@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+<wb-module deploy-name="xeov2.1 xwc">
+<wb-resource deploy-path="/" source-path="/public_html"/>
+<wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+<wb-resource deploy-path="/WEB-INF/classes" source-path="/projects_eclipse/oc4j1013/j2ee/home/application-deployments/current-workspace-app/xeov21_xwc/persistence/_pages"/>
+<wb-resource deploy-path="/WEB-INF/classes" source-path="/log4j"/>
+<wb-resource deploy-path="/WEB-INF/classes" source-path="/jgroups"/>
+<property name="context-root" value="xeov2.1_xwc"/>
+<property name="java-output-path"/>
+</wb-module>
+</project-modules>
