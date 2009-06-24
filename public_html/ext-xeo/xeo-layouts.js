@@ -1,0 +1,199 @@
+var xeoUserDisplayName = null;
+XEOLayout = function() 
+{
+    this.desktop = new XEOLayout.ViewPort();    
+    
+};
+
+XEOLayout.closeWindow = function(  ) {
+	ExtXeo.destroyComponents( document.body );
+}
+
+
+XEOLayout.ViewPort = function()
+{
+    this.toolBar = null; //mainToolBar;
+    this.tabPanel = new Ext.TabPanel({
+            region:'center',
+            id:'app-tabpanel',
+            deferredRender:true,
+            activeTab:0,
+            resizeTabs:true,
+            minTabWidth: 100,
+            tabWidth:170,
+            enableTabScroll:true,
+            width:600,
+            height:250,
+            margins:'0 3 3 0',
+            autoDestroy:true,
+            style: 'background-color:white',
+            defaults: {autoScroll:true},
+            listeners: { 
+            	'beforeremove': {
+            		fn:function( oTabCont, oComp ) {
+            			return XEOLayout.onCloseTab( oTabCont, oComp );
+            		}
+            	} 
+            }, 
+            items:null
+        });
+    
+        XEOLayout.ViewPort.superclass.constructor.call( this,
+            {
+                layout:'border',
+                frame:false,
+                border:false,
+                items:[{
+                            region:'north',
+                            split:false,
+                            border:false,
+                            frame:false,
+                            height: 25,
+                            minSize: 25,
+                            maxSize: 200,
+                            collapsible: false,
+                            hideBorders: true,
+                            margins:'3 3 3 3',
+                            items: [ { html:' <table id="header" width="100%" ><tr><td ><div class="api-title" style="font-family:tahoma,arial,sans-serif;color:white;">Bem Vindo '+xeoUserDisplayName+'</div></td><td align="right"></td><td width="30px" align="right">'
+                            	+'<img HEIGHT="15px" src="ext-xeo/images/xeo_30.gif"/>  </td></tr></table>'} ]
+                        }
+                ,{
+                    region:'west',
+                    id:'west-panel',
+                    title:(window.treeName?treeName:'Gestão de Associados'),
+                    split:true, 
+                    width: 200,
+                    minSize: 175,
+                    maxSize: 400,
+                    collapsible: true,
+                    margins:'0 0 3 3',
+                    animated:true,
+            	    layout: 'fit',
+                    layoutConfig:{
+                        animate:true
+                    },
+                    items: [ layoutTree ]
+                             	/*
+                    items: [{
+                        title:'Navigation',
+                        collapsible: false,
+                        border:false,
+                        iconCls:'nav',
+                        
+                    }
+                    ]*/
+                }
+                    ,            
+                    // Aplication Area
+                    this.tabPanel
+                 ]
+            }
+        );
+    }
+    
+    
+Ext.extend(XEOLayout.ViewPort, Ext.Viewport, {
+	    openTab : function( sFormName, sCommandName )
+	    {
+	        XVW.openCommandTab( 'Viewer1'+(new Date()-100), sFormName, sCommandName );
+	    },
+	    closeTab : function( tab ) 
+	    {
+	        var tabs = this.findById('app-tabpanel');
+	        tabs.remove( tab );        
+	    }
+	}
+);
+
+XEOLayout.onCloseTab = function( oTabCont, oComp ) {
+	if( !oComp.forceClose ) {
+		var changed = false;
+		var x = oComp.el.dom.getElementsByTagName('iframe');
+		for( var i=0;!changed && i < x.length; i++ ) {
+			try {
+				var y = x[i].contentWindow.document.getElementsByName("__isChanged");
+				for( var k = 0;k < y.length; k++ ) {
+					var cmd = y[i].value;
+					x[i].contentWindow.XVW.AjaxCommand( cmd.split(':')[0],cmd.split(':')[1],"",2,true );
+					return false;
+					break;
+				}
+			}
+			catch(e) {
+				e=e;
+			}
+		}
+    }
+}
+
+function xeodmToggleHandler( btn, state ) {
+	var oForm = document.getElementsByName("formMain")[0];
+	if( state ) {
+		window.xeodmstate = true;
+		var sActionUrl = XVW.prv.getFormInput( oForm, 'xvw.ajax.resourceUrl').value;
+		var xmlReq = XVW.createXMLHttpRequest();
+	    xmlReq.open( "POST", sActionUrl+"netgest/bo/xwc/components/viewers/XEOViewerOperations.xvw?action=xeodmtoggler&xeodmstate=true", true );
+	    xmlReq.send();
+		btn.setText( "XEODM Activo" );
+	}
+	else {
+		window.xeodmstate = false;
+		var sActionUrl = XVW.prv.getFormInput( oForm, 'xvw.ajax.resourceUrl').value;
+		var xmlReq = XVW.createXMLHttpRequest();
+	    xmlReq.open( "POST", sActionUrl+"netgest/bo/xwc/components/viewers/XEOViewerOperations.xvw?action=xeodmtoggler&xeodmstate=false", true );
+	    xmlReq.send();
+		btn.setText( "XEODM Inactivo" );
+	}
+}
+
+var XApp = null;
+XEOLayoutInit = function() 
+{
+	if( window.xeodmstate ) {
+	} else {
+		xeodmstate = false;
+	}
+	
+	var viewState = document.getElementsByName('javax.faces.ViewState')[0].value;
+	var action = document.getElementsByName('formMain')[0].action;
+	
+	action += "?javax.faces.ViewState=" + viewState + "&xvw.servlet=formMain:tree";
+	
+	window.layoutTree = new Ext.tree.TreePanel({
+	    border:false,
+	    useArrows:true,
+	    autoScroll:true,
+	    animate:true,
+	    enableDD:false,
+	    containerScroll: true,
+	    rootVisible: false,
+	    frame: false,
+	    layout: 'fit',
+		collapsed : false,
+	    root: {
+	        nodeType: 'async'
+	    },
+	    dataUrl: action,
+	    bbar: [ 
+		           {xtype:'button',
+		        	img:'ext-xeo/images/menus/logout.gif' ,
+		        	text:'Terminar Sessão',
+		        	handler: function() { document.location.href='Logout.jsp' } 
+		           },{
+			        	text:'XEODM ' + (xeodmstate?'Activo':'Inactivo'),
+			        	toggleHandler: xeodmToggleHandler,	
+			        	enableToggle: true,
+			        	pressed: xeodmstate
+			       }
+	           ]
+	    //'/xwc/testes/ext/examples/tree/tree.json'
+	});
+
+	
+	XApp = new XEOLayout();
+    XApp.desktop.syncSize();
+    window.onunload = XEOLayout.closeWindow;
+    window.setInterval("XVW.keepAlive( document.getElementsByTagName('form')[0] );" ,7*60000);
+}
+
+Ext.onReady( XEOLayoutInit );

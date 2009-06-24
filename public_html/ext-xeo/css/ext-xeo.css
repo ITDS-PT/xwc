@@ -1,0 +1,65 @@
+@CHARSET "ISO-8859-1";
+.x-tab-panel-body {
+    border-right: 1px solid #8db2e3;
+    border-left: 1px solid #8db2e3;
+    border-bottom: 1px solid #8db2e3;
+    __background:#dfe8f6;
+    padding: 0pt;
+}
+
+.xwc-rows-row {
+	font-family: tahoma,verdana,helvetica;
+	font-size: small;	
+}
+
+.xwc-tab {
+	position:relative!important;	
+	overflow-y:auto;
+}
+
+.xwc-form-required {
+	color:red;
+}
+
+.xwc-form-recommended {
+	color:green;
+}
+
+.xwc-form-label {
+	font-size: 12px;	
+}
+
+.xwc-att-file {
+	cursor:hand;
+}
+
+.x-fieldset {
+	margin:3px;
+}
+
+.gridRowUnRead {
+    font-weight: bold;
+}
+
+.gridRowUnRead .x-grid3-cell-inner {
+    font-weight: bold;
+}
+
+.xeoObjectLink .x-form-text  {
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline; 
+}
+
+.x-grid3-header-offset {
+	width: 100px;	
+}
+
+ul.x-tab-strip {
+    width:100%;
+}
+
+.x-grid3-hd-row td.ux-filtered-column {   
+    font-style: italic;  
+    font-weight: bold;
+}

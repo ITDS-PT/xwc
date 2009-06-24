@@ -1,0 +1,191 @@
+html { 
+    margin:0; 
+    padding:0; 
+} 
+body { 
+    margin:0; 
+    padding:0; 
+} 
+
+.x-tab-panel-header, .x-tab-panel-footer {
+    background: none;
+    border: 0px;
+    overflow:hidden;
+}
+
+.x-tab-panel-header {
+    border: 0px;
+    padding-bottom: 0px;
+}
+.x-tab-strip-wrap {
+    width:100%;
+    overflow:hidden;
+    position:relative;
+}
+ul.x-tab-strip {
+    display:INLINE;
+}
+
+ul.x-tab-strip-top{
+    padding-top: 1px;
+    background: none; /*url(../images/default/tabs/tab-strip-bg.gif) #cedff5 repeat-x bottom;*/
+    border-bottom: 1px solid #8db2e3;
+    width:100%
+}
+
+.x-panel-ml {
+    background: none;
+    padding-left:6px;
+    border: 0px
+}
+.x-panel-mr {
+    background: none;
+    padding-right:6px;
+}
+
+/*
+.x-panel-mc {
+    border:0 none;
+    padding:0;
+    margin:0;
+    font: normal 11px tahoma,arial,helvetica,sans-serif;
+    padding-top:6px;
+    background:transparent;
+}
+
+.x-panel-bwrap {
+    border:0px solid #99bbe8;
+    padding: 0pt ;
+   zoom:1;
+}
+*/
+.x-tab-panel-body {
+/*    border: 1px solid #8db2e3;*/
+    border-right: 1px solid #8db2e3;
+    border-left: 1px solid #8db2e3;
+    border-bottom: 1px solid #8db2e3;
+    background:#dfe8f6;
+    padding: 3pt;
+}
+
+
+.x-form-text{
+	position:static!important;
+}
+.x-form-field {
+	position:static!important;
+}
+.x-item-disabled {
+	position:static!important;
+}
+
+.x-form-field-wrap {
+	position:static!important;
+}
+
+.x-form-trigger {
+	position:static!important;
+} 
+.x-form-arrow-trigger {
+	position:static!important;
+}
+
+.xwc-rows-row {
+	font-family: tahoma,verdana,helvetica;
+	font-size: small;	
+}
+
+.xwc-tab {
+	overflow-y:auto;
+}
+
+.xwc-form-required {
+	color:red;
+}
+
+.xwc-form-recommended {
+	color:green;
+}
+
+.xwc-form-label {
+	font-size: 12px;	
+}
+
+.xwc-att-file {
+	cursor:hand;
+}
+
+.x-form-field {
+	position:static!important;
+}
+
+.x-form-field-wrap { 
+	position:static!important;
+}
+
+.x-form-trigger {
+	position:static!important;
+}
+
+.x-tab-right {
+	position:static!important;
+}
+
+.x-tab-strip-wrap {
+	position:static!important;
+}	
+
+.x-toolbar {
+	position:static!important;
+}
+
+.x-panel-body {
+	position:static!important;
+}
+
+
+
+.x-grid3-hd-row td.ux-filtered-column {   
+    font-style: italic;  
+    font-weight: bold;
+}
+
+.x-grid3-header-offset
+{
+    width:1px;
+}
+
+.x-fieldset
+{
+    margin:3; 
+    padding:3; 
+}
+
+/*
+
+x-tab-panel-body x-tab-panel-body-top
+
+.x-grid3 {
+	position:static!important;
+}
+
+.x-grid3-hd-inner {
+	position:static!important;
+}
+
+x-grid3-cell-inner {
+	position:static!important;	
+}
+*/
+
+
+.gridRowUnRead .x-grid3-cell-inner {
+    font-weight: bold;
+}
+
+.xeoObjectLink .x-form-text  {
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline; 
+}
+
