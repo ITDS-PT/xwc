@@ -15,7 +15,6 @@
 	<classpathentry kind="lib" path="lib/jstl.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.8.jar"/>
 	<classpathentry kind="lib" path="lib/servlet_2_4.jar"/>
-	<classpathentry kind="lib" path="lib/xmlparserv2.jar"/>
 	<classpathentry kind="lib" path="lib/itext-2.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/cos.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
