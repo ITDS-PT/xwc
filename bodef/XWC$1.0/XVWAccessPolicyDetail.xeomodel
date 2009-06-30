@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 U (http://www.altova.com) by jcarreira (EMBRACE) -->
+<!--Ficheiro xeoModel v2 convertido em:Tue May 30 16:02:24 BST 2006-->
+<xeoModel xmlns:xm="xeoModel" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="C:\projects\xeo\v2.1\xeoHome\xeoModel.xsd">
+	<general name="XVWAccessPolicyDetail" type="object" version="1.0" extends="" orphan="false" multiparent="false" extendsJavaClass="">
+		<locale language="pt" country="PT" variant=""/>
+		<implements/>
+		<database/>
+		<versioning active="false"/>
+		<textIndex active="true" appendChilds="false" deep="1">
+			<process/>
+		</textIndex>
+		<description>Access Policy Detail</description>
+		<cardID>[id]</cardID>
+		<label>Access Policy Detail</label>
+	</general>
+	<opl active="false"/>
+	<states/>
+	<methods/>
+	<events/>
+	<fwdObjects/>
+	<attributes>
+		<attributeObject name="object">
+			<label>Objecto</label>
+			<type>object.iXEOUser</type>
+			<required language="BOL">true</required>
+			<objects>
+				<object>iXEOUser</object>
+				<object>Ebo_Role</object>
+				<object>workQueue</object>
+				<object>Ebo_Group</object>
+				<object>Ebo_Application</object>
+			</objects>
+		</attributeObject>
+		<attributeNumber name="accessLevel">
+			<label>Acesso</label>
+			<grouping>false</grouping>
+			<decimals>0</decimals>
+			<required language="BOL">true</required>
+		</attributeNumber>
+	</attributes>
+	<viewers/>
+</xeoModel>

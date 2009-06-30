@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 U (http://www.altova.com) by jcarreira (EMBRACE) -->
+<!--Ficheiro xeoModel v2 convertido em:Tue May 30 16:02:24 BST 2006-->
+<xeoModel xmlns:xm="xeoModel" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="C:\projects\xeo\v2.1\xeoHome\xeoModel.xsd">
+	<general name="XVWAccessPolicy" type="object" version="1.0" extends="" orphan="true" multiparent="false" extendsJavaClass="">
+		<locale language="pt" country="PT" variant=""/>
+		<implements/>
+		<database/>
+		<versioning active="false"/>
+		<textIndex active="true" appendChilds="false" deep="1">
+			<process/>
+		</textIndex>
+		<description>Access Policy</description>
+		<cardID>[id]</cardID>
+		<label>Access Policy</label>
+	</general>
+	<opl active="false"/>
+	<states/>
+	<methods/>
+	<events/>
+	<fwdObjects/>
+	<attributes>
+		<attributeText name="id">
+			<len>350</len>
+			<label>Id</label>
+			<tooltip/>
+			<required language="BOL">true</required>
+		</attributeText>
+		<attributeText name="viewer">
+			<len>100</len>
+			<label>Viewer</label>
+			<tooltip/>
+			<required language="BOL">true</required>
+		</attributeText>
+		<attributeText name="childViewers">
+			<len>500</len>
+			<label>Viewer</label>
+			<tooltip/>
+		</attributeText>
+		<attributeText name="componentType">
+			<len>50</len>
+			<label>Tipo de Componente</label>
+			<tooltip/>
+			<required language="BOL">true</required>
+			<lov retainValues="false" name="xwvComponentTypes">
+				<items>
+					<item>
+						<value>TOOLBAR</value>
+						<label>Toolbar</label>
+					</item>
+					<item>
+						<value>MENU</value>
+						<label>Menu</label>
+					</item>
+					<item>
+						<value>AREA</value>
+						<label>Area</label>
+					</item>
+					<item>
+						<value>GRID</value>
+						<label>Grid</label>
+					</item>
+					<item>
+						<value>ATTRIBUTE</value>
+						<label>Attribute</label>
+					</item>
+				</items>
+			</lov>
+		</attributeText>
+		<attributeText name="label">
+			<len>100</len>
+			<label>Etiqueta</label>
+			<tooltip/>
+			<required language="BOL">true</required>
+		</attributeText>
+		<attributeObjectCollection name="policyDetails">
+			<label/>
+			<type>object.XVWAccessPolicyDetail</type>
+			<bridge>
+				<attributes/>
+			</bridge>
+			<minOccurs>0</minOccurs>
+			<maxOccurs>N</maxOccurs>
+		</attributeObjectCollection>
+		<attributeObject name="container">
+			<label>Contentor</label>
+			<type>object.XVWAccessPolicy</type>
+		</attributeObject>
+		<attributeBoolean name="referenced">
+			<label>Referenced</label>
+			<required language="BOL">true</required>
+		</attributeBoolean>
+	</attributes>
+	<viewers/>
+</xeoModel>
