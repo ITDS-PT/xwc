@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="base_lib/modules/xeocore.jar"/>
 	<classpathentry kind="lib" path="base_lib/j2ee/activation.jar"/>
 	<classpathentry kind="lib" path="base_lib/j2ee/adk.jar"/>
 	<classpathentry kind="lib" path="base_lib/j2ee/ejb.jar"/>
@@ -42,5 +41,6 @@
 	<classpathentry kind="lib" path="project_lib/sun-commons-digester.jar"/>
 	<classpathentry kind="lib" path="project_lib/sun-commons-logging.jar"/>
 	<classpathentry kind="lib" path="project_lib/itext-2.0.4.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/xeo_v3_core"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
