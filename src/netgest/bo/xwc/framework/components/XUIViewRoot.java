@@ -403,6 +403,13 @@ public class XUIViewRoot extends UIViewRoot
 
                 headerW.writeText('\n');
                 headerW.startElement("head", component );
+                headerW.startElement("meta", component);
+                headerW.writeAttribute( "http-equiv" , "X-UA-Compatible", null );
+                headerW.writeAttribute( "content" , "IE=EmulateIE7", null );
+                
+                headerW.startElement("meta", component);
+                headerW.writeAttribute( "http-equiv" , "X-UA-Compatible", null );
+                headerW.writeAttribute( "content" , "IE=7", null );
                 
                 // Write Body
                 w.startElement("body", component );
