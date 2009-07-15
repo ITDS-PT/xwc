@@ -13,7 +13,6 @@
 	<classpathentry kind="lib" path="base_lib/j2ee/ojsp.jar"/>
 	<classpathentry kind="lib" path="base_lib/j2ee/servlet.jar"/>
 	<classpathentry kind="lib" path="base_lib/j2ee/soap.jar"/>
-	<classpathentry kind="lib" path="base_lib/j2ee/xmlparserv2.jar"/>
 	<classpathentry kind="lib" path="base_lib/modules_lib/AppXTender.jar"/>
 	<classpathentry kind="lib" path="base_lib/modules_lib/bcmail-jdk14-125.jar"/>
 	<classpathentry kind="lib" path="base_lib/modules_lib/bcpg-jdk14-125.jar"/>
@@ -40,6 +39,7 @@
 	<classpathentry kind="lib" path="project_lib/sun-commons-digester.jar"/>
 	<classpathentry kind="lib" path="project_lib/sun-commons-logging.jar"/>
 	<classpathentry kind="lib" path="project_lib/itext-2.0.4.jar"/>
+	<classpathentry kind="lib" path="base_lib/modules_lib/xmlparserv2.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xeo_v3_core"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0"/>
