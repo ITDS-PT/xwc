@@ -312,9 +312,6 @@ public class XUIStateManagerImpl extends StateManager {
         
         Object state = viewRoot.processSaveState(context);
         
-        System.out.println( "Save View:" + ( System.currentTimeMillis() - init ) );
-        
-        
         captureChild(treeList, 0, viewRoot);        
         Object[] tree = treeList.toArray();      
         

@@ -287,12 +287,12 @@ public abstract class XUIComponentBase extends UIComponentBase
     @Override
     public Object saveState(FacesContext context) 
     {
-    	long ini = System.currentTimeMillis();
+//    	long ini = System.currentTimeMillis();
         Object ret = saveState();
-        long end = System.currentTimeMillis();
-        if( 50 < (end-ini) ) {
-        	System.out.println( "Save state demorado: [ " + this.getClass().getName() +  " ]:" + ( end-ini ) );
-        }
+//        long end = System.currentTimeMillis();
+//        if( 50 < (end-ini) ) {
+//        	System.out.println( "Save state demorado: [ " + this.getClass().getName() +  " ]:" + ( end-ini ) );
+//        }
         return ret;
         
     }

@@ -37,7 +37,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
     	new XUIStateBindProperty<String[]>( "dependences", this, Boolean.class );
     	
     private XUIStateBindProperty<Byte> 	dataType = 
-    	new XUIStateBindProperty<Byte>( "dataType", this, Boolean.class );
+    	new XUIStateBindProperty<Byte>( "dataType", this, Byte.class );
     
     private XUIStateBindProperty<Byte> 	inputRenderType	= 
     	new XUIStateBindProperty<Byte>( "inputRenderType", this, Byte.class );

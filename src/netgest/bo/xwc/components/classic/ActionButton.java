@@ -7,6 +7,7 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import static netgest.bo.xwc.components.HTMLAttr.*;
 import static netgest.bo.xwc.components.HTMLTag.*;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
@@ -21,12 +22,22 @@ import netgest.bo.xwc.framework.XUIStateProperty;
 public class ActionButton extends XUICommand
 {
     
-    private XUIStateProperty<String>    width = new XUIStateProperty<String>( "width", this, "75" );
-    private XUIStateProperty<String>     label = new XUIStateProperty<String>( "label", this, "#Button#" );
-    private XUIStateProperty<String>     action = new XUIStateProperty<String>( "action", this );
+    private XUIStateProperty<String>    	width = new XUIStateProperty<String>( "width", this, "75" );
+    private XUIStateProperty<String>     	label = new XUIStateProperty<String>( "label", this, "#Button#" );
+    private XUIStateProperty<String>     	action = new XUIStateProperty<String>( "action", this );
 
-    private XUIStateBindProperty<Boolean> disabled = new XUIStateBindProperty<Boolean>( "disabled", this, "false",Boolean.class );
-    private XUIStateBindProperty<Boolean> visible  = new XUIStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
+    private XUIStateBindProperty<Boolean> 	disabled = new XUIStateBindProperty<Boolean>( "disabled", this, "false",Boolean.class );
+    private XUIStateBindProperty<Boolean> 	visible  = new XUIStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
+    
+    private XUIBaseProperty<Integer>		waitMode = new XUIBaseProperty<Integer>( "waitMode" , this, XVWScripts.WAIT_DIALOG );		
+    
+    public void setWaitMode( int waitMode ) {
+    	this.waitMode.setValue( waitMode ); 
+    }
+    
+    public int getWaitMode() {
+    	return this.waitMode.getValue();
+    }
     
     public void setAction( String sExpr ) {
         this.action.setValue( sExpr );
@@ -145,7 +156,7 @@ public class ActionButton extends XUICommand
             if( oActionButton.getActionExpression() != null ) {
                 oConfig.add( "handler", 
                              "function(){" + 
-                             XVWScripts.getAjaxCommandScript( oActionButton, XVWScripts.WAIT_DIALOG ) +
+                             	XVWScripts.getAjaxCommandScript( oActionButton, oActionButton.getWaitMode() ) +
                              "}"
                             );
             }

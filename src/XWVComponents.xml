@@ -97,6 +97,7 @@
 			<!--- Dialogs Components -->
 			<xwc:render for='dialogProgress'>netgest.bo.xwc.components.classic.DialogProgress$XEOHTMLRenderer</xwc:render>
 
+			<xwc:render for='progressBar'>netgest.bo.xwc.components.classic.ProgressBar$XEOHTMLRenderer</xwc:render>
 
 			<!--- HTML Graphics -->
             <xwc:render for='attributeImage'>netgest.bo.xwc.components.classic.AttributeImage$XEOHTMLRenderer</xwc:render>
@@ -167,6 +168,8 @@
 
 			<!--- Dialogs Components -->
 			<xwc:render for='dialogProgress'>netgest.bo.xwc.components.classic.DialogProgress$XEOHTMLRenderer</xwc:render>
+
+			<xwc:render for='progressBar'>netgest.bo.xwc.components.classic.ProgressBar$XEOHTMLRenderer</xwc:render>
 
 
 			<!--- HTML Graphics -->
@@ -380,7 +383,11 @@
         </xwc:component>
 <!-- End Window Components -->
 
-
+        <xwc:component name='progressBar'>
+            <xwc:className>netgest.bo.xwc.components.classic.ProgressBar</xwc:className>
+            <xwc:description>ProgressBar</xwc:description>
+        </xwc:component>
+ 
 <!-- Model Components -->
         <xwc:component name='menu'>
             <xwc:className>netgest.bo.xwc.components.model.Menu</xwc:className>

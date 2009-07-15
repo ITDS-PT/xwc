@@ -2,6 +2,7 @@ package netgest.bo.xwc.framework.http;
 
 import java.io.IOException;
 
+import javax.faces.application.ViewExpiredException;
 import javax.faces.webapp.FacesServlet;
 
 import javax.servlet.RequestDispatcher;
@@ -42,15 +43,14 @@ public class XUIServlet implements Servlet
     public void init(ServletConfig servletConfig) throws ServletException
     {
         facesServlet.init(servletConfig);
+        initializeXeo();
     }
     
     public synchronized void initializeXeo() {
-
         if( oBoApplication == null ) {
             oBoApplication = boApplication.getApplicationFromStaticContext("XEO");
         }
         bIsInitialized = true;
-        
     }
 
     public ServletConfig getServletConfig()
@@ -63,19 +63,15 @@ public class XUIServlet implements Servlet
     {
         HttpServletRequest oRequest;
         HttpServletResponse oResponse;
-        String sRequestURI;
         EboContext oEboContext;
         
         oEboContext = null;
         oRequest = (HttpServletRequest)servletRequest;
         oResponse = (HttpServletResponse)servletResponse;
-
-        sRequestURI = oRequest.getRequestURI();
         
         // Initialize XEO....        
         if( !bIsInitialized ) 
             initializeXeo();
-        
         
         HttpSession oHttpSession = oRequest.getSession();
         boSession	oXEOSession = null;
@@ -84,55 +80,43 @@ public class XUIServlet implements Servlet
         }
     
     	if( oXEOSession != null ) {
-	        oEboContext = oXEOSession.createRequestContext( oRequest, oResponse, null );
-	        boApplication.currentContext().addEboContext( oEboContext );
+    		if( oXEOSession.getUser().getBoui() != 0 ) {
+		        oEboContext = oXEOSession.createRequestContext( oRequest, oResponse, null );
+		        boApplication.currentContext().addEboContext( oEboContext );
+    		}
     	}
         
         try {
-            // Check if is a valid viewer.
-//            if (  oRequest.getAttribute( "include_true" ) != null ||  sRequestURI.endsWith(".xvw") || sRequestURI.endsWith(".xeoviewer") )
-//            {
-        		oResponse.setHeader("Pragma", "No-Cache");
-        		oResponse.setHeader("cache-control", "max-age=0");
-                if( oRequest.getContentType() != null && oRequest.getContentType().startsWith( "text/xml" )  )
-                {
-                    facesServlet.service( new XUIAjaxRequestWrapper( oRequest ), servletResponse );
-                } 
-                else if( oRequest.getContentType() != null && oRequest.getContentType().startsWith( "multipart/form-data" )  )
-                {
-                    facesServlet.service( new XUIMultiPartRequestWrapper( oRequest ), servletResponse );
-                }
-                else { 
-                    facesServlet.service( servletRequest, servletResponse );
-                }
-/*
+    		oResponse.setHeader("Pragma", "No-Cache");
+    		oResponse.setHeader("cache-control", "max-age=0");
+            if( oRequest.getContentType() != null && oRequest.getContentType().startsWith( "text/xml" )  )
+            {
+                facesServlet.service( new XUIAjaxRequestWrapper( oRequest ), servletResponse );
+            } 
+            else if( oRequest.getContentType() != null && oRequest.getContentType().startsWith( "multipart/form-data" )  )
+            {
+                facesServlet.service( new XUIMultiPartRequestWrapper( oRequest ), servletResponse );
             }
-            else {
-                
-                // Try find a resource in the parent path
-                int iServletPathIdx;
-                String sForwardRequestURI;
-                String sServletPath;
-
-                // Remove context path and forward request
-                sServletPath = oRequest.getContextPath() + oRequest.getServletPath() + "/";
-                
-                iServletPathIdx = sRequestURI.indexOf( sServletPath );
-                
-                sForwardRequestURI = sRequestURI.substring( 0, iServletPathIdx + 1 ) + sRequestURI.substring( iServletPathIdx + sServletPath.length() );
-                
-                
-                RequestDispatcher forwardDispatcher = servletRequest.getRequestDispatcher( sForwardRequestURI );
-                if( forwardDispatcher != null )
-                    forwardDispatcher.forward( servletRequest, servletResponse );
-                else {
-                    ((HttpServletResponse)servletResponse).sendError( 404, sRequestURI );
-                }
+            else { 
+                facesServlet.service( servletRequest, servletResponse );
             }
-*/
+        }
+        catch( RuntimeException e ) {
+        	throw e;
+        }
+        catch( ServletException e ) {
+        	if( e.getRootCause() instanceof ViewExpiredException ) {
+        		// Handle expired view
+        		oResponse.sendError(401, "Session was expired!");
+        	}
+        	else {
+        		throw e;
+        	}
+        }
+        catch( IOException e ) {
+        	throw e;
         }
         finally {
-            
             if (XUIRequestContext.getCurrentContext() != null )
             {
                 XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();

@@ -163,20 +163,9 @@ public class Attribute extends AttributeBase
                     sRet = "attributeDateTime";
                     break;
             }
-/*
-                case DataFieldTypes.VALUE_DURATION:
-                    sRet = "attributeDuration";
-                    break;
-                case DataFieldTypes.VALUE_IFILELINK:
-                    sRet = "attributeIFileLink";
-                    break;
-                case DataFieldTypes.VALUE_NUMBER_LOOKUP:
-                    sRet = "attributeNumberLookup";
-                    break;
-                case DataFieldTypes.VALUE_BLOB:
-*/                
-            //
+
             setInputType( sRet );
+            
         }
         return sRet;
         
@@ -247,7 +236,6 @@ public class Attribute extends AttributeBase
     @Override
     public void decode( ) {
         // This object cannot decode... is a representation of label and attrbiute
-        
         // Overwrite avoid decodes
     }
 
@@ -325,12 +313,15 @@ public class Attribute extends AttributeBase
             Attribute oAttr = (Attribute)oComp;
             
             XUIResponseWriter w = getResponseWriter();
-            String labelPos = "left";
+            String labelPos 	= "left";
+            int	   labelWidth   = 100;
             
             Rows r = (Rows)oAttr.findParentComponent( Rows.class );
 
-            if( r!=null )
-            	labelPos = r.getLabelPosition();
+            if( r!=null ) {
+            	labelPos 	= r.getLabelPosition();
+            	labelWidth	= r.getLabelWidth();
+            }
             
             w.startElement( TABLE, oComp );
             w.writeAttribute( CELLPADDING, "0", null );
@@ -341,7 +332,7 @@ public class Attribute extends AttributeBase
             {
 	            w.startElement("COLGROUP", oComp);
 	            w.startElement(COL, oComp );
-	            w.writeAttribute( HTMLAttr.WIDTH, "100px", null );
+	            w.writeAttribute( HTMLAttr.WIDTH, labelWidth + "px", null );
 	            w.endElement("COL");
 	            w.startElement(COL, oComp );
 	            w.endElement("COL");

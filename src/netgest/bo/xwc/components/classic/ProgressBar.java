@@ -1,24 +1,24 @@
 package netgest.bo.xwc.components.classic;
 
+import java.io.IOException;
+
+import javax.el.ValueExpression;
+
+import netgest.bo.xwc.components.HTMLAttr;
+import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.components.classic.extjs.ExtConfig;
+import netgest.bo.xwc.framework.XUIRenderer;
+import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIOutput;
 
 public class ProgressBar extends XUIOutput {
 
-	private XUIStateBindProperty<Integer>  minValue 		= new XUIStateBindProperty<Integer>( "minValue", this, "0", Integer.class );
-	private XUIStateBindProperty<Integer>  maxValue 		= new XUIStateBindProperty<Integer>( "maxValue", this, "100", Integer.class );
-
+	private XUIStateBindProperty<Float>    valueExpression	= new XUIStateBindProperty<Float>( "valueExpression", this, "0", Float.class );
 	private XUIStateBindProperty<String>   width 			= new XUIStateBindProperty<String>( "width", this, "auto", String.class );
-
-	private XUIStateBindProperty<Integer>  updateInterval 	= new XUIStateBindProperty<Integer>( "updateInterval", this, "5000", Integer.class );
-
-	public int getUpdateInterval() {
-		return updateInterval.getEvaluatedValue();
-	}
-
-	public void setUpdateInterval(String updateIntervalExpr ) {
-		this.updateInterval.setExpressionText( updateIntervalExpr );
-	}
+	private XUIStateBindProperty<String>   text 			= new XUIStateBindProperty<String>( "text", this, "5000", String.class );
 
 	public String getWidth() {
 		return width.getEvaluatedValue();
@@ -27,28 +27,58 @@ public class ProgressBar extends XUIOutput {
 	public void setWidth(String widthExpr ) {
 		this.width.setExpressionText( widthExpr  );
 	}
-
-	public Integer getMinValue() {
-		return minValue.getEvaluatedValue();
+	
+	public void setText( String exprText ) {
+		this.text.setExpressionText( exprText );
 	}
-
-	public void setMinValue(String minValueExpr ) {
-		this.minValue.setExpressionText( minValueExpr );
-	}
-
-	public int getMaxValue() {
-		return maxValue.getEvaluatedValue();
-	}
-
-	public void setMaxValue(String maxValueExpr ) {
-		this.maxValue.setExpressionText( maxValueExpr );
+	
+	public String getText() {
+		return text.getEvaluatedValue();
 	}
 
 	public void setValueExpression( String sValueExpression ) {
-		super.setValueExpression( "value" ,  createValueExpression( sValueExpression, Integer.class ));
+		ValueExpression ve = createValueExpression( sValueExpression, Float.class );
+		valueExpression.setValue( ve );
+		super.setValueExpression( "value" , ve );
 	}
 	
-	public static class XEOHTMLRenderer {
+	public static class XEOHTMLRenderer extends XUIRenderer {
+
+		@Override
+		public void encodeEnd( XUIComponentBase component ) throws IOException {
+			XUIResponseWriter w = getResponseWriter();
+			w.startElement( HTMLTag.DIV , component );
+			w.writeAttribute( HTMLAttr.ID, component.getClientId(), null );
+			w.endElement( HTMLTag.DIV );
+			ExtConfig compConfig = renderExtJs( component );
+			w.getScriptContext().add( 
+					XUIScriptContext.POSITION_FOOTER, 
+					component.getClientId(), 
+					compConfig.renderExtConfig()
+			);
+		}
+		
+        public ExtConfig renderExtJs( XUIComponentBase oComp ) {
+            ProgressBar			progressBar;
+            String              sJsValue;
+
+            progressBar = (ProgressBar)oComp;
+            
+            sJsValue = String.valueOf( progressBar.getValue() ); 
+            
+            ExtConfig oExtConfig = new ExtConfig("Ext.ProgressBar");
+            oExtConfig.addJSString("renderTo", oComp.getClientId());
+            oExtConfig.addJSString("id", oComp.getClientId());
+            oExtConfig.addJSString("width", progressBar.getWidth() );
+            oExtConfig.addJSString("text", progressBar.getText() );
+            
+            if( progressBar.getValue() != null ) {
+            	oExtConfig.add("value", sJsValue );
+            }
+            return oExtConfig;
+        }
+
+		
 		
 		
 	}

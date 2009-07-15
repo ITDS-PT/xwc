@@ -8,6 +8,7 @@ import java.io.IOException;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.security.SecurityPermissions;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
@@ -16,8 +17,24 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import com.sun.faces.io.FastStringWriter;
 
 public class AttributeBoolean extends AttributeBase {
+	
+	XUIBaseProperty<Boolean> useBooleanValues = new XUIBaseProperty<Boolean>( "useBooleanValues", this, false ); 
+	
+	private boolean getUseBooleanValues() {
+		return useBooleanValues.getValue();
+	}
 
-    public static class XEOHTMLRenderer extends XUIRenderer {
+	public void processPreRender() {
+		Object value = getValue();
+
+		if( value != null && value instanceof Boolean )
+			useBooleanValues.setValue( true );
+		else
+			useBooleanValues.setValue( false );
+		
+	}
+
+	public static class XEOHTMLRenderer extends XUIRenderer {
 
         @Override
         public void encodeEnd(XUIComponentBase oComp) throws IOException {
@@ -57,7 +74,11 @@ public class AttributeBoolean extends AttributeBase {
             
             sOut = new FastStringWriter( 100 );
             
-            sJsValue = (String)oAttrBoolean.getValue(); 
+            if( oAttrBoolean.getUseBooleanValues() )
+            	sJsValue = ((Boolean)oAttrBoolean.getValue()).booleanValue()?"1":"0";
+            else
+            	sJsValue = (String)oAttrBoolean.getValue();
+           
             
             ExtConfig oCheckConfig = new ExtConfig( "Ext.form.Checkbox" );
             //sOut.write( "Ext.onReady( function() { " ); sOut.write("\n");
@@ -119,11 +140,19 @@ public class AttributeBoolean extends AttributeBase {
             
             String value = getFacesContext().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
             if( "on".equals( value ) ) {
-                oAttrComp.setSubmittedValue( "1" );    
+                if( oAttrComp.getUseBooleanValues() )
+                	oAttrComp.setSubmittedValue( true );
+                else
+                	oAttrComp.setSubmittedValue( "1" );
+                	
             }
             else if ( value != null ) {
-                oAttrComp.setSubmittedValue( "0" );    
+                if( oAttrComp.getUseBooleanValues() )
+                	oAttrComp.setSubmittedValue( false );
+                else
+                	oAttrComp.setSubmittedValue( "0" );
             }
+            
             super.decode(component);
 
         }

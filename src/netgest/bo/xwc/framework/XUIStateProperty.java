@@ -10,9 +10,9 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 public class XUIStateProperty<V> extends XUIBaseProperty<V> {
     
     private boolean bWasChanged;
-    private Object  oBindValue;
     
-    private XUIComponentBase oComponent;
+    private Object  lastEvalValue;
+    private boolean lastEvalValueWasSet;
     
     public XUIStateProperty( String sPropertyName, 
                             XUIComponentBase oComponent ) {
@@ -34,6 +34,11 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
         }
     }
     
+    protected void setLastEvaluatedValue( Object lastEvalValue ) {
+    	this.lastEvalValue = lastEvalValue;
+    	lastEvalValueWasSet = true;
+    }
+    
     public Object saveState() {
         Object oValue = getValue();
         if( oValue instanceof ValueExpression ) {
@@ -41,33 +46,36 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
 	        	ValueExpression oValExpr = (ValueExpression)oValue;
 	            if( oValExpr != null )
 	            {
-	                if ( oValExpr.isLiteralText() ) {
-	                    
-	                    String sLiteralText = oValExpr.getExpressionString();
-	                    if( oValExpr.getExpectedType() == String.class ) {
-	                    	oBindValue = (V)sLiteralText;
-	                    }
-	                    else if( oValExpr.getExpectedType() == Double.class ) {
-	                    	oBindValue = (V)Double.valueOf( sLiteralText );
-	                    }
-	                    else if( oValExpr.getExpectedType() == Integer.class ) {
-	                    	oBindValue = (V)Integer.valueOf( sLiteralText );
-	                    }
-	                    else if( oValExpr.getExpectedType() == Long.class ) {
-	                    	oBindValue = (V)Long.valueOf( sLiteralText );
-	                    }
-	                    else if( oValExpr.getExpectedType() == Boolean.class ) {
-	                    	oBindValue = (V)Boolean.valueOf( sLiteralText );
-	                    }
-	                    else if( oValExpr.getExpectedType() == Byte.class ) {
-	                    	oBindValue = (V)Byte.valueOf( sLiteralText );
-	                    } else {
-	                    	throw new RuntimeException( "Cannot conver expression text ["+sLiteralText+"] in " + oValExpr.getExpectedType().getName() );
-	                    }
-	                }
-	                else {
-	                	oBindValue = (V)oValExpr.getValue( getComponent().getELContext() );
-	                }
+	            	if( !lastEvalValueWasSet ) {
+		                if ( oValExpr.isLiteralText() ) {
+		                    
+		                    String sLiteralText = oValExpr.getExpressionString();
+		                    if( oValExpr.getExpectedType() == String.class ) {
+		                    	lastEvalValue = (V)sLiteralText;
+		                    }
+		                    else if( oValExpr.getExpectedType() == Double.class ) {
+		                    	lastEvalValue = (V)Double.valueOf( sLiteralText );
+		                    }
+		                    else if( oValExpr.getExpectedType() == Integer.class ) {
+		                    	lastEvalValue = (V)Integer.valueOf( sLiteralText );
+		                    }
+		                    else if( oValExpr.getExpectedType() == Long.class ) {
+		                    	lastEvalValue = (V)Long.valueOf( sLiteralText );
+		                    }
+		                    else if( oValExpr.getExpectedType() == Boolean.class ) {
+		                    	lastEvalValue = (V)Boolean.valueOf( sLiteralText );
+		                    }
+		                    else if( oValExpr.getExpectedType() == Byte.class ) {
+		                    	lastEvalValue = (V)Byte.valueOf( sLiteralText );
+		                    } else {
+		                    	throw new RuntimeException( "Cannot conver expression text ["+sLiteralText+"] in " + oValExpr.getExpectedType().getName() );
+		                    }
+		                }
+		                else {
+		                	lastEvalValue = (V)oValExpr.getValue( getComponent().getELContext() );
+		                }
+	            	}
+	            	
 	            }
             }
             catch( Exception e )
@@ -81,13 +89,13 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
             }
         }
         else {
-        	oBindValue = oValue;
+        	lastEvalValue = oValue;
         }
-        return new Object[] { oBindValue, super.saveState() };
+        return new Object[] { lastEvalValue, super.saveState() };
     }
     
     public void restoreState( Object oStateValue ) {
-        oBindValue = (V)((Object[])oStateValue)[0];
+    	lastEvalValue = (V)((Object[])oStateValue)[0];
         super.restoreState( ((Object[])oStateValue)[1] );
     }
 
@@ -141,10 +149,10 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
             try {
                 
                 Object oNewValue = ((ValueExpression)oValue).getValue( XUIRequestContext.getCurrentContext().getELContext() );
-                if( oBindValue == null ) {
+                if( lastEvalValue == null ) {
                 	return false;
                 }
-                return !compareValues( oBindValue, oNewValue );
+                return !compareValues( lastEvalValue, oNewValue );
 
             }
             catch( Exception e )

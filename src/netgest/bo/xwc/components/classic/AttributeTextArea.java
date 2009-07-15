@@ -90,7 +90,12 @@ public class AttributeTextArea extends AttributeBase {
             if( oAttrText.isDisabled() || !oAttrText.getEffectivePermission(SecurityPermissions.WRITE) )
                 sOut.write( "disabled: true,");
     
-            sOut.write( "name: '"); sOut.write( oComp.getClientId() ); sOut.write("',");
+            if( oAttrText.isReadOnly() ) 
+                sOut.write( "readOnly: true,");
+            
+            if( !oAttrText.isReadOnly() && !oAttrText.isDisabled()  ) {
+            	sOut.write( "name: '"); sOut.write( oComp.getClientId() ); sOut.write("',");
+            }
             
             // Write value            
             sOut.write( "value: '"); 

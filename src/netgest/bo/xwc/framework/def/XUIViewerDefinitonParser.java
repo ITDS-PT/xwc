@@ -13,6 +13,7 @@ import javax.faces.context.FacesContext;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 
+import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 import netgest.utils.ngtXMLUtils;
 
 import oracle.xml.parser.v2.NSResolver;
@@ -98,7 +99,12 @@ public class XUIViewerDefinitonParser
             }
             else
             {
-                throw new RuntimeException("O viewer " + viewerName + " não existe");
+                throw new RuntimeException( 
+                		XUIMessagesLocalization.getMessage(
+                			"netgest.bo.xwc.framework.localization.", 
+                			"parser.viewernotfound"	 
+                		)
+                	);
             }
         }
         return xwvr;

@@ -21,33 +21,25 @@ public class Rows extends XUIComponentBase
     XUIStateProperty<Integer> cellSpacing = new XUIStateProperty<Integer>( "cellSpacing", this, 5 );
     XUIStateProperty<Integer> cellPadding = new XUIStateProperty<Integer>( "cellPadding", this, 5 );
 
-    XUIStateProperty<String> width = new XUIStateProperty<String>( "width", this, "99.9%" );
-    XUIStateProperty<String> height = new XUIStateProperty<String>( "height", this, "99.9%" );
+    XUIStateProperty<String> width 			= new XUIStateProperty<String>( "width", this, "99.9%" );
+    XUIStateProperty<String> height 		= new XUIStateProperty<String>( "height", this, "99.9%" );
 
-    XUIBaseProperty<String> columns = new XUIBaseProperty<String>( "columns", this, "2" );
-    XUIBaseProperty<String> columnWidths = new XUIBaseProperty<String>( "columnWidths", this, "auto" );
-    XUIBaseProperty<String> labelPosition = new XUIBaseProperty<String>( "labelPosition", this, "left" );
+    XUIBaseProperty<String> columns 		= new XUIBaseProperty<String>( "columns", this, "2" );
+    XUIBaseProperty<String> columnWidths 	= new XUIBaseProperty<String>( "columnWidths", this, "auto" );
+    XUIBaseProperty<String> labelPosition 	= new XUIBaseProperty<String>( "labelPosition", this, "left" );
+    XUIBaseProperty<Integer> labelWidth 	= new XUIBaseProperty<Integer>( "labelWidth", this, 100 );
     
-    @Deprecated
-    public void encodeChildren( FacesContext context ) throws IOException
-    {
-
-        for (int i = 0; i < getChildCount(); i++) 
-        {
-            UIComponent kid = getChild( i );
-            
-            kid.encodeBegin(context);
-            if (kid.getRendersChildren()) 
-            {
-                kid.encodeChildren(context);
-            }
-            kid.encodeEnd(context);
-        }
-    }
-
     public boolean getRendersChildren()
     {
         return true;
+    }
+
+    public void setLabelWidth( int labelWidth ) {
+        this.labelWidth.setValue( labelWidth );
+    }
+
+    public int getLabelWidth() {
+        return labelWidth.getValue();
     }
 
     public void setLabelPosition(String labelPosition) {

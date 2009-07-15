@@ -102,6 +102,7 @@ public class XUIStateBindProperty<V> extends XUIStateProperty<ValueExpression> {
                 oRetValue = (V)Byte.valueOf( (byte)0 );
             }
         }
+        setLastEvaluatedValue( oRetValue );
         return oRetValue;
     }
 }

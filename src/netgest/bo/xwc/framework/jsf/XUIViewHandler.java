@@ -338,8 +338,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                 oTransaction.activate();
             }
         }
-        
-        System.out.println( "Restore View:" + (System.currentTimeMillis() - init) );
         return viewRoot;
     }
 
@@ -787,13 +785,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                     sXml
                 );
         
-        long init = System.currentTimeMillis();
-        
         responseWriter.flushToWriter();
         responseWriter.release();
-        
-        System.out.println("Flushing response:" + ( System.currentTimeMillis() - init ) );
-        
     }
 
     

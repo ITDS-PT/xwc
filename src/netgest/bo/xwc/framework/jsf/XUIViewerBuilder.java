@@ -1,50 +1,23 @@
 package netgest.bo.xwc.framework.jsf;
 
 import java.io.IOException;
-
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
-import javax.faces.context.FacesContext;
 
 import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.def.XUIComponentDefinition;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.def.XUIViewerDefinitionNode;
-import netgest.bo.xwc.framework.def.XUIViewerDefinitonParser;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 public class XUIViewerBuilder
 {
-    private static final Log log = LogFactory.getLog(netgest.bo.xwc.framework.jsf.XUIViewerBuilder.class);
-
-    /*
-    public void pre_Render( UIViewRoot root )
-    {
-        
-        FacesContext fcontext = FacesContext.getCurrentInstance();
-        if( root.getChildCount() == 0 ) 
-        {
-            XUIViewerDefinitonParser vparser = new XUIViewerDefinitonParser();
-            vdef = oXUIApplication.getViewerDef( viewerName );
-            buildComponentTree( root );
-        }
-
-    }
-*/
+//    private static final Log log = LogFactory.getLog(netgest.bo.xwc.framework.jsf.XUIViewerBuilder.class);
     
     public void buildView( XUIRequestContext oContext, XUIViewerDefinition oViewerDefinition, UIViewRoot oUIViewRoot  )    {
         buildComponentTree( oContext, oViewerDefinition, oUIViewRoot );
@@ -57,15 +30,10 @@ public class XUIViewerBuilder
     
     private void buildComponent( XUIRequestContext oContext, UIViewRoot root,UIComponent parent, XUIViewerDefinitionNode dcomponent )
     {
-    	if( "genericTag".equalsIgnoreCase( dcomponent.getName() ) ) {
-    		boolean todebug = true;
-    		todebug = false;
-    	}
     	
     	UIComponent comp = createComponent( oContext, dcomponent.getName() );
         comp.setId( dcomponent.getId()==null?root.createUniqueId():dcomponent.getId() );
         
-        //TODO: Set properties
         try
         {
         	Method m = comp.getClass().getMethod( "setProperties",new Class[] { Map.class } );
@@ -73,8 +41,6 @@ public class XUIViewerBuilder
         }
         catch(Exception e)
         {
-        	e = null;
-            //TODO:Warning Message;
         }
         
         try
@@ -84,22 +50,78 @@ public class XUIViewerBuilder
         }
         catch(Exception e)
         {
-        	e = null;
-            //TODO:Warning Message;
         }
         
         Iterator<String> keysEnum = dcomponent.getProperties().keySet().iterator();
         while( keysEnum.hasNext() )
         {
-            String keyName = String.valueOf( keysEnum.next() );
-            String fieldName = "set" + keyName.substring(0,1).toUpperCase() + keyName.substring(1);
 
+        	String keyName = String.valueOf( keysEnum.next() );
+        	String value   = dcomponent.getProperty( keyName );
+            String setterName = "set" + keyName.substring(0,1).toUpperCase() + keyName.substring(1);
+            
+            boolean wasSet 		= false;
+            boolean isBool 		= false;
+            boolean isFloat 	= false;
+            boolean isInt 		= false;
+            
+            double  valueDouble = 0;
+            long	valueLong	= 0;
+            boolean boolValue	= false;
+            
+            if( "true".equals( value ) || "false".equals( value ) ) {
+            	boolValue 	= Boolean.parseBoolean( value );
+            	isBool 		= true;
+            }
+            
+            if( !isBool ) {
+	            try {
+	            	valueLong = Long.parseLong( value );
+	            	isInt     = true;
+	            }
+	            catch ( NumberFormatException e ) {
+	            }
+	            
+	            if( !isInt ) {
+		            try {
+		            	valueDouble = Long.parseLong( value );
+		            	isFloat     = true;
+		            }
+		            catch ( NumberFormatException e ) {
+		            }
+	            }
+            }
+            
+            if( !wasSet && isBool ) {
+            	wasSet = setComponentProperty( comp, setterName, boolValue );
+            }
+            
+            if( !wasSet && isInt ) {
+            	wasSet = setComponentProperty( comp, setterName, (int)valueLong );
+            	wasSet = !wasSet && setComponentProperty( comp, setterName, (long)valueLong );
+            	wasSet = !wasSet && setComponentProperty( comp, setterName, (short)valueLong );
+            	wasSet = !wasSet && setComponentProperty( comp, setterName, (byte)valueLong );
+            	wasSet = !wasSet && setComponentProperty( comp, setterName, (float)valueLong );
+            	wasSet = !wasSet && setComponentProperty( comp, setterName, (double)valueLong );
+            }
+
+            if( !wasSet && isFloat ) {
+            	wasSet = setComponentProperty( comp, setterName, (float)valueDouble );
+            	wasSet = !wasSet && setComponentProperty( comp, setterName, (double)valueDouble );
+            }
+            
+            if( !wasSet ) {
+            	wasSet = setComponentProperty( comp, setterName, value );
+            	wasSet = !wasSet && setComponentProperty( comp, setterName, (Object)value );
+            }
+            
+            /*
             try
             {
 
             	try {
             		
-					Method m = comp.getClass().getMethod( fieldName, new Class[] { String.class } );
+					Method m = comp.getClass().getMethod( setterNameName, new Class[] { String.class } );
 					m.invoke( 	
 							comp, 
 							new Object[] { 
@@ -107,51 +129,128 @@ public class XUIViewerBuilder
 							} 
 						);
 				} catch (NoSuchMethodException e) {
-					Method m = comp.getClass().getMethod( fieldName, new Class[] { Object.class } );
+					Method m = comp.getClass().getMethod( setterNameName, new Class[] { Object.class } );
 					m.invoke( 	
 							comp, 
 							new Object[] { 
-								dcomponent.getProperty( keyName ) 
+								 
 							} 
 						);
 				}
             } catch (Exception ex) {
-            	/*
-                try {
-                	
-                    Method m = 
-                        comp.getClass().getMethod("set" + fieldName, 
-                                                          new Class[] { Object.class });
-                    m.invoke(comp, 
-                             new Object[] { dcomponent.getProperty(keyName) });
-                } catch (Exception e) {
-                    Throwable t;
-                    //TODO:Warning Message;
-                    if( e.getCause() != null ) {
-                        t = e.getCause();
-                    }
-                    else {
-                        t = e;
-                    }
-                    log.warn( "Error setting component property " + dcomponent.getName() + ":" +  fieldName + ":" + t.getClass() + "-" + t.getMessage() );
-                }
-                */
             }
+            */
         }
-		//if (  log.isDebugEnabled() )
-		//	log.debug( " END Creating component " + dcomponent.getName() );
         
         parent.getChildren().add( comp );
 
-        List children = dcomponent.getChildren();
-        Iterator it = children.iterator();
+        List<XUIViewerDefinitionNode> children = dcomponent.getChildren();
+        Iterator<XUIViewerDefinitionNode> it = children.iterator();
         while( it.hasNext() )
         {
-            buildComponent( oContext, root, comp, (XUIViewerDefinitionNode)it.next() );           
+            buildComponent( oContext, root, comp, it.next() );           
         }
         
     }
     
+    private boolean setComponentProperty( Object component, String setterName, boolean value ) {
+    	try {
+    		Method m = component.getClass().getMethod( setterName, new Class[] { Boolean.TYPE }  );
+			m.invoke(  component,  new Object[] { value } );
+    		return true;
+    	}
+		catch( Exception e ) {
+			return false;
+		}
+    }
+    
+    private boolean setComponentProperty( Object component, String setterName, byte value ) {
+    	try {
+    		Method m = component.getClass().getMethod( setterName, new Class[] { Byte.TYPE }  );
+			m.invoke(  component,  new Object[] { value } );
+    		return true;
+    	}
+		catch( Exception e ) {
+			return false;
+		}
+    }
+
+    private boolean setComponentProperty( Object component, String setterName, short value ) {
+    	try {
+    		Method m = component.getClass().getMethod( setterName, new Class[] { Short.TYPE }  );
+			m.invoke(  component,  new Object[] { value } );
+    		return true;
+    	}
+		catch( Exception e ) {
+			return false;
+		}
+    }
+
+    private boolean setComponentProperty( Object component, String setterName, int value ) {
+    	try {
+    		Method m = component.getClass().getMethod( setterName, new Class[] { Integer.TYPE }  );
+			m.invoke(  component,  new Object[] { value } );
+    		return true;
+    	}
+    	catch( Exception e ) {
+    		return false;
+    	} 
+    }
+
+    private boolean setComponentProperty( Object component, String setterName, long value ) {
+    	try {
+    		Method m = component.getClass().getMethod( setterName, new Class[] { Long.TYPE }  );
+			m.invoke(  component,  new Object[] { value } );
+    		return true;
+    	}
+    	catch( Exception e ) {
+    		return false;
+    	} 
+    }
+
+    private boolean setComponentProperty( Object component, String setterName, float value ) {
+    	try {
+    		Method m = component.getClass().getMethod( setterName, new Class[] { Float.TYPE }  );
+			m.invoke(  component,  new Object[] { value } );
+    		return true;
+    	}
+    	catch( Exception e ) {
+    		return false;
+    	} 
+    }
+
+    private boolean setComponentProperty( Object component, String setterName, double value ) {
+    	try {
+    		Method m = component.getClass().getMethod( setterName, new Class[] { Double.TYPE }  );
+			m.invoke(  component,  new Object[] { value } );
+    		return true;
+    	}
+		catch( Exception e ) {
+			return false;
+		}
+    }
+
+    private boolean setComponentProperty( Object component, String setterName, String value ) {
+		try {
+			Method m = component.getClass().getMethod( setterName, new Class[] { String.class }  );
+			m.invoke(  component,  new Object[] { value } );
+			return true;
+		}
+		catch( Exception e ) {
+			return false;
+		}
+    }
+    
+    private boolean setComponentProperty( Object component, String setterName, Object value ) {
+    	try {
+    		Method m = component.getClass().getMethod( setterName, new Class[] { Object.class }  );
+			m.invoke(  component,  new Object[] { value } );
+    		return true;
+    	}
+		catch( Exception e ) {
+			return false;
+		}
+    }
     
     public UIComponent createComponent( XUIRequestContext oContext, String name )
     {
