@@ -29,6 +29,11 @@
 			<param-value>true</param-value>
 		</init-param>
 	</filter>
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 	<servlet>
 		<servlet-name>XWC Servlet</servlet-name>
 		<servlet-class>netgest.bo.xwc.framework.http.XUIServlet</servlet-class>
