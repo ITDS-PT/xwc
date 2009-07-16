@@ -46,31 +46,36 @@ public class XUIMessagesLocalization {
 		Hashtable<String, ResourceBundle> localeBundles;
 		ResourceBundle resourceBundle;
 		
-		resourceBundle = null;
-		localeBundles = resourceBundles.get( locale );
+		try {
 		
-		if( localeBundles != null ) {
-			resourceBundle = localeBundles.get( bundle );
-		}
-		
-		if( resourceBundle == null ) {
-			resourceBundle = ResourceBundle.getBundle( bundle, locale );
-			if ( resourceBundle != null ) {
-				if( localeBundles == null ) {				
-					localeBundles = new Hashtable<String, ResourceBundle>();
-					resourceBundles.put( locale, localeBundles );
+			resourceBundle = null;
+			localeBundles = resourceBundles.get( locale );
+			
+			if( localeBundles != null ) {
+				resourceBundle = localeBundles.get( bundle );
+			}
+			
+			if( resourceBundle == null ) {
+				resourceBundle = ResourceBundle.getBundle( bundle, locale );
+				if ( resourceBundle != null ) {
+					if( localeBundles == null ) {				
+						localeBundles = new Hashtable<String, ResourceBundle>();
+						resourceBundles.put( locale, localeBundles );
+					}
+					localeBundles.put( bundle, resourceBundle );
 				}
-				localeBundles.put( bundle, resourceBundle );
+			}
+			
+			if( resourceBundle != null ) {
+				localizedMessage = resourceBundle.getString( key );
+				if( args != null && args.length > 0 ) {
+					Formatter formatter = new Formatter();
+					formatter.format( localizedMessage , args );
+					localizedMessage = formatter.toString();
+				}
 			}
 		}
-		
-		if( resourceBundle != null ) {
-			localizedMessage = resourceBundle.getString( key );
-			if( args != null && args.length > 0 ) {
-				Formatter formatter = new Formatter();
-				formatter.format( localizedMessage , args );
-				localizedMessage = formatter.toString();
-			}
+		catch( java.util.MissingResourceException e ) {
 		}
 		
 		if ( localizedMessage == null ) 
