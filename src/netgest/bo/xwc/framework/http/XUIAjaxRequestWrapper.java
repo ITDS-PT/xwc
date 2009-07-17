@@ -2,21 +2,14 @@ package netgest.bo.xwc.framework.http;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
-
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import netgest.utils.ngtXMLUtils;
-
-import oracle.xml.parser.v2.DOMParser;
-import oracle.xml.parser.v2.XMLDocument;
 import oracle.xml.parser.v2.XMLElement;
 
 import org.w3c.dom.Document;
@@ -28,7 +21,6 @@ public class XUIAjaxRequestWrapper extends HttpServletRequestWrapper {
     private HttpServletRequest          oHttpRequest;
     private Hashtable<String,String[]>  oRequestParmatersMap;
     private Document                    oXmlRequestDocument;
-    private String                      sTextRequest;
     
     
     public XUIAjaxRequestWrapper( HttpServletRequest oHttpRequest ) {
@@ -37,7 +29,7 @@ public class XUIAjaxRequestWrapper extends HttpServletRequestWrapper {
         try {
             loadRequest();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load AJAX request", e );
+            throw new RuntimeException("Failed to load AJAX request!", e );
         }
     }
 
@@ -91,7 +83,6 @@ public class XUIAjaxRequestWrapper extends HttpServletRequestWrapper {
         
         Element oXvwAjaxElem;
         NodeList oParametersList;
-        Element oParameters;
         
         oRequestParmatersMap = new Hashtable<String,String[]>();
         

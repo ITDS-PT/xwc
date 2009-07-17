@@ -1,13 +1,14 @@
 package netgest.bo.xwc.framework.def;
 
-import java.util.ArrayList;
-import java.util.Properties;
 
 
 public class XUIViewerDefinition
 {
     protected String                   viewerBean;
     protected String                   viewerBeanId;
+    
+    protected String[] 				   localizationClasses;
+    
     protected boolean				   btransient;
 
 	protected XUIViewerDefinitionNode  rootComponent;
@@ -17,7 +18,15 @@ public class XUIViewerDefinition
         
     }
     
-    public boolean isTransient() {
+    public String[] getLocalizationClasses() {
+		return localizationClasses;
+	}
+
+	public void setLocalizationClasses(String[] localizationClass) {
+		this.localizationClasses = localizationClass;
+	}
+
+	public boolean isTransient() {
 		return btransient;
 	}
 

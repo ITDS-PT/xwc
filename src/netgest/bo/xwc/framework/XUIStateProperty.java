@@ -80,7 +80,7 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
             }
             catch( Exception e )
             {
-                System.out.println( "Saving evaluated value on [" +
+                System.err.println( "Saving evaluated value on [" +
                 			this.getComponent().getId()+"].["+
                 			this.getComponent().getClass().getName()+"].[" + 
                 			this.getName() + "]:" + e.getClass().getName() + 

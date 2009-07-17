@@ -1,14 +1,10 @@
 package netgest.bo.xwc.framework.jsf;
 
 import java.beans.FeatureDescriptor;
-
 import java.util.Iterator;
 
 import javax.el.ELContext;
 import javax.el.ELResolver;
-
-import javax.faces.component.UIViewRoot;
-import javax.faces.context.FacesContext;
 
 import netgest.bo.xwc.framework.XUIRequestContext;
 
@@ -34,11 +30,6 @@ public class XUIELResolver extends ELResolver {
         Object oResult;
         String sProperty = String.valueOf( property );
         
-        if( "rowSelectionMode".equals( property ) ) {
-            boolean toBreak = true;
-        }
-        
-
         XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
         
         // Resolve Viewer Beans

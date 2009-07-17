@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
-    <xvw:viewer beanClass='netgest.bo.xwc.components.beans.XEOLoginBean' beanId='viewBean'>  
+    <xvw:viewer 
+    	beanClass = 'netgest.bo.xwc.components.beans.XEOLoginBean' 
+    	beanId = 'viewBean'
+		localizationClasses = 'netgest.bo.xwc.components.localization.ViewersMessages'
+    >  
         <xvw:form id='login' defaultCommand='#{viewBean.login}'>
 	        	<xvw:requestAction requestParameter='action'>
 	        		<!-- Define the action associated with the parameter -->
@@ -28,25 +32,25 @@
 					        		<xvw:rows>
 					        			<xvw:row>
 					        				<xvw:cell>
-					        					<xvw:attribute disabled='#{viewBean.isLoggedIn}' valueExpression='#{viewBean.userName}' id='userName' inputType='attributeText' label='Utilizador' maxLength='20'></xvw:attribute>
+					        					<xvw:attribute disabled='#{viewBean.isLoggedIn}' valueExpression='#{viewBean.userName}' id='userName' inputType='attributeText' label='@{LOGIN_USER}' maxLength='20'></xvw:attribute>
 					        				</xvw:cell>
 					        			</xvw:row>
 					        			<xvw:row>
 					        				<xvw:cell>
-					        					<xvw:attribute disabled='#{viewBean.isLoggedIn}' valueExpression='#{viewBean.password}' id='password' inputType='attributePassword' label='Password' maxLength='20'></xvw:attribute>
+					        					<xvw:attribute disabled='#{viewBean.isLoggedIn}' valueExpression='#{viewBean.password}' id='password' inputType='attributePassword' label='@{LOGIN_PASSWORD}' maxLength='20'></xvw:attribute>
 					        				</xvw:cell>
 					        			</xvw:row>
 					        			<xvw:row>
 					        				<xvw:cell>
-					        					<xvw:attribute lovMap='#{viewBean.profileLovMap}' visible='#{viewBean.showProfilesLov}' valueExpression='#{viewBean.profile}' id='perfil' inputType='attributeLov' label='Perfil' maxLength='20'></xvw:attribute>
+					        					<xvw:attribute lovMap='#{viewBean.profileLovMap}' visible='#{viewBean.showProfilesLov}' valueExpression='#{viewBean.profile}' id='profile' inputType='attributeLov' label='@{LOGIN_PROFILE}' maxLength='20'></xvw:attribute>
 					        				</xvw:cell>
 					        			</xvw:row>
 					        			<xvw:row>
 					        				<xvw:cell>
-					        					<xvw:actionButton label='Validar' action='#{viewBean.login}' width='80' ></xvw:actionButton>
+					        					<xvw:actionButton label='@{BTN_CONFIRM}' action='#{viewBean.login}' width='80' ></xvw:actionButton>
 					        				</xvw:cell>
 					        				<xvw:cell>
-					        					<xvw:actionButton label='Sair' width='80' action='#{viewBean.logout}'></xvw:actionButton>
+					        					<xvw:actionButton id='logoutBtn' label='@{LOGIN_LOGOUT}' width='80' action='#{viewBean.logout}'></xvw:actionButton>
 					        				</xvw:cell>
 					        			</xvw:row>
 					        		</xvw:rows>

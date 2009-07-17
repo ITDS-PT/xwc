@@ -1,7 +1,5 @@
 package netgest.bo.xwc.framework.def;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;

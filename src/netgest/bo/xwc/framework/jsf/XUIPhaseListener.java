@@ -6,12 +6,10 @@ import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 
-import netgest.bo.transaction.XTransactionManager;
 import netgest.bo.xwc.framework.PackageIAcessor;
 import netgest.bo.xwc.framework.XUIApplicationContext;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
-import netgest.bo.xwc.framework.http.XUIServlet;
 
 public class XUIPhaseListener implements PhaseListener {
 
@@ -19,15 +17,9 @@ public class XUIPhaseListener implements PhaseListener {
     XUIApplicationContext  oXuiApplication;
     
     public XUIPhaseListener() {
-        
-        // Initializing listener
-        System.out.println("Listener Initialized");
-        
     }
 
     public void afterPhase(PhaseEvent event) {
-
-
     }
 
     public void beforePhase(PhaseEvent event) {

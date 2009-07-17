@@ -1,10 +1,5 @@
 package netgest.bo.xwc.framework.jsf;
 
-import com.sun.faces.lifecycle.LifecycleFactoryImpl;
-import com.sun.faces.lifecycle.LifecycleImpl;
-import com.sun.faces.util.FacesLogger;
-import com.sun.faces.util.MessageUtils;
-
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -13,6 +8,9 @@ import java.util.logging.Logger;
 import javax.faces.FacesException;
 import javax.faces.lifecycle.Lifecycle;
 import javax.faces.lifecycle.LifecycleFactory;
+
+import com.sun.faces.util.FacesLogger;
+import com.sun.faces.util.MessageUtils;
 
 public class XUILifeCycleFactoryImpl extends LifecycleFactory {
 

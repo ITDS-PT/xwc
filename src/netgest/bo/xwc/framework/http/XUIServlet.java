@@ -1,6 +1,7 @@
 package netgest.bo.xwc.framework.http;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.faces.application.ViewExpiredException;
 import javax.faces.webapp.FacesServlet;
@@ -27,6 +28,8 @@ import netgest.bo.system.boSession;
 import netgest.bo.xwc.framework.XUIApplicationContext;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.jsf.XUIPhaseListener;
+import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 
 public class XUIServlet implements Servlet
 {
@@ -85,7 +88,8 @@ public class XUIServlet implements Servlet
 		        boApplication.currentContext().addEboContext( oEboContext );
     		}
     	}
-        
+        XUIMessagesLocalization.setThreadCurrentLocale( new Locale( "en" ) );
+    	
         try {
     		oResponse.setHeader("Pragma", "No-Cache");
     		oResponse.setHeader("cache-control", "max-age=0");
@@ -107,7 +111,9 @@ public class XUIServlet implements Servlet
         catch( ServletException e ) {
         	if( e.getRootCause() instanceof ViewExpiredException ) {
         		// Handle expired view
-        		oResponse.sendError(401, "Session was expired!");
+        		oResponse.sendError(401,
+        				XUICoreMessages.SESSION_EXPIRED.toString()
+        		);
         	}
         	else {
         		throw e;

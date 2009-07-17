@@ -1,26 +1,18 @@
 package netgest.bo.xwc.framework.def;
 
-import java.io.InputStream;
 import java.io.IOException;
-
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.faces.context.FacesContext;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-
-
-import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
+import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.utils.ngtXMLUtils;
-
 import oracle.xml.parser.v2.NSResolver;
 import oracle.xml.parser.v2.XMLDocument;
 import oracle.xml.parser.v2.XMLElement;
-import oracle.xml.parser.v2.XMLNode;
-import oracle.xml.parser.v2.XSLException;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -29,7 +21,6 @@ import org.w3c.dom.NodeList;
 public class XUIViewerDefinitonParser
 {
     private static NSResolver ns = new GenericResolver();
-    private static Logger log = Logger.getLogger( XUIViewerDefinitonParser.class.getName() );
     
     private static  HashMap<String, XUIViewerDefinition> viewCache = new HashMap<String, XUIViewerDefinition>();
 
@@ -51,6 +42,13 @@ public class XUIViewerDefinitonParser
 
             xwvr.setViewerBean( node.getAttribute( "beanClass" ) );
             xwvr.setViewerBeanId( node.getAttribute( "beanId" ) );
+            
+            
+            String localizationClasses = node.getAttribute( "localizationClasses" );
+            
+            if( localizationClasses != null && localizationClasses.length() > 0 ) {
+            	xwvr.setLocalizationClasses( localizationClasses.split(",") );
+            }
             
             String isTransient = node.getAttribute("transient");
             if( isTransient != null ) {
@@ -99,11 +97,8 @@ public class XUIViewerDefinitonParser
             }
             else
             {
-                throw new RuntimeException( 
-                		XUIMessagesLocalization.getMessage(
-                			"netgest.bo.xwc.framework.localization.", 
-                			"parser.viewernotfound"	 
-                		)
+                throw new RuntimeException(
+                		XUICoreMessages.VIEWER_NOTFOUND.toString( viewerName )
                 	);
             }
         }
@@ -129,7 +124,7 @@ public class XUIViewerDefinitonParser
 
             for( int i=0; i < iAttsLength; i++ ) {
             	Node attr = attNodeMap.item( i );
-            	propertiesMap.put( attr.getNodeName(), attr.getNodeValue() );
+            	propertiesMap.put( attr.getNodeName(), getLocalizedMessage( root, attr.getNodeValue() ) );
             }
             component.setProperties( propertiesMap );
         }
@@ -147,7 +142,7 @@ public class XUIViewerDefinitonParser
             }
             else
             {
-                component.setProperty( xnode.getNodeName(), xnode.getNodeValue() );
+                component.setProperty( xnode.getNodeName(), getLocalizedMessage( root, xnode.getNodeValue() ) );
             }
         }
         NodeList nlist = node.getChildNodes();
@@ -162,12 +157,58 @@ public class XUIViewerDefinitonParser
             {
             	XUIViewerDefinitionNode childText = new XUIViewerDefinitionNode();
             	childText.setName("genericTag");
-            	childText.setTextContent( cnode.getNodeValue() );
+            	childText.setTextContent( getLocalizedMessage( root, cnode.getNodeValue() ) );
             	component.addChild( childText );
             }
         }
         return component; 
     }
+    
+    
+    @SuppressWarnings("unchecked")
+	private static String getLocalizedMessage( XUIViewerDefinition vwrDef, String message ) {
+    	Pattern p = Pattern.compile("\\@\\{([a-zA-Z0-9_-]{1,})\\}");
+    	Matcher m = p.matcher( message );
+    	if( m.find() ) {
+    		
+        	boolean found = false;
+        	
+    		String[] localizationClasses = vwrDef.getLocalizationClasses();
+    		
+    		for( String localizationClass : localizationClasses  ) {
+	    		if( localizationClass != null && localizationClass.trim().length() > 0 ) {
+	    			try {
+						String 	fieldName = m.group(1); 
+						Class 	classInst = Class.forName( localizationClass );
+						try {
+							Field field = classInst.getField( fieldName );
+							message = field.get( null ).toString();
+							found = true;
+							break;
+						} catch ( Exception e ) {
+						}
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+	    		}
+    		}
+    		if( !found ) {
+    			StringBuilder sb = new StringBuilder();
+        		for( String localizationClass : localizationClasses  ) {
+    	    		if( localizationClass != null && localizationClass.trim().length() > 0 ) {
+    	    			if( sb.length() > 0 )
+    	    				sb.append( ',' );
+    	    				
+	    				sb.append( localizationClass );
+    	    		}
+        		}
+    			throw new RuntimeException( "Cannot find resource [" + message + "] on localization classes [" + sb.toString() + "]" );
+    		}
+    		
+    	}
+    	return message;
+    }
+    
     
     private static class GenericResolver implements NSResolver
     {

@@ -3,37 +3,26 @@ package netgest.bo.xwc.framework;
 import java.io.InputStream;
 import java.util.Hashtable;
 
-import java.util.Vector;
-
 import javax.faces.FactoryFinder;
-import javax.faces.application.Application;
-
 import javax.faces.context.FacesContext;
-
 import javax.faces.render.RenderKit;
 import javax.faces.render.RenderKitFactory;
 import javax.faces.render.Renderer;
 
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIComponentDefinition;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
 import netgest.bo.xwc.framework.def.XUIComponentStore;
-import netgest.bo.xwc.framework.def.XUIViewerDefinitonParser;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
-import netgest.bo.xwc.framework.jsf.XUIApplicationLoader;
-import netgest.bo.xwc.framework.jsf.XUIRenderKit;
+import netgest.bo.xwc.framework.def.XUIViewerDefinitonParser;
 import netgest.bo.xwc.framework.jsf.XUIViewerBuilder;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
-
-import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.framework.components.XUIViewRoot.XEOHTMLRenderer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class XUIApplicationContext {
 
-
-    private Log log = LogFactory.getLog(XUIApplicationLoader.class );
+    private Log log = LogFactory.getLog(XUIApplicationContext.class );
 
     private Hashtable<String, RenderKit> oRenderKits   = new Hashtable<String, RenderKit>();
     
@@ -53,7 +42,9 @@ public class XUIApplicationContext {
         oComponentParser.loadComponents( this );
         
         // Register components into JSF
-        log.debug("Registering XUI Components Render Kit's definition...");
+        if( log.isDebugEnabled() )
+        	log.debug("Registering XUI Components Render Kit's definition...");
+        
         registerRenderKits();
         registerComponentRenders();
         

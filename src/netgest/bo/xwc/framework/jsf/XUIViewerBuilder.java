@@ -13,6 +13,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.def.XUIComponentDefinition;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.def.XUIViewerDefinitionNode;
+import netgest.bo.xwc.framework.localization.XUICoreMessages;
 
 
 public class XUIViewerBuilder
@@ -268,7 +269,9 @@ public class XUIViewerBuilder
         {
             throw new RuntimeException(e);
         }
-        throw new RuntimeException("O componente ["+name+"] não está registado.");
+        throw new RuntimeException(
+        		XUICoreMessages.COMPONENT_NOT_REGISTRED.toString( name )
+        	);
     }
     
     public void render() throws IOException

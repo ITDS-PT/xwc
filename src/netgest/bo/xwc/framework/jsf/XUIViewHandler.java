@@ -65,6 +65,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewBean;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
+import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 import netgest.bo.xwc.framework.components.XUIViewRoot;
@@ -118,43 +119,11 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                            UIViewRoot viewToRender) throws IOException,
         FacesException {
 
-        // suppress rendering if "rendered" property on the component is
-        // false
-//        if (!viewToRender.isRendered()) {
-//            return;
-//        }
-
         ExternalContext extContext = context.getExternalContext();
 
         ServletRequest request = (ServletRequest) extContext.getRequest();
         ServletResponse response = (ServletResponse) extContext.getResponse();
 
-/*
- *      Comentado, ï¿½ utilizado para pï¿½ginas JSP
-        try {
-            if (executePageToBuildView(context, viewToRender)) {
-                response.flushBuffer();
-                XUIApplicationAssociate associate = 
-                    getAssociate(context);
-                if (associate != null) {
-                    associate.responseRendered();
-                }
-                return;
-            }
-        } catch (IOException e) {
-            throw new FacesException(e);
-        }
-
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.FINE, "Completed building view for : \n" +
-                    viewToRender.getViewId());
-        }
-        if (logger.isLoggable(Level.FINEST)) {
-            logger.log(Level.FINEST, "+=+=+=+=+=+= Printout for " + viewToRender.getViewId() + " about to render.");
-            DebugUtil.printTree(viewToRender, logger, Level.FINEST);
-        }
-*/
-        
         // set up the ResponseWriter
 
         // TODO: Inicializar uma unica vez por sessÃ£o.
@@ -210,9 +179,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         }
 
         response.flushBuffer();
-
-        //RequestDispatcher disp_fim = request.getRequestDispatcher("/ui/classic/common_fim.inc");
-        //disp_fim.include( request,response );
 
     }
     
@@ -281,41 +247,15 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         String mapping = Util.getFacesMapping(context);
         XUIViewRoot viewRoot = null;
 
-        //if (mapping != null && !Util.isPrefixMapped(mapping)) {
-        //    viewId = convertViewId(context, viewId);
-        //}
         
-        // maping could be null if a non-faces request triggered
-        // this response.
+        // this is necessary to allow decorated impls.
+        ViewHandler outerViewHandler =
+            context.getApplication().getViewHandler();
+        String renderKitId =
+            outerViewHandler.calculateRenderKitId(context);
         
-        /* Removido, porque no contexto do XPortal não está a funcionar correctamente
-         * e não registei nenhuma necessidade desta verificação.
-        
-        if (extContext.getRequestPathInfo() == null && mapping != null &&
-            Util.isPrefixMapped(mapping)) {
-            // this was probably an initial request
-            // send them off to the root of the web application
-            try {
-                context.responseComplete();
-                if (log.isDebugEnabled()) {
-                    log.debug("Response Complete for" + viewId);
-                }
-                extContext.redirect(extContext.getRequestContextPath());
-            } catch (IOException ioe) {
-                throw new FacesException(ioe);
-            }
-        } else {
-        */
-        
-            // this is necessary to allow decorated impls.
-            ViewHandler outerViewHandler =
-                context.getApplication().getViewHandler();
-            String renderKitId =
-                outerViewHandler.calculateRenderKitId(context);
-            
-            XUIStateManagerImpl oStateManagerImpl = (XUIStateManagerImpl)Util.getStateManager(context);
-            viewRoot = (XUIViewRoot)oStateManagerImpl.restoreView(context, viewId, renderKitId, savedId );
-        //}
+        XUIStateManagerImpl oStateManagerImpl = (XUIStateManagerImpl)Util.getStateManager(context);
+        viewRoot = (XUIViewRoot)oStateManagerImpl.restoreView(context, viewId, renderKitId, savedId );
         
         if( viewRoot != null )
         {
@@ -478,14 +418,14 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         result.setTransient( oViewerDef.isTransient() );
         
         // Set Bean to the viewer
+        String sBeanName      = oViewerDef.getViewerBeanId();
+        String sBeanClassName = oViewerDef.getViewerBean();
         try {
             // Initialize View Bean.
             if( log.isDebugEnabled() ) {
                 log.debug("Initializing beans for view " + viewId );    
             }
             
-            String sBeanClassName = oViewerDef.getViewerBean();
-            String sBeanName      = oViewerDef.getViewerBeanId();
             if( sBeanClassName != null && sBeanClassName.length() > 0 ) {
 	            Class   oBeanClass = Class.forName( sBeanClassName );
 	            
@@ -499,7 +439,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             }
         } 
         catch ( Exception ex ) {
-            log.error( "Erro loading Viewer Class [" + oViewerDef.getViewerBean() + "] for view [" + viewId + "] ", ex );
+            throw new FacesException( XUICoreMessages.VIEWER_CLASS_NOT_FOUND.toString( sBeanClassName, viewId ) );
         }
         
         // Create a new instance of the view bean

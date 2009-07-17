@@ -51,6 +51,6 @@ public class XUIPerformanceFilter
         
         chain.doFilter(request, response);
 
-        System.out.println( sRequestURI + ":" + ( System.currentTimeMillis() - init ) );
+//        System.out.println( sRequestURI + ":" + ( System.currentTimeMillis() - init ) );
     }
 }

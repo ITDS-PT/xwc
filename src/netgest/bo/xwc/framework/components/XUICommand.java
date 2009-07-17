@@ -1,15 +1,10 @@
 package netgest.bo.xwc.framework.components;
 
-import com.sun.faces.application.MethodBindingMethodExpressionAdapter;
-
-import com.sun.faces.application.MethodExpressionMethodBindingAdapter;
-
 import java.util.Map;
 
 import javax.el.ELException;
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
-
 import javax.faces.FacesException;
 import javax.faces.application.Application;
 import javax.faces.component.ActionSource;
@@ -26,6 +21,9 @@ import javax.faces.render.Renderer;
 
 import netgest.bo.xwc.framework.XUIActionEvent;
 import netgest.bo.xwc.framework.XUIRequestContext;
+
+import com.sun.faces.application.MethodBindingMethodExpressionAdapter;
+import com.sun.faces.application.MethodExpressionMethodBindingAdapter;
 
 
 /**
@@ -55,6 +53,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
  * <code>setRendererType()</code> method.</p>
  */
 
+@SuppressWarnings("deprecation")
 public class XUICommand extends XUIComponentBase implements ActionSource2 {
 
 
