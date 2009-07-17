@@ -1,12 +1,16 @@
 package netgest.bo.transaction;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boThread;
-import netgest.bo.system.*;
+import netgest.bo.system.boApplication;
+import netgest.bo.system.boMemoryArchive;
+import netgest.bo.system.boPoolManager;
+import netgest.bo.system.boPoolOwner;
+import netgest.bo.system.boPoolable;
 
 public class XTransactionManager extends boPoolable implements boPoolOwner {
 

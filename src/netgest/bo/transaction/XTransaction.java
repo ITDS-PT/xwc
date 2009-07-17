@@ -1,26 +1,19 @@
 package netgest.bo.transaction;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectContainer;
-import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.boThread;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boPoolOwner;
 
-@SuppressWarnings("unchecked")
 public class XTransaction extends boObjectContainer implements boPoolOwner {
     
 	
-	public static final Scope SCOPE_REQUEST 	= new Scope(1);
-	public static final Scope SCOPE_TRANSACTION = new Scope(2);
+//	public static final Scope SCOPE_REQUEST 	= new Scope(1);
+//	public static final Scope SCOPE_TRANSACTION = new Scope(2);
 	
 	private static AtomicLong transactionIdSequence = new AtomicLong( 0 );
 
@@ -28,14 +21,14 @@ public class XTransaction extends boObjectContainer implements boPoolOwner {
     
     private String 		sTransactionId = String.valueOf( transactionIdSequence.incrementAndGet() );
     
-    private Map<Long,boObject>	objectsMap			= null; //new ObjectsLRUMap(500);
-    private Map<Long,boObject>	changedObjectsMap	= new Hashtable<Long,boObject>();
+//    private Map<Long,boObject>	objectsMap			= null; //new ObjectsLRUMap(500);
+//    private Map<Long,boObject>	changedObjectsMap	= new Hashtable<Long,boObject>();
 
-    private XTransactionManager	transactionManager;
+//    private XTransactionManager	transactionManager;
     
     protected XTransaction( XTransactionManager m ) {
     	super(null);
-    	this.transactionManager = m;
+//    	this.transactionManager = m;
     }
     
     public String getId() {
@@ -151,11 +144,11 @@ public class XTransaction extends boObjectContainer implements boPoolOwner {
     }
 */
     
-    private static class Scope {
-    	int value;
-    	private Scope( int value ) {
-    		this.value = value;
-    	}
-    }
+//    private static class Scope {
+//    	int value;
+//    	private Scope( int value ) {
+//    		this.value = value;
+//    	}
+//    }
 
 }
