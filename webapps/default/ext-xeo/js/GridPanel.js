@@ -276,7 +276,7 @@ ExtXeo.grid.GroupingView = Ext.extend(Ext.grid.GridView, {
     ignoreAdd: false,
     _groupTextTpl : '{text} ({count})',
     gidSeed : 1000,
-    
+    loadingMsg : 'A Carregar...',
     initTemplates : function(){
         ExtXeo.grid.GroupingView.superclass.initTemplates.call(this);
         this.state = {};
@@ -346,15 +346,6 @@ ExtXeo.grid.GroupingView = Ext.extend(Ext.grid.GridView, {
         this.mainBody.on('mousedown', this.interceptMouse, this);
 
         if(this.enableGroupingMenu && this.hmenu){
-        	/*
-        	this.hmenu.add('-',{
-                id:'groupBy',
-                text: this.groupByText,
-                handler: this.onGroupByClick,
-                scope: this,
-                iconCls:'x-group-by-icon'
-            });
-            */
             if(this.enableNoGroups){
                 this.hmenu.add('-',{
                     id:'showGroups',
@@ -424,7 +415,7 @@ ExtXeo.grid.GroupingView = Ext.extend(Ext.grid.GridView, {
 	        
 	        //group.firstChild.nextSibling.innerHTML = buf.join('');
 	        */
-            group.firstChild.nextSibling.innerHTML = "<span>A Carregar...</span>";
+            group.firstChild.nextSibling.innerHTML = "<span>" + this.loadingMsg + "</span>";
         }
         else {
         	if( this.groups[i].tb != null ) {

@@ -65,8 +65,8 @@ XVW.Wait = function( iWaitMode ) {
     if( iWaitMode == '1' )
     {
         Ext.MessageBox.show({
-           title: 'A processar...      ',
-           msg: 'A enviar dados, aguarde p.f. ...',
+           title: ExtXeo.Messages.PROCESSING + '      ',
+           msg: ExtXeo.Messages.SENDING_DATA,
            width:300,
            wait:true,
            waitConfig: {interval:200},
@@ -81,7 +81,7 @@ XVW.beforeApplyHtml = function( oDNode ) {
 }
 
 XVW.NoWait = function() {
-	if( Ext.MessageBox.getDialog().title == 'A processar...      ' ) {
+	if( Ext.MessageBox.getDialog().title == ExtXeo.Messages.PROCESSING + '      ' ) {
 		Ext.MessageBox.hide();
 	}
 }
@@ -407,14 +407,6 @@ ExtXeo.layoutMan.doForm = function( oElem )
 
 ExtXeo.resizeLayoutExtComp = function( oElem, c ) {
 	var x=oElem.parentNode;
-
-//	if( c.getValue )
-//		if( c.getValue().toString().indexOf( 'fornea' ) > -1 ) {
-//			alert( x.clientWidth + " - " + c.getValue() );
-//			debugger;
-//		}
-//	else
-//		alert( x.clientWidth + " - " + c.text );
 	
 	while( x != null && x.tagName != 'TD' && x.className.indexOf('xwc-rows-row') == -1  )
 		x = x.parentNode;
@@ -422,11 +414,6 @@ ExtXeo.resizeLayoutExtComp = function( oElem, c ) {
 		c.lastSize = { width:0, height:0 };
 	c.setWidth( x.clientWidth );
 
-//	var imgs = x.getElementsByTagName('IMG');
-//	for ( var i = 0; i < imgs.length; i++) {
-//		imgs[i].align = 'absMiddle';
-//	}
-	
 }
 
 ExtXeo.getAbsoulteOffsetTop = function( o ) {
@@ -575,8 +562,8 @@ XVW.findTabByFrameName = function ( sFrameName ) {
 
 
 
-//Localização
-//Ext.UpdateManager.defaults.indicatorText = '<div class="loading-indicator">Chargement en cours...</div>';
+//Localizacao
+/*
 
 Date.monthNames =
  ["Janeiro",
@@ -651,3 +638,4 @@ Ext.apply(Ext.form.ComboBox.prototype, {
   loadingText: "A Carregar..."
 });
 
+*/

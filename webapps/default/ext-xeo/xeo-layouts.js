@@ -54,13 +54,13 @@ XEOLayout.ViewPort = function()
                             collapsible: false,
                             hideBorders: true,
                             margins:'3 3 3 3',
-                            items: [ { html:' <table id="header" width="100%" ><tr><td ><div class="api-title" style="font-family:tahoma,arial,sans-serif;color:white;">Bem Vindo '+xeoUserDisplayName+'</div></td><td align="right"></td><td width="30px" align="right">'
+                            items: [ { html:' <table id="header" width="100%" ><tr><td ><div class="api-title" style="font-family:tahoma,arial,sans-serif;color:white;">'+ ExtXeo.Messages.WELCOME + ' ' + xeoUserDisplayName + '</div></td><td align="right"></td><td width="30px" align="right">'
                             	+'<img HEIGHT="15px" src="ext-xeo/images/xeo_30.gif"/>  </td></tr></table>'} ]
                         }
                 ,{
                     region:'west',
                     id:'west-panel',
-                    title:(window.treeName?treeName:'Gestão de Associados'),
+                    title:(window.treeName?treeName: + ExtXeo.Messages.TREE_TITLE ),
                     split:true, 
                     width: 200,
                     minSize: 175,
@@ -134,7 +134,7 @@ function xeodmToggleHandler( btn, state ) {
 		var xmlReq = XVW.createXMLHttpRequest();
 	    xmlReq.open( "POST", sActionUrl+"netgest/bo/xwc/components/viewers/XEOViewerOperations.xvw?action=xeodmtoggler&xeodmstate=true", true );
 	    xmlReq.send();
-		btn.setText( "XEODM Activo" );
+		btn.setText( ExtXeo.Messages.XEODM_ACTIVE );
 	}
 	else {
 		window.xeodmstate = false;
@@ -142,7 +142,7 @@ function xeodmToggleHandler( btn, state ) {
 		var xmlReq = XVW.createXMLHttpRequest();
 	    xmlReq.open( "POST", sActionUrl+"netgest/bo/xwc/components/viewers/XEOViewerOperations.xvw?action=xeodmtoggler&xeodmstate=false", true );
 	    xmlReq.send();
-		btn.setText( "XEODM Inactivo" );
+		btn.setText( ExtXeo.Messages.XEODM_INACTIVE );
 	}
 }
 
@@ -177,10 +177,10 @@ XEOLayoutInit = function()
 	    bbar: [ 
 		           {xtype:'button',
 		        	img:'ext-xeo/images/menus/logout.gif' ,
-		        	text:'Terminar Sessão',
+		        	text: ExtXeo.Messages.LOGOUT_BTN,
 		        	handler: function() { document.location.href='Logout.jsp' } 
 		           },{
-			        	text:'XEODM ' + (xeodmstate?'Activo':'Inactivo'),
+			        	text: ( xeodmstate? ExtXeo.Messages.XEODM_ACTIVE : ExtXeo.Messages.XEODM_INACTIVE ),
 			        	toggleHandler: xeodmToggleHandler,	
 			        	enableToggle: true,
 			        	pressed: xeodmstate
