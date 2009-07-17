@@ -1,13 +1,9 @@
 package netgest.bo.xwc.components.classic.theme;
 
-import netgest.bo.runtime.AttributeHandler;
-import netgest.bo.xwc.components.classic.AttributeHtmlEditor;
-import netgest.bo.xwc.framework.XUIRenderer;
-import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
 import netgest.bo.xwc.framework.XUITheme;
-import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 
 public class ExtJsTheme implements XUITheme {
     public ExtJsTheme() { 
@@ -18,7 +14,6 @@ public class ExtJsTheme implements XUITheme {
 //        styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "extjs_css-gray", composeUrl( getResourceBaseUri() + "resources/css/xtheme-gray.css" ) );
         styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "extjs_css1", composeUrl( "ext-xeo/css/ext-xeo.css" ) );
         
-        XUIViewRoot r = XUIRequestContext.getCurrentContext().getViewRoot();
 //        if ( r.findComponent( AttributeHtmlEditor.class ) != null ) {
 //            styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "ext-xeo-htmleditor", composeUrl( "ext-xeo/css/ext-xeo-htmleditor.css" ) );
 //        }
@@ -28,11 +23,18 @@ public class ExtJsTheme implements XUITheme {
     }
 
     public void addScripts(XUIScriptContext scriptContext) {
-        scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-base", composeUrl( getResourceBaseUri() + "adapter/ext/ext-base.js" ) );
+    	
+    	// Current language...
+        String lang = XUIMessagesLocalization.getThreadCurrentLocale().getLanguage();
+    	
+    	scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-base", composeUrl( getResourceBaseUri() + "adapter/ext/ext-base.js" ) );
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all", composeUrl( getResourceBaseUri() + "ext-all.js" ) );
-        scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all-pt", composeUrl( getResourceBaseUri() + "build/locale/ext-lang-pt-min.js" ) );
+        
+        
+        scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all-"+lang, composeUrl( getResourceBaseUri() + "build/locale/ext-lang-"+lang+"-min.js" ) );
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "xwc-core", composeUrl( "xwc/js/xwc-core.js" ) );
-        scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "xwc-messages", composeUrl( "xwc/js/xwc-messages_pt.js" ) );
+        scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "xwc-messages", composeUrl( "xwc/js/localization/xwc-messages_" + lang + ".js" ) );
+        
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-xeo", composeUrl( "ext-xeo/js/ext-xeo.js" ) );
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-xeo1", composeUrl( "ext-xeo/js/SearchField.js" ) );
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ExtXeo.grid", composeUrl( "ext-xeo/js/GridPanel.js" ) );
@@ -50,6 +52,7 @@ public class ExtJsTheme implements XUITheme {
 
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "xwc-grid-menu-editable", ExtJsTheme.composeUrl( "extjs/grid/menu/EditableItem.js" ) );
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "xwc-grid-menu-rangemenu", ExtJsTheme.composeUrl( "extjs/grid/menu/RangeMenu.js" ) );
+        scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-xeo-messages", composeUrl( "ext-xeo/js/localization/ext-xeo-messages_" + lang + ".js" ) );
         
         scriptContext.add( XUIScriptContext.POSITION_HEADER , "s.gif", "Ext.BLANK_IMAGE_URL = '"+ ExtJsTheme.composeUrl("extjs/images/default/s.gif") + "';");
         scriptContext.add( XUIScriptContext.POSITION_FOOTER , "ExtQuickTips", "Ext.onReady( function() {Ext.QuickTips.init();} );" );

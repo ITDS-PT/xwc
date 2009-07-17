@@ -137,7 +137,6 @@ public class Panel extends ViewerSecurityBase {
         public void encodeEnd(XUIComponentBase component) throws IOException {
             XUIResponseWriter w;
             w = getResponseWriter();
-            Panel oPanel = (Panel)component;
             
 //            w.endElement(DIV);
 //            

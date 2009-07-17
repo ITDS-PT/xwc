@@ -1,12 +1,9 @@
 package netgest.bo.xwc.components.classic.scripts;
 
-import javax.faces.component.UIComponent;
-
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 

@@ -68,7 +68,6 @@ public class Section extends ViewerSecurityBase {
 
         @Override
         public void encodeEnd(XUIComponentBase component) throws IOException {
-        	Section oSection = (Section)component;
             ResponseWriter w = getResponseWriter();
             w.endElement("fieldset");
             super.encodeEnd(component);

@@ -30,6 +30,7 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.xeodm.XEODMBuilder;
@@ -73,7 +74,7 @@ public class AttributeFile extends AttributeBase {
     	
     	XUISessionContext oSessionContext = getRequestContext().getSessionContext();
     	
-    	XUIViewRoot oViewRoot = oSessionContext.createChildView( "FileBrowse.xvw" );
+    	XUIViewRoot oViewRoot = oSessionContext.createChildView( "netgest/bo/xwc/viewers/FileBrowse.xvw" );
     	getRequestContext().setViewRoot( oViewRoot );
     	
     	FileBrowseBean oFileBrowseBean = (FileBrowseBean)oViewRoot.getBean( "viewBean" );
@@ -104,7 +105,7 @@ public class AttributeFile extends AttributeBase {
                                                                         XUIMessage.TYPE_MESSAGE,
                                                                         XUIMessage.SEVERITY_ERROR,
                                                                         getLabel(),
-                                                                        oSubmitedValue + " não está no formato correcto "
+                                                                        ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
                                                                    )
                                                     );
                     setValid( false );
@@ -134,10 +135,8 @@ public class AttributeFile extends AttributeBase {
 
         @Override
         public void encodeEnd(XUIComponentBase oComp) throws IOException {
-            AttributeFile  oAttr;
             
             XUIResponseWriter w = getResponseWriter();
-            oAttr = (AttributeFile)oComp; 
             
             // Place holder for the component
             w.startElement( DIV, oComp );
@@ -161,7 +160,8 @@ public class AttributeFile extends AttributeBase {
 
         }
 
-        public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
+        @SuppressWarnings("unchecked")
+		public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
         	HttpServletResponse resp = (HttpServletResponse)response;
         	
         	AttributeFile oFile = (AttributeFile)comp;
@@ -175,15 +175,14 @@ public class AttributeFile extends AttributeBase {
 	        	if( "POST".equals( hRequest.getMethod() ) ) {
 					if( oFile.isDisabled() ) {
 						
-						resp.sendError(403,"The file is not editable!");
+						resp.sendError(403,ComponentMessages.FILE_NOT_EDITABLE.toString());
 						
 					} else {
 		        		
 		        		if( hRequest instanceof XUIMultiPartRequestWrapper )
 		        		{
 			        		XUIMultiPartRequestWrapper mRequest = (XUIMultiPartRequestWrapper)hRequest;
-			        		@SuppressWarnings("unused")
-							Enumeration enumFiles = mRequest.getFileNames();
+							Enumeration<Object> enumFiles = mRequest.getFileNames();
 			        		if( enumFiles.hasMoreElements() ) {
 			        			String fname = (String)enumFiles.nextElement();
 			        			File file = mRequest.getFile( fname );
@@ -403,7 +402,6 @@ public class AttributeFile extends AttributeBase {
 	//					"	}" +
 	            		"};" +
 	            		"}" );
-	            System.out.println( dmb.toUrlString() );
             }
             oInpConfig.renderExtConfig( sOut );          
             return sOut.toString();

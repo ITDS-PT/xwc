@@ -6,7 +6,8 @@ import java.util.List;
 
 public class ExtConfigArray {
 
-    private List childs = new ArrayList();
+    private List<Object> childs = new ArrayList<Object>();
+    
     public final ExtConfig addChild( ExtConfig oExtConfig ) {
         childs.add( oExtConfig );
         return oExtConfig;
@@ -17,7 +18,7 @@ public class ExtConfigArray {
     }
     
     public final StringBuilder renderExtConfig( StringBuilder oStringBuilder ) {
-        Iterator oChildsIt;
+        Iterator<Object> oChildsIt;
         Object   oChild;
         boolean  bIsFirst;
         

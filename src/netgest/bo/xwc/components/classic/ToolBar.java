@@ -72,7 +72,6 @@ public class ToolBar extends ViewerSecurityBase {
         @Override
         public void encodeBegin(XUIComponentBase component) throws IOException {
             XUIResponseWriter w = getResponseWriter();
-            ToolBar toolBarComp = (ToolBar)component;
 
     		w.startElement( HTMLTag.DIV, component );
     		w.writeAttribute( HTMLAttr.ID, component.getClientId(), null );
@@ -88,7 +87,6 @@ public class ToolBar extends ViewerSecurityBase {
 
         @Override
         public void encodeEnd(XUIComponentBase component) throws IOException {
-            ToolBar toolBarComp = (ToolBar)component;
     		super.encodeEnd(component);
     		XUIResponseWriter w = getResponseWriter();
     		w.endElement("div");
@@ -115,7 +113,7 @@ public class ToolBar extends ViewerSecurityBase {
             //sOut.write( "items: [" ); sOut.write("\n");
             ExtConfigArray oItemsCfg = oToolBarCfg.addChildArray( "items" );
 
-            Iterator childs =  component.getChildren().iterator();
+            Iterator<UIComponent> childs =  component.getChildren().iterator();
             while( childs.hasNext() ) {
                 
                 ExtConfig oItemCfg;
@@ -214,9 +212,7 @@ public class ToolBar extends ViewerSecurityBase {
         
         public void encodeSubMenuJS( ExtConfig oMenu, Menu oSubMenu ) {
             ExtConfigArray  oSubChildCfg;
-            boolean bFirstOption;
-            
-            bFirstOption = true;
+
             //sOut.write(" new Ext.menu.Menu({ "); sOut.write("\n");
             oMenu.setComponentType( "Ext.menu.Menu" );
             //sOut.write(" id: '" + oSubMenu.getClientId() + "'"); sOut.write(",\n");
@@ -224,7 +220,7 @@ public class ToolBar extends ViewerSecurityBase {
             //sOut.write(" items: [ "); sOut.write("\n");
             oSubChildCfg = oMenu.addChildArray( "items" );
             
-            Iterator oSubChildren = oSubMenu.getChildren().iterator();
+            Iterator<UIComponent> oSubChildren = oSubMenu.getChildren().iterator();
             
             while( oSubChildren.hasNext() ) {
                 

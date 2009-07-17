@@ -2,13 +2,6 @@ package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
 
-import java.util.Iterator;
-import java.util.List;
-
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 

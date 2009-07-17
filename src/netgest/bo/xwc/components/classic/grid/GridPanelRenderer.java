@@ -1,9 +1,7 @@
 package netgest.bo.xwc.components.classic.grid;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
@@ -20,9 +18,6 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.components.connectors.DataGroupConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
-import netgest.bo.xwc.components.connectors.DataListIterator;
-import netgest.bo.xwc.components.connectors.DataRecordConnector;
-import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.data.JavaScriptArrayProvider;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -31,7 +26,6 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -179,14 +173,6 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
     }
 	
 	public GridPanelRequestParameters decodeServiceParmeters( GridPanel oGridPanel, HttpServletRequest oRequest ) {
-		
-		// Debug grid parameters
-		@SuppressWarnings("unchecked")
-        Enumeration<Object> sq = ((HttpServletRequest)oRequest).getParameterNames();
-        while( sq.hasMoreElements() ) {
-        	String sPar = sq.nextElement().toString();
-        	System.out.println( sPar + "=" + oRequest.getParameter( sPar ) );
-        }
 		
 		// Paramterers at gridLevel
 		String selectedRows = oRequest.getParameter( "selectedRows" );

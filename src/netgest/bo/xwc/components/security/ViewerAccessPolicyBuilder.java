@@ -70,8 +70,6 @@ public class ViewerAccessPolicyBuilder {
 
 				for (String viewer : viewerNames) {
 					processViewer( viewer, context, sessionContext, true );
-					System.out.println( viewer+": " + nrComponents + " Components" );
-					System.out.println( viewer+": " + nrComponentsStored + " Components stored" );
 				}
 				
 				commit = true;
@@ -202,8 +200,6 @@ public class ViewerAccessPolicyBuilder {
 		Long parentBoui = containerBoui;
 		nrComponents++;
 		
-		System.out.println( component.getClass().getName() );
-		
 		// Process the component
 		String id = null, componentType = null, label = null;
 		StringBuffer stringBufferId = new StringBuffer();
@@ -233,7 +229,6 @@ public class ViewerAccessPolicyBuilder {
 			}
 			// Add the viewer name to the component
 			id = viewerName+id;
-			System.out.println( id );
 			
 			String instanceId = "instanceId"+instanceCounter.addAndGet(1);
 			securableComponent.setInstanceId(instanceId);
@@ -241,7 +236,6 @@ public class ViewerAccessPolicyBuilder {
 			
 			if ( buildObjects ) {
 				boObject accessPolicy = buildAccessPolicyForComponent( context, id, viewerName, componentType, label, containerBoui, childViewers );
-				System.out.println( "Update component ("+viewerName+")"+accessPolicy.getBoui() );
 				accessPolicy.update();				
 				if ( isContainer ) {
 					parentBoui = accessPolicy.getBoui();
@@ -316,7 +310,7 @@ public class ViewerAccessPolicyBuilder {
 		UIComponent currentComponent = component;
 		
 		while( parentComponent!=null ) {
-			index = getChildrenByType(parentComponent, currentComponent.getClass()).indexOf(currentComponent)+1;
+			index = getChildrenByType(parentComponent, currentComponent.getClass() ).indexOf(currentComponent)+1;
 			sb.insert( 0, "["+index+"]" );
 			sb.insert( 0, currentComponent.getRendererType() );
 			sb.insert( 0, "/" );
@@ -333,6 +327,7 @@ public class ViewerAccessPolicyBuilder {
 	 * @param uiClass
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private List<UIComponent> getChildrenByType( UIComponent component, Class uiClass ) {
 		List<UIComponent> childrenByType = new ArrayList<UIComponent>();
 		

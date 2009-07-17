@@ -3,13 +3,12 @@ package netgest.bo.xwc.components.model;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.PhaseId;
 
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 public class RequestAction extends XUIComponentBase {
 
@@ -35,7 +34,7 @@ public class RequestAction extends XUIComponentBase {
 				
 				if( kValue != null ) {
 				
-					Iterator it = getChildren().iterator();
+					Iterator<UIComponent> it = getChildren().iterator();
 					
 					for (; it.hasNext(); ) {
 						Object type = it.next();

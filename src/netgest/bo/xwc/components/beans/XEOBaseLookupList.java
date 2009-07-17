@@ -6,13 +6,11 @@ import java.util.Map;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Window;
-import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
-import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
+import netgest.bo.xwc.components.localization.BeansMessages;
 import netgest.bo.xwc.framework.XUIActionEvent;
 import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 public class XEOBaseLookupList extends XEOBaseList {
@@ -42,11 +40,6 @@ public class XEOBaseLookupList extends XEOBaseList {
 		}
 	}
 
-	public void selectObject() {
-    	System.out.println( ((XEOObjectListConnector)getDataList()).getRecordCount() );
-    	//executeBoql( getParentBean().getLookupQuery( this.parentAttribute, this.selectedObject ) );
-    }
-    
     public Map<String, String> getLookupObjects() {
     	return this.lookupObjectsMap;
     }
@@ -114,7 +107,7 @@ public class XEOBaseLookupList extends XEOBaseList {
         
         // Only set the dummy view if is the same
         if( oRequestContext.getViewRoot() == oViewRoot )
-        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "dummy.xvw" ) );
+        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/viewers/Dummy.xvw" ) );
 
     }
     
@@ -201,17 +194,15 @@ public class XEOBaseLookupList extends XEOBaseList {
 
     public String getTitle() {
     	try {
-			return "Pesquisa de " + getCurrentObjectList().getBoDef().getLabel();
+			return BeansMessages.LIST_OF.toString() + getCurrentObjectList().getBoDef().getLabel();
 		} catch (boRuntimeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Ignore
 		}
 		return ""; 
     }
 
 	public void canCloseTab() {
 		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
-		String val = oRequestContext.getRequestParameterMap().get(  oRequestContext.getEvent().getComponent().getClientId() );
 		XUIViewRoot viewRoot = oRequestContext.getViewRoot();
 		XVWScripts.closeView( viewRoot );
 		oRequestContext.getViewRoot().setRendered( false );

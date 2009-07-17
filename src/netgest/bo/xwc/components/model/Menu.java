@@ -146,9 +146,6 @@ public class Menu extends ViewerCommandSecurityBase {
 			if( ret == null ) {
 				ret = true;
 			}
-			else {
-				ret = ret;
-			}
 			return ret;
 		} catch (Exception e) {
 			e.printStackTrace();

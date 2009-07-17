@@ -3,11 +3,9 @@ package netgest.bo.xwc.components.classic;
 import static netgest.bo.xwc.components.HTMLAttr.CLASS;
 
 import java.io.IOException;
-
 import java.util.Iterator;
 
 import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
 import netgest.bo.xwc.framework.XUIRenderer;

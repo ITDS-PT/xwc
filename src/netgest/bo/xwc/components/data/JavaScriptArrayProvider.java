@@ -1,9 +1,7 @@
 package netgest.bo.xwc.components.data;
 
 import java.math.BigDecimal;
-
 import java.sql.Timestamp;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -13,17 +11,16 @@ import java.util.Map;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
-import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
-import netgest.bo.xwc.components.connectors.DataListConnector;
-import netgest.bo.xwc.components.connectors.DataListIterator;
+import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.util.DateUtils;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 
 public class JavaScriptArrayProvider {
     
-    private static final int INITIAL__BUFFER_SIZE = 300;
+    private static final int INITIAL__BUFFER_SIZE = 150;
     
     private static final char[] EMPTY_FIELD = "''".toCharArray();
     
@@ -50,7 +47,7 @@ public class JavaScriptArrayProvider {
     {
         StringBuilder oScriptBuilder;
         
-        oScriptBuilder = new StringBuilder( 150 );
+        oScriptBuilder = new StringBuilder( INITIAL__BUFFER_SIZE );
         
         getJSArray( oScriptBuilder );
         
@@ -83,7 +80,7 @@ public class JavaScriptArrayProvider {
         int                     iCntr;
         String					sDisplayValue;
         
-        List      selRows = new ArrayList();
+        List<String>      selRows = new ArrayList<String>();
         
         if( selectedRows != null ) {
         	selRows = Arrays.asList( selectedRows );
@@ -212,7 +209,7 @@ public class JavaScriptArrayProvider {
                     }
                 }
                 else {
-                    oStringBuilder.append( "'Invalid[" + sDataFields[i] + "]'" );
+                    oStringBuilder.append( ComponentMessages.GRID_INVALID_COLUMN.toString( sDataFields[i] ));
                     //oStringBuilder.append( EMPTY_FIELD );
                 }
             }

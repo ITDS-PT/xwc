@@ -27,6 +27,7 @@ import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataListConnector;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
@@ -352,7 +353,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer {
         
         if( oNavBarComp == null || oNavBarComp.getShowFullTextSearch() ) {
         if( (oGrid.getDataSource().dataListCapabilities() & DataListConnector.CAP_FULLTEXTSEARCH) != 0 ) {
-            oPagingItems.addChild("Ext.form.Label" ).addJSString( "text", "Pesquisa Livre:" );
+            oPagingItems.addChild("Ext.form.Label" ).addJSString( "text", ComponentMessages.GRID_FREE_SEARCH.toString() );
             ExtConfig oSearchField = oPagingItems.addChild("Ext.form.TwinTriggerField" );
             oSearchField.add("hideTrigger1", false);
             oSearchField.add("hideTrigger1", false);
@@ -403,12 +404,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer {
         }
         
         
-        //ExtConfig reader = oDataStoreConfig.addChild("reader");
-        //reader.setComponentType( "Ext.data.JsonReader"  );
-        //reader.addJSString( "url", actionURL );
-        //reader.addJSString( "root", oGrid.getId() );
-        //reader.addJSString( "totalProperty", "totalCount" );
-        
         oDataStoreConfig.add("reader","new Ext.data.JsonReader({remoteSort:true, url:'"+actionURL+"',root:'" + oGrid.getId() + "',totalProperty:'totalCount'}," 
         		+ oFieldsConfig.renderExtConfig() + ")");
         
@@ -455,7 +450,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer {
         
         
         ExtConfig oSelException = oExtListeners.addChild( "'loadexception'");
-        oSelException.add( "fn", "function() { alert('Error loding data!!\\n ' + " +
+        oSelException.add( "fn", "function() { alert('" + ComponentMessages.GRID_ERROR_LOADING_DATA.toString() + "\\n ' + " +
         		"arguments[2].responseText" + 
         		"   );debugger;}" );
 
@@ -552,7 +547,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer {
         oGridConfig.add( "autoHeight", oGrid.getAutoHeight() );
         oGridConfig.add( "minHeight", oGrid.getMinHeight());
         oGridConfig.add( "frame", false );
-        oGridConfig.add( "loadMask", "new Ext.LoadMask(Ext.getBody(), {msg:'Actualizando dados...'})" );
+        oGridConfig.add( "loadMask", "new Ext.LoadMask(Ext.getBody(), {msg:'" + ComponentMessages.GRID_REFRESHING_DATA.toString() + "'})" );
         
         if( !oGrid.getEnableColumnHide() )
             oGridConfig.add( "enableColumnHide", false );
@@ -662,13 +657,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer {
         	oGridConfig.add( "plugins", oGrid.getId() + "_filters" );
         }
         
-/*            
-        bbar: new Ext.PagingToolbar({
-          store: ds,
-          pageSize: 15,
-          plugins: filters
-        })
-*/
         return oGridConfig;
     }
     
@@ -706,7 +694,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer {
             	
             	
             	if( oGrid.getDataSource() == null ) {
-            		throw new RuntimeException("GridPanel dataSource property returned null value...");
+            		throw new RuntimeException( ComponentMessages.GRID_DATASOURCE_IS_NULL.toString() );
             	}
 				metaData = oGrid.getDataSource().getAttributeMetaData( col.getDataField() );
 

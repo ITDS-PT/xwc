@@ -22,21 +22,8 @@ public class AttributeText extends AttributeBase {
 
         @Override
         public void encodeEnd(XUIComponentBase oComp) throws IOException {
-            AttributeText       oAttrText;
 
-            oAttrText = (AttributeText)oComp; 
-            
-            XUIResponseWriter w = getResponseWriter();
-            /*
-            w.startElement( INPUT, oComp );
-            w.writeAttribute( HTMLAttr.STYLE, "width:" + oAttrText.getWidth() + "px", null );
-            w.writeAttribute( CLASS, "x-form-text x-form-field", null);
-            w.writeAttribute( ID, oComp.getClientId(), null );
-            w.writeAttribute( NAME, oComp.getClientId(), null );
-            w.writeAttribute( VALUE, oAttrText.getValue(), "value" );
-            w.endElement( INPUT );
-            */
-
+        	XUIResponseWriter w = getResponseWriter();
 
             // Place holder for the component
             w.startElement( DIV, oComp );
@@ -54,14 +41,11 @@ public class AttributeText extends AttributeBase {
         public String renderExtJs( XUIComponentBase oComp ) {
             AttributeText       oAttrText;
             String              sJsValue;
-//            FastStringWriter    sOut;
             String              sFormId;
             Form                oForm;
             
             sFormId = oComp.getNamingContainerId();
             oForm   = (Form)oComp.findComponent( sFormId );
-
-//            sOut = new FastStringWriter( 250 );
 
             oAttrText = (AttributeText)oComp; 
             
@@ -71,23 +55,10 @@ public class AttributeText extends AttributeBase {
             
             sJsValue = (String)oAttrText.getValue(); 
             
-            
-//            if( !isAjax() )
-//                sOut.write( "Ext.onReady( function() { " ); sOut.write("\n");
-                                                            
-            //sOut.write( "var " + oComp.getId() + " =" +
-            
             ExtConfig textConfig = new ExtConfig( "Ext.form.TextField" );
             textConfig.addJSString( "renderTo" , oComp.getClientId() );
             textConfig.addJSString( "width" , oAttrText.getWidth() );
             textConfig.add( "enableKeyEvents" , true );
-            
-                
-            //sOut.write( 		" new Ext.form.TextField({"); sOut.write("\n");
-            //sOut.write( "renderTo: '" ); sOut.write( oComp.getClientId() ); sOut.write("',");
-            //sOut.write( "width: "+oAttrText.getWidth()+",");
-            
-            
             
         	ExtConfig textListeners = textConfig.addChild("listeners");
             textListeners.add( "keydown" , 
@@ -103,33 +74,19 @@ public class AttributeText extends AttributeBase {
             	textListeners.add( "change" , "function(fld,newValue,oldValue){fld.setValue(newValue);" 
                 + XVWScripts.getAjaxUpdateValuesScript( (XUIComponentBase)oComp.getParent(), 0 ) + "}" );
             	
-//                sOut.write( "listeners : { change: function(fld,newValue,oldValue){fld.setValue(newValue);" 
-//                            + XVWScripts.getAjaxUpdateValuesScript( (XUIComponentBase)oComp.getParent(), 0 ) + "} },"
-//                        );
             }
             textConfig.add( "maxLength", oAttrText.getMaxLength());
             
-            //sOut.write( "maxLength: '"+oAttrText.getMaxLength()+"',");
             if( !oAttrText.isVisible() ) {
                 textConfig.add( "hidden", true );
-                //sOut.write( "hidden: true,");
             }
             if( oAttrText.isDisabled() || !oAttrText.getEffectivePermission(SecurityPermissions.WRITE) ) {
                 textConfig.add( "disabled", true );
-//                sOut.write( "disabled: true,");
             }
-//            sOut.write( "name: '"); sOut.write( oComp.getClientId() ); sOut.write("',");
             textConfig.addJSString( "name",  oComp.getClientId() );
             
             // Write value            
-//            sOut.write( "value: '"); 
             textConfig.addJSString( "value",  sJsValue );
-//            sOut.write("'");
-                
-//            sOut.write("});");
-    
-//            if( !isAjax() )
-//                sOut.write("});");
             
             StringBuilder sOut = new StringBuilder( 150 );
             textConfig.renderExtConfig( sOut );

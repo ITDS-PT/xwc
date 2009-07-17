@@ -3,10 +3,7 @@ package netgest.bo.xwc.components.beans;
 import javax.el.MethodExpression;
 
 import netgest.bo.transaction.XTransaction;
-import netgest.bo.transaction.XTransactionManager;
 import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.XUISessionContext;
-import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 public class ProgressBean extends XEOBase {

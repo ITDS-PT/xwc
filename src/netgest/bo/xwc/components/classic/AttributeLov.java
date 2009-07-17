@@ -1,12 +1,13 @@
 package netgest.bo.xwc.components.classic;
-import com.sun.faces.io.FastStringWriter;
+import static netgest.bo.xwc.components.HTMLAttr.ID;
+import static netgest.bo.xwc.components.HTMLAttr.NAME;
+import static netgest.bo.xwc.components.HTMLTag.DIV;
+import static netgest.bo.xwc.components.HTMLTag.OPTION;
+import static netgest.bo.xwc.components.HTMLTag.SELECT;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-
-import static netgest.bo.xwc.components.HTMLAttr.*;
-import static netgest.bo.xwc.components.HTMLTag.*;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
@@ -44,7 +45,7 @@ public class AttributeLov extends AttributeBase {
             w.writeAttribute( ID, oComp.getClientId() + "_s", null );
             w.writeAttribute( NAME, oComp.getClientId() + "_s", null );
             
-            Set oValues = oLovMap.keySet();
+            Set<Object> oValues = oLovMap.keySet();
             for ( Object oValue : oValues ) {
                 
                 w.startElement( OPTION, oComp );
@@ -121,45 +122,12 @@ public class AttributeLov extends AttributeBase {
             	ExtConfig listeners = oInpConfig.addChild("listeners");
             	listeners.add( "'select'" , 
             			"function(fld,newValue,oldValue){\n" +
-            			"//fld.setValue(newValue);\n" +
             			 XVWScripts.getAjaxUpdateValuesScript( (XUIComponentBase)oComp.getParent(), 0 ) + "}"
             	);
             }
             
             oInpConfig.renderExtConfig( sOut );
 
-            
-//            sOut.write( "Ext.onReady( function() { " ); sOut.write("\n");
-//            sOut.write( "var " + oComp.getId() + " = new Ext.form.ComboBox({"); sOut.write("\n");
-//            sOut.write( "typeAhead: true,");
-//            sOut.write( "triggerAction: 'all',");
-//            sOut.write( "transform: '" ); sOut.write( oComp.getClientId() ); sOut.write("_s',");
-//            sOut.write( "forceSelection:true,");
-//            sOut.write( "width: "+oAttrLov.getWidth()+",");
-//
-//            if( oForm.haveDependents( oAttrLov.getObjectAttribute() ) )
-//                sOut.write( "listeners : { change: function(fld,newValue,oldValue){fld.setValue(newValue);" 
-//                            + XVWScripts.getAjaxUpdateValuesScript( (XUIComponentBase)oComp.getParent(), 0 ) + "} },"
-//                        );
-//            
-//            //sOut.write( "maxLength: '"+oAttrLov.getMaxLength()+"',");
-//            if( !oAttrLov.isVisible() )
-//                sOut.write( "hidden: true,");
-//                 
-//            if( oAttrLov.isDisabled() )
-//                sOut.write( "disabled: true,");
-//    
-//            sOut.write( "name: '"); sOut.write( oComp.getClientId() ); sOut.write("',");
-//            
-//            // Write value            
-//            sOut.write( "value: '"); 
-//            if( sJsValue != null )  
-//                sOut.write( sJsValue ); 
-//            sOut.write("'");
-//                
-//            sOut.write("});");
-//            sOut.write("});");
-            
             return sOut.toString();
         }
 

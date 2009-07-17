@@ -1,20 +1,15 @@
 package netgest.bo.xwc.components.connectors;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import netgest.bo.data.DataSet;
 import netgest.bo.data.DriverUtils;
 import netgest.bo.def.boDefAttribute;
-import netgest.bo.def.boDefBridge;
-import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.EboContext;
-import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.boApplication;
@@ -200,17 +195,12 @@ public class XEOObjectListConnector implements DataListConnector {
     		oObjectList.setUserQuery( query.length()>0?query.toString():null, pars.toArray() );
     	else
     		oObjectList.setUserQuery( null, null );
-    
-    	System.out.println ( query );
     }
     
     public DataRecordConnector findByUniqueIdentifier(String sUniqueIdentifier) {
 		long boui;
-		int previousPos;
-		
 		DataRecordConnector drc;
 		drc = null;
-		previousPos = this.oObjectList.getRow();
 		boui = Long.parseLong( sUniqueIdentifier );
 		drc = new XEOObjectConnector( boui );
 		return drc;

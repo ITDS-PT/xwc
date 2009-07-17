@@ -1,7 +1,5 @@
 package netgest.bo.xwc.components.connectors;
 
-import java.util.Iterator;
-
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefBridge;
 import netgest.bo.def.boDefHandler;
@@ -11,23 +9,19 @@ public class XEOBridgeListConnector implements DataListConnector {
     
 	public DataListConnector getGroup(String groupAttribute, int page,
 			int pageSize) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public DataListConnector getGroupDetail(String groupAttribute,
 			Object groupValue, int page, int pageSize) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public void setGroupBy(String[] attributes) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public String[] getGroupItens(String groupAttribute, int page, int pageSize) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -66,8 +60,6 @@ public class XEOBridgeListConnector implements DataListConnector {
     }
 
     public void setFilterTerms(FilterTerms sortTerms) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void setSortTerms(SortTerms sortTerms) {
@@ -88,12 +80,9 @@ public class XEOBridgeListConnector implements DataListConnector {
 	}
 
 	public void setPage(int pageNo) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void setPageSize(int pageSize) {
-		// TODO Auto-generated method stub
 	}
 
 	public void setSearchTerms(String[] columnName, Object[] columnValue) {
@@ -122,20 +111,14 @@ public class XEOBridgeListConnector implements DataListConnector {
 
 	public DataRecordConnector findByUniqueIdentifier(String sUniqueIdentifier) {
 		long boui;
-		//int previousPos;
 		
 		DataRecordConnector drc;
 		
 		drc = null;
-		
-		//previousPos = this.oBridge.getRow();
-		
+
 		boui = Long.parseLong( sUniqueIdentifier );
 		
-		//if ( this.oBridge.haveBoui( boui ) ) {
-			drc = new XEOObjectConnector( boui );
-		//}
-		//this.oBridge.moveTo( previousPos );
+		drc = new XEOObjectConnector( boui );
 
 		return drc;
 	
@@ -143,13 +126,11 @@ public class XEOBridgeListConnector implements DataListConnector {
 	
 	public DataListConnector getGroupDetails(int level, String[] parentGroups,
 			Object[] parentValues, int page, int pageSize) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public DataGroupConnector getGroups(int level, String[] parentGroups,
 			Object[] parentValues, int page, int pageSize) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

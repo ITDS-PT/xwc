@@ -1,21 +1,16 @@
 package netgest.bo.xwc.components.classic;
 
-import com.sun.faces.io.FastStringWriter;
+import static netgest.bo.xwc.components.HTMLAttr.ID;
+import static netgest.bo.xwc.components.HTMLTag.DIV;
 
 import java.io.IOException;
-
 import java.math.BigDecimal;
-
-import java.sql.Timestamp;
-
-import java.text.ParseException;
-
-import java.util.Date;
 
 import javax.faces.context.FacesContext;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -23,8 +18,6 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIInput;
-import static netgest.bo.xwc.components.HTMLAttr.ID;
-import static netgest.bo.xwc.components.HTMLTag.*;
 
 public class AttributeNumber extends AttributeBase {
 
@@ -48,7 +41,7 @@ public class AttributeNumber extends AttributeBase {
                                                                         XUIMessage.TYPE_MESSAGE,
                                                                         XUIMessage.SEVERITY_ERROR,
                                                                         getLabel(),
-                                                                        oSubmitedValue + " não está no formato correcto "
+                                                                        ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
                                                                    )
                                                     );
                     setValid( false );

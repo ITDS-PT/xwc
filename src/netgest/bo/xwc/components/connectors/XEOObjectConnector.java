@@ -2,33 +2,24 @@ package netgest.bo.xwc.components.connectors;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-
 import java.util.Map;
 import java.util.Set;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.sun.faces.el.DummyPropertyResolverImpl;
-
 import netgest.bo.runtime.AttributeHandler;
-import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
-import netgest.bo.runtime.bridgeHandler;
+import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.boApplication;
-import netgest.bo.xwc.components.beans.XEOBaseBean;
+import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
-import netgest.bo.xwc.framework.def.XUIComponentParser;
 
-public class XEOObjectConnector implements DataRecordConnector, Map {
+public class XEOObjectConnector implements DataRecordConnector, Map<String,Object> {
 
 	private static final Logger log = Logger.getLogger( XEOObjectConnector.class.getName() );
     
     private long lBoObjectBoui;
-    //private Hashtable<String, XEOObjectAttributeConnector>  oMappedAttributes;
     
     public XEOObjectConnector( long lBoObjectBoui ) 
     {
@@ -66,13 +57,13 @@ public class XEOObjectConnector implements DataRecordConnector, Map {
         // Static Attributes
         try {
 			if( name.equals("SYS_OBJECT_LABEL") ) 
-				return new GenericFieldConnector( "Etiqueta do Objecto", getXEOObject().getLabel(), DataFieldTypes.VALUE_CHAR );
+				return new GenericFieldConnector( ConnectorsMessages.OBJECT_LABEL.toString(), getXEOObject().getLabel(), DataFieldTypes.VALUE_CHAR );
 			
 			if( name.equals("SYS_OBJECT_ICON_16") ) 
-				return new GenericFieldConnector( "Etiqueta do Objecto", getXEOObject().getSrcForIcon16(), DataFieldTypes.VALUE_CHAR );
+				return new GenericFieldConnector( ConnectorsMessages.OBJECT_LABEL.toString(), getXEOObject().getSrcForIcon16(), DataFieldTypes.VALUE_CHAR );
 
 			if( name.equals("SYS_ICON_COMPOSED_STATE") ) 
-				return new GenericFieldConnector( "Etiqueta do Objecto", getXEOObject().getICONComposedState(), DataFieldTypes.VALUE_CHAR );
+				return new GenericFieldConnector( ConnectorsMessages.OBJECT_LABEL.toString(), getXEOObject().getICONComposedState(), DataFieldTypes.VALUE_CHAR );
 			
 		} catch (boRuntimeException e) {
 			throw new RuntimeException( e );
@@ -157,7 +148,7 @@ public class XEOObjectConnector implements DataRecordConnector, Map {
         return getAttribute( (String)key );
     }
 
-    public Object put(Object key, Object value) {
+    public Object put(String key, Object value) {
         throw new RuntimeException("XEODataRecord is readOnly" );
     }
 
@@ -165,7 +156,8 @@ public class XEOObjectConnector implements DataRecordConnector, Map {
         return null;
     }
 
-    public void putAll(Map t) {
+    @SuppressWarnings("unchecked")
+	public void putAll(Map t) {
         log.log( Level.WARNING, "Mehtod not implemented!" );
     }
 
@@ -173,17 +165,19 @@ public class XEOObjectConnector implements DataRecordConnector, Map {
         log.log( Level.WARNING, "Mehtod not implemented!" );
     }
 
-    public Set keySet() {
+    @SuppressWarnings("unchecked")
+	public Set<String> keySet() {
         log.log( Level.WARNING, "Mehtod not implemented!" );
         return Collections.EMPTY_SET;
     }
 
-    public Collection values() {
+    public Collection<Object> values() {
         log.log( Level.WARNING, "Mehtod not implemented!" );
         return null;
     }
 
-    public Set entrySet() {
+    @SuppressWarnings("unchecked")
+	public Set entrySet() {
         return Collections.EMPTY_SET;
     }
 

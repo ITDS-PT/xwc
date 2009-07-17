@@ -2,7 +2,6 @@ package netgest.bo.xwc.components.beans;
 
 import java.util.Map;
 
-import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectContainer;

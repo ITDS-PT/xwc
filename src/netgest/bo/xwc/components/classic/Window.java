@@ -14,7 +14,6 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;

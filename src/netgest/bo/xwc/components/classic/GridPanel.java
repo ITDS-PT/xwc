@@ -29,6 +29,7 @@ import netgest.bo.xwc.components.connectors.FilterTerms;
 import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.model.Columns;
 import netgest.bo.xwc.components.security.SecurableComponent;
@@ -463,9 +464,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 	             return (DataListConnector)dataSource.getValue().getValue( getELContext() );
 	        }
     	} catch (Exception e) {
-    		e.printStackTrace();
+    		throw new RuntimeException( ComponentMessages.GRID_DATASOURCE_ERROR.toString( dataSource.getExpressionString() ), e );
     	}
-        
         return null;
     }
 
@@ -837,7 +837,8 @@ public class GridPanel extends ViewerInputSecurityBase {
             final int direction = term.getDirection();
         	
             Collections.sort( orderedList, new Comparator<DataRecordConnector>() {
-                public int compare( DataRecordConnector left, DataRecordConnector right )  {
+                @SuppressWarnings("unchecked")
+				public int compare( DataRecordConnector left, DataRecordConnector right )  {
                     Comparable<Comparable> sLeft, sRight;
 
                     DataFieldConnector leftField = left.getAttribute( sSort );
@@ -912,7 +913,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 			                        addLine = false;
 			                    }
 			                } else {
-			                    System.out.println( "Local Filter: Unsupported String filter" );
+			                    System.err.println( "Local Filter: Unsupported String filter" );
 			                }
 			        } else if ( val instanceof java.util.Date ) {
 			                Date dVal = (Date)val;
@@ -930,7 +931,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 			                        addLine = false;
 			                    }
 			                } else {
-			                    System.out.println( "Local Filter: Unsupported Date filter" );
+			                    System.err.println( "Local Filter: Unsupported Date filter" );
 			                }                        
 			        } else if ( val instanceof Boolean ) {
 			                // Only supports OPERATOR_EQUAL
@@ -955,7 +956,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 			                        addLine = false;
 			                    }
 			                } else {
-			                    System.out.println( "Local Filter: Unsupported BigDecimal filter" );
+			                    System.err.println( "Local Filter: Unsupported BigDecimal filter" );
 			                }
 			        } else if ( val instanceof Object[] ) {
 			            BigDecimal nColumnValue = (BigDecimal)dataRecordConnector.getAttribute( column ).getValue();

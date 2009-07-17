@@ -220,9 +220,6 @@ public class TreePanel extends XUIComponentBase {
         }
         
         public void encodeSubMenuJS( ExtConfigArray oChildren, Menu oSubMenu ) {
-            boolean bFirstOption;
-            
-            bFirstOption = true;
             
             Iterator<UIComponent> oSubChildren = oSubMenu.getChildren().iterator();
             
@@ -279,7 +276,6 @@ public class TreePanel extends XUIComponentBase {
 		                    }
 		                    else {
 		                    	String cmd = XVWScripts.getAjaxCommandScript( oMenuChild, XVWScripts.WAIT_DIALOG );
-		                    	System.out.println( cmd );
 		                    	oItemListeners.add( "'click'", "function(){"+cmd+"}" );
 		                    }
 		                }

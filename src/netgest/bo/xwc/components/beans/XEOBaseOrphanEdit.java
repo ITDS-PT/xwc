@@ -30,7 +30,7 @@ public class XEOBaseOrphanEdit extends XEOBaseBean {
 	        XUIViewRoot oParentViewRoot = getParentView();
 	        oParentViewRoot.syncClientView();
 	        
-	        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "dummy.xvw" ) );
+	        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/viewers/Dummy.xvw" ) );
     	}
 
     }
@@ -99,7 +99,7 @@ public class XEOBaseOrphanEdit extends XEOBaseBean {
         
         this.bTransactionStarted = false;
         
-        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "dummy.xvw" ) );
+        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/viewers/Dummy.xvw" ) );
 
     }
 

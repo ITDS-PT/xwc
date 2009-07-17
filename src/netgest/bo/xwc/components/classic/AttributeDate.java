@@ -1,24 +1,20 @@
 package netgest.bo.xwc.components.classic;
 
-import com.sun.faces.io.FastStringWriter;
+import static netgest.bo.xwc.components.HTMLAttr.ID;
+import static netgest.bo.xwc.components.HTMLTag.DIV;
 
 import java.io.IOException;
-
 import java.sql.Timestamp;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
-import static netgest.bo.xwc.components.HTMLAttr.ID;
-import static netgest.bo.xwc.components.HTMLTag.DIV;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.components.connectors.DataFieldConnector;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -64,7 +60,7 @@ public class AttributeDate extends AttributeBase {
                                                                         XUIMessage.TYPE_MESSAGE,
                                                                         XUIMessage.SEVERITY_ERROR,
                                                                         getLabel(),
-                                                                        oSubmitedValue + " não está no formato correcto "
+                                                                        ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
                                                                    )
                                                     );
                     setValid( false );

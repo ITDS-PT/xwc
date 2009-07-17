@@ -1,6 +1,5 @@
 package netgest.bo.xwc.components;
 
-import netgest.bo.xwc.framework.jsf.XUIWriterAttributeConst;
 import netgest.bo.xwc.framework.jsf.XUIWriterElementConst;
 
 public class HTMLTag {

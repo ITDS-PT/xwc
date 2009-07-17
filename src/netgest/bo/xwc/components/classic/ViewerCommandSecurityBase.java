@@ -8,9 +8,6 @@ public abstract class ViewerCommandSecurityBase extends XUICommand implements Se
 
 	private String 	childViewers;
 	
-	
-	
-	
 	private ComponentSecurityHandler componentSecurityHandler = 
 		new ComponentSecurityHandler( this );
     

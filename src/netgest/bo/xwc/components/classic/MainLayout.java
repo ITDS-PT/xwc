@@ -1,27 +1,23 @@
 package netgest.bo.xwc.components.classic;
 
-import java.io.IOException;
+import static netgest.bo.xwc.components.HTMLAttr.ID;
+import static netgest.bo.xwc.components.HTMLTag.DIV;
 
+import java.io.IOException;
 import java.util.Iterator;
 
-import javax.faces.application.Application;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.render.Renderer;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
-import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
-import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import static netgest.bo.xwc.components.HTMLTag.*;
-import static netgest.bo.xwc.components.HTMLAttr.*;
-import static netgest.bo.xwc.components.CSSAttr.*;
 
 
 public class MainLayout extends XUIComponentBase {

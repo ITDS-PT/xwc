@@ -1,6 +1,5 @@
 package netgest.bo.xwc.components.connectors;
 
-import java.util.Iterator;
 
 
 public interface DataListConnector {

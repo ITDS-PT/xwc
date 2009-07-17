@@ -19,7 +19,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class AttributeLabel extends ViewerOutputSecurityBase {
 
-    public XUIStateProperty<String> text 		= new XUIStateProperty<String>("text", this, " Texto da Label ");
+    public XUIStateProperty<String> text 		= new XUIStateProperty<String>("text", this, " Label Text ");
     
     private XUIStateProperty<ValueExpression> 	disabled       = new XUIStateProperty<ValueExpression>( "disabled", this );
     private XUIStateProperty<ValueExpression> 	visible        = new XUIStateProperty<ValueExpression>( "visible", this );
@@ -64,10 +64,6 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
     }
 
 	public boolean isModelRequired() {
-		if( modelRequired == null ) {
-			boolean debug=true;
-			debug = false;
-		}
 		Boolean ret = modelRequired.getEvaluatedValue();
 		if( ret != null ) 
 			return ret;
@@ -79,10 +75,6 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 	}
 
 	public boolean isRecommended() {
-		if( recommended == null ) {
-			boolean debug=true;
-			debug = false;
-		}
 		Boolean ret = recommended.getEvaluatedValue();
 		if( ret != null ) 
 			return ret;
@@ -153,19 +145,6 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 
         	oLabelConfig.renderExtConfig(sOut);
 
-            //sOut.write( "Ext.onReady( function() { " ); sOut.write("\n");
-//            sOut.write( "var " + oComp.getId() + " = new Ext.form.Label({"); sOut.write("\n");
-//            sOut.write( "renderTo: '" ); sOut.write( oComp.getClientId() ); sOut.write("',");
-//
-//            if( !oAttrLabel.isVisible() )
-//                sOut.write( "hidden: true,");
-//            if( oAttrLabel.isDisabled() )
-//                sOut.write( "disabled: true,");
-//
-//            sOut.write( "text: '"); sOut.write( oComp.getText() ); sOut.write("'");
-//            sOut.write("});");
-            //sOut.write("});");
-            
             return sOut.toString();
         }
 

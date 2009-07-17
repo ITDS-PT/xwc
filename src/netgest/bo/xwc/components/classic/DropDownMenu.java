@@ -14,8 +14,7 @@ public class DropDownMenu extends XUIComponentBase
 
     public void renderBeginTag( ResponseWriter w ) throws IOException
     {
-        if(true) return;
-
+/*
         w.startElement("table", null );
         w.writeAttribute( "class","mnubarFlat", null );
         w.writeAttribute( "cellspacing","0", null );
@@ -42,7 +41,7 @@ public class DropDownMenu extends XUIComponentBase
         w.endElement( "tr" );
         w.endElement( "tbody" );
         w.endElement( "table" );
-        
+*/        
     }
     
     public void renderOptions( ResponseWriter w ) throws IOException

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -16,7 +17,9 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class DialogProgress extends XUIComponentBase {
 
-	private XUIStateBindProperty<String> 	title 			= new XUIStateBindProperty<String>( "title", this, "Progresso" , String.class );
+	private XUIStateBindProperty<String> 	title 			= 
+		new XUIStateBindProperty<String>( "title", this, ComponentMessages.DIALOG_PROGRESS.toString(), String.class );
+	
 	private XUIStateBindProperty<Boolean> 	finished 		= new XUIStateBindProperty<Boolean>( "finished", this, "false",Boolean.class );
 	private XUIStateBindProperty<Integer> 	updateInterval 	= new XUIStateBindProperty<Integer>( "updateInterval", this, "5" , Integer.class );
 	private XUIStateBindProperty<Integer> 	progress 		= new XUIStateBindProperty<Integer>( "progress", this, "0" , Integer.class );

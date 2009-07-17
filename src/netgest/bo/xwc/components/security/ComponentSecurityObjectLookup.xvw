@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
-    <xvw:viewer beanClass='netgest.bo.xwc.components.beans.XEOBaseLookupList' beanId='viewBean'>
+    <xvw:viewer 
+    	beanClass='netgest.bo.xwc.components.beans.XEOBaseLookupList' 
+    	beanId='viewBean'
+    	localizationClasses='netgest.bo.xwc.components.localization.ViewersMessages'
+    >
         <xvw:form>
             <xvw:window width='800' height='400'>
-				<xvw:title valueExpression='Permissões' />
+				<xvw:title valueExpression='@{SECURITY_PERMISSIONS}' />
 				<xvw:panel>
 					<xvw:toolBar>
-                        <xvw:menu text='Confirmar' serverAction='#{viewBean.confirm}'/>                        
+                        <xvw:menu text='@{SECURITY_CONFIRM}' serverAction='#{viewBean.confirm}'/>                        
                     </xvw:toolBar>
 				</xvw:panel>
 					<xvw:rows>
@@ -15,10 +19,10 @@
 								<xvw:rows columns='2' columnWidths='100%,75px'>
 									<xvw:row >					
 										<xvw:cell>
-											<xvw:attribute label='Escolha o Objecto' valueExpression='#{viewBean.selectedObject}' inputType='attributeLov' lovMap='#{viewBean.lookupObjects}'  ></xvw:attribute>
+											<xvw:attribute label='@{SECURITY_SELECT_OBJECT}' valueExpression='#{viewBean.selectedObject}' inputType='attributeLov' lovMap='#{viewBean.lookupObjects}'  ></xvw:attribute>
 										</xvw:cell>
 										<xvw:cell>
-											<xvw:actionButton label='Selecionar' serverAction='#{viewBean.selectObject}'  ></xvw:actionButton>
+											<xvw:actionButton label='@{SECURITY_SELECT}' serverAction='#{viewBean.selectObject}'  ></xvw:actionButton>
 										</xvw:cell>
 				                	</xvw:row>
 								</xvw:rows>		                	
@@ -33,7 +37,7 @@
 				                        >
 				                    <xvw:columns>
 				                        <xvw:columnAttribute width='100' label='Id' dataField='id'/>
-				                        <xvw:columnAttribute label='Nome' dataField='name'/>
+				                        <xvw:columnAttribute label='@{SECURITY_COL_NAME}' dataField='name'/>
 				                    </xvw:columns>
 				                </xvw:gridPanel>
 							</xvw:cell>		                

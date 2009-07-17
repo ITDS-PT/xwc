@@ -1,9 +1,7 @@
 package netgest.bo.xwc.components.beans;
 
-import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
-import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 public class Dialogs {

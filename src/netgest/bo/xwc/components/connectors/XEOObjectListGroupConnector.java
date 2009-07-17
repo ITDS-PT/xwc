@@ -23,7 +23,6 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 	private XEOObjectListConnector 	rootList;
 	private String 					groupAttribute;
 	private Object[]				parentValues;
-	private String[]				parentGroups;
 	private DataSet					dataSet;
 	
 	private String					preparedSql;
@@ -44,7 +43,6 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		this.groupAttribute 	= groupAttribute;
 		this.rootList 			= rootList;
 		this.parentValues		= parentValues;
-		this.parentGroups	= parentGroups;
 		this.page = page;
 		this.pageSize = pageSize;
 	}
@@ -69,6 +67,7 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		return isDate;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public DataListConnector getDetails() {
 		
 		String 		userQuery 		= this.rootList.oObjectList.getUserQuery();
@@ -215,6 +214,7 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		return new XEOObjectListGroupIterator( this );
 	}
 
+	@SuppressWarnings("unchecked")
 	public void prepareQuery() {
 		String 		userQuery 		= this.rootList.oObjectList.getUserQuery();
 		Object[] 	userQueryArgs 	= this.rootList.oObjectList.getUserQueryArgs();

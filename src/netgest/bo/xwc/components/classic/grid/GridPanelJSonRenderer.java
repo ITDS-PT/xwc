@@ -13,7 +13,6 @@ import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.connectors.DataListConnector;
-import netgest.bo.xwc.components.connectors.DataListIterator;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.data.JavaScriptArrayProvider;
 import netgest.bo.xwc.components.model.Column;

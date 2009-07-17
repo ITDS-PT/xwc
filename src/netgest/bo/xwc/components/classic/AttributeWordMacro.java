@@ -24,24 +24,19 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
-import netgest.bo.xwc.components.beans.FileBrowseBean;
-import netgest.bo.xwc.components.beans.XEOBaseBean;
-import netgest.bo.xwc.components.classic.AttributeFile.LookupActionListener;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
-import netgest.bo.xwc.components.util.JavaScriptUtils;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.xeodm.XEODMBuilder;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
 import netgest.io.FSiFile;
 import netgest.io.iFile;
@@ -66,16 +61,6 @@ public class AttributeWordMacro extends AttributeBase {
 
     }
 
-    private void doLookup() {
-        try {
-            XEOBaseBean oXEOBaseBean;
-            oXEOBaseBean = (XEOBaseBean)getRequestContext().getViewRoot().getBean("viewBean");
-            oXEOBaseBean.lookupAttribute( this.getClientId() );
-        } catch (boRuntimeException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
     public void validate( FacesContext context ) {
         Object      oSubmitedValue = getSubmittedValue();
         String      sSubmitedValue = null;
@@ -95,7 +80,7 @@ public class AttributeWordMacro extends AttributeBase {
                                                                         XUIMessage.TYPE_MESSAGE,
                                                                         XUIMessage.SEVERITY_ERROR,
                                                                         getLabel(),
-                                                                        oSubmitedValue + " n�o est� no formato correcto "
+                                                                        ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
                                                                    )
                                                     );
                     setValid( false );
@@ -265,7 +250,6 @@ public class AttributeWordMacro extends AttributeBase {
             		"};" +
             		"}" );
             
-            System.out.println( dmb.toUrlString() );
             oInpConfig.renderExtConfig( sOut );          
             return sOut.toString();
         }
@@ -296,7 +280,8 @@ public class AttributeWordMacro extends AttributeBase {
         }
         
         
-        public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
+        @SuppressWarnings("unchecked")
+		public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
         	HttpServletResponse resp = (HttpServletResponse)response;
         	 
         	AttributeWordMacro oFile = (AttributeWordMacro)comp;
@@ -312,7 +297,6 @@ public class AttributeWordMacro extends AttributeBase {
 	        		
 		        	if( "POST".equals( hRequest.getMethod() ) && hRequest instanceof XUIMultiPartRequestWrapper ) {
 		        		XUIMultiPartRequestWrapper mRequest = (XUIMultiPartRequestWrapper)hRequest;
-		        		@SuppressWarnings("unused")
 						Enumeration enumFiles = mRequest.getFileNames();
 		        		if( enumFiles.hasMoreElements() ) {
 		        			String fname = (String)enumFiles.nextElement();

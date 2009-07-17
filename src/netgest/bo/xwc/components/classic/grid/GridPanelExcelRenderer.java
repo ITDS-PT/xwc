@@ -16,7 +16,6 @@ import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
-import netgest.bo.xwc.components.connectors.DataListIterator;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.framework.XUIResponseWriter;

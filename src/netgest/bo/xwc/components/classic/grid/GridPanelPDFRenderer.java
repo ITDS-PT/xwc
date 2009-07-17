@@ -9,8 +9,8 @@ import javax.servlet.ServletResponse;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
-import netgest.bo.xwc.components.connectors.DataListIterator;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Column;
 
 import com.lowagie.text.Chunk;
@@ -61,7 +61,7 @@ public class GridPanelPDFRenderer {
         	
         	// Footer
         	// Create a new Paragraph for the footer
-        	Paragraph par = new Paragraph("Page ");
+        	Paragraph par = new Paragraph( ComponentMessages.GRID_PAGE.toString() );
         	par.setAlignment(Element.ALIGN_CENTER);
 
         	// Add the RtfPageNumber to the Paragraph
@@ -122,9 +122,6 @@ public class GridPanelPDFRenderer {
 					document.add(table);
 					table.deleteBodyRows();
 					table.setSkipFirstHeader(true);
-					
-					System.out.println( "Generation PDF Row:" + row );
-					
 				}
     			for( int i=0;i < oGridColumns.length; i++ ) {
     				DataFieldConnector oAtt;
@@ -142,7 +139,7 @@ public class GridPanelPDFRenderer {
         				cell = 
         					new PdfPCell( 
         							new Paragraph(
-        								"«« Invalid [" + oGridColumns[i].getDataField() + "] »»", 
+        								ComponentMessages.GRID_INVALID_COLUMN.toString( oGridColumns[i].getDataField() ),
 	        							fontB
         							)
         						);

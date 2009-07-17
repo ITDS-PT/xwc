@@ -8,13 +8,11 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 public class XEOObjectListAttributeCount implements DataFieldConnector {
 
 	private XEOObjectListGroupConnector parent;
-	private String						attName;
 	private int							row;
 	
 		   
 	public XEOObjectListAttributeCount( XEOObjectListGroupConnector parent, int row,String attName ) {
 		this.parent = parent;
-		this.attName = attName;
 		this.row = row;
 	}
 	

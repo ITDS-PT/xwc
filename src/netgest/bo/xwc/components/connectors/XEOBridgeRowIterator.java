@@ -1,7 +1,5 @@
 package netgest.bo.xwc.components.connectors;
 
-import java.util.Iterator;
-
 import netgest.bo.runtime.boBridgeIterator;
 
 public class XEOBridgeRowIterator implements DataListIterator {

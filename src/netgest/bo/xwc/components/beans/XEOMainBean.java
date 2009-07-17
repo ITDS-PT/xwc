@@ -4,6 +4,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import netgest.bo.xwc.components.localization.BeansMessages;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -65,7 +66,7 @@ public class XEOMainBean extends XEOBase {
         oBaseBean = (XEOBaseBean)oViewRoot.getBean( "viewBean" );
         
         if( oBaseBean == null ) {
-        	throw new  RuntimeException( "O Viewer " + sViewerName + "não tem definido a viewBean" );
+        	throw new  RuntimeException( BeansMessages.VIEWER_WITHOUT_VIEWBEAN.toString() );
         }
         oBaseBean.setCurrentObjectKey( Long.toString( oViewerConfig.getBoui() ) );
         // Diz a que a view corrente é a criada.
@@ -105,15 +106,6 @@ public class XEOMainBean extends XEOBase {
         // TODO: This action must be automatic on the platform
         // initialize components
         oViewRoot.processInitComponents();
-        
-/*
-        boObject oObj = boObject.getBoManager().createObject(
-                boApplication.currentContext().getEboContext(),
-                "Teste"
-            );
-        oObj.update();
-        editObject( Long.toString( oObj.getBoui() ), "Teste_edit.xvw" );
-*/
         
     }
     
@@ -188,7 +180,6 @@ public class XEOMainBean extends XEOBase {
         XUIRequestContext   oRequestContext;
         XUISessionContext   oSessionContext;
         XUIViewRoot         oViewRoot;
-        XEOBaseList         oBaseBean;
 
         oRequestContext = XUIRequestContext.getCurrentContext();
         oSessionContext = oRequestContext.getSessionContext();

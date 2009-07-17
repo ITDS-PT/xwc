@@ -1,19 +1,21 @@
 package netgest.bo.xwc.components.classic;
 
+import static netgest.bo.xwc.components.HTMLAttr.CELLPADDING;
+import static netgest.bo.xwc.components.HTMLAttr.CELLSPACING;
+import static netgest.bo.xwc.components.HTMLAttr.WIDTH;
+import static netgest.bo.xwc.components.HTMLTag.COL;
+import static netgest.bo.xwc.components.HTMLTag.COLGROUP;
+import static netgest.bo.xwc.components.HTMLTag.TABLE;
+import static netgest.bo.xwc.components.HTMLTag.TBODY;
+
 import java.io.IOException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 
-import javax.faces.context.ResponseWriter;
-
+import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.XUIStateProperty;
-import static netgest.bo.xwc.components.HTMLAttr.*;
-import static netgest.bo.xwc.components.HTMLTag.*;
-import netgest.bo.xwc.components.HTMLAttr;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 
 public class Rows extends XUIComponentBase

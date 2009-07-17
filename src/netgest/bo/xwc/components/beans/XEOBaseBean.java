@@ -1,7 +1,6 @@
 package netgest.bo.xwc.components.beans;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +9,6 @@ import java.util.logging.Logger;
 import javax.faces.event.ActionEvent;
 
 import netgest.bo.def.boDefAttribute;
-import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
@@ -31,6 +29,7 @@ import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOBridgeListConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector;
+import netgest.bo.xwc.components.localization.BeansMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -128,12 +127,9 @@ public class XEOBaseBean extends XEOBase {
     
     public void saveAndClose() throws boRuntimeException {
     	XUIRequestContext oRequestContext;
-    	XUISessionContext oSessionContext;
     	this.save();
     	if( this.isValid() ) {
     		oRequestContext = XUIRequestContext.getCurrentContext();
-    		oSessionContext = oRequestContext.getSessionContext();
-    		
     		XVWScripts.closeView( oRequestContext.getViewRoot() );
     		oRequestContext.getViewRoot().setRendered( false );
     		oRequestContext.renderResponse();
@@ -165,8 +161,8 @@ public class XEOBaseBean extends XEOBase {
 	        XUIRequestContext.getCurrentContext().addMessage(
 	                "Bean",
 	                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
-	                    "Sucesso", 
-	                    "Os seus dados foram guardados com sucesso." 
+	                    BeansMessages.TITLE_SUCCESS.toString(), 
+	                    BeansMessages.BEAN_SAVE_SUCESS.toString() 
 	                )
 	            );
     	} catch ( Exception e ) {
@@ -176,8 +172,8 @@ public class XEOBaseBean extends XEOBase {
     		        XUIRequestContext.getCurrentContext().addMessage(
     		                "Bean",
     		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
-    		                    "Erro", 
-    		                    "Os seus dados foram alterados por outro utilizador." 
+    		                    BeansMessages.TITLE_ERROR.toString(), 
+    		                    BeansMessages.DATA_CHANGED_BY_OTHER_USER.toString() 
     		                )
     		            );
     			} else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
@@ -205,8 +201,8 @@ public class XEOBaseBean extends XEOBase {
     		oRequestContext.addMessage(
 	                "Bean",
 	                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
-	                    "Sucesso", 
-	                    "Os seus dados foram guardados com sucesso." 
+	                    BeansMessages.TITLE_SUCCESS.toString(), 
+	                    BeansMessages.BEAN_SAVE_SUCESS.toString() 
 	                )
 	            );
     	} catch ( Exception e ) {
@@ -216,8 +212,8 @@ public class XEOBaseBean extends XEOBase {
     		        XUIRequestContext.getCurrentContext().addMessage(
     		                "Bean",
     		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
-    		                    "Erro", 
-    		                    "Os seus dados foram alterados por outro utilizador." 
+    		                    BeansMessages.TITLE_ERROR.toString(), 
+    		                    BeansMessages.DATA_CHANGED_BY_OTHER_USER.toString() 
     		                )
     		            );
     			} else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
@@ -225,7 +221,7 @@ public class XEOBaseBean extends XEOBase {
     					oRequestContext.addMessage( "viewBean_erros", new XUIMessage(
     							XUIMessage.TYPE_ALERT, 
     							XUIMessage.SEVERITY_ERROR,
-    							"Erro a gravar objecto relacionado",
+    							BeansMessages.ERROR_SAVING_RELATED_OBJECT.toString(),
     							boEx.getMessage()
     						)
     					);
@@ -611,8 +607,9 @@ public class XEOBaseBean extends XEOBase {
 									"error_edit_bridge",
 									new XUIMessage(XUIMessage.TYPE_ALERT,
 											XUIMessage.SEVERITY_ERROR,
-											"Erro a executar a operação",
-											"Não têm permissões para abrir o objecto selecionado."));
+											BeansMessages.ERROR_EXECUTING_OPERATION.toString(),
+											BeansMessages.NOT_ENOUGH_PERMISSIONS_TO_OPEN_OBJECT.toString()
+										));
 				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
@@ -623,8 +620,8 @@ public class XEOBaseBean extends XEOBase {
         			new XUIMessage( 
         					XUIMessage.TYPE_ALERT, 
         					XUIMessage.SEVERITY_ERROR, 
-        					"Erro a executar a operação",
-        					"Não foi possivel associar a brige a um atributo do objecto, operação cancelada!"
+        					BeansMessages.ERROR_EXECUTING_OPERATION.toString(),
+        					BeansMessages.ERROR_ASSOCIATING_BRIDGE.toString()
         			) 
         	);
         }
@@ -815,6 +812,7 @@ public class XEOBaseBean extends XEOBase {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public void showObjectErrors() {
         XUIRequestContext   oRequestContext;
         oRequestContext = XUIRequestContext.getCurrentContext();
@@ -850,7 +848,7 @@ public class XEOBaseBean extends XEOBase {
 			oRequestContext.addMessage( "viewBean_erros", new XUIMessage(
 					XUIMessage.TYPE_ALERT, 
 					XUIMessage.SEVERITY_ERROR,
-					"Erros",
+					BeansMessages.TITLE_ERRORS.toString(),
 					sErros.toString()
 				)
 			);
@@ -904,7 +902,6 @@ public class XEOBaseBean extends XEOBase {
         try {
 			AttributeBase oAtt = (AttributeBase)srcComponent.getParent();
 			AttributeHandler    oAttHandler = ((XEOObjectAttributeConnector)oAtt.getDataFieldConnector()).getAttributeHandler();
-			boDefAttribute      oAttDef     = oAttHandler.getDefAttribute();
 			
 			if( oAttHandler.getValueObject() != null ) {
 				long boui = oAttHandler.getValueLong();
@@ -948,23 +945,8 @@ public class XEOBaseBean extends XEOBase {
 	
 	public void canCloseTab() {
 		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
-		String val = oRequestContext.getRequestParameterMap().get(  oRequestContext.getEvent().getComponent().getClientId() );
 		XUIViewRoot viewRoot = oRequestContext.getViewRoot();
 		if( getIsChanged() ) {
-			
-//			{ 
-//		        title:'Alterações não guardadas?',
-//		        msg: 'Se continuar vai perder as alterações efectuadas.<br />Deseja mesmo continuar?',
-//		        buttons: Ext.MessageBox.YESNO, 
-//		        fn: function(a1,a2) {
-//					if( a1 == 'yes' ) {
-//						oComp.dialogForceClose = true;
-//						oTabCont.remove( oComp );
-//					}
-//				},
-//		        animEl: 'mb4',
-//		        icon: Ext.MessageBox.QUESTION
-//		    }			
 			String closeScript;
 			Window xWnd = (Window)viewRoot.findComponent(Window.class);
 			if( xWnd != null ) {
@@ -983,8 +965,8 @@ public class XEOBaseBean extends XEOBase {
 				closeScript = "XVW.closeView('" + viewRoot.getClientId() + "');";
 			}
 			ExtConfig messageBoxConfig = new ExtConfig();
-			messageBoxConfig.addJSString( "title" , "Alterações não foram guardadas");
-			messageBoxConfig.addJSString( "msg" , "Se continuar vai perder as alterações efectuadas.<br />Deseja mesmo continuar?");
+			messageBoxConfig.addJSString( "title" , BeansMessages.CHANGES_NOT_SAVED_TITLE.toString() );
+			messageBoxConfig.addJSString( "msg" , BeansMessages.CHANGES_NOT_SAVED_MESSAGE.toString() );
 			messageBoxConfig.add( "buttons" , "Ext.MessageBox.YESNO ");
 			messageBoxConfig.add( "fn",  "function(a1) { if( a1=='yes' ) { "+closeScript+" } }" );
 			messageBoxConfig.add( "icon", "Ext.MessageBox.QUESTION" );

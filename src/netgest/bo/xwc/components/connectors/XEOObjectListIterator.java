@@ -1,11 +1,6 @@
 package netgest.bo.xwc.components.connectors;
 
-import java.util.Iterator;
-
-import netgest.bo.parser.XEORecognizer;
-import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
-import netgest.bo.runtime.boRuntimeException;
 
 public class XEOObjectListIterator implements DataListIterator {
     

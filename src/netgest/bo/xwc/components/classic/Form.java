@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.el.MethodExpression;
 import javax.el.PropertyNotFoundException;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -15,17 +14,15 @@ import javax.faces.context.ResponseWriter;
 
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
-import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 
 import com.sun.faces.config.WebConfiguration;
 import com.sun.faces.renderkit.AttributeManager;
@@ -332,6 +329,7 @@ public class Form extends XUIForm
 			return true;
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public void encodeChildren(FacesContext context, UIComponent component)
 				throws IOException {
@@ -361,7 +359,7 @@ public class Form extends XUIForm
 				XUIResponseWriter w = getResponseWriter();
 				w.startElement( HTMLTag.H1, component);
 				w.writeAttribute( HTMLAttr.STYLE , "color:red", null);
-				w.writeText( "Não têm permissões para realizar a operação!", null );
+				w.writeText( ComponentMessages.FORM_NOT_ENOUGH_PERMISSION.toString(), null );
 				w.endElement( HTMLTag.H1);
 			}
 		}

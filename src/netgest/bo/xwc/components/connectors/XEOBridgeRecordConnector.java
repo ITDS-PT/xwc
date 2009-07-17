@@ -5,7 +5,6 @@ import netgest.bo.runtime.boBridgeRow;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.boApplication;
-import netgest.bo.xwc.framework.XUIRequestContext;
 
 public class XEOBridgeRecordConnector extends XEOObjectConnector {
     

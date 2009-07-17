@@ -2,9 +2,7 @@ package netgest.bo.xwc.components.classic;
 
 import static netgest.bo.xwc.components.HTMLAttr.CELLPADDING;
 import static netgest.bo.xwc.components.HTMLAttr.CELLSPACING;
-import static netgest.bo.xwc.components.HTMLAttr.ID;
 import static netgest.bo.xwc.components.HTMLTag.COL;
-import static netgest.bo.xwc.components.HTMLTag.DIV;
 import static netgest.bo.xwc.components.HTMLTag.TABLE;
 import static netgest.bo.xwc.components.HTMLTag.TD;
 import static netgest.bo.xwc.components.HTMLTag.TR;
@@ -21,6 +19,7 @@ import javax.faces.context.FacesContext;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -75,7 +74,7 @@ public class AttributeDateTime extends AttributeDate {
 	                                                                    XUIMessage.TYPE_MESSAGE,
 	                                                                    XUIMessage.SEVERITY_ERROR,
 	                                                                    getLabel(),
-	                                                                    oSubmitedValue + " não está no formato correcto "
+	                                                                    ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
 	                                                               )
 	                                                );
 	                setValid( false );

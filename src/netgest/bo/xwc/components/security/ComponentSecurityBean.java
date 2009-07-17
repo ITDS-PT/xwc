@@ -24,6 +24,8 @@ import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector;
+import netgest.bo.xwc.components.localization.BeansMessages;
+import netgest.bo.xwc.components.localization.ViewersMessages;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -91,7 +93,7 @@ public class ComponentSecurityBean extends XEOBaseBean {
 	
 	@Override
 	public String getTitle() {
-		return "Seguranças";
+		return BeansMessages.VIEWER_SECURITY_TITLE.toString();
 	}
 	
 	public void setChildViewer( String sChildViewer ) {
@@ -192,8 +194,7 @@ public class ComponentSecurityBean extends XEOBaseBean {
 		Menu root;
 		
 		root = new Menu();
-		root.setText( "Componentes" );
-		
+		root.setText( BeansMessages.VIEWER_SECURITY_COMPONENTS.toString() );
 		String viewer = getSelectedViewer();
 		if( viewer != null && viewer.length() > 0 ) {
 			try {
@@ -281,8 +282,6 @@ public class ComponentSecurityBean extends XEOBaseBean {
 	@Override
 	public boObject getXEOObject() {
 		try {
-			EboContext ctx = getEboContext();
-			System.out.println( ctx.poolUniqueId() ); 
 			boObject obj;
 			
 			if( getCurrentObjectKey() == null )  {
@@ -402,8 +401,8 @@ public class ComponentSecurityBean extends XEOBaseBean {
 	        XUIRequestContext.getCurrentContext().addMessage(
 	                "Bean",
 	                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
-	                    "Sucesso", 
-	                    "Os seus dados foram guardados com sucesso." 
+	                    BeansMessages.TITLE_SUCCESS.toString(), 
+	                    BeansMessages.BEAN_SAVE_SUCESS.toString() 
 	                )
 	            );
 		}
@@ -456,35 +455,35 @@ public class ComponentSecurityBean extends XEOBaseBean {
 				if( intValue >= 0 ) {
 					ret.append( "<b><i>" );
 					if( intValue == SecurityPermissions.FULL_CONTROL ) {
-						ret.append("Controlo Total");
+						ret.append( ViewersMessages.SECURITY_FULL_CONTROL.toString() );
 					} else if( intValue == SecurityPermissions.NONE ) {
-						ret.append("Sem Acesso");
+						ret.append( ViewersMessages.SECURITY_NO_ACCESS.toString() );
 					} 
 					else {
 						boolean appendComma = false;
 						if( (intValue & SecurityPermissions.READ) > 0 ) {
-							ret.append( "Leitura" );
+							ret.append( ViewersMessages.SECURITY_READ.toString() );
 							appendComma = true;
 						}
 
 						if( (intValue & SecurityPermissions.WRITE) > 0 ) {
 							if( appendComma )
 								ret.append( ",&nbsp;" );
-							ret.append( "Escrita" );
+							ret.append( ViewersMessages.SECURITY_WRITE.toString() );
 							appendComma = true;
 						}
 
 						if( (intValue & SecurityPermissions.DELETE) > 0 ) {
 							if( appendComma )
 								ret.append( ",&nbsp;" );
-							ret.append( "Remover" );
+							ret.append( ViewersMessages.SECURITY_DELETE.toString() );
 							appendComma = true;
 						}
 
 						if( (intValue & SecurityPermissions.EXECUTE) > 0 ) {
 							if( appendComma )
 								ret.append( ",&nbsp;" );
-							ret.append( "Executar" );
+							ret.append( ViewersMessages.SECURITY_EXECUTE.toString() );
 							appendComma = true;
 						}
 					}

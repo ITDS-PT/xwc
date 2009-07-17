@@ -136,37 +136,6 @@ public class AttributeHtmlEditor extends AttributeBase {
             sOut.append( "} catch(e){} \n");
             sOut.append("});\n");
 
-            
-            /*
-            sOut.write( "Ext.onReady( function() { " ); sOut.write("\n");
-            sOut.write( "try { \n");
-            sOut.write( "var x = new ({\n");
-            sOut.write( "    id: '" + oComp.getClientId() + "',\n");
-            sOut.write( "    name: '" + oComp.getClientId() + "',\n");
-            sOut.write( "    renderTo: '" + oComp.getClientId() + "',\n");
-            sOut.write( "    value:'" + JavaScriptUtils.safeJavaScriptWrite(oHtmlComp.getDisplayValue(), '\'') + "',"  );
-            sOut.write( "    width: 600,\n");
-            sOut.write( "    height: 400,\n"); 
-            sOut.write( "    frame: false,\n");
-            sOut.write( "    layout: 'fit',\n");
-            sOut.write( "    frame: false,\n");
-            sOut.write( "    enableColors: true,\n"); 
-            sOut.write( "    enableAlignments: true,\n");
-            sOut.write( "    enableLinks: false\n");
-            sOut.write( "});\n");
-            sOut.write( "} catch(e){} \n");
-            sOut.write("});\n");
-			*/
-            
-            /*
-            sOut.write( "var " + oComp.getId() + " = new Ext.form.HtmlEditor({"); sOut.write("\n");
-            sOut.write( "renderTo: '" ); sOut.write( oComp.getClientId() ); sOut.write("',");
-            sOut.write( "width: 300,");
-            sOut.write( "height: 200,");
-            sOut.write( "name: '"); sOut.write( oComp.getClientId() ); sOut.write("'");
-            sOut.write("});");
-            */
-            
             return sOut.toString();
         }
 

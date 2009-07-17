@@ -24,6 +24,7 @@ import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
+import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
 import netgest.io.FSiFile;
@@ -83,9 +84,9 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 			} else if ( getDataType() == DataFieldTypes.VALUE_BOOLEAN ) {
 				sRetValue = oAttHandler.getValueString();
 				if ( "0".equals( sRetValue ) ) {
-					sRetValue = "Não";
+					sRetValue = ConnectorsMessages.TEXT_YES.toString();
 				} else if ( "1".equals( sRetValue ) ) {
-					sRetValue = "Sim";
+					sRetValue = ConnectorsMessages.TEXT_NO.toString();;
 				}
 			} else if ( getInputRenderType() == DataFieldTypes.RENDER_IFILE_LINK ) {
 				sRetValue = oAttHandler.getValueString();
@@ -191,7 +192,6 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 
         boDefAttribute      oDefAttr;
         ArrayList<String>   allDependencesList;
-        String[]            sEventDepences;
         boDefXeoCode        oXeoCode;
 
         allDependencesList = new ArrayList<String>();

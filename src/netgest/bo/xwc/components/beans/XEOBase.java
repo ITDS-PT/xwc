@@ -2,7 +2,6 @@ package netgest.bo.xwc.components.beans;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -244,11 +243,6 @@ public class XEOBase extends XEOSecurityBaseBean implements boPoolOwner, XUIView
     private static final byte	  USER_WORKQUEUES = 2;
     private static final byte	  USER_GROUPS = 3;
     private static final byte	  USER_PROFILES = 4;
-    
-    private Hashtable<Byte,String[]> cacheUserBriges = new Hashtable<Byte, String[]>();
-
-    
-    
     
     private String[] getUserBridge( byte type ) {
 		try {

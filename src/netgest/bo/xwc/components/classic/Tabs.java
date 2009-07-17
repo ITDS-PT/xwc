@@ -1,26 +1,20 @@
 package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
-
 import java.util.Iterator;
-import java.util.List;
 
 import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
-import netgest.bo.xwc.framework.XUIRenderer;
-import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
-
+import netgest.bo.xwc.framework.XUIRenderer;
+import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStateProperty;
-
-import org.w3c.dom.Text;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class Tabs extends XUIComponentBase
 {

@@ -8,17 +8,14 @@ import java.util.Date;
 import java.util.Map;
 
 import netgest.bo.def.boDefAttribute;
-import netgest.bo.def.boDefBridge;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.boApplication;
+import netgest.bo.xwc.components.localization.ConnectorsMessages;
 
 public class XEOObjectListGroupAttribute extends XEOObjectAttributeMetaData implements DataFieldConnector {
 
-	private static final SimpleDateFormat sdfDT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-    private static final SimpleDateFormat sdfD = new SimpleDateFormat("dd/MM/yyyy");
-	
 	private XEOObjectListGroupConnector parent;
 	private int 						row;
 	private boolean 					displayValue;
@@ -58,9 +55,9 @@ public class XEOObjectListGroupAttribute extends XEOObjectAttributeMetaData impl
 			} else if ( getDataType() == DataFieldTypes.VALUE_BOOLEAN ) {
 				sRetValue = (String)attValue;
 				if ( "0".equals( sRetValue ) ) {
-					sRetValue = "Não";
+					sRetValue = ConnectorsMessages.TEXT_NO.toString();
 				} else if ( "1".equals( sRetValue ) ) {
-					sRetValue = "Sim";
+					sRetValue = ConnectorsMessages.TEXT_YES.toString();
 				}
 			} else if ( getInputRenderType() == DataFieldTypes.RENDER_IFILE_LINK ) {
 				sRetValue = String.valueOf( attValue );
@@ -86,6 +83,7 @@ public class XEOObjectListGroupAttribute extends XEOObjectAttributeMetaData impl
 			} else if ( getDataType() == DataFieldTypes.VALUE_DATE || getDataType() == DataFieldTypes.VALUE_DATETIME ) {
 				Date oDate = new Date(((Timestamp)attValue).getTime());
 				if( oDate != null ) {
+					SimpleDateFormat sdfD = new SimpleDateFormat("dd/MM/yyyy");
 					sRetValue = sdfD.format( oDate );
 				} else {
 					sRetValue = null;

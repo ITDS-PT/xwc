@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
+	<xvw:viewer 
+		beanClass='netgest.bo.xwc.components.viewers.beans.BuilderBean' 
+		localizationClasses='netgest.bo.xwc.components.localization.ViewersMessages'
+		beanId='viewBean'>
+		<xvw:form id='builder'>
+			<title>@{BUILDER_ALERT_TITLE}</title>
+			<xvw:errorMessages></xvw:errorMessages>
+			<xvw:section label='@{BUILD_BUILD_OPTIONS}'>
+				<xvw:rows labelWidth='200' columns='3'>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attribute onChangeSubmit='true'
+								valueExpression='#{viewBean.buildOptions.buildDatabase}'
+								inputType='attributeBoolean' label="@{BUILD_CREATE_DATABASE}"></xvw:attribute>
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:attribute valueExpression='#{viewBean.buildOptions.generateAndCompileJava}'
+								inputType='attributeBoolean' label="@{BUILD_CREATE_JAVA}"></xvw:attribute>
+						</xvw:cell>
+					</xvw:row>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attribute valueExpression='#{viewBean.buildOptions.buildWorkplaces}'
+								inputType='attributeBoolean' label='@{BUILD_WORKPLACES}'></xvw:attribute>
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:attribute valueExpression='#{viewBean.buildOptions.removeUserWorkplaces}'
+								inputType='attributeBoolean' label="@{BUILD_REMOVE_WORKPLACES}"></xvw:attribute>
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:attribute valueExpression='#{viewBean.buildOptions.fullBuild}'
+								inputType='attributeBoolean' label='@{BUILD_REMOVE_WORKPLACES}'></xvw:attribute>
+						</xvw:cell>
+					</xvw:row>
+				</xvw:rows>
+			</xvw:section>
+			<xvw:rows>
+				<xvw:row>
+					<xvw:cell>
+						<xvw:actionButton id='buildBtn'
+							disabled='#{viewBean.btnBuildDisabled}' label='@{BUILD_START_BUILD}'
+							waitMode='2' serverAction='#{viewBean.startBuild}'>
+						</xvw:actionButton>
+						<xvw:actionButton id='buildBtnHidden'
+							renderComponent='false' serverAction='#{viewBean.build}'></xvw:actionButton>
+						<xvw:actionButton id='updateBtnHidden'
+							renderComponent='false' serverAction='#{viewBean.updateView}'></xvw:actionButton>
+					</xvw:cell>
+					<xvw:cell>
+						<xvw:attributeOutput label='Elapsed Time'
+							valueExpression='#{viewBean.elapsedTime}'></xvw:attributeOutput>
+					</xvw:cell>
+				</xvw:row>
+			</xvw:rows>
+			<xvw:section label='Build Progress'>
+				<xvw:rows columnWidths='150px,99%'>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attributeLabel text='@{BUILD_OVERALL_PROGRESS}'></xvw:attributeLabel>
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:progressBar valueExpression='#{viewBean.overallProgress}'
+								text='#{viewBean.overallTaskName}'>
+							</xvw:progressBar>
+						</xvw:cell>
+					</xvw:row>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attributeLabel text='@{BUILD_TASK_PROGRESS}'></xvw:attributeLabel>
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:progressBar valueExpression='#{viewBean.currentTaskProgress}'
+								text='#{viewBean.currentTaskName}'></xvw:progressBar>
+						</xvw:cell>
+					</xvw:row>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:section label='@{BUILD_LOG}'>
+								<xvw:attributeTextArea readOnly='true'
+									maxLength='256000' valueExpression='#{viewBean.logText}'
+									height='300' label='Build Log'></xvw:attributeTextArea>
+							</xvw:section>
+						</xvw:cell>
+					</xvw:row>
+					<xvw:row>
+					</xvw:row>
+				</xvw:rows>
+			</xvw:section>
+		</xvw:form>
+	</xvw:viewer>
+</xvw:root>

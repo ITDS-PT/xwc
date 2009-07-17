@@ -22,21 +22,8 @@ public class AttributePassword extends AttributeBase {
 
         @Override
         public void encodeEnd(XUIComponentBase oComp) throws IOException {
-            AttributePassword       oAttrText;
 
-            oAttrText = (AttributePassword)oComp; 
-            
-            XUIResponseWriter w = getResponseWriter();
-            /*
-            w.startElement( INPUT, oComp );
-            w.writeAttribute( HTMLAttr.STYLE, "width:" + oAttrText.getWidth() + "px", null );
-            w.writeAttribute( CLASS, "x-form-text x-form-field", null);
-            w.writeAttribute( ID, oComp.getClientId(), null );
-            w.writeAttribute( NAME, oComp.getClientId(), null );
-            w.writeAttribute( VALUE, oAttrText.getValue(), "value" );
-            w.endElement( INPUT );
-            */
-
+        	XUIResponseWriter w = getResponseWriter();
 
             // Place holder for the component
             w.startElement( DIV, oComp );

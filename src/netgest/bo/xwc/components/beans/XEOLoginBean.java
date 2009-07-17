@@ -12,9 +12,12 @@ import netgest.bo.system.boApplication;
 import netgest.bo.system.boLoginException;
 import netgest.bo.system.boSession;
 import netgest.bo.utils.IProfileUtils;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.localization.ViewersMessages;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class XEOLoginBean extends XEOSecurityLessBean {
 	
@@ -182,8 +185,8 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 					new XUIMessage( 
 						XUIMessage.TYPE_ALERT,
 						XUIMessage.SEVERITY_ERROR,
-						"Erro a efectuar Login",
-						"Password ou Utilizador inválido."
+						ViewersMessages.LOGIN_TITLE_ERROR_LOGIN.toString(),
+						ViewersMessages.LOGIN_INVALID_CREDENCIALS.toString()
 					)
 				);
 		}
@@ -193,22 +196,24 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 
 	public void logout() {
 		HttpSession session = getHttpSession( true );
-		session.removeAttribute("boSession");
-		session.invalidate();
 		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
 		HttpServletResponse oHttpResponse = (HttpServletResponse)oRequestContext.getResponse();
 		if( oRequestContext.isAjaxRequest() ) {
 			oRequestContext.getScriptContext().add(
 				XUIScriptContext.POSITION_HEADER,
 				"Login_Logout", 
-				"document.location.href='" + oRequestContext.getActionUrl( oRequestContext.getViewRoot().getViewId() ) + "'" 
+				XVWScripts.getCommandScript( 
+						(XUIComponentBase)oRequestContext.getViewRoot().findComponent("login:logoutBtn") , 
+						XVWScripts.WAIT_STATUS_MESSAGE 
+				)
 			);
 			oRequestContext.renderResponse();
 		}
 		else {
 			try {
+				session.removeAttribute("boSession");
+				session.invalidate();
 				oHttpResponse.sendRedirect( oRequestContext.getActionUrl( oRequestContext.getViewRoot().getViewId() ) );
-				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

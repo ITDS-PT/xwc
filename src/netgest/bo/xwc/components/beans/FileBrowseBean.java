@@ -67,7 +67,7 @@ public class FileBrowseBean extends XEOBase {
         );
 		
 		oRequestContext.setViewRoot(  
-			oRequestContext.getSessionContext().createView( "dummy.xvw" )
+			oRequestContext.getSessionContext().createView( "netgest/bo/xwc/viewers/Dummy.xvw" )
 		);
 		
 		oRequestContext.renderResponse();
@@ -81,7 +81,7 @@ public class FileBrowseBean extends XEOBase {
                 "});\n"
         );
 		oRequestContext.setViewRoot(  
-				oRequestContext.getSessionContext().createView( "dummy.xvw" )
+				oRequestContext.getSessionContext().createView( "netgest/bo/xwc/viewers/dummy.xvw" )
 			);
 			
 			oRequestContext.renderResponse();

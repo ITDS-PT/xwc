@@ -29,6 +29,7 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.xeodm.XEODMBuilder;
 import netgest.bo.xwc.framework.XUIMessage;
@@ -100,7 +101,7 @@ public class AttributeNumberLookup extends AttributeBase {
                                                                         XUIMessage.TYPE_MESSAGE,
                                                                         XUIMessage.SEVERITY_ERROR,
                                                                         getLabel(),
-                                                                        oSubmitedValue + " n�o est� no formato correcto "
+                                                                        ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
                                                                    )
                                                     );
                     setValid( false );
@@ -287,7 +288,7 @@ public class AttributeNumberLookup extends AttributeBase {
 //            dmb.put( "httpp","javax.faces.ViewState=" + sViewState );
 //            dmb.put( "httpp", "xvw.servlet=" + sServletId );
             
-            dmb.put("link", "http://jpnbook.itds.pt:8888" + sActionUrl );
+            dmb.put("link", sActionUrl );
             dmb.put("action", "open");
             oInpLsnr.add("'render'", "function(){ " +
             		"this.getEl().dom.onclick=function(event){" +
@@ -297,8 +298,6 @@ public class AttributeNumberLookup extends AttributeBase {
 //					"	}" +
             		"};" +
             		"}" );
-            
-            System.out.println( dmb.toUrlString() );
             
             return sOut.toString();
         }
@@ -329,7 +328,8 @@ public class AttributeNumberLookup extends AttributeBase {
         }
         
         
-        public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
+        @SuppressWarnings("unchecked")
+		public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
         	HttpServletResponse resp = (HttpServletResponse)response;
         	
         	AttributeFile oFile = (AttributeFile)comp;
@@ -342,8 +342,7 @@ public class AttributeNumberLookup extends AttributeBase {
         		XEOObjectAttributeConnector oXeoConnector = (XEOObjectAttributeConnector)oConnector;
 	        	if( "POST".equals( hRequest.getMethod() ) && hRequest instanceof XUIMultiPartRequestWrapper ) {
 	        		XUIMultiPartRequestWrapper mRequest = (XUIMultiPartRequestWrapper)hRequest;
-	        		@SuppressWarnings("unused")
-					Enumeration enumFiles = mRequest.getFileNames();
+					Enumeration<Object> enumFiles = mRequest.getFileNames();
 	        		if( enumFiles.hasMoreElements() ) {
 	        			String fname = (String)enumFiles.nextElement();
 	        			File file = mRequest.getFile( fname );

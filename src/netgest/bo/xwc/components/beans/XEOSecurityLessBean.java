@@ -1,7 +1,5 @@
 package netgest.bo.xwc.components.beans;
 
-import java.util.Map;
-
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.security.ComponentSecurityMap;
 

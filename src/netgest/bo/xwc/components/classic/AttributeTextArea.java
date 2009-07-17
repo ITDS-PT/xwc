@@ -1,12 +1,12 @@
 package netgest.bo.xwc.components.classic;
 
-import com.sun.faces.io.FastStringWriter;
+import static netgest.bo.xwc.components.HTMLAttr.ID;
+import static netgest.bo.xwc.components.HTMLTag.DIV;
 
 import java.io.IOException;
 
 import javax.faces.context.FacesContext;
 
-import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
@@ -15,8 +15,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
-import static netgest.bo.xwc.components.HTMLAttr.*;
-import static netgest.bo.xwc.components.HTMLTag.*;
+import com.sun.faces.io.FastStringWriter;
 
 public class AttributeTextArea extends AttributeBase {
 

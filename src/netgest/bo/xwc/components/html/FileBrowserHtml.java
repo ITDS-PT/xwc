@@ -1,16 +1,16 @@
 package netgest.bo.xwc.components.html;
 
-import java.io.File;
-import java.io.IOException;
 import static netgest.bo.xwc.components.HTMLAttr.CELLPADDING;
 import static netgest.bo.xwc.components.HTMLAttr.CELLSPACING;
 import static netgest.bo.xwc.components.HTMLAttr.WIDTH;
 import static netgest.bo.xwc.components.HTMLTag.TABLE;
 import static netgest.bo.xwc.components.HTMLTag.TR;
 
+import java.io.File;
+import java.io.IOException;
+
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
-import netgest.bo.xwc.components.classic.HTMLFileBrowse;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -18,7 +18,6 @@ import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
-
 import netgest.io.FSiFile;
 import netgest.io.iFile;
 /**

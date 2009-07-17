@@ -9,23 +9,18 @@ import netgest.bo.ql.QLParser;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
-import netgest.bo.security.securityOPL;
-import netgest.bo.security.securityRights;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
 import netgest.bo.xwc.components.classic.Window;
-import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
-import netgest.bo.xwc.components.connectors.XEOObjectConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
-import netgest.bo.xwc.components.security.SecurityPermissions;
+import netgest.bo.xwc.components.localization.BeansMessages;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 public class XEOBaseList extends XEOBase {
@@ -77,11 +72,11 @@ public class XEOBaseList extends XEOBase {
         			new XUIMessage( 
         					XUIMessage.TYPE_ALERT, 
         					XUIMessage.SEVERITY_ERROR, 
-        					"Erro", 
-        					"O objecto selecionado não existe!" 
+        					BeansMessages.TITLE_ERROR.toString(), 
+        					BeansMessages.SELECTED_OBJECT_NOT_EXISTS.toString() 
         			)
         	);
-        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("error.xvw") );
+        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("netgest/bo/xwc/viewers/Error.xvw") );
         }
         else {
         	oEditBean.setCurrentObjectKey( String.valueOf( oActiveRow.getAttribute("BOUI").getValue() ) );
@@ -129,7 +124,7 @@ public class XEOBaseList extends XEOBase {
 	    		QLParser qp = this.currentObjectList.getQLParser(); 
 	    		boDefHandler oBoDef = qp.getObjectDef();
 	    		if( oBoDef != null ) {
-	    			sTitle = "Lista de " + oBoDef.getLabel();
+	    			sTitle =  BeansMessages.LIST_OF.toString() + " " + oBoDef.getLabel();
 	    		}
 	    	}
 	    	return sTitle;

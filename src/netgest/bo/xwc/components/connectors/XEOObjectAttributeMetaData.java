@@ -11,13 +11,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import netgest.bo.def.boDefAttribute;
-import netgest.bo.def.boDefHandler;
 import netgest.bo.lovmanager.LovManager;
 import netgest.bo.lovmanager.lovObject;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
-import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.security.SecurityPermissions;
