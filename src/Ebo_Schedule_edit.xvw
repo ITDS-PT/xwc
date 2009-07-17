@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by precatado (ITds) -->
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
+	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseBean" beanId="viewBean">
+		<xvw:form id="form1">
+			<xvw:title valueExpression="#{viewBean.title}"/>
+			<xvw:toolBar id="MyTool">
+				<xvw:menu id="save" text="Guardar" icon="ext-xeo/images/menus/gravar.gif" serverAction="#{viewBean.save}"/>
+				<xvw:menu id="saveandclose" text="Guardar e Fechar" icon="ext-xeo/images/menus/gravar_e_sair.gif" serverAction="#{viewBean.saveAndClose}"/>
+				<xvw:menu id="remove" text="Remover" icon="ext-xeo/images/menus/cancel.gif" serverAction="#{viewBean.remove}"/>
+			</xvw:toolBar>
+			<xvw:panel>
+				<xvw:errorMessages/>
+			</xvw:panel>
+			<xvw:panel>
+				<xvw:panel>
+					<xvw:tabs>
+						<xvw:tab label="Geral">
+							<xvw:rows>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="id"/>
+									</xvw:cell>
+									<xvw:cell/>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="description"/>
+									</xvw:cell>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="performer"/>
+									</xvw:cell>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="lastresultcode"/>
+									</xvw:cell>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="executiontime"/>
+									</xvw:cell>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="lastruntime"/>
+									</xvw:cell>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="nextruntime"/>
+									</xvw:cell>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="state"/>
+									</xvw:cell>
+									<xvw:cell/>
+								</xvw:row>								
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="errormessage"/>
+									</xvw:cell>
+								</xvw:row>
+							</xvw:rows>
+						</xvw:tab>
+						<xvw:tab label="Agendamento">
+							<xvw:rows>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="javaclass"/>
+									</xvw:cell>
+									<xvw:cell/>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="parameters"/>
+									</xvw:cell>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="onerrorpar"/>
+									</xvw:cell>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="type"/>
+									</xvw:cell>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="interval"/>
+									</xvw:cell>
+									<xvw:cell/>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="startdate"/>
+									</xvw:cell>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="enddate"/>
+									</xvw:cell>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="every"/>
+									</xvw:cell>
+									<xvw:cell/>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="when"/>
+									</xvw:cell>
+									<xvw:cell/>
+								</xvw:row>
+							</xvw:rows>
+						</xvw:tab>
+					</xvw:tabs>
+				</xvw:panel>
+			</xvw:panel>
+		</xvw:form>
+	</xvw:viewer>
+</xvw:root>
