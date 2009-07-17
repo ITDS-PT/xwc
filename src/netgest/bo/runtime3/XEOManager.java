@@ -17,7 +17,6 @@ import netgest.bo.runtime.boObjectFactoryData;
 import netgest.bo.runtime.boObjectListResultFactoryLegacy;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.cacheBouis;
-import netgest.utils.DataUtils;
 
 public class XEOManager {
 
@@ -104,7 +103,8 @@ public class XEOManager {
         	ctx.getDataBaseDriver().getDBSequence( ctx.getConnectionSystem(), "borptsequence", Driver.SEQUENCE_NEXTVAL ); 
     }
 	
-    private boObject getObject(EboContext ctx, String name) throws boRuntimeException {
+    @SuppressWarnings("unchecked")
+	private boObject getObject(EboContext ctx, String name) throws boRuntimeException {
 	    try
 	    {
 	        boDefHandler bodef = boDefHandler.getBoDefinition(name);

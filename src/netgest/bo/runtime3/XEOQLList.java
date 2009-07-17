@@ -28,23 +28,23 @@ public class XEOQLList implements XEOList {
 
 	public void execute(String query, List<Object> queryArguments, int page, int pageSize) {
 		this.boql 		= query;
-		this.boqlArgs 	= queryArguments;
+//		this.boqlArgs 	= queryArguments;
 		this.page = page;
 		this.pageSize = pageSize;
 		execute();
 	}
 
 	private String 			boql;
-	private List<Object>	boqlArgs;
+//	private List<Object>	boqlArgs;
 	private int				page				= 1;	
 	private int				pageSize 			= 50;
-	private FilterTerms		filterTerms;
-	private SortTerms		sortTerms;
-	private String			searchText;
+//	private FilterTerms		filterTerms;
+//	private SortTerms		sortTerms;
+//	private String			searchText;
 	private boDefHandler	boDefHandler;
 	
-	private int				preLoadCount 		= pageSize;
-	private boolean			preLoadCountDefault = true;
+//	private int				preLoadCount 		= pageSize;
+//	private boolean			preLoadCountDefault = true;
 	
 	private DataSet			dataSet;
 	
@@ -82,32 +82,32 @@ public class XEOQLList implements XEOList {
 		this.page = pageNo;
 	}
 
-	public void setPageSize(int pageSize) {
-		this.pageSize = pageSize;
-		if( this.preLoadCountDefault )
-			this.preLoadCount = pageSize;
-	}
-
-	public void setFilterTerms( FilterTerms filterTerms ) {
-		this.filterTerms = filterTerms;
-	}
-
-	public void setSearchText(String searchText) {
-		this.searchText = searchText;
-	}
-
-	public void setSortTerms(SortTerms sortTerms) {
-		this.sortTerms = sortTerms;
-	}
+//	public void setPageSize(int pageSize) {
+//		this.pageSize = pageSize;
+//		if( this.preLoadCountDefault )
+//			this.preLoadCount = pageSize;
+//	}
+//
+//	public void setFilterTerms( FilterTerms filterTerms ) {
+//		this.filterTerms = filterTerms;
+//	}
+//
+//	public void setSearchText(String searchText) {
+//		this.searchText = searchText;
+//	}
+//
+//	public void setSortTerms(SortTerms sortTerms) {
+//		this.sortTerms = sortTerms;
+//	}
 
 	public void setQuery( String boql ) {
 		this.boql = boql;
 	}
 
-	public void setQuery( String boql, List<Object> boqlArguments ) {
-		this.boql = boql;
-		this.boqlArgs = boqlArguments;
-	}
+//	public void setQuery( String boql, List<Object> boqlArguments ) {
+//		this.boql = boql;
+//		this.boqlArgs = boqlArguments;
+//	}
 	
 	public boDefHandler	getBoDefinition() {
 		return this.boDefHandler;
@@ -139,7 +139,7 @@ public class XEOQLList implements XEOList {
 	
 	private long _executeRecordCount() {
 		QLParser qp 	= new QLParser();
-		String 	 sql 	= "SELECT COUNT(*) FROM (" + qp.toSql( this.boql, this.transaction.getEboContext() ) + ")";
+//		String 	 sql 	= "SELECT COUNT(*) FROM (" + qp.toSql( this.boql, this.transaction.getEboContext() ) + ")";
 		
 		this.boDefHandler = qp.getObjectDef();
 //		XEOManager x = this.transaction.getManager();
@@ -165,13 +165,43 @@ public class XEOQLList implements XEOList {
 	private EboContext getEboContext() {
 		return boApplication.currentContext().getEboContext();
 	}
-	
-	private String composeFilterClause() {
-		return null;
+
+	@Override
+	public void setFilterTerms(FilterTerms filterTerms) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	private String composeOrderByClause() {
-		return null;
+	@Override
+	public void setPageSize(int pageSize) {
+		// TODO Auto-generated method stub
+		
 	}
+
+	@Override
+	public void setQuery(String boql, List<Object> boqlArguments) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSearchText(String searchText) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSortTerms(SortTerms sortTerms) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+//	private String composeFilterClause() {
+//		return null;
+//	}
+//
+//	private String composeOrderByClause() {
+//		return null;
+//	}
 
 }
