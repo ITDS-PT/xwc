@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
     <xvw:viewer beanClass='netgest.bo.xwc.components.beans.XEOBaseLookupList' beanId='viewBean'>
-        <xvw:form id='form2Group'>
+        <xvw:form id='formGroupLookup'>
             <xvw:window width="550" height='300' >
                 <xvw:title valueExpression='#{viewBean.title}' />
-                <xvw:gridPanel rowSelectionMode='#{viewBean.rowSelectionMode}' id='lookupPanel' dataSource="#{viewBean.dataList}">
+                <xvw:gridPanel rowSelectionMode='#{viewBean.rowSelectionMode}' id='formGroupLookupPanel' dataSource="#{viewBean.dataList}">
                     <xvw:columns>
                         <xvw:columnAttribute width='240' label='Nome' dataField='name' />                    
                         <xvw:columnAttribute width='190' label='Id' dataField='id' />
