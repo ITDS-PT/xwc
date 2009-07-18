@@ -209,7 +209,9 @@ public class JavaScriptArrayProvider {
                     }
                 }
                 else {
-                    oStringBuilder.append( ComponentMessages.GRID_INVALID_COLUMN.toString( sDataFields[i] ));
+                	oStringBuilder.append('\'');
+                    oStringBuilder.append( JavaScriptUtils.safeJavaScriptWrite( ComponentMessages.GRID_INVALID_COLUMN.toString( sDataFields[i] ), '\'') );
+                	oStringBuilder.append('\'');
                     //oStringBuilder.append( EMPTY_FIELD );
                 }
             }
