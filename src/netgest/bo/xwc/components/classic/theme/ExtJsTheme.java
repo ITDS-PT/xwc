@@ -64,9 +64,7 @@ public class ExtJsTheme implements XUITheme {
         // Utility Scrits
         scriptContext.add( XUIScriptContext.POSITION_HEADER , "s.gif", "Ext.BLANK_IMAGE_URL = '"+ ExtJsTheme.composeUrl("extjs/images/default/s.gif") + "';");
         scriptContext.add( XUIScriptContext.POSITION_FOOTER , "ExtQuickTips", "Ext.onReady( function() {Ext.QuickTips.init();} );" );
-
-        
-        scriptContext.add( XUIScriptContext.POSITION_FOOTER , "ExtQuickTips", "var App = new Ext.App({});" );
+        scriptContext.add( XUIScriptContext.POSITION_FOOTER , "Ext.App", "var App = new Ext.App({});" );
         
     }
     
