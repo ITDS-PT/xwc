@@ -66,7 +66,7 @@
 		<listener-class>netgest.bo.xwc.framework.http.XUISessionListener</listener-class>
 	</listener>
 	<session-config>
-		<session-timeout>22</session-timeout>
+		<session-timeout>1</session-timeout>
 	</session-config>
 	<mime-mapping>
 		<extension>html</extension>

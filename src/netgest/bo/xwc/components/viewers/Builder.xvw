@@ -6,7 +6,6 @@
 		beanId='viewBean'>
 		<xvw:form id='builder'>
 			<title>@{BUILDER_ALERT_TITLE}</title>
-			<xvw:errorMessages></xvw:errorMessages>
 			<xvw:section label='@{BUILD_BUILD_OPTIONS}'>
 				<xvw:rows labelWidth='200' columns='3'>
 					<xvw:row>
@@ -31,7 +30,7 @@
 						</xvw:cell>
 						<xvw:cell>
 							<xvw:attribute valueExpression='#{viewBean.buildOptions.fullBuild}'
-								inputType='attributeBoolean' label='@{BUILD_REMOVE_WORKPLACES}'></xvw:attribute>
+								inputType='attributeBoolean' label='@{BUILD_FORCE_FULL}'></xvw:attribute>
 						</xvw:cell>
 					</xvw:row>
 				</xvw:rows>

@@ -121,7 +121,7 @@ public class Window extends XUIComponentBase {
         oRequestContext = XUIRequestContext.getCurrentContext();
         oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER, this.getClientId() + "_closeLookup", 
                 "Ext.onReady( function() { " +
-                "if( "+this.getId()+" )" + this.getId() +  ".destroy();" +
+                "debugger; if( "+this.getId()+" )" + this.getId() +  ".destroy();" +
                 "else if(window.parent."+this.getId()+") window.parent." + this.getId() +  ".destroy();" +
                 "});\n"
         );

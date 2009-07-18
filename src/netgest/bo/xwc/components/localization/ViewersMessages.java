@@ -31,6 +31,9 @@ public interface ViewersMessages {
 	public static final XUILocalizedMessage BUILD_REMOVE_WORKPLACES = 
 		new XUILocalizedMessage( ViewersMessages.class.getName(), "BUILD_REMOVE_WORKPLACES" );
 	
+	public static final XUILocalizedMessage BUILD_FORCE_FULL = 
+		new XUILocalizedMessage( ViewersMessages.class.getName(), "BUILD_FORCE_FULL" );
+
 	public static final XUILocalizedMessage BUILD_TASK_PROGRESS = 
 		new XUILocalizedMessage( ViewersMessages.class.getName(), "BUILD_TASK_PROGRESS" );
 

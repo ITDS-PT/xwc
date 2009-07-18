@@ -64,6 +64,12 @@ XVW.ErrorDialog = function( sTitle, sMessage ) {
 XVW.Wait = function( iWaitMode ) {
     if( iWaitMode == '1' )
     {
+//    	if( !ExtXeo.loadMask ) {
+//    		ExtXeo.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: ExtXeo.Messages.SENDING_DATA });
+//    	}
+//    	ExtXeo.loadMask.show();    	
+
+    	/*
         Ext.MessageBox.show({
            title: ExtXeo.Messages.PROCESSING + '      ',
            msg: ExtXeo.Messages.SENDING_DATA,
@@ -73,6 +79,7 @@ XVW.Wait = function( iWaitMode ) {
            icon:'ext-mb-download', //custom class in msg-box.html
            animEl: 'mb7'
        });
+       */
     }
 }
 
@@ -81,9 +88,12 @@ XVW.beforeApplyHtml = function( oDNode ) {
 }
 
 XVW.NoWait = function() {
-	if( Ext.MessageBox.getDialog().title == ExtXeo.Messages.PROCESSING + '      ' ) {
-		Ext.MessageBox.hide();
-	}
+//	if( ExtXeo.loadMask ) {
+//		window.setTimeout( 'ExtXeo.loadMask.hide();', 1 );
+//	}
+	//if( Ext.MessageBox.getDialog().title == ExtXeo.Messages.PROCESSING + '      ' ) {
+	//	Ext.MessageBox.hide();
+	//}
 }
 
 XVW.openCommandTab = function( sFrameName, sFormId, sActionId, sActionValue, sTabTitle ) {

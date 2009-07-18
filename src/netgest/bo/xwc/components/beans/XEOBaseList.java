@@ -76,7 +76,7 @@ public class XEOBaseList extends XEOBase {
         					BeansMessages.SELECTED_OBJECT_NOT_EXISTS.toString() 
         			)
         	);
-        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("netgest/bo/xwc/viewers/Error.xvw") );
+        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Error.xvw") );
         }
         else {
         	oEditBean.setCurrentObjectKey( String.valueOf( oActiveRow.getAttribute("BOUI").getValue() ) );

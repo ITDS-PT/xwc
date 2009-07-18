@@ -3,6 +3,7 @@ package netgest.bo.xwc.components.beans;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.classic.Window;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
@@ -22,15 +23,25 @@ public class XEOBaseOrphanEdit extends XEOBaseBean {
     	processValidate();
     	if( this.isValid() ) {
     		processUpdate();
+    		
 	        // Get the window in the viewer and close it!
 	        Window oWndComp 		= (Window)getViewRoot().findComponent( Window.class );
-	        oWndComp.destroy();
-	
+    		if( oWndComp != null ) {
+    			oWndComp.destroy();
+    		}
+    		else {
+        		XVWScripts.closeView( oRequestContext.getViewRoot() );
+        		oRequestContext.getViewRoot().setRendered( false );
+        		oRequestContext.renderResponse();
+    		}
+    		
 	        // Trigger parent view sync with server
 	        XUIViewRoot oParentViewRoot = getParentView();
-	        oParentViewRoot.syncClientView();
+	        if( oParentViewRoot != null ) {
+		        oParentViewRoot.syncClientView();
+	        }
 	        
-	        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/viewers/Dummy.xvw" ) );
+	        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/components/viewers/Dummy.xvw" ) );
     	}
 
     }
@@ -93,13 +104,8 @@ public class XEOBaseOrphanEdit extends XEOBaseBean {
         Window oWndComp 		= (Window)getViewRoot().findComponent( Window.class );
         oWndComp.destroy();
 
-        // Trigger parent view sync with server
-        //XUIViewRoot oParentViewRoot = getParentView();
-        //oParentViewRoot.syncClientView();
-        
         this.bTransactionStarted = false;
-        
-        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/viewers/Dummy.xvw" ) );
+        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/components/viewers/Dummy.xvw" ) );
 
     }
 

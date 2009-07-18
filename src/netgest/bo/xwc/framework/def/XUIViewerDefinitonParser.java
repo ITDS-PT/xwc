@@ -174,37 +174,37 @@ public class XUIViewerDefinitonParser
         	boolean found = false;
         	
     		String[] localizationClasses = vwrDef.getLocalizationClasses();
-    		
-    		for( String localizationClass : localizationClasses  ) {
-	    		if( localizationClass != null && localizationClass.trim().length() > 0 ) {
-	    			try {
-						String 	fieldName = m.group(1); 
-						Class 	classInst = Class.forName( localizationClass );
-						try {
-							Field field = classInst.getField( fieldName );
-							message = field.get( null ).toString();
-							found = true;
-							break;
-						} catch ( Exception e ) {
+    		if( localizationClasses != null ) {
+	    		for( String localizationClass : localizationClasses  ) {
+		    		if( localizationClass != null && localizationClass.trim().length() > 0 ) {
+		    			try {
+							String 	fieldName = m.group(1); 
+							Class 	classInst = Class.forName( localizationClass );
+							try {
+								Field field = classInst.getField( fieldName );
+								message = field.get( null ).toString();
+								found = true;
+								break;
+							} catch ( Exception e ) {
+							}
+						} catch (Exception e) {
+							throw new RuntimeException(e);
 						}
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
+		    		}
+	    		}
+	    		if( !found ) {
+	    			StringBuilder sb = new StringBuilder();
+	        		for( String localizationClass : localizationClasses  ) {
+	    	    		if( localizationClass != null && localizationClass.trim().length() > 0 ) {
+	    	    			if( sb.length() > 0 )
+	    	    				sb.append( ',' );
+	    	    				
+		    				sb.append( localizationClass );
+	    	    		}
+	        		}
+	    			throw new RuntimeException( "Cannot find resource [" + message + "] on localization classes [" + sb.toString() + "]" );
 	    		}
     		}
-    		if( !found ) {
-    			StringBuilder sb = new StringBuilder();
-        		for( String localizationClass : localizationClasses  ) {
-    	    		if( localizationClass != null && localizationClass.trim().length() > 0 ) {
-    	    			if( sb.length() > 0 )
-    	    				sb.append( ',' );
-    	    				
-	    				sb.append( localizationClass );
-    	    		}
-        		}
-    			throw new RuntimeException( "Cannot find resource [" + message + "] on localization classes [" + sb.toString() + "]" );
-    		}
-    		
     	}
     	return message;
     }

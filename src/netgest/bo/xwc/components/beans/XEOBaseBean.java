@@ -19,6 +19,7 @@ import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.classic.AttributeBase;
+import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
 import netgest.bo.xwc.components.classic.Window;
@@ -57,7 +58,7 @@ public class XEOBaseBean extends XEOBase {
     private String					sBridgeKeyToEdit;
     
     private boolean 				bValid = true;
-
+    
     /**
      * @return
      */
@@ -121,7 +122,9 @@ public class XEOBaseBean extends XEOBase {
     public void save() throws boRuntimeException {
     	processValidate();
     	if( this.isValid() ) {
+    		
     		processUpdate();
+    		
     	}
     }
     
@@ -198,6 +201,11 @@ public class XEOBaseBean extends XEOBase {
     	try {
     		getXEOObject().update();
     		getXEOObject().setChanged( false );
+    		oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_HEADER, 
+    				"message_success", 
+    				"window.parent.App.setAlert('" + BeansMessages.TITLE_SUCCESS.toString() + "','" + BeansMessages.BEAN_SAVE_SUCESS.toString() + "')"
+    		);
+    		/*
     		oRequestContext.addMessage(
 	                "Bean",
 	                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
@@ -205,6 +213,7 @@ public class XEOBaseBean extends XEOBase {
 	                    BeansMessages.BEAN_SAVE_SUCESS.toString() 
 	                )
 	            );
+    		*/
     	} catch ( Exception e ) {
     		if( e instanceof boRuntimeException ) {
     			boRuntimeException boEx = (boRuntimeException)e;
@@ -531,7 +540,15 @@ public class XEOBaseBean extends XEOBase {
         // Obtem a bean do objecto a ser editado
         // e associa o objecto do parametro
         if( oAttDef != null ) {
-            DataRecordConnector oSelectedRow = oGrid.getActiveRow();
+
+        	DataRecordConnector oSelectedRow = oGrid.getActiveRow();
+            if( oSelectedRow == null ) {
+            	String value = (String)oCommand.getValue();
+            	if( value != null ) {
+            		oSelectedRow = oGrid.getRowByIdentifier( value );
+            	}
+            }
+            
     		sBridgeKeyToEdit = String.valueOf( oSelectedRow.getAttribute("BOUI").getValue() );
     		
     		try {
@@ -540,13 +557,18 @@ public class XEOBaseBean extends XEOBase {
 				if (securityRights.canRead(getEboContext(), childObj.getName())) {
 					if (oAttDef.getChildIsOrphan()) {
 						if (oRequestContext.isAjaxRequest()) {
+							// Resubmit the to the command... to save the selected row.
+							oCommand.setValue( oSelectedRow
+									.getAttribute("BOUI")
+									.getValue().toString());
+									
 							oRequestContext.getScriptContext().add(
 									XUIScriptContext.POSITION_FOOTER,
 									"editBrigde_openTab",
 									XVWScripts.getOpenCommandTab(oCommand,
-											String.valueOf(oSelectedRow
-													.getAttribute("BOUI")
-													.getValue())));
+											""
+									));
+									
 							oRequestContext.renderResponse();
 						} else {
 							String sClassName;
@@ -989,6 +1011,8 @@ public class XEOBaseBean extends XEOBase {
 			}
     		XVWScripts.closeView( viewRoot );
     		oRequestContext.getViewRoot().setRendered( false );
+    		oRequestContext.getViewRoot().setTransient( true );
+    		
 		}
 		oRequestContext.renderResponse();
 	}

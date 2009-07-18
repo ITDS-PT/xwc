@@ -8,6 +8,8 @@ import javax.el.ValueExpression;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import netgest.bo.runtime.EboContext;
+import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.beans.ViewerConfig;
 import netgest.bo.xwc.components.classic.ViewerCommandSecurityBase;
 import netgest.bo.xwc.components.security.SecurableComponent;
@@ -32,6 +34,7 @@ public class Menu extends ViewerCommandSecurityBase {
     private XUIStateBindProperty<String> workQueues = new XUIStateBindProperty<String>( "workQueues", this, String.class );
     private XUIStateBindProperty<String> groups = new XUIStateBindProperty<String>( "groups", this, String.class );
     private XUIStateBindProperty<String> profiles = new XUIStateBindProperty<String>( "profiles", this, String.class );
+    private XUIStateBindProperty<String> profile = new XUIStateBindProperty<String>( "profile", this, String.class );
     
     
     public void setRoles( String sExpression ) {
@@ -65,7 +68,14 @@ public class Menu extends ViewerCommandSecurityBase {
     public String getProfiles() {
     	return this.profiles.getEvaluatedValue();
     }
-    
+
+    public void setProfile( String sExpression ) {
+    	this.profile.setExpressionText( sExpression );
+    }
+
+    public String getProfile() {
+    	return this.profile.getEvaluatedValue();
+    }
     
     public void setText(String sText) {
         this.sText.setValue( sText );
@@ -143,6 +153,9 @@ public class Menu extends ViewerCommandSecurityBase {
 			ret = ret==null||ret==false?check( ret, "userWorkQueues", getWorkQueues() ):ret;
 			ret = ret==null||ret==false?check( ret, "userGroups", getGroups() ):ret;
 			ret = ret==null||ret==false?check( ret, "userProfiles", getProfiles() ):ret;
+			
+			ret = checkProfile( ret );
+			
 			if( ret == null ) {
 				ret = true;
 			}
@@ -170,6 +183,24 @@ public class Menu extends ViewerCommandSecurityBase {
 	    		}
 	    	}
     		return true;
+    	}
+    	return ret;
+    }
+
+    private Boolean checkProfile( Boolean ret ) {
+    	String profile = getProfile();
+    	if( profile != null && profile.length() > 0 ) {
+    		if( boApplication.currentContext() != null ) {
+    			EboContext ctx = boApplication.currentContext().getEboContext();
+    			if( ctx != null ) {
+    				String userProfile = ctx.getBoSession().getPerformerIProfileName();
+    				List<String> profiles = Arrays.asList( profile.split(",") );
+    				if( !profiles.contains( userProfile ) ) {
+    					ret = false;
+    				}
+    			}
+    		}
+    		
     	}
     	return ret;
     }

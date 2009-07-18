@@ -107,7 +107,7 @@ public class XEOBaseLookupList extends XEOBaseList {
         
         // Only set the dummy view if is the same
         if( oRequestContext.getViewRoot() == oViewRoot )
-        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/viewers/Dummy.xvw" ) );
+        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/components/viewers/Dummy.xvw" ) );
 
     }
     

@@ -12,10 +12,9 @@
                 onRowDoubleClick='#{viewBean.rowDoubleClick}' 
                 id='users'
                 autoExpandColumn='name'
-                autoHeight='true'
-                layout="">
+                >
                 <xvw:columns>
-                    <xvw:columnAttribute width='150' label='Utilizador' dataField='userName' />
+                    <xvw:columnAttribute width='150' label='Utilizador' dataField='username' />
                     <xvw:columnAttribute width='300' label='Nome' dataField='name' />
                 </xvw:columns>
             </xvw:gridPanel>

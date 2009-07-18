@@ -1,5 +1,6 @@
 package netgest.bo.xwc.components.classic.scripts;
 
+import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -90,6 +91,14 @@ public class XVWScripts {
             "'" + oComponent.getId() + "'," +
             "'" + sActionValue + "'" +
             ");";
+    }
+    
+    public static final String getSyncClientViewScript( XUIViewRoot viewRoot ) {
+    	Form form = (Form)viewRoot.findComponent( Form.class );
+    	if( form != null ) {
+    		return "XVW.syncView('" + form.getClientId() + "');";
+    	}
+    	return "";
     }
     
     public static final void closeView( XUIViewRoot oViewRoot ) {

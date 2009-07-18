@@ -349,7 +349,9 @@ public class XUICommand extends XUIComponentBase implements ActionSource2 {
 	        }
         }
         finally {
-            XUIRequestContext.getCurrentContext().setEvent( null );
+        	if( XUIRequestContext.getCurrentContext() != null ) {
+        		XUIRequestContext.getCurrentContext().setEvent( null );
+        	}
         }
     }
 

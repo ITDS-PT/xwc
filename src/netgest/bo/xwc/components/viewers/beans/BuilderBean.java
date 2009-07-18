@@ -103,6 +103,7 @@ public class BuilderBean {
 				boApplication bapp = boApplication.getApplicationFromStaticContext("XEO");
 				session = bapp.boLogin( "SYSTEM" , boLoginBean.getSystemKey() );
 				ctx = session.createRequestContext(  null, null, null);
+				XUIRequestContext.getCurrentContext().getTransactionManager().release();
 				boBuilder.buildAll( ctx, this.buildOptions, this.buildProgress );
 				buildSucess = true;
 			}
@@ -173,7 +174,6 @@ public class BuilderBean {
 			XUIViewRoot		  viewRoot		 = requestContext.getViewRoot();
 			
 			XUICommand 	hiddenCommand = (XUICommand)viewRoot.findComponent( "builder:buildBtnHidden" );
-
     		XUICommand 	updateCommand = (XUICommand)viewRoot.findComponent( "builder:updateBtnHidden" );
 			
 			builderInProgress = true;

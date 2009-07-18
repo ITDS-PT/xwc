@@ -35,7 +35,7 @@ public class GridPanelJSonRenderer {
         	}
         }
         
-        String[] selRows = new String[] { oGrid.getActiveRowByIdentifier() }; 
+        String[] selRows = new String[] { oGrid.getActiveRowIdentifier() }; 
         
         oJsArrayProvider = new JavaScriptArrayProvider( dataIterator, oColumns, start, limit );
         

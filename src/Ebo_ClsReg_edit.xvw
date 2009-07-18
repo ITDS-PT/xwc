@@ -48,9 +48,9 @@
 						</xvw:rows>
 					</xvw:tab>
 					<xvw:tab label="Atributos">
-						<xvw:rows>
+						<xvw:rows> 
 							<xvw:row>
-								<xvw:gridPanel rowSelectionMode="MULTI_ROW" objectAttribute="attributes" id="attributes">
+								<xvw:gridPanel rowSelectionMode="ROW" objectAttribute="attributes" id="attributes" >
 									<!--xvw:toolBar>
 										<xvw:menu text="Adicionar" icon="ext-xeo/images/menus/adicionar-bridge.gif" value="form1:attributes" serverAction="#{viewBean.lookupBridge}"/>
 										<xvw:menu text="Remover" icon="ext-xeo/images/menus/remover-bridge.gif" value="form1:attributes" serverAction="#{viewBean.removeFromBridge}"/>
@@ -66,7 +66,7 @@
 					<xvw:tab label="Métodos">
 						<xvw:rows>
 							<xvw:row>
-								<xvw:gridPanel rowSelectionMode="MULTI_ROW" objectAttribute="methods" id="methods">
+								<xvw:gridPanel rowSelectionMode="ROW" objectAttribute="methods" id="methods">
 									<!--xvw:toolBar>
 										<xvw:menu text="Adicionar" icon="ext-xeo/images/menus/adicionar-bridge.gif" value="form1:methods" serverAction="#{viewBean.lookupBridge}"/>
 										<xvw:menu text="Remover" icon="ext-xeo/images/menus/remover-bridge.gif" value="form1:methods" serverAction="#{viewBean.removeFromBridge}"/>

@@ -610,7 +610,7 @@ public class GridPanel extends ViewerInputSecurityBase {
         this.sActiveRow.setValue( rowIdentifier );
     }
 
-    public String getActiveRowByIdentifier() {
+    public String getActiveRowIdentifier() {
         return this.sActiveRow.getValue();
     }
 
@@ -621,10 +621,17 @@ public class GridPanel extends ViewerInputSecurityBase {
     public DataRecordConnector getActiveRow() {
 
     	if( this.sActiveRow != null ) {
-        	return getDataSource().findByUniqueIdentifier( this.getActiveRowByIdentifier() );
+    		String rowId = this.getActiveRowIdentifier();
+    		if( rowId != null && rowId.length() > 0 ) {
+    			return getDataSource().findByUniqueIdentifier( rowId );
+    		}
         }
         return null;
         
+    }
+    
+    public DataRecordConnector getRowByIdentifier( String rowIdentifier ) {
+    	return getDataSource().findByUniqueIdentifier( rowIdentifier );
     }
     
     public DataRecordConnector[] getSelectedRows() {

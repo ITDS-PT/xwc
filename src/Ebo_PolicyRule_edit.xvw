@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by António (Itds) -->
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
-	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseOrphanEdit" beanId="viewBean">		
+	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseBean" beanId="viewBean">		
 		<xvw:form id="form1Regra">
-		  <xvw:window id="editWindow" width="550" height="400">
 			<xvw:title valueExpression="#{viewBean.title}"/>
 			<xvw:panel>
 			<xvw:toolBar id="MyTool">
-				<xvw:menu id="save" icon="ext-xeo/images/menus/gravar.gif" text="Guardar" serverAction="#{viewBean.confirm}"/>
+				<xvw:menu id="save" icon="ext-xeo/images/menus/gravar.gif" text="Guardar" serverAction="#{viewBean.save}"/>
 				<!--xvw:menu id='remove' text='Remover' serverAction="#{viewBean.remove}" /-->
 			</xvw:toolBar>
 			</xvw:panel>
@@ -52,7 +51,6 @@
 					</xvw:tab>
 				</xvw:tabs>
 			</xvw:panel>
-			</xvw:window>
 		</xvw:form>		
 	</xvw:viewer>
 </xvw:root>

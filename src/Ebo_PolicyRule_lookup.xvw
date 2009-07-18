@@ -2,17 +2,24 @@
 <!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by António (Itds) -->
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
 	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseLookupList" beanId="viewBean">
-		<xvw:form id="form2">
+		<xvw:form>
 			<xvw:window id="lookupWindow" width="550" height="400">
 				<xvw:title value="Lista de Regras"/>
-				<xvw:gridPanel rowSelectionMode="#{viewBean.rowSelectionMode}" id="lookupPanel" dataSource="#{viewBean.dataList}" onRowDoubleClick="#{viewBean.rowDoubleClick}">
-					<xvw:columns>
-						<xvw:columnAttribute width="150" dataField="name"/>
-						<xvw:columnAttribute width="150" dataField="description"/>
-						<xvw:columnAttribute width="150" dataField="typePolicy"/>
-					</xvw:columns>
-					<xvw:actionButton label="Confirmar" serverAction="#{viewBean.confirm}"/>
-				</xvw:gridPanel>
+				<xvw:panel>
+					<xvw:toolBar>
+						<xvw:menu text="Confirmar" icon='ext-xeo/images/menus/confirmar.gif' serverAction="#{viewBean.confirm}"></xvw:menu>
+						<xvw:menu text="Criar Novo" icon='ext-xeo/images/menus/adicionar-bridge.gif' serverAction="#{viewBean.addNew}"></xvw:menu>
+					</xvw:toolBar>
+				</xvw:panel>
+				<xvw:panel>
+					<xvw:gridPanel rowSelectionMode="#{viewBean.rowSelectionMode}" dataSource="#{viewBean.dataList}" onRowDoubleClick="#{viewBean.rowDoubleClick}">
+						<xvw:columns>
+							<xvw:columnAttribute width="150" dataField="name"/>
+							<xvw:columnAttribute width="150" dataField="description"/>
+							<xvw:columnAttribute width="150" dataField="typePolicy"/>
+						</xvw:columns>
+					</xvw:gridPanel>
+				</xvw:panel>
 			</xvw:window>
 		</xvw:form>
 	</xvw:viewer>

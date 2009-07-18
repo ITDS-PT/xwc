@@ -46,6 +46,10 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 		return getBoSession()!=null;
 	}
 
+	public boolean getDisableLogout() {
+		return getBoSession()==null;
+	}
+
 	public boSession getBoSession() {
 		HttpSession session = getHttpSession( false );
 		if( session != null ) {
@@ -144,10 +148,15 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 					XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
 					HttpServletResponse oHttpResponse = (HttpServletResponse)oRequestContext.getResponse();
 					session.setAttribute( "boSession", oXeoSession );
-					showProfiles = true;
+					showProfiles = false;
+					
+					if( getProfileLovMap().size() > 1 ) {
+						showProfiles = true;
+					}
+					
 					invalidCredentials = false;
 					Boolean showProfilesConfig = (Boolean)((HttpServletRequest)XUIRequestContext.getCurrentContext().getRequest()).getAttribute("__xwcShowUserProfiles");
-					if( showProfilesConfig != null && !showProfilesConfig.booleanValue()  ) {
+					if( (showProfilesConfig != null && !showProfilesConfig.booleanValue()) || !showProfiles  ) {
 						if( oRequestContext.isAjaxRequest() ) {
 							oRequestContext.getScriptContext().add(
 								XUIScriptContext.POSITION_HEADER,

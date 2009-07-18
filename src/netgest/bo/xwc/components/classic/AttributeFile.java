@@ -74,7 +74,7 @@ public class AttributeFile extends AttributeBase {
     	
     	XUISessionContext oSessionContext = getRequestContext().getSessionContext();
     	
-    	XUIViewRoot oViewRoot = oSessionContext.createChildView( "netgest/bo/xwc/viewers/FileBrowse.xvw" );
+    	XUIViewRoot oViewRoot = oSessionContext.createChildView( "netgest/bo/xwc/components/viewers/FileBrowse.xvw" );
     	getRequestContext().setViewRoot( oViewRoot );
     	
     	FileBrowseBean oFileBrowseBean = (FileBrowseBean)oViewRoot.getBean( "viewBean" );

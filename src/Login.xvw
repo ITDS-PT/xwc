@@ -5,7 +5,7 @@
     	beanId = 'viewBean'
 		localizationClasses = 'netgest.bo.xwc.components.localization.ViewersMessages'
     >  
-        <xvw:form id='login' defaultCommand='#{viewBean.login}'>
+        <xvw:form id='login' default_Command='#{viewBean.login}'>
 	        	<xvw:requestAction requestParameter='action'>
 	        		<!-- Define the action associated with the parameter -->
 	        		<xvw:requestActionValue value='logout' 	serverAction='#{viewBean.logout}' />
@@ -50,7 +50,7 @@
 					        					<xvw:actionButton label='@{BTN_CONFIRM}' action='#{viewBean.login}' width='80' ></xvw:actionButton>
 					        				</xvw:cell>
 					        				<xvw:cell>
-					        					<xvw:actionButton id='logoutBtn' label='@{LOGIN_LOGOUT}' width='80' action='#{viewBean.logout}'></xvw:actionButton>
+					        					<xvw:actionButton id='logoutBtn' disabled='#{viewBean.disableLogout}' label='@{LOGIN_LOGOUT}' width='80' action='#{viewBean.logout}'></xvw:actionButton>
 					        				</xvw:cell>
 					        			</xvw:row>
 					        		</xvw:rows>

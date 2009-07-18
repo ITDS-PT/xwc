@@ -3,10 +3,9 @@ XVW = function() {}
 // Send command to server
 XVW.Command = function( sFormId, sActionId, sActionValue, iWaitScreen ) {
     XVW.prv.cmdCntr = 0;
-    XVW.Wait( iWaitScreen );
     var oForm = XVW.prv.createCommand( sFormId, sActionId, sActionValue );
     if( oForm != null ) {
-        oForm.submit();   
+		oForm.submit();
     } 
     XVW.prv.removeCommand( sFormId, sActionId );
 }

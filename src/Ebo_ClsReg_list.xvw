@@ -7,11 +7,17 @@
 			<!--xvw:toolBar>
 				<xvw:menu target="Tab" text="Novo" serverAction="#{viewBean.addNew}"/>
 			</xvw:toolBar-->
-			<xvw:gridPanel rowSelectionMode="" dataSource="#{viewBean.dataList}" onRowDoubleClick="#{viewBean.rowDoubleClick}" id="users" autoExpandColumn="name">
+			<xvw:gridPanel 
+					rowSelectionMode="" 
+					dataSource="#{viewBean.dataList}" 
+					onRowDoubleClick="#{viewBean.rowDoubleClick}" 
+					id="users" 
+					autoExpandColumn="name"
+				>
 				<xvw:columns>
 					<xvw:columnAttribute width="150" label="Nome" dataField="name"/>
+					<xvw:columnAttribute width="200" label="Label" dataField="label"/>
 					<xvw:columnAttribute width="300" label="Descrição" dataField="description"/>
-					<xvw:columnAttribute width="150" label="Label" dataField="label"/>
 				</xvw:columns>
 			</xvw:gridPanel>
 		</xvw:form>
