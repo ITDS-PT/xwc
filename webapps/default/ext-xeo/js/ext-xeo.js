@@ -64,10 +64,10 @@ XVW.ErrorDialog = function( sTitle, sMessage ) {
 XVW.Wait = function( iWaitMode ) {
     if( iWaitMode == '1' )
     {
-//    	if( !ExtXeo.loadMask ) {
-//    		ExtXeo.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: ExtXeo.Messages.SENDING_DATA });
-//    	}
-//    	ExtXeo.loadMask.show();    	
+    	if( !ExtXeo.loadMask ) {
+    		ExtXeo.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: ExtXeo.Messages.SENDING_DATA });
+    	}
+    	ExtXeo.loadMask.show();    	
 
     	/*
         Ext.MessageBox.show({
@@ -88,9 +88,9 @@ XVW.beforeApplyHtml = function( oDNode ) {
 }
 
 XVW.NoWait = function() {
-//	if( ExtXeo.loadMask ) {
-//		window.setTimeout( 'ExtXeo.loadMask.hide();', 1 );
-//	}
+	if( ExtXeo.loadMask ) {
+		window.setTimeout( 'ExtXeo.loadMask.hide();', 1 );
+	}
 	//if( Ext.MessageBox.getDialog().title == ExtXeo.Messages.PROCESSING + '      ' ) {
 	//	Ext.MessageBox.hide();
 	//}
@@ -206,7 +206,7 @@ ExtXeo.layoutMan.doLayout = function( sViewId ) {
 		}
 	}
 	else if( sViewId ) {
-		ExtXeo.layoutMan.doLayout1( sViewId );
+		ExtXeo.layoutMan.doLayout1( sViewId )
 	}
 	else {
 		if( ExtXeo.layoutMan.layoutTimeoutId  != null )
@@ -251,14 +251,16 @@ ExtXeo.layoutMan.doFitParent = function( oElem )
 {
 	var x;
 	var pcont;
-	var xoffSet = oElem.offsetTop+(oElem.clientTop*2);
-	var loffParent = oElem.offsetParent;
+	var xoffSet = 0;//oElem.offsetTop+(oElem.clientTop*2);
+	var loffParent = null;//oElem.offsetParent;
 	var lastValidClientHeight = 0;
 	
 //	if( Ext.isIE && !Ext.isIE8 ) {
 //		pcont = oElem.parentNode;
 //	} else {
-		pcont = loffParent;
+		//pcont = loffParent;
+		pcont = oElem.parentNode;
+	 
 //	}
 	
 	if( oElem.currentStyle ) {
@@ -360,6 +362,9 @@ ExtXeo.layoutMan.doFitParent = function( oElem )
 	if( !xvw_isPortal ) {
 		if( pcont == null ) {
 			pcont=document.body;
+			if( xoffSet == 0 ) {
+				xoffSet += oElem.offsetTop+(oElem.clientTop*2);
+			}
 		}
 	}
 	

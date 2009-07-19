@@ -175,8 +175,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 
     @Override
     public void preRender() {
-        // per component inicializations.
-    	
+        // per component initializations...
         if( findComponent( getId() + "_lookupCommand" ) == null ) {
         	filterLookupCommand = new XUICommand();
         	filterLookupCommand.setId( getId() + "_lookupCommand" );
