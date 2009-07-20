@@ -53,6 +53,7 @@ public class XVWScripts {
     	ExtConfig msgBoxConfig = new ExtConfig();
     	msgBoxConfig.addJSString( "title", sTitle );
     	msgBoxConfig.addJSString( "msg", sMessage.replaceAll("\n", "<br/>") );
+    	msgBoxConfig.add( "buttons", "Ext.Msg.OK" );
     	switch ( icon ) {
     		case ALERT_ICON_ERROR:
     			msgBoxConfig.add("icon", "Ext.MessageBox.ERROR" );
