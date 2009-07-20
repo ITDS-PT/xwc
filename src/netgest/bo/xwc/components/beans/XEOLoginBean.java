@@ -201,7 +201,6 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 		}
 		
 		if( invalidCredentials ) {
-
 			XUIRequestContext.getCurrentContext().addMessage(
 					"LoginBean",
 					new XUIMessage( 
@@ -212,8 +211,6 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 					)
 				);
 		}
-
-	
 	}
 
 	public void logout() {
