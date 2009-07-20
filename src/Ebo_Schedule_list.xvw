@@ -12,6 +12,7 @@
 			</xvw:panel>
 			<xvw:gridPanel rowSelectionMode="" dataSource="#{viewBean.dataList}" onRowDoubleClick="#{viewBean.rowDoubleClick}" id="actiividadesEconomicas" autoExpandColumn="designacao">
 				<xvw:columns>
+                	<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
 					<xvw:columnAttribute width="400" dataField="description"/>
 					<xvw:columnAttribute width="200" dataField="id"/>
 				</xvw:columns>

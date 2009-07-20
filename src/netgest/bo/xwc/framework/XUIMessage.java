@@ -4,6 +4,7 @@ public class XUIMessage {
     
     public static final int TYPE_ALERT = 1;
     public static final int TYPE_MESSAGE = 2;
+    public static final int TYPE_POPUP_MESSAGE = 3;
     
     public static final int SEVERITY_INFO = 11;
     public static final int SEVERITY_WARNING = 12;

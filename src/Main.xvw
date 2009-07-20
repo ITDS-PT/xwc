@@ -51,21 +51,31 @@
 	            		/>
             	</xvw:menu>
             	
-            	<xvw:menu text='XEO Administration' profile='admin' expanded='true' >
+            	<xvw:menu text='XEO Administration' profile='admin,Default' expanded='true' >
             		<xvw:menu text='XEO Models' expanded='true'>
 	            		<xvw:menu
+	            				icon='resources/Ebo_Package/ico16.gif'
+		                        text='Packages' 
+		                        value="{viewerName:'Ebo_Package_list.xvw', boql:'select Ebo_Package where deployed=\'1\''}" 
+		                        target='Tab' 
+		                        serverAction="#{viewBean.listObject}" 
+	            		/>
+	            		<xvw:menu
+	            				icon='resources/Ebo_ClsReg/ico16.gif'
 		                        text='Models Registry' 
 		                        value="{viewerName:'Ebo_ClsReg_list.xvw', boql:'select Ebo_ClsReg where deployed=\'1\''}" 
 		                        target='Tab' 
 		                        serverAction="#{viewBean.listObject}" 
 	            		/>
 	            		<xvw:menu
+	            				icon='resources/Ebo_Policy/ico16.gif'
 		                        text='Models Policies' 
 		                        value="{viewerName:'Ebo_Policy_list.xvw', boql:select Ebo_Policy}" 
 		                        target='Tab' 
 		                        serverAction="#{viewBean.listObject}" 
 	            		/>
 	            		<xvw:menu
+	            				icon='resources/Ebo_Schedule/ico16.gif'
 		                        text='Schedules' 
 		                        value="{viewerName:'Ebo_Schedule_list.xvw', boql:select Ebo_Schedule}" 
 		                        target='Tab' 
@@ -82,18 +92,21 @@
 	                </xvw:menu>
             		<xvw:menu text='User Administration' expanded='true'>
 	            		<xvw:menu
+	            				icon='resources/Ebo_Perf/ico16.gif'
 		                        text='Users' 
 		                        value="{viewerName:'Ebo_Perf_list.xvw', boql:select Ebo_Perf}" 
 		                        target='Tab' 
 		                        serverAction="#{viewBean.listObject}" 
 	            		/>
 	            		<xvw:menu
+	            				icon='resources/Ebo_Group/ico16.gif'
 		                        text='Groups' 
 		                        value="{viewerName:'Ebo_Group_list.xvw', boql:select Ebo_Group}" 
 		                        target='Tab' 
 		                        serverAction="#{viewBean.listObject}" 
 	            		/>
 	            		<xvw:menu
+	            				icon='resources/uiProfile/ico16.gif'
 		                        text='Profiles' 
 		                        value="{viewerName:'uiProfile_list.xvw', boql:select uiProfile}" 
 		                        target='Tab' 

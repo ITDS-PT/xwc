@@ -12,11 +12,15 @@
 						dataSource="#{viewBean.dataList}" 
 						onRowDoubleClick="#{viewBean.rowDoubleClick}"
 					>
+						<xvw:toolBar>
+							<xvw:menu text="Confirmar" icon='ext-xeo/images/menus/confirmar.gif' serverAction="#{viewBean.confirm}"></xvw:menu>
+							<xvw:menu text="Criar Novo" icon='ext-xeo/images/menus/adicionar-bridge.gif' serverAction="#{viewBean.addNew}"></xvw:menu>
+						</xvw:toolBar>
 						<xvw:columns>
+                			<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
 							<xvw:columnAttribute width="150" dataField="name"/>
 							<xvw:columnAttribute width="150" dataField="description"/>
 						</xvw:columns>
-						<xvw:actionButton label="Confirmar" serverAction="#{viewBean.confirm}"/>
 					</xvw:gridPanel>
 				</xvw:panel>				
 			</xvw:window>

@@ -9,6 +9,9 @@
 				<xvw:menu id="saveandclose" text="Save and Close" icon="ext-xeo/images/menus/gravar_e_sair.gif" serverAction="#{viewBean.saveAndClose}"/>
 				<xvw:menu id="remove" text="Remove" icon="ext-xeo/images/menus/cancel.gif" serverAction="#{viewBean.remove}"/>
 			</xvw:toolBar>
+            <xvw:panel layout='none'> 
+                <xvw:errorMessages></xvw:errorMessages>
+            </xvw:panel>
 			<xvw:panel>
 				<xvw:rows>
 					<xvw:row>

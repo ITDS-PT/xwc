@@ -1,5 +1,6 @@
 package netgest.bo.xwc.framework;
 
+import javax.el.ELContext;
 import javax.el.ValueExpression;
 
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -8,7 +9,7 @@ public class XUIBindProperty<V> extends XUIBaseProperty<ValueExpression> {
     
     private XUIComponentBase   oComp         = null;
     private Class              cValueType    = null;
-
+    private boolean			   propertyResolved = false;
     public XUIBindProperty( String sPropertyName, XUIComponentBase oComponent, Class cValueType ) {
         super( sPropertyName, oComponent );
         this.oComp = oComponent;
@@ -32,10 +33,16 @@ public class XUIBindProperty<V> extends XUIBaseProperty<ValueExpression> {
     	return null;
     }
 
+    public boolean isPropertyResolved() {
+    	return propertyResolved;
+    }
+    
     public V getEvaluatedValue() {
         ValueExpression oValExpr;
         
         V               oRetValue;
+
+        propertyResolved = false;
         
         oRetValue = null;
         
@@ -44,7 +51,7 @@ public class XUIBindProperty<V> extends XUIBaseProperty<ValueExpression> {
         if( oValExpr != null )
         {
             if ( oValExpr.isLiteralText() ) {
-                
+            	propertyResolved = true;
                 String sLiteralText = oValExpr.getExpressionString();
                 if( oValExpr.getExpectedType() == String.class ) {
                     oRetValue = (V)sLiteralText;
@@ -66,7 +73,10 @@ public class XUIBindProperty<V> extends XUIBaseProperty<ValueExpression> {
                 }
             }
             else {
-                oRetValue = (V)oValExpr.getValue( oComp.getELContext() );
+            	ELContext elCtx = oComp.getELContext();
+                oRetValue = (V)oValExpr.getValue( elCtx );
+                propertyResolved = elCtx.isPropertyResolved();
+                
             }
         }
         

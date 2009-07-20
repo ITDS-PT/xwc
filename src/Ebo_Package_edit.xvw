@@ -8,25 +8,23 @@
 				<xvw:menu id="save" icon="ext-xeo/images/menus/gravar.gif" text="Guardar" serverAction="#{viewBean.save}"/>
 				<!--xvw:menu id='remove' text='Remover' serverAction="#{viewBean.remove}" /-->
 			</xvw:toolBar>
-			<xvw:panel>
-				<xvw:panel>
-					<xvw:rows>
-						<xvw:row>
-							<xvw:cell>
-								<xvw:attribute objectAttribute="name"/>
-							</xvw:cell>
-							<xvw:cell>
-								<xvw:attribute objectAttribute="deployed"/>
-							</xvw:cell>
-						</xvw:row>
-						<xvw:row>
-							<xvw:cell>
-								<xvw:attribute objectAttribute="description" disabled="false"/>
-							</xvw:cell>
-						</xvw:row>
-					</xvw:rows>
-				</xvw:panel>
-			</xvw:panel>
+			<xvw:section label='Dados Gerais'>
+				<xvw:rows>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attribute objectAttribute="name"/>
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:attribute objectAttribute="deployed"/>
+						</xvw:cell>
+					</xvw:row>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attribute objectAttribute="description" disabled="false"/>
+						</xvw:cell>
+					</xvw:row>
+				</xvw:rows>
+			</xvw:section>
 		</xvw:form>
 	</xvw:viewer>
 </xvw:root>

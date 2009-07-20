@@ -7,6 +7,7 @@
                 <xvw:menu target='Tab' text='Novo' serverAction="#{viewBean.addNew}" />
 			</xvw:toolBar>
             <xvw:gridPanel
+            	enableGroupBy = 'true'
                 rowSelectionMode="" 
                 dataSource='#{viewBean.dataList}'  
                 onRowDoubleClick='#{viewBean.rowDoubleClick}' 
@@ -14,8 +15,9 @@
                 autoExpandColumn='name'
                 >
                 <xvw:columns>
-                    <xvw:columnAttribute width='150' label='Utilizador' dataField='username' />
-                    <xvw:columnAttribute width='300' label='Nome' dataField='name' />
+                	<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
+                    <xvw:columnAttribute width='150' dataField='username' />
+                    <xvw:columnAttribute width='300' dataField='name' />
                 </xvw:columns>
             </xvw:gridPanel>
         </xvw:form>

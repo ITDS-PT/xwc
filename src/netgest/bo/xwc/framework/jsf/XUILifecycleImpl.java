@@ -92,11 +92,7 @@ public class XUILifecycleImpl extends Lifecycle {
             {
                 break;
             }
-            
-            long init = System.currentTimeMillis();
-            
             phases[i].doPhase(context, this, listeners.listIterator());
-
         }
         
         // Check if required phases where performed

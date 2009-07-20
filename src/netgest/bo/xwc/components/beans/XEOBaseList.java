@@ -60,32 +60,45 @@ public class XEOBaseList extends XEOBase {
         
         
         BigDecimal boui = (BigDecimal)oActiveRow.getAttribute("BOUI").getValue();
-        
-        String sObjectName = boObject.getBoManager().getClassNameFromBOUI( boApplication.currentContext().getEboContext(), boui.longValue());
-        
-
-        XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createView( sObjectName + "_edit.xvw");
-        XEOBaseBean oEditBean = (XEOBaseBean)oEditViewRoot.getBean("viewBean");
-        
-        if( oActiveRow == null ) {
+        if( boui == null ) {
         	oRequestContext.addMessage( "bean" ,  
         			new XUIMessage( 
-        					XUIMessage.TYPE_ALERT, 
+        					XUIMessage.TYPE_POPUP_MESSAGE, 
         					XUIMessage.SEVERITY_ERROR, 
         					BeansMessages.TITLE_ERROR.toString(), 
         					BeansMessages.SELECTED_OBJECT_NOT_EXISTS.toString() 
         			)
         	);
-        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Error.xvw") );
+        	XUIViewRoot viewRoot = oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Dummy.xvw");
+        	oRequestContext.setViewRoot( viewRoot );
+        	XVWScripts.closeView( viewRoot );
         }
         else {
-        	oEditBean.setCurrentObjectKey( String.valueOf( oActiveRow.getAttribute("BOUI").getValue() ) );
-            oRequestContext.setViewRoot( oEditViewRoot );
-            oEditViewRoot.processInitComponents();
+	        String sObjectName = boObject.getBoManager().getClassNameFromBOUI( boApplication.currentContext().getEboContext(), boui.longValue());
+	
+	        XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createView( sObjectName + "_edit.xvw");
+	        XEOBaseBean oEditBean = (XEOBaseBean)oEditViewRoot.getBean("viewBean");
+	        
+	        if( oActiveRow == null ) {
+	        	oRequestContext.addMessage( "bean" ,  
+	        			new XUIMessage( 
+	        					XUIMessage.TYPE_ALERT, 
+	        					XUIMessage.SEVERITY_ERROR, 
+	        					BeansMessages.TITLE_ERROR.toString(), 
+	        					BeansMessages.SELECTED_OBJECT_NOT_EXISTS.toString() 
+	        			)
+	        	);
+	        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Error.xvw") );
+	        }
+	        else {
+	        	oEditBean.setCurrentObjectKey( String.valueOf( oActiveRow.getAttribute("BOUI").getValue() ) );
+	            oRequestContext.setViewRoot( oEditViewRoot );
+	            oEditViewRoot.processInitComponents();
+	        }
+	        
+	        //TODO: Call must be not necessary
+	        oRequestContext.renderResponse();
         }
-        
-        //TODO: Call must be not necessary
-        oRequestContext.renderResponse();
     }
     
     public void addNew() throws Exception {
@@ -119,15 +132,17 @@ public class XEOBaseList extends XEOBase {
     
     public String getTitle() {
     	String sTitle = super.getTitle();
-    	if( sTitle == null ) {  
-	    	if( this.currentObjectList != null ) {
-	    		QLParser qp = this.currentObjectList.getQLParser(); 
+    	if( this.currentObjectList != null ) {
+    		QLParser qp = this.currentObjectList.getQLParser();
+    		if( qp != null ) {
 	    		boDefHandler oBoDef = qp.getObjectDef();
 	    		if( oBoDef != null ) {
-	    			sTitle =  BeansMessages.LIST_OF.toString() + " " + oBoDef.getLabel();
+	    			if( sTitle == null ) {
+	    				sTitle =  BeansMessages.LIST_OF.toString() + " " + oBoDef.getLabel();
+	    			}
+	    			sTitle = "<img align='middle' src='resources/" + oBoDef.getName() + "/ico16.gif'/>&nbsp;" + sTitle;
 	    		}
-	    	}
-	    	return sTitle;
+    		}
     	}
     	return sTitle;
     }

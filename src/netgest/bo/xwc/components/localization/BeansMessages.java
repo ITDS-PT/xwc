@@ -7,6 +7,9 @@ public interface BeansMessages {
 	public static final XUILocalizedMessage BEAN_SAVE_SUCESS = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "BEAN_SAVE_SUCCESS" );
 	
+	public static final XUILocalizedMessage BEAN_DESTROY_SUCCESS = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "BEAN_DESTROY_SUCCESS" );
+
 	public static final XUILocalizedMessage TITLE_SUCCESS = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "TITLE_SUCCESS" );
 	

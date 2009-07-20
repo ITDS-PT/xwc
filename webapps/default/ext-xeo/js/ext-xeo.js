@@ -52,14 +52,32 @@ ExtXeo.destroyComponents1 = function( oDNode, oWnd ){
     } catch( e ) {}
 }
 
-XVW.ErrorDialog = function( sTitle, sMessage ) {
+XVW.ErrorDialog = function( sTitle, sMessage, sDetails ) {
     Ext.MessageBox.show({
        title: sTitle,
+       icon: Ext.MessageBox.ERROR,
        msg: sMessage,
-       buttons: Ext.MessageBox.OK,
+       fn: function( btn, text ) {
+    		if (btn=='cancel') {
+    			var wnd = new Ext.Window( {
+        			title: sTitle,
+    				layout:'fit',
+    				plain: true,
+    				modal: true,
+    				height: 300,
+    				width: 500,
+    				autoScroll : true,
+    				closable: true,
+    				html: '<b color:red>' + sMessage + '</b><br/><pre>' + sDetails + '</pre>' 
+    			} );
+    			wnd.show();
+    		}
+       },
+       buttons: {ok:'OK', cancel:'Details'},
        icon: 'error'
    });
 }
+
 
 XVW.Wait = function( iWaitMode ) {
     if( iWaitMode == '1' )

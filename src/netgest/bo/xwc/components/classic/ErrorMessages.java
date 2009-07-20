@@ -11,6 +11,8 @@ import javax.faces.application.FacesMessage;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.localization.BeansMessages;
+import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -139,33 +141,65 @@ public class ErrorMessages extends XUIComponentBase {
             
             while( oItXuiMessages.hasNext() ) {
                 oXuiMessage = oItXuiMessages.next();
-                if( oXuiMessage.getType() != XUIMessage.TYPE_ALERT ) {
-                    w.startElement( DIV , component );
-                    w.writeAttribute( HTMLAttr.STYLE, "color:red", null );
-                    if( oXuiMessage.getMessage() != null || oXuiMessage.getDetail() != null )
-                    {
-                        if( oXuiMessage.getMessage() != null )
-                        {
-                            w.writeText( oXuiMessage.getMessage(), null );
-                            w.writeText( "-", null );
-                        }
-                        if( oXuiMessage.getDetail() != null )
-                            w.writeText( oXuiMessage.getDetail(), null );
-                    }
-                    else {
-                        w.writeText( oXuiMessage.getMessage().toString(), null  );
-                    }
-                    w.endElement( DIV );
-                }
-                else {
-                    w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER,
-                            component.getClientId(),
-                            XVWScripts.getAlertDialog( oXuiMessage.getTitle(), oXuiMessage.getMessage() )
-                        );
-                    
+                
+        		int iconType = 0;
+        		switch( oXuiMessage.getSeverity() ) {
+        			case XUIMessage.SEVERITY_CRITICAL:
+        				iconType = XVWScripts.ALERT_ICON_ERROR;
+        				break;
+        			case XUIMessage.SEVERITY_ERROR:
+        				iconType = XVWScripts.ALERT_ICON_ERROR;
+        				break;
+        			case XUIMessage.SEVERITY_INFO:
+        				iconType = XVWScripts.ALERT_ICON_INFO;
+        				break;
+        			case XUIMessage.SEVERITY_WARNING:
+        				iconType = XVWScripts.ALERT_ICON_WARNING;
+        				break;
+        		}
+                
+                switch( oXuiMessage.getType() ) {
+                	case XUIMessage.TYPE_MESSAGE: 
+	                    w.startElement( DIV , component );
+	                    w.writeAttribute( HTMLAttr.STYLE, "color:red", null );
+	                    if( oXuiMessage.getMessage() != null || oXuiMessage.getDetail() != null )
+	                    {
+	                        if( oXuiMessage.getMessage() != null )
+	                        {
+	                            w.writeText( oXuiMessage.getMessage(), null );
+	                            w.writeText( "-", null );
+	                        }
+	                        if( oXuiMessage.getDetail() != null )
+	                            w.writeText( oXuiMessage.getDetail(), null );
+	                    }
+	                    else {
+	                        w.writeText( oXuiMessage.getMessage().toString(), null  );
+	                    }
+	                    w.endElement( DIV );
+	                    break;
+                	case XUIMessage.TYPE_POPUP_MESSAGE:
+                		w.getScriptContext().add( XUIScriptContext.POSITION_FOOTER, 
+                				"message_success", 
+                				"var xapp = window.App;\n" +
+                				"if(window.parent.App) xapp=window.parent.App;\n" +
+                				"xapp.setAlert('" + 
+                					JavaScriptUtils.safeJavaScriptWrite( oXuiMessage.getTitle(), '\'') + 
+                					"','" + 
+                					JavaScriptUtils.safeJavaScriptWrite( oXuiMessage.getMessage(), '\'') + 
+                					"')"
+                		);
+                		break;
+                	default:
+	                    w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER,
+	                            component.getClientId(),
+	                            XVWScripts.getAlertDialog( oXuiMessage.getTitle(), oXuiMessage.getMessage() , iconType )
+	                        );
                 }
             }
             w.endElement( DIV );
+            
+            // Render popup Messages
+            
 
         }
 

@@ -9,7 +9,9 @@
 				<xvw:menu id="saveandclose" text="Guardar e Fechar" icon="ext-xeo/images/menus/gravar_e_sair.gif" serverAction="#{viewBean.saveAndClose}"/>
 				<xvw:menu id="remove" text="Remover" icon="ext-xeo/images/menus/cancel.gif" serverAction="#{viewBean.remove}"/>
 			</xvw:toolBar>
+            <xvw:errorMessages></xvw:errorMessages>
 			<xvw:panel>
+				<xvw:section label='Dados Gerais'>
 				<xvw:rows>
 					<xvw:row>
 						<xvw:cell>
@@ -30,6 +32,7 @@
 						</xvw:cell>
 					</xvw:row>
 				</xvw:rows>
+				</xvw:section>				
 				<xvw:tabs>
 					<xvw:tab label="Seguranças">
 						<xvw:rows>
@@ -40,6 +43,7 @@
 										<xvw:menu text="Remover" icon="ext-xeo/images/menus/remover-bridge.gif" value="form1:security" serverAction="#{viewBean.removeFromBridge}"/>
 									</xvw:toolBar>
 									<xvw:columns>
+                						<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
 										<xvw:columnAttribute width="150" dataField="name"/>
 										<xvw:columnAttribute width="150" label="Descrição" dataField="description"/>
 									</xvw:columns>
@@ -50,12 +54,13 @@
 					<xvw:tab label="Atributos">
 						<xvw:rows> 
 							<xvw:row>
-								<xvw:gridPanel rowSelectionMode="ROW" objectAttribute="attributes" id="attributes" >
+								<xvw:gridPanel rowSelectionMode="" objectAttribute="attributes" id="attributes" >
 									<!--xvw:toolBar>
 										<xvw:menu text="Adicionar" icon="ext-xeo/images/menus/adicionar-bridge.gif" value="form1:attributes" serverAction="#{viewBean.lookupBridge}"/>
 										<xvw:menu text="Remover" icon="ext-xeo/images/menus/remover-bridge.gif" value="form1:attributes" serverAction="#{viewBean.removeFromBridge}"/>
 									</xvw:toolBar-->
 									<xvw:columns>
+                						<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
 										<xvw:columnAttribute width="150" dataField="name"/>
 										<xvw:columnAttribute width="150" dataField="description"/>
 									</xvw:columns>
@@ -66,12 +71,13 @@
 					<xvw:tab label="Métodos">
 						<xvw:rows>
 							<xvw:row>
-								<xvw:gridPanel rowSelectionMode="ROW" objectAttribute="methods" id="methods">
+								<xvw:gridPanel rowSelectionMode="" objectAttribute="methods" id="methods">
 									<!--xvw:toolBar>
 										<xvw:menu text="Adicionar" icon="ext-xeo/images/menus/adicionar-bridge.gif" value="form1:methods" serverAction="#{viewBean.lookupBridge}"/>
 										<xvw:menu text="Remover" icon="ext-xeo/images/menus/remover-bridge.gif" value="form1:methods" serverAction="#{viewBean.removeFromBridge}"/>
 									</xvw:toolBar-->
 									<xvw:columns>
+                						<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
 										<xvw:columnAttribute width="150" dataField="name"/>
 										<xvw:columnAttribute width="150" dataField="description"/>
 									</xvw:columns>

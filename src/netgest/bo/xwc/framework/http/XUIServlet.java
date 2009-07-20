@@ -1,6 +1,7 @@
 package netgest.bo.xwc.framework.http;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Locale;
 
 import javax.faces.application.ViewExpiredException;
@@ -18,6 +19,8 @@ import javax.servlet.http.HttpSession;
 
 import javax.servlet.http.HttpServletResponse;
 
+import sun.rmi.server.Dispatcher;
+
 import netgest.bo.dochtml.docHTML;
 import netgest.bo.dochtml.docHTML_controler;
 import netgest.bo.runtime.EboContext;
@@ -25,6 +28,7 @@ import netgest.bo.system.boApplication;
 import netgest.bo.system.boLoginBean;
 import netgest.bo.system.boLoginException;
 import netgest.bo.system.boSession;
+import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIApplicationContext;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.jsf.XUIPhaseListener;
@@ -72,6 +76,8 @@ public class XUIServlet implements Servlet
         oRequest = (HttpServletRequest)servletRequest;
         oResponse = (HttpServletResponse)servletResponse;
         
+        boolean isAjax = false;
+        
         // Initialize XEO....        
         if( !bIsInitialized ) 
             initializeXeo();
@@ -84,8 +90,10 @@ public class XUIServlet implements Servlet
     
     	if( oXEOSession != null ) {
     		if( oXEOSession.getUser().getBoui() != 0 ) {
-		        oEboContext = oXEOSession.createRequestContext( oRequest, oResponse, null );
-		        boApplication.currentContext().addEboContext( oEboContext );
+    			if( boApplication.currentContext().getEboContext() == null ) {
+			        oEboContext = oXEOSession.createRequestContext( oRequest, oResponse, null );
+			        boApplication.currentContext().addEboContext( oEboContext );
+    			}
     		}
     	}
         XUIMessagesLocalization.setThreadCurrentLocale( new Locale( "en" ) );
@@ -95,6 +103,7 @@ public class XUIServlet implements Servlet
     		oResponse.setHeader("cache-control", "max-age=0");
             if( oRequest.getContentType() != null && oRequest.getContentType().startsWith( "text/xml" )  )
             {
+                isAjax = true;
                 facesServlet.service( new XUIAjaxRequestWrapper( oRequest ), servletResponse );
             } 
             else if( oRequest.getContentType() != null && oRequest.getContentType().startsWith( "multipart/form-data" )  )
@@ -109,19 +118,68 @@ public class XUIServlet implements Servlet
         	throw e;
         }
         catch( ServletException e ) {
-        	if( e.getRootCause() instanceof ViewExpiredException ) {
-        		// Handle expired view
-        		oResponse.sendError(401,
-        				XUICoreMessages.SESSION_EXPIRED.toString()
-        		);
-        	}
-        	else {
-        		throw e;
+        	if( !Boolean.parseBoolean( (String)oRequest.getAttribute("xvw.portlet") ) ) {
+	        	if( e.getRootCause() instanceof ViewExpiredException && oRequest.getSession() != null && oRequest.getSession().isNew() ) {
+	        		// Handle expired view
+            		StringBuilder sb = new StringBuilder();
+            		if( oRequest.isSecure() ) { 
+            			sb.append( "https://" );
+            			sb.append( oRequest.getServerName() );
+            			if( oRequest.getServerPort() != 443 ) {
+            				sb.append( ':' );
+            				sb.append( oRequest.getServerPort() );
+            			}
+            		}
+            		else {
+            			sb.append( "http://" );
+            			sb.append( oRequest.getServerName() );
+            			if( oRequest.getServerPort() != 80 ) {
+            				sb.append( ':' );
+            				sb.append( oRequest.getServerPort() );
+            			}
+            		}
+        			sb.append( "/" );
+            		sb.append( oRequest.getContextPath() );
+            		sb.append( "/Login.xvw?msg=1" );
+	        		
+	        		if( isAjax ) {
+		        		oResponse.setHeader( "login-url" , sb.toString() );
+		        		oResponse.sendError(401);
+	        		}
+	        		else {
+	            		oResponse.reset();
+	            		oResponse.resetBuffer();
+	            		oResponse.setContentType("text/html;charset=utf-8");
+	            		PrintWriter out = oResponse.getWriter();
+	            		out.println( "<script>window.top.location.href='" 
+	            				+ JavaScriptUtils.safeJavaScriptWrite( sb.toString() , '\'')
+	            				+ "';</script>" );
+	        		}
+	        	}
+	        	else {
+	        		if( isAjax ) {
+	        			throw e;
+	        		}
+	        		oResponse.reset();
+	        		oResponse.resetBuffer();
+	        		oResponse.setContentType("text/html;charset=utf-8");
+	        		PrintWriter out = oResponse.getWriter();
+	        		out.println( "<h2>" + XUICoreMessages.REQUEST_ERROR.toString() +  "</h2><br>" );
+	        		out.println( "<a onclick='document.getElementById(\"errorDetails\").style.display=\"\"'  href='javascript:void(0)'>" + XUICoreMessages.ERROR_DETAILS.toString() +  "</a>" );
+	        		out.println( "<div id='errorDetails' style='display:none;overflow:auto;widht:100%;height:80%'><pre>");
+	        		out.println( "<b>Error:</b>" );
+	        		e.printStackTrace( out );
+	        		if( e.getRootCause() != null ) {
+		        		out.println( "<b>Cause By:</b>" );
+		        		e.getRootCause().printStackTrace( out );
+	        		}
+	        		out.println("</pre></div>" );
+	        	}
         	}
         }
         catch( IOException e ) {
         	throw e;
-        }
+        } 
         finally {
             if (XUIRequestContext.getCurrentContext() != null )
             {

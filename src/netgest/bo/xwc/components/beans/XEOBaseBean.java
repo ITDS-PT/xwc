@@ -19,7 +19,6 @@ import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.classic.AttributeBase;
-import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
 import netgest.bo.xwc.components.classic.Window;
@@ -132,10 +131,7 @@ public class XEOBaseBean extends XEOBase {
     	XUIRequestContext oRequestContext;
     	this.save();
     	if( this.isValid() ) {
-    		oRequestContext = XUIRequestContext.getCurrentContext();
-    		XVWScripts.closeView( oRequestContext.getViewRoot() );
-    		oRequestContext.getViewRoot().setRendered( false );
-    		oRequestContext.renderResponse();
+    		closeView();
     	}
     }
 
@@ -147,12 +143,19 @@ public class XEOBaseBean extends XEOBase {
     	XUIRequestContext oRequestContext;
     	processDestroy();
     	if( isValid() ) {
-    		oRequestContext = XUIRequestContext.getCurrentContext();
-    		XVWScripts.closeView( oRequestContext.getViewRoot() );
-    		oRequestContext.getViewRoot().setRendered( false );
-    		oRequestContext.renderResponse();
+    		closeView();
     	}
     }
+    
+    public void closeView() {
+    	XUIRequestContext oRequestContext;
+		oRequestContext = XUIRequestContext.getCurrentContext();
+		XVWScripts.closeView( oRequestContext.getViewRoot() );
+    	XUIViewRoot viewRoot = oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Dummy.xvw");
+    	oRequestContext.setViewRoot( viewRoot );
+		oRequestContext.renderResponse();
+    }
+    
     
     public void processDestroy()  throws boRuntimeException {
     	destroy();
@@ -160,12 +163,12 @@ public class XEOBaseBean extends XEOBase {
     
     public void destroy()  throws boRuntimeException {
     	try {
-    		getXEOObject().destroy();
+    		getXEOObject().destroy(); 
 	        XUIRequestContext.getCurrentContext().addMessage(
 	                "Bean",
-	                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
+	                new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, 
 	                    BeansMessages.TITLE_SUCCESS.toString(), 
-	                    BeansMessages.BEAN_SAVE_SUCESS.toString() 
+	                    BeansMessages.BEAN_DESTROY_SUCCESS.toString() 
 	                )
 	            );
     	} catch ( Exception e ) {
@@ -201,26 +204,20 @@ public class XEOBaseBean extends XEOBase {
     	try {
     		getXEOObject().update();
     		getXEOObject().setChanged( false );
-    		oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_HEADER, 
-    				"message_success", 
-    				"window.parent.App.setAlert('" + BeansMessages.TITLE_SUCCESS.toString() + "','" + BeansMessages.BEAN_SAVE_SUCESS.toString() + "')"
-    		);
-    		/*
     		oRequestContext.addMessage(
 	                "Bean",
-	                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
+	                new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, 
 	                    BeansMessages.TITLE_SUCCESS.toString(), 
 	                    BeansMessages.BEAN_SAVE_SUCESS.toString() 
 	                )
 	            );
-    		*/
     	} catch ( Exception e ) {
     		if( e instanceof boRuntimeException ) {
     			boRuntimeException boEx = (boRuntimeException)e;
     			if ( "BO-3022".equals( boEx.getErrorCode() ) ) {
     		        XUIRequestContext.getCurrentContext().addMessage(
     		                "Bean",
-    		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
+    		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
     		                    BeansMessages.TITLE_ERROR.toString(), 
     		                    BeansMessages.DATA_CHANGED_BY_OTHER_USER.toString() 
     		                )
@@ -984,14 +981,14 @@ public class XEOBaseBean extends XEOBase {
 				}
 			}
 			else {
-				closeScript = "XVW.closeView('" + viewRoot.getClientId() + "');";
+				closeScript = XVWScripts.getCloseViewScript( viewRoot );
 			}
 			ExtConfig messageBoxConfig = new ExtConfig();
 			messageBoxConfig.addJSString( "title" , BeansMessages.CHANGES_NOT_SAVED_TITLE.toString() );
 			messageBoxConfig.addJSString( "msg" , BeansMessages.CHANGES_NOT_SAVED_MESSAGE.toString() );
 			messageBoxConfig.add( "buttons" , "Ext.MessageBox.YESNO ");
 			messageBoxConfig.add( "fn",  "function(a1) { if( a1=='yes' ) { "+closeScript+" } }" );
-			messageBoxConfig.add( "icon", "Ext.MessageBox.QUESTION" );
+			messageBoxConfig.add( "icon", "Ext.MessageBox.WARNING" );
 			oRequestContext.getScriptContext().add(  
 					XUIScriptContext.POSITION_HEADER,
 					"canCloseDialog", 

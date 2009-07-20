@@ -81,7 +81,7 @@ public class FileBrowseBean extends XEOBase {
                 "});\n"
         );
 		oRequestContext.setViewRoot(  
-				oRequestContext.getSessionContext().createView( "netgest/bo/xwc/components/viewers/dummy.xvw" )
+				oRequestContext.getSessionContext().createView( "netgest/bo/xwc/components/viewers/Dummy.xvw" )
 			);
 			
 			oRequestContext.renderResponse();

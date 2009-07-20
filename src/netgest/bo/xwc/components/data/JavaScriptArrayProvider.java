@@ -121,9 +121,7 @@ public class JavaScriptArrayProvider {
             
             if( rowClass != null ) {
             	oStringBuilder.append( "__rc:'" );
-            	oStringBuilder.append(
-        			JavaScriptUtils.safeJavaScriptWrite( rowClass.getRowClass( grid, oDataRecord ),'\'')
-            	);
+    			JavaScriptUtils.safeJavaScriptWrite( oStringBuilder, rowClass.getRowClass( grid, oDataRecord ),'\'');
                 oStringBuilder.append( "'," );
         	}
         
@@ -144,7 +142,7 @@ public class JavaScriptArrayProvider {
                         oStringBuilder.append( '\'' );
                         JavaScriptUtils.safeJavaScriptWrite( 
                             oStringBuilder, 
-                            ((String)oDataFieldValue).toCharArray(),
+                            ((String)oDataFieldValue),
                             '\''
                         );
                         oStringBuilder.append( '\'' );
@@ -163,7 +161,7 @@ public class JavaScriptArrayProvider {
 	                    	sDisplayValue = oDataField.getDisplayValue(); 
 	                    	if( sDisplayValue != null ) {
 	                            oStringBuilder.append( '\'' );
-	                            JavaScriptUtils.safeJavaScriptWrite( oStringBuilder, sDisplayValue.toCharArray(), '\'' );
+	                            JavaScriptUtils.safeJavaScriptWrite( oStringBuilder, sDisplayValue, '\'' );
 	                            oStringBuilder.append( '\'' );
 	                    	}
 	                    	else {
@@ -182,7 +180,7 @@ public class JavaScriptArrayProvider {
 		                                oStringBuilder.append( '\'' );
 		                                JavaScriptUtils.safeJavaScriptWrite( 
 		                                    oStringBuilder, 
-		                                    ((String)oDataFieldValue).toCharArray(),
+		                                    ((String)oDataFieldValue),
 		                                    '\''
 		                                );
 		                                oStringBuilder.append( '\'' );
@@ -292,7 +290,7 @@ public class JavaScriptArrayProvider {
                                 oStringBuilder.append( '\'' );
                                 JavaScriptUtils.safeJavaScriptWrite( 
                                     oStringBuilder, 
-                                    ((String)oDataFieldValue).toCharArray(),
+                                    ((String)oDataFieldValue),
                                     '\''
                                 );
                                 oStringBuilder.append( '\'' );

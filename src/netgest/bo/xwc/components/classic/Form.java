@@ -43,12 +43,19 @@ public class Form extends XUIForm
 	}
 	
 	public byte getSecurityPermissions() {
-		try {
-			return this.securityPermissions.getEvaluatedValue();
-		} catch (PropertyNotFoundException e) {
-			// viewBean doesn't have securityPermissions property... return full control;
-			return SecurityPermissions.FULL_CONTROL;
+		// Quando não existe bean associada ao viewer ignora seguranças.
+		// Não existe outra maneira já que o propriedade é sempre resolvida através da class
+		// ScopedAttributeELResolver 
+		
+		if( getRequestContext().getViewRoot().getBean("viewBean") != null ) {
+			try {
+				byte ret =  this.securityPermissions.getEvaluatedValue();
+				return ret;
+			} catch (PropertyNotFoundException e) {
+				// viewBean doesn't have securityPermissions property... return full control;
+			}
 		}
+		return SecurityPermissions.FULL_CONTROL;
 	}
 	
 	public String getEncType() {

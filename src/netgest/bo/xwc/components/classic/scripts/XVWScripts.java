@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.classic.scripts;
 
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Window;
+import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
@@ -12,6 +13,10 @@ public class XVWScripts {
     
     public static final int WAIT_DIALOG = 1;
     public static final int WAIT_STATUS_MESSAGE= 2;
+    
+    public static final int ALERT_ICON_INFO = 1;
+    public static final int ALERT_ICON_ERROR = 2;
+    public static final int ALERT_ICON_WARNING = 3;
 
     public static final String getCommandScript( XUIComponentBase oComponent, int iWaitMode ) {
         return 
@@ -38,20 +43,31 @@ public class XVWScripts {
             "XVW.AjaxCommand( '" + oComponent.getNamingContainerId() +  "', null, null, '"+ iWaitMode +"')";
     }
 
-    public static final String getAlertDialog( String sTitle, String sMessage ) {
+    public static final String getAlertDialog( String sTitle, String sMessage, int icon ) {
     	
     	StringBuilder s = new StringBuilder();
     	if( sMessage == null )
             sMessage = "";
     	
-    	JavaScriptUtils.safeJavaScriptWrite(s, sMessage.toCharArray(), '\'');
+    	JavaScriptUtils.safeJavaScriptWrite(s, sMessage, '\'');
+    	ExtConfig msgBoxConfig = new ExtConfig();
+    	msgBoxConfig.addJSString( "title", sTitle );
+    	msgBoxConfig.addJSString( "msg", sMessage.replaceAll("\n", "<br/>") );
+    	switch ( icon ) {
+    		case ALERT_ICON_ERROR:
+    			msgBoxConfig.add("icon", "Ext.MessageBox.ERROR" );
+     			break;
+    		case ALERT_ICON_WARNING:
+    			msgBoxConfig.add("icon", "Ext.MessageBox.WARNING" );
+    			break;
+    		case ALERT_ICON_INFO:
+    			msgBoxConfig.add("icon", "Ext.MessageBox.INFO" );
+    			break;
+    		default:
+    	}
     	
         return
-            "Ext.onReady(function(){ Ext.Msg.show({" + 
-            "title: '"+sTitle+"'," +
-            "msg: '"+ s.toString() +"'," +
-            "buttons:Ext.Msg.OK" +
-            "})});";
+            "Ext.onReady(function() { Ext.Msg.show( "  + msgBoxConfig.renderExtConfig() + "  );})";
     }
 
     public static final String getOpenCommandWindow(  XUIComponentBase oComponent, String sActionValue )    {
@@ -102,23 +118,44 @@ public class XVWScripts {
     }
     
     public static final void closeView( XUIViewRoot oViewRoot ) {
+		// A vista não têm janela... ou seja deve estar inserida num tab
+		// o ecran inteiro... neste caso corre o script do lado do cliente
+		// para fechar a vista.
+        XUIRequestContext oRequestContext;
+        oRequestContext = XUIRequestContext.getCurrentContext();
+		oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER ,
+				oViewRoot + "_close",
+				getCloseViewScript( oViewRoot )
+		);
+    	oViewRoot.setTransient( true );
+    }
+
+    public static final String getCloseViewScript( XUIViewRoot oViewRoot ) {
     	// Verifica se é um window
+    	StringBuilder sb = new StringBuilder(  );
     	Window oWnd =  (Window)oViewRoot.findComponent( Window.class );
     	if( oWnd != null ) {
     		// A vista é uma janela... simplesmente fecha a janela
-    		oWnd.destroy();
+    		sb
+    		.append( "Ext.onReady( function() { " )
+	        .append( "if( "+oWnd.getId()+" )")
+	        .append( oWnd.getId() )
+	        .append(  ".destroy();")
+	        .append(    "else if(window.parent.")
+	        .append(oWnd.getId())
+	        .append(") window.parent.")
+	        .append( oWnd.getId())
+	        .append( ".destroy();")
+	        .append(  "});\n");    		
+	       oWnd.destroy();
     	} 
     	else {
     		// A vista não têm janela... ou seja deve estar inserida num tab
     		// o ecran inteiro... neste caso corre o script do lado do cliente
     		// para fechar a vista.
-            XUIRequestContext oRequestContext;
-            oRequestContext = XUIRequestContext.getCurrentContext();
-    		oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER ,
-    				oViewRoot + "_close",
-    				"XVW.closeView('" + oViewRoot.getClientId() + "')"
-    		);
+    		sb.append( "XVW.closeView('" + oViewRoot.getClientId() + "')" );
     	}
+    	return sb.toString();
     }
 
     public static final void setTitle( String sTitle ) {

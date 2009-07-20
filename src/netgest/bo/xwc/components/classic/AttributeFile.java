@@ -291,7 +291,7 @@ public class AttributeFile extends AttributeBase {
             String sValue = oAttr.getDisplayValue();
             if( sValue != null ) {
             	sJsValue = new StringBuilder();
-            	JavaScriptUtils.safeJavaScriptWrite( sJsValue, sValue.toCharArray(), '"');
+            	JavaScriptUtils.safeJavaScriptWrite( sJsValue, sValue, '"');
             }
             
             

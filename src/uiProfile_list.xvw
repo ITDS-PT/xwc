@@ -14,6 +14,7 @@
 	                autoExpandColumn='name'
                 >
                 <xvw:columns>
+                	<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
                     <xvw:columnAttribute width='150' label='Name' dataField='name' />
                     <xvw:columnAttribute width='300' label='Description' dataField='description' />
                 </xvw:columns>

@@ -4,9 +4,6 @@
 	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseList" beanId="viewBean">
 		<xvw:form>
 			<xvw:title valueExpression="#{viewBean.title}"/>
-			<!--xvw:toolBar>
-				<xvw:menu target="Tab" text="Novo" serverAction="#{viewBean.addNew}"/>
-			</xvw:toolBar-->
 			<xvw:gridPanel 
 					rowSelectionMode="" 
 					dataSource="#{viewBean.dataList}" 
@@ -15,6 +12,7 @@
 					autoExpandColumn="name"
 				>
 				<xvw:columns>
+                	<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
 					<xvw:columnAttribute width="150" label="Nome" dataField="name"/>
 					<xvw:columnAttribute width="200" label="Label" dataField="label"/>
 					<xvw:columnAttribute width="300" label="Descrição" dataField="description"/>

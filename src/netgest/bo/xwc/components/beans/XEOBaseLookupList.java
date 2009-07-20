@@ -194,7 +194,7 @@ public class XEOBaseLookupList extends XEOBaseList {
 
     public String getTitle() {
     	try {
-			return BeansMessages.LIST_OF.toString() + getCurrentObjectList().getBoDef().getLabel();
+			return BeansMessages.LIST_OF.toString() + " " + getCurrentObjectList().getBoDef().getLabel();
 		} catch (boRuntimeException e) {
 			// Ignore
 		}

@@ -90,36 +90,6 @@ XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubm
         var sActionUrl = XVW.prv.getFormInput( oForm, 'xvw.ajax.submitUrl').value;
         submitAjax( sActionUrl, reqDoc );
         
-        /*
-        var oXmlReq = XVW.createXMLHttpRequest(  );
-        
-        var sActionUrl = XVW.prv.getFormInput( oForm, 'xvw.ajax.submitUrl').value;
-        
-        oXmlReq.open('POST', sActionUrl, true );
-        oXmlReq.setRequestHeader('Content-Type', 'text/xml');
-        oXmlReq.onreadystatechange = function() {
-            if( oXmlReq.readyState == 4 ) {
-            	window.init = new Date();
-                if( oXmlReq.status == 200 ) {
-                    try
-                    {
-                        window.ts2 = new Date();
-                        XVW.NoWait();
-                        XVW.handleAjaxResponse( oXmlReq );
-                    }
-                    catch( e ) {
-                        XVW.handleAjaxError( e.description );
-                    }
-                }
-                else {
-                    XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.responseText )
-                }
-                // IE6 Bug!!!
-                //oXmlReq.onreadystatechange = null;
-            }
-        }
-        oXmlReq.send( reqDoc );
-        */
     }    
 }
 
@@ -129,20 +99,21 @@ function submitAjax( sActionUrl, reqDoc ) {
     oXmlReq.setRequestHeader('Content-Type', 'text/xml');
     oXmlReq.onreadystatechange = function() {
         if( oXmlReq.readyState == 4 ) {
-        	window.init = new Date();
+            XVW.NoWait();
             if( oXmlReq.status == 200 ) {
                 try
                 {
                     window.ts2 = new Date();
-                    XVW.NoWait();
                     XVW.handleAjaxResponse( oXmlReq );
                 }
                 catch( e ) {
                     XVW.handleAjaxError( e.description );
                 }
             }
-            else {
-                XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.responseText )
+            else if( oXmlReq.status == 401 && oXmlReq.getResponseHeader('login-url') != "" ) {
+            	window.top.location.href = oXmlReq.getResponseHeader('login-url');
+            } else {
+                XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText )
             }
         }
     }
@@ -210,8 +181,8 @@ XVW.getViewForm = function( sViewId, sFormId ) {
     return null;    
 }
 
-XVW.handleAjaxError = function( sErrorMessage ) {
-    XVW.ErrorDialog( XVW.Messages.AJAXERROR_TITLE, XVW.Messages.AJAXERROR_MESSAGE + "\n" + sErrorMessage );
+XVW.handleAjaxError = function( sErrorMessage, sDetails ) {
+    XVW.ErrorDialog( XVW.Messages.AJAXERROR_TITLE, XVW.Messages.AJAXERROR_MESSAGE + "<br/>" + sErrorMessage, sDetails );
 }
 
 // Must be overwriten ti handle error dialogs

@@ -93,7 +93,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     // Private/Protected Constants
     //
     private static final Log log = LogFactory.getLog(netgest.bo.xwc.framework.jsf.XUIViewHandler.class);
-    private static final Logger logger = FacesLogger.APPLICATION.getLogger();
     
 
     /**

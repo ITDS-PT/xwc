@@ -452,7 +452,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer {
         ExtConfig oSelException = oExtListeners.addChild( "'loadexception'");
         oSelException.add( "fn", "function() { alert('" + ComponentMessages.GRID_ERROR_LOADING_DATA.toString() + "\\n ' + " +
         		"arguments[2].responseText" + 
-        		"   );debugger;}" );
+        		"   );}" );
 
         
         return oDataStoreConfig;

@@ -140,7 +140,6 @@ public class AttributeNumber extends AttributeBase {
             listeners.add( "'keydown'" , 
         			"function(fld,e) { " +
         			"	var fldVal = new String(fld.getValue());" +
-        			"	if(fldVal.length > 5 ) debugger;" +
         			"	fldVal = fldVal.replace(/\\./g,'');" +
         			"	if( fldVal.length >= fld.maxLength ){" +
         			"		if( '01234556789'.indexOf(String.fromCharCode(event.keyCode))>-1 ) {" +

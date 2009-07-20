@@ -18,6 +18,7 @@ import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.localization.XUICoreMessages;
 
 public class XEOLoginBean extends XEOSecurityLessBean {
 	
@@ -28,6 +29,18 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 	
 	public String getUserName() {
 		return getIsLoggedIn()?getBoSession().getUser().getUserName():this.userName;
+	}
+	
+	public String getStatusMessage() {
+		String message = "";
+		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
+		String msg = oRequestContext.getRequestParameterMap().get( "msg" );
+		if( msg != null ) {
+			if( "1".equals( msg ) ) {
+				message = XUICoreMessages.SESSION_EXPIRED.toString();
+			}
+		}
+		return message;
 	}
 	
 	public void setUserName(String userName) {

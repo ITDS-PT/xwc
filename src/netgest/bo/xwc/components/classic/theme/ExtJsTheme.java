@@ -30,7 +30,7 @@ public class ExtJsTheme implements XUITheme {
     	
         // Extjs
     	scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-base", composeUrl( getResourceBaseUri() + "adapter/ext/ext-base.js" ) );
-        scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all", composeUrl( getResourceBaseUri() + "ext-all-debug.js" ) );
+        scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all", composeUrl( getResourceBaseUri() + "ext-all.js" ) );
         
         // xwc
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "xwc-core", composeUrl( "xwc/js/xwc-core.js" ) );
@@ -64,7 +64,7 @@ public class ExtJsTheme implements XUITheme {
         // Utility Scrits
         scriptContext.add( XUIScriptContext.POSITION_HEADER , "s.gif", "Ext.BLANK_IMAGE_URL = '"+ ExtJsTheme.composeUrl("extjs/images/default/s.gif") + "';");
         scriptContext.add( XUIScriptContext.POSITION_FOOTER , "ExtQuickTips", "Ext.onReady( function() {Ext.QuickTips.init();} );" );
-        scriptContext.add( XUIScriptContext.POSITION_FOOTER , "Ext.App", "var App = new Ext.App({});" );
+        scriptContext.add( XUIScriptContext.POSITION_FOOTER , "Ext.App", "if(!window.parent.App)  var App = new Ext.App({});" );
         
     }
     

@@ -36,7 +36,7 @@ public class ExtConfig {
             value = "";
         
         oConfigOptions.put( id, (new StringBuilder( value.length() + 2 )).append('"').append( 
-        		JavaScriptUtils.safeJavaScriptWrite(value.toCharArray(),  '\"' )
+        		JavaScriptUtils.safeJavaScriptWrite(value,  '\"' )
         ).append( '"' ) );
         
     }
