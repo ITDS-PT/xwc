@@ -41,7 +41,6 @@
 		                        serverAction="#{viewBean.listObject}" 
 	            		/>
             	</xvw:menu>
-
             	<xvw:menu text='XEO Developers' expanded='true' >
 	            		<xvw:menu
 		                        text='XEO Model Builder' 
@@ -50,8 +49,7 @@
 		                        serverAction="#{viewBean.openViewer}" 
 	            		/>
             	</xvw:menu>
-            	
-            	<xvw:menu text='XEO Administration' profile='admin,Default' expanded='true' >
+            	<xvw:menu text='XEO Administration' profile='admin' expanded='true' >
             		<xvw:menu text='XEO Models' expanded='true'>
 	            		<xvw:menu
 	            				icon='resources/Ebo_Package/ico16.gif'
