@@ -6,32 +6,20 @@ import java.util.Locale;
 
 import javax.faces.application.ViewExpiredException;
 import javax.faces.webapp.FacesServlet;
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import javax.servlet.http.HttpServletResponse;
-
-import sun.rmi.server.Dispatcher;
-
-import netgest.bo.dochtml.docHTML;
-import netgest.bo.dochtml.docHTML_controler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
-import netgest.bo.system.boLoginBean;
-import netgest.bo.system.boLoginException;
 import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
-import netgest.bo.xwc.framework.XUIApplicationContext;
 import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.jsf.XUIPhaseListener;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 
