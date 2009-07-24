@@ -11,6 +11,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,7 +24,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 
-public class XUIServlet implements Servlet
+public class XUIServlet extends HttpServlet
 {
     FacesServlet        facesServlet;
 //    boSession           oXEOSession;
@@ -79,7 +80,7 @@ public class XUIServlet implements Servlet
     	if( oXEOSession != null ) {
     		if( oXEOSession.getUser().getBoui() != 0 ) {
     			if( boApplication.currentContext().getEboContext() == null ) {
-			        oEboContext = oXEOSession.createRequestContext( oRequest, oResponse, null );
+			        oEboContext = oXEOSession.createRequestContextInServlet( oRequest, oResponse, getServletContext() );
 			        boApplication.currentContext().addEboContext( oEboContext );
     			}
     		}
