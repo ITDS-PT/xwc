@@ -84,9 +84,9 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 			} else if ( getDataType() == DataFieldTypes.VALUE_BOOLEAN ) {
 				sRetValue = oAttHandler.getValueString();
 				if ( "0".equals( sRetValue ) ) {
-					sRetValue = ConnectorsMessages.TEXT_YES.toString();
-				} else if ( "1".equals( sRetValue ) ) {
 					sRetValue = ConnectorsMessages.TEXT_NO.toString();;
+				} else if ( "1".equals( sRetValue ) ) {
+					sRetValue = ConnectorsMessages.TEXT_YES.toString();
 				}
 			} else if ( getInputRenderType() == DataFieldTypes.RENDER_IFILE_LINK ) {
 				sRetValue = oAttHandler.getValueString();
@@ -287,12 +287,15 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
     	byte efectivePermissions = 0;
 
     	try {
-			efectivePermissions += securityRights
+			efectivePermissions += 
+				securityRights
 					.canRead(ctx, clsName, attName)
 					&& securityOPL.canRead(oAttHandler.getParent()) ? SecurityPermissions.READ
 					: 0;
-			efectivePermissions += securityRights.canWrite(ctx, clsName,
-					attName)
+			efectivePermissions +=
+					securityRights.canWrite(ctx, clsName)
+					&&
+					securityRights.canWrite(ctx, clsName, attName)
 					&& securityOPL.canWrite(oAttHandler.getParent()) ? SecurityPermissions.WRITE
 					: 0;
 			efectivePermissions += securityRights.canDelete(ctx, clsName,
