@@ -11,6 +11,7 @@ import javax.faces.context.FacesContext;
 
 import javax.faces.event.ActionEvent;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
@@ -196,6 +197,10 @@ public class XUIRequestContext {
 
     public boolean isPostBack() {
         return bIsPostBack;
+    }
+    
+    public ServletContext getServletContext() {
+    	return (ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext();
     }
 
     public void setViewRoot( XUIViewRoot oViewRoot ) {
