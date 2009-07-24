@@ -91,21 +91,12 @@ public class XEOLoginBean extends XEOSecurityLessBean {
             String[] iProfiles;
             
 			iProfiles = IProfileUtils.getIProfiles( getBoSession() );
-			
-	        if(iProfiles.length <= 1)
-	        {
-	            this.profile = IProfileUtils.DEFAULT;
-	            if(iProfiles.length > 0)
-	            {
-	                this.profile = iProfiles[0].split(";")[0];
+			if( iProfiles != null ) {
+	            for( String profileString : iProfiles ) {
+	            	String[] currProfile = profileString.split(";");
+	            	oProfilesMap.put( currProfile[0] , currProfile[1] );
 	            }
-	        }
-	        else {
-                for( String profileString : iProfiles ) {
-                	String[] currProfile = profileString.split(";");
-                	oProfilesMap.put( currProfile[0] , currProfile[1] );
-                }
-	        }
+			}
 		}
 		return oProfilesMap;
 	}
@@ -163,8 +154,26 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 					session.setAttribute( "boSession", oXeoSession );
 					showProfiles = false;
 					
-					if( getProfileLovMap().size() > 1 ) {
-						showProfiles = true;
+					Map<Object,String> profilesMap = getProfileLovMap(); 
+					if( profilesMap.size() > 0 ) {
+						if( profilesMap.size() > 1 ) {
+							showProfiles = true;
+						}
+						else {
+							EboContext loginCtx = null;
+							try {
+								if( boApplication.currentContext().getEboContext() == null ) {
+									loginCtx = oXeoSession.createRequestContext( null, null, null);
+									boApplication.currentContext().addEboContext( loginCtx );
+								}
+								oXeoSession.setPerformerIProfileBoui( String.valueOf( profilesMap.keySet().iterator().next() ) );
+							}
+							finally {
+								if( loginCtx != null ) {
+									loginCtx.close();
+								}
+							}
+						}
 					}
 					
 					invalidCredentials = false;
