@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boLoginException;
 import netgest.bo.system.boSession;
