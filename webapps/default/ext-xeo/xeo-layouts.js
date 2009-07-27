@@ -189,13 +189,13 @@ XEOLayoutInit = function()
 			        	   	text: ExtXeo.Messages.LOGOUT_BTN,
 			        	   	handler: function() { document.location.href='Logout.jsp' }
 		        	   	}]
-		           },
+		           }/*,
 		           {
 			        	text: ( xeodmstate? ExtXeo.Messages.XEODM_ACTIVE : ExtXeo.Messages.XEODM_INACTIVE ),
 			        	toggleHandler: xeodmToggleHandler,	
 			        	enableToggle: true,
 			        	pressed: xeodmstate
-			       }
+			       }*/
 	           ]
 	    //'/xwc/testes/ext/examples/tree/tree.json'
 	});
