@@ -175,11 +175,22 @@ XEOLayoutInit = function()
 	    },
 	    dataUrl: action,
 	    bbar: [ 
-		           {xtype:'button',
-		        	img:'ext-xeo/images/menus/logout.gif' ,
-		        	text: ExtXeo.Messages.LOGOUT_BTN,
-		        	handler: function() { document.location.href='Logout.jsp' } 
-		           },{
+		           {
+		        	   	xtype:'splitbutton',
+		        	   	icon:'ext-xeo/images/menus/logout.gif' ,
+		        	   	cls: "x-btn-text-icon",		        	
+		        	   	text: ExtXeo.Messages.LOGOUT_BTN,
+		        	   	tooltip: ExtXeo.Messages.LOGOUT_BTN,
+		        	   	handler: function() { document.location.href='Logout.jsp' },
+		           		menu: [{
+			        	   	xtype:'button',
+			        	   	icon:'ext-xeo/images/menus/logout.gif' ,
+			        	   	cls: "x-btn-text-icon",		        	
+			        	   	text: ExtXeo.Messages.LOGOUT_BTN,
+			        	   	handler: function() { document.location.href='Logout.jsp' }
+		        	   	}]
+		           },
+		           {
 			        	text: ( xeodmstate? ExtXeo.Messages.XEODM_ACTIVE : ExtXeo.Messages.XEODM_INACTIVE ),
 			        	toggleHandler: xeodmToggleHandler,	
 			        	enableToggle: true,
