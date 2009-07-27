@@ -1,13 +1,13 @@
 Ext.ns('ExtXeo');
 
-ExtXeo.Messages = function() {
-	this.PROCESSING 	= 'A processar...';
-	this.SENDING_DATA 	= 'A enviar dados, aguarde p.f. ...';
-	this.WELCOME		= 'Bem Vindo';
-	this.TREE_TITLE		= 'Opções';
-	this.XEODM_ACTIVE	= "XEODM Activo";
-	this.XEODM_INACTIVE	= "XEODM Inactivo";
-	this.LOGOUT_BTN		= 'Terminar Sessão';
+ExtXeo.Messages = {
+		PROCESSING 		: 'A processar...',
+		SENDING_DATA 	: 'A enviar dados, aguarde p.f. ...',
+		WELCOME			: 'Bem Vindo',
+		TREE_TITLE		: 'Op&ccedil;&otilde;es',
+		XEODM_ACTIVE	: "XEODM Activo",
+		XEODM_INACTIVE	: "XEODM Inactivo",
+		LOGOUT_BTN		: 'Terminar Sess&atilde;o'
 };
 
 if(ExtXeo.PagingToolbar){
