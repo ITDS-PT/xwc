@@ -1,58 +1,12 @@
 <?xml version="1.0" encoding="windows-1252" ?>
-<xwc:config xmlns:xwc="http://www.netgest.net/xeo/xvc">
+<xwc:config xmlns:xwc="http://www.netgest.net/xeo/xwc">
     <xwc:renderKits>
-
     	<!-- To Register RenderKits Class Names -->
         <xwc:renderKit name='XEOHTML' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
         <xwc:renderKit name='XEOPDF' 	className='netgest.bo.xwc.components.render.pdf.PdfRenderKit' />
         <xwc:renderKit name='XEOV2' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
 		
-    	<!-- To Register RenderKit component renderers -->
-    	<!-- 
-        <xwc:renderKit name='XEOPDF'>
-            <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.render.pdf.ErrorMessages</xwc:render>
-            <xwc:render for="form">netgest.bo.xwc.components.classic.render.pdf.Form</xwc:render>
-            <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.render.pdf.ToolBar</xwc:render>
-            <xwc:render for='areas'>netgest.bo.xwc.components.classic.render.pdf.Areas</xwc:render>
-            <xwc:render for='area'>netgest.bo.xwc.components.classic.render.pdf.Area</xwc:render>
-            <xwc:render for='panel'>netgest.bo.xwc.components.classic.render.pdf.Panel</xwc:render>
-            <xwc:render for='tabs'>netgest.bo.xwc.components.classic.render.pdf.Tabs</xwc:render>
-            <xwc:render for='tab'>netgest.bo.xwc.components.classic.render.pdf.Tab</xwc:render>
-            <xwc:render for='section'>netgest.bo.xwc.components.classic.render.pdf.Section</xwc:render>
-            <xwc:render for='rows'>netgest.bo.xwc.components.classic.render.pdf.Rows</xwc:render>
-            <xwc:render for='row'>netgest.bo.xwc.components.classic.render.pdf.Row</xwc:render>
-            <xwc:render for='cell'>netgest.bo.xwc.components.classic.render.pdf.Cell</xwc:render>
-            <xwc:render for='actionButton'>netgest.bo.xwc.components.classic.render.pdf.ActionButton</xwc:render>
-            <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.render.pdf.ToolBar</xwc:render>
-            <xwc:render for='attribute'>netgest.bo.xwc.components.classic.render.pdf.Attribute</xwc:render>
-            <xwc:render for='attributeText'>netgest.bo.xwc.components.classic.render.pdf.AttributeText</xwc:render>
-            <xwc:render for='attributeTextArea'>netgest.bo.xwc.components.classic.render.pdf.AttributeTextArea</xwc:render>
-            <xwc:render for='attributeLabel'>netgest.bo.xwc.components.classic.render.pdf.AttributeLabel</xwc:render>
-            <xwc:render for='attributeHtmlEditor'>netgest.bo.xwc.components.classic.render.pdf.AttributeHtmlEditor</xwc:render>
-            <xwc:render for='attributeDate'>netgest.bo.xwc.components.classic.render.pdf.AttributeDate</xwc:render>
-            <xwc:render for='attributeDateTime'>netgest.bo.xwc.components.classic.render.pdf.AttributeDateTime</xwc:render>
-            <xwc:render for='attributeLov'>netgest.bo.xwc.components.classic.render.pdf.AttributeLov</xwc:render>
-            <xwc:render for='attributeBoolean'>netgest.bo.xwc.components.classic.render.pdf.AttributeBoolean</xwc:render>
-            <xwc:render for='attributeNumber'>netgest.bo.xwc.components.classic.render.pdf.AttributeNumber</xwc:render>
-            <xwc:render for='attributeNumberLookup'>netgest.bo.xwc.components.classic.render.pdf.AttributeNumberLookup</xwc:render>
-            <xwc:render for='attributeOutput'>netgest.bo.xwc.components.classic.render.pdf.AttributeOutput</xwc:render>
-            <xwc:render for='attributeFile'>netgest.bo.xwc.components.classic.render.pdf.AttributeFile</xwc:render>
-            <xwc:render for='mainLayout'>netgest.bo.xwc.components.classic.render.pdf.MainLayout</xwc:render>
-            <xwc:render for='gridPanel'>netgest.bo.xwc.components.classic.render.pdf.GridPanel</xwc:render>
-            <xwc:render for='window'>netgest.bo.xwc.components.classic.render.pdf.Window</xwc:render>
-			<xwc:render for='HTMLFileBrowse'>netgest.bo.xwc.components.classic.render.pdf.HTMLFileBrowse</xwc:render>
-			<xwc:render for='title'>netgest.bo.xwc.components.classic.render.pdf.Title</xwc:render>
-			<xwc:render for='borderLayout'>netgest.bo.xwc.components.classic.render.pdf.BorderLayout</xwc:render>
-
-			HTML Graphics
-            <xwc:render for='attributeImage'>netgest.bo.xwc.components.classic.render.pdf.AttributeImage</xwc:render>
-			HTML Graphics
-
-        </xwc:renderKit>
-		
-		-->
-
-		<xwc:renderKit name='XEOV2'>
+		<xwc:renderKit name='XEOV2' componentNamespace='xvw' >
             <xwc:render for="button_pb">netgest.bo.xwc.components.html.Button_pb$XEOHTMLRenderer</xwc:render>
             <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.ErrorMessages$XEOHTMLRenderer</xwc:render>
             <xwc:render for="form">netgest.bo.xwc.components.classic.Form$XEOHTMLRenderer</xwc:render>
@@ -107,9 +61,6 @@
 			<xwc:render for='buttonHtml'>netgest.bo.xwc.components.html.ButtonHtml$XEOHTMLRenderer</xwc:render>
             <xwc:render for='outputHtml'>netgest.bo.xwc.components.classic.OutputHtml$XEOHTMLRenderer</xwc:render>
 
-
-
-
 	        <!-- pcampos begin OE consolidar-->
             <xwc:render for='fileBrowserHtml'>netgest.bo.xwc.components.html.FileBrowserHtml$XEOHTMLRenderer</xwc:render>
             <!-- pcampos begin OE -->
@@ -124,7 +75,7 @@
 
 		</xwc:renderKit>
 
-        <xwc:renderKit name='XEOHTML'>
+		<xwc:renderKit name='XEOHTML' componentNamespace='xvw' >
             <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.ErrorMessages$XEOHTMLRenderer</xwc:render>
             <xwc:render for="form">netgest.bo.xwc.components.classic.Form$XEOHTMLRenderer</xwc:render>
             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.ToolBar$XEOHTMLRenderer</xwc:render>
@@ -194,7 +145,8 @@
 			
         </xwc:renderKit>
     </xwc:renderKits>
-    <xwc:components >
+    
+    <xwc:components namespace='xvw' >
     
 		<xwc:component name="button_pb">
 			<xwc:className>netgest.bo.xwc.components.html.Button_pb</xwc:className>
@@ -436,4 +388,97 @@
 
     </xwc:components>
     
+    <xwc:components namespace='xeo'>
+		<!--  XEO Components -->
+        <xwc:component name='attribute'>
+            <xwc:className>netgest.bo.xwc.xeo.components.Attribute</xwc:className>
+            <xwc:description>Represents a attribute of a XEO Model</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name='bridge'>
+            <xwc:className>netgest.bo.xwc.xeo.components.Bridge</xwc:className>
+            <xwc:description>Represents a toolbar for edit XEO Model Instance</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='columnAttribute'>
+            <xwc:className>netgest.bo.xwc.xeo.components.ColumnAttribute</xwc:className>
+            <xwc:description>Represents a grid column for a attribute of a XEO Model</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name='bridgeToolBar'>
+            <xwc:className>netgest.bo.xwc.xeo.components.BridgeToolBar</xwc:className>
+            <xwc:description>Represents a toolbar for a bridge of a XEO Model</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='editToolBar'>
+            <xwc:className>netgest.bo.xwc.xeo.components.EditToolBar</xwc:className>
+            <xwc:description>Represents a EditToolBar for editing a XEO Model</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='formEdit'>
+            <xwc:className>netgest.bo.xwc.xeo.components.FormEdit</xwc:className>
+            <xwc:description>Represents a Form to Edit a XEO Model</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='lookupList'>
+            <xwc:className>netgest.bo.xwc.xeo.components.LookupList</xwc:className>
+            <xwc:description>Represents a list of XEO Model instances</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='modelMethod'>
+            <xwc:className>netgest.bo.xwc.xeo.components.ModelMethod</xwc:className>
+            <xwc:description>Represents a method of a XEO Model</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='nonOrphanEditToolBar'>
+            <xwc:className>netgest.bo.xwc.xeo.components.NonOrphanEditToolBar</xwc:className>
+            <xwc:description>Represents a XEO Model Orphan edit toolbar</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='explorerList'>
+            <xwc:className>netgest.bo.xwc.xeo.components.ExplorerList</xwc:className>
+            <xwc:description>Represents a XEO Model instance Explorer, with standard options</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='viewerMessages'>
+            <xwc:className>netgest.bo.xwc.xeo.components.ViewerMessages</xwc:className>
+            <xwc:description>Represents the component to render ViewerMessages</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='viewerMethod'>
+            <xwc:className>netgest.bo.xwc.xeo.components.ViewerMethod</xwc:className>
+            <xwc:description>Represents a Methos of a Viewer of on XEO Model</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='viewerTitle'>
+            <xwc:className>netgest.bo.xwc.xeo.components.ViewerTitle</xwc:className>
+            <xwc:description>Represents the Title of the XEO Viewer</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='viewerWindow'>
+            <xwc:className>netgest.bo.xwc.xeo.components.ViewerWindow</xwc:className>
+            <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='formList'>
+            <xwc:className>netgest.bo.xwc.xeo.components.FormList</xwc:className>
+            <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='formLookupList'>
+            <xwc:className>netgest.bo.xwc.xeo.components.FormLookupList</xwc:className>
+            <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name='listToolBar'>
+            <xwc:className>netgest.bo.xwc.xeo.components.ListToolBar</xwc:className>
+            <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='list'>
+            <xwc:className>netgest.bo.xwc.xeo.components.List</xwc:className>
+            <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
+        </xwc:component>
+
+    </xwc:components>
 </xwc:config>
