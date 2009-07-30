@@ -42,7 +42,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
-import netgest.bo.xwc.xeo.beans.XEOSecurityBaseBean;
+import netgest.bo.xwc.components.beans.XEOSecurityBaseBean;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
 
