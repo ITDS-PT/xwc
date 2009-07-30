@@ -32,7 +32,7 @@ public class XUIComponentParser
     public void loadComponents( XUIApplicationContext oXUIApplication )
     {
     	try {
-			InputStream systemsComponents = getClass().getClassLoader().getResourceAsStream( "XWVComponents.xml" );
+			InputStream systemsComponents = Thread.currentThread().getContextClassLoader().getResourceAsStream( "XWVComponents.xml" );
 			loadComponents( oXUIApplication, systemsComponents );
 			systemsComponents.close();
 		} catch (IOException e) {
@@ -40,11 +40,11 @@ public class XUIComponentParser
 		}
 
     	try {
-			InputStream projectComponents = getClass().getClassLoader().getResourceAsStream( "XWVProjectComponents.xml" );
+			InputStream projectComponents = Thread.currentThread().getContextClassLoader().getResourceAsStream( "XWVProjectComponents.xml" );
 			if( projectComponents != null ) {
 				loadComponents( oXUIApplication, projectComponents );
+				projectComponents.close();
 			}
-			projectComponents.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -73,7 +73,9 @@ public class XUIComponentParser
 
             // Add render Kits
             XMLElement oRenderKitsElement   = (XMLElement)oConfigElement.selectSingleNode("xwc:renderKits",nr);
-            parseRenderKits( oComponentStore, oRenderKitsElement );
+            if( oRenderKitsElement != null ) {
+            	parseRenderKits( oComponentStore, oRenderKitsElement );
+            }
             
             // Add component Renders
             parseComponentRenders( oComponentStore, oRenderKitsElement );
