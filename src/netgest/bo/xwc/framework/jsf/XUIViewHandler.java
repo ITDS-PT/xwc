@@ -1,33 +1,17 @@
 package netgest.bo.xwc.framework.jsf;
 
-import com.sun.faces.RIConstants;
-import com.sun.faces.application.ViewHandlerResponseWrapper;
-import com.sun.faces.config.WebConfiguration;
-import com.sun.faces.config.WebConfiguration.WebContextInitParameter;
-import com.sun.faces.io.FastStringWriter;
-import com.sun.faces.util.FacesLogger;
-import com.sun.faces.util.RequestStateManager;
-import com.sun.faces.util.Util;
-
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.io.Writer;
-
 import java.lang.reflect.Field;
-import java.net.URL;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
-import javax.faces.application.StateManager;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
@@ -36,25 +20,15 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.render.RenderKit;
 import javax.faces.render.RenderKitFactory;
-
 import javax.faces.render.Renderer;
-
 import javax.faces.render.ResponseStateManager;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import netgest.bo.def.boDefHandler;
 import netgest.bo.system.boApplication;
 import netgest.bo.transaction.XTransaction;
-import netgest.bo.xwc.components.beans.XEOSecurityBaseBean;
 import netgest.bo.xwc.components.classic.Layouts;
-import netgest.bo.xwc.components.classic.Tab;
 import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
 import netgest.bo.xwc.framework.PackageIAcessor;
 import netgest.bo.xwc.framework.XUIApplicationContext;
@@ -63,22 +37,27 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewBean;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
-
-import netgest.bo.xwc.framework.components.XUIViewRoot;
-
+import netgest.bo.xwc.xeo.beans.XEOSecurityBaseBean;
 import netgest.utils.ngtXMLUtils;
-
 import oracle.xml.parser.v2.XMLDocument;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.sun.faces.RIConstants;
+import com.sun.faces.application.ViewHandlerResponseWrapper;
+import com.sun.faces.config.WebConfiguration;
+import com.sun.faces.config.WebConfiguration.WebContextInitParameter;
+import com.sun.faces.io.FastStringWriter;
+import com.sun.faces.util.RequestStateManager;
+import com.sun.faces.util.Util;
 
 
 /**
