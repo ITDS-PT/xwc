@@ -259,11 +259,16 @@ public class XUIViewerBuilder
         try
         {
             XUIComponentDefinition componentDef = oContext.getApplicationContext().getComponentStore().findComponent( name );
+            if( componentDef == null && name.indexOf( ':' ) == -1 ) {
+            	componentDef = oContext.getApplicationContext().getComponentStore().findComponent(  "xvw:" + name );
+            }
             if(componentDef != null)
             {
                 UIComponent fcomponent = (UIComponent)Class.forName( componentDef.getClassName() ).newInstance();
                 return fcomponent;
             }
+            
+            
         }
         catch (Exception e)
         {
