@@ -6,6 +6,7 @@ import java.util.Properties;
 
 public class XUIComponentDefinition
 {
+	public String namespace;
     public String className;
     public String name;
     public String description;
@@ -17,7 +18,15 @@ public class XUIComponentDefinition
     {
     }
     
-    public void setClassName(String className)
+    public String getNameSpace() {
+		return namespace;
+	}
+
+	public void setNameSpace(String namespace) {
+		this.namespace = namespace;
+	}
+
+	public void setClassName(String className)
     {
         this.className = className;
     }

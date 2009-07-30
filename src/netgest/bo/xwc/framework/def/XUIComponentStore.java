@@ -23,9 +23,9 @@ public class XUIComponentStore
     	return (String[])renderKits.keySet().toArray( new String[0] );
     }
     
-    public void registerComponent( XUIComponentDefinition component )
+    public void registerComponent( String nameSpace, XUIComponentDefinition component )
     {
-        components.put( component.getName(), component );        
+        components.put( nameSpace + ":" + component.getName(), component );        
     }
     
     public XUIComponentDefinition findComponent( String name )

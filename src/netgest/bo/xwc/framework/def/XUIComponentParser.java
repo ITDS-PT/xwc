@@ -1,5 +1,6 @@
 package netgest.bo.xwc.framework.def;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 
@@ -24,15 +25,29 @@ public class XUIComponentParser
     
     private static NSResolver nr = new GenericResolver();
     
-    
-    
     public XUIComponentParser(  )
     {
     }
     
     public void loadComponents( XUIApplicationContext oXUIApplication )
     {
-        loadComponents( oXUIApplication, getClass().getClassLoader().getResourceAsStream( "XWVComponents.xml" ) );
+    	try {
+			InputStream systemsComponents = getClass().getClassLoader().getResourceAsStream( "XWVComponents.xml" );
+			loadComponents( oXUIApplication, systemsComponents );
+			systemsComponents.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+    	try {
+			InputStream projectComponents = getClass().getClassLoader().getResourceAsStream( "XWVProjectComponents.xml" );
+			if( projectComponents != null ) {
+				loadComponents( oXUIApplication, projectComponents );
+			}
+			projectComponents.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }   
     
     public void loadComponents( XUIApplicationContext oXUIApplication, InputStream xml )
@@ -40,21 +55,33 @@ public class XUIComponentParser
         try
         {
             XMLDocument doc = ngtXMLUtils.loadXML( xml );
-            XMLElement oConfigElement       = (XMLElement)doc.selectSingleNode("xwc:config",nr);
-            XMLElement oComponentsElement   = (XMLElement)oConfigElement.selectSingleNode("xwc:components",nr);
-            XMLElement oRenderKitsElement   = (XMLElement)oConfigElement.selectSingleNode("xwc:renderKits",nr);
             
+            // Query config Element
+            XMLElement oConfigElement       = (XMLElement)doc.selectSingleNode("xwc:config",nr);
+
+            // Get the application component store
             XUIComponentStore oComponentStore = oXUIApplication.getComponentStore();
+            
             // Load components in XML file
-            parseComponents( oComponentStore, oComponentsElement );
+            NodeList oComponentsNodeList   = oConfigElement.selectNodes("xwc:components",nr);
+            for( int i=0; i < oComponentsNodeList.getLength(); i++ ) {
+            	XMLElement	element = (XMLElement)oComponentsNodeList.item( i );
+            	String nameSpace = element.getAttribute("namespace");
+            	parseComponents( oComponentStore, nameSpace, element );
+
+            }
 
             // Add render Kits
+            XMLElement oRenderKitsElement   = (XMLElement)oConfigElement.selectSingleNode("xwc:renderKits",nr);
             parseRenderKits( oComponentStore, oRenderKitsElement );
+            
+            // Add component Renders
             parseComponentRenders( oComponentStore, oRenderKitsElement );
             
         }
         catch (Exception e)
         {
+        	e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -83,6 +110,7 @@ public class XUIComponentParser
             String sRenderKitName;
             String sRenderFor;
             String sRenderClassName;
+            String sComponentNamespace;
 
             NodeList    oRendersNodeList;
             XMLElement  oRenderElement;
@@ -94,7 +122,8 @@ public class XUIComponentParser
             {
                 XMLElement oRenderKitElement = (XMLElement)listRenderKits.item( i );    
                 
-                sRenderKitName = oRenderKitElement.getAttribute("name");
+                sRenderKitName 		= oRenderKitElement.getAttribute("name");
+                sComponentNamespace = oRenderKitElement.getAttribute("componentNamespace");
                 
                 oRendersNodeList = oRenderKitElement.selectNodes("xwc:render",nr);
                 
@@ -105,16 +134,12 @@ public class XUIComponentParser
                     sRenderFor = oRenderElement.getAttribute( "for" );
                     
                     assert sRenderFor != null:"for attribute must be defined in element";
-                    oComponent = oComponents.getComponent( sRenderFor );
+                    oComponent = oComponents.getComponent( sComponentNamespace +":" + sRenderFor );
                     
                     if( oComponent != null )
                     {
-                        
                         sRenderClassName = oRenderElement.getText();
-                        
                         oComponent.addRenderKit( sRenderKitName, sRenderClassName );
-                        
-                        
                     }
                     else{
                         if ( log.isLoggable( Level.INFO ) ){
@@ -132,16 +157,15 @@ public class XUIComponentParser
 
     }
 
-    private XUIComponentStore parseComponents( XUIComponentStore oComponents, XMLElement xcomponents ) throws Exception
+    private XUIComponentStore parseComponents( XUIComponentStore oComponents, String namespace, XMLElement xcomponents ) throws Exception
     {
         try
         {
-            
             NodeList list = xcomponents.selectNodes("xwc:component",nr);
             for (int i = 0; i < list.getLength(); i++) 
             {
                 oComponents.registerComponent(
-                    parseComponent( (XMLElement)list.item( i ) )
+                    namespace, parseComponent( namespace, (XMLElement)list.item( i ) )
                 );
             }
             return oComponents;
@@ -152,45 +176,17 @@ public class XUIComponentParser
         }
     }
     
-    private XUIComponentDefinition parseComponent( XMLElement xcomponent ) throws Exception
+    private XUIComponentDefinition parseComponent( String namespace, XMLElement xcomponent ) throws Exception
     {
 
         XUIComponentDefinition component = new XUIComponentDefinition();
-        
         component.setName( xcomponent.getAttribute("name") );
+        component.setNameSpace( namespace );
         component.setClassName( getNodeText( xcomponent, "xwc:className" ) );
         component.setDescription( getNodeText( xcomponent, "xwc:description" ) );
-/*        
-        XMLElement propertiesElement = (XMLElement)xcomponent.selectSingleNode("xwc:properties",nr);
-        if ( propertiesElement != null ) 
-        {
-            parseComponentProperties( component, propertiesElement );
-        }
-
-        
-        XMLElement renderKitsElement = (XMLElement)xcomponent.selectSingleNode("xwc:renderKits",nr);
-        if ( renderKitsElement != null ) 
-        {
-            parseComponentRenderKits( component, renderKitsElement );
-        }
-*/
-
         return component;
     }
      
-/*
- * Vai ser substituido por java anotations
-    private void parseComponentProperties( XPFComponent component, XMLElement propertiesElement ) throws Exception
-    {
-        NodeList nlist = propertiesElement.selectNodes("xwc:property",nr);
-        for (int i = 0; i < nlist.getLength(); i++) 
-        {
-            XMLElement nelement = (XMLElement)nlist.item( i );
-            component.addProperty( nelement.getAttribute("name"),nelement.getAttribute("type"));
-        }
-    }
-*/    
-    
     private static final String getNodeText( XMLElement node, String nodeName )
     {
         try
@@ -213,7 +209,7 @@ public class XUIComponentParser
     {
         public String resolveNamespacePrefix( String prefix )
         {
-            return "http://www.netgest.net/xeo/xvc";
+            return "http://www.netgest.net/xeo/" + prefix;
         }
     }
     

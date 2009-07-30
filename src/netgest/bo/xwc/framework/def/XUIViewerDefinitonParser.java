@@ -114,7 +114,7 @@ public class XUIViewerDefinitonParser
         
         if( node.getNodeName().indexOf(':') == -1 )
         {
-            component.setName("genericTag");
+            component.setName("xvw:genericTag");
 
             LinkedHashMap<String, String> propertiesMap = new LinkedHashMap<String, String>();
             propertiesMap.put("__tagName", node.getNodeName() );
@@ -130,8 +130,9 @@ public class XUIViewerDefinitonParser
         }
         else
         {
-            component.setName( node.getNodeName().substring( node.getNodeName().indexOf(':')+1 ) );
+            component.setName( node.getNodeName() );
         }
+        
         NamedNodeMap atts = node.getAttributes();
         for (int i = 0; i < atts.getLength(); i++) 
         {
@@ -156,7 +157,7 @@ public class XUIViewerDefinitonParser
             else if ( cnode.getNodeType() == Node.TEXT_NODE ) 
             {
             	XUIViewerDefinitionNode childText = new XUIViewerDefinitionNode();
-            	childText.setName("genericTag");
+            	childText.setName("xvw:genericTag");
             	childText.setTextContent( getLocalizedMessage( root, cnode.getNodeValue() ) );
             	component.addChild( childText );
             }
