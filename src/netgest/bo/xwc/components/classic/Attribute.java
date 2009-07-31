@@ -37,7 +37,18 @@ public class Attribute extends AttributeBase
         createChildComponents();
     }
 
-    
+    public String getViewerSecurityLabel() {
+    	String ret = getViewerSecurityComponentType().toString();
+    	if( getObjectAttribute() != null && !"".equals( getObjectAttribute() ) ) {
+	    	try {
+	    		ret = getViewerSecurityComponentType().toString() + " " + getObjectAttribute();
+	    	}
+	    	catch (Throwable e){
+	    		
+	    	}
+    	}
+		return ret; 
+	}
     
     public void createChildComponents() {
         
