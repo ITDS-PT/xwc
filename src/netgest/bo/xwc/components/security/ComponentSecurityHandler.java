@@ -23,7 +23,7 @@ public class ComponentSecurityHandler {
 
 		viewerPermissions = 
 	    	new XUIBindProperty<Byte>( "viewerSecurityPermissions", oComponent,
-				Byte.toString( SecurityPermissions.FULL_CONTROL ),
+				SecurityPermissions.FULL_CONTROL,
 				Byte.class );
 	}
 
