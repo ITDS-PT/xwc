@@ -33,7 +33,7 @@
 	                            <xvw:attribute valueExpression='#{viewBean.write}' label='@{SECURITY_WRITE}' inputType='attributeBoolean' ></xvw:attribute>
 	                        </xvw:cell>
 	                        <xvw:cell>
-	                            <xvw:attribute valueExpression='#{viewBean.add}' label='@{SECURITY_ADD}' inputType='attributeBoolean'></xvw:attribute>
+	                            <xvw:attribute valueExpression='#{viewBean.add}' label='@{BTN_ADD}' inputType='attributeBoolean'></xvw:attribute>
 	                        </xvw:cell>
 	                        <xvw:cell>
 	                            <xvw:attribute valueExpression='#{viewBean.remove}' label='@{SECURITY_DELETE}' inputType='attributeBoolean'></xvw:attribute>
