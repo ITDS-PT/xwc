@@ -31,6 +31,11 @@ public class XEOBaseLookupList extends XEOBaseList {
 		return selectedObject;
 	}
 
+    public void selectObject() {
+    	//  Dummy
+    }
+    
+    
 	public void setSelectedObject(String selectedObject) {
 		if( !selectedObject.equals( this.selectedObject ) ) {
 			this.selectedObject = selectedObject;
