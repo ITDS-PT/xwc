@@ -13,11 +13,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.faces.component.UIComponent;
 
+import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boBridgeIterator;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.xwc.components.classic.Attribute;
+import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
@@ -77,7 +80,7 @@ public class ViewerAccessPolicyBuilder {
 				logger.error( "buildAccessPolicy:"+e );
 				commit = false;
 				throw new boRuntimeException( "", "", e );
-			} finally {
+ 			} finally {
 				if ( commit ) {
 					context.commitContainerTransaction();
 				} else {
@@ -102,7 +105,44 @@ public class ViewerAccessPolicyBuilder {
 	 * @throws boRuntimeException
 	 */
 	private void processViewer( String viewer, EboContext context, XUISessionContext sessionContext, boolean buildObjects ) throws boRuntimeException {
-		XUIViewRoot viewRoot = sessionContext.createView( viewer );
+		XUIViewRoot viewRoot = sessionContext.createChildView( viewer );
+		
+		// Try to intialize all the components in the tree....
+		/*
+		Object bean = viewRoot.getBean("viewBean");
+		if( bean instanceof XEOBaseBean ) {
+			String viewId = viewRoot.getViewId();
+			String objectName = viewId.substring( 0, viewId.lastIndexOf("_") );
+			boDefHandler defH = boDefHandler.getBoDefinition( objectName );
+			if( defH != null ) {
+				((XEOBaseBean)bean).createNew( defH.getName() );
+				XUIViewRoot originalView = XUIRequestContext.getCurrentContext().getViewRoot();
+				try {
+					XUIRequestContext.getCurrentContext().setViewRoot( viewRoot );
+					//viewRoot.processInitComponents();
+				}
+				finally {
+					XUIRequestContext.getCurrentContext().setViewRoot( originalView );
+				}
+			}
+		}
+		else if ( bean instanceof XEOBaseList ) {
+			String viewId = viewRoot.getViewId();
+			String objectName = viewId.substring( 0, viewId.lastIndexOf("_") );
+			boDefHandler defH = boDefHandler.getBoDefinition( objectName );
+			if( defH != null ) {
+				((XEOBaseList)bean).executeBoql( "select " + defH.getName() + " where 0=1 " );
+				XUIViewRoot originalView = XUIRequestContext.getCurrentContext().getViewRoot();
+				try {
+					XUIRequestContext.getCurrentContext().setViewRoot( viewRoot );
+					//viewRoot.processInitComponents();
+				}
+				finally {
+					XUIRequestContext.getCurrentContext().setViewRoot( originalView );
+				}
+			}
+		}
+		*/
 		processViewer( viewRoot, context, buildObjects );
 	}
 	
@@ -115,7 +155,7 @@ public class ViewerAccessPolicyBuilder {
 	 */
 	public void processViewer( XUIViewRoot viewRoot, EboContext context, boolean buildObjects ) throws boRuntimeException {
 		String viewerName = viewRoot.getViewId();
-
+		
 		accessPolicyByPath = new HashMap<String, String>();
 		idByComponent = new HashMap<String, String>();
 		instanceCounter = new AtomicLong(0);
@@ -135,7 +175,14 @@ public class ViewerAccessPolicyBuilder {
 	public static List<String> getRegisteredViewers() throws boRuntimeException {
 		List<String> registedViewers = new ArrayList<String>();
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		InputStream inputStream = classLoader.getResourceAsStream("netgest/bo/xwc/components/security/RegisteredViewers.txt");
+		
+		InputStream inputStream;
+		
+		inputStream = classLoader.getResourceAsStream("ProjectSecurableViewers.txt");
+		if( inputStream == null ) {
+			inputStream = classLoader.getResourceAsStream("netgest/bo/xwc/components/security/RegisteredViewers.txt");
+		}
+		
 		BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream) );
 		String line;
 		
