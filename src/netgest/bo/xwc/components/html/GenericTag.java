@@ -19,6 +19,10 @@ public class GenericTag extends XUIComponentBase {
 			this.properties = new LinkedHashMap<String, String>();
 		this.properties.putAll( properties );
 	}
+
+        public Map<String, String> getProperties() {
+                return this.properties;
+        }        
 	
 	public void setTextContent( String textContext ) {
 		this.textContent = textContext;
