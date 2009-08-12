@@ -10,21 +10,22 @@ import org.json.JSONObject;
 
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
-import netgest.bo.xwc.components.beans.ViewerConfig;
 import netgest.bo.xwc.components.classic.ViewerCommandSecurityBase;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.xeo.beans.ViewerConfig;
 
 public class Menu extends ViewerCommandSecurityBase {
     
-    public XUIStateProperty<String> sText = new XUIStateProperty<String>( "sText", this );
-    public XUIStateProperty<String> sToolTip = new XUIStateProperty<String>( "sToolTip", this );
-    public XUIStateProperty<String> sIconCls = new XUIStateProperty<String>( "sIconCls", this );
-    public XUIStateProperty<String> sIcon = new XUIStateProperty<String>( "sIcon", this );
-    public XUIStateProperty<String> sServerAction = new XUIStateProperty<String>( "sServerAction", this );
-    public XUIStateProperty<String> sTarget = new XUIStateProperty<String>( "sTarget", this );
+	
+    public XUIStateProperty<String> text = new XUIStateProperty<String>( "text", this );
+    public XUIStateProperty<String> toolTip = new XUIStateProperty<String>( "toolTip", this );
+    public XUIStateProperty<String> iconCls = new XUIStateProperty<String>( "iconCls", this );
+    public XUIStateProperty<String> icon = new XUIStateProperty<String>( "icon", this );
+    public XUIStateProperty<String> serverAction = new XUIStateProperty<String>( "serverAction", this );
+    public XUIStateProperty<String> target = new XUIStateProperty<String>( "target", this );
 
     private XUIStateBindProperty<Boolean> disabled = new XUIStateBindProperty<Boolean>( "disabled", this, "false",Boolean.class );
     private XUIStateBindProperty<Boolean> visible  = new XUIStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
@@ -36,6 +37,17 @@ public class Menu extends ViewerCommandSecurityBase {
     private XUIStateBindProperty<String> profiles = new XUIStateBindProperty<String>( "profiles", this, String.class );
     private XUIStateBindProperty<String> profile = new XUIStateBindProperty<String>( "profile", this, String.class );
     
+    public static final Menu getMenuSpacer() {
+    	return new Menu("-");
+    }
+    
+    private Menu( String sText ) {
+    	setText( sText );
+    }
+    
+    public Menu() {
+    	
+    }
     
     public void setRoles( String sExpression ) {
     	this.roles.setExpressionText( sExpression );
@@ -78,47 +90,47 @@ public class Menu extends ViewerCommandSecurityBase {
     }
     
     public void setText(String sText) {
-        this.sText.setValue( sText );
+        this.text.setValue( sText );
     }
 
     public String getText() {
-        return sText.getValue();
+        return text.getValue();
     }
 
     public void setTarget(String sText) {
-        this.sTarget.setValue( sText );
+        this.target.setValue( sText );
     }
 
     public String getTarget() {
-        return sTarget.getValue();
+        return target.getValue();
     }
 
     public void setToolTip(String sToolTip) {
-        this.sToolTip.setValue( sToolTip );
+        this.toolTip.setValue( sToolTip );
     }
 
     public String getToolTip() {
-        return sToolTip.getValue();
+        return toolTip.getValue();
     }
 
     public void setIconCls(String sIconCls) {
-        this.sIconCls.setValue( sIconCls );
+        this.iconCls.setValue( sIconCls );
     }
 
     public String getIconCls() {
-        return sIconCls.getValue();
+        return iconCls.getValue();
     }
 
     public void setIcon(String sIcon) {
-        this.sIcon.setValue( sIcon );
+        this.icon.setValue( sIcon );
     }
 
     public String getIcon() {
-        return sIcon.getValue();
+        return icon.getValue();
     }
     
     public void setServerAction(String sActionExpr ) {
-        this.sServerAction.setValue( sActionExpr );
+        this.serverAction.setValue( sActionExpr );
         setActionExpression( createMethodBinding( sActionExpr ) );
     }
 

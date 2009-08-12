@@ -98,11 +98,6 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 					sRetValue = sRetValue.substring( sRetValue.lastIndexOf("\\") + 1 );
 				}
 				
-				//iFile oFile = oAttHandler.getValueiFile();
-				//if( oFile != null ) {
-				//	sRetValue = oFile.getName();
-				//}
-				
 			} else if ( getIsLov() ) {
 
 				Object  value;

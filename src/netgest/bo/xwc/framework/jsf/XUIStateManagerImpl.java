@@ -263,23 +263,11 @@ public class XUIStateManagerImpl extends StateManager {
         synchronized (sessionObj) {
             Map logicalMap = (Map) externalCtx.getSessionMap()
                   .get(LOGICAL_VIEW_MAP);
-            if (logicalMap != null) {
-                Map actualMap = (Map) logicalMap.get(idInLogicalMap);
-                if (actualMap != null) {
-                    stateArray =
-                          (Object[]) actualMap.get(idInActualMap);
-                }
-            }
+            
+            if( logicalMap.containsKey(idInLogicalMap) )
+            	logicalMap.remove( idInLogicalMap );
+            
         }
-        if (stateArray == null) {
-            return;
-        }
-        viewRoot = (XUIViewRoot)restoreTree(((Object[]) stateArray[0]).clone());
-        viewRoot.processRestoreState(context, handleRestoreState(stateArray[1]));
-        
-        viewRoot.getTransactionId();
-        
-        viewRoot.dispose();
         
     }
 
@@ -307,9 +295,6 @@ public class XUIStateManagerImpl extends StateManager {
                         + viewRoot.getViewId());
         }
         List<TreeNode> treeList = new ArrayList<TreeNode>(32);
-        
-        long init = System.currentTimeMillis();
-        
         Object state = viewRoot.processSaveState(context);
         
         captureChild(treeList, 0, viewRoot);        
@@ -358,17 +343,6 @@ public class XUIStateManagerImpl extends StateManager {
                     sessionMap.put(LOGICAL_VIEW_MAP, logicalMap);
                 }
             
-                
-                /*
-                String idInLogicalMap = (String)
-                      RequestStateManager.get(context, RequestStateManager.LOGICAL_VIEW_MAP);
-                if (idInLogicalMap == null) {
-                    idInLogicalMap = createUniqueRequestId(context);
-                }
-                assert(null != idInLogicalMap);
-                
-                String idInActualMap = createUniqueRequestId(context);
-                */
                 
                 String sViewState = ((XUIViewRoot)viewRoot).getViewState();
                 

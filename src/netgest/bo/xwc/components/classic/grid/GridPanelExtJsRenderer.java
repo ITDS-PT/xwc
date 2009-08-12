@@ -42,7 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class GridPanelExtJsRenderer extends XUIRenderer {
+public class GridPanelExtJsRenderer extends XUIRenderer  {
 
     private ExtConfigArray oExtButtons;
     private ExtConfigArray oExtToolbar;
@@ -89,7 +89,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer {
                             oExtButtons = new ExtConfigArray();
                         }
                         oExtButtons.addChild(
-                            ((ExtJsRenderer)renderer).extEncodeAll( (XUIComponentBase)oChildComp )
+                            ((ExtJsRenderer)renderer).getExtJsConfig( (XUIComponentBase)oChildComp )
                         );
                     }
                 }
@@ -107,7 +107,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer {
                             oExtToolbar = new ExtConfigArray();
                         }
                         oExtToolbar.addChild(
-                            ((ExtJsRenderer)renderer).extEncodeAll( (XUIComponentBase)oChildComp )
+                            ((ExtJsRenderer)renderer).getExtJsConfig( (XUIComponentBase)oChildComp )
                         );
                         
                     }

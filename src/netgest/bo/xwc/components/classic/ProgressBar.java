@@ -18,7 +18,7 @@ public class ProgressBar extends XUIOutput {
 
 	private XUIStateBindProperty<Float>    valueExpression	= new XUIStateBindProperty<Float>( "valueExpression", this, "0", Float.class );
 	private XUIStateBindProperty<String>   width 			= new XUIStateBindProperty<String>( "width", this, "auto", String.class );
-	private XUIStateBindProperty<String>   text 			= new XUIStateBindProperty<String>( "text", this, "5000", String.class );
+	private XUIStateBindProperty<String>   text 			= new XUIStateBindProperty<String>( "text", this, "", String.class );
 
 	public String getWidth() {
 		return width.getEvaluatedValue();

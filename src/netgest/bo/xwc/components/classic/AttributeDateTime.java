@@ -13,36 +13,72 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
+import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
-
 import netgest.bo.xwc.components.HTMLAttr;
-import netgest.bo.xwc.components.classic.extjs.ExtConfig;
-import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.localization.ComponentMessages;
-import netgest.bo.xwc.components.security.SecurityPermissions;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
-public class AttributeDateTime extends AttributeDate {
+/**
+ * This components automatic creates to Child's, on to represent the Date and another the Time
+ * 
+ * He take control of the decodes, to handle a unique java.sql.Timestamp with date and hour.
+ * 
+ * He cannot have children
+ * 
+ * @author jcarreira
+ *
+ */
+public class AttributeDateTime extends AttributeBase {
 
-    private static final SimpleDateFormat oTimeFormat       = new SimpleDateFormat( "HH:mm" );
     private static final SimpleDateFormat oDateTimeFormat   = new SimpleDateFormat( "dd/MM/yyyy HH:mm" );
-    private static final SimpleDateFormat oDateFormat   = new SimpleDateFormat( "dd/MM/yyyy" );
 
     @Override
     public void initComponent() {
-        
-        super.initComponent();
-
+    	
+    	super.initComponent();
+    	
+    	AttributeDate attDate = new AttributeDate();
+    	propagateProperties( attDate );
+    	attDate.setId( getId() + "_d" );
+    	getChildren().add( attDate );
+    	
+    	AttributeTime attTime = new AttributeTime();
+    	propagateProperties( attTime );
+    	attTime.setId( getId() + "_t" );
+    	getChildren().add( attTime );
+    	
     }
     
+    @SuppressWarnings("unchecked")
+	private void propagateProperties( AttributeBase attDate ) {
+    	Set<Entry<String,XUIBaseProperty>> properties = getStateProperties();
+    	for( Entry<String,XUIBaseProperty> entry : properties ) {
+    		XUIBaseProperty prop = attDate.getStateProperty( entry.getKey() );
+    		if( prop != null ) {
+    			prop.setValue( entry.getValue().getValue() );
+    		}
+    	}
+    	
+    	ValueExpression val = getValueExpression( "value" );
+    	if( val != null ) {
+    		attDate.setValueExpression("value", val );
+    	}
+    	
+    }
     
+    @Override
+    public void processDecodes( FacesContext context ) {
+    	decode();
+    }
     
-
     @Override
     public void validate(FacesContext context) {
         Object oSubmitedValue = getSubmittedValue();
@@ -70,19 +106,27 @@ public class AttributeDateTime extends AttributeDate {
 	                setValid(true);
             	}
 	            catch( ParseException e ) {
-	            	getRequestContext().addMessage( getClientId(), new XUIMessage(
-	                                                                    XUIMessage.TYPE_MESSAGE,
-	                                                                    XUIMessage.SEVERITY_ERROR,
-	                                                                    getLabel(),
-	                                                                    ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
-	                                                               )
-	                                                );
+	            	getRequestContext().addMessage( getClientId(), 
+	            			new XUIMessage(
+	                                XUIMessage.TYPE_MESSAGE,
+	                                XUIMessage.SEVERITY_ERROR,
+	                                getLabel(),
+	                                ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
+                           )
+                    );
 	                setValid( false );
 	            }
             }
         }
+        
+        
     }
 
+    @Override
+    public boolean wasStateChanged() {
+    	return false;
+    }
+    
     @Override
     public String getWidth() {
         return "200";
@@ -93,6 +137,8 @@ public class AttributeDateTime extends AttributeDate {
 
         @Override
         public void encodeEnd(XUIComponentBase oComp) throws IOException {
+        	
+        	XUIComponentBase childComp;
             XUIResponseWriter w = getResponseWriter();
 
             w.startElement( TABLE, oComp );
@@ -109,183 +155,34 @@ public class AttributeDateTime extends AttributeDate {
             w.endElement("COL");
             w.endElement("COLGROUP");
             w.startElement( TR, oComp );
-
             
         	w.startElement( TD, oComp );
-            w.writeAttribute( "id" , oComp.getClientId() + "_d" , null );
+            childComp = oComp.findComponent( AttributeDate.class ); 
+            childComp.setRenderedOnClient( false );
+            childComp.encodeAll();
             w.endElement( TD );
+            
             w.startElement( TD, oComp );
-            w.writeAttribute( "id" , oComp.getClientId() + "_t" , null );
+            childComp = oComp.findComponent( AttributeTime.class ); 
+            childComp.setRenderedOnClient( false );
+            childComp.encodeAll();
             w.endElement( TD );
-
+            
             w.endElement( TR );
             w.endElement( TABLE );
                 
-            w.getScriptContext().addInclude( XUIScriptContext.POSITION_HEADER, "xwc-components.js", "/xwc/ext-xeo/js/xwc-components.js");
-            
-            w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, 
-                    oComp.getId(),
-                    renderExtJs( oComp )
-                );
-            
-            
-
-//            w.startElement( TABLE, oComp );
-//            w.writeAttribute( HTMLAttr.STYLE, "width:100%", null );
-//            w.writeAttribute( HTMLAttr.CELLPADDING, "0", null );
-//            w.writeAttribute( HTMLAttr.CELLSPACING, "0", null );
-//            w.writeAttribute( ID, oComp.getClientId() + "_ctnt", null );
-//            w.startElement( TR, oComp );
-//
-//            w.startElement( TD, oComp );
-//            
-//            // Saves the id to super render with other id
-//            // Isto é para que este componente controlo o place holder do elemento            
-//            //super.encodeEnd( oComp );
-//            
-//            w.endElement( TD );
-//
-//            w.startElement( TD, oComp ); 
-//            w.writeAttribute( HTMLAttr.STYLE, "width:100%", null );
-//			*/
-//            // Place holder for the component
-//            w.startElement( DIV, oComp );
-//            w.writeAttribute( ID, oComp.getClientId(), null );
-//            //w.writeAttribute( HTMLAttr.STYLE, "width:120px", null );
-//            w.endElement( DIV ); 
-
-            
-            
-            /*
-            w.endElement( TD );
-
-            w.endElement( TR );
-            w.endElement( TABLE );
-			*/
-
         }
-
-        private String renderExtJs( XUIComponentBase oComp ) {
-            AttributeDate       oAttrText;
-            Timestamp           oJsValue;
-            StringBuilder    	sOut;
-            String              sFormId;
-            Form                oForm;
-            
-            
-            sFormId = oComp.getNamingContainerId();
-            oForm   = (Form)oComp.findComponent( sFormId );
-
-            sOut = new StringBuilder( 100 );
-
-            oAttrText = (AttributeDate)oComp; 
-
-            if ( !oAttrText.getEffectivePermission(SecurityPermissions.READ) ) {
-            	// Without permissions do not render the field
-            	return "";            	
-            }
-
-            oJsValue = (Timestamp)oAttrText.getValue(); 
-            
-            String sValue = "";
-            
-            ExtConfig oInpDateConfig = new ExtConfig("Ext.form.DateField");
-            oInpDateConfig.addJSString("renderTo", oComp.getClientId() + "_d" );
-            oInpDateConfig.addJSString("format", "d/m/Y");
-            oInpDateConfig.add("width", 95 );
-            if( !oAttrText.isVisible() )
-            	oInpDateConfig.add("hidden", true );
-
-            if( oAttrText.isDisabled() || !oAttrText.getEffectivePermission(SecurityPermissions.WRITE) ) {
-            	oInpDateConfig.add("disabled", true );
-            }
-            else {
-            	oInpDateConfig.addJSString("name", oAttrText.getClientId() + "_d" );
-            }
-
-            if( oJsValue != null )  {
-                sValue = oDateFormat.format( oJsValue );
-                oInpDateConfig.addJSString("value", sValue );
-            }
-            
-
-            if( oForm.haveDependents( oAttrText.getObjectAttribute() ) || oAttrText.isOnChangeSubmit()  ) {
-            	ExtConfig listeners = oInpDateConfig.addChild("listeners");
-            	listeners.add( "'change'" , 
-            			"function(fld,newValue,oldValue){fld.setValue(newValue);" +
-            			 XVWScripts.getAjaxUpdateValuesScript( (XUIComponentBase)oComp.getParent(), 0 ) + "}"
-            	);
-            }
-
-            ExtConfig oInpTimeConfig = new ExtConfig("Ext.form.TimeField");
-            oInpTimeConfig.addJSString("renderTo", oComp.getClientId() + "_t" );
-            oInpTimeConfig.addJSString("format", "H:i");
-            oInpTimeConfig.add("width", 95 );
-            if( !oAttrText.isVisible() )
-            	oInpTimeConfig.add("hidden", true );
-
-            if( oAttrText.isDisabled() || !oAttrText.getEffectivePermission(SecurityPermissions.WRITE) ) {
-            	oInpTimeConfig.add("disabled", true );
-            }
-            else {
-            	oInpTimeConfig.addJSString("name", oAttrText.getClientId() + "_t" );
-            } 
-
-            if( oJsValue != null )  {
-                sValue = oTimeFormat.format( oJsValue );
-                oInpTimeConfig.addJSString("value", sValue );
-            }
-            
-
-            if( oForm.haveDependents( oAttrText.getObjectAttribute() ) || oAttrText.isOnChangeSubmit()  ) {
-            	ExtConfig listeners = oInpTimeConfig.addChild("listeners");
-            	listeners.add( "'change'" , 
-            			"function(fld,newValue,oldValue){fld.setValue(newValue);" +
-            			 XVWScripts.getAjaxUpdateValuesScript( (XUIComponentBase)oComp.getParent(), 0 ) + "}"
-            	);
-            }
-
-            oInpDateConfig.renderExtConfig( sOut );
-            sOut.append(";\n");
-            oInpTimeConfig.renderExtConfig( sOut );
-            
-//            
-//            sOut.write( "Ext.onReady( function() { " ); sOut.write("\n");
-//            sOut.write( "var " + oComp.getId() + " = new Ext.form.TimeField({"); sOut.write("\n");
-//            sOut.write( "renderTo: '" ); sOut.write( oComp.getClientId() ); sOut.write("_t',");
-//            sOut.write( "format: 'H:i',");
-//            sOut.write( "width: 95,");
-//
-//            if( oForm.haveDependents( oAttrText.getObjectAttribute() ) )
-//                sOut.write( "listeners : { change: function(fld,newValue,oldValue){fld.setValue(newValue);" 
-//                            + XVWScripts.getAjaxUpdateValuesScript( (XUIComponentBase)oComp.getParent(), 0 ) + "} },"
-//                        );
-//            /*
-//            sOut.write( "maxLength: '"+oAttrText.getMaxLength()+"',");
-//            if( !oAttrText.isVisible() )
-//                sOut.write( "hidden: true,");
-//            */
-//            
-//            if( oAttrText.isDisabled() )
-//                sOut.write( "disabled: true,");
-//    
-//            sOut.write( "name: '"); sOut.write( oComp.getClientId() ); sOut.write("_t',");
-//            
-//            // Write value            
-//            sOut.write( "value: '"); 
-//            if( oJsValue != null )  {
-//                String sValue = oTimeFormat.format( oJsValue );
-//                sOut.write( sValue ); 
-//            }
-//                
-//            sOut.write("'");
-//                
-//            sOut.write("});");
-//            sOut.write("});");
-//            
-            return sOut.toString();
+        
+        
+        @Override
+        public void encodeChildren(XUIComponentBase component) {
+        	//
         }
-
+        
+        @Override
+        public boolean getRendersChildren() {
+        	return true;
+        }
 
         @Override
         public void decode(XUIComponentBase component) {
@@ -293,8 +190,8 @@ public class AttributeDateTime extends AttributeDate {
             String sDate;
             String sTime;
                 
-            AttributeDate oAttrComp;
-            oAttrComp = (AttributeDate)component;
+            AttributeDateTime oAttrComp;
+            oAttrComp = (AttributeDateTime)component;
             
             // To avoid multiple inputs to the same value...
             if( oAttrComp.getSubmittedValue() == null ) {

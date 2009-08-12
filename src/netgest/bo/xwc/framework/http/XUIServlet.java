@@ -85,7 +85,7 @@ public class XUIServlet extends HttpServlet
     			}
     		}
     	}
-        XUIMessagesLocalization.setThreadCurrentLocale( new Locale( "pt" ) );
+        XUIMessagesLocalization.setThreadCurrentLocale( new Locale( "en" ) );
     	
         try {
     		oResponse.setHeader("Pragma", "No-Cache");

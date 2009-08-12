@@ -2,26 +2,15 @@ package netgest.bo.xwc.framework.components;
 
 
 import java.util.Iterator;
+
 import javax.el.ELException;
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.FacesException;
-import javax.faces.component.ActionSource2;
 import javax.faces.component.NamingContainer;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-
-
-
-import java.util.Iterator;
-import javax.el.ELException;
-import javax.el.ValueExpression;
-import javax.faces.FacesException;
-import javax.faces.component.UIComponentBase;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-
-import netgest.bo.xwc.framework.XUIMethodBindProperty;
 
 
 /**

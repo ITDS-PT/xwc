@@ -11,7 +11,6 @@ import javax.faces.application.FacesMessage;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.components.localization.BeansMessages;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -21,6 +20,14 @@ import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
+/**
+ * This component render's alert boxes and messages in client brwoser, and controls the save state of of viewer.~
+ * 
+ * He also invokes some special bean properties to handle the alert box, data was not saved!
+ * 
+ * @author jcarreira
+ *
+ */
 public class ErrorMessages extends XUIComponentBase {
     
     // Property to save if last request where messages writen in the request before this.

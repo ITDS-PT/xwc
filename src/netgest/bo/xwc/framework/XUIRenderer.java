@@ -149,14 +149,12 @@ public class XUIRenderer extends Renderer
     public String getResourceURL( Class parentClass, String resourceName ) {
 
         String className;
-        String viewId;
         StringBuffer retUrl;
 
         FacesContext context;
 
         context = getFacesContext();
         className = parentClass.getName();
-        viewId = context.getViewRoot().getViewId();
         
         retUrl = new StringBuffer();
         retUrl.append( context.getExternalContext().getRequestContextPath() );

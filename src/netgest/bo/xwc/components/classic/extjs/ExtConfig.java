@@ -3,6 +3,8 @@ package netgest.bo.xwc.components.classic.extjs;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 
@@ -30,7 +32,11 @@ public class ExtConfig {
         oConfigOptions.put( id, value );
     }
 
-    public final void addJSString( String id, String value ) {
+    public final void addString( String id, CharSequence value ) {
+    	addJSString( id, value);
+    }
+    
+    public final void addJSString( String id, CharSequence value ) {
         
         if( value == null )
             value = "";
@@ -64,16 +70,15 @@ public class ExtConfig {
     }
             
     public final StringBuilder renderExtConfig( StringBuilder oBuilder ) {
-        Iterator<String> oKeyIt;
+        Iterator<Entry<String,Object>> oKeyIt;
         Object oValue;
-        String sKey;
         boolean bIsFirst;
         
         bIsFirst = true;                
         
         if( sVarName != null ) {
             oBuilder.append( "var " ).append( this.sVarName ).append( '=' );
-        }
+        } 
 
         if( sComponentType != null ) {
             oBuilder.append( "new " );
@@ -84,24 +89,29 @@ public class ExtConfig {
         
         oBuilder.append( "{" );
         
-        oKeyIt = oConfigOptions.keySet().iterator();
+        oKeyIt = oConfigOptions.entrySet().iterator();
+        
         while( oKeyIt.hasNext() ) {
 
-            sKey = oKeyIt.next();
-            oValue = oConfigOptions.get( sKey );
+            Entry<String,Object> sEntry = oKeyIt.next();
             
             if( !bIsFirst ) {
                 oBuilder.append( ',' );
                 oBuilder.append( '\n' );
             }
             
-            oBuilder.append( sKey ).append( " : " );
-            
+            if( sEntry.getKey() != null ) {
+	            oBuilder.append( sEntry.getKey() ).append( " : " );
+            }
+            oValue = sEntry.getValue();
             if( oValue instanceof ExtConfig ) {
                 ((ExtConfig)oValue).renderExtConfig( oBuilder );
             }
             else if( oValue instanceof ExtConfigArray ) {
                 ((ExtConfigArray)oValue).renderExtConfig( oBuilder );
+            }
+            else if( oValue instanceof CharSequence ) {
+            	oBuilder.append( ((CharSequence)oValue).toString() );
             }
             else {
                 oBuilder.append( oValue );
@@ -118,7 +128,25 @@ public class ExtConfig {
 
     }
 
+    public ExtConfig getConfig( String id ) {
+    	return getConfig( id, false );
+    }
 
+    public ExtConfig getConfig( String id, boolean createNew ) {
+    	ExtConfig ret;
+    	
+    	ret = (ExtConfig)oConfigOptions.get( id );
+    	if( ret == null ) {
+    		ret = new ExtConfig();
+    		add( id, ret );
+    	}
+    	return ret;
+    }
+
+    public ExtConfigArray getConfigArray( String id ) {
+    	return (ExtConfigArray)oConfigOptions.get( id );
+    }
+    
     public void setComponentType(String sComponentType) {
         this.sComponentType = sComponentType;
     }

@@ -1,28 +1,39 @@
 package netgest.bo.xwc.components.classic;
 
 
+import static netgest.bo.xwc.components.HTMLAttr.ID;
+import static netgest.bo.xwc.components.HTMLTag.DIV;
+
 import java.io.IOException;
+
+import javax.el.ValueExpression;
+import javax.faces.el.MethodBinding;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
-import static netgest.bo.xwc.components.HTMLAttr.*;
-import static netgest.bo.xwc.components.HTMLTag.*;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
-import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.XUIStateProperty;
 
-
+/**
+ * This components represents a XUICommand in the form of a button
+ * 
+ * He cannot have children
+ * 
+ * @author jcarreira
+ *
+ */
 
 public class ActionButton extends XUICommand
 {
     
-    private XUIStateProperty<String>    	width = new XUIStateProperty<String>( "width", this, "75" );
+    private XUIStateProperty<Integer>    	width = new XUIStateProperty<Integer>( "width", this, 75 );
     private XUIStateProperty<String>     	label = new XUIStateProperty<String>( "label", this, "#Button#" );
     private XUIStateProperty<String>     	action = new XUIStateProperty<String>( "action", this );
 
@@ -31,22 +42,6 @@ public class ActionButton extends XUICommand
     
     private XUIBaseProperty<Integer>		waitMode = new XUIBaseProperty<Integer>( "waitMode" , this, XVWScripts.WAIT_DIALOG );		
     
-    public void setWaitMode( int waitMode ) {
-    	this.waitMode.setValue( waitMode ); 
-    }
-    
-    public int getWaitMode() {
-    	return this.waitMode.getValue();
-    }
-    
-    public void setAction( String sExpr ) {
-        this.action.setValue( sExpr );
-        setActionExpression( createMethodBinding( sExpr ) );
-    }
-    
-    public String getActionString() {
-        return action.getValue();
-    }
     
     public ActionButton()
     {
@@ -54,48 +49,143 @@ public class ActionButton extends XUICommand
         setRendererType( null );
     }
     
-    public boolean isRendered()
+    /**
+     * Defines the message type while the request is processing
+     * 
+     * @param waitMode
+     * 				1 - Show a wait a message while the request is bean processed
+     * 				2 - Don't show a wait message. 
+     */
+    public void setWaitMode( int waitMode ) {
+    	this.waitMode.setValue( waitMode ); 
+    }
+    
+    /**
+     * @return Return the current wait mode value
+     * 		
+     */
+    public int getWaitMode() {
+    	return this.waitMode.getValue();
+    }
+    
+    /**
+     * A {@link MethodBinding} to be invoked when the button is clicked 
+     *  
+     * 
+     * @param sExpr  - {@link MethodBinding}
+     * 		
+     */
+    public void setAction( String sExpr ) {
+        this.action.setValue( sExpr );
+        setActionExpression( createMethodBinding( sExpr ) );
+    }
+    
+    /**
+     * Return the {@link MethodBinding} expression associated with the action button
+     * 
+     * @return  {@link MethodBinding} expression string
+     * 		
+     */
+    public String getActionString() {
+        return action.getValue();
+    }
+    
+    /**
+     * Return if the component is to be rendered on the client
+     */
+    @Override
+	public boolean isRendered()
     {
         return true;
     }
-
-    public void setWidth(String width) {
+    
+    /**
+     * Defines the with of the button
+     * 
+     * @param width int with the width of the button, defaults to 75px
+     */
+    public void setWidth(int width) {
         this.width.setValue( width ); 
     }
-
-    public String getWidth() {
+    
+    /**
+     * Returns the current width of the button
+     * 
+     * @return int with the current width of the button
+     */
+    public int getWidth() {
         return width.getValue();
     }
-
+    
+    /**
+     * Label of the button
+     * 
+     * @param label - Label of the button
+     */
     public void setLabel(String label) {
         this.label.setValue( label );
     }
-
+    
+    /**
+     * Current label of the button
+     * 
+     * @return Current label of the button
+     */
     public String getLabel() {
         return label.getValue();
     }
-
+    
+    /**
+     * Defines the server action as a {@link MethodBinding} to be trigged when the button is clicked
+     * 
+     * @param sAction	{@link MethodBinding}
+     */
     public void setServerAction( String sAction ) {
         this.action.setValue( sAction );
         setActionExpression( createMethodBinding( sAction ) );
     }
-
+    
+    
+    /**
+     * 
+     * @return {@link MethodBinding} expressin String
+     */
     public String getServerAction(  ) {
         return action.getValue();
     }
     
+    /**
+     * Set disabled property of the component
+     * 
+     * @param disabled true/false or a {@link ValueExpression}
+     */
     public void setDisabled(String disabled) {
         this.disabled.setExpressionText( disabled );
     }
-
+    
+    /**
+     * Returns if the component is disabled
+     * 
+     * @return true/false 
+     */
     public boolean isDisabled() {
         return disabled.getEvaluatedValue();
     }
 
+    /**
+     * Set the visibility of the component
+     * 
+     * @param true/false or a {@link ValueExpression} 
+     */
     public void setVisible(String visible) {
         this.visible.setExpressionText( visible );
     }
-
+    
+    /**
+     * Return if the component is visible
+     * 
+     * @return true/false
+     */
     public boolean isVisible() {
         return this.visible.getEvaluatedValue();
     }
@@ -125,7 +215,7 @@ public class ActionButton extends XUICommand
             
         }
         
-        public ExtConfig extEncodeAll( XUIComponentBase oActionButton  ) {
+        public ExtConfig getExtJsConfig( XUIComponentBase oActionButton  ) {
             
             return renderExtComponent( oActionButton );
             
@@ -134,7 +224,7 @@ public class ActionButton extends XUICommand
         public ExtConfig renderExtComponent( XUIComponentBase oActionButton ) {
             ExtConfig oExtConfig;
             oExtConfig = new ExtConfig( "Ext.Button" );
-            renderExtComponent( (ActionButton)oActionButton, oExtConfig );
+            renderExtComponent( oActionButton, oExtConfig );
             return oExtConfig;
         }
         
@@ -162,5 +252,6 @@ public class ActionButton extends XUICommand
             }
             return oConfig;
         }
+
     }
 }

@@ -18,23 +18,31 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 public class Panel extends ViewerSecurityBase {
     
     private XUIStateProperty<String> height = new XUIStateProperty<String>( "height", this );
-    private XUIStateProperty<String> width = new XUIStateProperty<String>( "height", this );
+    private XUIStateProperty<String> width = new XUIStateProperty<String>( "width", this );
 	private XUIStateBindProperty<String> title = new XUIStateBindProperty<String>( "title", this, String.class );
     
 	private XUIStateProperty<String> layout = new XUIStateProperty<String>( "layout", this, "" );
-
+	
+	/**
+	 * Returns the title of the panel 
+	 * @return Title
+	 */
     public String getTitle() {
 		return title.getEvaluatedValue();
 	}
-
+    
+    /**
+     * Set the title of the panel
+     * @param title String with the title
+     */
 	public void setTitle(String title) {
 		this.title.setExpressionText( title );
 	}
-
+	
 	public void setHeight(String height) {
         this.height.setValue( height );
     }
-
+	
     public String getHeight() {
         return height.getValue();
     }
@@ -46,13 +54,21 @@ public class Panel extends ViewerSecurityBase {
 	public void setWidth(String width) {
 		this.width.setValue( width );
 	}
-
+	
+	/**
+	 * Set the layout type to this panel
+	 * @return
+	 */
 	public String getLayout() {
 		return layout.getValue();
 	}
-
-	public void setLayout(String width) {
-		this.layout.setValue( width );
+	
+	/**
+	 * return the current layout type of this Panel
+	 * @param layoutType String with one of the next layouts ( fit-parent, fit-window, form )
+	 */
+	public void setLayout(String layoutType) {
+		this.layout.setValue( layoutType );
 	}
 	
 	@Override

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import netgest.bo.xwc.components.util.JavaScriptUtils;
+
 public class ExtConfigArray {
 
     private List<Object> childs = new ArrayList<Object>();
@@ -50,6 +52,10 @@ public class ExtConfigArray {
 
     public final void add( Object oValue ) {
         childs.add( oValue );
+    }
+
+    public final void addString( String oValue ) {
+        childs.add( "'" + JavaScriptUtils.writeValue( oValue ) + "'" );
     }
 
     public final ExtConfig addChild( String sComponetType ) {

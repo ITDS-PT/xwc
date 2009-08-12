@@ -35,7 +35,8 @@ public class Tabs extends XUIComponentBase
         return activeTab.getValue();
     }
    
-    public boolean getRendersChildren()
+    @Override
+	public boolean getRendersChildren()
     {
         return true;
     }
@@ -159,6 +160,7 @@ public class Tabs extends XUIComponentBase
                     }
                     w.startElement("a", component );
                     w.writeAttribute("class", "x-tab-right", null);
+                    w.writeAttribute("tabIndex", "100", null);
                     
                     if( bIsActiveTab ) {
                         w.writeAttribute("href", "javascript:void(0)", null );

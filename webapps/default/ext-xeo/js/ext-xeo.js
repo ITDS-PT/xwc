@@ -20,7 +20,8 @@ XVW.getXApp = function() {
 ExtXeo.destroyComponents = function( oDNode, oWnd ){
 	var x = new Date();
 	try {
-	ExtXeo.destroyComponents1( oDNode, oWnd );
+		ExtXeo.destroyComponents1( oDNode, oWnd );
+    	oDNode.innerHTML="";
 	} catch( e ) {};
 }
 
@@ -48,7 +49,6 @@ ExtXeo.destroyComponents1 = function( oDNode, oWnd ){
 	    if( oExtComp != null ) {
 	        oExtComp.destroy();
 	    }
-    	oDNode.innerHTML="";
     } catch( e ) {}
 }
 
@@ -79,14 +79,19 @@ XVW.ErrorDialog = function( sTitle, sMessage, sDetails ) {
 }
 
 
+XVW.beforeApplyHtml = function( oDNode, destroyComponent ) {
+	if( destroyComponent ) {
+		ExtXeo.destroyComponents( oDNode );
+	}
+}
+
 XVW.Wait = function( iWaitMode ) {
     if( iWaitMode == '1' )
     {
     	if( !ExtXeo.loadMask ) {
-    		ExtXeo.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: ExtXeo.Messages.SENDING_DATA });
+    		ExtXeo.loadMask = new Ext.LoadMask(document.body, {msg: ExtXeo.Messages.SENDING_DATA });
     	}
     	ExtXeo.loadMask.show();    	
-
     	/*
         Ext.MessageBox.show({
            title: ExtXeo.Messages.PROCESSING + '      ',
@@ -101,13 +106,10 @@ XVW.Wait = function( iWaitMode ) {
     }
 }
 
-XVW.beforeApplyHtml = function( oDNode ) {
-	ExtXeo.destroyComponents( oDNode );
-}
 
-XVW.NoWait = function() {
+XVW.NoWait = function() { 
 	if( ExtXeo.loadMask ) {
-		window.setTimeout( 'ExtXeo.loadMask.hide();', 1 );
+		window.setTimeout( "ExtXeo.loadMask.hide();", 50 );
 	}
 	//if( Ext.MessageBox.getDialog().title == ExtXeo.Messages.PROCESSING + '      ' ) {
 	//	Ext.MessageBox.hide();
@@ -543,6 +545,29 @@ XVW.syncView = function( sFormId, iWaitScreen ) {
 	}
 }
 
+XVW.closeWindow = function( sFormId, sWindowId ) {
+	var formWnd = window;
+	var wnd = Ext.ComponentMgr.get( sWindowId );
+	if( wnd == null ) {
+		formWnd = window.parent;
+		if( formWnd && formWnd.Ext ) {
+			wnd = formWnd.Ext.ComponentMgr.get( sWindowId );
+		}
+	}
+	
+	if( wnd == null ) {
+		formWnd = XVW.findFormWindow( sFormId );
+		if( formWnd && formWnd.Ext ) {
+			wnd = formWnd.Ext.ComponentMgr.get( sWindowId );
+		}
+	}
+	if( wnd ) {
+		wnd.hide();
+		wnd.destroy();
+	}
+}
+
+
 XVW.findFormWindow = function ( sFormId ) {
 	var ret;
 	var form = document.getElementById( sFormId );
@@ -557,7 +582,7 @@ XVW.findFormWindow = function ( sFormId ) {
 	    		for ( var k = 0; k < oFrames.length; k++) {
 	    			var frame = oFrames[k];
 	    			if( frame ) {
-	    				form = frame.contentWindow.document.getElementById('form12');
+	    				form = frame.contentWindow.document.getElementById( sFormId );
 	    				if( form != null ) {
 	    					ret = frame.contentWindow;
 	    					break;
@@ -672,3 +697,7 @@ Ext.apply(Ext.form.ComboBox.prototype, {
 });
 
 */
+
+//Disable back
+window.history.forward(1);
+

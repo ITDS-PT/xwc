@@ -7,7 +7,10 @@ import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boLoginBean;
 import netgest.bo.system.boSession;
+import netgest.bo.xwc.components.classic.Window;
+import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.localization.BeansMessages;
 import netgest.bo.xwc.components.localization.ViewersMessages;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -111,7 +114,7 @@ public class BuilderBean {
 				buildSucess = false;
 				Throwable cause = e;
 				int cntr = 0;
-				while( e.getCause() != null ) {
+				while( cause.getCause() != null ) {
 					if( cntr > 5 ) {
 						cause = e;
 						break;
@@ -201,5 +204,21 @@ public class BuilderBean {
 		}
 		
 	}
+	
+	public void canCloseTab() {
+		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
+		XUIViewRoot viewRoot = oRequestContext.getViewRoot();
+		Window xWnd = (Window)viewRoot.findComponent(Window.class);
+		if( xWnd != null ) {
+			if( xWnd.getOnClose() != null ) {
+				xWnd.getOnClose().invoke( oRequestContext.getELContext(), null);
+            }
+		}
+		XVWScripts.closeView( viewRoot );
+		oRequestContext.getViewRoot().setRendered( false );
+		oRequestContext.getViewRoot().setTransient( true );
+		oRequestContext.renderResponse();
+	}
+	
 	
 }

@@ -32,7 +32,12 @@ import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.io.iFile;
-
+/**
+ * This component bind to a AttributeBinnaryData from the XEO Model a instead of render the value
+ * he generates a image based on the AttributeBinnaryData 
+ * @author jcarreira
+ *
+ */
 public class AttributeImage extends ViewerOutputSecurityBase {
 	
     private XUIBaseProperty<String> beanProperty         		= new XUIBaseProperty<String>( "beanProperty", this, "viewBean.currentData" );
@@ -56,12 +61,11 @@ public class AttributeImage extends ViewerOutputSecurityBase {
     private AttributeLabel      oLabel = null;
 
 
-    public void initComponent() {
-        // per component inicializations.
+    @Override
+	public void initComponent() {
+        // Component initializations.
         createChildComponents();
     }
-
-    
     
     public void createChildComponents() {
         
@@ -71,9 +75,6 @@ public class AttributeImage extends ViewerOutputSecurityBase {
             this.oLabel.setId( getId() +  "_l" );
             this.oLabel.setText( getLabel() );
 
-            if( getValueExpression("disabled") != null )
-                this.oLabel.setDisabled( getValueExpression("disabled").getExpressionString() );
-            
             if( getValueExpression("visible") != null )
                 this.oLabel.setVisible( getValueExpression("visible").getExpressionString() );
 

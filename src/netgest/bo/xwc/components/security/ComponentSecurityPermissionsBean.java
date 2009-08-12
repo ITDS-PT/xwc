@@ -2,7 +2,7 @@ package netgest.bo.xwc.components.security;
 
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
-import netgest.bo.xwc.components.beans.XEOBaseOrphanEdit;
+import netgest.bo.xwc.xeo.beans.XEOBaseOrphanEdit;
 
 public class ComponentSecurityPermissionsBean extends XEOBaseOrphanEdit {
 

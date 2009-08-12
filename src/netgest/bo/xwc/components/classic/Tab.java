@@ -35,7 +35,8 @@ public class Tab extends ViewerCommandSecurityBase
         return label.getValue();
     }
 
-    public void actionPerformed(ActionEvent event)
+    @Override
+	public void actionPerformed(ActionEvent event)
     {
         ((Tabs)getParent()).setActiveTab( getId() );
     }

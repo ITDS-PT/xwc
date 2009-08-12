@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
@@ -29,6 +31,12 @@ public abstract class XUIComponentBase extends UIComponentBase
     private LinkedHashMap<String, XUIBaseProperty> oStatePropertyMap;
 
     private boolean         isPostBack = false;
+    private boolean			wasPreRenderProcessed = false;
+    private boolean			wasInitComponentProcessed = false;
+    private XUIBaseProperty<Boolean> 	isRenderedOnClient 
+    	= new XUIBaseProperty<Boolean>("isRenderedOnClient", this, false);
+    private boolean 		_isRenderedOnClient = false;
+    private boolean			destroyOnClient = false;
     
     @Override
 	public String getId() {
@@ -46,18 +54,23 @@ public abstract class XUIComponentBase extends UIComponentBase
         }
         oStatePropertyMap.put( oStateProperty.getName(), oStateProperty );
     }
+	
+	public XUIBaseProperty getStateProperty( String propertyName ) {
+        return oStatePropertyMap.get( propertyName );
+	}
     
     @Override
 	public boolean isRendered() {
-    	//if( this.renderComponent.getExpressionString() != null  ) {
-    	//	return this.renderComponent.getEvaluatedValue();
-    	//}
 		return super.isRendered();
 	}
 
     
 	public void setRenderComponent( String sValueExpression ) {
     	this.renderComponent.setExpressionText(sValueExpression );
+    }
+
+	public void setRenderComponent( boolean renderComponent ) {
+    	this.renderComponent.setValue( renderComponent );
     }
     
     public boolean getRenderComponent() {
@@ -74,14 +87,11 @@ public abstract class XUIComponentBase extends UIComponentBase
             return true;
         }
         
-        Iterator<XUIBaseProperty> oStatePropertiesIterator = getStateProperties();
+        Iterator<Entry<String,XUIBaseProperty>> oStatePropertiesIterator = getStateProperties().iterator();
         if( oStatePropertiesIterator != null ) {
-
             while( oStatePropertiesIterator.hasNext() ) {
                 XUIBaseProperty oStateProperty;
-                
-                oStateProperty = oStatePropertiesIterator.next();
-                
+                oStateProperty = oStatePropertiesIterator.next().getValue();
                 if( oStateProperty.wasChanged() ) {
                     return true;
                 }
@@ -111,9 +121,9 @@ public abstract class XUIComponentBase extends UIComponentBase
         }
     }
     
-    public Iterator<XUIBaseProperty> getStateProperties() {
+    public Set<Entry<String,XUIBaseProperty>> getStateProperties() {
         if( oStatePropertyMap != null ) {
-            return oStatePropertyMap.values().iterator();
+            return oStatePropertyMap.entrySet();
         }
         return null;
     }
@@ -171,27 +181,13 @@ public abstract class XUIComponentBase extends UIComponentBase
 
         if( this.oStatePropertyMap != null && oStatePropertyMap.size() > 0 ) {
         	oStateProperyState = new Object[ this.oStatePropertyMap.size() ];
-            Iterator<XUIBaseProperty> oStatePropertiesIt = getStateProperties();
+            Iterator<Entry<String,XUIBaseProperty>> oStatePropertiesIt = getStateProperties().iterator();
             while( oStatePropertiesIt.hasNext() ) {
-            	
-            	XUIBaseProperty x = oStatePropertiesIt.next();
-
-            	//long ini = System.currentTimeMillis();
-            	long ini_2   = System.nanoTime();
-            	
+            	XUIBaseProperty x = oStatePropertiesIt.next().getValue();
             	if( !x.isDefaultValue() )
             		oStateProperyState[ iCntr ] = x.saveState();
             	else
             		oStateProperyState[ iCntr ] = null;
-            	
-                //long end = System.currentTimeMillis();
-                long end_2 = System.nanoTime();
-
-                if( 300000 < (end_2-ini_2) ) {
-                	//System.out.println( "Save state demorado: [ " + this.getClass().getName() +  "." + x.getName() + " ]:" + ( end-ini ) );
-                	//System.out.println( "Save state demorado: ["+this.getId()+"][ " + this.getClass().getName() +  "." + x.getName() + " ]:" + ( end_2-ini_2 ) );
-                }
-                
                 iCntr ++;
             }
         }
@@ -206,25 +202,26 @@ public abstract class XUIComponentBase extends UIComponentBase
         Object[] oMyState = (Object[])oState;
         Object[] oPropertiesState;
         int      iCntr = 0;
-        isPostBack = true;
         
+        isPostBack = true;
+        wasInitComponentProcessed = true;
         // Restore all the properties
         super.restoreState( getFacesContext(), oMyState[0] );
         oPropertiesState = (Object[])oMyState[1];
         
         if( this.oStatePropertyMap != null )
         {
-            Iterator<XUIBaseProperty> oStatePropertiesIt = getStateProperties();
+            Iterator<Entry<String,XUIBaseProperty>> oStatePropertiesIt = getStateProperties().iterator();
             while( oStatePropertiesIt.hasNext() ) {
-            	
             	if( oPropertiesState[ iCntr ] != null )
-            		oStatePropertiesIt.next().restoreState( oPropertiesState[ iCntr ]  );
+            		oStatePropertiesIt.next().getValue().restoreState( oPropertiesState[ iCntr ]  );
             	else 
             		oStatePropertiesIt.next();
             	
                 iCntr ++;
             }
         }
+        _isRenderedOnClient = this.isRenderedOnClient.getValue();
     }
     
     public UIComponent getChild( int i ) {
@@ -237,13 +234,13 @@ public abstract class XUIComponentBase extends UIComponentBase
         super.decode( FacesContext.getCurrentInstance() );
     }
 
-    public void encodeBegin(  ) throws IOException
+    public void encodeBegin( ) throws IOException
     {
     	if( getRenderComponent() )
     		super.encodeBegin( FacesContext.getCurrentInstance() );
     }
 
-    public void encodeEnd(  ) throws IOException
+    public void encodeEnd( ) throws IOException
     {
     	if( getRenderComponent() )
     		super.encodeEnd( FacesContext.getCurrentInstance() );
@@ -265,9 +262,6 @@ public abstract class XUIComponentBase extends UIComponentBase
     {
         this.decode();
     }
-    
-    
-    
 
     @Override
     public String getRendererType() 
@@ -278,23 +272,15 @@ public abstract class XUIComponentBase extends UIComponentBase
         return sRenderType;
     }
 
-
     public String getFamily() {
         return getRendererType();
     }
 
-
     @Override
     public Object saveState(FacesContext context) 
     {
-//    	long ini = System.currentTimeMillis();
         Object ret = saveState();
-//        long end = System.currentTimeMillis();
-//        if( 50 < (end-ini) ) {
-//        	System.out.println( "Save state demorado: [ " + this.getClass().getName() +  " ]:" + ( end-ini ) );
-//        }
         return ret;
-        
     }
 
     @Override
@@ -304,9 +290,9 @@ public abstract class XUIComponentBase extends UIComponentBase
     }
 
     public void encodeAll() throws IOException {
-        super.encodeAll( FacesContext.getCurrentInstance() );
+    	this.isRenderedOnClient.setValue( true );
+    	super.encodeAll( FacesContext.getCurrentInstance() );
     }
-    
 
     public String getClientId() {
         return super.getClientId(getFacesContext());
@@ -342,18 +328,20 @@ public abstract class XUIComponentBase extends UIComponentBase
     }
     
     public void initComponent() {
-        
     }
     
-    public void processInitComponents() {
+    public final void processInitComponents() {
         // Process this component itself
-        initComponent();
+    	if( !wasInitComponentProcessed ) {
+    		initComponent();
+    		wasInitComponentProcessed = true;
+    	}
 
         // Process all facets and children of this component
-        Iterator kids = getFacetsAndChildren();
+        Iterator<UIComponent> kids = getFacetsAndChildren();
         while (kids.hasNext()) {
-            UIComponent kid = (UIComponent) kids.next();
-            if( kid instanceof UIComponent ) {
+            UIComponent kid = kids.next();
+            if( kid instanceof XUIComponentBase ) {
                 ((XUIComponentBase)kid).processInitComponents();
             }
         }
@@ -363,15 +351,18 @@ public abstract class XUIComponentBase extends UIComponentBase
         
     }
     
-    public void processPreRender() {
+    public final void processPreRender() {
         // Process this component itself
-        preRender();
-
+    	if( !wasPreRenderProcessed ) {
+    		preRender();
+    		wasPreRenderProcessed = true;
+    	}
+        
         // Process all facets and children of this component
-        Iterator kids = getFacetsAndChildren();
+        Iterator<UIComponent> kids = getFacetsAndChildren();
         while (kids.hasNext()) {
-            UIComponent kid = (UIComponent) kids.next();
-            if( kid instanceof UIComponent ) {
+            UIComponent kid = kids.next();
+            if( kid instanceof XUIComponentBase ) {
                 ((XUIComponentBase)kid).processPreRender();
             }
         }
@@ -420,6 +411,7 @@ public abstract class XUIComponentBase extends UIComponentBase
      @Deprecated
     public void encodeAll(FacesContext context) throws IOException {
         super.encodeAll(context);
+        this.isRenderedOnClient.setValue( true );
     }
 
     /**
@@ -480,5 +472,30 @@ public abstract class XUIComponentBase extends UIComponentBase
 		super.setValueExpression( name , binding);
 	}
 
+	public boolean isRenderedOnClient() {
+		return this._isRenderedOnClient && XUIRequestContext.getCurrentContext().isAjaxRequest();
+	}
+	
+	public void setRenderedOnClient( boolean renderedOnClient ) {
+		this._isRenderedOnClient = renderedOnClient;
+		this.isRenderedOnClient.setValue( renderedOnClient );
+	}
 
+	public void setDestroyOnClient( boolean destroyOnClient ) {
+		this.destroyOnClient = destroyOnClient;
+	}
+	
+	public boolean isDestroyOnClient() {
+		return this.destroyOnClient;
+	}
+	
+	public void resetRenderedOnClient() {
+		this.isRenderedOnClient.setValue( false );
+		List<UIComponent> children = getChildren();
+		for( UIComponent child : children ) {
+			if( child instanceof XUIComponentBase ) {
+				((XUIComponentBase)child).resetRenderedOnClient();
+			}
+		}
+	}
 }

@@ -42,7 +42,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
-import netgest.bo.xwc.components.beans.XEOSecurityBaseBean;
+import netgest.bo.xwc.xeo.beans.XEOSecurityBaseBean;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
 
@@ -773,7 +773,12 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         
         if( oViewToRender.isPostBack() )
         {
-        
+        	for( UIComponent comp : oToRenderList ) {
+        		if( comp instanceof XUIComponentBase ) {
+        			((XUIComponentBase)comp).resetRenderedOnClient();
+        		}
+        	}
+        	
             // Phase 2... callRenders for the Objects
             for (int i = 0; i < oToRenderList.size(); i++) {
                 
@@ -815,6 +820,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     
                 oCompElement = oAjaxXmlResp.createElement( "component" );
                 oCompElement.setAttribute("id", oComp.getClientId( context ) );
+                if( oComp instanceof XUIComponentBase ) {
+                	oCompElement.setAttribute("destroy", Boolean.toString( ((XUIComponentBase)oComp).isDestroyOnClient() ) );
+                }
                 oCompElement.appendChild( oAjaxXmlResp.createCDATASection( oComponentWriter.toString() ) );
                 oRenderElement.appendChild( oCompElement );
                 

@@ -15,8 +15,8 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.bridgeHandler;
-import netgest.bo.xwc.components.beans.XEOBaseBean;
-import netgest.bo.xwc.components.beans.XEOBaseOrphanEdit;
+import netgest.bo.xwc.xeo.beans.XEOBaseBean;
+import netgest.bo.xwc.xeo.beans.XEOBaseOrphanEdit;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Window;
@@ -327,7 +327,7 @@ public class ComponentSecurityBean extends XEOBaseBean {
 	}
 
 	@Override
-	public void setOrphanEdit(XEOBaseOrphanEdit orphanEditBean)
+	public void setOrphanEdit(XEOBaseBean orphanEditBean)
 			throws boRuntimeException {
 		
 		boObject obj = getXEOObject();

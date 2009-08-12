@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by António (Itds) -->
-<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
+	<xvw:root 
+		xmlns:xvw="http://www.netgest.net/xeo/xvw"
+		xmlns:xeo="http://www.netgest.net/xeo/xeo"
+	>
 	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseList" beanId="viewBean">
 		<xvw:form>
 			<xvw:title valueExpression="#{viewBean.title}"/>

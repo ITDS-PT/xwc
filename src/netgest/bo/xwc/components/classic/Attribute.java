@@ -8,8 +8,8 @@ import static netgest.bo.xwc.components.HTMLTag.TD;
 import static netgest.bo.xwc.components.HTMLTag.TR;
 
 import java.io.IOException;
-
 import netgest.bo.xwc.components.HTMLAttr;
+import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -18,7 +18,33 @@ import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
-
+/**
+ * This components renders a label and the input component for a {@link DataFieldConnector}
+ * 
+ * The inputType is automatic calculated based on the renderType returned from the DataFieldConnector
+ * but can be overwrited for any valid AttributeBase input field
+ * 
+ * Example:
+ * <code>
+ * 		<xvw:attribute objectAttribute='att1' inputType='attributePassword'/>
+ * 		<!-- In this case the attribute is forced to render as a password -->
+ * 
+ * 		<!-- To overwrite propreties from the {@link DataFieldConnector} the
+ * 			objectAttribute property must be first attribute in the xml
+ * 	 	-->
+ * 		<-- Wrong Way -->
+ * 		<xvw:attribute objectAttribute='att1' disabled='true'/>
+ * 		<-- Write Way -->
+ * 		<xvw:attribute disabled='true' objectAttribute='att1'/>
+ * 
+ * </code>
+ * 
+ * Can't have children
+ * 
+ * 
+ * @author jcarreira
+ *
+ */
 public class Attribute extends AttributeBase
 {
 
@@ -29,15 +55,16 @@ public class Attribute extends AttributeBase
     private XUIStateBindProperty<String> inputType   = new XUIStateBindProperty<String>( "inputType", this,"", String.class );
 
 
-    public Attribute() {
-    }
+    public Attribute() {}
     
-    public void initComponent() {
+	@Override
+	public void initComponent() {
         // per component inicializations.
         createChildComponents();
     }
 
-    public String getViewerSecurityLabel() {
+    @Override
+	public String getViewerSecurityLabel() {
     	String ret = getViewerSecurityComponentType().toString();
     	if( getObjectAttribute() != null && !"".equals( getObjectAttribute() ) ) {
 	    	try {
@@ -67,9 +94,6 @@ public class Attribute extends AttributeBase
 	            this.oLabel.setId( getId() +  "_l" );
 	            this.oLabel.setText( getLabel() );
 	
-	            if( getValueExpression("disabled") != null )
-	                this.oLabel.setDisabled( getValueExpression("disabled").getExpressionString() );
-	            
 	            if( getValueExpression("visible") != null )
 	                this.oLabel.setVisible( getValueExpression("visible").getExpressionString() );
 	
@@ -252,23 +276,10 @@ public class Attribute extends AttributeBase
 
     @Override
     public void restoreState(Object oState) {
-        super.restoreState(oState);
-        
         if( this.getChildCount() > 0 ) {
             this.oLabel = (AttributeLabel)getChild( 0 );
             this.oInput = (AttributeBase)getChild( 1 );
         }
-        
-    }
-
-    @Override
-    public Object getValue() {
-        return super.getValue();
-    }
-
-    @Override
-    public void setValue(Object value) {
-        super.setValue(value);
     }
 
     @Override
@@ -277,6 +288,10 @@ public class Attribute extends AttributeBase
     }
 
 
+    public void setRenderLabel( boolean renderLabel) {
+        this.renderLabel.setValue( renderLabel?"1":"0" );
+    }
+    
     public void setRenderLabel(String renderLabel) {
 
         this.renderLabel.setValue( renderLabel );
@@ -297,7 +312,7 @@ public class Attribute extends AttributeBase
 
     public String getRenderInput(  ) {
 
-        return renderLabel.getValue();
+        return "1";
 
     }
 
@@ -327,6 +342,12 @@ public class Attribute extends AttributeBase
             String labelPos 	= "left";
             int	   labelWidth   = 100;
             
+            if( !"1".equals( oAttr.getRenderLabel() ) )
+            {
+            	System.out.print(false);
+            }
+            	
+            
             Rows r = (Rows)oAttr.findParentComponent( Rows.class );
 
             if( r!=null ) {
@@ -345,8 +366,12 @@ public class Attribute extends AttributeBase
 	            w.startElement(COL, oComp );
 	            w.writeAttribute( HTMLAttr.WIDTH, labelWidth + "px", null );
 	            w.endElement("COL");
-	            w.startElement(COL, oComp );
-	            w.endElement("COL");
+
+	            if( "1".equals( oAttr.getRenderLabel() ) )
+	            {
+		            w.startElement(COL, oComp );
+		            w.endElement("COL");
+	            }
 	            w.endElement("COLGROUP");
             } else {
 	            w.startElement("COLGROUP", oComp);
@@ -360,7 +385,6 @@ public class Attribute extends AttributeBase
 
             if( "1".equals( oAttr.getRenderLabel() ) )
             {
-
             	w.startElement( TD, oComp );
                 if( oAttr.getLabelComponent() != null ) {
                     oAttr.getLabelComponent().encodeAll();    

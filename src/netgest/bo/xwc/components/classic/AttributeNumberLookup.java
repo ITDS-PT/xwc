@@ -1,8 +1,5 @@
 package netgest.bo.xwc.components.classic;
 
-import static netgest.bo.xwc.components.HTMLAttr.ID;
-import static netgest.bo.xwc.components.HTMLTag.DIV;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +13,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,53 +20,58 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
-import netgest.bo.xwc.components.beans.XEOBaseBean;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
+import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
-import netgest.bo.xwc.components.xeodm.XEODMBuilder;
+import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIMessage;
-import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
+import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.io.FSiFile;
 import netgest.io.iFile;
-
+/**
+ * This component render's a hidden number field with a number and text box with
+ * the displayValue of the {@link DataFieldConnector}
+ * 
+ * @author jcarreira
+ *
+ */
 public class AttributeNumberLookup extends AttributeBase {
 
     private XUICommand oLookupCommand;
     private XUICommand oOpenCommand;
 
-    public void initComponent() {
-        // per component inicializations.
-        if( getChildCount() == 0 ) {
-            oLookupCommand = new XUICommand();
-            oLookupCommand.setId( getId() + "_lk" );
-            oLookupCommand.addActionListener( 
-                    new LookupActionListener()
-                );
-            getChildren().add( oLookupCommand );
-            
-            oOpenCommand = new XUICommand();
-            oOpenCommand.setId( getId() + "_op" );
-            oOpenCommand.setActionExpression( createMethodBinding( "#{viewBean.openLookupObject}" ) );
-            getChildren().add( oOpenCommand );
-        }
-        else {
-            oLookupCommand = (XUICommand)getChild( 0 );
-            oOpenCommand = (XUICommand)getChild( 1 );
-        }
+    @Override
+	public void initComponent() {
+        // per component initializations.
+        oLookupCommand = new XUICommand();
+        oLookupCommand.setId( getId() + "_lk" );
+        oLookupCommand.addActionListener( 
+                new LookupActionListener()
+            );
+        getChildren().add( oLookupCommand );
+        
+        oOpenCommand = new XUICommand();
+        oOpenCommand.setId( getId() + "_op" );
+        oOpenCommand.setActionExpression( createMethodBinding( "#{viewBean.openLookupObject}" ) );
+        getChildren().add( oOpenCommand );
 
     }
     
     
+    @Override
+    public void preRender() {
+        oLookupCommand = (XUICommand)getChild( 0 );
+        oOpenCommand = (XUICommand)getChild( 1 );
+    }
 
     private void doLookup() {
         try {
@@ -82,7 +83,8 @@ public class AttributeNumberLookup extends AttributeBase {
         }
     }
     
-    public void validate( FacesContext context ) {
+    @Override
+	public void validate( FacesContext context ) {
         Object      oSubmitedValue = getSubmittedValue();
         String      sSubmitedValue = null;
         BigDecimal  oSubmitedBigDecimal;
@@ -97,13 +99,14 @@ public class AttributeNumberLookup extends AttributeBase {
                     setValue( oSubmitedBigDecimal );
                 }
                 catch( NumberFormatException ex ) {
-                    getRequestContext().addMessage( getClientId(), new XUIMessage(
-                                                                        XUIMessage.TYPE_MESSAGE,
-                                                                        XUIMessage.SEVERITY_ERROR,
-                                                                        getLabel(),
-                                                                        ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
-                                                                   )
-                                                    );
+                    getRequestContext().addMessage( getClientId(), 
+                    		new XUIMessage(
+                                XUIMessage.TYPE_MESSAGE,
+                                XUIMessage.SEVERITY_ERROR,
+                                getLabel(),
+                                ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
+                           )
+			        );
                     setValid( false );
                 }
             }
@@ -127,20 +130,28 @@ public class AttributeNumberLookup extends AttributeBase {
         }
     }
     
-    public static class XEOHTMLRenderer extends XUIRenderer implements XUIRendererServlet {
+    public static class XEOHTMLRenderer extends ExtJsFieldRendeder implements XUIRendererServlet {
 
-        @Override
-        public void encodeEnd(XUIComponentBase oComp) throws IOException {
+    	
+		@Override
+		public String getExtComponentType( XUIComponentBase oComp ) {
+			return "Ext.form.TwinTriggerField";
+		}
+		
+		
+		@Override
+		public void encodeBeginPlaceHolder(XUIComponentBase oComp )
+				throws IOException {
+
             AttributeNumberLookup  oAttr;
-            
             XUIResponseWriter w = getResponseWriter();
             oAttr = (AttributeNumberLookup)oComp; 
             
-            // Place holder for the component
-            w.startElement( DIV, oComp );
-            w.writeAttribute( ID, oComp.getClientId(), null );
+            super.encodeBeginPlaceHolder( oComp );
+            
+            // Add the a style to the place holder DIV
             w.writeAttribute( HTMLAttr.STYLE, "width:100%;height:100%", null );
-
+        	
             w.startElement( HTMLTag.INPUT, oComp);
             w.writeAttribute(HTMLAttr.TYPE, "hidden", null);
             w.writeAttribute(HTMLAttr.VALUE, oAttr.getValue() , null);
@@ -149,45 +160,33 @@ public class AttributeNumberLookup extends AttributeBase {
             w.writeAttribute(HTMLAttr.ID, oComp.getClientId() + "_ci", null);
             
             w.endElement(HTMLTag.INPUT);
-            
-            w.endElement( DIV ); 
-
-            w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, 
-                oComp.getId(),
-                renderExtJs( oComp )
-            );
-
-        }
-
-        public String renderExtJs( XUIComponentBase oComp ) {
-            AttributeNumberLookup  oAttr;
-            String              sJsValue;
-            StringBuilder    	sOut;
-            String              sFormId;
-            Form                oForm;
-            
-            sFormId = oComp.getNamingContainerId();
-            oForm   = (Form)oComp.findComponent( sFormId );
-
-            sOut = new StringBuilder( 250 );
-
+		}
+		
+		@Override
+		public ExtConfig getExtJsFieldConfig(AttributeBase oComp) {
+            AttributeNumberLookup  	oAttr;
+            String              	sFormId;
+            Form                	oForm;
+			
             oAttr = (AttributeNumberLookup)oComp; 
 
-            if ( !oAttr.getEffectivePermission(SecurityPermissions.READ) ) {
-            	// Without permissions do not render the field
-            	return "";
+            ExtConfig oInpConfig = super.getExtJsFieldConfig(oComp);
+
+			boolean enableCardIdLink = oAttr.getEnableCardIdLink();
+			sFormId = oComp.getNamingContainerId();
+            oForm   = (Form)oComp.findComponent( sFormId );
+
+            
+            oInpConfig.add("maxLength", "32" );
+            oInpConfig.add("readOnly", true );
+        	oInpConfig.add( "enableKeyEvents", true);
+            oInpConfig.add("hideTrigger1", false);
+            
+            
+            if( enableCardIdLink ) {
+            	oInpConfig.addJSString("ctCls", "xeoObjectLink" );
             }
-            
-            boolean enableCardIdLink = oAttr.getEnableCardIdLink();
-            
-            //sJsValue = String.valueOf( oAttr.getValue() ); 
-            sJsValue = String.valueOf( oAttr.getDisplayValue() ); 
-            
-            ExtConfig oInpConfig = new ExtConfig("Ext.form.TwinTriggerField");
-            
-            oInpConfig.addJSString("renderTo", oComp.getClientId());
-            
-            
+
             if( oAttr.isDisabled() || oAttr.isReadOnly() || !oAttr.getEffectivePermission(SecurityPermissions.WRITE) ) {
 	            oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
 	            oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
@@ -200,108 +199,84 @@ public class AttributeNumberLookup extends AttributeBase {
             		
 	            oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
             }
-            oInpConfig.add("hideTrigger1", false);
-            oInpConfig.addJSString("name", oAttr.getClientId() );
-            oInpConfig.addJSString("id", oAttr.getClientId() + "_c" );
-            
-            if( enableCardIdLink ) {
-            	oInpConfig.addJSString("ctCls", "xeoObjectLink" );
-            }
-           
-            oInpConfig.addJSString("value", sJsValue );
-            oInpConfig.add("readOnly", true );
-            
-            //if( oAttr.isDisabled() || (permissions&SecurityPermissions.WRITE)==0 ) {
-	        //    oInpConfig.add("disabled", true);
-            //}
             
             if( !oAttr.isDisabled() && !oAttr.isReadOnly() ) {
-	            if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
-		            oInpConfig.add("onTrigger1Click", "function(){ " +
-//		            		"Ext.ComponentMgr.get('" + oAttr.getClientId() + "_c').setValue('');\n" + 
-//		            		"document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';\n" + 
-		            		"XVW.AjaxCommand( '" + oAttr.getNamingContainerId() +  "','" + oAttr.getId() + "_clear','true')" +
-//		            		XVWScripts.getAjaxCommandScript(,"NaN"  ,XVWScripts.WAIT_STATUS_MESSAGE ) + 
-		            		"}"
-		            );
-	            }
-	            else {
-		            oInpConfig.add("onTrigger1Click", "function(){ " +
-		            		"Ext.ComponentMgr.get('" + oAttr.getClientId() + "_c').setValue('');\n" + 
-		            		"document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';\n" + 
-		            		"}"
-		            );
-	            }
-	
-	            oInpConfig.add("onTrigger2Click", "function(){ " +
+	            oInpConfig.add("onTrigger1Click", "function(){ " +
+	            			getClearCode(oForm, oAttr) +
+	            		"}"
+	            );
+            	
+            	oInpConfig.add("onTrigger2Click", "function(){ " +
 	            		XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_STATUS_MESSAGE ) +
 	            		"}"
 	            );
-	            
             }
- 
-            oInpConfig.add("width", oAttr.getWidth() );
-            oInpConfig.addJSString("renderTo", oComp.getClientId());
+			return oInpConfig;
+		}
+		
+		@Override
+		public ExtConfig getExtJsFieldListeners(AttributeBase oAttr) {
+            String              sFormId;
+            Form                oForm;
+			
+            sFormId = oAttr.getNamingContainerId();
+            oForm   = (Form)oAttr.findComponent( sFormId );
+			
+			AttributeNumberLookup oAttLk = (AttributeNumberLookup)oAttr;
+			boolean enableCardIdLink = oAttr.getEnableCardIdLink();
 
-            ExtConfig oInpLsnr;
-            oInpLsnr = oInpConfig.addChild("listeners");
-            oInpLsnr.add("'change'", "function(fld,newValue,oldValue){fld.setValue(newValue);" 
-                            + XVWScripts.getAjaxUpdateValuesScript( (XUIComponentBase)oComp.getParent(), 0 ) + "}"
-                         );
-            
+            ExtConfig oInpLsnr = super.getExtJsFieldListeners(oAttr);
             if( enableCardIdLink ) {
 	            oInpLsnr.add("'render'", "function(){ " +
 	            		"this.getEl().dom.onclick=function(event){" +
-	            			XVWScripts.getAjaxCommandScript( oAttr.oOpenCommand ,  XVWScripts.WAIT_STATUS_MESSAGE ) +
+	            			XVWScripts.getAjaxCommandScript( oAttLk.oOpenCommand ,  XVWScripts.WAIT_STATUS_MESSAGE ) +
 	            		"};" +
 	            		"}" );
             }
-            oInpConfig.renderExtConfig( sOut );     
             
-            //'javax.faces.ViewState'
-            String sViewState = getRequestContext().getViewRoot().getViewState();
-            //xvw.servlet
-            String sServletId = oComp.getClientId();
+            if( !oAttr.isDisabled() && !oAttr.isReadOnly() ) {
+	            oInpLsnr.add("'keydown'", "function(f,e){ " +
+	            		"if(e.getKey()==13) {" +
+	            			XVWScripts.getAjaxCommandScript( oAttLk.getLookupCommand(),XVWScripts.WAIT_STATUS_MESSAGE ) +
+	            			";\ne.stopEvent();" +
+	            		"} else if ( e.getKey() == 8 || e.getKey() == 46  ) {" +
+	            			getClearCode(oForm, oAttr) +
+	            		";\ne.stopEvent();"+
+	            "}}" );
+            }
             
-            String sActionUrl = getRequestContext().getActionUrl();
-            
-            if( sActionUrl.indexOf('?') != -1 ) {
-            	sActionUrl += "&";
+            /** 
+             * Doesn't work well in ExtJs
+             */
+            //oInpLsnr.add("'focus'", "function(c){ c.selectText(); }");
+			
+			return oInpLsnr;
+		}
+		
+		
+		@Override
+		public ScriptBuilder getEndComponentScript(AttributeBase oComp) {
+			ScriptBuilder sb = super.getEndComponentScript(oComp, false, true );
+			String sJsValue = String.valueOf( oComp.getValue() );
+			if( oComp.isRenderedOnClient() ) {
+	        	if( "null".equals( sJsValue ) ) {
+	        		sJsValue = "NaN";
+	        	}
+	        	sb.w( "document.getElementById('" ).w( oComp.getClientId() ).w("_ci').value = '").w(  sJsValue  ).w( "';" );
+			}
+			sb.endBlock();
+			return sb;
+		}
+
+        public String getClearCode( Form oForm, AttributeBase oAttr ) {
+            if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
+	            return "XVW.AjaxCommand( '" + oAttr.getNamingContainerId() +  "','" + oAttr.getId() + "_clear','true');";
             }
             else {
-            	sActionUrl += "?";
+            	return "Ext.ComponentMgr.get('" + getExtComponentId(oAttr) + "').setValue('');\n" + 
+	            	   "document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';";
             }
-            sActionUrl += "javax.faces.ViewState=" + sViewState;
-            sActionUrl += "&xvw.servlet=" + sServletId;
-            	
-            
-            // Render XEODM Protocol
-            
-            XEODMBuilder dmb = new XEODMBuilder();
-            HttpServletRequest req = (HttpServletRequest)getRequestContext().getFacesContext().getExternalContext().getRequest();
-            Cookie[] cookies = req.getCookies();
-            
-            for( Cookie cookie : cookies ) {
-            	if( "JSESSIONID".equals( cookie.getName() ) )
-            		dmb.put( "httpc", cookie.getName() + "=" + cookie.getValue() );
-            }
-//            dmb.put( "httpp","javax.faces.ViewState=" + sViewState );
-//            dmb.put( "httpp", "xvw.servlet=" + sServletId );
-            
-            dmb.put("link", sActionUrl );
-            dmb.put("action", "open");
-            oInpLsnr.add("'render'", "function(){ " +
-            		"this.getEl().dom.onclick=function(event){" +
-//            		"	if( event.srcElement.value.length > 0 ) {" +
-//            		"		XVW.downloadFile('" + dmb.toUrlString() + "');" +
-            		"		document.location.href='" + dmb.toUrlString() + "';" +
-//					"	}" +
-            		"};" +
-            		"}" );
-            
-            return sOut.toString();
         }
-
 
         @Override
         public void decode(XUIComponentBase component) {
@@ -314,13 +289,12 @@ public class AttributeNumberLookup extends AttributeBase {
             if( "true".equals( clear ) ) {
                 oAttrComp.setSubmittedValue( "" );
             } else {
-                            
                 String value = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() + "_ci" );
                 if( "NaN".equals( value ) ) {
                     oAttrComp.setSubmittedValue( "" );
                 }
                 else {
-                    oAttrComp.setSubmittedValue( value );
+                	oAttrComp.setSubmittedValue( value );
                 }
             }
             super.decode(component);
@@ -335,7 +309,6 @@ public class AttributeNumberLookup extends AttributeBase {
         	AttributeFile oFile = (AttributeFile)comp;
         	DataFieldConnector oConnector = oFile.getDataFieldConnector();
         	
-        	//TODO: Criar no AttributeConnector suporte para ficheiros
         	HttpServletRequest hRequest = (HttpServletRequest)request;
         	
         	if( oConnector instanceof XEOObjectAttributeConnector ) {
@@ -350,7 +323,6 @@ public class AttributeNumberLookup extends AttributeBase {
 	        				boObject bobj = oXeoConnector.getAttributeHandler().getObject();
 	        				bobj.getAttribute("file").setValueiFile( new FSiFile( null, file, null ) );
 						} catch (boRuntimeException e) {
-							// TODO Auto-generated catch block
 							throw new RuntimeException(e);
 						}
 	        		}
@@ -396,13 +368,11 @@ public class AttributeNumberLookup extends AttributeBase {
 				            so.close(); 
 						}
 					} catch (boRuntimeException e) {
-						// TODO Auto-generated catch block
 						throw new RuntimeException(e);
 					}
 	        	}
         	}
 		}
-        
     }
 
 

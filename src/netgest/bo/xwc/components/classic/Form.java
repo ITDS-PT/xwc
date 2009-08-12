@@ -29,13 +29,19 @@ import com.sun.faces.renderkit.AttributeManager;
 import com.sun.faces.renderkit.RenderKitUtils;
 import com.sun.faces.util.FacesLogger;
 
-
+/**
+ * A form with dependences control. This form controls the dependence between attributes a 
+ * force a data submit when a dependent depends of another component
+ * 
+ * @author jcarreira
+ *
+ */
 public class Form extends XUIForm
 {
 	
 	private XUIStateProperty<String> 	encType 			= new XUIStateProperty<String>("encType", this, null );
 	private XUIBindProperty<Byte> 		securityPermissions = 
-		new XUIBindProperty<Byte>("securityPermissions", this, "#{viewBean.securityPermissions}", Byte.class );
+		new XUIBindProperty<Byte>("securityPermissions", this, Byte.class, "#{viewBean.securityPermissions}" );
 
 	
 	public void setSecurityPermissions( String sExpressionString ) {
@@ -68,7 +74,8 @@ public class Form extends XUIForm
 
 	private HashMap<String, Boolean> oComponentDependeces;
 
-    public void preRender() {
+    @Override
+	public void preRender() {
         
         super.preRender();
         

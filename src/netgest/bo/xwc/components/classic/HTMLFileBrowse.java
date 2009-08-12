@@ -50,7 +50,8 @@ public class HTMLFileBrowse extends XUIInput {
         sRenderType = sRenderType.substring( sRenderType.lastIndexOf( "." ) + 1 );
         return sRenderType;
     }
-    public String getFamily() {
+    @Override
+	public String getFamily() {
         return getRendererType();
     }
 	

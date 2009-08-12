@@ -20,10 +20,14 @@ import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.XUIStyleContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
-
+/**
+ * This component represents a HtmlEditor.
+ * 
+ * @author jcarreira
+ *
+ */
 public class AttributeHtmlEditor extends AttributeBase {
 	
 	public AttributeHtmlEditor() {
@@ -41,7 +45,7 @@ public class AttributeHtmlEditor extends AttributeBase {
 //            w.startElement( HTMLTag.STYLE, oComp );
 //            w.writeText(
             w.getStyleContext().addInclude(
-            		XUIStyleContext.POSITION_HEADER, 
+            		XUIScriptContext.POSITION_HEADER, 
             		"ext-xeo-nohtmleditor", 
             		"ext-xeo/css/ext-xeo-htmleditor.css" 
             );

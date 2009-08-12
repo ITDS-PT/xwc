@@ -28,6 +28,9 @@ import java.util.logging.Logger;
 
 import javax.faces.lifecycle.Lifecycle;
 
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
+
 public class XUILifecycleImpl extends Lifecycle {
 
     // -------------------------------------------------------- Static Variables
@@ -49,21 +52,21 @@ public class XUILifecycleImpl extends Lifecycle {
     private Phase[] phases = {
         null, // ANY_PHASE placeholder, not a real Phase
         new RestoreViewPhase(),
-        iniComponents,
+        iniComponents,  // Only if is a new view
         new ApplyRequestValuesPhase(),
         new ProcessValidationsPhase(),
         new UpdateModelValuesPhase(),
         new XUIValidateModelPhase(),
         new InvokeApplicationPhase(),
-        preRender,
-        response
+        preRender, // Pre render for current elements Tree
+        iniComponents, // Only for new components add in the preRender Tree
+        preRender, // Run pre render in the added components
+        response // Render response
     };
 
     // List for registered PhaseListeners
     private List<PhaseListener> listeners =
           new CopyOnWriteArrayList<PhaseListener>();
-
-        
 
     // ------------------------------------------------------- Lifecycle Methods
 
@@ -84,29 +87,56 @@ public class XUILifecycleImpl extends Lifecycle {
         int i = 1;
         int len = phases.length -1;
         
-        for ( ; i < len; i++) { // Skip ANY_PHASE placeholder
+    	boolean runPhase;
+
+    	for ( ; i < len; i++) { // Skip ANY_PHASE placeholder
             
             // Check if initComponents as been done
             // if not do phases to initcomponents phase
+    		runPhase = true;
+        	
             if ( context.getRenderResponse() || context.getResponseComplete()) 
             {
                 break;
             }
-            phases[i].doPhase(context, this, listeners.listIterator());
-        }
+            
+            // Only run initcomponents at this phase if
+            // the view is not a postback
+            if( i == 2 && !XUIRequestContext.getCurrentContext().getViewRoot().isPostBack()  ) {
+            	runPhase = false;
+            }
+        	
+            if( runPhase ) {
+            	phases[i].doPhase(context, this, listeners.listIterator());
+            }
+
+    	}
         
         // Check if required phases where performed
         if( !context.getResponseComplete() ) {
-            
+        	
+        	XUIViewRoot viewToRender = XUIRequestContext.getCurrentContext().getViewRoot(); 
+        	
+        	runPhase = !viewToRender.isPostBack();
             // Check initComponents phase.
-            if ( i < 3 ) {
+            if ( !viewToRender.wasInitComponentsProcessed() ) {
                 iniComponents.execute( context );
             }
+            
             // Check PreRender Phase
-            if ( i < len ) {
+            if ( i < 8 ) {
                 //
                 preRender.execute( context );    
             }
+
+            if ( i < 9 ) {
+            	iniComponents.execute( context );
+            }
+            
+            if ( i < 10 ) {
+            	preRender.execute( context );
+            }
+            
         }
 
     }

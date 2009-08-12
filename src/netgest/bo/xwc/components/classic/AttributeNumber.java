@@ -1,24 +1,20 @@
 package netgest.bo.xwc.components.classic;
 
-import static netgest.bo.xwc.components.HTMLAttr.ID;
-import static netgest.bo.xwc.components.HTMLTag.DIV;
-
-import java.io.IOException;
 import java.math.BigDecimal;
 
 import javax.faces.context.FacesContext;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
-import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.localization.ComponentMessages;
-import netgest.bo.xwc.components.security.SecurityPermissions;
+import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIMessage;
-import netgest.bo.xwc.framework.XUIRenderer;
-import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIInput;
-
+/**
+ * This component reders a only number's input
+ * @author jcarreira
+ *
+ */
 public class AttributeNumber extends AttributeBase {
 
     @Override
@@ -37,13 +33,14 @@ public class AttributeNumber extends AttributeBase {
                     setValue( oSubmitedBigDecimal );
                 }
                 catch( NumberFormatException ex ) {
-                    getRequestContext().addMessage( getClientId(), new XUIMessage(
-                                                                        XUIMessage.TYPE_MESSAGE,
-                                                                        XUIMessage.SEVERITY_ERROR,
-                                                                        getLabel(),
-                                                                        ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
-                                                                   )
-                                                    );
+                    getRequestContext().addMessage( getClientId(), 
+                    		new XUIMessage(
+                                    XUIMessage.TYPE_MESSAGE,
+                                    XUIMessage.SEVERITY_ERROR,
+                                    getLabel(),
+                                    ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
+                            )
+                    );
                     setValid( false );
                 }
             }
@@ -53,104 +50,45 @@ public class AttributeNumber extends AttributeBase {
         }
     }
 
-    public static class XEOHTMLRenderer extends XUIRenderer {
+    public static class XEOHTMLRenderer extends ExtJsFieldRendeder {
 
-        @Override
-        public void encodeEnd(XUIComponentBase oComp) throws IOException {
-            
-            XUIResponseWriter w = getResponseWriter();
-            
-            // Place holder for the component
-            w.startElement( DIV, oComp );
-            w.writeAttribute( ID, oComp.getClientId(), null );
-            //w.writeAttribute( HTMLAttr.STYLE, "width:120px", null );
-
-            w.endElement( DIV ); 
-
-            w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, 
-                oComp.getId(),
-                renderExtJs( oComp )
-            );
-
-            // Mark field as valid/invalid
-            if( !((XUIInput)oComp).isValid() ) {
-            	w.getScriptContext().add(
-            			XUIScriptContext.POSITION_FOOTER, 
-            			oComp.getClientId()+"_invalid", 
-            			"Ext.ComponentMgr.get('" + oComp.getClientId() + "_c" + "').markInvalid();"
-            		);
-            }
-            
-        }
-
-        public String renderExtJs( XUIComponentBase oComp ) {
-            AttributeNumber     oAttr;
-            String              sJsValue;
-            StringBuilder    	sOut;
-            String              sFormId;
-            Form                oForm;
-            
-            sFormId = oComp.getNamingContainerId();
-            oForm   = (Form)oComp.findComponent( sFormId );
-
-            sOut = new StringBuilder( 100 );
-
-            oAttr = (AttributeNumber)oComp; 
-            sJsValue = null;
-
-            if ( !oAttr.getEffectivePermission(SecurityPermissions.READ) ) {
-            	// Without permissions do not render the field
-            	return "";
-            }
-            
-            try {
-				sJsValue = String.valueOf( oAttr.getValue() );
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-
-            ExtConfig oInpConfig = new ExtConfig("Ext.form.NumberField");
-            oInpConfig.add( "enableKeyEvents" , true );
-            oInpConfig.addJSString("renderTo", oComp.getClientId());
-            oInpConfig.addJSString("id", oComp.getClientId() + "_c" );
-            oInpConfig.add("decimalPrecision", oAttr.getDecimalPrecision());
-            oInpConfig.addJSString("width", oAttr.getWidth() );
-
-            oInpConfig.add("maxLength", oAttr.getMaxLength() );
-
-            if( !oAttr.isVisible() )
-            	oInpConfig.add("hidden", true );
-
-            if( oAttr.isDisabled() || !oAttr.getEffectivePermission(SecurityPermissions.WRITE) )
-            	oInpConfig.add("disabled", true );
-            
-            oInpConfig.addJSString("name", oAttr.getClientId() );
-            
-            if( sJsValue != null )
-            	oInpConfig.addJSString("value", sJsValue );
- 
-        	ExtConfig listeners = oInpConfig.addChild("listeners");
-            if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit() ) {
-            	listeners.add( "'change'" , 
-            			"function(fld,newValue,oldValue){fld.setValue(newValue);" +
-            			 XVWScripts.getAjaxUpdateValuesScript( (XUIComponentBase)oComp.getParent(), 0 ) + "}"
-            	);
-            }
-            listeners.add( "'keydown'" , 
-        			"function(fld,e) { " +
-        			"	var fldVal = new String(fld.getValue());" +
-        			"	fldVal = fldVal.replace(/\\./g,'');" +
-        			"	if( fldVal.length >= fld.maxLength ){" +
-        			"		if( '01234556789'.indexOf(String.fromCharCode(event.keyCode))>-1 ) {" +
-        			"			event.returnValue=false; " +
-        			"		}" +
-        			"	}" +
-        			"}"
-            );
-            oInpConfig.renderExtConfig( sOut );
-            return sOut.toString();
-        }
+		@Override
+		public String getExtComponentType( XUIComponentBase oComp ) {
+			// TODO Auto-generated method stub
+			return "Ext.form.NumberField";
+		}
+    	
+		@Override
+		public ExtConfig getExtJsFieldConfig( AttributeBase oAttr ) {
+			ExtConfig config;
+			
+			config = super.getExtJsFieldConfig( oAttr );
+			
+			config.add( "enableKeyEvents" , true );
+			config.add("decimalPrecision", oAttr.getDecimalPrecision());
+			
+			return config;
+		}
+		
+		@Override 
+		public ExtConfig getExtJsFieldListeners( AttributeBase oAttr ) {
+			ExtConfig listeners;
+			
+			listeners = super.getExtJsFieldListeners( oAttr );
+			ScriptBuilder s = new ScriptBuilder();
+			s.l( "function(fld,e) {" )
+			.s( "	var fldVal = new String(fld.getValue())" )
+			.s( "	fldVal = fldVal.replace(/\\./g,'')" )
+			.l( "	if( fldVal.length >= fld.maxLength ) {" )
+			.l( "		if( '8,9,13,16,17,18,19,20,27,33,34,35,36,37,38,39,40,45,46'.indexOf(''+event.keyCode) == -1 && '01234556789'.indexOf(String.fromCharCode(event.keyCode))>-1 ) {")
+			.l("			event.returnValue=false; ")
+			.l("		}")
+			.l("	}")
+			.l("}");
+            listeners.add( "'keydown'" , s );
+            return listeners;
+			
+		}
 
         @Override
         public void decode(XUIComponentBase component) {
@@ -165,6 +103,7 @@ public class AttributeNumber extends AttributeBase {
             super.decode(component);
 
         }
+
     }
 
 }

@@ -145,6 +145,10 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
         
         Object oValue = super.getValue();
         
+        if( this.bWasChanged ) {
+        	return true;
+        }
+        
         if( oValue instanceof ValueExpression ) {
             try {
                 

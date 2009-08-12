@@ -243,7 +243,7 @@ XVW.handleAjaxResponse = function( oXmlReq ) {
             if( oCompDNode != null ) {
         		var pNode = oCompDNode.parentNode; 
 
-        		XVW.beforeApplyHtml( oCompDNode );
+        		XVW.beforeApplyHtml( oCompDNode, oCompNode.getAttribute("destroy")=='true' );
                 if(oCompNode.textContent /*Mozilla*/) {
             		// If first child is null... there is nothing to render
             		// The component didn't write anything to the output
@@ -268,15 +268,15 @@ XVW.handleAjaxResponse = function( oXmlReq ) {
             		if( oCompNode.text != "" ) {
 	                	// if the child node doest exists any more in the document
 	                	// append the to the child tree;
-	                	if( document.getElementById( oCompId ) == null ) {
-	                		pNode.appendChild( x.firstChild );
-	                	} else {
+//	                	if( document.getElementById( oCompId ) == null ) {
+//	                		pNode.appendChild( x.firstChild );
+//	                	} else {
 	                		// If first child is null... there is nothing to render
 	                		// The component didn't write anything to the output
 	                    	//x.innerHTML = oCompNode.text;
 	                    	oCompDNode.outerHTML = oCompNode.text;
 	            			//pNode.replaceChild( x.firstChild, oCompDNode );
-	                	}
+//	                	}
             		}
                 }
             }
@@ -402,7 +402,7 @@ XVW.keepAlive = function( oForm ) {
 }
 
 XVW.syncView = function( sFormId, iWaitScreen ) {
-     XVW.AjaxCommand( sFormId, null, null, iWaitScreen, false );
+    XVW.AjaxCommand( sFormId, null, null, iWaitScreen, false );
 }
 
 XVW.prv = function() {}
@@ -553,3 +553,4 @@ XVW.events.afterSubmit = [];
 XVW.events.beforeAjaxRequest = [];
 XVW.events.readyAjaxRequest = [];
 XVW.events.afterAjaxRequest = [];
+

@@ -29,6 +29,7 @@
             <xwc:render for='attributeLabel'>netgest.bo.xwc.components.classic.AttributeLabel$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeHtmlEditor'>netgest.bo.xwc.components.classic.AttributeHtmlEditor$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeDate'>netgest.bo.xwc.components.classic.AttributeDate$XEOHTMLRenderer</xwc:render>
+            <xwc:render for='attributeTime'>netgest.bo.xwc.components.classic.AttributeTime$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeDateTime'>netgest.bo.xwc.components.classic.AttributeDateTime$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeLov'>netgest.bo.xwc.components.classic.AttributeLov$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeBoolean'>netgest.bo.xwc.components.classic.AttributeBoolean$XEOHTMLRenderer</xwc:render>
@@ -72,7 +73,7 @@
 			<!-- FIM Viewer Tag -->
 			
 			<xwc:render for='attributeWordMacro'>netgest.bo.xwc.components.classic.AttributeWordMacro$XEOHTMLRenderer</xwc:render>
-
+	
 		</xwc:renderKit>
 
 		<xwc:renderKit name='XEOHTML' componentNamespace='xvw' >
@@ -97,6 +98,7 @@
             <xwc:render for='attributeLabel'>netgest.bo.xwc.components.classic.AttributeLabel$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeHtmlEditor'>netgest.bo.xwc.components.classic.AttributeHtmlEditor$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeDate'>netgest.bo.xwc.components.classic.AttributeDate$XEOHTMLRenderer</xwc:render>
+            <xwc:render for='attributeTime'>netgest.bo.xwc.components.classic.AttributeTime$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeDateTime'>netgest.bo.xwc.components.classic.AttributeDateTime$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeLov'>netgest.bo.xwc.components.classic.AttributeLov$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeBoolean'>netgest.bo.xwc.components.classic.AttributeBoolean$XEOHTMLRenderer</xwc:render>
@@ -142,11 +144,20 @@
 			<!-- FIM Viewer Tag -->
 			
 			<xwc:render for='attributeWordMacro'>netgest.bo.xwc.components.classic.AttributeWordMacro$XEOHTMLRenderer</xwc:render>
+
+			<xwc:render for='attributeObjectLookup'>netgest.bo.xwc.xeo.components.AttributeObjectLookup$XEOHTMLRenderer</xwc:render>
 			
+        </xwc:renderKit>
+        <xwc:renderKit name="XEOHTML" componentNamespace="xeo" >
+      		<xwc:render for='splitedLookup'>netgest.bo.xwc.xeo.components.SplitedLookup$XEOHTMLRenderer</xwc:render>
         </xwc:renderKit>
     </xwc:renderKits>
     
-    <xwc:components namespace='xvw' >
+    <xwc:components namespace='xvw' > 
+		<xwc:component name='attributeObjectLookup'>
+            <xwc:className>netgest.bo.xwc.xeo.components.AttributeObjectLookup</xwc:className>
+            <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
+		</xwc:component>
     
 		<xwc:component name="button_pb">
 			<xwc:className>netgest.bo.xwc.components.html.Button_pb</xwc:className>
@@ -233,6 +244,10 @@
         </xwc:component>
         <xwc:component name='attributeDate'>
             <xwc:className>netgest.bo.xwc.components.classic.AttributeDate</xwc:className>
+            <xwc:description>Attribute Date</xwc:description>
+        </xwc:component>
+        <xwc:component name='attributeTime'>
+            <xwc:className>netgest.bo.xwc.components.classic.AttributeTime</xwc:className>
             <xwc:description>Attribute Date</xwc:description>
         </xwc:component>
         <xwc:component name='attributeDateTime'>
@@ -480,5 +495,10 @@
             <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
         </xwc:component>
 
+        <xwc:component name='splitedLookup'>
+            <xwc:className>netgest.bo.xwc.xeo.components.SplitedLookup</xwc:className>
+            <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
+        </xwc:component>
+	
     </xwc:components>
 </xwc:config>

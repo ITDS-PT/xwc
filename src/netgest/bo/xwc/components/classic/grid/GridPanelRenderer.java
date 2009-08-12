@@ -8,8 +8,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import netgest.bo.xwc.components.beans.XEOBaseBean;
-import netgest.bo.xwc.components.beans.XEOBaseList;
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -20,16 +18,19 @@ import netgest.bo.xwc.components.connectors.DataGroupConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.data.JavaScriptArrayProvider;
 import netgest.bo.xwc.components.model.Column;
+import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.beans.XEOBaseBean;
+import netgest.bo.xwc.xeo.beans.XEOBaseList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet, ExtJsRenderer {
+public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet {
     
 
 	GridPanelExtJsRenderer extRenderer;
@@ -77,7 +78,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
     	this.extRenderer.encodeChildren( oComp );
     }
     
-	public ExtConfig extEncodeAll(XUIComponentBase comp) throws IOException {
+	public ExtConfig getExtJsConfig(XUIComponentBase comp) throws IOException {
 		if( this.extRenderer == null ) 
 			this.extRenderer = new GridPanelExtJsRenderer();
 		
@@ -272,6 +273,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 		return reqParam;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static String getExportTitle( GridPanel oGrid ) {
     	XUIViewRoot oViewRoot = XUIRequestContext.getCurrentContext().getViewRoot();
     	Object viewBean = oViewRoot.getBean("viewBean");
@@ -291,7 +293,5 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
     	sTitle = sTitle.replaceAll( "<[a-zA-Z\\/][^>]*>", "");
     	return sTitle;
 	}
-    
-    
 
 }

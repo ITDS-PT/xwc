@@ -4,13 +4,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.el.ValueExpression;
+import javax.faces.el.MethodBinding;
 
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
-
+/**
+ * This component is not usable in the viewers, is the base of all attribute Type Components
+ * 
+ * @author jcarreira
+ *
+ */
 public class AttributeBase extends ViewerInputSecurityBase {
     
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -21,26 +27,26 @@ public class AttributeBase extends ViewerInputSecurityBase {
     
     private XUIBindProperty<DataFieldConnector> dataFieldConnector = new XUIBindProperty<DataFieldConnector>( "dataFieldConnector", this, DataFieldConnector.class );
 
-    private XUIStateBindProperty<Boolean> isLov = 
-    	new XUIStateBindProperty<Boolean>( "isLov", this, Boolean.class );
+    private XUIBindProperty<Boolean> isLov = 
+    	new XUIBindProperty<Boolean>( "isLov", this, Boolean.class );
     
-    private XUIStateBindProperty<Boolean> isLovEditable   = 
-    	new XUIStateBindProperty<Boolean>( "isLovEditable", this, Boolean.class );
+    private XUIBindProperty<Boolean> isLovEditable   = 
+    	new XUIBindProperty<Boolean>( "isLovEditable", this, Boolean.class );
 
-    private XUIStateBindProperty<Boolean> validation	= 
-    	new XUIStateBindProperty<Boolean>( "valid", this, Boolean.class );
+    private XUIBindProperty<Boolean> validation	= 
+    	new XUIBindProperty<Boolean>( "validation", this, Boolean.class );
     
-    private XUIStateBindProperty<Boolean> onChangeSubmit = 
-    	new XUIStateBindProperty<Boolean>( "onChangeSubmit", this, Boolean.class );
+    private XUIBindProperty<Boolean> onChangeSubmit = 
+    	new XUIBindProperty<Boolean>( "onChangeSubmit", this, Boolean.class );
     
-    private XUIStateBindProperty<String[]> dependences = 
-    	new XUIStateBindProperty<String[]>( "dependences", this, Boolean.class );
+    private XUIBindProperty<String[]> dependences = 
+    	new XUIBindProperty<String[]>( "dependences", this, String[].class );
     	
-    private XUIStateBindProperty<Byte> 	dataType = 
-    	new XUIStateBindProperty<Byte>( "dataType", this, Byte.class );
+    private XUIBindProperty<Byte> 	dataType = 
+    	new XUIBindProperty<Byte>( "dataType", this, Byte.class );
     
-    private XUIStateBindProperty<Byte> 	inputRenderType	= 
-    	new XUIStateBindProperty<Byte>( "inputRenderType", this, Byte.class );
+    private XUIBindProperty<Byte> 	inputRenderType	= 
+    	new XUIBindProperty<Byte>( "inputRenderType", this, Byte.class );
 
     private XUIStateBindProperty<String> width = 
     	new XUIStateBindProperty<String>( "width", this, String.class );
@@ -48,13 +54,13 @@ public class AttributeBase extends ViewerInputSecurityBase {
     private XUIStateBindProperty<String> height = 
     	new XUIStateBindProperty<String>( "height", this, "100",String.class );
 
-    private XUIStateBindProperty<Integer> maxLength = 
-    	new XUIStateBindProperty<Integer>( "maxLength", this, Integer.class );
+    private XUIBindProperty<Integer> maxLength = 
+    	new XUIBindProperty<Integer>( "maxLength", this, Integer.class );
     
-    private XUIStateBindProperty<Integer> decimalPrecision  = 
-    	new XUIStateBindProperty<Integer>( "decimalPrecision", this, Integer.class );
+    private XUIBindProperty<Integer> decimalPrecision  = 
+    	new XUIBindProperty<Integer>( "decimalPrecision", this, Integer.class );
 
-    private XUIBaseProperty<Object> renderedValue     = 
+    protected XUIBaseProperty<Object> renderedValue     = 
     	new XUIBaseProperty<Object>( "renderedValue", this, Object.class );
 
     private XUIStateBindProperty<Boolean> disabled       	= 
@@ -86,7 +92,12 @@ public class AttributeBase extends ViewerInputSecurityBase {
     
     private XUIBindProperty<Map<Object,String>> lovMap = 
     	new XUIBindProperty<Map<Object,String>>( "lovMap", this, Map.class );
+
+    private XUIBindProperty<String> invalidText = new XUIBindProperty<String>("invalidText", this, null, String.class ); 
     
+    /**
+     * Initialize the component
+     */
     @Override
     public void initComponent() {
         super.initComponent();
@@ -94,13 +105,12 @@ public class AttributeBase extends ViewerInputSecurityBase {
     }
 
     /**
-     * Define o atributo de um objecto XEO ao qual o componente fica associado. 
-     * 
-     * @property objectAttribute
-     * @propertyType baseProperty
+     * Bind this component to a XEO Attribute using a {@linkplain DataFieldConnector}.<br>
+     *
+     * Property: <code>objectAttribute</code>
      *
      * @param  value
-     *         Array that is the source of characters
+     *         The EL expression to resolve the {@link DataFieldConnector}
      *
      */
     public void setObjectAttribute(String sObjectAttribute) {
@@ -184,188 +194,340 @@ public class AttributeBase extends ViewerInputSecurityBase {
         
     }
     
+    /**
+     * 
+     * Returns the value of the property dataFieldConnector
+     * Property: <code>dataFieldConnector</code>
+     * @return
+     * 		{@link DataFieldConnector}
+     */
     public DataFieldConnector getDataFieldConnector() {
         return this.dataFieldConnector.getEvaluatedValue();
     }
-
+    
+    /**
+     * Returns the XEO Model attribute binding to this component
+     * @return The XEO Model attribute name
+     * 	
+     */
     public String getObjectAttribute() {
         return this.objectAttribute.getValue();
     }
-
+    
+    /**
+     * Defines the visibility of the component
+     * @param visible true/false or a {@link ValueExpression}
+     */
     public void setVisible( String visible) {
         this.visible.setExpressionText( visible );
     }
-
+    
+    /**
+     * Returns the visibility state of the component
+     * @return true/false depending on the current visibility state
+     */
     public boolean isVisible() {
         return this.visible.getEvaluatedValue();
     }
     
+    /**
+     * Returns if the component is readOnly
+     * @return true/false The component readOnly state
+     */
     public boolean isReadOnly() {
     	return this.readOnly.getEvaluatedValue();
     }
-
+    
+    /**
+     * Set the component readOnly state
+     * @param readOnly true/false ou {@link ValueExpression}
+     */
     public void setReadOnly( String readOnly ) {
     	this.readOnly.setExpressionText( readOnly );
     }
     
+    /**
+     * Set the display value for the component. Typical used when showing a cardId instead of the BOUI
+     * @return	The current display value
+     */
     public String getDisplayValue() {
 		return displayValue.getEvaluatedValue();
 	}
-
+    
+    /**
+     * Set the display value
+     * @param cardIdExpression The display value in the format of a {@linkplain ValueExpression}
+     */
 	public void setDisplayValue( String cardIdExpression ) {
 		this.displayValue.setExpressionText( cardIdExpression );
 	}
 
-    
+    /**
+     * Set's the data type of the component.
+     * @param dataType Literal or a value in the format of a {@linkplain ValueExpression}
+     */
     public void setDataType(String dataType) {
         this.dataType.setExpressionText( dataType );
     }
-
-    @Override
-	public void validateModel() {
-//    	boolean isValid = false;
-//    	if( validation.getValue() != null && validation.getValue().isLiteralText() ) {
-//    		isValid = Boolean.parseBoolean( validation.getValue().getExpressionString() );
-//        }
-//        else if ( validation.getValue() != null ) {
-//        	isValid = (Boolean)validation.getValue().getValue( getELContext() );
-//        }
-//    	if( !isValid ) {
-//    		setValid( isValid );
-//    	}
-    }
-
+    
+    /**
+     * Returns the dataType of the component
+     * @return Byte representing the dataType associated to the component
+     */
 	public byte getDataType() {
 		return this.dataType.getEvaluatedValue();
 	}
-
+	
+	
+	/**
+	 * Returns if this value is required by the XEO Model
+	 * @return true/false if it is required
+	 */
     public boolean isModelRequired() {
     	return this.modelRequired.getEvaluatedValue();
     }
-
-    public void setRequired(String recomended) {
-    	this.modelRequired.setExpressionText( recomended );
+    
+    /**
+     * Set required property of the component
+     * @param modelRequired true/false or a {@link ValueExpression}
+     */
+    public void setRequired(String modelRequired) {
+    	this.modelRequired.setExpressionText( modelRequired );
     }
 
+    /**
+     * Set recommended property of the component
+     * @param recomended true/false or a {@link ValueExpression}
+     */
     public void setRecomended(String recomended) {
     	this.recommended.setExpressionText( recomended );
     }
-
+    
+    /**
+     * Return the value of the recommended property.
+     * @return	true/false 
+     */
     public boolean isRecomended() {
         return this.recommended.getEvaluatedValue();
     }
-
+    
+    /**
+     * Set a validation method for the component
+     * @param validation as a {@linkplain MethodBinding}
+     */
     public void setValidation(String validation) {
         this.validation.setExpressionText( validation );
     }
-
+    
+    /**
+     * Set if the component must post the data to the server after a change in the value
+     * @param onChangeSubmit true/false
+     */
+    public void setOnChangeSubmit( boolean onChangeSubmit) {
+        this.onChangeSubmit.setExpressionText( String.valueOf( onChangeSubmit ) );
+    }
+    
+    /**
+     * Set if the component must post the data to the server after a change in the value
+     * @param onChangeSubmit true/false or {@linkplain ValueExpression}
+     */
     public void setOnChangeSubmit(String onChangeSubmit) {
         this.onChangeSubmit.setExpressionText( onChangeSubmit  );
     }
-
+    
+    /**
+     * Read the property isOnChangeSubmit of the component
+     * @return true/false
+     */
     public boolean isOnChangeSubmit() {
         return this.onChangeSubmit.getEvaluatedValue();
     }
-
+    
+    /**
+     * Set's the component state to disabled
+     * @param sDisable true/false or {@link ValueExpression}
+     */
     public void setDisabled(String sDisable) {
         this.disabled.setExpressionText( sDisable );
     }
 
+    /**
+     * Returns the current disabled state of the component
+     * @return true/false
+     */
     public boolean isDisabled() {
         return this.disabled.getEvaluatedValue();
     }
-
+    
+    /**
+     * Set's the label text associated to this component
+     * @param label String or {@link ValueExpression}
+     */
     public void setLabel(String label) {
         this.label.setExpressionText( label );
     }
-
+    
+    /**
+     * Get's the current label of the component
+     * @return	Returns the current label text of the component
+     */
     public String getLabel() {
         return this.label.getEvaluatedValue();
     }
 
+    /**
+     * Set's if the component show the link in the cardId witch allow the navigation 
+     * to the original XEO Model
+     * 
+     * @param sExpressionText true/false or a {@linkplain ValueExpression}
+     */
     public void setEnableCardIdLink(String sExpressionText) {
         this.enableCardIdLink.setExpressionText( sExpressionText );
     }
-
+    
+    /**
+     * Get's the current value of the property enableCardIdLink 
+     * @return true / false
+     */
     public boolean getEnableCardIdLink() {
         return this.enableCardIdLink.getEvaluatedValue();
     }
     
+    /**
+     * Set the max length of the attribute 
+     * @param maxLength {@linkplain ValueExpression} with the max length of the component
+     */
     public void setMaxLength(String maxLength) {
         this.maxLength.setExpressionText( maxLength );
     }
+
+    /**
+     * Set the max length of the attribute 
+     * @param maxLength int with the max length of the component
+     */
+    public void setMaxLength( int maxLength) {
+        this.maxLength.setExpressionText( String.valueOf( maxLength ) );
+    }
     
+    /**
+     * Return the current maxLength of the component 
+     * @return int with the max length of the component
+     */
     public int getMaxLength() {
         return this.maxLength.getEvaluatedValue();
     }
 
+    /**
+     * Set's the decimal precision of the component, when is of the numeric type
+     * @param decimalPrecision integer or {@linkplain ValueExpression}
+     */
     public void setDecimalPrecision(String decimalPrecision) {
         this.dataType.setExpressionText( decimalPrecision );
     }
-
+    
+    /**
+     * Get the current decimal precision of the component
+     * @return int with the current decimal precision
+     */
     public int getDecimalPrecision() {
         return this.decimalPrecision.getEvaluatedValue();
     }
 
+    /**
+     * Set the dependences of the component by the objectAttribute property. 
+     * If this component have dependences when a dependency changes the values are posted to the server.
+     * 
+     * sDependences String[] return by a {@link ValueExpression} or a comma spared String containing the objectAttributes 
+     */
     public void setDependences(String sDependences ) {
         this.dependences.setExpressionText( sDependences );
     }
-
+    
+    
+    /**
+     * Get the current dependencies of the component
+     * @return String[] with objectAttribute values form which this component depends 
+     */
     public String[] getDependences() {
         if( !dependences.isNull() ) {
 	        if( dependences.isLiteralText() ) {
-	            return dependences.getExpressionString().split(";");
+	        	if( dependences.getValue() != null ) {
+	        		return String.valueOf(dependences.getValue()).split(";");
+	        	}
 	        }
 	        else {
-	             return (String[])dependences.getValue().getValue( getELContext() );
+	            return dependences.getEvaluatedValue();
 	        }
         }
         return EMPTY_STRING_ARRAY;
     }
 
     /**
-     * Define se o component é rendarizado em formato de combobox. 
+     * Define if the component is rendered in the format of a inputLov component 
      * 
-     * @property isLov
-     * @propertyType stateBindProperty
-     * @propertyValue boolean
-     *
-     * @param  sIsLov
-     *         Expresão EL que deve retornar true ou false.
+     * @param  sIsLov tru/false or a {@link ValueExpression}
+     *         
      *
      */
     public void setIsLov( String sIsLov ) {
         this.isLov.setExpressionText( sIsLov );
     }
-
+    
+    /**
+     * Get the value of the isLov property of the component
+     * @return true/false 
+     */
     public boolean isLov() {
         return this.isLov.getEvaluatedValue();
     }
-
+    
+    /**
+     * Forces a lookup viewer for this XEO Model object attribute
+     * @param sLookupViewerExpr Literal string with the lookup viewer name or a {@link ValueExpression} 
+     */
     public void setLookupViewer( String sLookupViewerExpr ) {
         this.lookupViewer.setExpressionText( sLookupViewerExpr );
     }
-
+    
+    /**
+     * Get the current forced lookup viewer name for this component.
+     * @return String with the viewer name
+     */
     public String getLookupViewer() {
         return this.lookupViewer.getEvaluatedValue();
     }
     
+    /**
+     * Set's if the values of the inputLov are editable
+     * @param sIsLovEditable true/false or a {@link ValueExpression}
+     */
     public void setIsLovEditable( String sIsLovEditable ) {
         this.isLovEditable.setExpressionText( sIsLovEditable );
     }
-
+    /**
+     * Get the current value of the property isLovEditable
+     * @return true/false
+     */
     public boolean isLovEditable() {
         return this.isLovEditable.getEvaluatedValue();
     }
-
+    
+    /**
+     * Set's the lov values
+     * @param sLovValues {@link ValueExpression} returning a Map<Object,String> with the lov values.
+     */
     public void setLovMap( String sLovValues ) {
         this.lovMap.setExpressionText( sLovValues );
     }
 
+    /**
+     * Get the current lov Map associated with the component
+     * @return  Map<Object,String> with the lov Map
+     */
     public Map<Object, String> getLovMap() {
-    	if( this.lovMap.getValue() != null && this.lovMap.getValue().isLiteralText() ) {
+    	if( this.lovMap.getValue() != null && this.lovMap.isLiteral() ) {
         	Map<Object, String> oRetLovMap = new LinkedHashMap<Object, String>();
-            String[] values = this.lovMap.getValue().getExpressionString().split(";");
+            String[] values = this.lovMap.getExpressionString().split(";");
             for( String lovValue : values  ) {
             	oRetLovMap.put( lovValue , lovValue);
             }
@@ -376,7 +538,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
     	final Map<Object, String> oRetLovMap = new LinkedHashMap<Object, String>();
     	return oRetLovMap;
     }
-
+    
     public void setHasDependents(boolean hasDependents) {
         this.hasDependents = hasDependents;
     }
@@ -384,19 +546,35 @@ public class AttributeBase extends ViewerInputSecurityBase {
     public boolean getHasDependents() {
         return hasDependents;
     }
-
+    
+    /**
+     * Set the with of the component
+     * @param sWidth Integer or a {@link ValueExpression}
+     */
     public void setWidth( String sWidth ) {
         this.width.setExpressionText( sWidth );
     }
 
+    /**
+     * Set the height of the component, only works with multiline components like textArea and HtmlEditor
+     * @param sWidth Integer or a {@link ValueExpression} 
+     */
     public void setHeight( String sHeight ) {
         this.height.setExpressionText( sHeight );
     }
-
+    
+    /**
+     * Get the current Height of the component
+     * @return String with a integer value with the Height of the Component
+     */
     public String getHeight() {
         return this.height.getEvaluatedValue();
     }
     
+    /**
+     * Get the current Height of the component
+     * @return String with a integer value with the Width of the Component
+     */
     public String getWidth() {
     	if ( !this.width.isNull() ) {
     		return this.width.getEvaluatedValue();
@@ -404,16 +582,52 @@ public class AttributeBase extends ViewerInputSecurityBase {
         return "150";
     }
 
+    /**
+     * Force the component to render the value with the specified component
+     * @param inputRenderType A component name, like attributePassword or attributeText 
+     */
     public void setInputRenderType(String inputRenderType) {
         this.inputRenderType.setExpressionText( inputRenderType );
     }
 
+    /**
+     * Get the forced component type to manage the value of the component 
+     * @return The component name, like attributePassword or attributeText 
+     */
     public byte getInputRenderType() {
     	return this.inputRenderType.getEvaluatedValue();
     }
 
+    /**
+     * Marks this component as invalid a set the invalid text 
+     * @param sInvalidText The text to be displayed in a format of literal String or {@link ValueExpression} 
+     */
+    public void setInvalidText( String sInvalidText ) {
+    	this.invalidText.setExpressionText( sInvalidText );
+    }
+    
+    /**
+     * Get the current invalid message of the component
+     * @return String with the invalid message of the Component
+     */
+    public String getInvalidText() {
+    	return this.invalidText.getEvaluatedValue();
+    }
+    
+    /**
+     * Reset's the invalid message of the Object
+     */
+    public void clearInvalid() {
+    	this.invalidText.setExpressionText( null );
+    }
+    
+    
+    /**
+     * Check's if the component need's to be rerendered on the client side after a postback in Ajax
+     */
     @Override
     public boolean wasStateChanged() {
+    	
         if( !super.wasStateChanged() ) {
             if (!XUIStateProperty.compareValues( this.renderedValue.getValue(), getValue() )) {
                 return true;
@@ -424,7 +638,11 @@ public class AttributeBase extends ViewerInputSecurityBase {
         }
         return false;
     }
-
+    
+    /**
+     * Get the value {@link ValueExpression} associated with this component
+     * @return {@link ValueExpression}
+     */
     public String getValueExpression() {
 		ValueExpression oExpr = getValueExpression( "value" );
 		if( oExpr != null ) {
@@ -433,6 +651,10 @@ public class AttributeBase extends ViewerInputSecurityBase {
 		return null;
 	}
 
+    /**
+     * Set the value {@link ValueExpression} associated with this component
+     * @param valueExpression {@link ValueExpression}
+     */
 	public void setValueExpression(String valueExpression) {
 		ValueExpression oVExpr = createValueExpression(valueExpression, Object.class);
 		this.setValueExpression( "value" , oVExpr );
@@ -441,12 +663,18 @@ public class AttributeBase extends ViewerInputSecurityBase {
 		}
 	}
     
+	/**
+	 * Save the object property of this component 
+	 */
     @Override
     public Object saveState() {
         this.renderedValue.setValue( getValue() );
         return super.saveState();
     }
 
+	/**
+	 * Save the object property of this component 
+	 */
     public void setBeanProperty(String beanProperty) {
         this.beanProperty.setValue( beanProperty ); 
         
@@ -454,11 +682,19 @@ public class AttributeBase extends ViewerInputSecurityBase {
             setObjectAttribute( getObjectAttribute() );
         
     }
-
+    
+    /**
+     * Get the bean property associated with the component
+     * 
+     * @return String in the format of {@link ValueExpression}
+     */
     public String getBeanProperty() {
         return beanProperty.getValue();
     }
 
+    /**
+     * Update the XEO Model with the submited value
+     */
 	@Override
 	public void updateModel() {
 		
@@ -478,8 +714,10 @@ public class AttributeBase extends ViewerInputSecurityBase {
 		}
 		
 		// Se os valores forem diferentes, submete a alteracao ao modelo.
-		if( !XUIStateBindProperty.compareValues( oRenderedValue, oCurrentValue ) ) {
+		if( !XUIStateProperty.compareValues( oRenderedValue, oCurrentValue ) ) {
 			super.updateModel();
+			this.renderedValue.setValue( oCurrentValue );
+			
 		}
         else {
             // Important! - Clear Local value

@@ -65,6 +65,9 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 			if( name.equals("SYS_ICON_COMPOSED_STATE") ) 
 				return new GenericFieldConnector( ConnectorsMessages.OBJECT_LABEL.toString(), getXEOObject().getICONComposedState(), DataFieldTypes.VALUE_CHAR );
 			
+			if( name.equals("SYS_CARDID") ) 
+				return new GenericFieldConnector( ConnectorsMessages.OBJECT_LABEL.toString(), getXEOObject().getCARDID().toString(), DataFieldTypes.VALUE_CHAR );
+			
 		} catch (boRuntimeException e) {
 			throw new RuntimeException( e );
 		}

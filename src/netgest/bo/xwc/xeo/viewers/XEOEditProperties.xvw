@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xvw:root 
+	xmlns:xvw="http://www.netgest.net/xeo/xvw"
+	xmlns:xeo="http://www.netgest.net/xeo/xeo"
+>
+    <xvw:viewer beanClass='netgest.bo.xwc.xeo.beans.XEOEditPropertiesBean' beanId='viewBean'>
+        <xvw:form>
+        	<xvw:window width='500' height='250'>
+	            <xvw:title valueExpression='Propriedades'></xvw:title>
+	            <xvw:errorMessages></xvw:errorMessages>
+	            <xvw:section lable='Propriedades'>
+				<xvw:rows columns='2' columnWidths='35%,65%' >
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attributeLabel text='Identificação:' />
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:outputHtml valueExpression='#{viewBean.cardId}' />
+						</xvw:cell>
+					</xvw:row>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attributeLabel text='Criado em:' />
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:outputHtml valueExpression='#{viewBean.creationDate}'/>
+						</xvw:cell>
+					</xvw:row>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attributeLabel text='Criado por:' />
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:outputHtml valueExpression='#{viewBean.createdBy}'/>
+						</xvw:cell>
+					</xvw:row>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attributeLabel text='Última modificação em:' />
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:outputHtml valueExpression='#{viewBean.lastModificationDate}'/>
+						</xvw:cell>
+					</xvw:row>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attributeLabel text='Última modificação por:' />
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:outputHtml valueExpression='#{viewBean.lastModificationBy}'/>
+						</xvw:cell>
+					</xvw:row>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attributeLabel text='Versão:' />
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:outputHtml valueExpression='#{viewBean.version}'/>
+						</xvw:cell>
+					</xvw:row>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:attributeLabel text='Identificador único:' />
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:outputHtml valueExpression='#{viewBean.boui}'/>
+						</xvw:cell>
+					</xvw:row>
+	 			</xvw:rows>
+				</xvw:section>
+				<xvw:rows columns='2' >
+					<xvw:row>
+						<xvw:cell>
+							<xvw:actionButton serverAction='#{viewBean.canCloseTab}' label='Fechar' />
+						</xvw:cell>
+						<xvw:cell/>
+					</xvw:row>
+				</xvw:rows>
+			</xvw:window>
+        </xvw:form>
+    </xvw:viewer>
+</xvw:root>

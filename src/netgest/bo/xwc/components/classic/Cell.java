@@ -5,6 +5,14 @@ import java.io.IOException;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
+/**
+ * Cell of a row
+ * 
+ * He can have children of any type
+ * 
+ * @author jcarreira
+ *
+ */
 public class Cell extends XUIComponentBase
 {
 

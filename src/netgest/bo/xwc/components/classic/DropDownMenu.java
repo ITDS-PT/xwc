@@ -6,6 +6,11 @@ import javax.faces.context.ResponseWriter;
 import netgest.bo.xwc.framework.components.XUIOption;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
+/**
+ * Drop down menu
+ * @author jcarreira
+ *
+ */
 public class DropDownMenu extends XUIComponentBase
 {
     public DropDownMenu()
@@ -145,7 +150,8 @@ public class DropDownMenu extends XUIComponentBase
     {
     }
 
-    public boolean getRendersChildren()
+    @Override
+	public boolean getRendersChildren()
     {
         return false;
     }

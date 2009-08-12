@@ -19,10 +19,20 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
-
+/**
+ * The component that creates the application Workspace
+ * @author jcarreira
+ *
+ */
 public class MainLayout extends XUIComponentBase {
 
-	XUIBindProperty<String> applicationType = new XUIBindProperty<String>("applicationType", this, "TREE_BASED", String.class );
+	XUIBindProperty<String> applicationType = 
+			new XUIBindProperty<String>(
+						"applicationType", 
+						this, 
+						"TREE_BASED", 
+						String.class 
+					);
 	
 	public String getApplicationType() {
 		return applicationType.getEvaluatedValue();
@@ -30,10 +40,6 @@ public class MainLayout extends XUIComponentBase {
 
 	public void setApplicationType(String applicationType) {
 		this.applicationType.setExpressionText( applicationType );
-	}
-
-	@Override
-	public void processInitComponents() {
 	}
 
 	public static class XEOHTMLRenderer extends XUIRenderer {
@@ -87,7 +93,7 @@ public class MainLayout extends XUIComponentBase {
                     if (rendererType != null) {
                         Renderer renderer = getRenderer( oChildComp, XUIRequestContext.getCurrentContext().getFacesContext() );
                         if (renderer != null) {
-                            this.oExtToolBar = ((ExtJsRenderer)renderer).extEncodeAll( (XUIComponentBase)oChildComp );
+                            this.oExtToolBar = ((ExtJsRenderer)renderer).getExtJsConfig( (XUIComponentBase)oChildComp );
                         }
                     }
                 }

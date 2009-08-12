@@ -26,8 +26,8 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 public class TreePanel extends XUIComponentBase {
 
-	private XUIBindProperty<Menu> root = new XUIBindProperty<Menu>( "root", this,  null, Menu.class );
-	private XUIBindProperty<Boolean> reload = new XUIBindProperty<Boolean>( "reload", this,  "false", Boolean.class );
+	private XUIBindProperty<Menu> root = new XUIBindProperty<Menu>( "root", this,  Menu.class );
+	private XUIBindProperty<Boolean> reload = new XUIBindProperty<Boolean>( "reload", this,  false, Boolean.class );
 	
 	private boolean localReload = false;
 	

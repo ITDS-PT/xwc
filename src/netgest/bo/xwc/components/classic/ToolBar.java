@@ -116,80 +116,79 @@ public class ToolBar extends ViewerSecurityBase {
             Iterator<UIComponent> childs =  component.getChildren().iterator();
             while( childs.hasNext() ) {
                 
-                ExtConfig oItemCfg;
+                ExtConfig oItemCfg = null;
                 
                 Menu oMenuChild = (Menu)childs.next();
                 
-                if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
-                	
-                    oItemCfg = oItemsCfg.addChild();
-	                
-	                //if( !bFirstOption )
-	                //    sOut.write(",");
-	                
-	                //sOut.write("{\n");
-	                
-	                //sOut.write( "text: '" ); sOut.write( oMenuChild.getText() ); sOut.write("'");
-	                oItemCfg.addJSString( "text", oMenuChild.getText() );
-	                if( !oMenuChild.isVisible() )
-	                    oItemCfg.add( "hidden", true );
-
-	                if( oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
-	                    oItemCfg.add( "disabled", true );
-	                
-	                if( oMenuChild.getIcon() != null ) {
-	                	oItemCfg.addJSString( "icon", oMenuChild.getIcon() );
-	                	oItemCfg.addJSString("cls", "x-btn-text-icon");
+                if( oMenuChild.isRendered() ) {
+                
+	            	String sText = oMenuChild.getText();
+	
+	            	if( "-".equals( sText ) ) {
+	                	oItemsCfg.add("'-'");
 	                }
+	                else if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
+	
 	                    
-	                if( oMenuChild.getValue() instanceof Boolean ) {
-	                    //sOut.write(",\n");
-	                    //sOut.write( "checked: " ); sOut.write( String.valueOf( oMenuChild.getValue() ) ); ; sOut.write("\n");
-	                    oItemCfg.add( "checked", oMenuChild.getValue() );
+	                        oItemCfg = oItemsCfg.addChild(  );
+	                        
+			                oItemCfg.addJSString( "text", sText );
+			                if( !oMenuChild.isVisible() )
+			                    oItemCfg.add( "hidden", true );
+		
+			                if( oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
+			                    oItemCfg.add( "disabled", true );
+			                
+			                if( oMenuChild.getIcon() != null ) {
+			                	oItemCfg.addJSString( "icon", oMenuChild.getIcon() );
+			                	if( sText == null ) {
+				                	oItemCfg.addJSString("cls", "x-btn-icon");
+			                	}
+			                	else {
+				                	oItemCfg.addJSString("cls", "x-btn-text-icon");
+			                	}
+			                }
+			                
+			                if( oMenuChild.getToolTip() != null ) {
+			                	oItemCfg.addJSString("tooltip", oMenuChild.getToolTip() );
+			                }
+			                    
+			                if( oMenuChild.getValue() instanceof Boolean ) {
+			                    oItemCfg.add( "checked", oMenuChild.getValue() );
+			                }
+			                
+		                    if( "window".equalsIgnoreCase( oMenuChild.getTarget() ) ) {
+		                    	oItemCfg.add( "handler", "function() {" +
+			                    		"var oForm=document.getElementById('" + oMenuChild.getNamingContainerId() +"');\n" +
+			                    		"var oldTrg=oForm.target;\n" +
+			                    		"oForm.target='opt_"+ oMenuChild.getClientId() +"';\n" +
+			                    		XVWScripts.getCommandScript( oMenuChild, XVWScripts.WAIT_STATUS_MESSAGE ) +";\n" +
+			                    		"oForm.target=oldTrg;\n" +
+			                    		"}"
+			                    );
+		                    } 
+		                    else if( "CommandWindow".equalsIgnoreCase( oMenuChild.getTarget() ) )
+		                    {
+		                        oItemCfg.add( "handler", "function(){"+XVWScripts.getOpenCommandWindow( oMenuChild, "" )+"}" );
+		                    }
+	                        else if ( "downloadFrame".equalsIgnoreCase( oMenuChild.getTarget() ) ) {
+	                            oItemCfg.add( "handler", "function(){"+XVWScripts.getCommandDownloadFrame( oMenuChild, "" )+"}" );
+	                        }
+		                    else if( "Tab".equalsIgnoreCase( oMenuChild.getTarget() ) )
+		                    {
+		                        oItemCfg.add( "handler", "function(){"+XVWScripts.getOpenCommandTab( oMenuChild, "", oMenuChild.getText() )+"}" );
+		                    }
+		                    else {
+		                        oItemCfg.add( "handler", "function(){"+XVWScripts.getAjaxCommandScript( oMenuChild, XVWScripts.WAIT_DIALOG )+"}" );
+		                    }
+		                    if( oMenuChild.getChildCount() > 0 ) {
+		                    	oItemCfg.addJSString( "xtype", "splitbutton" );
+		                    	if( oItemCfg != null ) {
+		    	                    encodeSubMenuJS( oItemCfg.addChild( "menu" ), oMenuChild );
+		                    	}
+		                    }
 	                }
-	
-	                if( oMenuChild.getActionExpression() != null ) {
-	//                    sOut.write(",\n");
-	//                    sOut.write( "handler: function(){" ); 
-	//                        sOut.write(XVWScripts.getAjaxCommandScript( oMenuChild, XVWScripts.WAIT_DIALOG ) );
-	//                    sOut.write( "},\n" );
-	//                    sOut.write( "scope: this" );
-	
-	                    if( "window".equalsIgnoreCase( oMenuChild.getTarget() ) ) {
-	                    	oItemCfg.add( "handler", "function() {" +
-		                    		"var oForm=document.getElementById('" + oMenuChild.getNamingContainerId() +"');\n" +
-		                    		"var oldTrg=oForm.target;\n" +
-		                    		"oForm.target='opt_"+ oMenuChild.getClientId() +"';\n" +
-		                    		XVWScripts.getCommandScript( oMenuChild, XVWScripts.WAIT_STATUS_MESSAGE ) +";\n" +
-		                    		"oForm.target=oldTrg;\n" +
-		                    		"}"
-		                    );
-	                    } 
-	                    else if( "CommandWindow".equalsIgnoreCase( oMenuChild.getTarget() ) )
-	                    {
-	                        oItemCfg.add( "handler", "function(){"+XVWScripts.getOpenCommandWindow( oMenuChild, "" )+"}" );
-	                    }
-                        else if ( "downloadFrame".equalsIgnoreCase( oMenuChild.getTarget() ) ) {
-                            oItemCfg.add( "handler", "function(){"+XVWScripts.getCommandDownloadFrame( oMenuChild, "" )+"}" );
-                        }
-	                    else if( "Tab".equalsIgnoreCase( oMenuChild.getTarget() ) )
-	                    {
-	                        oItemCfg.add( "handler", "function(){"+XVWScripts.getOpenCommandTab( oMenuChild, "", oMenuChild.getText() )+"}" );
-	                    }
-	                    else {
-	                        oItemCfg.add( "handler", "function(){"+XVWScripts.getAjaxCommandScript( oMenuChild, XVWScripts.WAIT_DIALOG )+"}" );
-	                    }
-	                }
-	                
-	                if( oMenuChild.getChildCount() > 0 ) {
-	//                    sOut.write(",\n");
-	//                    sOut.write( "menu: " );
-	                    encodeSubMenuJS( oItemCfg.addChild( "menu" ), oMenuChild );
-	                }
-	//                sOut.write("\n}\n");
-	
-	//                bFirstOption = false;
-            	}
+                }
             }
 
 //            sOut.write( "]\n" );
@@ -228,7 +227,11 @@ public class ToolBar extends ViewerSecurityBase {
                 
                 Menu oMenuChild = (Menu)oSubChildren.next();
                 
-                if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
+                String sText = oMenuChild.getText();
+                if( "-".equals( sText ) ) {
+                	oSubChildCfg.add("'-'");
+                }
+                else if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
                 	oItemCfg = oSubChildCfg.addChild();
                 	oItemCfg.addJSString( "text", oMenuChild.getText() );
                 	if( !oMenuChild.isVisible() )
@@ -241,12 +244,20 @@ public class ToolBar extends ViewerSecurityBase {
                 		oItemCfg.add( "checked", oMenuChild.getValue() );
                 	}
                 	
-                	if( oMenuChild.getIcon() != null ) {
-                		oItemCfg.addJSString( "icon", oMenuChild.getIcon() );
-                		oItemCfg.addJSString("cls", "x-btn-text-icon");
-                	}
+	                if( oMenuChild.getIcon() != null ) {
+	                	oItemCfg.addJSString( "icon", oMenuChild.getIcon() );
+	                	if( sText == null ) {
+		                	oItemCfg.addJSString("cls", "x-btn-icon");
+	                	}
+	                	else {
+		                	oItemCfg.addJSString("cls", "x-btn-text-icon");
+	                	}
+	                }
+	                if( oMenuChild.getToolTip() != null ) {
+	                	oItemCfg.addJSString("tooltip", oMenuChild.getToolTip() );
+	                }
                 	
-                	if( oMenuChild.getActionExpression() != null ) {
+//                	if( oMenuChild.getActionExpression() != null ) {
                 		if( "window".equalsIgnoreCase( oMenuChild.getTarget() ) ) {
                 			oItemCfg.add( "handler", "function() {" +
                 					"var oForm=document.getElementById('" + oMenuChild.getNamingContainerId() +"');\n" +
@@ -264,17 +275,20 @@ public class ToolBar extends ViewerSecurityBase {
                 		else {
                 			oItemCfg.add( "handler", "function(){"+XVWScripts.getAjaxCommandScript( oMenuChild, XVWScripts.WAIT_DIALOG )+"}" );
                 		}
-                	}
+                		
+//                	}
                 	
                 	if( oMenuChild.getChildCount() > 0 ) {
                 		encodeSubMenuJS( oItemCfg.addChild( "menu" ), oMenuChild );
                 	}
                 }
+            
                 
             }
         }
 
-        public ExtConfig extEncodeAll(XUIComponentBase oComp) throws IOException {
+        @Override
+        public ExtConfig getExtJsConfig(XUIComponentBase oComp) {
             return renderExtJs( oComp );
         }
 
@@ -284,9 +298,7 @@ public class ToolBar extends ViewerSecurityBase {
 			return true;
 			
 		}
-        
-        
-    
+
     }
 
     //

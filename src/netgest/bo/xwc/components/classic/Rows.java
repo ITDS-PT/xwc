@@ -31,7 +31,8 @@ public class Rows extends XUIComponentBase
     XUIBaseProperty<String> labelPosition 	= new XUIBaseProperty<String>( "labelPosition", this, "left" );
     XUIBaseProperty<Integer> labelWidth 	= new XUIBaseProperty<Integer>( "labelWidth", this, 100 );
     
-    public boolean getRendersChildren()
+    @Override
+	public boolean getRendersChildren()
     {
         return true;
     }

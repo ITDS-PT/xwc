@@ -37,5 +37,12 @@ public interface ComponentMessages {
 	public static final XUILocalizedMessage FORM_NOT_ENOUGH_PERMISSION = 
 		new XUILocalizedMessage( ComponentMessages.class.getName(), "FORM_NOT_ENOUGH_PERMISSION" );
 
+	public static final XUILocalizedMessage XEO_ERROR_INVOKE_METHOD = 
+		new XUILocalizedMessage( ComponentMessages.class.getName(), "XEO_ERROR_INVOKE_METHOD" );
+
+	public static final XUILocalizedMessage XEO_ERROR_TITLE = 
+		new XUILocalizedMessage( ComponentMessages.class.getName(), "XEO_ERROR_TITLE" );
+	
+	
 	
 }

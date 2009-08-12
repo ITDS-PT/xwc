@@ -29,8 +29,15 @@ public class XVWScripts {
     }
      
     public static final String getAjaxCommandScript( XUIComponentBase oComponent, int iWaitMode ) {
+    	assert oComponent != null : "The component is null!";
+    	String containerId = oComponent.getNamingContainerId();
+    	assert containerId != null : "Cannot find a naming container for the component"; 
+
+    	
+    	String compId = oComponent.getId();
+    	
         return 
-            "XVW.AjaxCommand( '" + oComponent.getNamingContainerId() +  "','" + oComponent.getId() + "','" + oComponent.getId() + "','"+iWaitMode+"')";
+            "XVW.AjaxCommand( '" + containerId +  "','" + compId + "','" + compId + "','"+iWaitMode+"')";
     }
 
     public static final String getAjaxCommandScript( XUIComponentBase oComponent, String sValue, int iWaitMode ) {
@@ -128,6 +135,7 @@ public class XVWScripts {
 				oViewRoot + "_close",
 				getCloseViewScript( oViewRoot )
 		);
+		oViewRoot.dispose();
     	oViewRoot.setTransient( true );
     }
 

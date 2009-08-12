@@ -15,6 +15,11 @@ import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
+/**
+ * A dialog progress component
+ * @author jcarreira
+ *
+ */
 public class DialogProgress extends XUIComponentBase {
 
 	private XUIStateBindProperty<String> 	title 			= 

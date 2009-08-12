@@ -18,3 +18,4 @@
 	request.getSession().setAttribute("boSession", boSession );
 %>
 <jsp:forward page="/netgest/bo/xwc/components/viewers/Builder.xvw"></jsp:forward>
+ 

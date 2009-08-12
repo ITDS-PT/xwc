@@ -2,6 +2,8 @@ package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
 
+import javax.el.ValueExpression;
+
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -25,22 +27,34 @@ public class OutputHtml extends ViewerOutputSecurityBase {
         }
         return false;    
     }
-
+    
     @Override
     public Object saveState() {
         this.renderedValue.setValue( getValue() );
         return super.saveState();
     }
-
+    
+    /**
+     * The value to be displayed
+     * @param valueExpression {@link ValueExpression} or a literal String with the output html
+     */
     public void setValueExpression(String valueExpression) {
         this.valueExpression.setValue( valueExpression ); 
         super.setValueExpression( "value", createValueExpression( valueExpression, String.class ) );
     }
-
+    
+    /**
+     * The current expression string or literal representing the value to ouput
+     * @return String
+     */
     public String getValueExpression() {
         return valueExpression.getValue();
     }
-
+    
+    /**
+     * The evaluated value of the valueExpression property.
+     * @return Object with the current Value  
+     */
     @Override
     public Object getValue() {
         return super.getValue();

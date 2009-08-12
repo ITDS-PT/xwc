@@ -41,11 +41,18 @@ import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
 import netgest.io.FSiFile;
 import netgest.io.iFile;
 
+/**
+ * This component renders a attributeFile type components, but add some functionality
+ * to work with Microsoft Word Templates
+ * @author jcarreira
+ *
+ */
 public class AttributeWordMacro extends AttributeBase {
 	
     private XUICommand oLookupCommand;
 
-    public void initComponent() {
+    @Override
+	public void initComponent() {
         // per component inicializations.
         if( getChildCount() == 0 ) {
             oLookupCommand = new XUICommand();
@@ -61,7 +68,8 @@ public class AttributeWordMacro extends AttributeBase {
 
     }
 
-    public void validate( FacesContext context ) {
+    @Override
+	public void validate( FacesContext context ) {
         Object      oSubmitedValue = getSubmittedValue();
         String      sSubmitedValue = null;
         BigDecimal  oSubmitedBigDecimal;

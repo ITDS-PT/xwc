@@ -1,27 +1,26 @@
 package netgest.bo.xwc.components.classic;
 
-import static netgest.bo.xwc.components.HTMLAttr.ID;
-import static netgest.bo.xwc.components.HTMLTag.DIV;
-
 import java.io.IOException;
 
 import javax.el.ValueExpression;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
-import netgest.bo.xwc.components.security.SecurityPermissions;
-import netgest.bo.xwc.framework.XUIRenderer;
+import netgest.bo.xwc.components.classic.extjs.ExtJsBaseRenderer;
+import netgest.bo.xwc.components.util.JavaScriptUtils;
+import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-
-
+/**
+ * This component renders a label for a input component
+ * @author jcarreira
+ *
+ */
 public class AttributeLabel extends ViewerOutputSecurityBase {
 
     public XUIStateProperty<String> text 		= new XUIStateProperty<String>("text", this, " Label Text ");
     
-    private XUIStateProperty<ValueExpression> 	disabled       = new XUIStateProperty<ValueExpression>( "disabled", this );
     private XUIStateProperty<ValueExpression> 	visible        = new XUIStateProperty<ValueExpression>( "visible", this );
     private XUIStateBindProperty<Boolean> 		modelRequired  = new XUIStateBindProperty<Boolean>( "modelRequired", this, Boolean.class );
     private XUIStateBindProperty<Boolean> 		recommended    = new XUIStateBindProperty<Boolean>( "recommended", this, Boolean.class );
@@ -48,21 +47,6 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
         return true;
     }
 
-    public void setDisabled(String sDisable) {
-        this.disabled.setValue( createValueExpression( sDisable, Boolean.class ) );
-    }
-
-
-    public boolean isDisabled() {
-        if( disabled.getValue() != null && disabled.getValue().isLiteralText() ) {
-            return Boolean.parseBoolean( disabled.getValue().getExpressionString() );
-        }
-        else if ( disabled.getValue() != null ) {
-             return (Boolean)disabled.getValue().getValue( getELContext() );
-        }
-        return false;
-    }
-
 	public boolean isModelRequired() {
 		Boolean ret = modelRequired.getEvaluatedValue();
 		if( ret != null ) 
@@ -84,70 +68,88 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 	public void setRecommended(String recommendedExpression ) {
 		this.recommended.setExpressionText( recommendedExpression );
 	}
+	
+	@Override
+	public boolean wasStateChanged() {
+		return super.wasStateChanged();
+	}
 
-	public static class XEOHTMLRenderer extends XUIRenderer {
+	public static class XEOHTMLRenderer extends ExtJsBaseRenderer {
 
-        @Override
-        public void encodeEnd(XUIComponentBase oComp) throws IOException {
-            
-            XUIResponseWriter w = getResponseWriter();
-
-            // Place holder for the component
-            w.startElement( DIV, oComp ); 
-            
+		@Override
+		public String getExtComponentType( XUIComponentBase oComp ) {
+			return "Ext.form.Label";
+		};
+		
+		@Override
+		public void encodeBeginPlaceHolder(XUIComponentBase oAtt) throws IOException {
+			super.encodeBeginPlaceHolder(oAtt);
+			XUIResponseWriter w = getResponseWriter();
             w.writeAttribute( "class" , "xwc-form-label", null);
-            w.writeAttribute( ID, oComp.getClientId(), null );
-            
-            w.endElement( DIV );
-            
-            w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, 
-                oComp.getId(),
-                renderExtJs( (AttributeLabel)oComp )
-            );
-
-            
-        }
-
-        public String renderExtJs( AttributeLabel oComp ) {
-            
-            StringBuilder sOut = new StringBuilder( 150 );
-            
+		}
+		
+		@Override
+		public ExtConfig getExtJsConfig(XUIComponentBase oComp) {
+			
             AttributeLabel oAttrLabel = (AttributeLabel)oComp;
 
-            if ( !oAttrLabel.getEffectivePermission(SecurityPermissions.READ) ) {
-            	// Without permissions do not render the field
-            	return "";
-            }
+            ExtConfig config = super.getExtJsConfig(oComp);
             
-            ExtConfig oLabelConfig = new ExtConfig("Ext.form.Label");
-            oLabelConfig.addJSString( "renderTo" , oComp.getClientId() );
+            //It's not working... in extjs 2.2.1
+//			config.addString( "forId" , ((Attribute)oComp.getParent()).getInputComponent().getClientId() );
             
-            if( oComp.getParent() instanceof Attribute )
-            	oLabelConfig.addJSString( "forId" , ((Attribute)oComp.getParent()).getInputComponent().getClientId() + "_c" );
-            
-            oLabelConfig.addJSString("text", oComp.getText() );
+			config.addString( "text" , JavaScriptUtils.writeValue( oAttrLabel.getText() ) );
+			
             if( !oAttrLabel.isVisible() )
-            	oLabelConfig.add("hidden",true);
+            	config.add("hidden",true);
             
-            if( oAttrLabel.isDisabled() || !oAttrLabel.getEffectivePermission(SecurityPermissions.WRITE) )  {
-            	oLabelConfig.add("disabled",true);
-            }
+            config.addString("cls", getComponentClass(oAttrLabel) );
             
+			return config;
+		}
+		
+		public StringBuilder getComponentClass( AttributeLabel oLabel ) {
             StringBuilder cls = new StringBuilder("xwc-form-label ");
-        	
-            if( oAttrLabel.isRecommended() )
+
+            if( oLabel.isRecommended() )
             	cls.append( "xwc-form-recommended " );
 
-            if( oAttrLabel.isModelRequired() )
+            if( oLabel.isModelRequired() )
             	cls.append( "xwc-form-required " );
             
-        	oLabelConfig.addJSString("cls", cls.toString() );
+            return cls;
+		}
+		
+		@Override
+		public ScriptBuilder getEndComponentScript(XUIComponentBase oComp) {
+			
+			ScriptBuilder s = null;
+			
+			if( oComp.isRenderedOnClient() ) {
+				AttributeLabel oAttrLabel = (AttributeLabel)oComp;
+	
+				s = new ScriptBuilder();
+				s.startBlock();
+				super.writeExtContextVar(s, oComp);
+			
+				if( oComp.getStateProperty("text").wasChanged() )
+					s.w( "c.setText('" ).writeValue( oAttrLabel.getText() ).l("');");
 
-        	oLabelConfig.renderExtConfig(sOut);
-
-            return sOut.toString();
-        }
-
+				if( oComp.getStateProperty("visible").wasChanged() )
+					s.w( "c.setVisible('" ).writeValue( oAttrLabel.isVisible() ).l("');");
+					
+				if( oComp.getStateProperty("recommended").wasChanged() || oComp.getStateProperty("modelRequired").wasChanged() ) {
+					s.s( "c.removeClass('xwc-form-recommended')");
+					s.s( "c.removeClass('xwc-form-required')");
+					s.w( "c.addClass('").w( getComponentClass(oAttrLabel) ).s("')");
+				}
+				s.endBlock();
+			}
+			return s;
+			
+		}
+		
+		
     }
 
 }

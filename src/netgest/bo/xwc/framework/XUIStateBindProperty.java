@@ -23,7 +23,9 @@ public class XUIStateBindProperty<V> extends XUIStateProperty<ValueExpression> {
     
     public void setExpressionText( String sExpression ) {
     	if( sExpression != null ) {
-    		super.setValue( oComp.createValueExpression( sExpression, this.cValueType ) );
+    		if( !sExpression.equals( getExpressionString() ) ) {
+    			super.setValue( oComp.createValueExpression( sExpression, this.cValueType ) );
+    		}
     	} else {
     		super.setValue( null );
     	}
@@ -41,7 +43,11 @@ public class XUIStateBindProperty<V> extends XUIStateProperty<ValueExpression> {
     }
     
     public String getExpressionString() {
-        return super.getValue().getExpressionString();
+    	ValueExpression ve = super.getValue(); 
+    	if( ve != null )
+    		return ve.getExpressionString();
+    	
+    	return null;
     }
 
     public V getEvaluatedValue() {

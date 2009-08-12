@@ -1,21 +1,11 @@
 package netgest.bo.xwc.framework.components;
 
-import com.sun.faces.util.LRUMap;
-import com.sun.faces.util.RequestStateManager;
-import com.sun.faces.util.TypedCollections;
-
-import com.sun.faces.util.Util;
-
 import java.io.IOException;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.faces.application.StateManager;
 import javax.faces.component.NamingContainer;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
@@ -27,7 +17,6 @@ import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.Window;
-import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -37,6 +26,11 @@ import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl;
 
+import com.sun.faces.util.LRUMap;
+import com.sun.faces.util.RequestStateManager;
+import com.sun.faces.util.TypedCollections;
+import com.sun.faces.util.Util;
+
 
 public class XUIViewRoot extends UIViewRoot 
 {
@@ -44,7 +38,6 @@ public class XUIViewRoot extends UIViewRoot
     
     private String   sInstanceId    = String.valueOf( oInstanceIdCntr.addAndGet( 1 ) );
     private String 	 sBeanIds		= "";
-    private String   sClientId      = null;
     private Object   oViewerBean;
     private String   sStateId       = null;
     private XUITheme oTheme;
@@ -55,7 +48,8 @@ public class XUIViewRoot extends UIViewRoot
     
     private XUIViewRoot  oParentView    = null;
     private boolean      isPostBack     = false;
-
+    
+    private boolean 	 wasInitComponentsProcessed = false;
     
     public void setOwnsTransaction( boolean owns ) {
     	this.bOwnsTransaction = owns;
@@ -167,6 +161,13 @@ public class XUIViewRoot extends UIViewRoot
         }
         return false;
     }
+
+    public boolean wasInitComponentsProcessed() {
+        if( isPostBack() ) {
+            return true;
+        }
+        return this.wasInitComponentsProcessed;
+    }
     
     public void processStateChanged( List<XUIComponentBase> oRenderList ) {
         boolean bChanged;
@@ -240,6 +241,7 @@ public class XUIViewRoot extends UIViewRoot
         if( sParentViewState != null && oParentView == null )
         {
             oParentView = XUIRequestContext.getCurrentContext().getSessionContext().getView( sParentViewState );
+            oParentView.sStateId = sParentViewState;
         }
         return oParentView;
     }
@@ -267,6 +269,8 @@ public class XUIViewRoot extends UIViewRoot
                 ((XUIComponentBase)kid).processInitComponents();
             }
         }
+        wasInitComponentsProcessed = true;        
+
     }
     
     public void processValidateModel() {
@@ -307,7 +311,7 @@ public class XUIViewRoot extends UIViewRoot
         
         if( sStateId == null )
         {
-        
+         
             FacesContext context = FacesContext.getCurrentInstance();
             XUIStateManagerImpl stateManager = (XUIStateManagerImpl)Util.getStateManager(context);
             

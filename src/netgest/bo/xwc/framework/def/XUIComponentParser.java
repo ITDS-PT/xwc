@@ -31,22 +31,38 @@ public class XUIComponentParser
     
     public void loadComponents( XUIApplicationContext oXUIApplication )
     {
+    	InputStream systemsComponents = null;
     	try {
-			InputStream systemsComponents = Thread.currentThread().getContextClassLoader().getResourceAsStream( "XWVComponents.xml" );
-			loadComponents( oXUIApplication, systemsComponents );
-			systemsComponents.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+			systemsComponents = Thread.currentThread().getContextClassLoader().getResourceAsStream( "XWVComponents.xml" );
+			if( systemsComponents != null ) 
+				loadComponents( oXUIApplication, systemsComponents );
+		}
+		finally {
+			try {
+				if( systemsComponents != null ) 
+					systemsComponents.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 
+    	InputStream projectComponents = null;
     	try {
-			InputStream projectComponents = Thread.currentThread().getContextClassLoader().getResourceAsStream( "XWVProjectComponents.xml" );
+			projectComponents = Thread.currentThread().getContextClassLoader().getResourceAsStream( "XWVProjectComponents.xml" );
 			if( projectComponents != null ) {
 				loadComponents( oXUIApplication, projectComponents );
-				projectComponents.close();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		}
+		finally {
+			try {
+				if( projectComponents != null )
+					projectComponents.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
     }   
     
@@ -83,7 +99,6 @@ public class XUIComponentParser
         }
         catch (Exception e)
         {
-        	e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
