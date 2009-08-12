@@ -197,7 +197,7 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		DataSet countDataSet = DataManager.executeNativeQuery( 
 				getEboContext(), 
 				"DATA", 
-				"select count(*) from (" + this.preparedSql + ") AS COUNT_SELECT", 
+				"select count(*) from (" + this.preparedSql + ") COUNT_SELECT", 
 				1,
 				1,
 				this.preparedSqlArgs 
