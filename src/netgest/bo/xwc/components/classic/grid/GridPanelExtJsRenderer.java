@@ -301,7 +301,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             oChild.add( "handler", sb.toString() );
         }
         }
-        if( oNavBarComp == null || oNavBarComp.getShowExportToExcel() ) {
+        if( oNavBarComp == null || oNavBarComp.getShowExportToPDF() ) {
         oPagingItems.add( "'-'" );
         {
             String sActionUrl = getRequestContext().getAjaxURL();
