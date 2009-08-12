@@ -52,6 +52,9 @@ public class Bridge extends GridPanel {
 	@Override
 	public void initComponent() {
 		
+		if( getStateProperty( "objectAttribute" ).isDefaultValue() )
+			this.setObjectAttribute( getBridgeName() );
+
 		if( getStateProperty("rowSelectionMode").isDefaultValue() )
 			this.setRowSelectionMode( GridPanel.SELECTION_MULTI_ROW );
 		
@@ -67,9 +70,6 @@ public class Bridge extends GridPanel {
 		if( getStateProperty( "rowDblClickTarget" ).isDefaultValue() )
 			this.setRowDblClickTarget("self");
 		
-		if( getStateProperty( "objectAttribute" ).isDefaultValue() )
-			this.setObjectAttribute( getBridgeName() );
-
 		if( getRenderToolBar() )
 			createToolbar();
     	
