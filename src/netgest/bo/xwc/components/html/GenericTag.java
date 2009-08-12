@@ -27,6 +27,10 @@ public class GenericTag extends XUIComponentBase {
 	public void setTextContent( String textContext ) {
 		this.textContent = textContext;
 	}
+        
+        public String getTextContent() {
+                return this.textContent;
+        }
 
 	@Override
 	public void restoreState(Object state) {
