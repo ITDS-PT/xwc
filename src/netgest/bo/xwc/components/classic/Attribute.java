@@ -94,26 +94,7 @@ public class Attribute extends AttributeBase
 	            this.oLabel.setId( getId() +  "_l" );
 	            this.oLabel.setText( getLabel() );
 	
-	            if( getValueExpression("visible") != null )
-	                this.oLabel.setVisible( getValueExpression("visible").getExpressionString() );
-	
-	            if( getValueExpression("modelRequired") != null ) {
-	                this.oLabel.setModelRequired( getValueExpression("modelRequired").getExpressionString() );
-	            }
-	            
-	            if( getValueExpression("recommended") != null )
-	                this.oLabel.setRecommended( getValueExpression("recommended").getExpressionString() );
-	            
-	            //this.oLabel.setObjectAttribute( getObjectAttribute() );
-	            //propagateProperties( oLabel );
-	            
-	            if( getValueExpression( "securityPermissions" )!=null )
-	            	oLabel.setSecurityPermissions( getValueExpression("securityPermissions").getExpressionString() );
-
-	            if( getValueExpression( "viewerSecurityPermissions" )!=null )
-	            	oLabel.setViewerSecurityPermissions( getValueExpression("viewerSecurityPermissions").getExpressionString() );
-
-	            oLabel.setInstanceId( getInstanceId() );
+	            propagateLabelProperties( oLabel );
 	            
 	            this.getChildren().add( this.oLabel );
 	            
@@ -127,19 +108,16 @@ public class Attribute extends AttributeBase
 	            
 	            //this.oInput = new AttributeText(  );
 	            this.oInput.setId( getId() + "_i" );
-	            this.oInput.setValueExpression( "value", getValueExpression("value") );
 	            
-	            if( getObjectAttribute() != null ) {
-	            	this.oInput.setObjectAttribute( getObjectAttribute() );
-	            }
+	            propagateInputProperties( this.oInput );
 	            
-	            propagateProperties( this.oInput );
 	            this.getChildren().add( this.oInput );
 	            
 	            
 	        }
         }
     }
+    
     
     private String getInputComponentType(  ) {
         String sRet;
@@ -206,8 +184,34 @@ public class Attribute extends AttributeBase
         
     }
     
-    private void propagateProperties( AttributeBase oAttr ) {
+    
+    protected void propagateLabelProperties( AttributeLabel label ) {
+        if( getValueExpression("visible") != null )
+        	label.setVisible( getValueExpression("visible").getExpressionString() );
 
+        if( getValueExpression("modelRequired") != null ) {
+            label.setModelRequired( getValueExpression("modelRequired").getExpressionString() );
+        }
+        
+        if( getValueExpression("recommended") != null )
+        	label.setRecommended( getValueExpression("recommended").getExpressionString() );
+        
+        if( getValueExpression( "securityPermissions" )!=null )
+        	label.setSecurityPermissions( getValueExpression("securityPermissions").getExpressionString() );
+
+        if( getValueExpression( "viewerSecurityPermissions" )!=null )
+        	label.setViewerSecurityPermissions( getValueExpression("viewerSecurityPermissions").getExpressionString() );
+
+        label.setInstanceId( getInstanceId() );
+    }
+    
+    protected void propagateInputProperties( AttributeBase oAttr ) {
+
+    	oAttr.setValueExpression( "value", getValueExpression("value") );
+        if( getObjectAttribute() != null ) {
+        	oAttr.setObjectAttribute( getObjectAttribute() );
+        }
+    	
         // Set attribute properties
         if( getBeanProperty() != null )
             oAttr.setBeanProperty( getBeanProperty() );
@@ -232,6 +236,9 @@ public class Attribute extends AttributeBase
 
         if( getValueExpression("lovMap") != null )
             oAttr.setLovMap( getValueExpression("lovMap").getExpressionString() );
+
+        if( getValueExpression("validation") != null )
+            oAttr.setValidation( getValueExpression("validation").getExpressionString() );
 
         if( getValueExpression("enableCardIdLink") != null )
             oAttr.setEnableCardIdLink( getValueExpression("enableCardIdLink").getExpressionString() );
@@ -280,6 +287,7 @@ public class Attribute extends AttributeBase
             this.oLabel = (AttributeLabel)getChild( 0 );
             this.oInput = (AttributeBase)getChild( 1 );
         }
+        super.restoreState(oState);
     }
 
     @Override
@@ -287,6 +295,10 @@ public class Attribute extends AttributeBase
         return false;
     }
 
+    @Override
+    public void validateModel() {
+    	return;
+    }
 
     public void setRenderLabel( boolean renderLabel) {
         this.renderLabel.setValue( renderLabel?"1":"0" );

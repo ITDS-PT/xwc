@@ -53,10 +53,13 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
     public ExtConfig getExtJsFieldConfig(AttributeBase oAttr) {
         ExtConfig			extConfig;
         
+        
+        String sDisplayValue = oAttr.getDisplayValue();
+        
     	extConfig = super.getExtJsConfig(oAttr);
     	
         extConfig.addJSString( "name",  oAttr.getClientId() );
-        extConfig.addJSString( "value", oAttr.getDisplayValue() );
+        extConfig.addJSString( "value", sDisplayValue );
 
         extConfig.add( "maxLength", oAttr.getMaxLength());
 
@@ -70,7 +73,13 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
         	extConfig.add( "readOnly", true );
         }
         
+        addValidator( extConfig );
+        
     	return extConfig;
+    }
+    
+    public void addValidator( ExtConfig inpConfig ) {
+    	inpConfig.add( "validator", "function() { return this._xwcvalid; }" );
     }
 	
     public ExtConfig getExtJsFieldListeners( AttributeBase oAtt ) {
@@ -135,20 +144,27 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
     	
     	if( oComp.isRenderedOnClient() ) {
 
-    		if( renderValue && oComp.getStateProperty("displayValue").wasChanged() )
-        		s.w("c.setRawValue('").writeValue( oComp.getDisplayValue() ).w("')").endStatement();
+    		if( renderValue && oComp.getStateProperty("displayValue").wasChanged() ) {
+    			String sDisplayValue =  oComp.getDisplayValue();
+        		s.w("c.setRawValue('").writeValue( sDisplayValue ).w("')").endStatement();
+    		}
 
         	if( oComp.getStateProperty("visible").wasChanged() )
-        		s.w("c.setVisible('").writeValue( oComp.isVisible() ).w("')").endStatement();
+        		s.w("c.setVisible(").writeValue( oComp.isVisible() ).w(")").endStatement();
         		
         	if( oComp.getStateProperty("disabled").wasChanged() )
-        		s.w("c.setDisabled('").writeValue( oComp.isDisabled() ).w("')").endStatement();
+        		s.w("c.setDisabled(").writeValue( oComp.isDisabled() ).w(")").endStatement();
     	}
-    	
         String invalidText = oComp.getInvalidText();
         if ( invalidText != null && invalidText.length() > 0 ) {
+        	s.w("c._xwcvalid='").writeValue( invalidText ).w("'").endStatement();
         	s.w("c.markInvalid('" ).writeValue( invalidText ).w("')").endStatement();
         }
+        else {
+        	s.w("c.clearInvalid()").endStatement();
+        	s.s("c._xwcvalid=true").endStatement();
+        }
+    	
         if( closeBlock ) {
         	s.endBlock();
         }

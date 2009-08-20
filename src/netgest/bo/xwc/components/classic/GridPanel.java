@@ -48,9 +48,6 @@ import org.json.JSONObject;
 
 public class GridPanel extends ViewerInputSecurityBase {
 
-	// private static final DataRecordConnector[]
-	// EMPTY_ARRAY_DATARECORDCONNECTOR = new DataRecordConnector[0];
-
 	private String childViewers;
 
 	public static final String SELECTION_ROW = "ROW";
@@ -88,7 +85,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 			"rowClickTarget", this, "");
 
 	private XUIBaseProperty<String> sActiveRow = new XUIBaseProperty<String>(
-			"sActiveRow", this, "tab");;
+			"sActiveRow", this, null );;
 
 	private XUIBaseProperty<String> currentFilters = new XUIBaseProperty<String>(
 			"currentFilters", this);
@@ -142,7 +139,13 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIMethodBindProperty	onRowDoubleClick 	= new XUIMethodBindProperty("onRowDoubleClick", this );
 	
 	private XUIMethodBindProperty	onRowClick 			= new XUIMethodBindProperty("onRowClick", this );
+
+	private XUIMethodBindProperty	onSelectionChange	= new XUIMethodBindProperty("onSelectionChange", this );
 	
+	private XUIBindProperty<Boolean> autoReloadData = new XUIBindProperty<Boolean>(
+			"autoReloadData", this, true,Boolean.class );
+	
+	private boolean forcedReloadData = false;
 	
 	private String currentFullTextSearch;
 
@@ -234,6 +237,19 @@ public class GridPanel extends ViewerInputSecurityBase {
 			}
 			oRowDblClickComp
 					.setActionExpression( this.onRowClick.getValue() );
+		}
+
+		if( this.onSelectionChange.getValue() != null ) {
+			XUICommand oRowDblClickComp = (XUICommand) this.findComponent(getId()
+					+ "_selChange");
+
+			if (oRowDblClickComp == null) {
+				oRowDblClickComp = new XUICommand();
+				oRowDblClickComp.setId(getId() + "_selChange");
+				this.getChildren().add(oRowDblClickComp);
+			}
+			oRowDblClickComp
+					.setActionExpression( this.onSelectionChange.getValue() );
 		}
 		
 		// per component initializations...
@@ -499,7 +515,6 @@ public class GridPanel extends ViewerInputSecurityBase {
 								try {
 									value = sdf.parse(submitedValue);
 								} catch (ParseException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 									value = null;
 								}
@@ -653,13 +668,16 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public DataListConnector getDataSource() {
 		try {
 			if (dataSource.getValue() != null) {
-				return dataSource.getEvaluatedValue();
+				DataListConnector ret = dataSource.getEvaluatedValue();
+				if( ret != null ) {
+					return ret;
+				}
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(ComponentMessages.GRID_DATASOURCE_ERROR
 					.toString(dataSource.getExpressionString()), e);
 		}
-		return null;
+		throw new RuntimeException("There are no dataSource defined. The GridPanel property dataSource is null or returned null!");
 	}
 	
 	/**
@@ -896,6 +914,20 @@ public class GridPanel extends ViewerInputSecurityBase {
 	}
 	
 	/**
+	 * Returns the index position in the DataListConnector of the selected rows, first rows is 1
+	 * @return Array of int with the indexes of the selected rows. Returns empty array if there are no selected rows.
+	 */
+	public int[] getSelectedRowsPos() {
+		int[] selRows;
+		DataRecordConnector[] selDr = getSelectedRows();
+		selRows = new int[ selDr.length ];
+		for( int i=0;i < selDr.length; i++ ) {
+			selRows[ i ] = selDr[i].getRowIndex();
+		}
+		return selRows;
+	}
+	
+	/**
 	 * Returns the active row,  ( The last row user clicked )
 	 * @return {@link DataRecordConnector}
 	 */
@@ -947,6 +979,50 @@ public class GridPanel extends ViewerInputSecurityBase {
 	}
 	
 	/**
+	 * When set to true the defaul, the grid reload the the data after a server request.
+	 * When false the method reloadData must be called to force the data be refreshed
+	 * 
+	 * @param elexpression a {@link ValueExpression} return a boolean value
+	 */
+	public void setAutoReloadData( String elexpression ) {
+		this.autoReloadData.setExpressionText( elexpression );
+	}
+	
+	/**
+	 * When set to true the defaul, the grid reload the the data after a server request.
+	 * When false the method reloadData must be called to force the data be refreshed
+	 * 
+	 * @param autoReload true / false
+	 */
+	public void setAutoReloadData( boolean autoReload ) {
+		this.autoReloadData.setValue( autoReload );
+	}
+	
+	/**
+	 * Reads the property autoReloadData of the GridPanel
+	 * @return
+	 */
+	public boolean getAutoReloadData() {
+		return this.autoReloadData.getEvaluatedValue();
+	}
+	
+	/**
+	 * Mark the grid to reload the data after the server request
+	 * 
+	 */
+	public void reloadData() {
+		this.forcedReloadData = true;
+	}
+	
+	/**
+	 * Check if the method reloadData was called
+	 * @return true / false
+	 */
+	public boolean isMarkedToReloadData() {
+		return this.forcedReloadData;
+	}
+	
+	/**
 	 * Set the onRowDoubleClick action
 	 * @param onRowDoubleClick {@link MethodBinding} expression 
 	 */
@@ -960,6 +1036,22 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 */
 	public String getOnRowClick() {
 		return this.onRowClick.getExpressionString();
+	}
+
+	/**
+	 * Set the onSelectionChange action
+	 * @param onSelectionChange {@link MethodBinding} expression 
+	 */
+	public void setOnSelectionChange(String onRowDoubleClick) {
+		this.onSelectionChange.setExpressionText( onRowDoubleClick );
+	}
+	
+	/**
+	 * Get the current action for onSelectionChange
+	 * @return String whith {@link MethodBinding} expression
+	 */
+	public String getOnSelectionChange() {
+		return this.onSelectionChange.getExpressionString();
 	}
 	
 	/**
@@ -1230,7 +1322,6 @@ public class GridPanel extends ViewerInputSecurityBase {
 				boolean addLine = true;
 				while (it.hasNext()) {
 					FilterTerms.FilterJoin filterJoin = it.next();
-					// TODO Parse filterJoin
 					FilterTerm filterTerm = filterJoin.getTerm();
 					Object val = filterTerm.getValue();
 					String column = filterTerm.getDataField();
@@ -1325,7 +1416,6 @@ public class GridPanel extends ViewerInputSecurityBase {
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return finalList.iterator();

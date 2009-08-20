@@ -1,13 +1,13 @@
 package netgest.bo.xwc.xeo.beans;
 
-import netgest.bo.xwc.xeo.beans.XEOBaseBean;
+import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.components.classic.HTMLFileBrowse;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
-public class FileBrowseBean extends netgest.bo.xwc.xeo.beans.XEOBase {
+public class FileBrowseBean extends netgest.bo.xwc.xeo.beans.XEOBaseBean {
 
 	private String      parentParentBeanId;
     private String      parentComponentId;
@@ -38,7 +38,7 @@ public class FileBrowseBean extends netgest.bo.xwc.xeo.beans.XEOBase {
 		HTMLFileBrowse 	oFileComp   = 
 			(HTMLFileBrowse)oViewRoot.findComponent( HTMLFileBrowse.class );
 		
-		XEOBaseBean     oParentBean = getParentBean();
+		XEOEditBean     oParentBean = getParentBean();
 		
 		XUIInput oParentInput = 
 			(XUIInput)oParentBean.getViewRoot().findComponent( parentComponentId );
@@ -88,9 +88,9 @@ public class FileBrowseBean extends netgest.bo.xwc.xeo.beans.XEOBase {
 
 	}
 
-    public XEOBaseBean getParentBean()
+    public XEOEditBean getParentBean()
     {
-        return (XEOBaseBean)getParentView().getBean( parentParentBeanId );
+        return (XEOEditBean)getParentView().getBean( parentParentBeanId );
     }
 
 }

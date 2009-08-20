@@ -20,9 +20,11 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 	private static final Logger log = Logger.getLogger( XEOObjectConnector.class.getName() );
     
     private long lBoObjectBoui;
+    private int	 rowIndex; 
     
-    public XEOObjectConnector( long lBoObjectBoui ) 
+    public XEOObjectConnector( long lBoObjectBoui, int rowIndex ) 
     {
+    	this.rowIndex = rowIndex;
         this.lBoObjectBoui = lBoObjectBoui;
     }
     
@@ -290,7 +292,25 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 	    public byte getSecurityPermissions() {
 			return SecurityPermissions.FULL_CONTROL;
 		}
+
+		@Override
+		public String getInvalidMessage() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean validate() {
+			// TODO Auto-generated method stub
+			return false;
+		}
     	
     }
+
+	@Override
+	public int getRowIndex() {
+		return this.rowIndex;
+	}
+
     
 }

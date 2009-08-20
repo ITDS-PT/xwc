@@ -4,11 +4,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.el.ValueExpression;
-import javax.faces.el.MethodBinding;
 
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 /**
@@ -33,8 +33,8 @@ public class AttributeBase extends ViewerInputSecurityBase {
     private XUIBindProperty<Boolean> isLovEditable   = 
     	new XUIBindProperty<Boolean>( "isLovEditable", this, Boolean.class );
 
-    private XUIBindProperty<Boolean> validation	= 
-    	new XUIBindProperty<Boolean>( "validation", this, Boolean.class );
+    private XUIMethodBindProperty validation	= 
+    	new XUIMethodBindProperty( "validation", this );
     
     private XUIBindProperty<Boolean> onChangeSubmit = 
     	new XUIBindProperty<Boolean>( "onChangeSubmit", this, Boolean.class );
@@ -93,7 +93,8 @@ public class AttributeBase extends ViewerInputSecurityBase {
     private XUIBindProperty<Map<Object,String>> lovMap = 
     	new XUIBindProperty<Map<Object,String>>( "lovMap", this, Map.class );
 
-    private XUIBindProperty<String> invalidText = new XUIBindProperty<String>("invalidText", this, null, String.class ); 
+    private XUIStateBindProperty<String> invalidText = 
+    	new XUIStateBindProperty<String>("invalidText", this, String.class ); 
     
     /**
      * Initialize the component
@@ -117,6 +118,8 @@ public class AttributeBase extends ViewerInputSecurityBase {
     	
         String sBeanExpression = "#{" + getBeanProperty() + "." + sObjectAttribute;
         
+        this.dataFieldConnector.setExpressionText( "#{" + getBeanProperty() + "." + sObjectAttribute + "}" );
+        
         this.objectAttribute.setValue( sObjectAttribute );
 
         // Value
@@ -133,7 +136,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
             );
         
         this.validation.setValue( 
-                createValueExpression( sBeanExpression + ".valid}", Boolean.class ) 
+                createMethodBinding( sBeanExpression + ".validate}", Boolean.class ) 
             );
 
         this.onChangeSubmit.setValue( 
@@ -603,6 +606,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
      * @param sInvalidText The text to be displayed in a format of literal String or {@link ValueExpression} 
      */
     public void setInvalidText( String sInvalidText ) {
+    	this.invalidText.setChanged( true );
     	this.invalidText.setExpressionText( sInvalidText );
     }
     
@@ -724,5 +728,27 @@ public class AttributeBase extends ViewerInputSecurityBase {
             setValue(null);
             setLocalValueSet(false);
         }
+	}
+	
+	@Override
+	public void validateModel() {
+		setModelValid( true );
+		this.validation.invoke();
+		Boolean ret = (Boolean)this.validation.getReturnValue();
+		if( ret != null ) {
+			if( !ret ) {
+				setModelValid( false );
+				setInvalidText( "Valor inválido!" );
+				if( this.dataFieldConnector.getValue() != null) {
+					String sMsg = this.dataFieldConnector.getEvaluatedValue().getInvalidMessage();
+					if( sMsg != null && sMsg.length() > 0 ) {
+						setInvalidText(sMsg);
+					}
+				}
+			}
+			else {
+				setInvalidText( null );
+			}
+		}
 	}
 }

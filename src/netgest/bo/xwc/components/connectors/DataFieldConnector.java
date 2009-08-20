@@ -14,9 +14,11 @@ public interface DataFieldConnector extends DataFieldMetaData {
     
     public byte 	getSecurityPermissions();
     
-    public boolean getRecomended();
+    public boolean 	getRecomended();
     
-    public boolean getValid(); 
+    public boolean 	validate(); 
+
+    public String 	getInvalidMessage(); 
     
     public String[] getDependences();
     

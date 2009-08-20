@@ -245,7 +245,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        	if( savedId != null )
 	        		((XUIViewBean)viewRoot.getBean("viewBean")).setViewRoot( (String)savedId );
 	        	else
-	        		((XUIViewBean)viewRoot.getBean("viewBean")).setViewRoot( pValue );
+	        		((XUIViewBean)viewRoot.getBean("viewBean")).setViewRoot( viewRoot.getViewState() );
 	        }
 	        
 	        // Se existe view restora a transacção associada a view.

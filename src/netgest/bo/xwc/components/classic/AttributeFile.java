@@ -136,6 +136,17 @@ public class AttributeFile extends AttributeBase {
 
     	
     	@Override
+		public void encodeEnd(XUIComponentBase oComp) throws IOException {
+    		
+    		if( oComp.getStateProperty("readOnly").wasChanged() ) {
+    			oComp.setDestroyOnClient( true );
+    			oComp.setRenderedOnClient( false );
+    		}
+    		
+			super.encodeEnd(oComp);
+		}
+
+		@Override
     	public String getExtComponentType( XUIComponentBase oComp ) {
     		
     		AttributeBase oAtt = (AttributeBase)oComp;
@@ -149,7 +160,6 @@ public class AttributeFile extends AttributeBase {
     	@Override
     	public void encodeBeginPlaceHolder(XUIComponentBase oAtt)
     			throws IOException {
-    		
     		super.encodeBeginPlaceHolder(oAtt);
 
     		XUIResponseWriter w = getResponseWriter();
@@ -191,28 +201,26 @@ public class AttributeFile extends AttributeBase {
             }
             oInpConfig.add("readOnly", true );
             
-            if( !oAttr.isDisabled() ) {
 	            if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
-		            oInpConfig.add("onTrigger1Click", "function(){ " +
+		            oInpConfig.add("onTrigger1Click", "function(){ if(!this.disabled){ " +
 		            		"Ext.ComponentMgr.get('" + getExtComponentId(oAttr) + "_c').setValue('');\n" + 
 		            		"document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';\n" + 
 		            		XVWScripts.getAjaxCommandScript(oAttr,  XVWScripts.WAIT_STATUS_MESSAGE ) + 
-		            		"}"
+		            		"}}"
 		            );
 	            }
 	            else {
-		            oInpConfig.add("onTrigger1Click", "function(){ " +
+		            oInpConfig.add("onTrigger1Click", "function(){ if(!this.disabled){" +
 		            		"Ext.ComponentMgr.get('" + getExtComponentId(oAttr) + "').setValue('');\n" + 
 		            		"document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';\n" + 
-		            		"}"
+		            		"}}"
 		            );
 	            }
-	            oInpConfig.add("onTrigger2Click", "function(){ " +
+	            oInpConfig.add("onTrigger2Click", "function(){if(!this.disabled){ " +
 	            		XVWScripts.getOpenCommandWindow( oAttFile.getLookupCommand(), 
 	            				oAttFile.getLookupCommand() + "_" + System.currentTimeMillis() ) +
-	            		"}"
+	            		"}}"
 	            );
-            }
             
             
             return oInpConfig;

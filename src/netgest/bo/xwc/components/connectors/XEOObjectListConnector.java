@@ -202,7 +202,7 @@ public class XEOObjectListConnector implements DataListConnector {
 		DataRecordConnector drc;
 		drc = null;
 		boui = Long.parseLong( sUniqueIdentifier );
-		drc = new XEOObjectConnector( boui );
+		drc = new XEOObjectConnector( boui, indexOf(sUniqueIdentifier) );
 		return drc;
 	}
 
@@ -333,6 +333,18 @@ public class XEOObjectListConnector implements DataListConnector {
 			DataListConnector.CAP_SORT + 
 			DataListConnector.CAP_FILTER +
 			DataListConnector.CAP_GROUPING;
+	}
+
+	@Override
+	public int indexOf(String sUniqueIdentifier) {
+		int ret = -1;
+		
+		int lastRow = this.oObjectList.getRow();
+		if( this.oObjectList.haveBoui( Long.valueOf( sUniqueIdentifier ) ) ) {
+			ret = this.oObjectList.getRow();
+		}
+		this.oObjectList.moveTo( lastRow );
+		return ret;
 	}
 
 

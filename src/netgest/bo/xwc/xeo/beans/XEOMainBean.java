@@ -16,7 +16,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 import org.json.JSONObject;
 
-public class XEOMainBean extends XEOBase {
+public class XEOMainBean extends XEOBaseBean {
 
 	public XEOMainBean() {
 		if( getEboContext() != null ) {
@@ -50,7 +50,7 @@ public class XEOMainBean extends XEOBase {
         XUIRequestContext   oRequestContext;
         XUISessionContext   oSessionContext;
         XUIViewRoot         oViewRoot;
-        XEOBaseBean         oBaseBean;
+        XEOEditBean         oBaseBean;
         
         oRequestContext = XUIRequestContext.getCurrentContext();
         oSessionContext = oRequestContext.getSessionContext();
@@ -63,7 +63,7 @@ public class XEOMainBean extends XEOBase {
         String sViewerName = oViewerConfig.getViewerName();  
 
         oViewRoot = oSessionContext.createView( sViewerName );
-        oBaseBean = (XEOBaseBean)oViewRoot.getBean( "viewBean" );
+        oBaseBean = (XEOEditBean)oViewRoot.getBean( "viewBean" );
         
         if( oBaseBean == null ) {
         	throw new  RuntimeException( BeansMessages.VIEWER_WITHOUT_VIEWBEAN.toString() );
@@ -82,7 +82,7 @@ public class XEOMainBean extends XEOBase {
         XUIRequestContext   oRequestContext;
         XUISessionContext   oSessionContext;
         XUIViewRoot         oViewRoot;
-        XEOBaseBean         oBaseBean;
+        XEOEditBean         oBaseBean;
         
         oRequestContext = XUIRequestContext.getCurrentContext();
         oSessionContext = oRequestContext.getSessionContext();
@@ -97,7 +97,7 @@ public class XEOMainBean extends XEOBase {
         String sObjectName = oViewerConfig.getObjectName();
 
         oViewRoot = oSessionContext.createView( sViewerName );
-        oBaseBean = (XEOBaseBean)oViewRoot.getBean( "viewBean" );
+        oBaseBean = (XEOEditBean)oViewRoot.getBean( "viewBean" );
         oBaseBean.createNew( sObjectName );
         
         // Diz a que a view corrente é a criada.
@@ -115,7 +115,7 @@ public class XEOMainBean extends XEOBase {
         XUIRequestContext   oRequestContext;
         XUISessionContext   oSessionContext;
         XUIViewRoot         oViewRoot;
-        XEOBaseBean         oBaseBean;
+        XEOEditBean         oBaseBean;
         
         oRequestContext = XUIRequestContext.getCurrentContext();
         oSessionContext = oRequestContext.getSessionContext();
@@ -124,7 +124,7 @@ public class XEOMainBean extends XEOBase {
         // e associa o objecto do parametro
 
         oViewRoot = oSessionContext.createView( sView );
-        oBaseBean = (XEOBaseBean)oViewRoot.getBean( "viewBean" );
+        oBaseBean = (XEOEditBean)oViewRoot.getBean( "viewBean" );
         oBaseBean.setCurrentObjectKey( sKey );
         
         // Diz a que a view corrente é a criada.
@@ -204,12 +204,12 @@ public class XEOMainBean extends XEOBase {
 			oRequestContext = XUIRequestContext.getCurrentContext();
 			if( !oRequestContext.isAjaxRequest() ) {
 				((HttpServletResponse) oRequestContext.getResponse())
-						.sendRedirect("/logout.jsp");
+						.sendRedirect("/logoutXVW.jsp");
 				oRequestContext.responseComplete();
 			}
 			else {
 				oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_HEADER , "logout", 
-						"window.top.location.href='Logout.jsp'"
+						"window.top.location.href='logoutXVW.jsp'"
 				);
 				
 			}

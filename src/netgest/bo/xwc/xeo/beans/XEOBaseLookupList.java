@@ -19,7 +19,7 @@ public class XEOBaseLookupList extends XEOBaseList {
     private String      sParentComponentId;
     private boolean     bMultiLookup;
     private boolean     bFilterLookup;
-    private XEOBaseBean	parentBean;
+    private XEOEditBean	parentBean;
     private String		parentAttribute;
     
     Map<String,Object>	    	attributes;
@@ -132,14 +132,14 @@ public class XEOBaseLookupList extends XEOBaseList {
             if( !isFilterLookup() )
             {
 	            if( isMultiLookup() ) {
-	                ((XEOBaseBean)oParentBean).setLookupBridgeResults( this, oSelectedRows );
+	                ((XEOEditBean)oParentBean).setLookupBridgeResults( this, oSelectedRows );
 	            }
 	            else {
-	            	((XEOBaseBean)oParentBean).setLookupAttributeResults( this, oSelectedRows );    
+	            	((XEOEditBean)oParentBean).setLookupAttributeResults( this, oSelectedRows );    
 	            }
             }
-            else if ( oParentBean instanceof XEOBase ) {
-            	((XEOBase)oParentBean).setLookupFilterResults( this, oSelectedRows );
+            else if ( oParentBean instanceof XEOBaseBean ) {
+            	((XEOBaseBean)oParentBean).setLookupFilterResults( this, oSelectedRows );
             }
         }
     }
@@ -175,13 +175,13 @@ public class XEOBaseLookupList extends XEOBaseList {
         return sParentParentBeanId;
     }
 
-    public void setParentBean( XEOBaseBean parentBean ) {
+    public void setParentBean( XEOEditBean parentBean ) {
     	this.parentBean = parentBean;
     }
     
-    public XEOBase getParentBean() {
+    public XEOBaseBean getParentBean() {
     	if( this.parentBean == null )
-    		return (XEOBase)getParentView().getBean( sParentParentBeanId );
+    		return (XEOBaseBean)getParentView().getBean( sParentParentBeanId );
     	else
     		return this.parentBean;
     }
@@ -226,8 +226,8 @@ public class XEOBaseLookupList extends XEOBaseList {
 		if( viewRoot != oRequestContext.getViewRoot() ) {
 			((Window)viewRoot.findComponent(Window.class)).close();
 			XUIViewRoot oViewRoot = oRequestContext.getViewRoot();
-			XEOBaseBean baseBean = (XEOBaseBean)oViewRoot.getBean("viewBean");
-			baseBean.setParentBean( (XEOBaseBean)getParentBean() );
+			XEOEditBean baseBean = (XEOEditBean)oViewRoot.getBean("viewBean");
+			baseBean.setParentBean( (XEOEditBean)getParentBean() );
 			baseBean.setParentComponentId( getParentComponentId() );
 			oViewRoot.setParentView( parentViewRoot );
 		}

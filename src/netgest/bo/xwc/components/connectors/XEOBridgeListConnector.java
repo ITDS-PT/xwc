@@ -118,7 +118,7 @@ public class XEOBridgeListConnector implements DataListConnector {
 
 		boui = Long.parseLong( sUniqueIdentifier );
 		
-		drc = new XEOObjectConnector( boui );
+		drc = new XEOObjectConnector( boui, indexOf( sUniqueIdentifier ) );
 
 		return drc;
 	
@@ -136,6 +136,18 @@ public class XEOBridgeListConnector implements DataListConnector {
 
 	public int dataListCapabilities() {
 		return 0; //DataListConnector.CAP_PAGING;
+	}
+
+	@Override
+	public int indexOf(String sUniqueIdentifier) {
+		int ret = -1;
+		
+		int lastRow = this.oBridge.getRow();
+		if( this.oBridge.haveBoui( Long.valueOf( sUniqueIdentifier ) ) ) {
+			ret = this.oBridge.getRow();
+		}
+		this.oBridge.moveTo( lastRow );
+		return ret;
 	}
 	
 }

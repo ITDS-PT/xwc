@@ -27,6 +27,7 @@ import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataListConnector;
+import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.model.Menu;
@@ -129,14 +130,13 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
             // Place holder for the component
         
-            /*
-            if( oGrid.getOnlyRefreshData() ) {
-                triggerLoadData( oGrid );
+            if( oComp.isRenderedOnClient() ) {
+            	if( oGrid.getAutoReloadData() || oGrid.isMarkedToReloadData() ) {
+            		triggerLoadData( w, oGrid );
+            	}
             }
             else {
-            */
 	            oGridConfig = renderExtComponent( getResponseWriter(), oComp );
-//	            oGridConfig.addJSString( "renderTo", oComp.getClientId() );
 
 	            oGridConfig.setVarName( oGrid.getId() );
 	
@@ -149,16 +149,14 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
 	            w.startElement( DIV, oComp );
 	            w.writeAttribute( ID, oComp.getClientId(), null );
-	            //w.writeAttribute(HTMLAttr.STYLE, "width:100%;height:100%", null );
 	            encodeGridHiddenInputs( oComp );
 	            w.endElement( DIV ); 
 	            
 	            if( "fit-parent".equalsIgnoreCase( oGrid.getLayout() ) ) {
 	            	Layouts.registerComponent( w, oComp, Layouts.LAYOUT_FIT_PARENT);
 	            }
-            //}
+            }
         }
-        
     }
 
     public void encodeGridHiddenInputs( XUIComponentBase oComp ) throws IOException {
@@ -244,7 +242,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         oLoadParams.add( "'javax.faces.ViewState'" ,"'" + XUIRequestContext.getCurrentContext().getViewRoot().getViewState() + "'" );
         oLoadParams.addJSString( "'xvw.servlet'" , oGrid.getClientId() );
-        //oLoadParams.addJSString( "'c'" , Long.toString( System.currentTimeMillis() ) );
+
         oLoadParams.add( "start" , 0 );
         oLoadParams.add( "limit" , oGrid.getPageSize() );
         
@@ -253,11 +251,42 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	oLoadParams1.addJSString( "groupBy" , oGrid.getGroupBy() );
         }
 
+        StringBuilder sb = new StringBuilder();
+        if( GridPanel.SELECTION_CELL.equals( oGrid.getRowSelectionMode() ) ) {
+        	DataRecordConnector d = oGrid.getActiveRow();
+        	if( d != null ) {
+		        oLoadParams.add("callback", 
+		        		"function(){" +
+			    			oGrid.getId() + "_sm.suspendEvents(false);" +
+			    			oGrid.getId() + "_sm.selectRow(" + (d.getRowIndex()-1) + ");" + 
+			    			oGrid.getId() + "_sm.resumeEvents();"
+		    			+ "}"
+		        );
+        	}
+        }
+        else {
+	    	int[] selPos = oGrid.getSelectedRowsPos();
+	    	sb.append( "[");
+	    	for( int sel : selPos ) {
+	    		if( sb.length() > 1 )
+	    			sb.append(',');
+	    		sb.append( sel - 1 );
+	    	}
+	    	sb.append( "]");
+	    	if( sb.length() > 2 ) {
+		        oLoadParams.add("callback", 
+		        		"function(){" +
+			    			oGrid.getId() + "_sm.suspendEvents(false);" +
+			    			oGrid.getId() + "_sm.selectRows(" + sb + ");" + 
+			    			oGrid.getId() + "_sm.resumeEvents();"
+		    			+ "}"
+		        );
+	    	}
+        }
+        
     	w.getScriptContext().add(
                 XUIScriptContext.POSITION_HEADER,
                 oGrid.getId() + "_loadData",
-                //"window.setTimeout( function() {" + oGrid.getId() + "_store.loadData(" + oGrid.getId() + "_data)}, 50 );"
-                //oGrid.getId() + "_store.loadData(" + oGrid.getId() + "_data);"
                 oGrid.getId() + "_store.load(" + oLoadParams.renderExtConfig().toString() + ");"
             );
     }
@@ -270,8 +299,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oPagingConfig.add( "store", oGrid.getId() + "_store" );
         oPagingConfig.add( "pageSize", oGrid.getPageSize() );
         oPagingConfig.add( "displayInfo", true );
-        //oPagingConfig.addJSString("displayMsg", "Registos {0} - {1}" );
-        oPagingConfig.addJSString("displayMsg", "" );
+        oPagingConfig.addJSString("displayMsg", "Registos {0} - {1}" );
         oPagingConfig.addJSString("emptyMsg", "" );
         
         GridNavBar oNavBarComp = (GridNavBar)oGrid.findComponent( GridNavBar.class );
@@ -334,43 +362,31 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         if( oNavBarComp != null ) {
         	for(UIComponent child : oNavBarComp.getChildren() ) {
                 ExtConfig oChild = oPagingItems.addChild();
-                
                 Menu oMenu = (Menu)child;
-                
-                oChild.addJSString("text", oMenu.getText() );
-                if( "window".equalsIgnoreCase( oMenu.getTarget() ) ) {
-                    oChild.add( "handler", "function() {" +
-                    		"var oForm=document.getElementById('" + oGrid.getNamingContainerId() +"');\n" +
-                    		"var oldTrg=oForm.target;\n" +
-                    		"oForm.target='opt_"+ oMenu.getClientId() +"';\n" +
-                    		XVWScripts.getCommandScript( oMenu, XVWScripts.WAIT_STATUS_MESSAGE ) +";\n" +
-                    		"oForm.target=oldTrg;\n" +
-                    		"}"
-                    );
-                }
+            	ToolBar.XEOHTMLRenderer.configExtMenu( oMenu, oChild );
         	}
         }
         
         if( oNavBarComp == null || oNavBarComp.getShowFullTextSearch() ) {
-        if( (oGrid.getDataSource().dataListCapabilities() & DataListConnector.CAP_FULLTEXTSEARCH) != 0 ) {
-            oPagingItems.addChild("Ext.form.Label" ).addJSString( "text", ComponentMessages.GRID_FREE_SEARCH.toString() );
-            ExtConfig oSearchField = oPagingItems.addChild("Ext.form.TwinTriggerField" );
-            oSearchField.add("hideTrigger1", false);
-            oSearchField.add("hideTrigger1", false);
-            oSearchField.addJSString("trigger1Class", "x-form-clear-trigger");
-            oSearchField.addJSString("trigger2Class", "x-form-search-trigger");
-            oSearchField.add("onTrigger2Click", "function(){ " +
-            			oGrid.getId() + "_store.baseParams['fullText'] = this.getValue();\n" +
-            			oGrid.getId() + "_store.load();\n" +
-            		"}"
-            );
-            oSearchField.add("onTrigger1Click", "function(){ " +
-        			"this.setValue('');\n" +
-        			oGrid.getId() + "_store.baseParams['fullText'] = this.getValue();\n" +
-        			oGrid.getId() + "_store.load();\n" +
-        		"}"
-            );
-        }
+	        if( (oGrid.getDataSource().dataListCapabilities() & DataListConnector.CAP_FULLTEXTSEARCH) != 0 ) {
+	            oPagingItems.addChild("Ext.form.Label" ).addJSString( "text", ComponentMessages.GRID_FREE_SEARCH.toString() );
+	            ExtConfig oSearchField = oPagingItems.addChild("Ext.form.TwinTriggerField" );
+	            oSearchField.add("hideTrigger1", false);
+	            oSearchField.add("hideTrigger1", false);
+	            oSearchField.addJSString("trigger1Class", "x-form-clear-trigger");
+	            oSearchField.addJSString("trigger2Class", "x-form-search-trigger");
+	            oSearchField.add("onTrigger2Click", "function(){ " +
+	            			oGrid.getId() + "_store.baseParams['fullText'] = this.getValue();\n" +
+	            			oGrid.getId() + "_store.load();\n" +
+	            		"}"
+	            );
+	            oSearchField.add("onTrigger1Click", "function(){ " +
+	        			"this.setValue('');\n" +
+	        			oGrid.getId() + "_store.baseParams['fullText'] = this.getValue();\n" +
+	        			oGrid.getId() + "_store.load();\n" +
+	        		"}"
+	            );
+	        }
         }
         return oPagingConfig;
 
@@ -469,6 +485,19 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
         ExtConfig oExtListeners = oSelModelConfig.addChild( "listeners" );
         ExtConfig oSelChange = oExtListeners.addChild( "'selectionchange'");
+        
+        
+        String rowSelChangeCode = "";
+        XUICommand oSelChangeComp = (XUICommand)oGrid.findComponent( oGrid.getId() + "_selChange" );
+        if( oSelChangeComp != null )
+        {
+        	rowSelChangeCode += XVWScripts.getCommandScript( 
+                		"self",
+                		oSelChangeComp, 
+                		XVWScripts.WAIT_STATUS_MESSAGE 
+                	);
+        }
+        
         oSelChange.add( "fn",
                             "function(oSelModel){ " +
                                 "ExtXeo.grid.rowSelectionHndlr(" +
@@ -476,6 +505,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                                     "'" + oGrid.getClientId() +"_srs'," +
                                     "'" + oGrid.getRowUniqueIdentifier() + "'" +
                                 "); " +
+                                rowSelChangeCode +
                             "}" 
                         );
         
@@ -595,10 +625,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         XUICommand oRowClickComp = (XUICommand)oGrid.findComponent( oGrid.getId() + "_rowClick" );
         if( oRowClickComp != null )
         {
-        	if( "tab".equalsIgnoreCase( oGrid.getRowClickTarget() ) )
-        		rowClickCode += XVWScripts.getOpenCommandTab( oRowClickComp, "" ); 
-        	else
-        		rowClickCode += XVWScripts.getAjaxCommandScript( oRowClickComp, XVWScripts.WAIT_STATUS_MESSAGE ); 
+        		rowClickCode += XVWScripts.getCommandScript( 
+                		oGrid.getRowClickTarget(),
+                		oRowClickComp, 
+                		XVWScripts.WAIT_STATUS_MESSAGE 
+                	);
         }
         
         oGridListeners.addChild("'rowclick'")
@@ -606,9 +637,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                 "fn",
                 "function( oGrid, rowIndex, oEvent ) {" +
                 "   ExtXeo.grid.rowClickHndlr( oGrid, rowIndex, oEvent, '" + oGrid.getClientId() +"_act" + "', '" + oGrid.getRowUniqueIdentifier() + "' );" +
-                "   "+rowClickCode +
-                "}" +
-                ""
+                rowClickCode +
+                "}"
             );
 
         oGridListeners.addChild("'destroy'")
@@ -626,25 +656,21 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         XUICommand oRowDblClickComp = (XUICommand)oGrid.findComponent( oGrid.getId() + "_rowDblClick" );
         if( oRowDblClickComp != null )
         {
-        	if( "tab".equals( oGrid.getRowDblClickTarget() ) ) {
-                oGridListeners.addChild("'rowdblclick'")
-                    .add(
-                        "fn","function(){\n" +
-                            "XVW.openCommandTab( " +
-                            "'edit_'+arguments[0].getStore().getAt( arguments[1] ).get(\"" + oGrid.getRowUniqueIdentifier() + "\")," +
-                            "'" + oRowDblClickComp.getNamingContainerId() + "'," +
-                            "'" + oRowDblClickComp.getId() + "'," +
-                            "'" + oRowDblClickComp.getValue() + "'" +
-                            ");\n" +
-                        "}"
-                    );
-        	}
-        	else {
-                oGridListeners.addChild("'rowdblclick'")
-                .add(
-                        "fn","function(){" + XVWScripts.getAjaxCommandScript( oRowDblClickComp, XVWScripts.WAIT_STATUS_MESSAGE ) +"}"
-                );
-        	}
+            String targetName = 
+            	"edit_'+arguments[0].getStore().getAt( arguments[1] ).get(\"" + 
+            	oGrid.getRowUniqueIdentifier() + "\")+'";
+        	
+            oGridListeners.addChild("'rowdblclick'")
+            .add(
+                    "fn","function(){" + 
+                    XVWScripts.getCommandScript( 
+                    		oGrid.getRowDblClickTarget(),
+                    		targetName,
+                    		oRowDblClickComp, 
+                    		XVWScripts.WAIT_STATUS_MESSAGE 
+                    	) 
+                    +"}"
+            );
         } 
 
         if(  GridPanel.SELECTION_ROW.equals( sRowSelectionMode ) || GridPanel.SELECTION_MULTI_ROW.equals( sRowSelectionMode ) ) {

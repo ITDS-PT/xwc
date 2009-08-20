@@ -152,5 +152,17 @@ public class XEOObjectListGroupAttribute extends XEOObjectAttributeMetaData impl
 	public EboContext getEboContext() {
 		return boApplication.currentContext().getEboContext();
 	}
+
+	@Override
+	public String getInvalidMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean validate() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

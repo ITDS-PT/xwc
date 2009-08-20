@@ -136,7 +136,7 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 					s.w( "c.setText('" ).writeValue( oAttrLabel.getText() ).l("');");
 
 				if( oComp.getStateProperty("visible").wasChanged() )
-					s.w( "c.setVisible('" ).writeValue( oAttrLabel.isVisible() ).l("');");
+					s.w( "c.setVisible(" ).writeValue( oAttrLabel.isVisible() ).l(");");
 					
 				if( oComp.getStateProperty("recommended").wasChanged() || oComp.getStateProperty("modelRequired").wasChanged() ) {
 					s.s( "c.removeClass('xwc-form-recommended')");

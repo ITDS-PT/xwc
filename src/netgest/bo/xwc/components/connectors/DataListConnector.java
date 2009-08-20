@@ -18,6 +18,8 @@ public interface DataListConnector {
     
     public DataRecordConnector findByUniqueIdentifier( String sUniqueIdentifier );
     
+    public int	indexOf( String sUniqueIdentifier );
+    
     public void setSearchText( String sSearchText );
     
     public void setSortTerms( SortTerms sortTerms );

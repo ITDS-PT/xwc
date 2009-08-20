@@ -159,8 +159,24 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
         }
     }
 
-    public boolean getValid() {
-        return oAttHandler.isValid();
+    public boolean validate() {
+        try {
+        	boolean ret;
+			ret = oAttHandler.valid();
+			return ret;
+			
+		} catch (boRuntimeException e) {
+			throw new RuntimeException(e);
+		}
+    }
+    
+    public String getInvalidMessage() {
+    	String sMessage = oAttHandler.getErrorMessage();
+    	if( sMessage != null && sMessage.length() > 0 ) {
+			if( sMessage.indexOf('[') > -1  )  
+				sMessage = sMessage.substring(0,sMessage.lastIndexOf('['));
+    	}
+    	return sMessage;
     }
 
     public boolean getVisible() {
@@ -323,15 +339,6 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
         return Boolean.parseBoolean( oAttHandler.getDefAttribute().getGrouping() );
     }
 
-/*    
-    public String[] getLovDescriptions() {
-        return getLovItem().getDescriptions();
-    }
-
-    public Object[] getLovValues() {
-        return getLovItem().getValues();
-    }
-*/
     public Map<Object,String> getLovMap() {
         String           sLovName;
         sLovName = oAttHandler.getDefAttribute().getLOVName();

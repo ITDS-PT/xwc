@@ -1,11 +1,7 @@
 package netgest.bo.xwc.framework.components;
 
-import com.sun.faces.util.MessageFactory;
-import com.sun.faces.util.TypedCollections;
-
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -14,11 +10,11 @@ import java.util.logging.Logger;
 
 import javax.el.ELException;
 import javax.el.ValueExpression;
-
 import javax.faces.FacesException;
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
-import javax.faces.component.EditableValueHolder;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIComponentBase;
 import javax.faces.component.UIOutput;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -30,7 +26,10 @@ import javax.faces.render.Renderer;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
+import netgest.bo.xwc.framework.XUIEditableValueHolder;
 import netgest.bo.xwc.framework.XUIRequestContext;
+
+import com.sun.faces.util.MessageFactory;
 
 
 /**
@@ -76,7 +75,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
  * <code>setRendererType()</code> method.</p>
  */
 
-public class XUIInput extends XUIOutput implements EditableValueHolder {
+public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
 
     // ------------------------------------------------------ Manifest Constants
 
@@ -385,12 +384,12 @@ public class XUIInput extends XUIOutput implements EditableValueHolder {
     }
 
     private boolean valid = true;
+    
+    private boolean modelValid = true;
 
 
     public boolean isValid() {
-
         return (this.valid);
-
     }
 
 
@@ -1212,7 +1211,7 @@ public class XUIInput extends XUIOutput implements EditableValueHolder {
         values[5] = validatorMessage;
         values[6] = valid;
         values[7] = immediate;
-        values[8] = saveAttachedState(context, validators);
+//        values[8] = saveAttachedState(context, validators);
         return (values);
 
     }
@@ -1232,20 +1231,20 @@ public class XUIInput extends XUIOutput implements EditableValueHolder {
         List<Validator> restoredValidators;
         Iterator<Validator> iter;
 
-        if (null != (restoredValidators = TypedCollections.dynamicallyCastList((List)
-             restoreAttachedState(context, values[8]), Validator.class))) {
-            // if there were some validators registered prior to this
-            // method being invoked, merge them with the list to be
-            // restored.
-            if (null != validators) {
-                iter = restoredValidators.iterator();
-                while (iter.hasNext()) {
-                    validators.add(iter.next());
-                }
-            } else {
-                validators = restoredValidators;
-            }
-        }
+//        if (null != (restoredValidators = TypedCollections.dynamicallyCastList((List)
+//             restoreAttachedState(context, values[8]), Validator.class))) {
+//            // if there were some validators registered prior to this
+//            // method being invoked, merge them with the list to be
+//            // restored.
+//            if (null != validators) {
+//                iter = restoredValidators.iterator();
+//                while (iter.hasNext()) {
+//                    validators.add(iter.next());
+//                }
+//            } else {
+//                validators = restoredValidators;
+//            }
+//        }
 
     }
 
@@ -1307,5 +1306,17 @@ public class XUIInput extends XUIOutput implements EditableValueHolder {
 
         context.addMessage(getClientId(), message);
     }
+
+
+	@Override
+	public boolean isModelValid() {
+		return (this.modelValid);
+	}
+
+
+	@Override
+	public void setModelValid(boolean valid) {
+		this.modelValid = valid;
+	}
 
 }

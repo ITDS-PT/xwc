@@ -25,7 +25,7 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
-public class XEOBaseList extends XEOBase {
+public class XEOBaseList extends XEOBaseBean {
     
     boObjectList currentObjectList;
     
@@ -79,7 +79,7 @@ public class XEOBaseList extends XEOBase {
 	        String sObjectName = boObject.getBoManager().getClassNameFromBOUI( boApplication.currentContext().getEboContext(), boui.longValue());
 	
 	        XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createView( sObjectName + "_edit.xvw");
-	        XEOBaseBean oEditBean = (XEOBaseBean)oEditViewRoot.getBean("viewBean");
+	        XEOEditBean oEditBean = (XEOEditBean)oEditViewRoot.getBean("viewBean");
 	        
 	        if( oActiveRow == null ) {
 	        	oRequestContext.addMessage( "bean" ,  
@@ -128,7 +128,7 @@ public class XEOBaseList extends XEOBase {
         	}
 	
 	        XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createChildView( sObjectName + "_edit.xvw");
-	        XEOBaseBean oEditBean = (XEOBaseBean)oEditViewRoot.getBean("viewBean");
+	        XEOEditBean oEditBean = (XEOEditBean)oEditViewRoot.getBean("viewBean");
 	        oEditBean.createNew( sObjectName );
 	        oRequestContext.setViewRoot( oEditViewRoot );
 	        

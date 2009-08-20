@@ -5,12 +5,9 @@ import javax.el.ValueExpression;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class XUIBaseProperty<V> {
-    private V       oPropertyValue;
-    private boolean bStateSaved;
-    private boolean bDefaultValue = true;
-    
-    private String  sPropertyName;
-    
+    private V       		 oPropertyValue;
+    private boolean 		 bDefaultValue = true;
+    private String  		 sPropertyName;
     private XUIComponentBase oComponent;
     
     public XUIBaseProperty( String sPropertyName, 
@@ -45,8 +42,10 @@ public class XUIBaseProperty<V> {
     }
     
     public void setValue( V oNewValue ) {
+    	
     	bDefaultValue = false;
         oPropertyValue = oNewValue;
+        
         if( oNewValue instanceof ValueExpression ) {
             oComponent.setValueExpression( sPropertyName, (ValueExpression)oNewValue );
         }
@@ -54,14 +53,17 @@ public class XUIBaseProperty<V> {
     }
     
     public Object saveState() {
-        bStateSaved = true;
-        return new Object[] { oPropertyValue, bDefaultValue };
+        return new Object[] { 
+        		bDefaultValue? null:oPropertyValue, 
+        		bDefaultValue 
+        	};
     }
     
     public void restoreState( Object oStateValue ) {
         Object[] oStateValues =(Object[])oStateValue; 
-    	oPropertyValue = (V)(oStateValues)[0];
     	bDefaultValue = (Boolean)(oStateValues)[1];
+    	if( !bDefaultValue )
+    		oPropertyValue = (V)(oStateValues)[0];
     }
     
     public String getName() {
@@ -72,16 +74,8 @@ public class XUIBaseProperty<V> {
         return false;
     }
 
-    public boolean isStateSaved() {
-        return bStateSaved;
-    }
-    
     public boolean isDefaultValue() {
     	return bDefaultValue; 
-    }
-    
-    public void setDefaultValue( boolean isDefaultValue ) {
-    	this.bDefaultValue = isDefaultValue;
     }
     
     public XUIComponentBase getComponent() {

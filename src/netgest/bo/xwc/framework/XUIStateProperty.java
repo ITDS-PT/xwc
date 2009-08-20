@@ -1,7 +1,5 @@
 package netgest.bo.xwc.framework;
 
-import java.util.Arrays;
-
 import javax.el.ValueExpression;
 
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -10,7 +8,6 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 public class XUIStateProperty<V> extends XUIBaseProperty<V> {
     
     private boolean bWasChanged;
-    
     private Object  lastEvalValue;
     private boolean lastEvalValueWasSet;
     
@@ -39,7 +36,8 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
     	lastEvalValueWasSet = true;
     }
     
-    public Object saveState() {
+    @SuppressWarnings("unchecked")
+	public Object saveState() {
         Object oValue = getValue();
         if( oValue instanceof ValueExpression ) {
             try {
@@ -94,7 +92,8 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
         return new Object[] { lastEvalValue, super.saveState() };
     }
     
-    public void restoreState( Object oStateValue ) {
+    @SuppressWarnings("unchecked")
+	public void restoreState( Object oStateValue ) {
     	lastEvalValue = (V)((Object[])oStateValue)[0];
         super.restoreState( ((Object[])oStateValue)[1] );
     }
@@ -164,5 +163,8 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
         }
         return this.bWasChanged;
     }
-
+    
+    public void setChanged( boolean changed ) {
+    	this.bWasChanged = changed;
+    }
 }

@@ -78,5 +78,10 @@ public class XEOObjectListGroupDataRecord implements DataRecordConnector {
 	public byte getSecurityPermissions() {
 		return SecurityPermissions.FULL_CONTROL;
 	}
+
+	@Override
+	public int getRowIndex() {
+		return row;
+	}
 	
 }

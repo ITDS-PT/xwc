@@ -166,7 +166,7 @@ public class XUIOutput extends XUIComponentBase
         }
        
         values[0] = super.saveState(context);
-        values[1] = saveAttachedState(context, converter);
+        //values[1] = saveAttachedState(context, converter);
         values[2] = value;
         return (values);
 
@@ -177,7 +177,7 @@ public class XUIOutput extends XUIComponentBase
 
         values = (Object[]) state;
         super.restoreState(context, values[0]);
-        converter = (Converter) restoreAttachedState(context, values[1]);
+        //converter = (Converter) restoreAttachedState(context, values[1]);
         value = values[2];
 
     }

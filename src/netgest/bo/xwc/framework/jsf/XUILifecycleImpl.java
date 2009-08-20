@@ -56,7 +56,8 @@ public class XUILifecycleImpl extends Lifecycle {
         new ApplyRequestValuesPhase(),
         new ProcessValidationsPhase(),
         new UpdateModelValuesPhase(),
-        new XUIValidateModelPhase(),
+        //new XUIValidateModelPhase(),
+        null,
         new InvokeApplicationPhase(),
         preRender, // Pre render for current elements Tree
         iniComponents, // Only for new components add in the preRender Tree
@@ -90,26 +91,26 @@ public class XUILifecycleImpl extends Lifecycle {
     	boolean runPhase;
 
     	for ( ; i < len; i++) { // Skip ANY_PHASE placeholder
-            
-            // Check if initComponents as been done
-            // if not do phases to initcomponents phase
-    		runPhase = true;
-        	
-            if ( context.getRenderResponse() || context.getResponseComplete()) 
-            {
-                break;
+            if( phases[i]  != null ) {
+	            // Check if initComponents as been done
+	            // if not do phases to initcomponents phase
+	    		runPhase = true;
+	        	
+	            if ( context.getRenderResponse() || context.getResponseComplete()) 
+	            {
+	                break;
+	            }
+	            
+	            // Only run initcomponents at this phase if
+	            // the view is not a postback
+	            if( i == 2 && !XUIRequestContext.getCurrentContext().getViewRoot().isPostBack()  ) {
+	            	runPhase = false;
+	            }
+	        	
+	            if( runPhase ) {
+	            	phases[i].doPhase(context, this, listeners.listIterator());
+	            }
             }
-            
-            // Only run initcomponents at this phase if
-            // the view is not a postback
-            if( i == 2 && !XUIRequestContext.getCurrentContext().getViewRoot().isPostBack()  ) {
-            	runPhase = false;
-            }
-        	
-            if( runPhase ) {
-            	phases[i].doPhase(context, this, listeners.listIterator());
-            }
-
     	}
         
         // Check if required phases where performed

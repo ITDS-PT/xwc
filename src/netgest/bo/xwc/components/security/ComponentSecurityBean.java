@@ -15,7 +15,7 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.bridgeHandler;
-import netgest.bo.xwc.xeo.beans.XEOBaseBean;
+import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.xeo.beans.XEOBaseOrphanEdit;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -33,7 +33,7 @@ import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
-public class ComponentSecurityBean extends XEOBaseBean {
+public class ComponentSecurityBean extends XEOEditBean {
 	
 	private static final PermissionsColumnRenderer columnRenderer = new PermissionsColumnRenderer();
 		
@@ -327,7 +327,7 @@ public class ComponentSecurityBean extends XEOBaseBean {
 	}
 
 	@Override
-	public void setOrphanEdit(XEOBaseBean orphanEditBean)
+	public void setOrphanEdit(XEOEditBean orphanEditBean)
 			throws boRuntimeException {
 		
 		boObject obj = getXEOObject();

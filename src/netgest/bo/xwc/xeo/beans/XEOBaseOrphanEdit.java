@@ -7,7 +7,7 @@ import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
-public class XEOBaseOrphanEdit extends XEOBaseBean {
+public class XEOBaseOrphanEdit extends XEOEditBean {
 
     private boolean 	bTransactionStarted = false;
     
@@ -72,7 +72,7 @@ public class XEOBaseOrphanEdit extends XEOBaseBean {
         boObject currentObject = getXEOObject();
         currentObject.transactionEnds( true );
         this.bTransactionStarted = false;
-        XEOBaseBean oParentBean = getParentBean();
+        XEOEditBean oParentBean = getParentBean();
 
         if( oParentBean != null )
         {

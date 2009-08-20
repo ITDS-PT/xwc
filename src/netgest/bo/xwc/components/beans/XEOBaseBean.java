@@ -1,6 +1,6 @@
 package netgest.bo.xwc.components.beans;
 
 @Deprecated
-public class XEOBaseBean extends netgest.bo.xwc.xeo.beans.XEOBaseBean {
+public class XEOBaseBean extends netgest.bo.xwc.xeo.beans.XEOEditBean {
 
 }

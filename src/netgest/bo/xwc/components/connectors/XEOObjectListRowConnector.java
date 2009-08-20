@@ -8,7 +8,7 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 	int row;
 	boObjectList oObjectList;
 	public XEOObjectListRowConnector( long boui, boObjectList oObjectList ,int row ) {
-		super( boui );
+		super( boui, row );
 		this.row = row;
 		this.oObjectList = oObjectList;
 	}

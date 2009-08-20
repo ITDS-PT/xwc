@@ -13,6 +13,16 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  *
  */
 public class AttributeText extends AttributeBase {
+	
+	@Override
+	public boolean wasStateChanged() {
+		return super.wasStateChanged();
+	}
+	
+	@Override
+	public void validateModel() {
+		super.validateModel();
+	}
 
     public static class XEOHTMLRenderer extends ExtJsFieldRendeder {
 
@@ -55,8 +65,9 @@ public class AttributeText extends AttributeBase {
             oAttrComp = (AttributeBase)component;
             
             String value = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
-            oAttrComp.setSubmittedValue( value );
-            
+            if( value != null ) {
+            	oAttrComp.setSubmittedValue( value );
+            }
             super.decode(component);
 
         }

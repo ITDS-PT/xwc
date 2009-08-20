@@ -123,15 +123,16 @@ public class XUIViewRoot extends UIViewRoot
         Object[] oMyState;
 
         oSuperState     = super.saveState(context);
-        oMyState        = new Object[6];
+        oMyState        = new Object[7];
 
         oMyState[0] = sInstanceId;
         oMyState[1] = sParentViewState;
         oMyState[2] = sTransactionId;
         oMyState[3] = bOwnsTransaction;
         oMyState[4] = sBeanIds;
+        oMyState[5] = sStateId;
         
-        oMyState[5] = oSuperState;
+        oMyState[6] = oSuperState;
 
         return oMyState;
     }
@@ -148,8 +149,8 @@ public class XUIViewRoot extends UIViewRoot
         sTransactionId = (String)oMyState[2];
         bOwnsTransaction = (Boolean)oMyState[3]; 
         sBeanIds = (String)oMyState[4]; 
-        super.restoreState(context, oMyState[5]);
-
+        sStateId = (String)oMyState[5];
+        super.restoreState(context, oMyState[6]);
     }
 
     public boolean wasStateChanged() {

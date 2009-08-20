@@ -377,10 +377,10 @@ public abstract class XUIComponentBase extends UIComponentBase
         validateModel();
 
         // Process all facets and children of this component
-        Iterator kids = getFacetsAndChildren();
+        Iterator<UIComponent> kids = getFacetsAndChildren();
         while (kids.hasNext()) {
             UIComponent kid = (UIComponent) kids.next();
-            if( kid instanceof UIComponent ) {
+            if( kid instanceof XUIComponentBase ) {
                 ((XUIComponentBase)kid).processValidateModel();
             }
         }

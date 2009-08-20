@@ -7,31 +7,26 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class XUIBindProperty<V> extends XUIBaseProperty<Object> {
     
-    private XUIComponentBase   oComp         = null;
-    private Class              cValueType    = null;
-    private V			   	   defaultValue		= null;
+    @SuppressWarnings("unchecked")
+	private Class              cValueType    = null;
     
     public XUIBindProperty( String sPropertyName, XUIComponentBase oComponent, Class cValueType ) {
         super( sPropertyName, oComponent );
-        this.oComp = oComponent;
         this.cValueType = cValueType;
     }
 
     public XUIBindProperty( String sPropertyName, XUIComponentBase oComponent, Class cValueType, String sExpressionString ) {
         super( sPropertyName, oComponent, sExpressionString==null?null:oComponent.createValueExpression( sExpressionString, cValueType ) );
-        this.oComp = oComponent;
         this.cValueType = cValueType;
     }
 
     public XUIBindProperty( String sPropertyName, XUIComponentBase oComponent, V oDefaultValue, Class cValueType ) {
-        super( sPropertyName, oComponent, null );
-        this.oComp = oComponent;
+        super( sPropertyName, oComponent, oDefaultValue );
         this.cValueType = cValueType;
-        this.defaultValue = oDefaultValue;
     }
     
     public void setExpressionText( String sExpression ) {
-        super.setValue( sExpression==null?null:oComp.createValueExpression( sExpression, this.cValueType ) );
+        super.setValue( sExpression==null?null:getComponent().createValueExpression( sExpression, this.cValueType ) );
     }
 
     public boolean isLiteral() {
@@ -63,7 +58,8 @@ public class XUIBindProperty<V> extends XUIBaseProperty<Object> {
     	return super.getValue() == null;
     }
     
-    public V getEvaluatedValue() {
+    @SuppressWarnings("unchecked")
+	public V getEvaluatedValue() {
     	Object			oValue;
         ValueExpression oValExpr;
         
@@ -73,11 +69,7 @@ public class XUIBindProperty<V> extends XUIBaseProperty<Object> {
         
         oValue = getValue();
 
-        if( oValue == null ) {
-        	oRetValue = this.defaultValue;
-        }
-        else
-        {
+        if( oValue != null ) {
         	if( oValue instanceof ValueExpression ) {
         		oValExpr = (ValueExpression)oValue;
 	            if ( oValExpr.isLiteralText() ) {
@@ -102,7 +94,7 @@ public class XUIBindProperty<V> extends XUIBaseProperty<Object> {
 	                }
 	            }
 	            else {
-	            	ELContext elCtx = oComp.getELContext();
+	            	ELContext elCtx = getComponent().getELContext();
 	                oRetValue = (V)oValExpr.getValue( elCtx );
 	                
 	            }

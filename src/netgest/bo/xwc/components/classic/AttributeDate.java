@@ -12,6 +12,7 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
+import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
@@ -111,6 +112,24 @@ public class AttributeDate extends AttributeBase {
             oInpDateConfig.addJSString("value", sValue );
 
             return oInpDateConfig;
+    	}
+    	
+    	@Override
+    	public ScriptBuilder getEndComponentScript(AttributeBase oComp) {
+    		// TODO Auto-generated method stub
+    		ScriptBuilder s = super.getEndComponentScript(oComp, false, false );
+    		
+            Object sJsValue = (Timestamp)oComp.getValue(); 
+            String sValue = "";
+            if( sJsValue != null )  {
+        	  	sValue = oFormatDate.format( sJsValue );
+          	}
+    		s.w( "c.setValue('" ).writeValue( sValue ).l( "')" );
+    		
+    		s.endBlock();
+    		
+    		return s;
+    		
     	}
     	
         @Override

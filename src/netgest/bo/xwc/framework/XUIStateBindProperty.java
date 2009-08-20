@@ -6,25 +6,22 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class XUIStateBindProperty<V> extends XUIStateProperty<ValueExpression> {
     
-    private XUIComponentBase   oComp         = null;
     private Class              cValueType    = null;
 
     public XUIStateBindProperty( String sPropertyName, XUIComponentBase oComponent, Class cValueType ) {
         super( sPropertyName, oComponent );
-        this.oComp = oComponent;
         this.cValueType = cValueType;
     }
 
     public XUIStateBindProperty( String sPropertyName, XUIComponentBase oComponent, String sExpressionString, Class cValueType ) {
         super( sPropertyName, oComponent, oComponent.createValueExpression( sExpressionString, cValueType ) );
-        this.oComp = oComponent;
         this.cValueType = cValueType;
     }
     
     public void setExpressionText( String sExpression ) {
     	if( sExpression != null ) {
     		if( !sExpression.equals( getExpressionString() ) ) {
-    			super.setValue( oComp.createValueExpression( sExpression, this.cValueType ) );
+    			super.setValue( getComponent().createValueExpression( sExpression, this.cValueType ) );
     		}
     	} else {
     		super.setValue( null );
@@ -86,7 +83,7 @@ public class XUIStateBindProperty<V> extends XUIStateProperty<ValueExpression> {
                 }
             }
             else {
-                oRetValue = (V)oValExpr.getValue( oComp.getELContext() );
+                oRetValue = (V)oValExpr.getValue( getComponent().getELContext() );
             }
         }
         

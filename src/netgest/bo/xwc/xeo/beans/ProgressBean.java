@@ -6,7 +6,7 @@ import netgest.bo.transaction.XTransaction;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
-public class ProgressBean extends netgest.bo.xwc.xeo.beans.XEOBase {
+public class ProgressBean extends netgest.bo.xwc.xeo.beans.XEOBaseBean {
 
 	private boolean finished;
 	

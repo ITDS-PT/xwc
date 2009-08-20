@@ -218,6 +218,10 @@ public class XUIRequestContext {
     public void renderResponse() {
     	getFacesContext().renderResponse();
     }
+    
+    public boolean getRenderResponse() {
+    	return getFacesContext().getRenderResponse();
+    }
 
     public void responseComplete() {
     	getFacesContext().responseComplete();

@@ -128,59 +128,10 @@ public class ToolBar extends ViewerSecurityBase {
 	                	oItemsCfg.add("'-'");
 	                }
 	                else if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
-	
-	                    
 	                        oItemCfg = oItemsCfg.addChild(  );
 	                        
-			                oItemCfg.addJSString( "text", sText );
-			                if( !oMenuChild.isVisible() )
-			                    oItemCfg.add( "hidden", true );
-		
-			                if( oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
-			                    oItemCfg.add( "disabled", true );
-			                
-			                if( oMenuChild.getIcon() != null ) {
-			                	oItemCfg.addJSString( "icon", oMenuChild.getIcon() );
-			                	if( sText == null ) {
-				                	oItemCfg.addJSString("cls", "x-btn-icon");
-			                	}
-			                	else {
-				                	oItemCfg.addJSString("cls", "x-btn-text-icon");
-			                	}
-			                }
-			                
-			                if( oMenuChild.getToolTip() != null ) {
-			                	oItemCfg.addJSString("tooltip", oMenuChild.getToolTip() );
-			                }
-			                    
-			                if( oMenuChild.getValue() instanceof Boolean ) {
-			                    oItemCfg.add( "checked", oMenuChild.getValue() );
-			                }
-			                
-		                    if( "window".equalsIgnoreCase( oMenuChild.getTarget() ) ) {
-		                    	oItemCfg.add( "handler", "function() {" +
-			                    		"var oForm=document.getElementById('" + oMenuChild.getNamingContainerId() +"');\n" +
-			                    		"var oldTrg=oForm.target;\n" +
-			                    		"oForm.target='opt_"+ oMenuChild.getClientId() +"';\n" +
-			                    		XVWScripts.getCommandScript( oMenuChild, XVWScripts.WAIT_STATUS_MESSAGE ) +";\n" +
-			                    		"oForm.target=oldTrg;\n" +
-			                    		"}"
-			                    );
-		                    } 
-		                    else if( "CommandWindow".equalsIgnoreCase( oMenuChild.getTarget() ) )
-		                    {
-		                        oItemCfg.add( "handler", "function(){"+XVWScripts.getOpenCommandWindow( oMenuChild, "" )+"}" );
-		                    }
-	                        else if ( "downloadFrame".equalsIgnoreCase( oMenuChild.getTarget() ) ) {
-	                            oItemCfg.add( "handler", "function(){"+XVWScripts.getCommandDownloadFrame( oMenuChild, "" )+"}" );
-	                        }
-		                    else if( "Tab".equalsIgnoreCase( oMenuChild.getTarget() ) )
-		                    {
-		                        oItemCfg.add( "handler", "function(){"+XVWScripts.getOpenCommandTab( oMenuChild, "", oMenuChild.getText() )+"}" );
-		                    }
-		                    else {
-		                        oItemCfg.add( "handler", "function(){"+XVWScripts.getAjaxCommandScript( oMenuChild, XVWScripts.WAIT_DIALOG )+"}" );
-		                    }
+	                    	configExtMenu(oMenuChild, oItemCfg);
+		                        
 		                    if( oMenuChild.getChildCount() > 0 ) {
 		                    	oItemCfg.addJSString( "xtype", "splitbutton" );
 		                    	if( oItemCfg != null ) {
@@ -208,6 +159,39 @@ public class ToolBar extends ViewerSecurityBase {
             
         }
         
+        public static final void configExtMenu( Menu oMenuChild, ExtConfig  oItemCfg ) {
+            oItemCfg.addJSString( "text", oMenuChild.getText() );
+            if( !oMenuChild.isVisible() )
+                oItemCfg.add( "hidden", true );
+
+            if( oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
+                oItemCfg.add( "disabled", true );
+            
+            if( oMenuChild.getIcon() != null ) {
+            	oItemCfg.addJSString( "icon", oMenuChild.getIcon() );
+            	if( oMenuChild.getText() == null ) {
+                	oItemCfg.addJSString("cls", "x-btn-icon");
+            	}
+            	else {
+                	oItemCfg.addJSString("cls", "x-btn-text-icon");
+            	}
+            }
+            
+            if( oMenuChild.getToolTip() != null ) {
+            	oItemCfg.addJSString("tooltip", oMenuChild.getToolTip() );
+            }
+                
+            if( oMenuChild.getValue() instanceof Boolean ) {
+                oItemCfg.add( "checked", oMenuChild.getValue() );
+            }
+            
+            oItemCfg.add( "handler", "function(){" +
+            		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, XVWScripts.WAIT_DIALOG )+"}" 
+            	);
+                
+        	
+        }
+        
         
         public void encodeSubMenuJS( ExtConfig oMenu, Menu oSubMenu ) {
             ExtConfigArray  oSubChildCfg;
@@ -233,50 +217,8 @@ public class ToolBar extends ViewerSecurityBase {
                 }
                 else if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
                 	oItemCfg = oSubChildCfg.addChild();
-                	oItemCfg.addJSString( "text", oMenuChild.getText() );
-                	if( !oMenuChild.isVisible() )
-                		oItemCfg.add( "hidden", true );
                 	
-                	if( oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
-                		oItemCfg.add( "disabled", true );
-                	
-                	if( oMenuChild.getValue() instanceof Boolean ) {
-                		oItemCfg.add( "checked", oMenuChild.getValue() );
-                	}
-                	
-	                if( oMenuChild.getIcon() != null ) {
-	                	oItemCfg.addJSString( "icon", oMenuChild.getIcon() );
-	                	if( sText == null ) {
-		                	oItemCfg.addJSString("cls", "x-btn-icon");
-	                	}
-	                	else {
-		                	oItemCfg.addJSString("cls", "x-btn-text-icon");
-	                	}
-	                }
-	                if( oMenuChild.getToolTip() != null ) {
-	                	oItemCfg.addJSString("tooltip", oMenuChild.getToolTip() );
-	                }
-                	
-//                	if( oMenuChild.getActionExpression() != null ) {
-                		if( "window".equalsIgnoreCase( oMenuChild.getTarget() ) ) {
-                			oItemCfg.add( "handler", "function() {" +
-                					"var oForm=document.getElementById('" + oMenuChild.getNamingContainerId() +"');\n" +
-                					"var oldTrg=oForm.target;\n" +
-                					"oForm.target='opt_"+ oMenuChild.getClientId() +"';\n" +
-                					XVWScripts.getCommandScript( oMenuChild, XVWScripts.WAIT_STATUS_MESSAGE ) +";\n" +
-                					"oForm.target=oldTrg;\n" +
-                					"}"
-                			);
-                		} 
-                		else if( "Tab".equalsIgnoreCase( oMenuChild.getTarget() ) )
-                		{
-                			oItemCfg.add( "handler", "function(){"+XVWScripts.getOpenCommandTab( oMenuChild, "", oMenuChild.getText() )+"}" );
-                		}
-                		else {
-                			oItemCfg.add( "handler", "function(){"+XVWScripts.getAjaxCommandScript( oMenuChild, XVWScripts.WAIT_DIALOG )+"}" );
-                		}
-                		
-//                	}
+                	configExtMenu(oMenuChild, oItemCfg);
                 	
                 	if( oMenuChild.getChildCount() > 0 ) {
                 		encodeSubMenuJS( oItemCfg.addChild( "menu" ), oMenuChild );

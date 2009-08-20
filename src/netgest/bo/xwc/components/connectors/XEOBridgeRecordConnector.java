@@ -11,10 +11,9 @@ public class XEOBridgeRecordConnector extends XEOObjectConnector {
     private boBridgeRow oBridgeRow;
     
     public XEOBridgeRecordConnector( boBridgeRow oBridgeRow ) throws boRuntimeException {
-        super(oBridgeRow.getValueLong());
+        super(oBridgeRow.getValueLong(), oBridgeRow.getLine() );
         this.oBridgeRow = oBridgeRow;
     }
-
 
     @Override
     protected AttributeHandler getXEOAttribute(String sAttributeName) {

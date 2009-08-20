@@ -34,7 +34,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
-import netgest.bo.xwc.xeo.beans.XEOBaseBean;
+import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.io.FSiFile;
 import netgest.io.iFile;
 /**
@@ -75,8 +75,8 @@ public class AttributeNumberLookup extends AttributeBase {
 
     private void doLookup() {
         try {
-            XEOBaseBean oXEOBaseBean;
-            oXEOBaseBean = (XEOBaseBean)getRequestContext().getViewRoot().getBean("viewBean");
+            XEOEditBean oXEOBaseBean;
+            oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean("viewBean");
             oXEOBaseBean.lookupAttribute( this.getClientId() );
         } catch (boRuntimeException e) {
             throw new RuntimeException(e);
@@ -124,6 +124,15 @@ public class AttributeNumberLookup extends AttributeBase {
         return oLookupCommand;
     }
 
+    @Override
+    public Object saveState() {
+    	return super.saveState();
+    }
+    @Override
+    public void setRenderedOnClient(boolean renderedOnClient) {
+    	super.setRenderedOnClient(renderedOnClient);
+    }
+    
     public static class LookupActionListener implements ActionListener {
         public void processAction(ActionEvent event) {
             ((AttributeNumberLookup)((XUICommand)event.getSource()).getParent()).doLookup();
@@ -187,30 +196,22 @@ public class AttributeNumberLookup extends AttributeBase {
             	oInpConfig.addJSString("ctCls", "xeoObjectLink" );
             }
 
-            if( oAttr.isDisabled() || oAttr.isReadOnly() || !oAttr.getEffectivePermission(SecurityPermissions.WRITE) ) {
-	            oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
-	            oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
-            }
-            else {
-            	if ( !oAttr.getEffectivePermission(SecurityPermissions.DELETE) )
-	            	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
-            	else
-	            	oInpConfig.addJSString("trigger1Class", "x-form-clear-trigger");
-            		
-	            oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
-            }
+        	if ( !oAttr.getEffectivePermission(SecurityPermissions.DELETE) )
+            	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
+        	else
+            	oInpConfig.addJSString("trigger1Class", "x-form-clear-trigger");
+        		
+            oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
             
-            if( !oAttr.isDisabled() && !oAttr.isReadOnly() ) {
-	            oInpConfig.add("onTrigger1Click", "function(){ " +
-	            			getClearCode(oForm, oAttr) +
-	            		"}"
-	            );
-            	
-            	oInpConfig.add("onTrigger2Click", "function(){ " +
-	            		XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_STATUS_MESSAGE ) +
-	            		"}"
-	            );
-            }
+            oInpConfig.add("onTrigger1Click", "function(){if(!this.disabled){ " +
+            			getClearCode(oForm, oAttr) +
+            		"}}"
+            );
+        	
+        	oInpConfig.add("onTrigger2Click", "function(){ if(!this.disabled){" +
+            		XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_STATUS_MESSAGE ) +
+            		"}}"
+            );
 			return oInpConfig;
 		}
 		
@@ -264,6 +265,12 @@ public class AttributeNumberLookup extends AttributeBase {
 	        	}
 	        	sb.w( "document.getElementById('" ).w( oComp.getClientId() ).w("_ci').value = '").w(  sJsValue  ).w( "';" );
 			}
+        	if( oComp.getStateProperty("visible").wasChanged() )
+        		sb.w("c.setVisible(").writeValue( oComp.isVisible() ).w(")").endStatement();
+        		
+        	if( oComp.getStateProperty("disabled").wasChanged() )
+        		sb.w("c.setDisabled(").writeValue( oComp.isDisabled() ).w(")").endStatement();
+			
 			sb.endBlock();
 			return sb;
 		}

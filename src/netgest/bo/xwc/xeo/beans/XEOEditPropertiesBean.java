@@ -6,7 +6,7 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.framework.localization.XUILocalizationUtils;
 
-public class XEOEditPropertiesBean extends XEOBaseBean {
+public class XEOEditPropertiesBean extends XEOEditBean {
 
 	public String getCardId() throws boRuntimeException {
 		return getXEOObject().getCARDID().toString();

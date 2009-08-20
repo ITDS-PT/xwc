@@ -17,12 +17,39 @@ public class XVWScripts {
     public static final int ALERT_ICON_INFO = 1;
     public static final int ALERT_ICON_ERROR = 2;
     public static final int ALERT_ICON_WARNING = 3;
+    
+    public static final String getCommandScript( String target, XUIComponentBase oComponent, int iWaitMode ) { 
+    	return getCommandScript( target, null,oComponent, null, iWaitMode );
+    }
 
+    public static final String getCommandScript( String target, String targetName, XUIComponentBase oComponent, int iWaitMode ) { 
+    	return getCommandScript( target, targetName,oComponent, null, iWaitMode );
+    }
+
+    public static final String getCommandScript( String target, XUIComponentBase oComponent, String actionValue , int iWaitMode ) {
+    	return getCommandScript(target, null,oComponent, actionValue ,iWaitMode);
+    }
+    public static final String getCommandScript( String target, String targetName, XUIComponentBase oComponent, String actionValue , int iWaitMode ) {
+    	if( "blank".equalsIgnoreCase( target ) ) {
+    		return getOpenCommandBlankWindow( targetName ,oComponent, actionValue );
+    	}
+    	if( "window".equalsIgnoreCase( target ) ) {
+    		return getOpenCommandWindow( oComponent, actionValue );
+    	}
+    	else if( "tab".equalsIgnoreCase( target ) ) {
+    		return getOpenCommandTab( targetName, oComponent, actionValue );
+    	}
+    	else if( "download".equalsIgnoreCase( target ) ) {
+    		return getCommandDownloadFrame( oComponent, actionValue);
+    	}
+		return getAjaxCommandScript( oComponent, iWaitMode );
+    }
+    
     public static final String getCommandScript( XUIComponentBase oComponent, int iWaitMode ) {
         return 
             "XVW.Command( '" + oComponent.getNamingContainerId() +  "','" + oComponent.getId() + "','" + oComponent.getId() + "','"+iWaitMode+"')";
     }
-
+    
     public static final String getCommandScript( XUIComponentBase oComponent, String sValue, int iWaitMode ) {
         return 
             "XVW.Command( '" + oComponent.getNamingContainerId() +  "','" + oComponent.getId() + "','" + sValue + "', '"+ iWaitMode +"')";
@@ -78,31 +105,57 @@ public class XVWScripts {
             "Ext.onReady(function() { Ext.Msg.show( "  + msgBoxConfig.renderExtConfig() + "  );})";
     }
 
+    public static final String getOpenCommandWindow(  XUIComponentBase oComponent )    {
+    	return getOpenCommandWindow(  oComponent, null );
+    }
+    
     public static final String getOpenCommandWindow(  XUIComponentBase oComponent, String sActionValue )    {
         String sFrameName = "Frame_" + oComponent.getId();
         return 
             "XVW.OpenCommandWindow( " +
             "'" + sFrameName + "'," +
             "'" + oComponent.getNamingContainerId() + "'," +
-            "'" + oComponent.getId() + "'," +
-            "'" + sActionValue + "'" +
+            "'" + oComponent.getId() + "'" +
+            (sActionValue == null?"":
+            	",'" + JavaScriptUtils.writeValue( sActionValue ) + "'" ) +
             ");";
     }
 
-    
-    public static final String getOpenCommandTab(  XUIComponentBase oComponent, String sActionValue )    {
-        return getOpenCommandTab( oComponent, sActionValue, null );
+    public static final String getOpenCommandBlankWindow(  XUIComponentBase oComponent, String sActionValue )    {
+    	
+    	return getOpenCommandBlankWindow( null , oComponent,sActionValue );
+    	
+    }
+    public static final String getOpenCommandBlankWindow(  String targetName, XUIComponentBase oComponent, String sActionValue )    {
+        String sFrameName = "Frame_" + oComponent.getId();
+        return 
+			"{var oForm=document.getElementById('" + oComponent.getNamingContainerId() +"');\n" +
+			"var oldTrg=oForm.target;\n" +
+			"oForm.target='"+ sFrameName +"';\n" +
+			XVWScripts.getCommandScript( oComponent, XVWScripts.WAIT_STATUS_MESSAGE ) +";\n" +
+			"oForm.target=oldTrg;\n}";
     }
     
+    public static final String getOpenCommandTab(  XUIComponentBase oComponent, String sActionValue )    {
+        return getOpenCommandTab( null, oComponent, sActionValue, null );
+    }
+    
+    public static final String getOpenCommandTab( String targetName,  XUIComponentBase oComponent, String sActionValue )    {
+        return getOpenCommandTab( targetName ,oComponent, sActionValue, null );
+    }
+
     public static final String getOpenCommandTab(  XUIComponentBase oComponent, String sActionValue, String sTabTitle )    {
-        String sFrameName = "Frame_" + oComponent.getId();
+    	return getOpenCommandTab(  null, oComponent, sActionValue, sTabTitle );    
+    }
+    public static final String getOpenCommandTab(  String targetName, XUIComponentBase oComponent, String sActionValue, String sTabTitle )    {
+        String sFrameName =  targetName!=null?targetName:"Frame_" + oComponent.getId();
         return 
             "XVW.openCommandTab( " +
             "'" + sFrameName + "'," +
             "'" + oComponent.getNamingContainerId() + "'," +
             "'" + oComponent.getId() + "'," +
-            "'" + sActionValue + "'," +
-            (sTabTitle!=null? "'" + sTabTitle + "'" : null ) +
+            "'" + JavaScriptUtils.writeValue( sActionValue ) + "'," +
+            (sTabTitle!=null? "'" + JavaScriptUtils.writeValue( sTabTitle ) + "'" : null ) +
             ");";
     }
     
@@ -113,7 +166,7 @@ public class XVWScripts {
             "'" + sFrameName + "'," +
             "'" + oComponent.getNamingContainerId() + "'," +
             "'" + oComponent.getId() + "'," +
-            "'" + sActionValue + "'" +
+            "'" + JavaScriptUtils.writeValue(sActionValue) + "'" +
             ");";
     }
     

@@ -173,7 +173,6 @@ public class TreePanel extends XUIComponentBase {
 		
 		                if( oMenuChild.getIcon() != null ) {
 		                	oItemCfg.addJSString( "icon", oMenuChild.getIcon() );
-		//                	oItemCfg.addJSString("cls", "x-btn-text-icon");
 		                }
 		                oItemCfg.add( "expanded", oMenuChild.getExpanded() );
 		                    
@@ -183,23 +182,10 @@ public class TreePanel extends XUIComponentBase {
 		
 		                if( oMenuChild.getActionExpression() != null ) {
 		                	ExtConfig oItemListeners = oItemCfg.addChild("listeners");
-		                    if( "window".equalsIgnoreCase( oMenuChild.getTarget() ) ) {
-		                    	oItemListeners.add( "handler", "function() {" +
-			                    		"var oForm=document.getElementById('" + oMenuChild.getNamingContainerId() +"');\n" +
-			                    		"var oldTrg=oForm.target;\n" +
-			                    		"oForm.target='opt_"+ oMenuChild.getClientId() +"';\n" +
-			                    		XVWScripts.getCommandScript( oMenuChild, XVWScripts.WAIT_STATUS_MESSAGE ) +";\n" +
-			                    		"oForm.target=oldTrg;\n" +
-			                    		"}"
-			                    );
-		                    } 
-		                    else if( "Tab".equalsIgnoreCase( oMenuChild.getTarget() ) )
-		                    {
-		                    	oItemListeners.add( "handler", "function(){"+XVWScripts.getOpenCommandTab( oMenuChild, "", oMenuChild.getText() )+"}" );
-		                    }
-		                    else {
-		                    	oItemListeners.add( "handler", "function(){"+XVWScripts.getAjaxCommandScript( oMenuChild, XVWScripts.WAIT_STATUS_MESSAGE )+"}" );
-		                    }
+		                	oItemListeners.add( "'click'", "function(){" +
+		                    		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, XVWScripts.WAIT_DIALOG )+"}" 
+		                    	);
+		                	
 		                }
 		                
 		                if( oMenuChild.getChildCount() > 0 ) {
@@ -240,17 +226,6 @@ public class TreePanel extends XUIComponentBase {
 	                
 		                oItemCfg.addJSString( "text", oMenuChild.getText() );
 		                oItemCfg.add( "expanded", oMenuChild.getExpanded() );
-		                /*
-		                if( !oMenuChild.isVisible() )
-		                    oItemCfg.add( "hidden", true );
-		                     
-		                if( oMenuChild.isDisabled() )
-		                    oItemCfg.add( "disabled", true );
-		                    
-		                if( oMenuChild.getValue() instanceof Boolean ) {
-		                    oItemCfg.add( "checked", oMenuChild.getValue() );
-		                }
-		                */
 		
 		                if( oMenuChild.getIcon() != null ) {
 		                	oItemCfg.addJSString( "icon", oMenuChild.getIcon() );
@@ -259,25 +234,9 @@ public class TreePanel extends XUIComponentBase {
 		
 		                if( oMenuChild.getActionExpression() != null ) {
 		                	ExtConfig oItemListeners = oItemCfg.addChild("listeners");
-		                	
-		                    if( "window".equalsIgnoreCase( oMenuChild.getTarget() ) ) {
-		                    	oItemListeners.add( "'click'", "function() {" +
-			                    		"var oForm=document.getElementById('" + oMenuChild.getNamingContainerId() +"');\n" +
-			                    		"var oldTrg=oForm.target;\n" +
-			                    		"oForm.target='opt_"+ oMenuChild.getClientId() +"';\n" +
-			                    		XVWScripts.getCommandScript( oMenuChild, XVWScripts.WAIT_STATUS_MESSAGE ) +";\n" +
-			                    		"oForm.target=oldTrg;\n" +
-			                    		"}"
-			                    );
-		                    } 
-		                    else if( "Tab".equalsIgnoreCase( oMenuChild.getTarget() ) )
-		                    {
-		                    	oItemListeners.add( "'click'", "function(){"+XVWScripts.getOpenCommandTab( oMenuChild, "", oMenuChild.getText() )+"}" );
-		                    }
-		                    else {
-		                    	String cmd = XVWScripts.getAjaxCommandScript( oMenuChild, XVWScripts.WAIT_DIALOG );
-		                    	oItemListeners.add( "'click'", "function(){"+cmd+"}" );
-		                    }
+		                	oItemListeners.add( "'click'", "function(){" +
+		                    		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, XVWScripts.WAIT_DIALOG )+"}" 
+		                    	);
 		                }
 		                
 		                if( oMenuChild.getChildCount() > 0 ) {

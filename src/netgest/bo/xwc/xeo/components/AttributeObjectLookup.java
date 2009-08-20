@@ -40,7 +40,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.xeo.beans.XEOBaseBean;
+import netgest.bo.xwc.xeo.beans.XEOEditBean;
 
 public class AttributeObjectLookup extends AttributeBase {
 
@@ -71,8 +71,8 @@ public class AttributeObjectLookup extends AttributeBase {
 
     private void doLookup() {
         try {
-            XEOBaseBean oXEOBaseBean;
-            oXEOBaseBean = (XEOBaseBean)getRequestContext().getViewRoot().getBean("viewBean");
+            XEOEditBean oXEOBaseBean;
+            oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean("viewBean");
             oXEOBaseBean.lookupAttribute( this.getClientId() );
         } catch (boRuntimeException e) {
             throw new RuntimeException(e);

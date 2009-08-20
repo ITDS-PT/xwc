@@ -43,6 +43,9 @@ public class AttributeLov extends AttributeBase {
             // Override super properties..
             oInpConfig.addString( "value" , JavaScriptUtils.writeValue( oComp.getValue()) );
             oInpConfig.add( "maxLength" , 255 );
+            
+            super.addValidator( oInpConfig );
+            
             return oInpConfig;
         }
 
@@ -64,20 +67,27 @@ public class AttributeLov extends AttributeBase {
     	
     	@Override
     	public ScriptBuilder getEndComponentScript(AttributeBase oComp) {
-    		ScriptBuilder s = super.getEndComponentScript( oComp, false, false );
+    		
+    		
+    		ScriptBuilder s = new ScriptBuilder(); 
     		
     		Map<Object,String> map = oComp.getLovMap();
+    		
     		String jsValue = JavaScriptUtils.writeValue( oComp.getValue() );
+
     		if( jsValue.length() == 0 && map.size() > 0 ) {
     			jsValue = JavaScriptUtils.writeValue( map.keySet().iterator().next() );
     		}
     		if( oComp.isRenderedOnClient() ) {
+        		s.startBlock();
+        		writeExtContextVar(s, oComp);
 	    		s.l( "c.getStore().loadData(" );
 	    		s.l( getLovStoreData( oComp.getLovMap() ) );
 	    		s.l( ");" );
 	    		s.w( "c.setValue('" ).writeValue( jsValue ).l("');");
+	    		s.endBlock();
     		}
-    		s.endBlock();
+    		s.w(super.getEndComponentScript( oComp, true, false ) );
     		return s;
     	}
     	

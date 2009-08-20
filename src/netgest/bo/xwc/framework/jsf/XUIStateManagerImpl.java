@@ -48,12 +48,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.faces.FacesException;
 import javax.faces.application.StateManager;
@@ -64,9 +66,11 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.render.ResponseStateManager;
 
+import netgest.bo.xwc.framework.components.XUIViewRoot;
+
+import com.sun.faces.RIConstants;
 import com.sun.faces.config.WebConfiguration;
 import com.sun.faces.config.WebConfiguration.BooleanWebContextInitParameter;
-import com.sun.faces.config.WebConfiguration.WebContextInitParameter;
 import com.sun.faces.io.FastStringWriter;
 import com.sun.faces.renderkit.RenderKitUtils;
 import com.sun.faces.spi.SerializationProvider;
@@ -76,12 +80,9 @@ import com.sun.faces.util.FacesLogger;
 import com.sun.faces.util.LRUMap;
 import com.sun.faces.util.MessageUtils;
 import com.sun.faces.util.ReflectionUtils;
+import com.sun.faces.util.RequestStateManager;
 import com.sun.faces.util.TypedCollections;
 import com.sun.faces.util.Util;
-import com.sun.faces.util.RequestStateManager;
-import com.sun.faces.RIConstants;
-
-import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 public class XUIStateManagerImpl extends StateManager {
 
@@ -536,9 +537,11 @@ public class XUIStateManagerImpl extends StateManager {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
             ObjectOutputStream oas = null;
             try {
+            	GZIPOutputStream zout = new GZIPOutputStream( baos );
                 oas = serialProvider.createObjectOutputStream(baos);
                 oas.writeObject(state);
                 oas.flush();
+                zout.close();
             } catch (Exception e) {
                 throw new FacesException(e);
             } finally {
@@ -552,7 +555,6 @@ public class XUIStateManagerImpl extends StateManager {
         } else {
             return state;
         }
-
     }
 
 
@@ -567,12 +569,20 @@ public class XUIStateManagerImpl extends StateManager {
         if (webConfig.isOptionEnabled(BooleanWebContextInitParameter.SerializeServerState)) {
             ByteArrayInputStream bais = new ByteArrayInputStream((byte[]) state);
             ObjectInputStream ois = null;
+            GZIPInputStream zin = null;
             try {
+            	zin = new GZIPInputStream( bais );
                 ois = serialProvider.createObjectInputStream(bais);
                 return ois.readObject();
+                
             } catch (Exception e) {
                 throw new FacesException(e);
             } finally {
+            	if( zin != null  ) {
+                    try {
+                    	zin.close();
+                    } catch (IOException ignored) { }
+            	}
                 if (ois != null) {
                     try {
                         ois.close();

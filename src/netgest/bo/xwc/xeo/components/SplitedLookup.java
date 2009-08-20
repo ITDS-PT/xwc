@@ -9,6 +9,7 @@ import static netgest.bo.xwc.components.HTMLTag.TR;
 
 import java.io.IOException;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.event.ValueChangeListener;
@@ -18,20 +19,21 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.components.classic.Attribute;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.AttributeLabel;
 import netgest.bo.xwc.components.classic.AttributeNumberLookup;
 import netgest.bo.xwc.components.classic.Rows;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.xeo.beans.XEOBaseBean;
+import netgest.bo.xwc.xeo.beans.XEOEditBean;
 
-public class SplitedLookup extends XUIComponentBase {
+public class SplitedLookup extends Attribute {
 	
 	private XUIBindProperty<boObject> targetObject 	=
 		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
@@ -39,30 +41,19 @@ public class SplitedLookup extends XUIComponentBase {
 	private XUIBaseProperty<String> targetLookupAttribute 	=
 			new XUIBaseProperty<String>("targetLookupAttribute", this);
 	
-	private XUIBaseProperty<String> objectAttribute		= 	
-			new XUIBaseProperty<String>("objectAttribute", this);
-	
-	private XUIStateBindProperty<String> label 			=
-			new XUIStateBindProperty<String>("label", this , "", String.class);
-	
-	private XUIBaseProperty<Boolean> renderLabel 		=
-			new XUIBaseProperty<Boolean>("renderLabel", this, true );
-
 	private XUIBaseProperty<String>  lookupWidth		=
-			new XUIBaseProperty<String>("renderWidth", this, "60%" );
+			new XUIBaseProperty<String>("lookupWidth", this, "60%" );
 		
-	private XUIBaseProperty<String>  inputWidth		=
-		new XUIBaseProperty<String>("inputWidth", this, "30%" );
-	
-	private XUIBaseProperty<String>  inputType		=
-		new XUIBaseProperty<String>("inputType", this, "attributeText" );
-	
-	private XUIBaseProperty<Integer>  inputMaxLength	=
-		new XUIBaseProperty<Integer>("inputType", this, 30 );
+	private XUIBaseProperty<String>  keyInputWidth		=
+		new XUIBaseProperty<String>("keyInputWidth", this, "30%" );
+
+	private XUIBaseProperty<String>  keyInputType		=
+		new XUIBaseProperty<String>("keyInputType", this, "attributeText" );
 	
 	public String getLookupWidth() {
 		return this.lookupWidth.getValue();
 	}
+	
 	public void setLookupWidth( String lookupWidth ) {
 		this.lookupWidth.setValue( lookupWidth );
 	}
@@ -72,25 +63,19 @@ public class SplitedLookup extends XUIComponentBase {
 		return super.getRendererType();
 	}
 
-	public String getInputWidth() {
-		return this.inputWidth.getValue();
+	public String getKeyInputWidth() {
+		return this.keyInputWidth.getValue();
 	}
-	public void setFieldWidth( String fieldWidth ) {
-		this.inputWidth.setValue( fieldWidth );
-	}
-	
-	public String getInputType() {
-		return this.inputType.getValue();
-	}
-	public void setInputType( String inputType ) {
-		this.inputType.setValue( inputType );
+	public void setKeyInputWidth( String fieldWidth ) {
+		this.keyInputWidth.setValue( fieldWidth );
 	}
 
-	public int getInputMaxLength() {
-		return this.inputMaxLength.getValue();
+	public void setKeyInputType( String keyInputType ) {
+		this.keyInputType.setValue( keyInputType );
 	}
-	public void setInputMaxLength( int inputMaxLength ) {
-		this.inputMaxLength.setValue( inputMaxLength );
+
+	public String getKeyInputType() {
+		return this.keyInputType.getValue();
 	}
 	
 	public void setTargetObject( String beanExpr ) {
@@ -99,27 +84,6 @@ public class SplitedLookup extends XUIComponentBase {
 	
 	public boObject getTargetObject() {
 		return this.targetObject.getEvaluatedValue();
-	}
-	
-	public void setRenderLabel( boolean renderLabel ) {
-		this.renderLabel.setValue( renderLabel );
-	}
-	public boolean getRenderLabel() {
-		return this.renderLabel.getValue();
-	}
-	
-	public void setLabel( String labelExpr ) {
-		this.label.setExpressionText( labelExpr );
-	}
-	public String getLabel() {
-		return this.label.getEvaluatedValue();
-	}
-	
-	public void setObjectAttribute( String objectAttributeExpr ) {
-		this.objectAttribute.setValue( objectAttributeExpr );
-	}
-	public String getObjectAttritute() {
-		return this.objectAttribute.getValue();
 	}
 	
 	public void setTargetLookupAttribute( String attribute ) {
@@ -149,45 +113,71 @@ public class SplitedLookup extends XUIComponentBase {
 	
 	@Override
 	public void initComponent() {
+
+		boObject targetObject = getTargetObject();
+		String 	 attName	  =  getObjectAttribute();
 		
-		super.initComponent();
-		
-		boDefAttribute locAtt = getTargetObject().getAttribute( getObjectAttritute() ).getDefAttribute();
+		boDefAttribute locAtt = targetObject.getAttribute( attName ).getDefAttribute();
 		boDefAttribute remAtt = 
 			locAtt.getReferencedObjectDef().getAttributeRef( getTargetLookupAttribute() );
 
-		if( getRenderLabel() ) {
+		if( "1".equals( getRenderLabel() ) ) {
 			AttributeLabel label = new AttributeLabel();
 			label.setId( getId() + "_lbl" );
-			if( this.label.isDefaultValue() )
+			if( getStateProperty("label").isDefaultValue() )
 				label.setText( locAtt.getLabel() );
 			else
 				label.setText( getLabel() );
 			
+			propagateLabelProperties(label);
+			
 			getChildren().add( label );
 		}
 
-		String inputTypeName = getInputType();
+		String inputTypeName = getKeyInputType();
 		AttributeBase input = (AttributeBase)getRequestContext().getApplicationContext().getViewerBuilder()
         					.createComponent( getRequestContext(), inputTypeName );
         input.setId( getId() + "_fld" );
 
-        if( this.inputMaxLength.isDefaultValue() )
-        	input.setMaxLength( getInputMaxLength() );
+        if( getStateProperty("maxLength").isDefaultValue() )
+        	input.setMaxLength( getMaxLength() );
         else
         	input.setMaxLength( remAtt.getLen() );
         	
-        input.setOnChangeSubmit( true );
+        input.setOnChangeSubmit( "true" );
         
-        input.addValueChangeListener( new AttributeChangeListener() );
+        input.addValueChangeListener( new ChangeListener() );
+        
         getChildren().add( input );
         
 		AttributeNumberLookup numberLookup = new AttributeNumberLookup();
 		numberLookup.setId( getId() + "_lk" );
-		numberLookup.setObjectAttribute( getObjectAttritute() );
-		numberLookup.setOnChangeSubmit( "true" );
-		getChildren().add( numberLookup );
 		
+		propagateInputProperties( numberLookup );
+		
+		numberLookup.setOnChangeSubmit( "true" );
+		numberLookup.addValueChangeListener( new AttributeChangeListener() );
+		getChildren().add( numberLookup );
+	}
+	
+	@Override
+	public void validate(FacesContext context) {
+		super.validate(context);
+	}
+	
+	@Override
+	public void validateModel() {
+		super.validateModel();
+		if( isModelValid() ) {
+			String s = getInputComponent().getInvalidText();
+			if( s != null && s.length() > 0 ) {
+				XUIRequestContext c = XUIRequestContext.getCurrentContext();
+				c.addMessage( getInputComponent().getClientId() + "_msg" ,
+						new XUIMessage( XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, "", getLabel() + " - " + s )
+				);
+				setModelValid( false );
+			}
+		}
 	}
 	
 	@Override
@@ -198,10 +188,10 @@ public class SplitedLookup extends XUIComponentBase {
 		try {
 			AttributeBase att = getInputComponent();
 			boObject obj = getTargetObject();
-			boObject childObj = obj.getAttribute( getObjectAttritute() ).getObject();
+			boObject childObj = obj.getAttribute( getObjectAttribute() ).getObject();
 			if( childObj != null ) {
 				Object value = childObj.getAttribute( targetAtt ).getValueObject();
-				att.setValue( String.valueOf( value ) );
+				att.setValue( String.valueOf( value )  );
 				att.setDisplayValue( String.valueOf( value )  );
 				att.clearInvalid();
 			}
@@ -209,6 +199,10 @@ public class SplitedLookup extends XUIComponentBase {
 				if( att.getInvalidText() == null ) {
 					att.setValue( null );
 					att.setDisplayValue( null );
+				}
+				else {
+					if( att.getValue() != null )
+						att.setDisplayValue( String.valueOf( att.getValue() ) );
 				}
 			}
 		} catch (boRuntimeException e) {
@@ -243,7 +237,7 @@ public class SplitedLookup extends XUIComponentBase {
 	            if( !"Top".equalsIgnoreCase( labelPos ) ) 
 	            {
 		            w.startElement("COLGROUP", oComp);
-		            if( oAttr.getRenderLabel() )
+		            if( "1".equals( oAttr.getRenderLabel() ) )
 		            {
 			            w.startElement(COL, oComp );
 			            w.writeAttribute( HTMLAttr.WIDTH, labelWidth + "px", null );
@@ -260,7 +254,7 @@ public class SplitedLookup extends XUIComponentBase {
 	            
 	            w.startElement( TR, oComp );
 	
-	            if( oAttr.getRenderLabel() )
+	            if( "1".equals(oAttr.getRenderLabel()) )
 	            {
 	            	w.startElement( TD, oComp );
 	                if( oAttr.getLabelComponent() != null ) {
@@ -285,7 +279,7 @@ public class SplitedLookup extends XUIComponentBase {
 	            w.startElement("COLGROUP", oComp);
 	            
 	            w.startElement(COL, oComp );
-	            w.writeAttribute( HTMLAttr.WIDTH, oAttr.getInputWidth(), null );
+	            w.writeAttribute( HTMLAttr.WIDTH, oAttr.getKeyInputWidth(), null );
 	            w.endElement("COL");
 	
 	            w.startElement(COL, oComp );
@@ -330,34 +324,77 @@ public class SplitedLookup extends XUIComponentBase {
         }
         
         
+        @Override
+        public void decode(XUIComponentBase component) {
+        	
+        	SplitedLookup s = (SplitedLookup)component;
+        	
+        	XUIRequestContext r = XUIRequestContext.getCurrentContext();
+        	if( r.getRequestParameterMap().containsKey( component.getClientId() + "_fld" ) ) {
+        		s.getInputComponent().setDisplayValue(  r.getRequestParameterMap( ).get( component.getClientId() + "_fld" ) );
+        	}
+        }
+        
 	}
 	
-	public static class AttributeChangeListener implements ValueChangeListener {
+	public static class ChangeListener implements ValueChangeListener {
 		@Override
 		public void processValueChange(ValueChangeEvent arg0) throws AbortProcessingException {
 			try {
-				SplitedLookup lookup = (SplitedLookup)((AttributeBase)arg0.getComponent()).findParentComponent( SplitedLookup.class );
-				AttributeNumberLookup att = (AttributeNumberLookup)lookup.findComponent( AttributeNumberLookup.class );
 				
+				SplitedLookup lookup = 
+					(SplitedLookup)((AttributeBase)arg0.getComponent())
+						.findParentComponent( SplitedLookup.class );
+
 				Object inputValue = lookup.getInputComponent().getValue(); 
 				
 				boObject objAtt = lookup.getTargetObject();
-				XEOBaseBean b = (XEOBaseBean)XUIRequestContext.getCurrentContext().getViewRoot().getBean( "viewBean" );
+				XEOEditBean b = (XEOEditBean)XUIRequestContext.getCurrentContext().getViewRoot().getBean( "viewBean" );
 				Object value = b.validateLookupValue(  
-						objAtt.getAttribute( lookup.getObjectAttritute() ), 
+						objAtt.getAttribute( lookup.getObjectAttribute() ), 
 						new String[] { lookup.getTargetLookupAttribute() }, 
 						new Object[] { inputValue } 
 				);
 				
 				if( value == null && (inputValue instanceof String && ((String)inputValue).length() > 0 ) ) {
 					lookup.getInputComponent().setInvalidText( "O valor introduzido é inválido!" );
+					lookup.getLookupComponent().setValue(null);
 				}
 				else {
 					lookup.getInputComponent().clearInvalid();
+					AttributeBase lk = lookup.getLookupComponent();
+					lk.setValue( value );
+					lk.updateModel();
 				}
-				att.setValue( value );
-				att.updateModel();
-				System.out.println( lookup.getObjectAttritute() );
+			} catch (boRuntimeException e) {
+				throw new RuntimeException( e );
+			}
+		}
+	}
+	
+	
+	public static class AttributeChangeListener implements ValueChangeListener {
+		@Override
+		public void processValueChange(ValueChangeEvent arg0) throws AbortProcessingException {
+			SplitedLookup lookup = 
+				(SplitedLookup)((AttributeBase)arg0.getComponent())
+					.findParentComponent( SplitedLookup.class );
+				
+			String targetAtt = lookup.getTargetLookupAttribute();
+			try {
+				AttributeBase att = lookup.getInputComponent();
+				boObject obj = lookup.getTargetObject();
+				boObject childObj = obj.getAttribute( lookup.getObjectAttribute() ).getObject();
+				if( childObj != null ) {
+					Object value = childObj.getAttribute( targetAtt ).getValueObject();
+					att.setDisplayValue( String.valueOf( value )  );
+					att.clearInvalid();
+				}
+				else {
+					if( att.getInvalidText() == null ) {
+						att.setDisplayValue( null );
+					}
+				}
 			} catch (boRuntimeException e) {
 				throw new RuntimeException( e );
 			}

@@ -30,6 +30,7 @@ public class XUIServlet extends HttpServlet
 //    boSession           oXEOSession;
     boApplication       oBoApplication;
     boolean             bIsInitialized;
+    String				defaultLang;
     
     public XUIServlet()
     {
@@ -38,6 +39,8 @@ public class XUIServlet extends HttpServlet
 
     public void init(ServletConfig servletConfig) throws ServletException
     {
+    	defaultLang = servletConfig.getInitParameter("DefaultLanguage");
+    	
         facesServlet.init(servletConfig);
         initializeXeo();
     }
@@ -85,7 +88,10 @@ public class XUIServlet extends HttpServlet
     			}
     		}
     	}
-        XUIMessagesLocalization.setThreadCurrentLocale( new Locale( "en" ) );
+    	
+    	if( defaultLang != null ) {
+    		XUIMessagesLocalization.setThreadCurrentLocale( new Locale( "en" ) );
+    	}
     	
         try {
     		oResponse.setHeader("Pragma", "No-Cache");

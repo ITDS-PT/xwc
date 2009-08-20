@@ -24,7 +24,7 @@ import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.xeo.beans.XEOBaseBean;
+import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.xeo.beans.XEOBaseList;
 
 import org.json.JSONException;
@@ -278,8 +278,8 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
     	XUIViewRoot oViewRoot = XUIRequestContext.getCurrentContext().getViewRoot();
     	Object viewBean = oViewRoot.getBean("viewBean");
     	String sTitle;
-    	if( viewBean instanceof XEOBaseBean  ) {
-    		sTitle = ((XEOBaseBean)viewBean).getTitle();
+    	if( viewBean instanceof XEOEditBean  ) {
+    		sTitle = ((XEOEditBean)viewBean).getTitle();
     	} else if( viewBean instanceof XEOBaseList ) {
     		sTitle = ((XEOBaseList)viewBean).getTitle();
     	}
