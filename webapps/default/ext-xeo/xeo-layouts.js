@@ -181,13 +181,13 @@ XEOLayoutInit = function()
 		        	   	cls: "x-btn-text-icon",		        	
 		        	   	text: ExtXeo.Messages.LOGOUT_BTN,
 		        	   	tooltip: ExtXeo.Messages.LOGOUT_BTN,
-		        	   	handler: function() { document.location.href='Logout.jsp' },
+		        	   	handler: function() { document.location.href='LogoutXVW.jsp' },
 		           		menu: [{
 			        	   	xtype:'button',
 			        	   	icon:'ext-xeo/images/menus/logout.gif' ,
 			        	   	cls: "x-btn-text-icon",		        	
 			        	   	text: ExtXeo.Messages.LOGOUT_BTN,
-			        	   	handler: function() { document.location.href='Logout.jsp' }
+			        	   	handler: function() { document.location.href='LogoutXVW.jsp' }
 		        	   	}]
 		           }/*,
 		           {
