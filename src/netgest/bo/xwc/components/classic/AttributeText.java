@@ -64,9 +64,11 @@ public class AttributeText extends AttributeBase {
             
             oAttrComp = (AttributeBase)component;
             
-            String value = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
-            if( value != null ) {
-            	oAttrComp.setSubmittedValue( value );
+            if( !oAttrComp.isDisabled() && !oAttrComp.isReadOnly() && oAttrComp.isVisible() ) {
+	            String value = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
+	            if( value != null ) {
+	            	oAttrComp.setSubmittedValue( value );
+	            }
             }
             super.decode(component);
 

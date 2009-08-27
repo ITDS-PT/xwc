@@ -73,12 +73,15 @@ public class AttributeTime extends AttributeBase {
 			super.decode(component);
 			
             oAttrComp = (AttributeTime)component;
-            // To avoid multiple inputs to the same value...
-            if( oAttrComp.getSubmittedValue() == null ) {
-                Map<String,String> reqMap = getFacesContext().getExternalContext().getRequestParameterMap();
-                if( reqMap.containsKey( oAttrComp.getClientId() ) ) {
-	                oAttrComp.setSubmittedValue( reqMap.get( oAttrComp.getClientId() ) );
-                }
+            
+            if( !oAttrComp.isDisabled() && !oAttrComp.isReadOnly() && oAttrComp.isVisible() ) {
+	            // To avoid multiple inputs to the same value...
+	            if( oAttrComp.getSubmittedValue() == null ) {
+	                Map<String,String> reqMap = getFacesContext().getExternalContext().getRequestParameterMap();
+	                if( reqMap.containsKey( oAttrComp.getClientId() ) ) {
+		                oAttrComp.setSubmittedValue( reqMap.get( oAttrComp.getClientId() ) );
+	                }
+	            }
             }
 		}
 	}

@@ -96,10 +96,11 @@ public class AttributeNumber extends AttributeBase {
             AttributeNumber oAttrComp;
             
             oAttrComp = (AttributeNumber)component;
-            
-            String value = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
-            oAttrComp.setSubmittedValue( value );
-            
+            if( !oAttrComp.isDisabled() && !oAttrComp.isReadOnly() && oAttrComp.isVisible() ) {
+	            String value = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
+	            value = value.replace(',', '.');
+	            oAttrComp.setSubmittedValue( value );
+            }
             super.decode(component);
 
         }

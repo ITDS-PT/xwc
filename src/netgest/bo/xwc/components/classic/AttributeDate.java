@@ -137,11 +137,14 @@ public class AttributeDate extends AttributeBase {
 
             AttributeDate oAttrComp;
             oAttrComp = (AttributeDate)component;
-            Map<String,String> reqMap = getFacesContext().getExternalContext().getRequestParameterMap();
-            if( oAttrComp.getSubmittedValue() == null && reqMap.containsKey( oAttrComp.getClientId() ) ) {
-                String value = reqMap.get( oAttrComp.getClientId() );
-                oAttrComp.setSubmittedValue( value );
-            } 
+            
+            if( !oAttrComp.isDisabled() && !oAttrComp.isReadOnly() && oAttrComp.isVisible() ) {
+	            Map<String,String> reqMap = getFacesContext().getExternalContext().getRequestParameterMap();
+	            if( oAttrComp.getSubmittedValue() == null && reqMap.containsKey( oAttrComp.getClientId() ) ) {
+	                String value = reqMap.get( oAttrComp.getClientId() );
+	                oAttrComp.setSubmittedValue( value );
+	            } 
+            }
         }
     }
 

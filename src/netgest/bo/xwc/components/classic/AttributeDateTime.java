@@ -192,19 +192,21 @@ public class AttributeDateTime extends AttributeBase {
                 
             AttributeDateTime oAttrComp;
             oAttrComp = (AttributeDateTime)component;
-            
-            // To avoid multiple inputs to the same value...
-            if( oAttrComp.getSubmittedValue() == null ) {
-                Map<String,String> reqMap = getFacesContext().getExternalContext().getRequestParameterMap();
-                if( reqMap.containsKey( oAttrComp.getClientId() + "_d" ) ) {
-	                sDate = reqMap.get( oAttrComp.getClientId() + "_d" );                
-	                sTime = reqMap.get( oAttrComp.getClientId() + "_t" );                
-	                
-	                if( sTime != null ) {
-	                    sDate += " " + sTime;
+
+            if( !oAttrComp.isDisabled() && !oAttrComp.isReadOnly() && oAttrComp.isVisible() ) {
+	            // To avoid multiple inputs to the same value...
+	            if( oAttrComp.getSubmittedValue() == null ) {
+	                Map<String,String> reqMap = getFacesContext().getExternalContext().getRequestParameterMap();
+	                if( reqMap.containsKey( oAttrComp.getClientId() + "_d" ) ) {
+		                sDate = reqMap.get( oAttrComp.getClientId() + "_d" );                
+		                sTime = reqMap.get( oAttrComp.getClientId() + "_t" );                
+		                
+		                if( sTime != null ) {
+		                    sDate += " " + sTime;
+		                }
+		                oAttrComp.setSubmittedValue( sDate );
 	                }
-	                oAttrComp.setSubmittedValue( sDate );
-                }
+	            }
             }
         }
     }
