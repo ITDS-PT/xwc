@@ -31,6 +31,7 @@ public class XUIServlet extends HttpServlet
     boApplication       oBoApplication;
     boolean             bIsInitialized;
     String				defaultLang;
+    Locale 				defaultLocale;
     
     public XUIServlet()
     {
@@ -40,7 +41,12 @@ public class XUIServlet extends HttpServlet
     public void init(ServletConfig servletConfig) throws ServletException
     {
     	defaultLang = servletConfig.getInitParameter("DefaultLanguage");
-    	
+    	if( defaultLang != null && defaultLang.length() > 0 ) {
+        	defaultLocale = new Locale( defaultLang ); 
+    	}
+    	else {
+    		defaultLocale = Locale.getDefault();
+    	}
         facesServlet.init(servletConfig);
         initializeXeo();
     }
@@ -81,6 +87,9 @@ public class XUIServlet extends HttpServlet
         }
     
     	if( oXEOSession != null ) {
+    		
+    		oXEOSession.setDefaultLocale( defaultLocale );
+    		
     		if( oXEOSession.getUser().getBoui() != 0 ) {
     			if( boApplication.currentContext().getEboContext() == null ) {
 			        oEboContext = oXEOSession.createRequestContextInServlet( oRequest, oResponse, getServletContext() );
@@ -89,8 +98,8 @@ public class XUIServlet extends HttpServlet
     		}
     	}
     	
-    	if( defaultLang != null ) {
-    		XUIMessagesLocalization.setThreadCurrentLocale( new Locale( "en" ) );
+    	if( defaultLocale != null ) {
+    		XUIMessagesLocalization.setThreadCurrentLocale( defaultLocale );
     	}
     	
         try {
