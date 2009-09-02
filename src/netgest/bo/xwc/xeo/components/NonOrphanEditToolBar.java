@@ -77,7 +77,7 @@ public class NonOrphanEditToolBar extends ToolBar {
 	}
 	
 	public static final List<String> staticMethods = Arrays.asList(
-			new String[] {"cofirmar","cancelar","valid" }
+			new String[] {"cofirmar","cancelar","valid", "update", "destroy", "cloneObject" }
 		);
 
 	XUIBindProperty<boObject> 	targetObject = 

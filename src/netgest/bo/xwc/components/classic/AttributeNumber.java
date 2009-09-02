@@ -98,7 +98,9 @@ public class AttributeNumber extends AttributeBase {
             oAttrComp = (AttributeNumber)component;
             if( !oAttrComp.isDisabled() && !oAttrComp.isReadOnly() && oAttrComp.isVisible() ) {
 	            String value = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
-	            value = value.replace(',', '.');
+	            if( value != null ) {
+	            	value = value.replace(',', '.');
+	            }
 	            oAttrComp.setSubmittedValue( value );
             }
             super.decode(component);

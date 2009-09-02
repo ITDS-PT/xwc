@@ -18,7 +18,10 @@ public class XUIMethodBindProperty extends XUIBaseProperty<MethodExpression> {
     }
     
     public void setExpressionText( String sExpression ) {
-        super.setValue( getComponent().createMethodBinding( sExpression ) );
+    	if( sExpression != null && sExpression.length() > 0 )
+    		super.setValue( getComponent().createMethodBinding( sExpression ) );
+    	else
+    		super.setValue( null );
     }
 
     public String getExpressionString() {

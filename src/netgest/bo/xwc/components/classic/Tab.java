@@ -14,7 +14,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class Tab extends ViewerCommandSecurityBase
 {
-    protected XUIStateProperty<String> 		label = new XUIStateProperty<String>( "label", this );
+    protected XUIStateProperty<String> 		label 	= new XUIStateProperty<String>( "label", this );
     protected XUIStateBindProperty<Boolean> visible = new XUIStateBindProperty<Boolean>( "visible", this, "true", Boolean.class ); 	
     
     public void setLabel(String label)

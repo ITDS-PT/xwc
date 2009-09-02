@@ -214,7 +214,7 @@ public class TreePanel extends XUIComponentBase {
                 ExtConfig oItemCfg;
                 
                 Menu oMenuChild = (Menu)oSubChildren.next();
-                if( oMenuChild.canAcess() ) {
+                if( oMenuChild.canAcess() && oMenuChild.isVisible() ) {
                     if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
 		                oItemCfg = oChildren.addChild();
                     	oItemCfg.addJSString( "text", oMenuChild.getText() );

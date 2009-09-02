@@ -687,11 +687,19 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public void setObjectAttribute(String sObjectAttribute) {
 		this.objectAttribute.setValue(createValueExpression(sObjectAttribute,
 				String.class));
-		this.setDataSource("#{viewBean.currentData." + getObjectAttribute()
-				+ ".dataList}");
-		this.setRowClass("#{viewBean.rowClass}");
-		this.setOnRowDoubleClick("#{viewBean.editBridge}");
-		this.setRowDblClickTarget("self");
+		
+		if( this.dataSource.isDefaultValue() )
+			this.setDataSource("#{viewBean.currentData." + getObjectAttribute()
+					+ ".dataList}");
+		
+		if( this.rowClass.isDefaultValue() )
+			this.setRowClass("#{viewBean.rowClass}");
+		
+		if( this.onRowDoubleClick.isDefaultValue() )
+			this.setOnRowDoubleClick("#{viewBean.editBridge}");
+		
+		if( this.rowDblClickTarget.isDefaultValue() )
+			this.setRowDblClickTarget("self");
 	}
 
 	/**

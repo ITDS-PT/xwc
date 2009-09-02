@@ -91,7 +91,7 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
 
         ExtConfig listeners = new ExtConfig();
         if( oForm.haveDependents( oAtt.getObjectAttribute() ) || oAtt.isOnChangeSubmit()  ) {
-        	listeners.add( "change" , "function(fld,newValue,oldValue){fld.setValue(newValue);" 
+        	listeners.add( "'change'" , "function(fld,newValue,oldValue){fld.setValue(newValue);" 
             + XVWScripts.getAjaxUpdateValuesScript( oAtt, 0 ) + "}" );
         }
         return listeners; 

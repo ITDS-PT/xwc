@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.ResponseWriter;
@@ -10,6 +11,7 @@ import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
@@ -19,7 +21,26 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 public class Tabs extends XUIComponentBase
 {
     public XUIStateProperty<String> activeTab = new XUIStateProperty<String>( "activeTab", this );
- 
+    
+    public XUIBaseProperty<String> layout = new XUIBaseProperty<String>( "layout", this, Layouts.LAYOUT_FIT_PARENT );
+    public XUIBaseProperty<String> height = new XUIBaseProperty<String>( "height", this, "150px" );
+    
+    public void setLayout( String layout ) {
+    	this.layout.setValue( layout );
+    }
+    
+    public String getLayout() {
+    	return this.layout.getValue();
+    }
+
+    public void setHeight( String layout ) {
+    	this.height.setValue( layout );
+    }
+    
+    public String getHeight() {
+    	return this.height.getValue();
+    }
+    
     public void setActiveTab(String activeTab)
     {
         this.activeTab.setValue( activeTab );
@@ -43,13 +64,15 @@ public class Tabs extends XUIComponentBase
 
     @Override
 	public void preRender() {
-    	
     	if( getActiveTab() == null ) {
-    		if( getChildren().size() > 0 ) {
-    			setActiveTab( getChildren().get( 0 ).getId() );
+    		List<UIComponent> tabs = getChildren();
+    		for( UIComponent tab : tabs ) {
+    			if(((Tab)tab).isVisible() ) {
+    				setActiveTab( tab.getId() );
+    				break;
+    			}
     		}
     	}
-    	
 	}
 
 	@Override
@@ -77,8 +100,7 @@ public class Tabs extends XUIComponentBase
             Iterator<UIComponent> oChildsIt = component.getChildren().iterator();
             while( oChildsIt.hasNext() ) {
                 Tab oChildTab = (Tab)oChildsIt.next();
-                if( oTabs.getActiveTab().equals(  oChildTab.getId() ) ) {
-                	
+                if( oChildTab.getId().equals( oTabs.getActiveTab() ) && oChildTab.isVisible() ) {
                 	ExtConfig tabConfig = new ExtConfig( "ExtXeo.Tab" );
                 	tabConfig.addJSString("id",  oChildTab.getClientId() );
                 	tabConfig.add("minHeight", 200);
@@ -89,11 +111,14 @@ public class Tabs extends XUIComponentBase
                     	tabConfig.renderExtConfig()
                 	);
                 	
-                    Layouts.registerComponent(w, oChildTab, Layouts.LAYOUT_FIT_PARENT );
+                	String layout = oTabs.getLayout();
+                	if( layout != null && layout.length() > 0 ) {
+                		Layouts.registerComponent(w, oChildTab, layout );
+                	}
                 	w.startElement( HTMLTag.DIV ,oChildTab);
                     w.writeAttribute( HTMLAttr.ID , oChildTab.getClientId(), null);
                     w.writeAttribute( HTMLAttr.CLASS ,"x-panel x-tab-panel-body x-tab-panel-body-top xwc-tab",null);
-                    w.writeAttribute(HTMLAttr.STYLE, "", null);
+            		w.writeAttribute(HTMLAttr.STYLE, "height:" + oTabs.getHeight(), null);
                     oChildTab.encodeAll();
                     w.endElement(HTMLTag.DIV);
                 }

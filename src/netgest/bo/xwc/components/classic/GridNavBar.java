@@ -21,7 +21,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * @author jcarreira
  *
  */
-public class GridNavBar extends XUIComponentBase {
+public class GridNavBar extends ToolBar {
 
     XUIStateBindProperty<Boolean> showFullTextSearch = new XUIStateBindProperty<Boolean>( "showFullTextSearch", this, "true", Boolean.class );
     XUIStateBindProperty<Boolean> showExportToExcel = new XUIStateBindProperty<Boolean>( "showExportToExcel", this, "true", Boolean.class );

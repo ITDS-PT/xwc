@@ -19,11 +19,11 @@ public class EditToolBar extends ToolBar {
 		);
 
 	public static final List<String> MapObjectMethods = Arrays.asList(
-			new String[] {"update", "update","valid","cloneObject" }
+			new String[] {"update", "update","valid","cloneObject", "destroy" }
 	);
 	
 	public static final List<String> MapViewerMethods = Arrays.asList(
-			new String[] {"save","saveAndClose","processValidate","duplicate" }
+			new String[] {"save","saveAndClose","processValidate","duplicate", "destroy" }
 	);
 	
 	private XUIBindProperty<boObject> 	targetObject = 
@@ -141,7 +141,7 @@ public class EditToolBar extends ToolBar {
 
 		if( getRenderDestroyBtn() ) {
 			getChildren().add( pos++, Menu.getMenuSpacer() );
-			createViewerBeanMethod( pos++, null, "Remover","ext-xeo/images/menus/remover.gif", "remove", null );
+			createViewerBeanMethod( pos++, null, "Remover","ext-xeo/images/menus/remover.gif", "destroy", null );
 		}
 		
 		if( getRenderValidateBtn() ) {

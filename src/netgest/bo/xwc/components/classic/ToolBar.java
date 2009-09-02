@@ -18,11 +18,33 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 
 public class ToolBar extends ViewerSecurityBase {
+
 	
+    private XUIStateBindProperty<Boolean> disabled = new XUIStateBindProperty<Boolean>( "disabled", this, "false",Boolean.class );
+    private XUIStateBindProperty<Boolean> visible  = new XUIStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
+	
+    public void setDisabled(String disabled) {
+        this.disabled.setExpressionText( disabled );
+    }
+
+    public boolean isDisabled() {
+        return disabled.getEvaluatedValue();
+    }
+
+    public void setVisible(String visible) {
+        this.visible.setExpressionText( visible );
+    }
+
+    public boolean isVisible() {
+        return this.visible.getEvaluatedValue();
+    }
+    
+    
     public ToolBar()
     {
     }
@@ -46,17 +68,22 @@ public class ToolBar extends ViewerSecurityBase {
     
     private boolean wasStateChangedOnChilds( UIComponent oCompBase ) {
         UIComponent kid;
+        boolean ret = false;
         List<UIComponent> kids = oCompBase.getChildren();
         for (int i = 0; i < kids.size(); i++) {
             kid = kids.get( i );
             if( kid instanceof XUIComponentBase ) {
                 if( ((XUIComponentBase)kid).wasStateChanged() ) {
-                    return true;
+                    ret = true;
+                    break;
                 }
             }
-            wasStateChangedOnChilds( kid );
+            ret = wasStateChangedOnChilds( kid );
+            if( ret ) {
+            	break;
+            }
         }
-        return false;
+        return ret;
     }
 
 	@Override
@@ -93,24 +120,12 @@ public class ToolBar extends ViewerSecurityBase {
         }
 
         public ExtConfig renderExtJs( XUIComponentBase component ) {
-            
-            //boolean bFirstOption;
-            
-            //bFirstOption = true;
-            
-            //FastStringWriter sOut = new FastStringWriter( 500 );
-            
-            //sOut.write( "Ext.onReady( function() { " ); sOut.write("\n");
-                                                        
-            //sOut.write( "var " + component.getId() + " = new Ext.Toolbar({"); sOut.write("\n");
             ExtConfig oToolBarCfg = new ExtConfig( "Ext.Toolbar" );
             oToolBarCfg.addJSString("style","border:0px solid black;" );     
             oToolBarCfg.add( "width" , "'auto'" );
             
-            //sOut.write( "id:'" + component.getClientId() +"'," ); sOut.write("\n");
             oToolBarCfg.addJSString( "id", component.getClientId() );
 
-            //sOut.write( "items: [" ); sOut.write("\n");
             ExtConfigArray oItemsCfg = oToolBarCfg.addChildArray( "items" );
 
             Iterator<UIComponent> childs =  component.getChildren().iterator();
@@ -130,41 +145,27 @@ public class ToolBar extends ViewerSecurityBase {
 	                else if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
 	                        oItemCfg = oItemsCfg.addChild(  );
 	                        
-	                    	configExtMenu(oMenuChild, oItemCfg);
+	                    	configExtMenu( (ToolBar)component , oMenuChild, oItemCfg);
 		                        
 		                    if( oMenuChild.getChildCount() > 0 ) {
 		                    	oItemCfg.addJSString( "xtype", "splitbutton" );
 		                    	if( oItemCfg != null ) {
-		    	                    encodeSubMenuJS( oItemCfg.addChild( "menu" ), oMenuChild );
+		    	                    encodeSubMenuJS( (ToolBar)component,oItemCfg.addChild( "menu" ), oMenuChild );
 		                    	}
 		                    }
 	                }
                 }
             }
-
-//            sOut.write( "]\n" );
-            
-//            sOut.write( "});\n" );            
-
-//            sOut.write( component.getId() + ".render('" + component.getClientId() + "');"  );
-            
-//            sOut.write( "});\n" );            
-            
-            // Clean Script, not needed because there is not options
-//            if( bFirstOption ) {
-//                sOut.reset();
-//            }
-//            return sOut.toString();
             return oToolBarCfg;
             
         }
         
-        public static final void configExtMenu( Menu oMenuChild, ExtConfig  oItemCfg ) {
+        public static final void configExtMenu( ToolBar toolBar,  Menu oMenuChild, ExtConfig  oItemCfg ) {
             oItemCfg.addJSString( "text", oMenuChild.getText() );
-            if( !oMenuChild.isVisible() )
+            if( !toolBar.isVisible() || !oMenuChild.isVisible() )
                 oItemCfg.add( "hidden", true );
 
-            if( oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
+            if( toolBar.isDisabled() || oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
                 oItemCfg.add( "disabled", true );
             
             if( oMenuChild.getIcon() != null ) {
@@ -193,7 +194,7 @@ public class ToolBar extends ViewerSecurityBase {
         }
         
         
-        public void encodeSubMenuJS( ExtConfig oMenu, Menu oSubMenu ) {
+        public void encodeSubMenuJS( ToolBar tool, ExtConfig oMenu, Menu oSubMenu ) {
             ExtConfigArray  oSubChildCfg;
 
             //sOut.write(" new Ext.menu.Menu({ "); sOut.write("\n");
@@ -218,10 +219,10 @@ public class ToolBar extends ViewerSecurityBase {
                 else if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
                 	oItemCfg = oSubChildCfg.addChild();
                 	
-                	configExtMenu(oMenuChild, oItemCfg);
+                	configExtMenu( tool, oMenuChild, oItemCfg);
                 	
                 	if( oMenuChild.getChildCount() > 0 ) {
-                		encodeSubMenuJS( oItemCfg.addChild( "menu" ), oMenuChild );
+                		encodeSubMenuJS( tool, oItemCfg.addChild( "menu" ), oMenuChild );
                 	}
                 }
             
