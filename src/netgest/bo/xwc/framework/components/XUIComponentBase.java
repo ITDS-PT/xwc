@@ -498,4 +498,16 @@ public abstract class XUIComponentBase extends UIComponentBase
 			}
 		}
 	}
+	
+	public void forceRenderOnClient() {
+		this._isRenderedOnClient = false;
+		List<UIComponent> children = getChildren();
+		for( UIComponent child : children ) {
+			if( child instanceof XUIComponentBase ) {
+				((XUIComponentBase)child).forceRenderOnClient();
+			}
+		}
+	}
+	
+	
 }
