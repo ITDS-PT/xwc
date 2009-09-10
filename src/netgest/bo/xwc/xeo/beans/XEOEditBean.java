@@ -464,12 +464,14 @@ public class XEOEditBean extends XEOBaseBean {
         boDefAttribute  oAttDef = bridge.getDefAttribute();
         
         boDefHandler refObj = oAttDef.getReferencedObjectDef();
+
+        objectName = refObj.getName();
         
         String viewerName = getLookupViewer( bridge );
         
         if( objectName != null ) {
-        	refObj = boDefHandler.getBoDefinition( objectName );
-        	if( refObj.getBoCanBeOrphan() ) {
+//        	refObj = boDefHandler.getBoDefinition( objectName );
+        	if( oAttDef.getChildIsOrphan() ) {
         		viewerName = objectName + "_lookup.xvw";
         	}
         	else {
@@ -479,7 +481,7 @@ public class XEOEditBean extends XEOBaseBean {
         
         // Obtem a bean do objecto a ser editado
         // e associa o objecto do parametro
-        if( (oAttDef.getChildIsOrphan() && refObj.getBoCanBeOrphan()) )
+        if( oAttDef.getChildIsOrphan() )
         {
             XEOBaseLookupList   oBaseBean;
             oViewRoot = oSessionContext.createChildView( viewerName );
@@ -895,6 +897,9 @@ public class XEOEditBean extends XEOBaseBean {
         XUICommand oCommand = (XUICommand)oEvent.getComponent();
         
         GridPanel oGrid = (GridPanel)oCurrentView.findComponent( String.valueOf( oCommand.getValue() ) );
+        if( oGrid == null ) {
+        	oGrid = (GridPanel)oCommand.findParentComponent( GridPanel.class );
+        }
 
         oBridgeHandler  = ((XEOBridgeListConnector)oGrid.getDataSource()).getBridge();
         
