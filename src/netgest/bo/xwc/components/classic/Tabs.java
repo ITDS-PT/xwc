@@ -105,6 +105,10 @@ public class Tabs extends XUIComponentBase
                 	tabConfig.addJSString("id",  oChildTab.getClientId() );
                 	tabConfig.add("minHeight", 200);
                 	
+                	if( oTabs.isRenderedOnClient() ) {
+                		oChildTab.forceRenderOnClient();
+                	}
+                	
                 	getResponseWriter().getScriptContext().add(  
                 		XUIScriptContext.POSITION_FOOTER,
                 		"Tabs_" + oChildTab.getClientId(),
