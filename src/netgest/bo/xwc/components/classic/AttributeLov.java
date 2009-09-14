@@ -14,7 +14,12 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class AttributeLov extends AttributeBase {
 
-    public static class XEOHTMLRenderer extends ExtJsFieldRendeder {
+    @Override
+	public boolean isRenderedOnClient() {
+		return false;
+	}
+
+	public static class XEOHTMLRenderer extends ExtJsFieldRendeder {
 
     	@Override
     	public String getExtComponentType( XUIComponentBase oComp ) {
