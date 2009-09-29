@@ -2,6 +2,9 @@ package netgest.bo.xwc.components.model;
 
 import javax.el.MethodExpression;
 
+import netgest.bo.xwc.components.classic.Attribute;
+import netgest.bo.xwc.components.classic.AttributeDate;
+import netgest.bo.xwc.components.classic.AttributeText;
 import netgest.bo.xwc.framework.components.XUICommand;
 
 public class RequestActionValue extends XUICommand {
@@ -17,6 +20,5 @@ public class RequestActionValue extends XUICommand {
 		}
 		return null;
 	}
-	
-	
+
 }
