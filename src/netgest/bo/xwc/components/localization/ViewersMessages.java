@@ -134,6 +134,13 @@ public interface ViewersMessages {
 	public static final XUILocalizedMessage LOGIN_INVALID_CREDENCIALS = 
 		new XUILocalizedMessage( ViewersMessages.class.getName(), "LOGIN_INVALID_CREDENCIALS" );
 	
+	public static final XUILocalizedMessage BUILDER_DEV_TITLE = 
+		new XUILocalizedMessage( ViewersMessages.class.getName(), "BUILDER_DEV_TITLE" );
 	
+	public static final XUILocalizedMessage BUILDER_DEV_LOG = 
+		new XUILocalizedMessage( ViewersMessages.class.getName(), "BUILDER_DEV_LOG" );	
+	
+	public static final XUILocalizedMessage BUILDER_DEV_OPENLOG = 
+		new XUILocalizedMessage( ViewersMessages.class.getName(), "BUILDER_DEV_OPENLOG" );		
 }
 

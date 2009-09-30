@@ -14,6 +14,14 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	<filter>
+		<filter-name>XEOBuilderFilter</filter-name>
+		<filter-class>netgest.bo.http.XEOBuilderFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>XEOBuilderFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>	
+	<filter>
 		<filter-name>LoginFilter</filter-name>
 		<filter-class>netgest.bo.xwc.framework.http.XUILoginFilter</filter-class>
 		<init-param>
@@ -38,10 +46,6 @@
 		<servlet-name>XWC Servlet</servlet-name>
 		<servlet-class>netgest.bo.xwc.framework.http.XUIServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
-		<init-param>
-			<param-name>DefaultLanguage</param-name>
-			<param-value>en</param-value>
-		</init-param>
 	</servlet>
 	<filter>
 		<filter-name>DeployFilter</filter-name>
