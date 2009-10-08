@@ -58,9 +58,10 @@ public class XEOObjectListConnector implements DataListConnector {
     		// native
     		if( oObjectList.getBOQL().startsWith( "{" ) ) { 
     			try {
-					field = oObjectList.getBoDef().getAttributeRef( field ).getDbName();
+    				if( oObjectList.getBoDef().getAttributeRef( field ) != null ) {
+    					field = oObjectList.getBoDef().getAttributeRef( field ).getDbName();
+    				}
 				} catch (boRuntimeException e) {
-					// TODO Auto-generated catch block
 					throw new RuntimeException( e );
 				}
     		}

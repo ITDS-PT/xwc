@@ -207,7 +207,12 @@ public class Tabs extends XUIComponentBase
                     w.startElement("span", component );
                     w.writeAttribute("id", oTabs.getId() +":" + oChildTab.getId() + ":t", null );
                     w.writeAttribute("class", "x-tab-strip-text", null);
-                    w.writeText( oChildTab.getLabel(), component, null );
+
+                    String sLabel = oChildTab.getLabel();
+                    
+                    if( sLabel != null ) {
+                    	w.writeText( sLabel, component, null );
+                    }
                     
                     w.endElement("span");
                     w.endElement("span");

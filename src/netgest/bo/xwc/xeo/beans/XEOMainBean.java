@@ -1,5 +1,7 @@
 package netgest.bo.xwc.xeo.beans;
 
+import java.io.IOException;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -196,6 +198,14 @@ public class XEOMainBean extends XEOBaseBean {
         oRequestContext.setViewRoot( oViewRoot );
         oViewRoot.processInitComponents();
     	
+    }
+    
+    public void openLink() throws IOException {
+        XUIRequestContext   oRequestContext;
+        oRequestContext = XUIRequestContext.getCurrentContext();
+    	String url = (String)((XUICommand)oRequestContext.getEvent().getSource()).getValue();
+    	((HttpServletResponse)oRequestContext.getResponse()).sendRedirect( url );
+    	oRequestContext.responseComplete();
     }
     
     public void logout() {

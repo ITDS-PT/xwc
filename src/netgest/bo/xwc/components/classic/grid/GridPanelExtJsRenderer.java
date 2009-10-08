@@ -299,7 +299,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oPagingConfig.add( "store", oGrid.getId() + "_store" );
         oPagingConfig.add( "pageSize", oGrid.getPageSize() );
         oPagingConfig.add( "displayInfo", true );
-        oPagingConfig.addJSString("displayMsg", "Registos {0} - {1}" );
+        oPagingConfig.addJSString("displayMsg", "" );
         oPagingConfig.addJSString("emptyMsg", "" );
         
         GridNavBar oNavBarComp = (GridNavBar)oGrid.findComponent( GridNavBar.class );

@@ -18,13 +18,16 @@ import javax.faces.context.FacesContext;
 
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIComponentPugIn;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 
 
 public abstract class XUIComponentBase extends UIComponentBase 
 {
-    XUIBindProperty<Boolean> renderComponent = new XUIBindProperty<Boolean>( "renderComponent", this, Boolean.class );
+    XUIBindProperty<Boolean> 			renderComponent = new XUIBindProperty<Boolean>( "renderComponent", this, Boolean.class );
+
+    XUIBindProperty<XUIComponentPugIn> 	plugIn = new XUIBindProperty<XUIComponentPugIn>( "plugIn", this, XUIComponentPugIn.class );
     
     private static final    Object[] EMPTY_OBJECT_ARRAY = new Object[0];
     
@@ -46,6 +49,14 @@ public abstract class XUIComponentBase extends UIComponentBase
 	@Override
 	public void setId(String id) {
 		super.setId(id);
+	}
+	
+	public XUIComponentPugIn getPlugIn() {
+		return this.plugIn.getEvaluatedValue();
+	}
+	
+	public void setPlugIn( String expressionText ) {
+		this.plugIn.setExpressionText( expressionText );
 	}
 
 	public void addStateProperty( XUIBaseProperty oStateProperty ) {
@@ -106,17 +117,28 @@ public abstract class XUIComponentBase extends UIComponentBase
 
         List<UIComponent> oKids = this.getChildren();
         for (int i = 0; i < oKids.size(); i++) {
-            bChanged = false;
+            
+        	bChanged = false;
+            
             oKid = oKids.get( i );
+            
             if( oKid instanceof XUIComponentBase ) {
-                if( ((XUIComponentBase)oKid).wasStateChanged() ) {
+            	
+            	XUIComponentPugIn plugIn = getPlugIn();
+            	
+            	if( plugIn != null &&  plugIn.wasStateChanged() ) {
                     oRenderList.add( (XUIComponentBase)oKid );
                     bChanged = true;                    
-                }
-                if( !bChanged ) {
-                    ((XUIComponentBase)oKid).processStateChanged( oRenderList );    
-                }
-
+            	}
+            	else {
+	                if( ((XUIComponentBase)oKid).wasStateChanged() ) {
+	                    oRenderList.add( (XUIComponentBase)oKid );
+	                    bChanged = true;                    
+	                }
+	                if( !bChanged ) {
+	                    ((XUIComponentBase)oKid).processStateChanged( oRenderList );    
+	                }
+            	}
             }
         }
     }
@@ -332,19 +354,43 @@ public abstract class XUIComponentBase extends UIComponentBase
     
     public final void processInitComponents() {
         // Process this component itself
+    	
+    	XUIComponentBase component = this;
+    	
     	if( !wasInitComponentProcessed ) {
-    		initComponent();
+        	XUIComponentPugIn plugIn = getPlugIn();
+    		
+        	if( plugIn != null ) {
+        		plugIn.setComponent( this );
+        		plugIn.beforeInitComponent();
+        	}
+        	
+        	if( plugIn != null && plugIn.isReplaced() )
+        		component = plugIn.getComponent();
+
+        	component.initComponent();
+    		
+            if( plugIn != null )
+        		plugIn.afterInitComponent();
+    		
     		wasInitComponentProcessed = true;
     	}
+    	
+        if( this != component ) {
+        	List<UIComponent> childs = getParent().getChildren(); 
+        	childs.set(  childs.indexOf( this ), component );
+        }
 
         // Process all facets and children of this component
-        Iterator<UIComponent> kids = getFacetsAndChildren();
+        Iterator<UIComponent> kids = component.getFacetsAndChildren();
         while (kids.hasNext()) {
             UIComponent kid = kids.next();
             if( kid instanceof XUIComponentBase ) {
                 ((XUIComponentBase)kid).processInitComponents();
             }
         }
+        
+        
     }
 
     public void preRender() {
@@ -353,17 +399,42 @@ public abstract class XUIComponentBase extends UIComponentBase
     
     public final void processPreRender() {
         // Process this component itself
+    	
+    	XUIComponentBase component = this;
+
     	if( !wasPreRenderProcessed ) {
-    		preRender();
+        	XUIComponentPugIn plugIn = getPlugIn();
+        	
+        	if( plugIn != null ) {
+        		plugIn.setComponent( this );
+        		plugIn.beforePreRender();
+        	}
+        	
+        	if( plugIn != null && plugIn.isReplaced() )
+        		component = plugIn.getComponent();
+        	
+        	
+        	component.preRender();
+    		
+            if( plugIn != null )
+        		plugIn.afterPreRender();
+    		
     		wasPreRenderProcessed = true;
     	}
-        
+    	
+        if( this != component ) {
+        	List<UIComponent> childs = getParent().getChildren(); 
+        	childs.set(  childs.indexOf( this ), component );
+        }
+    	
         // Process all facets and children of this component
-        Iterator<UIComponent> kids = getFacetsAndChildren();
+        Iterator<UIComponent> kids = component.getFacetsAndChildren();
         while (kids.hasNext()) {
             UIComponent kid = kids.next();
             if( kid instanceof XUIComponentBase ) {
+            	
                 ((XUIComponentBase)kid).processPreRender();
+
             }
         }
     }
