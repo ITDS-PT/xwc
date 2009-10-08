@@ -11,11 +11,13 @@
 <%
 		return; 
 	}
-	// Do a System Login
-	boApplication boApp 	= boApplication.getApplicationFromStaticContext("XEO");
-	boSession     boSession = boApp.boLogin( "SYSTEM", boLoginBean.getSystemKey() );
-	
-	request.getSession().setAttribute("boSession", boSession );
+	if( session.getAttribute("boSession") == null ) {
+		// Do a System Login
+		boApplication boApp 	= boApplication.getApplicationFromStaticContext("XEO");
+		boSession     boSession = boApp.boLogin( "SYSTEM", boLoginBean.getSystemKey() );
+		
+		request.getSession().setAttribute("boSession", boSession );
+	}
 %>
 <jsp:forward page="/netgest/bo/xwc/components/viewers/Builder.xvw"></jsp:forward>
  
