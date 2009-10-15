@@ -463,9 +463,11 @@ public class XEOEditBean extends XEOBaseBean {
         bridgeHandler   bridge  = ((XEOBridgeListConnector)oGrid.getDataSource()).getBridge();
         boDefAttribute  oAttDef = bridge.getDefAttribute();
         
-        boDefHandler refObj = oAttDef.getReferencedObjectDef();
-
-        objectName = refObj.getName();
+        
+        if( objectName == null ) {
+        	boDefHandler refObj = oAttDef.getReferencedObjectDef();        	
+        	objectName = refObj.getName();
+        }
         
         String viewerName = getLookupViewer( bridge );
         
@@ -501,7 +503,7 @@ public class XEOEditBean extends XEOBaseBean {
             oBaseBean.setParentComponentId( oGrid.getClientId() );
             oBaseBean.executeBoql( 
             			//"select "+ oAttDef.getReferencedObjectName()
-            		getLookupQuery( bridge.getName(), oAttDef.getReferencedObjectName() )
+            		getLookupQuery( bridge.getName(), objectName )
             	);
             oBaseBean.setMultiLookup( true );
         }
