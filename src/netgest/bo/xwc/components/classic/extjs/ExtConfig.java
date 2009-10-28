@@ -77,7 +77,9 @@ public class ExtConfig {
         bIsFirst = true;                
         
         if( sVarName != null ) {
-            oBuilder.append( "var " ).append( this.sVarName ).append( '=' );
+        	//Remove var clause (IE Problem) possible workaround
+        	oBuilder.append( this.sVarName ).append( '=' );
+        	//  oBuilder.append( "var " ).append( this.sVarName ).append( '=' );
         } 
 
         if( sComponentType != null ) {
