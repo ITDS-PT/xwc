@@ -10,6 +10,8 @@ import netgest.bo.xwc.components.util.JavaScriptUtils;
 
 public class ExtConfig {
     
+	private boolean bPublic;
+	
     private String sComponentType;
     private String sVarName;
     
@@ -77,10 +79,11 @@ public class ExtConfig {
         bIsFirst = true;                
         
         if( sVarName != null ) {
-        	//Remove var clause (IE Problem) possible workaround
-        	oBuilder.append( this.sVarName ).append( '=' );
-        	//  oBuilder.append( "var " ).append( this.sVarName ).append( '=' );
-        } 
+        	if( isPublic() )
+        		oBuilder.append( "window." ).append( this.sVarName ).append( '=' );
+        	else
+        		oBuilder.append( "var " ).append( this.sVarName ).append( '=' );
+        }
 
         if( sComponentType != null ) {
             oBuilder.append( "new " );
@@ -164,4 +167,13 @@ public class ExtConfig {
     public String getVarName() {
         return sVarName;
     }
+
+	public boolean isPublic() {
+		return bPublic;
+	}
+
+	public void setPublic(boolean bPublic) {
+		this.bPublic = bPublic;
+	}
+    
 }
