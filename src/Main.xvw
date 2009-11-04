@@ -87,6 +87,12 @@
 		                        target='Tab' 
 		                        serverAction="#{viewBean.openViewer}" 
 		                />
+		                <xvw:menu 
+		                        text='Convert old XEO Viewers to XWC'  
+		                        value="{viewerName:'netgest/bo/xwc/components/viewers/MigrateXEOViewersToXWC.xvw',boql:select Ebo_Package}" 
+		                        target='Tab' 
+		                        serverAction="#{viewBean.listObject}"
+		                />	
 	                </xvw:menu>
             		<xvw:menu text='User Administration' expanded='true'>
 	            		<xvw:menu
