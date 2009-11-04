@@ -66,6 +66,7 @@ public class AttributeNumber extends AttributeBase {
 			
 			config.add( "enableKeyEvents" , true );
 			config.add("decimalPrecision", oAttr.getDecimalPrecision());
+			config.add("decimalSeparator", "','" );
 			
 			return config;
 		}
@@ -99,6 +100,7 @@ public class AttributeNumber extends AttributeBase {
             if( !oAttrComp.isDisabled() && !oAttrComp.isReadOnly() && oAttrComp.isVisible() ) {
 	            String value = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
 	            if( value != null ) {
+	            	value = value.replaceAll("\\.", "");
 	            	value = value.replace(',', '.');
 	            }
 	            oAttrComp.setSubmittedValue( value );

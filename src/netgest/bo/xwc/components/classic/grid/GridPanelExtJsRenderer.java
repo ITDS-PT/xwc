@@ -190,6 +190,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         // Build DataStore Config
         oStoreConfig = buildDataStore( oGrid );
+        oStoreConfig.setPublic( true );
         oStoreConfig.setVarName( oComp.getId() + "_store" );
         w.getScriptContext().add(
                 XUIScriptContext.POSITION_HEADER,

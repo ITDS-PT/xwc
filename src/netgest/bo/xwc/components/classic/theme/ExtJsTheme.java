@@ -1,5 +1,6 @@
 package netgest.bo.xwc.components.classic.theme;
 
+import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
 import netgest.bo.xwc.framework.XUITheme;
@@ -62,7 +63,14 @@ public class ExtJsTheme implements XUITheme {
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-xeo-app", composeUrl( "ext-xeo/js/App.js" ) );
         
         // Utility Scrits
-        scriptContext.add( XUIScriptContext.POSITION_HEADER , "s.gif", "Ext.BLANK_IMAGE_URL = '"+ ExtJsTheme.composeUrl("extjs/images/default/s.gif") + "';");
+        XUIRequestContext oRequestContext;
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        
+        scriptContext.add( XUIScriptContext.POSITION_HEADER , "s.gif", "Ext.BLANK_IMAGE_URL = '" + 
+        						oRequestContext.getResourceUrl( ExtJsTheme.composeUrl("extjs/images/default/s.gif") ) + 
+        						"';"
+        					);
+        
         scriptContext.add( XUIScriptContext.POSITION_FOOTER , "ExtQuickTips", "Ext.onReady( function() {Ext.QuickTips.init();} );" );
         scriptContext.add( XUIScriptContext.POSITION_FOOTER , "Ext.App", "if(!window.parent.App)  var App = new Ext.App({});" );
         

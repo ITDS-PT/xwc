@@ -100,7 +100,8 @@ public class AttributeBoolean extends AttributeBase {
             oAttrComp = (AttributeBoolean)component;
             
             String value = getFacesContext().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
-            if( "on".equals( value ) ) {
+            // Por vezes o ExtJs devolve yes.. não percebi porque razão, deve ser bug do extjs
+            if( "on".equalsIgnoreCase( value ) || "yes".equalsIgnoreCase( value ) ) {
                 if( oAttrComp.getUseBooleanValues() )
                 	oAttrComp.setSubmittedValue( true );
                 else
