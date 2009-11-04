@@ -91,7 +91,6 @@ public class ExtConfig {
             oBuilder.append( "(" );
         }
         
-        
         oBuilder.append( "{" );
         
         oKeyIt = oConfigOptions.entrySet().iterator();
