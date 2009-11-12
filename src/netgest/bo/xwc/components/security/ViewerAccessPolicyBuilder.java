@@ -66,7 +66,7 @@ public class ViewerAccessPolicyBuilder {
 			try {
 				context.beginContainerTransaction();
 
-				cleanAccessPolicy(context);
+				//cleanAccessPolicy(context);
 				
 				// Mark all items as unused
 				markAllAsUnreferenced(context);
