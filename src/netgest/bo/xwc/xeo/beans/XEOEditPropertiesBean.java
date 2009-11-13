@@ -39,7 +39,7 @@ public class XEOEditPropertiesBean extends XEOEditBean {
 	public String getLastModificationBy() throws boRuntimeException {
 		if( getXEOObject().getDataSet().findColumn( "SYS_USER" ) > 0 ) {
 			String user = getXEOObject().getDataRow().getString("SYS_USER");
-			if( user != null ) {
+			if( user != null && !"0".equals( user ) ) {
 				return boObject.getBoManager().loadObject(  getEboContext(), Long.parseLong( user )  ).getCARDID().toString();
 			}
 		}
@@ -52,7 +52,6 @@ public class XEOEditPropertiesBean extends XEOEditBean {
 			return Long.toString( sys_icn );
 		}
 		return "0";
-		
 	}
 	
 	public String getBoui() {

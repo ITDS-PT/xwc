@@ -172,7 +172,7 @@ public class TreePanel extends XUIComponentBase {
 		                oItemCfg.addJSString( "text", oMenuChild.getText() );
 		
 		                if( oMenuChild.getIcon() != null ) {
-		                	oItemCfg.addJSString( "icon", oMenuChild.getIcon() );
+		                	oItemCfg.addJSString( "icon", composeUrlWithWebContext( oMenuChild.getIcon() ) );
 		                }
 		                oItemCfg.add( "expanded", oMenuChild.getExpanded() );
 		                    
@@ -228,7 +228,7 @@ public class TreePanel extends XUIComponentBase {
 		                oItemCfg.add( "expanded", oMenuChild.getExpanded() );
 		
 		                if( oMenuChild.getIcon() != null ) {
-		                	oItemCfg.addJSString( "icon", oMenuChild.getIcon() );
+		                	oItemCfg.addJSString( "icon", composeUrlWithWebContext( oMenuChild.getIcon() ) );
 		                	oItemCfg.addJSString("cls", "x-btn-text-icon");
 		                }
 		

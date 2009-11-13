@@ -4,7 +4,6 @@ import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.security.SecurityPermissions;
-import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;

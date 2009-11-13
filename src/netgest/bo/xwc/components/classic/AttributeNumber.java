@@ -55,7 +55,7 @@ public class AttributeNumber extends AttributeBase {
 		@Override
 		public String getExtComponentType( XUIComponentBase oComp ) {
 			// TODO Auto-generated method stub
-			return "Ext.form.NumberField";
+			return "ExtXeo.form.NumberField";
 		}
     	
 		@Override
@@ -63,11 +63,10 @@ public class AttributeNumber extends AttributeBase {
 			ExtConfig config;
 			
 			config = super.getExtJsFieldConfig( oAttr );
-			
 			config.add( "enableKeyEvents" , true );
-			config.add("decimalPrecision", oAttr.getDecimalPrecision());
-			config.add("decimalSeparator", "','" );
-			
+			config.add( "decimalPrecision" , oAttr.getDecimalPrecision());
+			config.add( "minDecimalPrecision" , oAttr.getMinDecimalPrecision());
+			config.add( "value" , oAttr.getValue() );
 			return config;
 		}
 		

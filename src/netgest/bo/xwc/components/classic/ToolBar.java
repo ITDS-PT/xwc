@@ -145,7 +145,7 @@ public class ToolBar extends ViewerSecurityBase {
 	                else if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
 	                        oItemCfg = oItemsCfg.addChild(  );
 	                        
-	                    	configExtMenu( (ToolBar)component , oMenuChild, oItemCfg);
+	                    	configExtMenu( this, (ToolBar)component , oMenuChild, oItemCfg);
 		                        
 		                    if( oMenuChild.getChildCount() > 0 ) {
 		                    	oItemCfg.addJSString( "xtype", "splitbutton" );
@@ -160,7 +160,7 @@ public class ToolBar extends ViewerSecurityBase {
             
         }
         
-        public static final void configExtMenu( ToolBar toolBar,  Menu oMenuChild, ExtConfig  oItemCfg ) {
+        public static final void configExtMenu( XUIRenderer renderer, ToolBar toolBar,  Menu oMenuChild, ExtConfig  oItemCfg ) {
             oItemCfg.addJSString( "text", oMenuChild.getText() );
             if( !toolBar.isVisible() || !oMenuChild.isVisible() )
                 oItemCfg.add( "hidden", true );
@@ -169,7 +169,7 @@ public class ToolBar extends ViewerSecurityBase {
                 oItemCfg.add( "disabled", true );
             
             if( oMenuChild.getIcon() != null ) {
-            	oItemCfg.addJSString( "icon", oMenuChild.getIcon() );
+            	oItemCfg.addJSString( "icon", renderer.composeUrlWithWebContext( oMenuChild.getIcon() ) );
             	if( oMenuChild.getText() == null ) {
                 	oItemCfg.addJSString("cls", "x-btn-icon");
             	}
@@ -219,14 +219,12 @@ public class ToolBar extends ViewerSecurityBase {
                 else if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
                 	oItemCfg = oSubChildCfg.addChild();
                 	
-                	configExtMenu( tool, oMenuChild, oItemCfg);
+                	configExtMenu( this, tool, oMenuChild, oItemCfg);
                 	
                 	if( oMenuChild.getChildCount() > 0 ) {
                 		encodeSubMenuJS( tool, oItemCfg.addChild( "menu" ), oMenuChild );
                 	}
                 }
-            
-                
             }
         }
 

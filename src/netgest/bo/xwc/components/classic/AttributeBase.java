@@ -60,6 +60,9 @@ public class AttributeBase extends ViewerInputSecurityBase {
     private XUIBindProperty<Integer> decimalPrecision  = 
     	new XUIBindProperty<Integer>( "decimalPrecision", this, Integer.class );
 
+    private XUIBindProperty<Integer> minDecimalPrecision  = 
+    	new XUIBindProperty<Integer>( "minDecimalPrecision", this, Integer.class );
+
     protected XUIBaseProperty<Object> renderedValue     = 
     	new XUIBaseProperty<Object>( "renderedValue", this, Object.class );
 
@@ -151,6 +154,10 @@ public class AttributeBase extends ViewerInputSecurityBase {
                 createValueExpression( sBeanExpression + ".decimalPrecision}", Integer.class ) 
             );
         
+        this.minDecimalPrecision.setValue( 
+                createValueExpression( sBeanExpression + ".minDecimals}", Integer.class ) 
+            );
+
         // Label
 
         this.label.setValue( 
@@ -420,13 +427,6 @@ public class AttributeBase extends ViewerInputSecurityBase {
         return this.maxLength.getEvaluatedValue();
     }
 
-    /**
-     * Set's the decimal precision of the component, when is of the numeric type
-     * @param decimalPrecision integer or {@linkplain ValueExpression}
-     */
-    public void setDecimalPrecision(String decimalPrecision) {
-        this.dataType.setExpressionText( decimalPrecision );
-    }
     
     /**
      * Get the current decimal precision of the component
@@ -434,6 +434,30 @@ public class AttributeBase extends ViewerInputSecurityBase {
      */
     public int getDecimalPrecision() {
         return this.decimalPrecision.getEvaluatedValue();
+    }
+
+    /**
+     * Set's the decimal precision of the component, when is of the numeric type
+     * @param decimalPrecision integer or {@linkplain ValueExpression}
+     */
+    public void setDecimalPrecision(String decimalPrecision) {
+        this.decimalPrecision.setExpressionText( decimalPrecision );
+    }
+
+    /**
+     * Get the current minimum decimal precision of the component, when is of the numeric type
+     * @return int with the current minimum decimal precision
+     */
+    public int getMinDecimalPrecision() {
+        return this.minDecimalPrecision.getEvaluatedValue();
+    }
+    
+    /**
+     * Set's the decimal minimum precision of the component, when is of the numeric type
+     * @param decimalPrecision integer or {@linkplain ValueExpression}
+     */
+    public void setMinDecimalPrecision(String decimalPrecision) {
+        this.minDecimalPrecision.setExpressionText( decimalPrecision );
     }
 
     /**
@@ -445,7 +469,6 @@ public class AttributeBase extends ViewerInputSecurityBase {
     public void setDependences(String sDependences ) {
         this.dependences.setExpressionText( sDependences );
     }
-    
     
     /**
      * Get the current dependencies of the component

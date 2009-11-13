@@ -405,7 +405,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             }
             
             if( sBeanClassName != null && sBeanClassName.length() > 0 ) {
-	            Class   oBeanClass = Class.forName( sBeanClassName );
+	            Class oBeanClass = 
+	            	Thread.currentThread().getContextClassLoader().loadClass( sBeanClassName );
 	            
 	            Object oViewBean = oBeanClass.newInstance();
 	
@@ -435,17 +436,19 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
         // Initialize security
         try {
+        	
         	Object bean = result.getBean( "viewBean" );
+        	
     		// Only activates viewerSecurity if the XVWAccessPolicy object is deployed.
     		if ( ViewerAccessPolicyBuilder.applyViewerSecurity ) {
+    			
     			ViewerAccessPolicyBuilder.applyViewerSecurity = boDefHandler.getBoDefinition( "XVWAccessPolicy" ) != null;
-    		}
-    		if( ViewerAccessPolicyBuilder.applyViewerSecurity ) {
 	        	if ( bean!=null && bean instanceof XEOSecurityBaseBean ) {
 	        		ViewerAccessPolicyBuilder viewerAccessPolicyBuilder = new ViewerAccessPolicyBuilder();
 	        		viewerAccessPolicyBuilder.processViewer( result, boApplication.currentContext().getEboContext(), false );
 	        		((XEOSecurityBaseBean)bean).initializeSecurityMap(viewerAccessPolicyBuilder, result.getViewId() );
 	        	}
+	        	
     		}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -459,7 +462,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     public void processInitComponent( XUIViewRoot oViewRoot ) {
 
         // Process all facets and children of this component
-        Iterator kids = oViewRoot.getFacetsAndChildren();
+        Iterator<UIComponent> kids = oViewRoot.getFacetsAndChildren();
         while (kids.hasNext()) {
             UIComponent kid = (UIComponent) kids.next();
             if( kid instanceof UIComponent ) {

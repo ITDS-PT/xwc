@@ -376,9 +376,11 @@ public class XEOEditBean extends XEOBaseBean {
 
     private String getLookupViewer( boDefAttribute defAtt ) {
     	if( defAtt.getChildIsOrphan() )
-    		return defAtt.getReferencedObjectName() + "_lookup.xvw";
+    		return 
+    			getViewerResolver().getViewer( defAtt.getReferencedObjectName(), XEOViewerResolver.ViewerType.LOOKUP );
     	else
-    		return defAtt.getReferencedObjectName() + "_edit.xvw";
+    		return 
+    			getViewerResolver().getViewer( defAtt.getReferencedObjectName(), XEOViewerResolver.ViewerType.EDIT );
     }
     
     /**
@@ -474,10 +476,10 @@ public class XEOEditBean extends XEOBaseBean {
         if( objectName != null ) {
 //        	refObj = boDefHandler.getBoDefinition( objectName );
         	if( oAttDef.getChildIsOrphan() ) {
-        		viewerName = objectName + "_lookup.xvw";
+        		viewerName = getViewerResolver().getViewer( objectName, XEOViewerResolver.ViewerType.LOOKUP );
         	}
         	else {
-        		viewerName = objectName + "_edit.xvw";
+        		viewerName = getViewerResolver().getViewer( objectName, XEOViewerResolver.ViewerType.EDIT );
         	}
         }
         
@@ -606,8 +608,9 @@ public class XEOEditBean extends XEOBaseBean {
 												Long
 														.parseLong(sBridgeKeyToEdit));
 								oViewRoot = oSessionContext
-										.createChildView(sClassName
-												+ "_edit.xvw");
+										.createChildView(
+								        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+											);
 								XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 										.getBean("viewBean");
 								oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
@@ -629,7 +632,9 @@ public class XEOEditBean extends XEOBaseBean {
 									.getClassNameFromBOUI(getEboContext(),
 											lCurrentBoui);
 							oViewRoot = oSessionContext
-									.createChildView(sClassName + "_edit.xvw");
+									.createChildView(
+							        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+									);
 							XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 									.getBean("viewBean");
 							oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
@@ -639,8 +644,9 @@ public class XEOEditBean extends XEOBaseBean {
 							throw new RuntimeException(e);
 						}
 
-						oViewRoot = oSessionContext.createChildView(sClassName
-								+ "_edit.xvw");
+						oViewRoot = oSessionContext.createChildView(
+				        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+							);
 						XEOBaseOrphanEdit oBaseBean = (XEOBaseOrphanEdit) oViewRoot
 								.getBean("viewBean");
 
@@ -730,8 +736,9 @@ public class XEOEditBean extends XEOBaseBean {
 						} else {
 							try {
 								oViewRoot = oSessionContext
-										.createChildView(oObjectName
-												+ "_edit.xvw");
+										.createChildView(
+								        		getViewerResolver().getViewer( oObjectName, XEOViewerResolver.ViewerType.EDIT )
+											);
 								XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 										.getBean("viewBean");
 								oBaseBean.createNew( oObjectName );
@@ -744,7 +751,9 @@ public class XEOEditBean extends XEOBaseBean {
 						}
 					} else {
 						oViewRoot = oSessionContext
-								.createChildView( oObjectName + "_edit.xvw");
+								.createChildView(
+					        		getViewerResolver().getViewer( oObjectName, XEOViewerResolver.ViewerType.EDIT )
+								);
 						XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 								.getBean("viewBean");
 						oBaseBean.createNew( oObjectName );
@@ -1152,9 +1161,13 @@ public class XEOEditBean extends XEOBaseBean {
 					}
 					XUIViewRoot 	oViewRoot;
 					if( oAttHandler.getDefAttribute().getChildIsOrphan() )
-						oViewRoot = oSessionContext.createView( cls + "_edit.xvw" );
+						oViewRoot = oSessionContext.createView( 
+								getViewerResolver().getViewer( cls, XEOViewerResolver.ViewerType.EDIT )
+							);
 					else
-						oViewRoot = oSessionContext.createChildView( cls + "_edit.xvw" );
+						oViewRoot = oSessionContext.createChildView(
+								getViewerResolver().getViewer( cls, XEOViewerResolver.ViewerType.EDIT )
+							);
 					
 					((XEOEditBean)oViewRoot.getBean("viewBean"))
 						.setCurrentObjectKey( String.valueOf( boui ) );

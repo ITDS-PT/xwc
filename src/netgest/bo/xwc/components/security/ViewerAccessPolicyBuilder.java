@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,21 +16,31 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.faces.component.UIComponent;
 
-import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boBridgeIterator;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
-import netgest.bo.xwc.components.classic.Attribute;
-import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 import org.apache.log4j.Logger;
 
+
 public class ViewerAccessPolicyBuilder {
 
+	
+	public enum SecurityMode {
+		MORE_RESTRICTED,
+		LESS_RESTRICTED
+	}
+	
+	private static SecurityMode securityMode = SecurityMode.MORE_RESTRICTED;
+	
+	public static void setSecurityMode( SecurityMode securityMode ) {
+		ViewerAccessPolicyBuilder.securityMode = securityMode;
+	}
+	
 	private static Logger logger = Logger.getLogger( ViewerAccessPolicyBuilder.class.getName() );
 
 	/** Controls the use of viewer-defined securities */
@@ -399,6 +412,7 @@ public class ViewerAccessPolicyBuilder {
 	 */
 	public Map<String,Byte> getPoliciesByViewer( EboContext context, String viewerName, boObject xeoUserObj ) throws boRuntimeException {
 		Map<String,Byte> policiesByViewer = new HashMap<String, Byte>();
+
 		// SELECT XVWAccessPolicy.policyDetails WHERE policyDetails.boui in () and referenced='1' AND viewer=? order by policyDetails.securityLevel
 		//StringBuffer sb = new StringBuffer( "SELECT XVWAccessPolicy.policyDetails WHERE policyDetails.object.BOUI in (" );
 		StringBuffer sb = new StringBuffer( "SELECT XVWAccessPolicy.policyDetails WHERE policyDetails.object in (" );
@@ -426,11 +440,19 @@ public class ViewerAccessPolicyBuilder {
 		}
 		sb.append( ") and referenced='1' AND viewer=? order by policyDetails.PARENT, policyDetails.accessLevel" );
 		
+		if( securityMode == SecurityMode.LESS_RESTRICTED ) {
+			sb.append( " desc" );
+		}
+		
 		accessPolicyList = boObjectList.list( context, sb.toString(),
 				new Object[]{ viewerName },
 				1, 999999, "", false );
 		accessPolicyList.beforeFirst();
+		
+		boolean securityFound = false; 
+		
 		while( accessPolicyList.next() ) {
+			securityFound = true;
 			policyDetail = accessPolicyList.getObject();
 			componentId = policyDetail.getParent().getAttribute("id").getValueString();
 			// Get the most restrictive policy
@@ -438,6 +460,26 @@ public class ViewerAccessPolicyBuilder {
 				policiesByViewer.put( componentId, 
 						Byte.valueOf(policyDetail.getAttribute("accessLevel").getValueString()) );				
 			}
+		}
+		
+		if( !securityFound && securityMode == SecurityMode.LESS_RESTRICTED ) {
+			try {
+				PreparedStatement pstm = context.getConnectionData().
+					prepareStatement( "select boui,viewer,id from XVWAccessPolicy p where 1 = 1 AND exists (select * from XVWAccessPolicyDetail d where d.parent$=p.boui ) and viewer=?" );
+				pstm.setString( 1, viewerName );
+				ResultSet rslt = pstm.executeQuery();
+				while( rslt.next() ) {
+					String id = rslt.getString("id");
+					if( !policiesByViewer.containsKey( id ) ) {
+						policiesByViewer.put( id,  SecurityPermissions.NONE );
+					}
+				}
+				pstm.close();
+				rslt.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+			
 		}
 		
 		return policiesByViewer;

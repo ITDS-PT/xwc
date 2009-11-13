@@ -252,6 +252,12 @@ public class Attribute extends AttributeBase
         if( getValueExpression( "viewerSecurityPermissions" ) != null )
             oAttr.setViewerSecurityPermissions( getValueExpression("viewerSecurityPermissions").getExpressionString() );
         
+        if( getValueExpression( "minDecimalPrecision" ) != null )
+            oAttr.setMinDecimalPrecision( getValueExpression("minDecimalPrecision").getExpressionString() );
+
+        if( getValueExpression( "decimalPrecision" ) != null )
+            oAttr.setDecimalPrecision( getValueExpression("decimalPrecision").getExpressionString() );
+        
         oAttr.setInstanceId( getInstanceId() );
         
         if( getValueExpression("onChangeSubmit") != null )

@@ -14,8 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
+import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
+
 public class XUILoginFilter implements Filter {
 
+	private static final Logger log = Logger.getLogger( XUILoginFilter.class );
+
+	
 	private String 		loginPage = "/Login.xvw";
 	private String 		mainPage = "Main.xvw";
 	private boolean 	showUserProfiles = true;
@@ -65,6 +72,14 @@ public class XUILoginFilter implements Filter {
 		if( arg0.getInitParameter("ShowUserProfiles") != null )
 			showUserProfiles = Boolean.parseBoolean( arg0.getInitParameter("ShowUserProfiles") );
 		
+		if( arg0.getInitParameter("ViewerSecurityMode") != null ) {
+			String s = arg0.getInitParameter("ViewerSecurityMode");
+			ViewerAccessPolicyBuilder.SecurityMode m = ViewerAccessPolicyBuilder.SecurityMode.valueOf( s );
+			if( m != null ) {
+				ViewerAccessPolicyBuilder.setSecurityMode( m );
+			}
+		}
+
 	}
 
 }

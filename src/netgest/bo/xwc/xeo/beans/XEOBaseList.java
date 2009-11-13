@@ -53,7 +53,6 @@ public class XEOBaseList extends XEOBaseBean {
         DataRecordConnector oActiveRow;
         XUIRequestContext    oRequestContext;
 
-        
         oRequestContext = XUIRequestContext.getCurrentContext();
 
         oEvent = oRequestContext.getEvent();
@@ -78,7 +77,9 @@ public class XEOBaseList extends XEOBaseBean {
         else {
 	        String sObjectName = boObject.getBoManager().getClassNameFromBOUI( boApplication.currentContext().getEboContext(), boui.longValue());
 	
-	        XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createView( sObjectName + "_edit.xvw");
+	        XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createView( 
+	        		getViewerResolver().getViewer( sObjectName, XEOViewerResolver.ViewerType.EDIT )
+	        );
 	        XEOEditBean oEditBean = (XEOEditBean)oEditViewRoot.getBean("viewBean");
 	        
 	        if( oActiveRow == null ) {
@@ -127,7 +128,9 @@ public class XEOBaseList extends XEOBaseBean {
         		sObjectName = currentObjectList.getBoDef().getName();        		
         	}
 	
-	        XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createChildView( sObjectName + "_edit.xvw");
+	        XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createChildView(
+	        		getViewerResolver().getViewer( sObjectName, XEOViewerResolver.ViewerType.EDIT )
+	        	);
 	        XEOEditBean oEditBean = (XEOEditBean)oEditViewRoot.getBean("viewBean");
 	        oEditBean.createNew( sObjectName );
 	        oRequestContext.setViewRoot( oEditViewRoot );

@@ -1,5 +1,8 @@
 package netgest.bo.xwc.framework.def;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -8,6 +11,10 @@ import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+
+import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.NSResolver;
@@ -20,9 +27,10 @@ import org.w3c.dom.NodeList;
 
 public class XUIViewerDefinitonParser
 {
+	
+	private static final String DEFAULT_VIEWERS_ROOT = "viewers";
     private static NSResolver ns = new GenericResolver();
-    
-    private static  HashMap<String, XUIViewerDefinition> viewCache = new HashMap<String, XUIViewerDefinition>();
+    private static HashMap<String, XUIViewerDefinition> viewCache = new HashMap<String, XUIViewerDefinition>();
 
     public XUIViewerDefinitonParser()
     {
@@ -80,7 +88,9 @@ public class XUIViewerDefinitonParser
         XUIViewerDefinition xwvr;
         xwvr = null;//viewCache.get( viewerName );
         if( xwvr == null ) {
-            InputStream is = getClass().getClassLoader().getResourceAsStream( viewerName );
+            
+        	InputStream is = resolveViewer( viewerName );
+            
             if( is != null )
             {
             	try {
@@ -103,6 +113,85 @@ public class XUIViewerDefinitonParser
             }
         }
         return xwvr;
+    }
+
+    public InputStream resolveViewer( String viewerName ) {
+    	InputStream is = resolveViewerFromWebContext( viewerName );
+    	if( is == null ) {
+    		is = resolveViewerFromClassLoader( viewerName );
+    	}
+    	return is;
+    }
+    
+    private InputStream resolveViewerFromClassLoader( String viewerName ) {
+    	
+    	ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+    	
+    	InputStream is = null;
+    	
+    	if( is == null ) {
+    		is = contextClassLoader.getResourceAsStream( viewerName );
+    	}
+
+    	if( is == null ) {
+			int underScoreIdx = viewerName.lastIndexOf( '_' );
+			if( underScoreIdx != -1 ) {
+				char[] v = viewerName.toCharArray();
+				v[ underScoreIdx ] = '/';
+				is = contextClassLoader.getResourceAsStream( DEFAULT_VIEWERS_ROOT + "/" + String.valueOf( v ) );
+			}
+    	}
+    	
+    	if( is == null ) {
+    		
+    		if( viewerName.startsWith( DEFAULT_VIEWERS_ROOT ) ) {
+    			viewerName = viewerName.substring( DEFAULT_VIEWERS_ROOT.length() );
+    		}
+    		
+	    	int slashIdx = viewerName.lastIndexOf( '/' );
+			if( slashIdx != -1 ) {
+				char[] v = viewerName.toCharArray();
+				v[ slashIdx ] = '_';
+				is = contextClassLoader.getResourceAsStream( String.valueOf( v ) );
+			}
+    	}
+		
+    	if( is == null ) {
+	    	is = contextClassLoader.getResourceAsStream( viewerName );
+		}
+    	return is;
+    }
+    
+    private InputStream resolveViewerFromWebContext( String viewerName ) {
+    	
+    	File viewerFile;
+    	 
+    	viewerFile = null; 
+    	
+    	XUIRequestContext oReqCtx = XUIRequestContext.getCurrentContext();
+    	  
+    	ServletContext servletContext = 
+    		(ServletContext)oReqCtx.getFacesContext().getExternalContext().getContext();
+    	
+    	String sRealPath = servletContext.getRealPath( viewerName );
+    	if( sRealPath != null ) {
+    		viewerFile = new File( sRealPath );
+        	if( !viewerFile.exists() ) {
+            	sRealPath = servletContext.getRealPath( DEFAULT_VIEWERS_ROOT + File.separator + viewerName );
+        		viewerFile = new File( sRealPath );
+            	if( !viewerFile.exists() ) {
+            		viewerFile = null;
+            	}
+        	}
+    	} 
+    	if( viewerFile != null ) {
+    		try {
+				return new FileInputStream( viewerFile );
+			} catch (FileNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+    	}
+    	return null;
     }
     
     public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, XUIViewerDefinitionNode parent )

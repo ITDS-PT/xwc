@@ -35,11 +35,15 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
     private String sParentBeanId;
 	private String sTitle;
 	
+	private XEOViewerResolver viewerResolver = new XEOViewerResolver();
+	
+	public XEOViewerResolver getViewerResolver() {
+		return viewerResolver;
+	}
+	
 	public XEOBaseBean() {
         super( boApplication.currentContext().getEboContext() );
     }
-
-	
 	
     @Override
 	public EboContext getEboContext() {
@@ -113,7 +117,8 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
         XEOBaseLookupList   oBaseBean;
         
         if( sLookupViewer == null || sLookupViewer.length() == 0 ) {
-            sLookupViewer = oAttDef.getReferencedObjectName() + "_lookup.xvw";
+            sLookupViewer =
+            	getViewerResolver().getViewer( oAttDef.getReferencedObjectName(), XEOViewerResolver.ViewerType.LOOKUP );
         }
         
         oViewRoot = oSessionContext.createChildView( sLookupViewer );

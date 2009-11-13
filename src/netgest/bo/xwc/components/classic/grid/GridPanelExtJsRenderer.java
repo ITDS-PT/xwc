@@ -364,7 +364,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	for(UIComponent child : oNavBarComp.getChildren() ) {
                 ExtConfig oChild = oPagingItems.addChild();
                 Menu oMenu = (Menu)child;
-            	ToolBar.XEOHTMLRenderer.configExtMenu( oNavBarComp, oMenu, oChild );
+            	ToolBar.XEOHTMLRenderer.configExtMenu( this, oNavBarComp, oMenu, oChild );
         	}
         }
         
