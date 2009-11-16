@@ -1,8 +1,11 @@
 package netgest.bo.xwc.components.classic;
 
+import java.sql.Timestamp;
+
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 /**
@@ -40,6 +43,20 @@ public class AttributeBoolean extends AttributeBase {
 		public String getExtComponentType(XUIComponentBase oComp) {
 			return "Ext.form.Checkbox";
 		}
+		
+    	@Override
+    	public ScriptBuilder getEndComponentScript(AttributeBase oComp) {
+    		// TODO Auto-generated method stub
+    		ScriptBuilder s = super.getEndComponentScript(oComp, false, false );
+    		
+            Object sJsValue = oComp.getValue();
+    		s.w( "c.setValue('" ).writeValue( sJsValue ).l( "')" );
+    		s.endBlock();
+    		
+    		return s;
+    		
+    	}
+		
 		
 		@Override
 		public ExtConfig getExtJsFieldConfig(AttributeBase oComp) {
@@ -101,7 +118,7 @@ public class AttributeBoolean extends AttributeBase {
             
             String value = getFacesContext().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
             // Por vezes o ExtJs devolve yes.. não percebi porque razão, deve ser bug do extjs
-            if( "on".equalsIgnoreCase( value ) || "yes".equalsIgnoreCase( value ) ) {
+            if( "on".equalsIgnoreCase( value ) ) {
                 if( oAttrComp.getUseBooleanValues() )
                 	oAttrComp.setSubmittedValue( true );
                 else
