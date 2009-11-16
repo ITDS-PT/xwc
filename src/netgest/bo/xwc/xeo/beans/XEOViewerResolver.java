@@ -14,13 +14,16 @@ public class XEOViewerResolver {
 		String ret;
 		switch( type ) {
 			case LIST:
-				ret = "viewers/" + className + "/list.xvw";
+				//ret = "viewers/" + className + "/list.xvw";
+				ret = className + "_list.xvw";
 				break;
 			case EDIT:
-				ret = "viewers/" + className + "/edit.xvw"; 
+				ret = className + "_edit.xvw"; 
+				//ret = "viewers/" + className + "/edit.xvw"; 
 				break;
 			case LOOKUP:
-				ret = "viewers/" + className + "/lookup.xvw"; 
+				ret = className + "_lookup.xvw"; 
+				//ret = "viewers/" + className + "/lookup.xvw"; 
 				break;
 			default:
 				ret = null;
