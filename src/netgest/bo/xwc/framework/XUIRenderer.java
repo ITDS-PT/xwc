@@ -170,15 +170,14 @@ public class XUIRenderer extends Renderer
     public String composeUrlWithWebContext( String resourcePath ) {
         StringBuffer retUrl;
         FacesContext context;
-
+        
         context = getFacesContext();
         retUrl = new StringBuffer();
         retUrl.append( context.getExternalContext().getRequestContextPath() );
         
-        if( resourcePath.charAt( 0 ) != '/' ) {
+        if( resourcePath == null || resourcePath.length() == 0 || resourcePath.charAt( 0 ) != '/' ) {
         	retUrl.append( '/' );
         }
-        
         retUrl.append( resourcePath );
         return retUrl.toString();
         

@@ -168,8 +168,9 @@ public class ToolBar extends ViewerSecurityBase {
             if( toolBar.isDisabled() || oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
                 oItemCfg.add( "disabled", true );
             
-            if( oMenuChild.getIcon() != null ) {
-            	oItemCfg.addJSString( "icon", renderer.composeUrlWithWebContext( oMenuChild.getIcon() ) );
+            String icon = oMenuChild.getIcon(); 
+            if( icon != null && icon.length() > 0 ) {
+            	oItemCfg.addJSString( "icon", renderer.composeUrlWithWebContext( icon ) );
             	if( oMenuChild.getText() == null ) {
                 	oItemCfg.addJSString("cls", "x-btn-icon");
             	}
