@@ -36,6 +36,10 @@
 			<param-name>ShowUserProfiles</param-name>
 			<param-value>true</param-value>
 		</init-param>
+		<init-param>
+			<param-name>ViewerSecurityMode</param-name>
+			<param-value>MORE_RESTRICTED</param-value> <!--  LESS_RESTRICTED / MORE_RESTRICTED  -->
+		</init-param>
 	</filter>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
