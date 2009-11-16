@@ -62,10 +62,12 @@ public class AttributeNumber extends AttributeBase {
 		public ExtConfig getExtJsFieldConfig( AttributeBase oAttr ) {
 			ExtConfig config;
 			
-			config = super.getExtJsFieldConfig( oAttr );
+			config = super.getExtJsFieldConfig( oAttr ); 
 			config.add( "enableKeyEvents" , true );
 			config.add( "decimalPrecision" , oAttr.getDecimalPrecision());
 			config.add( "minDecimalPrecision" , oAttr.getMinDecimalPrecision());
+			boolean g = oAttr.getGroupNumber();
+			config.add( "group" , g );
 			config.add( "value" , oAttr.getValue() );
 			return config;
 		}

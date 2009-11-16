@@ -131,7 +131,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 					NumberFormat nf = NumberFormat.getInstance();
 					boDefAttribute oDefAtt = oAttHandler.getDefAttribute();
 					nf.setMinimumFractionDigits( oDefAtt.getMinDecimals() );
-					nf.setMinimumFractionDigits( oDefAtt.getDecimals() );
+					nf.setMaximumFractionDigits( oDefAtt.getDecimals() );
 					nf.setGroupingUsed( "Y".equals( oDefAtt.getGrouping() ) );
 					sRetValue = nf.format( oValue );
 				}
@@ -336,7 +336,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
     }
 
     public boolean getNumberGrouping() {
-        return Boolean.parseBoolean( oAttHandler.getDefAttribute().getGrouping() );
+        return "Y".equalsIgnoreCase( oAttHandler.getDefAttribute().getGrouping() );
     }
 
     public Map<Object,String> getLovMap() {

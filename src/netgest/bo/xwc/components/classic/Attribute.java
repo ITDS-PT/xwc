@@ -258,6 +258,9 @@ public class Attribute extends AttributeBase
         if( getValueExpression( "decimalPrecision" ) != null )
             oAttr.setDecimalPrecision( getValueExpression("decimalPrecision").getExpressionString() );
         
+        if( getValueExpression( "groupNumber" ) != null )
+            oAttr.setGroupNumber( getValueExpression("groupNumber").getExpressionString() );
+
         oAttr.setInstanceId( getInstanceId() );
         
         if( getValueExpression("onChangeSubmit") != null )

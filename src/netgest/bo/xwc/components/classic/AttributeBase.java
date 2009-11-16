@@ -63,6 +63,9 @@ public class AttributeBase extends ViewerInputSecurityBase {
     private XUIBindProperty<Integer> minDecimalPrecision  = 
     	new XUIBindProperty<Integer>( "minDecimalPrecision", this, Integer.class );
 
+    private XUIBindProperty<Boolean> groupNumber  = 
+    	new XUIBindProperty<Boolean>( "groupNumber", this, Boolean.class );
+
     protected XUIBaseProperty<Object> renderedValue     = 
     	new XUIBaseProperty<Object>( "renderedValue", this, Object.class );
 
@@ -156,6 +159,10 @@ public class AttributeBase extends ViewerInputSecurityBase {
         
         this.minDecimalPrecision.setValue( 
                 createValueExpression( sBeanExpression + ".minDecimals}", Integer.class ) 
+            );
+
+        this.groupNumber.setValue( 
+                createValueExpression( sBeanExpression + ".numberGrouping}", Boolean.class ) 
             );
 
         // Label
@@ -458,6 +465,22 @@ public class AttributeBase extends ViewerInputSecurityBase {
      */
     public void setMinDecimalPrecision(String decimalPrecision) {
         this.minDecimalPrecision.setExpressionText( decimalPrecision );
+    }
+
+    /**
+     * Get if the number should be grouped when is rendered, when is of the numeric type
+     * @return boolean true - if should be grouped . false - do not group
+     */
+    public boolean getGroupNumber() {
+        return this.groupNumber.getEvaluatedValue();
+    }
+
+    /**
+     * Set's if the number should be grouped, when is of the numeric type
+     * @param decimalPrecision boolean or {@linkplain ValueExpression} returning a boolean
+     */
+    public void setGroupNumber(String groupNumber ) {
+        this.groupNumber.setExpressionText( groupNumber );
     }
 
     /**
