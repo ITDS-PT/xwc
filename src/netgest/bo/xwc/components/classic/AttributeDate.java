@@ -140,8 +140,17 @@ public class AttributeDate extends AttributeBase {
             
             if( !oAttrComp.isDisabled() && !oAttrComp.isReadOnly() && oAttrComp.isVisible() ) {
 	            Map<String,String> reqMap = getFacesContext().getExternalContext().getRequestParameterMap();
-	            if( oAttrComp.getSubmittedValue() == null && reqMap.containsKey( oAttrComp.getClientId() ) ) {
-	                String value = reqMap.get( oAttrComp.getClientId() );
+            	
+	            String clientId =  oAttrComp.getClientId();
+            	// No extjs quando o comopent attribute e inicializado 
+	            // em disabled o name da input no form fica com ext-
+	            // Em principio será o um bug do extjs.
+            	if( !reqMap.containsKey( oAttrComp.getClientId() ) ) {
+            		clientId = "ext-" + clientId;
+            	}
+            	
+	            if( oAttrComp.getSubmittedValue() == null && reqMap.containsKey( clientId ) ) {
+	                String value = reqMap.get( clientId );
 	                oAttrComp.setSubmittedValue( value );
 	            } 
             }
