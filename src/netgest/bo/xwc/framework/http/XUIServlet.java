@@ -90,12 +90,10 @@ public class XUIServlet extends HttpServlet
     		
     		oXEOSession.setDefaultLocale( defaultLocale );
     		
-    		if( oXEOSession.getUser().getBoui() != 0 ) {
-    			if( boApplication.currentContext().getEboContext() == null ) {
-			        oEboContext = oXEOSession.createRequestContextInServlet( oRequest, oResponse, getServletContext() );
-			        boApplication.currentContext().addEboContext( oEboContext );
-    			}
-    		}
+			if( boApplication.currentContext().getEboContext() == null ) {
+		        oEboContext = oXEOSession.createRequestContextInServlet( oRequest, oResponse, getServletContext() );
+		        boApplication.currentContext().addEboContext( oEboContext );
+			}
     	}
     	
     	if( defaultLocale != null ) {
