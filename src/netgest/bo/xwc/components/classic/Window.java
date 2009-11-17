@@ -219,7 +219,7 @@ public class Window extends XUIComponentBase {
             oExtConfig.addJSString("contentEl", oRequestContext.getViewRoot().getClientId() );
             oExtConfig.addJSString("title", oWnd.getTitle() );
             oExtConfig.add("allowDomMove",false);
-            oExtConfig.add("modal",true);
+            oExtConfig.add("modal","(Ext.isIE?false:true)");
             
 //            if( oWnd.getAnimateTarget() != null ) {
 //                oExtConfig.addJSString( "animateTarget", oWnd.getAnimateTarget() );
