@@ -42,6 +42,9 @@ public class XVWScripts {
     	else if( "download".equalsIgnoreCase( target ) ) {
     		return getCommandDownloadFrame( oComponent, actionValue);
     	}
+    	else if( "self".equalsIgnoreCase( target ) ) {
+    		return getCommandScript( oComponent, iWaitMode );
+    	}
 		return getAjaxCommandScript( oComponent, iWaitMode );
     }
     
