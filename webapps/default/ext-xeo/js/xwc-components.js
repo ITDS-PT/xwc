@@ -96,26 +96,29 @@ ExtXeo.form.NumberField = Ext.extend(Ext.form.TextField,  {
     
     formatNumber : function(nStr) {
 		nStr += '';
-		var x = nStr.split(',');
-		var x1 = x[0];
-		var x2 = x.length > 1 ? ',' + x[1] : '';
-		
-		var y = (x2.length == 0)?0:x2.length-1;
-		
-		while ( y < this.minDecimalPrecision ) {
-			if( x2.length == 0 ) 
-				x2 = this.decimalSeparator;
-			x2 += '0';
-			y = x2.length-1;
-		}
-
-		if( this.group ) {
-			var rgx = /(\d+)(\d{3})/;
-			while (rgx.test(x1)) {
-				x1 = x1.replace(rgx, '$1' + '.' + '$2');
+		if( nStr.length > 0 ) {
+			var x = nStr.split(',');
+			var x1 = x[0];
+			var x2 = x.length > 1 ? ',' + x[1] : '';
+			
+			var y = (x2.length == 0)?0:x2.length-1;
+			
+			while ( y < this.minDecimalPrecision ) {
+				if( x2.length == 0 ) 
+					x2 = this.decimalSeparator;
+				x2 += '0';
+				y = x2.length-1;
 			}
-    	}
-		return x1 + x2;
+	
+			if( this.group ) {
+				var rgx = /(\d+)(\d{3})/;
+				while (rgx.test(x1)) {
+					x1 = x1.replace(rgx, '$1' + '.' + '$2');
+				}
+	    	}
+			return x1 + x2;
+		}
+		return nStr;
     },
 
     // private
@@ -136,268 +139,392 @@ ExtXeo.form.NumberField = Ext.extend(Ext.form.TextField,  {
 });
 
 
+ExtXeo.MessageBox = function(){
+    var dlg, opt, mask, waitTimer;
+    var bodyEl, msgEl, textboxEl, textareaEl, progressBar, pp, iconEl, spacerEl;
+    var buttons, activeTextEl, bwidth, iconCls = '';
 
-ExtXeo.form.DateTimeField2 = Ext.extend( Ext.form.Field,{
-    initComponent : function(){
-    	Ext.form.TextField.superclass.initComponent.call(this);
-		this.dateField = new Ext.form.DateField( );
-		this.timeField = new Ext.form.TimeField( );
-	},
-    onRender : function(ct, position){
-		Ext.form.TextField.superclass.onRender.call(ct, position);
-	},
-	onResize : function(w, h){
-		this.dateField.onResize( this, w/2-10, h );
-		this.timeField.onResize( this, w/2-10, h );
-	},
-    getResizeEl : function(){
-        return this.wrap;
-    },
-
-    getPositionEl : function(){
-        return this.wrap;
-    },
-    onDestroy : function(){
-        this.dateField.onDestroy();
-        this.timeField.onDestroy();
-        if(this.dateField){
-            this.dateField.removeAllListeners();
-            this.dateField.remove();
+    // private
+    var handleButton = function(button){
+        if(dlg.isVisible()){
+            dlg.hide();
+            Ext.callback(opt.fn, opt.scope||window, [button, activeTextEl.dom.value, opt], 1);
         }
-        if(this.timeField){
-            this.timeField.removeAllListeners();
-            this.timeField.remove();
+    };
+
+    // private
+    var handleHide = function(){
+        if(opt && opt.cls){
+            dlg.el.removeClass(opt.cls);
         }
-        if(this.wrap){
-            this.wrap.remove();
+        progressBar.reset();
+    };
+
+    // private
+    var handleEsc = function(d, k, e){
+        if(opt && opt.closable !== false){
+            dlg.hide();
         }
-    }
-}); 
-
-
-
-ExtXeo.form.__DateTimeField2 = Ext.extend(Ext.form.DateField,  {
-	defaultAutoCreate : {tag: "input", type: "text", size: "16", autocomplete: "off"},
-    hideTrigger:false,
-    
-    autoSize: Ext.emptyFn,
-        monitorTab : true,
-        deferHeight : true,
-        mimicing : false,
-
-    onResize : function(w, h){
-		ExtXeo.form.DateTimeField2.superclass.onResize.call(this, w/2-10, h);
-		/*
-        if(typeof w == 'number'){
-            //this.el.setWidth(this.adjustWidth('input', w - this.trigger.getWidth()));
-        	this.el.setWidth(this.adjustWidth('input', w/2-10 ));
-        	this.trigger.setWidth(this.adjustWidth('input', w/2-10 ));
+        if(e){
+            e.stopEvent();
         }
-        */
-        this.trigger.setWidth(w/2-10);
-    },
+    };
 
-    adjustSize : Ext.BoxComponent.prototype.adjustSize,
-
-    getResizeEl : function(){
-        return this.wrap;
-    },
-
-    getPositionEl : function(){
-        return this.wrap;
-    },
-
-    alignErrorIcon : function(){
-        if(this.wrap){
-            this.errorIcon.alignTo(this.wrap, 'tl-tr', [2, 0]);
+    // private
+    var updateButtons = function(b){
+        var width = 0;
+        if(!b){
+//            buttons["ok"].hide();
+//            buttons["cancel"].hide();
+//            buttons["yes"].hide();
+//            buttons["no"].hide();
+            return width;
         }
-    },
-
-    onRender : function(ct, position){
-    	ExtXeo.form.DateTimeField2.superclass.onRender.call(this, ct, position);
-        this.wrap = this.el.wrap({cls: "x-form-field-wrap"});
-        this.trigger = new Ext.form.TimeField();
-        this.trigger.onRender( ct, position );
-        /*
-        this.wrap = this.el.wrap({cls: "x-form-field-wrap"});
-        this.trigger = this.wrap.createChild(this.triggerConfig ||
-                {tag: "img", src: Ext.BLANK_IMAGE_URL, cls: "x-form-trigger " + this.triggerClass});
-        if(this.hideTrigger){
-            this.trigger.setDisplayed(false);
-        }
-        this.initTrigger();
-        if(!this.width){
-            this.wrap.setWidth(this.el.getWidth()+this.trigger.getWidth());
-        }
-        */
-    },
-
-    afterRender : function(){
-    	ExtXeo.form.DateTimeField2.superclass.afterRender.call(this);
-        var y;
-        if(Ext.isIE && this.el.getY() != (y = this.trigger.getY())){
-            this.el.position();
-            this.el.setY(y);
-        }
-    },
-
-    initTrigger : function(){
-        this.trigger.on("click", this.onTriggerClick, this, {preventDefault:true});
-        this.trigger.addClassOnOver('x-form-trigger-over');
-        this.trigger.addClassOnClick('x-form-trigger-click');
-    },
-
-    onDestroy : function(){
-        if(this.trigger){
-            this.trigger.removeAllListeners();
-            this.trigger.remove();
-        }
-        if(this.wrap){
-            this.wrap.remove();
-        }
-        ExtXeo.form.DateTimeField2.superclass.onDestroy.call(this);
-    },
-
-    onFocus : function(){
-    	ExtXeo.form.DateTimeField2.superclass.onFocus.call(this);
-        if(!this.mimicing){
-            this.wrap.addClass('x-trigger-wrap-focus');
-            this.mimicing = true;
-            Ext.get(Ext.isIE ? document.body : document).on("mousedown", this.mimicBlur, this, {delay: 10});
-            if(this.monitorTab){
-                this.el.on("keydown", this.checkTab, this);
+        dlg.footer.dom.style.display = '';
+        for(var k in buttons){
+            if(typeof buttons[k] != "function"){
+                if(b[k]){
+                    buttons[k].show();
+                    //buttons[k].setText(typeof b[k] == "string" ? b[k] : this.buttonText[k]);
+                    width += buttons[k].el.getWidth()+15;
+                }else{
+                    buttons[k].hide();
+                }
             }
         }
-    },
-    checkTab : function(e){
-        if(e.getKey() == e.TAB){
-            this.triggerBlur();
+        return width;
+    };
+
+    return {
+        
+        getDialog : function(titleText, btns, defaultBtn ){
+           if(!dlg){
+                dlg = new Ext.Window({
+                    autoCreate : true,
+                    title:titleText,
+                    resizable:false,
+                    constrain:true,
+                    constrainHeader:true,
+                    minimizable : false,
+                    maximizable : false,
+                    stateful: false,
+                    modal: true,
+                    shim:true,
+                    buttonAlign:"center",
+                    width:400,
+                    height:100,
+                    minHeight: 80,
+                    plain:true,
+                    footer:true,
+                    closable:true,
+                    close : function(){
+                        if(opt && opt.buttons && opt.buttons.no && !opt.buttons.cancel){
+                            handleButton("no");
+                        }else{
+                            handleButton("cancel");
+                        }
+                    }
+                });
+                buttons = {};
+                var bt = this.buttonText;
+                //TODO: refactor this block into a buttons config to pass into the Window constructor
+                for(var b in btns ) {
+                	buttons[b] = dlg.addButton(bt[b], handleButton.createCallback(b));
+                	buttons[b].hideMode = 'offsets';
+                }
+                /*
+                buttons["ok"] = dlg.addButton(bt["ok"], handleButton.createCallback("ok"));
+                buttons["yes"] = dlg.addButton(bt["yes"], handleButton.createCallback("yes"));
+                buttons["no"] = dlg.addButton(bt["no"], handleButton.createCallback("no"));
+                buttons["cancel"] = dlg.addButton(bt["cancel"], handleButton.createCallback("cancel"));
+                buttons["ok"].hideMode = buttons["yes"].hideMode = buttons["no"].hideMode = buttons["cancel"].hideMode = 'offsets';
+                */
+                
+                dlg.render(document.body);
+                dlg.getEl().addClass('x-window-dlg');
+                mask = dlg.mask;
+                bodyEl = dlg.body.createChild({
+                    html:'<div class="ext-mb-icon"></div><div class="ext-mb-content"><span class="ext-mb-text"></span><br /><div class="ext-mb-fix-cursor"><input type="text" class="ext-mb-input" /><textarea class="ext-mb-textarea"></textarea></div></div>'
+                });
+                iconEl = Ext.get(bodyEl.dom.firstChild);
+                var contentEl = bodyEl.dom.childNodes[1];
+                msgEl = Ext.get(contentEl.firstChild);
+                textboxEl = Ext.get(contentEl.childNodes[2].firstChild);
+                textboxEl.enableDisplayMode();
+//                textboxEl.addKeyListener([10,13], function(){
+//                    if(dlg.isVisible() && opt && opt.buttons){
+//                        if(opt.buttons[defaultBtn]){
+//                            handleButton(defaultBtn);
+//                        }
+//                    }
+//                });
+                textareaEl = Ext.get(contentEl.childNodes[2].childNodes[1]);
+                textareaEl.enableDisplayMode();
+                progressBar = new Ext.ProgressBar({
+                    renderTo:bodyEl
+                });
+               bodyEl.createChild({cls:'x-clear'});
+            }
+            return dlg;
+        },
+
+        
+        updateText : function(text){
+            if(!dlg.isVisible() && !opt.width){
+                dlg.setSize(this.maxWidth, 100); // resize first so content is never clipped from previous shows
+            }
+            msgEl.update(text || '&#160;');
+
+            var iw = iconCls != '' ? (iconEl.getWidth() + iconEl.getMargins('lr')) : 0;
+            var mw = msgEl.getWidth() + msgEl.getMargins('lr');
+            var fw = dlg.getFrameWidth('lr');
+            var bw = dlg.body.getFrameWidth('lr');
+            if (Ext.isIE && iw > 0){
+                //3 pixels get subtracted in the icon CSS for an IE margin issue,
+                //so we have to add it back here for the overall width to be consistent
+                iw += 3;
+            }
+            var w = Math.max(Math.min(opt.width || iw+mw+fw+bw, this.maxWidth),
+                        Math.max(opt.minWidth || this.minWidth, bwidth || 0));
+
+            if(opt.prompt === true){
+                activeTextEl.setWidth(w-iw-fw-bw);
+            }
+            if(opt.progress === true || opt.wait === true){
+                progressBar.setSize(w-iw-fw-bw);
+            }
+            if(Ext.isIE && w == bwidth){
+                w += 4; //Add offset when the content width is smaller than the buttons.    
+            }
+            dlg.setSize(w, 'auto').center();
+            return this;
+        },
+
+        
+        updateProgress : function(value, progressText, msg){
+            progressBar.updateProgress(value, progressText);
+            if(msg){
+                this.updateText(msg);
+            }
+            return this;
+        },
+
+        
+        isVisible : function(){
+            return dlg && dlg.isVisible();
+        },
+
+        
+        hide : function(){
+            var proxy = dlg.activeGhost;
+            if(this.isVisible() || proxy) {
+                dlg.hide();
+                handleHide();
+                if (proxy) {
+                    proxy.hide();
+                } 
+            }
+            return this;
+        },
+
+        
+        show : function(options){
+            if(this.isVisible()){
+                this.hide();
+            }
+            opt = options;
+            this.buttonText = opt.buttonText;
+            
+            var d = this.getDialog(opt.title || "&#160;", opt.buttons );
+            
+
+            d.setTitle(opt.title || "&#160;");
+            var allowClose = (opt.closable !== false && opt.progress !== true && opt.wait !== true);
+            d.tools.close.setDisplayed(allowClose);
+            activeTextEl = textboxEl;
+            opt.prompt = opt.prompt || (opt.multiline ? true : false);
+            if(opt.prompt){
+                if(opt.multiline){
+                    textboxEl.hide();
+                    textareaEl.show();
+                    textareaEl.setHeight(typeof opt.multiline == "number" ?
+                        opt.multiline : this.defaultTextHeight);
+                    activeTextEl = textareaEl;
+                }else{
+                    textboxEl.show();
+                    textareaEl.hide();
+                }
+            }else{
+                textboxEl.hide();
+                textareaEl.hide();
+            }
+            activeTextEl.dom.value = opt.value || "";
+            
+            if(opt.prompt){
+                d.focusEl = activeTextEl;
+            }else{
+                var bs = opt.buttons;
+                if( opt.defaultButton ) {
+                    var db = null;
+                    db = buttons[ opt.defaultButton ];
+                    if (db){
+                        d.focusEl = db;
+                    }
+                }
+            }
+            if(opt.iconCls){
+              d.setIconClass(opt.iconCls);
+            }
+            this.setIcon(opt.icon);
+            bwidth = updateButtons(opt.buttons);
+            progressBar.setVisible(opt.progress === true || opt.wait === true);
+            this.updateProgress(0, opt.progressText);
+            this.updateText(opt.msg);
+            if(opt.cls){
+                d.el.addClass(opt.cls);
+            }
+            d.proxyDrag = opt.proxyDrag === true;
+            d.modal = opt.modal !== false;
+            d.mask = opt.modal !== false ? mask : false;
+            if(!d.isVisible()){
+                // force it to the end of the z-index stack so it gets a cursor in FF
+                document.body.appendChild(dlg.el.dom);
+                d.setAnimateTarget(opt.animEl);
+                d.show(opt.animEl);
+            }
+
+            //workaround for window internally enabling keymap in afterShow
+            d.on('show', function(){
+                if(allowClose === true){
+                    d.keyMap.enable();
+                }else{
+                    d.keyMap.disable();
+                }
+            }, this, {single:true});
+
+            if(opt.wait === true){
+                progressBar.wait(opt.waitConfig);
+            }
+            return this;
+        },
+
+        
+        setIcon : function(icon){
+            if(icon && icon != ''){
+                iconEl.removeClass('x-hidden');
+                iconEl.replaceClass(iconCls, icon);
+                iconCls = icon;
+            }else{
+                iconEl.replaceClass(iconCls, 'x-hidden');
+                iconCls = '';
+            }
+            return this;
+        },
+
+        
+        progress : function(title, msg, progressText){
+            this.show({
+                title : title,
+                msg : msg,
+                buttons: false,
+                progress:true,
+                closable:false,
+                minWidth: this.minProgressWidth,
+                progressText: progressText
+            });
+            return this;
+        },
+
+        
+        wait : function(msg, title, config){
+            this.show({
+                title : title,
+                msg : msg,
+                buttons: false,
+                closable:false,
+                wait:true,
+                modal:true,
+                minWidth: this.minProgressWidth,
+                waitConfig: config
+            });
+            return this;
+        },
+
+        
+        alert : function(title, msg, fn, scope){
+            this.show({
+                title : title,
+                msg : msg,
+                buttons: this.OK,
+                fn: fn,
+                scope : scope
+            });
+            return this;
+        },
+
+        
+        confirm : function(title, msg, fn, scope){
+            this.show({
+                title : title,
+                msg : msg,
+                buttons: this.YESNO,
+                fn: fn,
+                scope : scope,
+                icon: this.QUESTION
+            });
+            return this;
+        },
+
+        
+        prompt : function(title, msg, fn, scope, multiline, value){
+            this.show({
+                title : title,
+                msg : msg,
+                buttons: this.OKCANCEL,
+                fn: fn,
+                minWidth:250,
+                scope : scope,
+                prompt:true,
+                multiline: multiline,
+                value: value
+            });
+            return this;
+        },
+
+        
+        OK : {ok:true},
+        
+        CANCEL : {cancel:true},
+        
+        OKCANCEL : {ok:true, cancel:true},
+        
+        YESNO : {yes:true, no:true},
+        
+        YESNOCANCEL : {yes:true, no:true, cancel:true},
+        
+        INFO : 'ext-mb-info',
+        
+        WARNING : 'ext-mb-warning',
+        
+        QUESTION : 'ext-mb-question',
+        
+        ERROR : 'ext-mb-error',
+
+        
+        defaultTextHeight : 75,
+        
+        maxWidth : 600,
+        
+        minWidth : 100,
+        
+        minProgressWidth : 250,
+        
+        buttonText : {
+            ok : "OK",
+            cancel : "Cancel",
+            yes : "Yes",
+            no : "No"
         }
-    },
-    onBlur : function(){
-            },
-        mimicBlur : function(e){
-        if(!this.wrap.contains(e.target) && this.validateBlur(e)){
-            this.triggerBlur();
-        }
-    },
+    };
+}();
 
-    triggerBlur : function(){
-        this.mimicing = false;
-        Ext.get(Ext.isIE ? document.body : document).un("mousedown", this.mimicBlur, this);
-        if(this.monitorTab){
-            this.el.un("keydown", this.checkTab, this);
-        }
-        this.beforeBlur();
-        this.wrap.removeClass('x-trigger-wrap-focus');
-        ExtXeo.form.DateTimeField2.superclass.onBlur.call(this);
-    },
-
-    beforeBlur : Ext.emptyFn, 
-
-            validateBlur : function(e){
-        return true;
-    },
-
-    onDisable : function(){
-    	ExtXeo.form.DateTimeField2.superclass.onDisable.call(this);
-        if(this.wrap){
-            this.wrap.addClass(this.disabledClass);
-            this.el.removeClass(this.disabledClass);
-        }
-    },
-
-    onEnable : function(){
-    	ExtXeo.form.DateTimeField2.superclass.onEnable.call(this);
-        if(this.wrap){
-            this.wrap.removeClass(this.disabledClass);
-        }
-    },
-
-    onShow : function(){
-        if(this.wrap){
-            this.wrap.dom.style.display = '';
-            this.wrap.dom.style.visibility = 'visible';
-        }
-    },
-
-    onHide : function(){
-        this.wrap.dom.style.display = 'none';
-    },
-    onTriggerClick : Ext.emptyFn
-    
-});
-
-
-ExtXeo.form.DateTimeField = Ext.extend( Ext.BoxComponent, {
-	timeComp: null,
-	dateComp: null,
-	initComponent: function() {
-		ExtXeo.form.DateTimeField.superclass.initComponent.call( this );
-	},
-	onDestroy: function() {
-		this.dateComp.destroy();
-		this.timeComp.destroy();
-		ExtXeo.form.DateTimeField.superclass.onDestroy.call( this );
-	},	
-	onRender: function( ct, position ) {
-		
-		var rEl = Ext.get( this.initialConfig.renderTo );
-		var htmId = this.getId();
-		this.el = rEl;
-		
-		
-		//ExtXeo.form.DateTimeField.superclass.onRender.call(this, ct, position);
-
-		this.oDivDate = Ext.DomHelper.append( rEl, {tag:'span', id: htmId+"_d" } );
-		this.oDivDate.style.display='inline';
-		this.oDivDate.className='x-form-field-wrap';
-		
-		this.oDivTime = Ext.DomHelper.append( rEl, {tag:'span', id: htmId+"_t" } );
-		this.oDivTime.style.display='inline';
-		this.oDivTime.className='x-form-field-wrap';
-
-		//Ext.DomHelper.append( rEl, {tag:'span', id: this.getId() + "_t" } );
-		
-		var id = this.getId();
-		
-		var dateConfig = [];
-		dateConfig.renderTo = htmId+"_d";
-		dateConfig.width = '120px';
-		dateConfig.name  = this.getName() + "_d";
-		dateConfig.listeners = this.initialConfig.listeners;
-		dateConfig.format = 'd/m/Y'
-		dateConfig.value = this.initialConfig.dateValue;
-		this.timeComp 		= new Ext.form.DateField( dateConfig );
-		this.timeComp.wrap.dom.style.display='inline';
-		
-		var timeConfig = [];
-		timeConfig.renderTo = htmId+"_t";
-		timeConfig.format = 'H:i'
-		timeConfig.width = '120px';
-		timeConfig.name  = this.getName() + "_t";
-		timeConfig.listeners = this.initialConfig.listeners;
-		timeConfig.value = this.initialConfig.timeValue;
-		this.dateComp 		= new Ext.form.TimeField( timeConfig );
-		
-		this.dateComp.wrap.dom.style.display='inline';
-		this.initialConfig.name = id; 
-		this.initialConfig.id = id; 
-		
-		/*
-		this.timeCompEl = Ext.DomHelper.insertAfter( this.el, {tag:'div', id: this.getId()+"_t" } );
-		this.initialConfig.renderEl = this.getId()+"_t";
-		this.timeComp = new Ext.form.TimeField( this );
-		*/
-	},
-	getResizeEl: function() { return this },
-	getName: function() { return this.initialConfig.name },
-	setHeight: function( h ) {
-		ExtXeo.form.DateTimeField.superclass.setHeight.call(this,h); 
-	},
-	setWidth: function( w ) {
-		this.dateComp.setWidth( (w / 2) );
-		this.timeComp.setWidth( (w / 2) );
-	}
-}
-);
