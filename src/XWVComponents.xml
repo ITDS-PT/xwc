@@ -115,7 +115,7 @@
 			<xwc:render for='HTMLFileBrowse'>netgest.bo.xwc.components.classic.HTMLFileBrowse$XEOHTMLRenderer</xwc:render>
 			<xwc:render for='title'>netgest.bo.xwc.components.classic.Title$XEOHTMLRenderer</xwc:render>
 			
-			<xwc:render for='borderLayout'>netgest.bo.xwc.components.classic.BorderLayout$XEOHTMLRenderer</xwc:render>
+<!-- 			<xwc:render for='borderLayout'>netgest.bo.xwc.components.classic.BorderLayout$XEOHTMLRenderer</xwc:render>  -->
 
             <xwc:render for='treePanel'>netgest.bo.xwc.components.classic.TreePanel$XEOHTMLRenderer</xwc:render>
 
