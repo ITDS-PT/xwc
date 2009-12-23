@@ -40,8 +40,13 @@ public class ListToolBar extends ToolBar {
 	public boolean getRenderCreateNewBtn() {
 		return renderCreateNewBtn.getEvaluatedValue();
 	}
-
+	
+	@Deprecated
 	public void setRenderCreateNew(String expression ) {
+		this.renderCreateNewBtn.setExpressionText( expression );
+	}
+	
+	public void setRenderCreateNewBtn(String expression ) {
 		this.renderCreateNewBtn.setExpressionText( expression );
 	}
 
