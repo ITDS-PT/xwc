@@ -177,10 +177,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 	}
 	
 	/**
-	 * If the component is allready rendered on the client, set this component
+	 * If the component is already rendered on the client, set this component
 	 * to only refresh the grid data
 	 * 
-	 * @return
+	 * @return true - if the grid only refresh data between server requests
 	 */
 	public boolean getOnlyRefreshData() {
 		return !super.wasStateChanged();
@@ -590,7 +590,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	/**
 	 * Get the default height of the GridPanel when the Layout is set to a EmptyString
-	 * @return 
+	 * @return the height
 	 */
 	public String getHeight() {
 		return height.getValue();
@@ -607,7 +607,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	/**
 	 * Return the autoHeight property of this Grid
-	 * @return {@link boolean}  
+	 * @return boolean autoHeight  
 	 */
 	public boolean getAutoHeight() {
 		return autoHeight.getValue();
@@ -744,7 +744,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 	/**
 	 * Set the current rowClickTarget target
-	 * @param rowClickTarget String with one of this values (tab - New Tab,self - Ajax Submit to the same page,window - Popup Window)
+	 * @param rowDblClickTarget String with one of this values (tab - New Tab,self - Ajax Submit to the same page,window - Popup Window)
 	 */
 	public void setRowClickTarget(String rowDblClickTarget) {
 		this.rowClickTarget.setValue(rowDblClickTarget);
@@ -954,7 +954,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	/**
 	 * Return a {@link DataRecordConnector} which match to the uniqueIdentifier
 	 * @param rowIdentifier String with the row unique identifier
-	 * @return
+	 * @return the DataRecord associated with the rowIdentifier
 	 */
 	public DataRecordConnector getRowByIdentifier(String rowIdentifier) {
 		return getDataSource().findByUniqueIdentifier(rowIdentifier);
@@ -1008,7 +1008,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	/**
 	 * Reads the property autoReloadData of the GridPanel
-	 * @return
+	 * @return true if the grid was triggred to reload data
 	 */
 	public boolean getAutoReloadData() {
 		return this.autoReloadData.getEvaluatedValue();
@@ -1050,8 +1050,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * Set the onSelectionChange action
 	 * @param onSelectionChange {@link MethodBinding} expression 
 	 */
-	public void setOnSelectionChange(String onRowDoubleClick) {
-		this.onSelectionChange.setExpressionText( onRowDoubleClick );
+	public void setOnSelectionChange(String onSelectionChange) {
+		this.onSelectionChange.setExpressionText( onSelectionChange );
 	}
 	
 	/**

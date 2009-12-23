@@ -68,7 +68,7 @@ public class XEOEditBean extends XEOBaseBean {
     private boolean 				bValid = true;
     
     /**
-     * @return
+     * @return	The current XEO Object associated to this bean
      */
     public boObject getXEOObject() {
         try {
@@ -89,7 +89,7 @@ public class XEOEditBean extends XEOBaseBean {
     }
 
     /**
-     * @return
+     * @return the current DataRecordConnector associated with the XEO Object
      */
     public DataRecordConnector getCurrentData() {
         if( oCurrentData == null ) {
@@ -941,7 +941,7 @@ public class XEOEditBean extends XEOBaseBean {
     }
 
     /**
-     * @return
+     * @return the BOUI as String of the current Object
      */
     public Object getCurrentObjectKey() {
         return oCurrentObjectKey;

@@ -57,7 +57,7 @@ public class Panel extends ViewerSecurityBase {
 	
 	/**
 	 * Set the layout type to this panel
-	 * @return
+	 * @return the current layout model
 	 */
 	public String getLayout() {
 		return layout.getValue();
