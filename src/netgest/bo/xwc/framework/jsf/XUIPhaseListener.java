@@ -14,7 +14,11 @@ import netgest.bo.xwc.framework.XUISessionContext;
 public class XUIPhaseListener implements PhaseListener {
 
 
-    XUIApplicationContext  oXuiApplication;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	XUIApplicationContext  oXuiApplication;
     
     public XUIPhaseListener() {
     }
@@ -32,7 +36,7 @@ public class XUIPhaseListener implements PhaseListener {
 
         XUISessionContext oSessionContext;
 
-        Map oExternalSessionMap = event.getFacesContext().getExternalContext().getSessionMap();        
+        Map<String,Object> oExternalSessionMap = event.getFacesContext().getExternalContext().getSessionMap();        
         oSessionContext = (XUISessionContext)oExternalSessionMap.get(XUISessionContext.SESSION_ATTRIBUTE_ID );
 
         if( oSessionContext == null ) {
@@ -41,7 +45,7 @@ public class XUIPhaseListener implements PhaseListener {
         }
         
         if( XUIRequestContext.getCurrentContext() == null ) {
-        	XUIRequestContext oRequestContext = PackageIAcessor.createRequestContext( oXuiApplication );
+        	PackageIAcessor.createRequestContext( oXuiApplication );
         }
         
     }

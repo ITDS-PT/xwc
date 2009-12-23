@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import netgest.bo.def.boDefAttribute;
@@ -22,6 +20,7 @@ import netgest.bo.runtime.boThread;
 import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
+import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.classic.AttributeBase;
@@ -141,7 +140,15 @@ public class XEOEditBean extends XEOBaseBean {
     		closeView();
     	}
     }
-
+    
+    /**
+     * 
+     * @throws boRuntimeException
+     */
+    public void saveAsTemplate() {
+    	
+    }
+    
     public void processUpdate() throws boRuntimeException {
     	
     	update();

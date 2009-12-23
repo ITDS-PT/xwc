@@ -1,28 +1,25 @@
 package netgest.bo.xwc.framework.jsf;
 
-import com.sun.faces.RIConstants;
-import com.sun.faces.config.WebConfiguration;
-import com.sun.faces.renderkit.RenderKitImpl;
-
-import com.sun.faces.renderkit.RenderKitUtils;
-import com.sun.faces.renderkit.html_basic.HtmlResponseWriter;
-import com.sun.faces.util.MessageUtils;
-
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseStream;
 import javax.faces.context.ResponseWriter;
 import javax.faces.render.Renderer;
 import javax.faces.render.ResponseStateManager;
-import com.sun.faces.config.WebConfiguration.BooleanWebContextInitParameter;
-import com.sun.faces.util.Util;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import netgest.bo.xwc.framework.XUIResponseWriter;
+
+import com.sun.faces.RIConstants;
+import com.sun.faces.config.WebConfiguration;
+import com.sun.faces.config.WebConfiguration.BooleanWebContextInitParameter;
+import com.sun.faces.renderkit.RenderKitImpl;
+import com.sun.faces.renderkit.RenderKitUtils;
+import com.sun.faces.util.MessageUtils;
+import com.sun.faces.util.Util;
 
 public class XUIRenderKit extends RenderKitImpl
 {

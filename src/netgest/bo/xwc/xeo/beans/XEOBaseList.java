@@ -14,7 +14,6 @@ import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.localization.BeansMessages;
@@ -22,7 +21,6 @@ import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 public class XEOBaseList extends XEOBaseBean {

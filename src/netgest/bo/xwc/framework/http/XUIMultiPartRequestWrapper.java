@@ -90,8 +90,8 @@ public class XUIMultiPartRequestWrapper extends HttpServletRequestWrapper{
 		return oMultiPartRequest.getFile( sName );
 	}
 
-	public Enumeration getFileNames() {
-		return oMultiPartRequest.getFileNames();
+	public Enumeration<String> getFileNames() {
+		return (Enumeration<String>)oMultiPartRequest.getFileNames();
 	}
 	
 }

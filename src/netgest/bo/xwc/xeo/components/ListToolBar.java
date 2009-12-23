@@ -7,7 +7,6 @@ import javax.faces.component.UIComponent;
 
 import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.boRuntimeException;
-import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
@@ -159,25 +158,5 @@ public class ListToolBar extends ToolBar {
 			throw new RuntimeException( e );
 		}
 	}
-	
-	private Menu createViewerBeanMethod( String id, String label, String toolTip, String icon, String value, String action, String target ) {
-		ViewerMethod toolBarOpt;
-		toolBarOpt = new ViewerMethod();
-		toolBarOpt.setId( getId() + "_" + id );
-		
-		if( target != null ) {
-			toolBarOpt.setTarget( target );
-		}
-		toolBarOpt.setValue( value );
-		toolBarOpt.setText( label );
-		toolBarOpt.setTargetMethod( action );
-		toolBarOpt.setIcon( icon );
-		toolBarOpt.setValue( findParentComponent(GridPanel.class).getClientId() );
-		getChildren().add( toolBarOpt );
-		
-		return toolBarOpt;
-	}
-	
-	
 	
 }

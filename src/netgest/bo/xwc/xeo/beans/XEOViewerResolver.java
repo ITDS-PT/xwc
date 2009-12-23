@@ -1,6 +1,5 @@
 package netgest.bo.xwc.xeo.beans;
 
-import java.io.File;
 
 public class XEOViewerResolver {
 	

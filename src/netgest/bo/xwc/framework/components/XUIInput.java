@@ -5,8 +5,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.el.ELException;
 import javax.el.ValueExpression;
@@ -26,6 +24,8 @@ import javax.faces.render.Renderer;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
+import netgest.bo.system.Logger;
+import netgest.bo.system.LoggerLevels;
 import netgest.bo.xwc.framework.XUIEditableValueHolder;
 import netgest.bo.xwc.framework.XUIRequestContext;
 
@@ -768,7 +768,9 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
                                                messageStr,
                                                messageStr);
                 }
-                LOGGER.log(Level.SEVERE, message.getSummary(), result);
+                
+                LOGGER.log(LoggerLevels.SEVERE, message.getSummary(), result);
+                
                 context.addMessage(getClientId(), message);
                 setValid(false);
             } catch (IllegalArgumentException e) {
@@ -776,7 +778,7 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
                      MessageFactory.getMessage(context, UPDATE_MESSAGE_ID,
                           MessageFactory.getLabel(
                                context, this));
-                LOGGER.log(Level.SEVERE, message.getSummary(), e);
+                LOGGER.log(LoggerLevels.SEVERE, message.getSummary(), e);
                 context.addMessage(getClientId(), message);
                 setValid(false);
             } catch (Exception e) {
@@ -789,7 +791,7 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
                      MessageFactory.getMessage(context, UPDATE_MESSAGE_ID,
                           MessageFactory.getLabel(
                                context, this));
-                LOGGER.log(Level.SEVERE, message.getSummary(), e);
+                LOGGER.log(LoggerLevels.SEVERE, message.getSummary(), e);
                 context.addMessage(getClientId(), message);
                 setValid(false);
             }

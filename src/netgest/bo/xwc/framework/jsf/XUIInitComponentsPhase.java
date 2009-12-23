@@ -1,22 +1,21 @@
 package netgest.bo.xwc.framework.jsf;
 
-import com.sun.faces.lifecycle.Phase;
-import com.sun.faces.util.FacesLogger;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
+import netgest.bo.system.Logger;
+import netgest.bo.system.LoggerLevels;
+import netgest.bo.system.LoggerLevels.LoggerLevel;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+
+import com.sun.faces.lifecycle.Phase;
 
 public class XUIInitComponentsPhase extends Phase {
 
     // Log instance for this class
-    private static Logger LOGGER = FacesLogger.LIFECYCLE.getLogger();
+    private static Logger LOGGER = Logger.getLogger( XUIInitComponentsPhase.class );
 
 
     // ---------------------------------------------------------- Public Methods
@@ -24,8 +23,8 @@ public class XUIInitComponentsPhase extends Phase {
 
     public void execute(FacesContext facesContext) throws FacesException {
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("Entering ProcessInitComponentsPhase");
+        if ( LOGGER.isFinerEnabled() ) {
+            LOGGER.finer("Entering ProcessInitComponentsPhase");
         }
         UIComponent component = facesContext.getViewRoot();
         assert (null != component);
@@ -38,14 +37,14 @@ public class XUIInitComponentsPhase extends Phase {
         } catch (RuntimeException re) {
             String exceptionMessage = re.getMessage();
             if (null != exceptionMessage) {
-                if (LOGGER.isLoggable(Level.WARNING)) {
-                    LOGGER.log(Level.WARNING, exceptionMessage, re);
+                if ( LOGGER.isLoggable( LoggerLevels.WARNING ) ) {
+                    LOGGER.warn( exceptionMessage, re);
                 }
             }
             throw new FacesException(exceptionMessage, re);
         }
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("Exiting ProcessInitComponentsPhase");
+        if (LOGGER.isFinerEnabled()) {
+            LOGGER.finer("Exiting ProcessInitComponentsPhase");
         }
 
     }

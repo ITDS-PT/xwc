@@ -10,8 +10,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefXeoCode;
@@ -24,6 +22,9 @@ import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
+import netgest.bo.system.Logger;
+import netgest.bo.system.LoggerLevels;
+import netgest.bo.system.LoggerLevels.LoggerLevel;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
@@ -270,7 +271,8 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
             	try {
             		oAttHandler.setValueString( (String)value );
             	} catch ( Exception e ) {
-            		log.log( Level.WARNING , "Error binding value to attribute:[" + oAttHandler.getName() + "] value [" + value + "] " );
+            		log.log( LoggerLevels.WARNING , 
+            				"Error binding value to attribute:[" + oAttHandler.getName() + "] value [" + value + "] " );
             		e.printStackTrace();
             	}
             }

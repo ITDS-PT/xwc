@@ -52,8 +52,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -66,6 +64,8 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.render.ResponseStateManager;
 
+import netgest.bo.system.Logger;
+import netgest.bo.system.LoggerLevels;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 import com.sun.faces.RIConstants;
@@ -76,17 +76,15 @@ import com.sun.faces.renderkit.RenderKitUtils;
 import com.sun.faces.spi.SerializationProvider;
 import com.sun.faces.spi.SerializationProviderFactory;
 import com.sun.faces.util.DebugUtil;
-import com.sun.faces.util.FacesLogger;
 import com.sun.faces.util.LRUMap;
 import com.sun.faces.util.MessageUtils;
 import com.sun.faces.util.ReflectionUtils;
 import com.sun.faces.util.RequestStateManager;
 import com.sun.faces.util.TypedCollections;
 import com.sun.faces.util.Util;
-
 public class XUIStateManagerImpl extends StateManager {
 
-    private static final Logger LOGGER = FacesLogger.APPLICATION.getLogger();
+    private static final Logger LOGGER = Logger.getLogger( XUIStateManagerImpl.class );
     private static final String STATEMANAGED_SERIAL_ID_KEY =
           XUIStateManagerImpl.class.getName() + ".SerialId";
 
@@ -97,8 +95,6 @@ public class XUIStateManagerImpl extends StateManager {
     private WebConfiguration webConfig;
 
     /** Number of views in logical view to be saved in session. */
-    private int noOfViews;
-    private int noOfViewsInLogicalView;
     private Map<String,Class<?>> classMap = 
           new ConcurrentHashMap<String,Class<?>>(32);
 
@@ -116,7 +112,6 @@ public class XUIStateManagerImpl extends StateManager {
 
     // ---------------------------------------------------------- Public Methods
 
-    @SuppressWarnings("deprecation")
     public UIViewRoot restoreView(FacesContext context, String viewId,
                                   String renderKitId) {
         
@@ -154,8 +149,8 @@ public class XUIStateManagerImpl extends StateManager {
             }
 
             if (null != id) {
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine("Begin restoring view in session for viewId "
+                if (LOGGER.isFinerEnabled()) {
+                    LOGGER.finer("Begin restoring view in session for viewId "
                                 + viewId);
                 }
                 String idString = (String) id;
@@ -174,8 +169,8 @@ public class XUIStateManagerImpl extends StateManager {
 
                 // stop evaluating if the session is not available
                 if (sessionObj == null) {
-                    if (LOGGER.isLoggable(Level.FINE)) {
-                        LOGGER.fine(
+                    if (LOGGER.isFinerEnabled()) {
+                        LOGGER.finer(
                               "Can't Restore Server View State, session expired for viewId: "
                               + viewId);
                     }
@@ -184,10 +179,10 @@ public class XUIStateManagerImpl extends StateManager {
 
                 Object [] stateArray = null;
                 synchronized (sessionObj) {
-                    Map logicalMap = (Map) externalCtx.getSessionMap()
+                    Map<?, ?> logicalMap = (Map<?, ?>) externalCtx.getSessionMap()
                           .get(LOGICAL_VIEW_MAP);
                     if (logicalMap != null) {
-                        Map actualMap = (Map) logicalMap.get(idInLogicalMap);
+                        Map<?,?> actualMap = (Map<?,?>) logicalMap.get(idInLogicalMap);
                         if (actualMap != null) {
                             RequestStateManager.set(context,
                                                     RequestStateManager.LOGICAL_VIEW_MAP,
@@ -203,8 +198,8 @@ public class XUIStateManagerImpl extends StateManager {
                     }
                 }
                 if (stateArray == null) {
-                    if (LOGGER.isLoggable(Level.FINE)) {
-                        LOGGER.fine(
+                    if (LOGGER.isFinerEnabled()) {
+                        LOGGER.finer(
                               "Session Available, but View State does not exist for viewId: "
                               + viewId);
                     }
@@ -220,8 +215,8 @@ public class XUIStateManagerImpl extends StateManager {
                 viewRoot = restoreTree(((Object[]) stateArray[0]).clone());
                 viewRoot.processRestoreState(context, handleRestoreState(stateArray[1])); 
 
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine("End restoring view in session for viewId "
+                if (LOGGER.isFinerEnabled()) {
+                    LOGGER.finer("End restoring view in session for viewId "
                                 + viewId);
                 }
             }
@@ -240,17 +235,13 @@ public class XUIStateManagerImpl extends StateManager {
     	
     	FacesContext context = FacesContext.getCurrentInstance();
     	
-    	XUIViewRoot viewRoot;
-    	
         String idInLogicalMap;
-        String idInActualMap;
 
         int sep = idString.indexOf(NamingContainer.SEPARATOR_CHAR);
         assert(-1 != sep);
         assert(sep < idString.length());
 
         idInLogicalMap = idString.substring(0, sep);
-        idInActualMap = idString.substring(sep + 1);
 
         ExternalContext externalCtx = context.getExternalContext();
         Object sessionObj = externalCtx.getSession(false);
@@ -260,9 +251,8 @@ public class XUIStateManagerImpl extends StateManager {
             return;
         }
 
-        Object [] stateArray = null;
         synchronized (sessionObj) {
-            Map logicalMap = (Map) externalCtx.getSessionMap()
+            Map<?,?> logicalMap = (Map<?,?>) externalCtx.getSessionMap()
                   .get(LOGICAL_VIEW_MAP);
             
             if( logicalMap.containsKey(idInLogicalMap) )
@@ -272,7 +262,7 @@ public class XUIStateManagerImpl extends StateManager {
         
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "deprecation", "unchecked" })
     @Override
     public SerializedView saveSerializedView(FacesContext context) {
 
@@ -291,8 +281,8 @@ public class XUIStateManagerImpl extends StateManager {
         checkIdUniqueness(context, viewRoot, new HashSet<String>(viewRoot.getChildCount() << 1));
 
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("Begin creating serialized view for "
+        if (LOGGER.isFinerEnabled()) {
+            LOGGER.finer("Begin creating serialized view for "
                         + viewRoot.getViewId());
         }
         List<TreeNode> treeList = new ArrayList<TreeNode>(32);
@@ -301,8 +291,8 @@ public class XUIStateManagerImpl extends StateManager {
         captureChild(treeList, 0, viewRoot);        
         Object[] tree = treeList.toArray();      
         
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("End creating serialized view " + viewRoot.getViewId());
+        if (LOGGER.isFinerEnabled()) {
+            LOGGER.finer("End creating serialized view " + viewRoot.getViewId());
         }
         if (!isSavingStateInClient(context)) {
             //
@@ -420,10 +410,9 @@ public class XUIStateManagerImpl extends StateManager {
             if (componentIds.add(id)) {
                 checkIdUniqueness(context, kid, componentIds);
             } else {
-                if (LOGGER.isLoggable(Level.SEVERE)) {
-                    LOGGER.log(Level.SEVERE,
-                               "jsf.duplicate_component_id_error",
-                               id);
+                if (LOGGER.isLoggable( LoggerLevels.SEVERE) ) {
+                    LOGGER.severe(
+                               "jsf.duplicate_component_id_error[" + id + " ]");
                 }
                 FastStringWriter writer = new FastStringWriter(128);
                 DebugUtil.simplePrintTree(context.getViewRoot(), id, writer);
@@ -461,8 +450,8 @@ public class XUIStateManagerImpl extends StateManager {
         try {
             noOfViewsInLogicalView = Integer.valueOf(noOfViewsStr);
         } catch (NumberFormatException nfe) {
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("Error parsing the servetInitParameter "
+            if (LOGGER.isFinerEnabled()) {
+                LOGGER.finer("Error parsing the servetInitParameter "
                             +
                             WebContextInitParameter.NumberOfLogicalViews
                                   .getQualifiedName()
@@ -503,8 +492,8 @@ public class XUIStateManagerImpl extends StateManager {
         try {
             noOfViews = Integer.valueOf(noOfViewsStr);
         } catch (NumberFormatException nfe) {
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("Error parsing the servetInitParameter "
+            if (LOGGER.isFinerEnabled()) {
+                LOGGER.finer("Error parsing the servetInitParameter "
                             +
                             WebContextInitParameter.NumberOfViews
                                   .getQualifiedName()
@@ -809,9 +798,6 @@ public class XUIStateManagerImpl extends StateManager {
     // ------------------------------------------------------------ Constructors
 
 
-        public TreeNode() { }
-
-
         public TreeNode(int parent, UIComponent c) {
 
             this.parent = parent;
@@ -855,10 +841,6 @@ public class XUIStateManagerImpl extends StateManager {
 
         private static final long serialVersionUID = -3777170310958005106L;
 
-
-    // ------------------------------------------------------------ Constructors
-        
-        public FacetNode() { }
 
         public FacetNode(int parent, 
                          String name, 

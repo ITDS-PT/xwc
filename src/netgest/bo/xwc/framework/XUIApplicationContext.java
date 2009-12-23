@@ -17,12 +17,11 @@ import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.def.XUIViewerDefinitonParser;
 import netgest.bo.xwc.framework.jsf.XUIViewerBuilder;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import netgest.bo.system.Logger;
 
 public class XUIApplicationContext {
 
-    private Log log = LogFactory.getLog(XUIApplicationContext.class );
+    private Logger log = Logger.getLogger( XUIApplicationContext.class ); 
 
     private Hashtable<String, RenderKit> oRenderKits   = new Hashtable<String, RenderKit>();
     
@@ -42,8 +41,8 @@ public class XUIApplicationContext {
         oComponentParser.loadComponents( this );
         
         // Register components into JSF
-        if( log.isDebugEnabled() )
-        	log.debug("Registering XUI Components Render Kit's definition...");
+        if( log.isFinerEnabled() )
+        	log.finer("Registering XUI Components Render Kit's definition...");
         
         registerRenderKits();
         registerComponentRenders();
@@ -64,14 +63,14 @@ public class XUIApplicationContext {
 
     public XUIViewerDefinition getViewerDef( String sViewerName )
     {
-        if( log.isDebugEnabled() )
+        if( log.isFinerEnabled() )
         {
-            log.debug("Parsing file " + sViewerName );
+            log.finer("Parsing file " + sViewerName );
         }
         XUIViewerDefinition oViewerDef =  oViewerParser.parse( sViewerName );
-        if( log.isDebugEnabled() )
+        if( log.isFinerEnabled() )
         {
-            log.debug("End file " + sViewerName + ".xml");
+            log.finer("End file " + sViewerName + ".xml");
         }
         return oViewerDef;
 
@@ -79,14 +78,14 @@ public class XUIApplicationContext {
     
     public XUIViewerDefinition getViewerDef( InputStream inputStream )
     {
-        if( log.isDebugEnabled() )
+        if( log.isFinerEnabled() )
         {
-            log.debug("Parsing file from InputStream" );
+            log.finer("Parsing file from InputStream" );
         }
         XUIViewerDefinition oViewerDef =  oViewerParser.parse( inputStream );
-        if( log.isDebugEnabled() )
+        if( log.isFinerEnabled() )
         {
-            log.debug("End file parsing from InputStream");
+            log.finer("End file parsing from InputStream");
         }
         return oViewerDef;
     }
@@ -116,7 +115,7 @@ public class XUIApplicationContext {
             }
             catch (Exception e)
             {
-                log.error("Error loading class "+ sRenderKitClassName +" for RenderKit " + sRenderKits[i] + ":" + e.getClass().getName() + "-" + e.getMessage() );
+                log.warn("Error loading class "+ sRenderKitClassName +" for RenderKit " + sRenderKits[i] + ":" + e.getClass().getName() + "-" + e.getMessage() );
             }
 		}
     }
@@ -150,9 +149,9 @@ public class XUIApplicationContext {
 
                     sRenderClassName = oComponentDef.getRenderKitClassName( sCompRenderKitTypes[j] );
 
-	                if ( log.isDebugEnabled() )
+	                if ( log.isFinerEnabled() )
 	                {
-	                    log.info("Loading class "+ sRenderClassName +" for component " + oAllComponents[i] );
+	                    log.finer("Loading class "+ sRenderClassName +" for component " + oAllComponents[i] );
 	                }
 
 	                try
@@ -175,12 +174,12 @@ public class XUIApplicationContext {
 	                }
 	                catch (Exception e)
 	                {
-	                    log.error("Error loading class "+ sRenderClassName +" for component " + oAllComponents[i] + ":" + e.getClass().getName() + "-" + e.getMessage() );
+	                    log.warn("Error loading class "+ sRenderClassName +" for component " + oAllComponents[i] + ":" + e.getClass().getName() + "-" + e.getMessage() );
 	                }
 
                 }
                 else {
-                    log.error("Cannot register " + sCompRenderKitTypes[j] + " for component " + oAllComponents[i] + " render kit [" + sCompRenderKitTypes[j] + "] doesn't exist. "  );
+                    log.warn("Cannot register " + sCompRenderKitTypes[j] + " for component " + oAllComponents[i] + " render kit [" + sCompRenderKitTypes[j] + "] doesn't exist. "  );
                 }
             }
         }

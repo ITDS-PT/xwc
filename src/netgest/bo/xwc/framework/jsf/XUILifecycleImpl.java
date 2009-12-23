@@ -1,35 +1,27 @@
 package netgest.bo.xwc.framework.jsf;
 
-import com.sun.faces.lifecycle.ApplyRequestValuesPhase;
-import com.sun.faces.lifecycle.InvokeApplicationPhase;
-import com.sun.faces.lifecycle.Phase;
-
-import com.sun.faces.lifecycle.ProcessValidationsPhase;
-import com.sun.faces.lifecycle.RenderResponsePhase;
-
-import com.sun.faces.lifecycle.RestoreViewPhase;
-
-import com.sun.faces.lifecycle.UpdateModelValuesPhase;
-
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseListener;
 import javax.faces.lifecycle.Lifecycle;
 
-import com.sun.faces.util.FacesLogger;
-import com.sun.faces.util.MessageUtils;
-
-import java.util.logging.Logger;
-
-import javax.faces.lifecycle.Lifecycle;
-
+import netgest.bo.system.Logger;
+import netgest.bo.system.LoggerLevels;
+import netgest.bo.system.LoggerLevels.LoggerLevel;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+
+import com.sun.faces.lifecycle.ApplyRequestValuesPhase;
+import com.sun.faces.lifecycle.InvokeApplicationPhase;
+import com.sun.faces.lifecycle.Phase;
+import com.sun.faces.lifecycle.ProcessValidationsPhase;
+import com.sun.faces.lifecycle.RenderResponsePhase;
+import com.sun.faces.lifecycle.RestoreViewPhase;
+import com.sun.faces.lifecycle.UpdateModelValuesPhase;
+import com.sun.faces.util.MessageUtils;
 
 public class XUILifecycleImpl extends Lifecycle {
 
@@ -37,7 +29,7 @@ public class XUILifecycleImpl extends Lifecycle {
 
 
     // Log instance for this class
-    private static Logger LOGGER = FacesLogger.LIFECYCLE.getLogger();
+    private static Logger LOGGER = Logger.getLogger( XUILifecycleImpl.class );
 
 
     // ------------------------------------------------------ Instance Variables
@@ -81,8 +73,8 @@ public class XUILifecycleImpl extends Lifecycle {
                  (MessageUtils.NULL_PARAMETERS_ERROR_MESSAGE_ID, "context"));
         }
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("execute(" + context + ")");
+        if (LOGGER.isFinerEnabled()) {
+            LOGGER.finer("execute(" + context + ")");
         }
         
         int i = 1;
@@ -152,8 +144,8 @@ public class XUILifecycleImpl extends Lifecycle {
                  (MessageUtils.NULL_PARAMETERS_ERROR_MESSAGE_ID, "context"));
         }
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("render(" + context + ")");
+        if (LOGGER.isFinerEnabled()) {
+            LOGGER.finer("render(" + context + ")");
         }
 
         if (!context.getResponseComplete()) {
@@ -177,14 +169,14 @@ public class XUILifecycleImpl extends Lifecycle {
         }
 
         if (listeners.contains(listener)) {
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(Level.FINE,
+            if (LOGGER.isFinerEnabled()) {
+                LOGGER.log(LoggerLevels.FINER,
                            "jsf.lifecycle.duplicate_phase_listener_detected",
                            listener.getClass().getName());
             }
         } else {
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(Level.FINE,
+            if (LOGGER.isFinerEnabled()) {
+                LOGGER.log(LoggerLevels.FINER,
                            "addPhaseListener({0},{1})",
                            new Object[]{
                                  listener.getPhaseId().toString(),
@@ -213,8 +205,8 @@ public class XUILifecycleImpl extends Lifecycle {
                         (MessageUtils.NULL_PARAMETERS_ERROR_MESSAGE_ID, "listener"));
         }
 
-        if (listeners.remove(listener) && LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.log(Level.FINE,
+        if (listeners.remove(listener) && LOGGER.isFinerEnabled()) {
+            LOGGER.log(LoggerLevels.FINER,
                        "removePhaseListener({0})",
                        new Object[]{listener.getClass().getName()});
         }

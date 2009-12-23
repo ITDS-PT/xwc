@@ -311,9 +311,9 @@ public class AttributeFile extends AttributeBase {
 		        		if( hRequest instanceof XUIMultiPartRequestWrapper )
 		        		{
 			        		XUIMultiPartRequestWrapper mRequest = (XUIMultiPartRequestWrapper)hRequest;
-							Enumeration<Object> enumFiles = mRequest.getFileNames();
+							Enumeration<String> enumFiles = mRequest.getFileNames();
 			        		if( enumFiles.hasMoreElements() ) {
-			        			String fname = (String)enumFiles.nextElement();
+			        			String fname = enumFiles.nextElement();
 			        			File file = mRequest.getFile( fname );
 			        			try {
 									oXeoConnector.getAttributeHandler().setValueiFile( new FSiFile( null, file, null ) );

@@ -33,6 +33,18 @@ public interface ComponentMessages {
 	
 	public static final XUILocalizedMessage DIALOG_PROGRESS = 
 		new XUILocalizedMessage( ComponentMessages.class.getName(), "DIALOG_PROGRESS" );
+
+	public static final XUILocalizedMessage DIALOG_OK_BTN = 
+		new XUILocalizedMessage( ComponentMessages.class.getName(), "DIALOG_OK_BTN" );
+
+	public static final XUILocalizedMessage DIALOG_CANCEL_BTN = 
+		new XUILocalizedMessage( ComponentMessages.class.getName(), "DIALOG_CANCEL_BTN" );
+
+	public static final XUILocalizedMessage DIALOG_YES_BTN = 
+		new XUILocalizedMessage( ComponentMessages.class.getName(), "DIALOG_YES_BTN" );
+
+	public static final XUILocalizedMessage DIALOG_NO_BTN = 
+		new XUILocalizedMessage( ComponentMessages.class.getName(), "DIALOG_NO_BTN" );
 	
 	public static final XUILocalizedMessage FORM_NOT_ENOUGH_PERMISSION = 
 		new XUILocalizedMessage( ComponentMessages.class.getName(), "FORM_NOT_ENOUGH_PERMISSION" );

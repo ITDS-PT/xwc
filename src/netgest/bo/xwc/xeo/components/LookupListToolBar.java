@@ -2,12 +2,9 @@ package netgest.bo.xwc.xeo.components;
 import java.util.Arrays;
 import java.util.List;
 
-import netgest.bo.runtime.boObject;
-import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class LookupListToolBar extends ListToolBar {
 

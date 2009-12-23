@@ -195,23 +195,29 @@ public class AttributeNumberLookup extends AttributeBase {
             if( enableCardIdLink ) {
             	oInpConfig.addJSString("ctCls", "xeoObjectLink" );
             }
-
-        	if ( !oAttr.getEffectivePermission(SecurityPermissions.DELETE) )
-            	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
-        	else
-            	oInpConfig.addJSString("trigger1Class", "x-form-clear-trigger");
-        		
-            oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
             
-            oInpConfig.add("onTrigger1Click", "function(){if(!this.disabled){ " +
-            			getClearCode(oForm, oAttr) +
-            		"}}"
-            );
-        	
-        	oInpConfig.add("onTrigger2Click", "function(){ if(!this.disabled){" +
-            		XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_STATUS_MESSAGE ) +
-            		"}}"
-            );
+            if( oAttr.isReadOnly() ) {
+            	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
+	            oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
+            }
+            else {
+	        	if ( !oAttr.getEffectivePermission(SecurityPermissions.DELETE) )
+	            	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
+	        	else
+	            	oInpConfig.addJSString("trigger1Class", "x-form-clear-trigger");
+	        		
+	            oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
+	            
+	            oInpConfig.add("onTrigger1Click", "function(){if(!this.disabled){ " +
+	            			getClearCode(oForm, oAttr) +
+	            		"}}"
+	            );
+	        	
+	        	oInpConfig.add("onTrigger2Click", "function(){ if(!this.disabled){" +
+	            		XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_STATUS_MESSAGE ) +
+	            		"}}"
+	            );
+            }
 			return oInpConfig;
 		}
 		
@@ -322,7 +328,7 @@ public class AttributeNumberLookup extends AttributeBase {
         		XEOObjectAttributeConnector oXeoConnector = (XEOObjectAttributeConnector)oConnector;
 	        	if( "POST".equals( hRequest.getMethod() ) && hRequest instanceof XUIMultiPartRequestWrapper ) {
 	        		XUIMultiPartRequestWrapper mRequest = (XUIMultiPartRequestWrapper)hRequest;
-					Enumeration<Object> enumFiles = mRequest.getFileNames();
+					Enumeration<String> enumFiles = mRequest.getFileNames();
 	        		if( enumFiles.hasMoreElements() ) {
 	        			String fname = (String)enumFiles.nextElement();
 	        			File file = mRequest.getFile( fname );

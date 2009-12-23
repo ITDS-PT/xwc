@@ -4,7 +4,7 @@ import com.sun.faces.util.Util;
 
 import java.io.InputStream;
 import java.util.Map;
-import java.util.logging.Logger;
+import netgest.bo.system.Logger;
 
 import javax.faces.context.FacesContext;
 
@@ -120,7 +120,7 @@ public class XUISessionContext {
             return oExternalSession.get( sName );
         }
         else {
-            log.warning( "Cant find HttpSession to get attribute ["+ sName +"]" );
+            log.warn( "Cant find HttpSession to get attribute ["+ sName +"]" );
         }
         return null;
     }
@@ -131,7 +131,7 @@ public class XUISessionContext {
             return oExternalSession.remove( sName );
         }
         else {
-            log.warning( "Cant find HttpSession to get attribute ["+ sName +"]" );
+            log.warn( "Cant find HttpSession to get attribute ["+ sName +"]" );
         }
         return null;
     }

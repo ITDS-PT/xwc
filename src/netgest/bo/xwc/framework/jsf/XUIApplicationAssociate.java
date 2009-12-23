@@ -1,15 +1,14 @@
 package netgest.bo.xwc.framework.jsf;
 
-import com.sun.faces.RIConstants;
-import com.sun.faces.application.ApplicationImpl;
-import com.sun.faces.application.ApplicationResourceBundle;
-import com.sun.faces.application.ConfigNavigationCase;
-import com.sun.faces.config.WebConfiguration;
-import com.sun.faces.mgbean.BeanManager;
-import com.sun.faces.spi.InjectionProvider;
-import com.sun.faces.spi.InjectionProviderFactory;
-import com.sun.faces.util.MessageUtils;
-import static com.sun.faces.config.WebConfiguration.BooleanWebContextInitParameter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.TreeSet;
 
 import javax.el.CompositeELResolver;
 import javax.el.ELResolver;
@@ -20,15 +19,17 @@ import javax.faces.context.FacesContext;
 import javax.faces.el.PropertyResolver;
 import javax.faces.el.VariableResolver;
 import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.TreeSet;
+
+import com.sun.faces.RIConstants;
+import com.sun.faces.application.ApplicationImpl;
+import com.sun.faces.application.ApplicationResourceBundle;
+import com.sun.faces.application.ConfigNavigationCase;
+import com.sun.faces.config.WebConfiguration;
+import com.sun.faces.config.WebConfiguration.BooleanWebContextInitParameter;
+import com.sun.faces.mgbean.BeanManager;
+import com.sun.faces.spi.InjectionProvider;
+import com.sun.faces.spi.InjectionProviderFactory;
+import com.sun.faces.util.MessageUtils;
 
 /**
  * <p>Break out the things that are associated with the Application, but
@@ -41,6 +42,8 @@ import java.util.TreeSet;
  * handle the rest.</p>
  */
 
+
+@SuppressWarnings("deprecation")
 public class XUIApplicationAssociate {
 
 
@@ -84,18 +87,18 @@ public class XUIApplicationAssociate {
 
     private List<ELResolver> elResolversFromFacesConfig = null;
 
-    @SuppressWarnings("deprecation")
-    private VariableResolver legacyVRChainHead = null;
+    
+	private VariableResolver legacyVRChainHead = null;
 
-    @SuppressWarnings("deprecation")
-    private PropertyResolver legacyPRChainHead = null;
+    
+	private PropertyResolver legacyPRChainHead = null;
     private ExpressionFactory expressionFactory = null;
 
-    @SuppressWarnings("deprecation")
-    private PropertyResolver legacyPropertyResolver = null;
+    
+	private PropertyResolver legacyPropertyResolver = null;
 
-    @SuppressWarnings("deprecation")
-    private VariableResolver legacyVariableResolver = null;
+    
+	private VariableResolver legacyVariableResolver = null;
     private CompositeELResolver facesELResolverForJsp = null;
 
     private InjectionProvider injectionProvider;
@@ -133,7 +136,8 @@ public class XUIApplicationAssociate {
                                            BooleanWebContextInitParameter.EnableLazyBeanValidation));
     }
 
-    public static XUIApplicationAssociate getInstance(ExternalContext
+    @SuppressWarnings("unchecked")
+	public static XUIApplicationAssociate getInstance(ExternalContext
          externalContext) {
         if (externalContext == null) {
             return null;
@@ -172,7 +176,8 @@ public class XUIApplicationAssociate {
         
     }
 
-    public static void clearInstance(ExternalContext
+    @SuppressWarnings("unchecked")
+	public static void clearInstance(ExternalContext
          externalContext) {
         Map applicationMap = externalContext.getApplicationMap();
         XUIApplicationAssociate me = (XUIApplicationAssociate) applicationMap.get(ASSOCIATE_KEY);
@@ -196,12 +201,12 @@ public class XUIApplicationAssociate {
      *
      * @param resolver VariableResolver
      */
-    @SuppressWarnings("deprecation")
+    
     public void setLegacyVRChainHead(VariableResolver resolver) {
         this.legacyVRChainHead = resolver;
     }
 
-    @SuppressWarnings("deprecation")
+    
     public VariableResolver getLegacyVRChainHead() {
         return legacyVRChainHead;
     }
@@ -213,13 +218,13 @@ public class XUIApplicationAssociate {
      *
      * @param resolver PropertyResolver
      */
-    @SuppressWarnings("deprecation")
-    public void setLegacyPRChainHead(PropertyResolver resolver) {
+    
+	public void setLegacyPRChainHead(PropertyResolver resolver) {
         this.legacyPRChainHead = resolver;
     }
 
-    @SuppressWarnings("deprecation")
-    public PropertyResolver getLegacyPRChainHead() {
+    
+	public PropertyResolver getLegacyPRChainHead() {
         return legacyPRChainHead;
     }
 
@@ -268,8 +273,8 @@ public class XUIApplicationAssociate {
      * Application.setPropertyResolver()
      * @param resolver PropertyResolver
      */
-    @SuppressWarnings("deprecation")
-    public void setLegacyPropertyResolver(PropertyResolver resolver) {
+    
+	public void setLegacyPropertyResolver(PropertyResolver resolver) {
         this.legacyPropertyResolver = resolver;
     }
 
@@ -277,8 +282,8 @@ public class XUIApplicationAssociate {
      * @return the PropertyResolver called through
      * Application.getPropertyResolver()
      */
-    @SuppressWarnings("deprecation")
-    public PropertyResolver getLegacyPropertyResolver() {
+    
+	public PropertyResolver getLegacyPropertyResolver() {
         return legacyPropertyResolver;
     }
 
@@ -287,8 +292,7 @@ public class XUIApplicationAssociate {
      * Application.setVariableResolver()
      * @param resolver VariableResolver
      */
-    @SuppressWarnings("deprecation")
-    public void setLegacyVariableResolver(VariableResolver resolver) {
+	public void setLegacyVariableResolver(VariableResolver resolver) {
         this.legacyVariableResolver = resolver;
     }
 
@@ -296,8 +300,7 @@ public class XUIApplicationAssociate {
      * @return the VariableResolver called through
      * Application.getVariableResolver()
      */
-    @SuppressWarnings("deprecation")
-    public VariableResolver getLegacyVariableResolver() {
+	public VariableResolver getLegacyVariableResolver() {
         return legacyVariableResolver;
     }
 
@@ -427,7 +430,6 @@ public class XUIApplicationAssociate {
      * values: ResourceBundleBean instances.
      */
 
-    @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     Map<String, ApplicationResourceBundle> resourceBundles =
          new HashMap<String, ApplicationResourceBundle>();
 

@@ -74,13 +74,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     private static final Log log = LogFactory.getLog(netgest.bo.xwc.framework.jsf.XUIViewHandler.class);
     
 
-    /**
-     * <p>The <code>request</code> scoped attribute to store the
-     * {@link javax.faces.webapp.FacesServlet} path of the original
-     * request.</p>
-     */
-    private static final String INVOCATION_PATH =
-        RIConstants.FACES_PREFIX + "INVOCATION_PATH";        
 
     //
     // Relationship Instance Variables
@@ -166,22 +159,13 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     public UIViewRoot restoreView(FacesContext context, String viewId, Object savedId ) {
         ExternalContext extContext = context.getExternalContext();
 
-        long init = System.currentTimeMillis();
-        
-        // set the request character encoding. NOTE! This MUST be done
-        // before any request praameter is accessed.
-
-        /*
-        HttpServletRequest request =
-            (HttpServletRequest) extContext.getRequest();
-        */
         
         if( viewId.startsWith("/") ) {
         	viewId = viewId.substring(1);
         }
         
         
-        Map headerMap = extContext.getRequestHeaderMap();
+        Map<String,String> headerMap = (Map<String,String>)extContext.getRequestHeaderMap();
         String
             contentType = null,
             charEnc = null;
@@ -222,7 +206,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             }
         }
 
-        String mapping = Util.getFacesMapping(context);
         XUIViewRoot viewRoot = null;
 
         
@@ -237,9 +220,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         
         if( viewRoot != null )
         {
-            String pValue = context.getExternalContext().getRequestParameterMap().
-            	get(ResponseStateManager.VIEW_STATE_PARAM);
-
             // Actualiza as beans
 	        if ( viewRoot.getBean("viewBean") instanceof XUIViewBean ) {
 	        	if( savedId != null )
@@ -405,7 +385,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             }
             
             if( sBeanClassName != null && sBeanClassName.length() > 0 ) {
-	            Class oBeanClass = 
+	            Class<?> oBeanClass = 
 	            	Thread.currentThread().getContextClassLoader().loadClass( sBeanClassName );
 	            
 	            Object oViewBean = oBeanClass.newInstance();
@@ -929,11 +909,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
     public void processStateWasChanged( ArrayList<XUIComponentBase> oRenderList, XUIViewRoot oRootView ) {
         UIComponent oKid;
-        boolean     bChanged = false;
         
         List<UIComponent> oKids = oRootView.getChildren();
         for (int i = 0; i < oKids.size(); i++) {
-            bChanged = false;
             oKid = oKids.get( i );
             if( oKid instanceof XUIComponentBase ) {
                 ((XUIComponentBase)oKid).processStateChanged( oRenderList );

@@ -24,7 +24,7 @@ import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
-import org.apache.log4j.Logger;
+import netgest.bo.system.Logger;
 
 
 public class ViewerAccessPolicyBuilder {
@@ -90,7 +90,7 @@ public class ViewerAccessPolicyBuilder {
 				
 				commit = true;
 			} catch ( Exception e ) {
-				logger.error( "buildAccessPolicy:"+e );
+				logger.severe( "buildAccessPolicy:"+e );
 				commit = false;
 				throw new boRuntimeException( "", "", e );
  			} finally {
@@ -106,7 +106,7 @@ public class ViewerAccessPolicyBuilder {
 			context.releaseObjects();
 		}
 		
-		logger.info("Done");
+		logger.finer("Done");
 	}
 
 	/**

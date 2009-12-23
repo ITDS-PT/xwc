@@ -4,14 +4,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.el.PropertyNotFoundException;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
+import netgest.bo.system.Logger;
+import netgest.bo.system.LoggerLevels;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.localization.ComponentMessages;
@@ -27,7 +27,6 @@ import netgest.bo.xwc.framework.components.XUIForm;
 import com.sun.faces.config.WebConfiguration;
 import com.sun.faces.renderkit.AttributeManager;
 import com.sun.faces.renderkit.RenderKitUtils;
-import com.sun.faces.util.FacesLogger;
 
 /**
  * A form with dependences control. This form controls the dependence between attributes a 
@@ -130,7 +129,7 @@ public class Form extends XUIForm
     public static class XEOHTMLRenderer extends XUIRenderer {
     
 
-        protected static final Logger logger = FacesLogger.RENDERKIT.getLogger();
+        protected static final Logger logger = Logger.getLogger( Form.class );
 
         private static final String[] ATTRIBUTES =
               AttributeManager.getAttributes(AttributeManager.Key.FORMFORM);
@@ -165,9 +164,9 @@ public class Form extends XUIForm
             Map<String, String> requestParameterMap = context.getExternalContext()
                   .getRequestParameterMap();
             if (requestParameterMap.containsKey(clientId)) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.log(Level.FINE,
-                               "UIForm with client ID {0}, submitted",
+                if (logger.isFinestEnabled()) {
+                    logger.log(LoggerLevels.FINEST,
+                               "UIForm with client ID %s, submitted",
                                clientId);
                 }
                 ((XUIForm) component).setSubmitted(true);
@@ -313,8 +312,8 @@ public class Form extends XUIForm
             // suppress rendering if "rendered" property on the component is
             // false.
             if (!component.isRendered()) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.log(Level.FINE,
+                if (logger.isFinestEnabled()) {
+                    logger.log(LoggerLevels.FINEST,
                                "End encoding component {0} since rendered attribute is set to false",
                                component.getId());
                 }
@@ -327,8 +326,8 @@ public class Form extends XUIForm
         protected boolean shouldDecode(UIComponent component) {
 
             if (com.sun.faces.util.Util.componentIsDisabledOrReadonly(component)) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.log(Level.FINE,
+                if (logger.isFinestEnabled()) {
+                    logger.log(LoggerLevels.FINEST,
                                "No decoding necessary since the component {0} is disabled or read-only",
                                component.getId());
                 }

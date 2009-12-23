@@ -14,7 +14,6 @@ import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 
 public class BridgeToolBar extends ToolBar {
@@ -55,6 +54,11 @@ public class BridgeToolBar extends ToolBar {
 		return renderCreateNewBtn.getEvaluatedValue();
 	}
 
+	public void setRenderCreateNewBtn(String expression ) {
+		this.renderCreateNewBtn.setExpressionText( expression );
+	}
+	
+	@Deprecated
 	public void setRenderCreateNew(String expression ) {
 		this.renderCreateNewBtn.setExpressionText( expression );
 	}

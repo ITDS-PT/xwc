@@ -1,8 +1,6 @@
 package netgest.bo.xwc.framework.http;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -14,15 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-
 import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
 
 public class XUILoginFilter implements Filter {
 
-	private static final Logger log = Logger.getLogger( XUILoginFilter.class );
-
-	
 	private String 		loginPage = "/Login.xvw";
 	private String 		mainPage = "Main.xvw";
 	private boolean 	showUserProfiles = true;

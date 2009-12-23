@@ -2,14 +2,14 @@ package netgest.bo.xwc.framework.jsf;
 
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.FacesException;
 import javax.faces.lifecycle.Lifecycle;
 import javax.faces.lifecycle.LifecycleFactory;
 
-import com.sun.faces.util.FacesLogger;
+import netgest.bo.system.Logger;
+import netgest.bo.system.LoggerLevels;
+
 import com.sun.faces.util.MessageUtils;
 
 public class XUILifeCycleFactoryImpl extends LifecycleFactory {
@@ -17,7 +17,7 @@ public class XUILifeCycleFactoryImpl extends LifecycleFactory {
 
 
     // Log instance for this class
-    private static Logger LOGGER = FacesLogger.LIFECYCLE.getLogger();
+    private static Logger LOGGER = netgest.bo.system.Logger.getLogger( XUILifeCycleFactoryImpl.class );
 
     protected ConcurrentHashMap<String,Lifecycle> lifecycleMap = null;
 
@@ -32,8 +32,8 @@ public class XUILifeCycleFactoryImpl extends LifecycleFactory {
         // We must have an implementation under this key.
         lifecycleMap.put(LifecycleFactory.DEFAULT_LIFECYCLE,
                          new XUILifecycleImpl());
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("Created Default Lifecycle");
+        if (LOGGER.isFinerEnabled()) {
+            LOGGER.finer("Created Default Lifecycle");
         }
     }
 
@@ -55,15 +55,15 @@ public class XUILifeCycleFactoryImpl extends LifecycleFactory {
             String message =
                 MessageUtils.getExceptionMessageString(MessageUtils.LIFECYCLE_ID_ALREADY_ADDED_ID,
                                          params);
-            if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning(MessageUtils.getExceptionMessageString(
+            if (LOGGER.isLoggable( LoggerLevels.WARNING )) {
+                LOGGER.warn(MessageUtils.getExceptionMessageString(
                         MessageUtils.LIFECYCLE_ID_ALREADY_ADDED_ID,params));
             }
             throw new IllegalArgumentException(message);
         }
         lifecycleMap.put(lifecycleId, lifecycle);
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("addedLifecycle: " + lifecycleId + " " + lifecycle);
+        if (LOGGER.isFinerEnabled()) {
+            LOGGER.finer("addedLifecycle: " + lifecycleId + " " + lifecycle);
         }
     }
 
@@ -81,16 +81,16 @@ public class XUILifeCycleFactoryImpl extends LifecycleFactory {
                 MessageUtils.getExceptionMessageString(
                     MessageUtils.CANT_CREATE_LIFECYCLE_ERROR_MESSAGE_ID,
                     params);
-            if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning("LifecycleId " + lifecycleId + " does not exist");
+            if (LOGGER.isLoggable( LoggerLevels.WARNING )) {
+                LOGGER.warn("LifecycleId " + lifecycleId + " does not exist");
             }
             throw new IllegalArgumentException(message);
         }
 
         Lifecycle result = lifecycleMap.get(lifecycleId);
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("getLifecycle: " + lifecycleId + " " + result);
+        if (LOGGER.isFinerEnabled()) {
+            LOGGER.finer("getLifecycle: " + lifecycleId + " " + result);
         }
         return result;
     }

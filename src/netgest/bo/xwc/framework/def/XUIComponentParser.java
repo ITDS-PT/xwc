@@ -3,14 +3,10 @@ package netgest.bo.xwc.framework.def;
 import java.io.IOException;
 import java.io.InputStream;
 
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import netgest.bo.system.Logger;
+import netgest.bo.system.LoggerLevels;
 import netgest.bo.xwc.framework.XUIApplicationContext;
-
 import netgest.utils.ngtXMLUtils;
-
 import oracle.xml.parser.v2.NSResolver;
 import oracle.xml.parser.v2.XMLDocument;
 import oracle.xml.parser.v2.XMLElement;
@@ -159,8 +155,8 @@ public class XUIComponentParser
                         oComponent.addRenderKit( sRenderKitName, sRenderClassName );
                     }
                     else{
-                        if ( log.isLoggable( Level.INFO ) ){
-                            log.warning("Component id ["+sRenderFor+"] not found parsing renderKit" );
+                        if ( log.isLoggable( LoggerLevels.FINER ) ){
+                            log.warn("Component id ["+sRenderFor+"] not found parsing renderKit" );
                         }
                     }
                 }

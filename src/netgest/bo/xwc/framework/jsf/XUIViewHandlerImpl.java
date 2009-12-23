@@ -1,20 +1,12 @@
 package netgest.bo.xwc.framework.jsf;
 
-import com.sun.faces.RIConstants;
-import com.sun.faces.application.ApplicationAssociate;
-import com.sun.faces.application.ViewHandlerResponseWrapper;
-import com.sun.faces.config.WebConfiguration;
-import com.sun.faces.config.WebConfiguration.WebContextInitParameter;
-import com.sun.faces.io.FastStringWriter;
-import com.sun.faces.util.DebugUtil;
-import com.sun.faces.util.MessageUtils;
-import com.sun.faces.util.Util;
-import com.sun.faces.util.FacesLogger;
-import com.sun.faces.util.RequestStateManager;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
-import javax.faces.application.StateManager;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
@@ -28,17 +20,19 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.jstl.core.Config;
 
-
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import netgest.bo.system.Logger;
+import netgest.bo.system.LoggerLevels;
+import netgest.bo.system.LoggerLevels.LoggerLevel;
 import netgest.bo.xwc.framework.PackageIAcessor;
 import netgest.bo.xwc.framework.XUIRequestContext;
+
+import com.sun.faces.RIConstants;
+import com.sun.faces.application.ViewHandlerResponseWrapper;
+import com.sun.faces.config.WebConfiguration;
+import com.sun.faces.config.WebConfiguration.WebContextInitParameter;
+import com.sun.faces.util.MessageUtils;
+import com.sun.faces.util.RequestStateManager;
+import com.sun.faces.util.Util;
 
 /**
  * <B>XUIViewHandlerImpl</B> is the default implementation class for ViewHandler.
@@ -49,7 +43,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 public class XUIViewHandlerImpl extends ViewHandler {
 
     // Log instance for this class
-    private static final Logger logger = FacesLogger.APPLICATION.getLogger();
+    private static final Logger logger = Logger.getLogger( XUIViewHandlerImpl.class );
 
     private XUIApplicationAssociate associate;
 
@@ -61,8 +55,8 @@ public class XUIViewHandlerImpl extends ViewHandler {
     protected int bufSize = -1;
 
     public XUIViewHandlerImpl() {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.FINE,"Created ViewHandler instance ");
+        if (logger.isFinerEnabled()) {
+            logger.finer("Created ViewHandler instance ");
         }
     }
     
@@ -111,13 +105,10 @@ public class XUIViewHandlerImpl extends ViewHandler {
             throw new FacesException(e);
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.FINE, "Completed building view for : \n" +
+        if (logger.isFinerEnabled()) {
+            logger.finer("Completed building view for : \n" +
                     viewToRender.getViewId());
-        }
-        if (logger.isLoggable(Level.FINEST)) {
-            logger.log(Level.FINEST, "+=+=+=+=+=+= Printout for " + viewToRender.getViewId() + " about to render.");
-            DebugUtil.printTree(viewToRender, logger, Level.FINEST);
+            
         }
 
         // set up the ResponseWriter
@@ -225,8 +216,8 @@ public class XUIViewHandlerImpl extends ViewHandler {
             associate.responseRendered();
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.FINE, "About to render view " + viewToRender.getViewId());
+        if (logger.isFinerEnabled()) {
+            logger.finer("About to render view " + viewToRender.getViewId());
         }
 
         viewToRender.encodeAll(context);
@@ -261,8 +252,8 @@ public class XUIViewHandlerImpl extends ViewHandler {
             // send them off to the root of the web application
             try {
                 context.responseComplete();
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.log(Level.FINE, "Response Complete for" + viewId);
+                if (logger.isFinerEnabled()) {
+                    logger.finer("Response Complete for" + viewId);
                 }
                 extContext.redirect(extContext.getRequestContextPath());
             } catch (IOException ioe) {
@@ -331,8 +322,8 @@ public class XUIViewHandlerImpl extends ViewHandler {
             renderKitId = context.getViewRoot().getRenderKitId();
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.log(Level.FINE, "Created new view for " + viewId);
+        if (logger.isFinerEnabled()) {
+            logger.finer("Created new view for " + viewId);
         }
         // PENDING(): not sure if we should set the RenderKitId here.
         // The UIViewRoot ctor sets the renderKitId to the default
@@ -343,13 +334,13 @@ public class XUIViewHandlerImpl extends ViewHandler {
             locale =
                 context.getApplication().getViewHandler().calculateLocale(
                     context);
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Locale for this view as determined by calculateLocale "
+            if (logger.isFinerEnabled()) {
+                logger.finer("Locale for this view as determined by calculateLocale "
                             + locale.toString());
             }
         } else {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Using locale from previous view "
+            if (logger.isFinerEnabled()) {
+                logger.finer("Using locale from previous view "
                             + locale.toString());
             }
         }
@@ -358,14 +349,14 @@ public class XUIViewHandlerImpl extends ViewHandler {
             renderKitId =
                 context.getApplication().getViewHandler().calculateRenderKitId(
                     context);
-           if (logger.isLoggable(Level.FINE)) {
-               logger.fine(
+           if (logger.isFinerEnabled()) {
+               logger.finer(
                "RenderKitId for this view as determined by calculateRenderKitId "
                + renderKitId);
             }
         } else {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Using renderKitId from previous view "
+            if (logger.isFinerEnabled()) {
+                logger.finer("Using renderKitId from previous view "
                             + renderKitId);
             }
         }
@@ -411,8 +402,8 @@ public class XUIViewHandlerImpl extends ViewHandler {
 
         String requestURI = viewToExecute.getViewId();
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("About to execute view " + requestURI);
+        if (logger.isFinerEnabled()) {
+            logger.finer("About to execute view " + requestURI);
         }
 
         // update the JSTL locale attribute in request scope so that JSTL
@@ -424,8 +415,8 @@ public class XUIViewHandlerImpl extends ViewHandler {
             extContext.getRequest(),
                        Config.FMT_LOCALE, context.getViewRoot().getLocale());
         }
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Before dispacthMessage to viewId " + requestURI);
+        if (logger.isFinerEnabled()) {
+            logger.finer("Before dispacthMessage to viewId " + requestURI);
         }
 
         // save the original response
@@ -438,8 +429,8 @@ public class XUIViewHandlerImpl extends ViewHandler {
         // build the view by executing the page
         extContext.dispatch(requestURI);
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("After dispacthMessage to viewId " + requestURI);
+        if (logger.isFinerEnabled()) {
+            logger.finer("After dispacthMessage to viewId " + requestURI);
         }
 
         // replace the original response
@@ -584,8 +575,8 @@ public class XUIViewHandlerImpl extends ViewHandler {
             throw new NullPointerException(message);
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Begin writing marker for viewId " +
+        if (logger.isFinerEnabled()) {
+            logger.finer("Begin writing marker for viewId " +
                         context.getViewRoot().getViewId());
         }
 
@@ -594,8 +585,8 @@ public class XUIViewHandlerImpl extends ViewHandler {
             writer.writingState();
         }
         context.getResponseWriter().write(RIConstants.SAVESTATE_FIELD_MARKER);
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("End writing marker for viewId " +
+        if (logger.isFinerEnabled()) {
+            logger.finer("End writing marker for viewId " +
                         context.getViewRoot().getViewId());
         }
 
@@ -716,11 +707,9 @@ public class XUIViewHandlerImpl extends ViewHandler {
             String mappingMod = builder.toString();
             boolean logged = false;
             while (uri.startsWith(mappingMod)) {
-                if (!logged && logger.isLoggable(Level.WARNING)) {
+                if (!logged && logger.isLoggable( LoggerLevels.WARNING )) {
                     logged = true;
-                    logger.log(Level.WARNING,
-                               "jsf.viewhandler.requestpath.recursion",
-                               new Object[] {uri, mapping});
+                    logger.warn("jsf.viewhandler.requestpath.recursion [" + uri +"] [" + mapping + "]" );
                 }
                 uri = uri.substring(length - 1);
             }
@@ -757,8 +746,8 @@ public class XUIViewHandlerImpl extends ViewHandler {
             if (contextDefaultSuffix == null) {
                 contextDefaultSuffix = ViewHandler.DEFAULT_SUFFIX;
             }
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("contextDefaultSuffix "
+            if (logger.isFinerEnabled()) {
+                logger.finer("contextDefaultSuffix "
                             + contextDefaultSuffix);
             }
         }
@@ -777,8 +766,8 @@ public class XUIViewHandlerImpl extends ViewHandler {
                 buffer.append(contextDefaultSuffix);
             }
             convertedViewId = buffer.toString();
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine( "viewId after appending the context suffix " +
+            if (logger.isFinerEnabled()) {
+                logger.finer( "viewId after appending the context suffix " +
                              convertedViewId);
             }
 

@@ -205,7 +205,7 @@ public abstract class XUIComponentBase extends UIComponentBase
         	oStateProperyState = new Object[ this.oStatePropertyMap.size() ];
             Iterator<Entry<String,XUIBaseProperty>> oStatePropertiesIt = getStateProperties().iterator();
             while( oStatePropertiesIt.hasNext() ) {
-            	XUIBaseProperty x = oStatePropertiesIt.next().getValue();
+            	XUIBaseProperty<?> x = oStatePropertiesIt.next().getValue();
             	if( !x.isDefaultValue() )
             		oStateProperyState[ iCntr ] = x.saveState();
             	else

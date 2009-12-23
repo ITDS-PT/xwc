@@ -141,7 +141,7 @@ public class EditToolBar extends ToolBar {
 
 		if( getRenderDestroyBtn() ) {
 			getChildren().add( pos++, Menu.getMenuSpacer() );
-			createViewerBeanMethod( pos++, null, "Remover","ext-xeo/images/menus/remover.gif", "destroy", null );
+			createViewerBeanMethod( pos++, null, "Remover","ext-xeo/images/menus/remover.gif", "remove", null );
 		}
 		
 		if( getRenderValidateBtn() ) {

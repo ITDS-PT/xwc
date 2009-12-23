@@ -24,26 +24,85 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
+/**
+ * The Class TreePanel.
+ */
 public class TreePanel extends XUIComponentBase {
 
-	private XUIBindProperty<Menu> root = new XUIBindProperty<Menu>( "root", this,  Menu.class );
-	private XUIBindProperty<Boolean> reload = new XUIBindProperty<Boolean>( "reload", this,  false, Boolean.class );
+	private XUIBindProperty<Menu> root = 
+		new XUIBindProperty<Menu>( "root", this,  Menu.class );
+	
+	private XUIBindProperty<Boolean> hideRoot = 
+		new XUIBindProperty<Boolean>( "hideRoot", this,  Boolean.class );
+	
+	private XUIBindProperty<Boolean> reload = 
+		new XUIBindProperty<Boolean>( "reload", this,  false, Boolean.class );
 	
 	private boolean localReload = false;
 	
-	
+	/**
+	 * To create a tree panel with dynamic content.
+	 * This property accepts a EL Expression that return a Menu component who holds 
+	 * the structure of the tree to be rendered
+	 * 
+	 * @param sRootExpr the new root element
+	 */
 	public void setRoot( String sRootExpr ) {
 		this.root.setExpressionText( sRootExpr );
 	}
 	
+	/**
+	 * Gets the root Menu element.
+	 * 
+	 * @return the root
+	 */
 	public Menu getRoot( ) {
 		return this.root.getEvaluatedValue();
 	}
 	
+	/**
+	 * Trigger the tree to be reloaded/refreshed at the end of the request
+	 * EL Expression to a boolean property or a literal true or false
+	 * 
+	 * @param sReloadExpr the new reload EL Expression
+	 */
 	public void setReload( String sReloadExpr ) {
 		this.reload.setExpressionText( sReloadExpr );
 	}
 	
+	/**
+	 * If the property root was specified when true hide the root Menu.
+	 * EL Expression to a boolean propertu or a literal true or false
+	 * 
+	 * @param elExpr the new hide root EL Expression
+	 */
+	public void setHideRoot( String elExpr ) {
+		this.hideRoot.setExpressionText( elExpr );
+	}
+	
+	/**
+	 * Same as setHideRoot(String) but accepts a boolean value
+	 * 
+	 * @param hideRoot true or false 
+	 */
+	public void setHideRoot( boolean hideRoot ) {
+		this.hideRoot.setValue( hideRoot );
+	}
+	
+	/**
+	 * Gets the hide root mode.
+	 * 
+	 * @return the hide root
+	 */
+	public boolean getHideRoot() {
+		return this.hideRoot.getEvaluatedValue();
+	}
+	
+	/**
+	 * Gets the if reload was triggered during the request
+	 * 
+	 * @return the reload
+	 */
 	public boolean getReload() {
 		return this.reload.getEvaluatedValue();
 	}
@@ -63,7 +122,12 @@ public class TreePanel extends XUIComponentBase {
 	    	Menu root = getRoot();
 	    	if( root != null ) {
 	    		this.getChildren().clear();
-	    		this.getChildren().add( root );
+	    		if( getHideRoot() ) {
+	    			this.getChildren().addAll( root.getChildren() );
+	    		}
+	    		else {
+		    		this.getChildren().add( root );
+	    		}
 	    		createMenuIds(  oRequestContext.getViewRoot(), root );
 	    	}
 		}

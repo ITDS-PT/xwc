@@ -4,14 +4,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.system.Logger;
+import netgest.bo.system.LoggerLevels;
 import netgest.bo.system.boApplication;
+import netgest.bo.system.LoggerLevels.LoggerLevel;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 
@@ -78,7 +79,7 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
         if( oAttrHandlr == null ) {
             String sObjectName =  getXEOObject().getName();
             
-            log.fine("Cannot found attribute [" + name + "]. Is missing on object [" + sObjectName + "]" );
+            log.severe("Cannot found attribute [" + name + "]. Is missing on object [" + sObjectName + "]" );
         } else {
         	oRetAttribute = new XEOObjectAttributeConnector( this, oAttrHandlr );
         }
@@ -163,21 +164,21 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 
     @SuppressWarnings("unchecked")
 	public void putAll(Map t) {
-        log.log( Level.WARNING, "Mehtod not implemented!" );
+        log.log( LoggerLevels.WARNING, "Mehtod not implemented!" );
     }
 
     public void clear() {
-        log.log( Level.WARNING, "Mehtod not implemented!" );
+        log.log( LoggerLevels.WARNING, "Mehtod not implemented!" );
     }
 
     @SuppressWarnings("unchecked")
 	public Set<String> keySet() {
-        log.log( Level.WARNING, "Mehtod not implemented!" );
+        log.log( LoggerLevels.WARNING, "Mehtod not implemented!" );
         return Collections.EMPTY_SET;
     }
 
     public Collection<Object> values() {
-        log.log( Level.WARNING, "Mehtod not implemented!" );
+        log.log( LoggerLevels.WARNING, "Mehtod not implemented!" );
         return null;
     }
 

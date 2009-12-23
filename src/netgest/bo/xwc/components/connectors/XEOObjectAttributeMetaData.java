@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+import netgest.bo.system.Logger;
 
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.lovmanager.LovManager;

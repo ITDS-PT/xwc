@@ -39,7 +39,7 @@ public class XUIAjaxRequestWrapper extends HttpServletRequestWrapper {
     }
 
     @Override
-    public Enumeration getParameterNames() {
+    public Enumeration<String> getParameterNames() {
         return oRequestParmatersMap.keys();
     }
 

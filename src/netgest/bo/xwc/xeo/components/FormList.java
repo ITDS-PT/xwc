@@ -1,10 +1,6 @@
 package netgest.bo.xwc.xeo.components;
 
-import netgest.bo.runtime.boObject;
 import netgest.bo.xwc.components.classic.Form;
-import netgest.bo.xwc.components.classic.Panel;
-import netgest.bo.xwc.components.classic.ToolBar;
-import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.framework.XUIBindProperty;
 
 public class FormList extends Form {
@@ -21,8 +17,8 @@ public class FormList extends Form {
 		return renderViewerTitle.getEvaluatedValue();
 	}
 
-	public void setRenderViewerTitle(boolean renderToolbar) {
-		this.renderViewerTitle.setValue( renderToolbar );
+	public void setRenderViewerTitle(boolean renderViewer ) {
+		this.renderViewerTitle.setValue( renderViewer );
 	}
 
 	@Override

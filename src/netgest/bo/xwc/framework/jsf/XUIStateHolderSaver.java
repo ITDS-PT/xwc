@@ -40,7 +40,7 @@ class XUIStateHolderSaver implements Serializable {
 
     public Object restore(FacesContext context) throws IllegalStateException {
         Object result = null;
-        Class toRestoreClass;
+        Class<?> toRestoreClass;
 
 	// if the Object to save implemented Serializable but not
 	// StateHolder
@@ -85,7 +85,7 @@ class XUIStateHolderSaver implements Serializable {
     }
 
 
-    private static Class loadClass(String name, 
+    private static Class<?> loadClass(String name, 
             Object fallbackClass) throws ClassNotFoundException {
         ClassLoader loader =
             Thread.currentThread().getContextClassLoader();

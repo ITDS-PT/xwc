@@ -20,13 +20,9 @@ import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
-import netgest.bo.xwc.components.classic.Attribute;
 import netgest.bo.xwc.components.classic.AttributeBase;
-import netgest.bo.xwc.components.classic.AttributeFile;
-import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
-import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataListIterator;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
@@ -157,15 +153,7 @@ public class AttributeObjectLookup extends AttributeBase {
         public String renderExtJs( XUIComponentBase oComp ) {
         	AttributeObjectLookup  oAttr;
             String              sJsValue;
-            StringBuilder    	sOut;
-            String              sFormId;
-            Form                oForm;
             
-            sFormId = oComp.getNamingContainerId();
-            oForm   = (Form)oComp.findComponent( sFormId );
-
-            sOut = new StringBuilder( 250 );
-
             oAttr = (AttributeObjectLookup)oComp; 
 
             if ( !oAttr.getEffectivePermission(SecurityPermissions.READ) ) {
@@ -249,7 +237,6 @@ public class AttributeObjectLookup extends AttributeBase {
             return oInpConfig.renderExtConfig().toString();
         }
 
-        @SuppressWarnings("unchecked")
 		public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
         	HttpServletResponse resp = (HttpServletResponse)response;
         	
