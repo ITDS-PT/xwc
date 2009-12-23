@@ -3,11 +3,11 @@
     <xwc:renderKits>
     	<!-- To Register RenderKits Class Names -->
         <xwc:renderKit name='XEOHTML' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
-        <xwc:renderKit name='XEOPDF' 	className='netgest.bo.xwc.components.render.pdf.PdfRenderKit' />
+<!--         <xwc:renderKit name='XEOPDF' 	className='netgest.bo.xwc.components.render.pdf.PdfRenderKit' /> -->
         <xwc:renderKit name='XEOV2' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
 		
 		<xwc:renderKit name='XEOV2' componentNamespace='xvw' >
-            <xwc:render for="button_pb">netgest.bo.xwc.components.html.Button_pb$XEOHTMLRenderer</xwc:render>
+<!--              <xwc:render for="button_pb">netgest.bo.xwc.components.html.Button_pb$XEOHTMLRenderer</xwc:render> -->
             <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.ErrorMessages$XEOHTMLRenderer</xwc:render>
             <xwc:render for="form">netgest.bo.xwc.components.classic.Form$XEOHTMLRenderer</xwc:render>
             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.ToolBar$XEOHTMLRenderer</xwc:render>
@@ -44,8 +44,8 @@
             <xwc:render for='gridPanel'>netgest.bo.xwc.components.classic.grid.GridPanelRenderer</xwc:render>
             <xwc:render for='window'>netgest.bo.xwc.components.classic.Window$XEOHTMLRenderer</xwc:render>
 			<xwc:render for='HTMLFileBrowse'>netgest.bo.xwc.components.classic.HTMLFileBrowse$XEOHTMLRenderer</xwc:render>
-            <xwc:render for='title'>xeo.viewers.render.TitleRenderer</xwc:render>
-			<xwc:render for='borderLayout'>netgest.bo.xwc.components.classic.BorderLayout$XEOHTMLRenderer</xwc:render>
+<!--             <xwc:render for='title'>xeo.viewers.render.TitleRenderer</xwc:render>  -->
+<!-- 			<xwc:render for='borderLayout'>netgest.bo.xwc.components.classic.BorderLayout$XEOHTMLRenderer</xwc:render>  -->
 
             <xwc:render for='treePanel'>netgest.bo.xwc.components.classic.TreePanel$XEOHTMLRenderer</xwc:render>
 
@@ -124,6 +124,8 @@
 
 			<xwc:render for='progressBar'>netgest.bo.xwc.components.classic.ProgressBar$XEOHTMLRenderer</xwc:render>
 
+			<xwc:render for='messageBox'>netgest.bo.xwc.components.classic.MessageBox$XEOHTMLRenderer</xwc:render>
+
 
 			<!--- HTML Graphics -->
             <xwc:render for='attributeImage'>netgest.bo.xwc.components.classic.AttributeImage$XEOHTMLRenderer</xwc:render>
@@ -159,10 +161,10 @@
             <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
 		</xwc:component>
     
-		<xwc:component name="button_pb">
+<!-- 		<xwc:component name="button_pb">
 			<xwc:className>netgest.bo.xwc.components.html.Button_pb</xwc:className>
 			<xwc:description>Botão de ligação ao PowerBuilder</xwc:description>
-		</xwc:component>
+		</xwc:component> -->
     
 		<!-- HTML Components -->
         <xwc:component name='buttonHtml'>
@@ -401,6 +403,11 @@
             <xwc:description>attributeWordMacro</xwc:description>
         </xwc:component>
 
+        <xwc:component name='messageBox'>
+            <xwc:className>netgest.bo.xwc.components.classic.MessageBox</xwc:className>
+            <xwc:description>Message Box component</xwc:description>
+        </xwc:component>
+
     </xwc:components>
     
     <xwc:components namespace='xeo'>
@@ -490,6 +497,11 @@
             <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
         </xwc:component>
 
+        <xwc:component name='lookupListToolBar'>
+            <xwc:className>netgest.bo.xwc.xeo.components.LookupListToolBar</xwc:className>
+            <xwc:description></xwc:description>
+        </xwc:component>
+
         <xwc:component name='list'>
             <xwc:className>netgest.bo.xwc.xeo.components.List</xwc:className>
             <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
@@ -499,6 +511,5 @@
             <xwc:className>netgest.bo.xwc.xeo.components.SplitedLookup</xwc:className>
             <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
         </xwc:component>
-	
     </xwc:components>
 </xwc:config>
