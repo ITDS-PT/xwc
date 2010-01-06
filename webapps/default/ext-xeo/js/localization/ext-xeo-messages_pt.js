@@ -16,9 +16,9 @@ if(ExtXeo.PagingToolbar){
 	    afterPageText  : "de {0} ({1})",
 	    firstText      : "Primeira P&aacute;gina",
 	    prevText       : "P&aacute;gina Anterior",
-	    nextText       : "Pr%oacute;xima P&aacute;gina",
+	    nextText       : "Pr&oacute;xima P&aacute;gina",
 	    lastText       : "&Uacute;ltima P&aacute;gina",
-	    refreshText    : "Recaregar",
+	    refreshText    : "Recarregar",
 	    displayMsg     : "A mostrar {0} - {1} de {2}",
 	    emptyMsg       : 'Sem dados para mostrar'
 	  });

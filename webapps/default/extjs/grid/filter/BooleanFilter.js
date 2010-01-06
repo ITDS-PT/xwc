@@ -21,7 +21,7 @@ Ext.grid.filter.BooleanFilter = Ext.extend(Ext.grid.filter.Filter, {
      * @cfg {String} noText
      * The text displayed for the "No" checkbox
      */
-    noText: 'Não',
+    noText: 'N&atilde;o',
 
 	init: function(){
 	    var gId = Ext.id();

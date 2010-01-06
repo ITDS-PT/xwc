@@ -273,7 +273,6 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 		return reqParam;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static String getExportTitle( GridPanel oGrid ) {
     	XUIViewRoot oViewRoot = XUIRequestContext.getCurrentContext().getViewRoot();
     	Object viewBean = oViewRoot.getBean("viewBean");
@@ -290,7 +289,9 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
     	if( t != null ) {
     		sTitle += " - " + t.getLabel();
     	}
+    	sTitle = sTitle.trim();
     	sTitle = sTitle.replaceAll( "<[a-zA-Z\\/][^>]*>", "");
+		sTitle = HTMLEntityDecoder.htmlEntityToChar( sTitle );  
     	return sTitle;
 	}
 

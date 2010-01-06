@@ -25,7 +25,7 @@ public class GridPanelExcelRenderer {
 	public void getExcel(  ServletRequest oRequest, ServletResponse oResponse, GridPanel oGrid  ) {
 
 		String sTitle = GridPanelRenderer.getExportTitle( oGrid );
-
+			
 		DataListConnector oDataSource = oGrid.getDataSource();
 		oDataSource.setPage(1);
 		oDataSource.setPageSize( Integer.MAX_VALUE );
@@ -61,9 +61,9 @@ public class GridPanelExcelRenderer {
     			w.startElement( HTMLTag.TH, null );
     			sLabel = GridPanel.getColumnLabel( oDataSource, oGridColumns[i] );
     			if( sLabel != null )
-    				w.writeText( sLabel, null );
+    				w.writeText( HTMLEntityDecoder.htmlEntityToChar( sLabel ), null );
     			else
-    				w.writeText( "&nbsp;", null );
+    				w.writeText( "", null );
     				
     			w.endElement( HTMLTag.TH );
 			}
@@ -104,7 +104,11 @@ public class GridPanelExcelRenderer {
         			}
         		
         			if( sValue != null ) {
-        				w.writeText( sValue, null );
+        				if( oGridColumns[i].isContentHtml() ) {
+        					sValue = sValue.replaceAll( "<[a-zA-Z\\/][^>]*>", "");
+        					sValue = HTMLEntityDecoder.htmlEntityToChar( sValue );
+        				}
+    					w.writeText( sValue, null );
         			}
         			w.endElement( HTMLTag.TD );
     			}

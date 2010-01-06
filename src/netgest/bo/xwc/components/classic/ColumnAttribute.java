@@ -12,6 +12,7 @@ import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.properties.XUIProperty;
 /**
  * This component represents a Column in a Grid panel
  * It must reside inside of a Columns element in the viewer
@@ -20,19 +21,22 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  *
  */
 public class ColumnAttribute extends XUIComponentBase implements Column {
-    
+	
     private XUIBaseProperty<String>         	dataField   = new XUIBaseProperty<String>( "dataField", this );
     private XUIStateBindProperty<String>    	label       = new XUIStateBindProperty<String>( "label", this, String.class );
     private XUIBaseProperty<String>    			width       = new XUIBaseProperty<String>( "width", this );
-    private XUIBaseProperty<Boolean>    		searchable  = new XUIBaseProperty<Boolean>( "searchable", this, true );
+	private XUIBaseProperty<Boolean>    		searchable  = new XUIBaseProperty<Boolean>( "searchable", this, true );
     private XUIBaseProperty<Boolean>    		sortable    = new XUIBaseProperty<Boolean>( "sortable", this, true );
     private XUIBaseProperty<Boolean>    		groupable	= new XUIBaseProperty<Boolean>( "groupable", this, true );
-    private XUIBaseProperty<Boolean>    		hideable 	= new XUIBaseProperty<Boolean>( "hideable", this, true );
+	private XUIBaseProperty<Boolean>    		hideable 	= new XUIBaseProperty<Boolean>( "hideable", this, true );
     private XUIBaseProperty<Boolean>    		hidden  	= new XUIBaseProperty<Boolean>( "hidden", this, false );
-    private XUIBaseProperty<Boolean>    		resizable   = new XUIBaseProperty<Boolean>( "resizable", this, true );
+	private XUIBaseProperty<Boolean>    		resizable   = new XUIBaseProperty<Boolean>( "resizable", this, true );
+	private XUIBaseProperty<Boolean>    		contentHtml   = new XUIBaseProperty<Boolean>( "contentHtml", this, false );
+
     private XUIBindProperty<String>             lookupViewer= new XUIBindProperty<String>( "lookupViewer", this, String.class );
-    
+
     private XUIBindProperty<GridColumnRenderer> renderer    = new XUIBindProperty<GridColumnRenderer>( "renderer", this, GridColumnRenderer.class );
+
     
     /**
      * Set if the column can be hidden by the user
@@ -66,6 +70,37 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 	 */
 	public boolean isHidden() {
 		return hidden.getValue();
+	}
+
+	/**
+	 * Toggle the column value is Html or not.
+	 * This to be used when exporting to a non HTML format, if this flag is set to true 
+	 * the renderer will try to convert the html to the final format.
+	 * Eg: If exporting to a PDF and this atribute is set to true the Html is converted to PDF
+	 * @param sBooleanContentHtml true/false
+	 */
+	public void setContentHtml( String sBooleanContentHtml ) {
+		this.contentHtml.setValue( Boolean.parseBoolean( sBooleanContentHtml ) );
+	}
+
+	/**
+	 * Toggle the column value is Html or not.
+	 * This to be used when exporting to a non HTML format, if this flag is set to true 
+	 * the renderer will try to convert the html to the final format.
+	 * Eg: If exporting to a PDF and this atribute is set to true the Html is converted to PDF
+	 * @param sBooleanContentHtml true/false
+	 */
+	public void setContentHtml( boolean sBooleanContentHtml ) {
+		this.contentHtml.setValue( sBooleanContentHtml );
+	}
+	
+	/**
+	 * Getter for the property contentHtml
+	 * 
+	 * @return true/false
+	 */
+	public boolean isContentHtml() {
+		return contentHtml.getValue();
 	}
 	
 	/**

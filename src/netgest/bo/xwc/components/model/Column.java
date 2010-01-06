@@ -12,4 +12,6 @@ public interface Column {
     public boolean isResizable();
     public byte getSecurityPermissions();
     public String getLookupViewer();
+    public boolean isContentHtml();
+    
 }

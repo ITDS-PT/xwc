@@ -1,7 +1,10 @@
 package netgest.bo.xwc.components.classic.grid;
 
 import java.awt.Color;
+import java.io.StringReader;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -12,6 +15,7 @@ import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Column;
+import netgest.bo.xwc.framework.XUIRequestContext;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
@@ -25,10 +29,10 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.rtf.headerfooter.RtfHeaderFooter;
 
 public class GridPanelPDFRenderer {
 	
+	@SuppressWarnings("unchecked")
 	public void render( ServletRequest oRequest, ServletResponse oResponse, GridPanel oGrid ) {
     	oResponse.setContentType("application/pdf");
     	int fragmentsize = 200;
@@ -38,6 +42,7 @@ public class GridPanelPDFRenderer {
     	font.setColor(new Color(0x92, 0x90, 0x83));
     	
     	String sTitle = GridPanelRenderer.getExportTitle( oGrid );
+    	sTitle = HTMLEntityDecoder.htmlEntityToChar( sTitle );
     	
 		DataListConnector oDataSource = oGrid.getDataSource();
 		oDataSource.setPage(1);
@@ -50,37 +55,40 @@ public class GridPanelPDFRenderer {
 			PdfWriter.getInstance(document, oResponse.getOutputStream() );
 			// step3
 			
-			// Header
-        	HeaderFooter header = new HeaderFooter(new Phrase(new Chunk(sTitle, new Font(Font.HELVETICA, 10, Font.BOLD))),false);
-        	header.setAlignment(Element.ALIGN_CENTER);
-        	header.setBorder(0);
-        	document.setHeader(header);
-			
-			document.addTitle( sTitle );
-        	
-        	
-        	// Footer
-        	// Create a new Paragraph for the footer
-        	Paragraph par = new Paragraph( ComponentMessages.GRID_PAGE.toString() );
-        	par.setAlignment(Element.ALIGN_CENTER);
-
-        	// Add the RtfPageNumber to the Paragraph
-        	//par.add(new RtfPageNumber());
-        	            
-        	// Create an RtfHeaderFooter with the Paragraph and set it
-        	// as a footer for the document
-        	RtfHeaderFooter footer = new RtfHeaderFooter(par);
-        	document.setFooter(footer);
-        	
-        	footer.setBorder(0);
-        	
-			document.open();
 			// step4
 			Font fontH = FontFactory.getFont("Verdana", 6, Font.BOLD,
 					Color.BLACK);
 
 			Font fontB = FontFactory.getFont("Verdana", 6, Font.NORMAL,
 					Color.BLACK);
+			
+			
+			// Header
+        	HeaderFooter header = new HeaderFooter(new Phrase(new Chunk(sTitle, new Font(Font.HELVETICA, 10, Font.BOLD))),false);
+        	header.setTop(30);
+        	header.setAlignment(Element.ALIGN_CENTER);
+        	header.setBorder(1);
+        	document.setHeader(header);
+			//document.addTitle( sTitle );
+        	
+        	// Footer
+        	// Create a new Paragraph for the footer
+        	//Paragraph par = new Paragraph( ComponentMessages.GRID_PAGE.toString() );
+        	//par.setAlignment(Element.ALIGN_CENTER);
+        	// Add the RtfPageNumber to the Paragraph
+        	//par.add(new RtfPageNumber());
+        	            
+        	// Create an RtfHeaderFooter with the Paragraph and set it
+        	Phrase footerText = new Phrase();
+        	footerText.setFont( fontB );
+        	footerText.add( ComponentMessages.GRID_PAGE.toString() + " " );
+        	
+        	HeaderFooter footer = new HeaderFooter(footerText,true);
+        	footer.setAlignment( Element.ALIGN_RIGHT );
+        	footer.setBorder(1);
+        	document.setFooter(footer);
+        	
+			document.open();
 
 			Column[] oGridColumns = oGrid.getColumns();
 			PdfPTable table = new PdfPTable( oGridColumns.length );
@@ -102,6 +110,8 @@ public class GridPanelPDFRenderer {
 				}
 				
     			String sLabel = GridPanel.getColumnLabel( oDataSource, oGridColumns[i] );
+    			sLabel = HTMLEntityDecoder.htmlEntityToChar( sLabel );
+    			
 				Paragraph p = new Paragraph( sLabel , fontH);
     			PdfPCell h1 = new PdfPCell(p);
     			h1.setBackgroundColor( Color.LIGHT_GRAY );
@@ -112,6 +122,24 @@ public class GridPanelPDFRenderer {
 			table.setLockedWidth(true);
 			table.setTotalWidth( iTableWidth );
 
+			
+			HashMap<String, String> htmlWorkerProps = 
+				new HashMap<String, String>();
+			
+			XUIRequestContext oRequestContext = 
+				XUIRequestContext.getCurrentContext();
+			
+ 			String resourceUrl = oRequestContext.getResourceUrl("");
+ 			if( !resourceUrl.toLowerCase().startsWith("http") ) {
+ 				
+ 				resourceUrl = 
+ 					oRequest.getScheme() + "://" +
+ 					oRequest.getServerName() + ":" +
+ 					oRequest.getServerPort() +
+ 					resourceUrl;
+ 			}
+			htmlWorkerProps.put( "img_baseurl" , resourceUrl );
+			
 			int row =0;
 			while( it.hasNext() ) {
 				
@@ -127,13 +155,28 @@ public class GridPanelPDFRenderer {
     				DataFieldConnector oAtt;
     				oAtt = oRecordConnector.getAttribute( oGridColumns[i].getDataField() );
     				if( oAtt != null ) {
-        				cell = 
-        					new PdfPCell( 
-        							new Paragraph(
-        								oAtt.getDisplayValue(), 
+    					String sValue = oAtt.getDisplayValue();
+        				
+    					cell = new PdfPCell();
+        				
+    					if(	oGridColumns[i].isContentHtml() ) {
+	    					sValue = HTMLEntityDecoder.htmlEntityToChar( sValue );
+	    					List<Element> s = (List<Element>)
+	    						HTMLWorker.parseToList(new StringReader(sValue), null, htmlWorkerProps );
+	        				if( s.size() > 0 ) {
+		        				for( Element elem : s ) {
+		        					cell.addElement( elem );
+		        				}
+	        				}
+    					}
+        				else {
+        					cell.addElement(
+								new Paragraph(
+	    								sValue, 
 	        							fontB
-        							)
-        						);
+	    							)
+							);
+        				}
     				}
     				else {
         				cell = 

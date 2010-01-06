@@ -79,12 +79,13 @@ public class List extends GridPanel {
 //    	<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
 		ColumnAttribute iconColumn = new ColumnAttribute();
 		iconColumn.setLabel("&nbsp;");
-		iconColumn.setWidth("10");
+		iconColumn.setWidth("20");
 		iconColumn.setHideable( "false" );
 		iconColumn.setSortable( "false" );
 		iconColumn.setGroupable( "false" );
 		iconColumn.setSearchable( "false" );
 		iconColumn.setDataField( "SYS_OBJECT_ICON_16" );
+		iconColumn.setContentHtml( true );
 		
 		c.getChildren().add( 0, iconColumn );
 		
