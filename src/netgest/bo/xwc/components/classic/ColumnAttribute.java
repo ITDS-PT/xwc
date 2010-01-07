@@ -2,9 +2,6 @@ package netgest.bo.xwc.components.classic;
 
 import javax.el.ValueExpression;
 
-import org.omg.CORBA.Current;
-
-import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.security.SecurityPermissions;
@@ -12,7 +9,6 @@ import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.properties.XUIProperty;
 /**
  * This component represents a Column in a Grid panel
  * It must reside inside of a Columns element in the viewer
