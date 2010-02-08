@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
@@ -127,7 +128,7 @@ public class XUIViewerDefinitonParser
     	
     	ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
     	
-    	InputStream is = null;
+     	InputStream is = null;
     	
     	if( is == null ) {
     		is = contextClassLoader.getResourceAsStream( viewerName );
@@ -138,27 +139,26 @@ public class XUIViewerDefinitonParser
 			if( underScoreIdx != -1 ) {
 				char[] v = viewerName.toCharArray();
 				v[ underScoreIdx ] = '/';
-				is = contextClassLoader.getResourceAsStream( DEFAULT_VIEWERS_ROOT + "/" + String.valueOf( v ) );
+				String sviewId = DEFAULT_VIEWERS_ROOT + "/" + String.valueOf( v );
+				is = contextClassLoader.getResourceAsStream( sviewId );
 			}
     	}
     	
     	if( is == null ) {
     		
     		if( viewerName.startsWith( DEFAULT_VIEWERS_ROOT ) ) {
-    			viewerName = viewerName.substring( DEFAULT_VIEWERS_ROOT.length() );
+    			viewerName = viewerName.substring( DEFAULT_VIEWERS_ROOT.length() + 1 );
     		}
     		
 	    	int slashIdx = viewerName.lastIndexOf( '/' );
 			if( slashIdx != -1 ) {
 				char[] v = viewerName.toCharArray();
 				v[ slashIdx ] = '_';
-				is = contextClassLoader.getResourceAsStream( String.valueOf( v ) );
+				String sviewId = String.valueOf( v );
+				is = contextClassLoader.getResourceAsStream( sviewId );
 			}
     	}
 		
-    	if( is == null ) {
-	    	is = contextClassLoader.getResourceAsStream( viewerName );
-		}
     	return is;
     }
     
