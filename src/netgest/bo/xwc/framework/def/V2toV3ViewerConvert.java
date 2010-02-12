@@ -54,7 +54,10 @@ public class V2toV3ViewerConvert {
 			boModel = (new ngtXMLHandler( boDefHandler.getBoDefinition(boName).getNode() )).getParentNode();
 			ngtXMLHandler[] forms = boModel.getChildNode("xeoModel").getChildNode("viewers").getChildNode("viewer").getChildNode("forms").getChildNodes();
 			XMLDocument newViewerXML = null;
-
+			
+			File boFolder = new File(destPath+File.separator+boName);
+			if (!boFolder.exists())
+				boFolder.mkdir();
 			for (int j=0;j<forms.length;j++){
 				this.createLogMessage("VIEWER name = "+forms[j].getAttribute("name") + " type = " +forms[j].getAttribute("formtype"));
 
@@ -70,8 +73,10 @@ public class V2toV3ViewerConvert {
 				}else{
 					newViewerXML = this.createV3ViewerXML(this.createV3ViewerEdit(forms[j]));
 				}
-				this.createNewViewerFile(newViewerXML,destPath,this.getNewXVWViewerName(boName,formName));
+				this.createNewViewerFile(newViewerXML,boFolder.getAbsolutePath(),this.getNewXVWViewerName(boName,formName));
 			}
+			if (boFolder.list().length == 0)
+				boFolder.delete();
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.createLogMessage("ERROR CONVERTING BO MODEL : "+boModelFile.getName());
@@ -449,7 +454,7 @@ public class V2toV3ViewerConvert {
 		
 		// explorer forms always have their name appended to the new file
 		if(foundForm.getChildNode("explorer") != null){
-			newViewerFileName = boName+"_list_"+formName+".xvw"; 
+			newViewerFileName = "list_"+formName+".xvw"; 
 		} else {
 			if(foundForm.getChildNode("grid") != null) {
 				foundFormType = "list";
@@ -463,9 +468,9 @@ public class V2toV3ViewerConvert {
 
 			// don't append form name if only one form of type or form has standard name (edit or list)
 			if (!mutipleFormsSameType || formName.trim().equalsIgnoreCase(foundFormType))
-				newViewerFileName = boName+"_"+newViewerType+".xvw"; 
+				newViewerFileName = newViewerType+".xvw"; 
 			else
-				newViewerFileName = boName+"_"+newViewerType+"_"+formName+".xvw"; 
+				newViewerFileName = newViewerType+"_"+formName+".xvw"; 
 		}
 
 		return newViewerFileName;
@@ -561,16 +566,16 @@ public class V2toV3ViewerConvert {
 				if (treeNodeMode.trim().equalsIgnoreCase("explorer")) {
 					ngtXMLHandler form = getBOForm(boName,formName);
 					boql = form.getChildNode("explorer").getChildNode("boql").getText().replace("'", "\\'");
-					newViewerFileName = (formName==null||formName.trim().equals(""))? boName+"_list.xvw" : this.getNewXVWViewerName(boName,formName);
+					newViewerFileName = (formName==null||formName.trim().equals(""))? boName+"_list.xvw" : boName+"/"+this.getNewXVWViewerName(boName,formName);
 					newMenuItem.setProperty("serverAction", "#{viewBean.listObject}");
 					newMenuItem.setProperty("value", "{viewerName:'"+newViewerFileName+"', boql:'"+boql+"'}");
 				} else if (treeNodeMode.trim().equalsIgnoreCase("list")  ) {
 					boql = "select "+ boName + " where 1=1";
-					newViewerFileName = (formName==null||formName.trim().equals(""))? boName+"_lookup.xvw" : this.getNewXVWViewerName(boName,formName);
+					newViewerFileName = (formName==null||formName.trim().equals(""))? boName+"_lookup.xvw" : boName+"/"+this.getNewXVWViewerName(boName,formName);
 					newMenuItem.setProperty("serverAction", "#{viewBean.listObject}");
 					newMenuItem.setProperty("value", "{viewerName:'"+newViewerFileName+"', boql:'"+boql+"'}");
 				} else if (treeNodeMode.trim().equalsIgnoreCase("new")) { 
-					newViewerFileName = (formName==null||formName.trim().equals(""))? boName+"_edit.xvw" : this.getNewXVWViewerName(boName,formName);
+					newViewerFileName = (formName==null||formName.trim().equals(""))? boName+"_edit.xvw" : boName+"/"+this.getNewXVWViewerName(boName,formName);
 					newMenuItem.setProperty("serverAction", "#{viewBean.createObject}");
 					newMenuItem.setProperty("value", "{viewerName:'"+newViewerFileName+"', objectName:'"+boName+"'}");
 				}
