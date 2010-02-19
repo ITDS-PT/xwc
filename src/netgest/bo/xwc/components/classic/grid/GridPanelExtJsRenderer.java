@@ -32,6 +32,7 @@ import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
+import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -99,19 +100,33 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                 if (!oChildComp.isRendered()) {
                     return;
                 }
-                String rendererType;
-                rendererType = oChildComp.getRendererType();
-                if (rendererType != null) {
-                    Renderer renderer = getRenderer( oChildComp, XUIRequestContext.getCurrentContext().getFacesContext() );
-                    if (renderer != null) {
-                        if( this.oExtToolbar == null ) {
-                            oExtToolbar = new ExtConfigArray();
-                        }
-                        oExtToolbar.addChild(
-                            ((ExtJsRenderer)renderer).getExtJsConfig( (XUIComponentBase)oChildComp )
-                        );
-                        
+                
+                if( ((ToolBar) oChildComp).isRenderedOnClient() ) {
+                	ScriptBuilder sb = ToolBar.XEOHTMLRenderer.updateMenuItems( (ToolBar) oChildComp );
+                    if( sb.length() > 0 ) {
+                    	getResponseWriter().getScriptContext().add( 
+                    			XUIScriptContext.POSITION_FOOTER, 
+                    			((ToolBar)oChildComp).getClientId(), 
+                    			sb.toString()
+                    	);
                     }
+                }
+                else {
+	                String rendererType;
+	                rendererType = oChildComp.getRendererType();
+	                if (rendererType != null) {
+	                    Renderer renderer = getRenderer( oChildComp, XUIRequestContext.getCurrentContext().getFacesContext() );
+	                    if (renderer != null) {
+	                        if( this.oExtToolbar == null ) {
+	                            oExtToolbar = new ExtConfigArray();
+	                        }
+	                        oExtToolbar.addChild(
+	                            ((ExtJsRenderer)renderer).getExtJsConfig( (XUIComponentBase)oChildComp )
+	                        );
+	                        
+	                    }
+	                }
+	                ((ToolBar)oChildComp).setRenderedOnClient( true );
                 }
             }
         }

@@ -8,7 +8,7 @@ import netgest.bo.xwc.framework.XUIBindProperty;
 
 public class FormEdit extends Form {
 
-	private XUIBindProperty<boObject> 	targetObject = 
+	private XUIBindProperty<boObject> targetObject = 
 		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
 	
 	private XUIBindProperty<Boolean> renderToolBar = 

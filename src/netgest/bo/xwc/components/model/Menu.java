@@ -138,6 +138,10 @@ public class Menu extends ViewerCommandSecurityBase {
         this.disabled.setExpressionText( disabled );
     }
 
+    public void setDisabled(boolean disabled) {
+        this.disabled.setExpressionText( Boolean.toString( disabled ) );
+    }
+
     public boolean isDisabled() {
         return disabled.getEvaluatedValue();
     }

@@ -148,18 +148,21 @@ public class BridgeToolBar extends ToolBar {
 				if( "lookupBridge".equals( viewerMethod.getTargetMethod() ) ) {
 					separatorRendered = XEOComponentStateLogic.isBridgeAddVisible( targetBridge );
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ) );
+					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeAddEnabled(targetBridge) );
 					if( separatorRendered )
 						renderToolBar = true;
 				}
 				else if( "removeFromBridge".equals( viewerMethod.getTargetMethod() ) ) {
 					separatorRendered = XEOComponentStateLogic.isBridgeRemoveVisible( targetBridge ); 
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ));
+					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeRemoveEnabled(targetBridge) );
 					if( separatorRendered )
 						renderToolBar = true;
 				}
 				else if( "addNewToBridge".equals( viewerMethod.getTargetMethod() ) ) {
 					separatorRendered = XEOComponentStateLogic.isBridgeNewVisible( targetBridge ); 
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ));
+					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeNewVisible(targetBridge) );
 					if( separatorRendered )
 						renderToolBar = true;
 				}

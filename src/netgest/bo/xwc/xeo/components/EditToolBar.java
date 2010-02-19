@@ -24,7 +24,7 @@ public class EditToolBar extends ToolBar {
 	);
 	
 	public static final List<String> MapViewerMethods = Arrays.asList(
-			new String[] {"save","saveAndClose","processValidate","duplicate", "destroy" }
+			new String[] {"save","saveAndClose","processValidate","duplicate", "remove" }
 	);
 	
 	private XUIBindProperty<boObject> 	targetObject = 

@@ -12,13 +12,17 @@ public class FormList extends Form {
 
 	private XUIBindProperty<Boolean> renderViewerTitle = 
 		new XUIBindProperty<Boolean>("renderViewerTitle", this, true, Boolean.class);
-	
+
 	public boolean getRenderViewerTitle() {
 		return renderViewerTitle.getEvaluatedValue();
 	}
 
 	public void setRenderViewerTitle(boolean renderViewer ) {
 		this.renderViewerTitle.setValue( renderViewer );
+	}
+
+	public void setRenderViewerTitle(String renderViewerExpr ) {
+		this.renderViewerTitle.setExpressionText( renderViewerExpr );
 	}
 
 	@Override

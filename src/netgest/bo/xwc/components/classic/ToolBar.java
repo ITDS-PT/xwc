@@ -15,6 +15,7 @@ import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
+import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
@@ -100,23 +101,80 @@ public class ToolBar extends ViewerSecurityBase {
         public void encodeBegin(XUIComponentBase component) throws IOException {
             XUIResponseWriter w = getResponseWriter();
 
-    		w.startElement( HTMLTag.DIV, component );
-    		w.writeAttribute( HTMLAttr.ID, component.getClientId(), null );
+    		if( !component.isRenderedOnClient() ) {
+    			w.startElement( HTMLTag.DIV, component );
+    			w.writeAttribute( HTMLAttr.ID, component.getClientId(), null );
     		
-    		ExtConfig toolBar = renderExtJs( component );
-    		toolBar.addJSString( "renderTo", component.getClientId() );
-    		w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, 
-    				"toolbar:"+component.getId(),
-    				toolBar.renderExtConfig()
-    		);
+	    		ExtConfig toolBar = renderExtJs( component );
+	    		toolBar.addJSString( "renderTo", component.getClientId() );
+	    		w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, 
+	    				"toolbar:"+component.getId(),
+	    				toolBar.renderExtConfig()
+	    		);
+    		}
+    		else {
+    			// update menu options
+            	ScriptBuilder sb = ToolBar.XEOHTMLRenderer.updateMenuItems( (ToolBar) component );
+                if( sb.length() > 0 ) {
+                	getResponseWriter().getScriptContext().add( 
+                			XUIScriptContext.POSITION_FOOTER, 
+                			((ToolBar)component).getClientId(), 
+                			sb.toString()
+                	);
+                }
+    		}
 
+        }
+        
+        public static final ScriptBuilder updateMenuItems( ToolBar toolBar ) {
+            Iterator<UIComponent> childs =  toolBar.getChildren().iterator();
+        	ScriptBuilder sb = new ScriptBuilder();
+            while( childs.hasNext() ) {
+                Menu oMenuChild = (Menu)childs.next();
+                if( oMenuChild.isRendered() ) {
+                	if( oMenuChild.wasStateChanged() ) {
+                    	sb.startBlock();
+                    	generateUpdateScript(sb, oMenuChild );
+                    	sb.endBlock();
+                	}
+                }
+            }
+            return sb;
+        }
+
+        public static final void updateChildMenuItems( ScriptBuilder sb, Menu menu ) {
+            Iterator<UIComponent> childs =  menu.getChildren().iterator();
+            while( childs.hasNext() ) {
+                Menu oMenuChild = (Menu)childs.next();
+                if( oMenuChild.isRendered() ) {
+	            	if( oMenuChild.wasStateChanged() ) {
+	                	sb.startBlock();
+	                	generateUpdateScript(sb, oMenuChild );
+	                	sb.endBlock();
+	            	}
+                }
+            }
+        }
+        
+        public static final void generateUpdateScript( ScriptBuilder sb, Menu oMenuChild ) {
+        	sb.w( "var m=Ext.getCmp('").writeValue( oMenuChild.getClientId() ).l("');" );
+        	if( !oMenuChild.isVisible() )
+        		sb.w( "m.hide();" );
+        	sb.w( "m.setDisabled(").w( oMenuChild.isDisabled() ).l( ");" );
+        	
+        }
+        
+        @Override
+        public void encodeChildren(XUIComponentBase component) throws IOException {
         }
 
         @Override
         public void encodeEnd(XUIComponentBase component) throws IOException {
     		super.encodeEnd(component);
-    		XUIResponseWriter w = getResponseWriter();
-    		w.endElement("div");
+    		if( !component.isRenderedOnClient() ) {
+	    		XUIResponseWriter w = getResponseWriter();
+	    		w.endElement("div");
+    		}
         }
 
         public ExtConfig renderExtJs( XUIComponentBase component ) {
@@ -159,6 +217,7 @@ public class ToolBar extends ViewerSecurityBase {
         }
         
         public static final void configExtMenu( XUIRenderer renderer, ToolBar toolBar,  Menu oMenuChild, ExtConfig  oItemCfg ) {
+            oItemCfg.addJSString( "id", oMenuChild.getClientId() );
             oItemCfg.addJSString( "text", oMenuChild.getText() );
             if( !toolBar.isVisible() || !oMenuChild.isVisible() )
                 oItemCfg.add( "hidden", true );
@@ -199,7 +258,7 @@ public class ToolBar extends ViewerSecurityBase {
             //sOut.write(" new Ext.menu.Menu({ "); sOut.write("\n");
             oMenu.setComponentType( "Ext.menu.Menu" );
             //sOut.write(" id: '" + oSubMenu.getClientId() + "'"); sOut.write(",\n");
-            oMenu.addJSString("id", oSubMenu.getClientId() );
+            //oMenu.addJSString("id", oSubMenu.getClientId() );
             //sOut.write(" items: [ "); sOut.write("\n");
             oSubChildCfg = oMenu.addChildArray( "items" );
             

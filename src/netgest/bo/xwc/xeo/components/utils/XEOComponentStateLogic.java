@@ -38,6 +38,30 @@ public class XEOComponentStateLogic {
 		}
 	}
 	
+	public static final boolean isBridgeAddEnabled( bridgeHandler bridgeHandler ) {
+		try {
+			return bridgeHandler.disableWhen() || !bridgeHandler.getParent().isEnabled;
+		} catch (boRuntimeException e) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	public static final boolean isBridgeRemoveEnabled( bridgeHandler bridgeHandler ) {
+		try {
+			return bridgeHandler.disableWhen() || !bridgeHandler.getParent().isEnabled;
+		} catch (boRuntimeException e) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	public static final boolean isBridgeRemoveNew( bridgeHandler bridgeHandler ) {
+		try {
+			return bridgeHandler.disableWhen() || !bridgeHandler.getParent().isEnabled;
+		} catch (boRuntimeException e) {
+			throw new RuntimeException( e );
+		}
+	}
+	
 	public static final boolean isBridgeAddVisible( bridgeHandler bridgeHandler ) {
 		try {
 			if (netgest.bo.security.securityRights.canWrite( bridgeHandler.getEboContext() , bridgeHandler.getParent().getName() ) ) {
