@@ -33,6 +33,11 @@ public class AttributeTime extends AttributeBase {
 	        oInpTimeConfig.addJSString("format", "H:i");
 	        oInpTimeConfig.add("width", 95 );
             oInpTimeConfig.addJSString("value", formatValue( oAttr ) );
+            if( oAttr.isReadOnly() ) {
+            	oInpTimeConfig.add("readOnly", true );
+            	oInpTimeConfig.add("hideTrigger", true );
+            	oInpTimeConfig.add("disabled", true );
+            }
 	        return oInpTimeConfig;
 		}
 		
@@ -42,6 +47,11 @@ public class AttributeTime extends AttributeBase {
 			
 			if( oComp.isRenderedOnClient() ) {
 	            sb.w( "c.setValue('" ).writeValue( formatValue( oComp ) ).s("')");
+	            
+	        	if( oComp.getStateProperty("readOnly").wasChanged() ) { 
+	        		sb.w("c.setDisabled(").w( oComp.isReadOnly() ).w(")").endStatement();
+	        		sb.w("c.trigger.setDisplayed(").w( !oComp.isReadOnly() ).w(")").endStatement();
+	        	}
 			}
 			sb.endBlock();
 			
