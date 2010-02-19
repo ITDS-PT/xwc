@@ -108,7 +108,7 @@ public class AttributeDateTime extends AttributeBase {
 	            catch( ParseException e ) {
 	            	getRequestContext().addMessage( getClientId(), 
 	            			new XUIMessage(
-	                                XUIMessage.TYPE_MESSAGE,
+	                                XUIMessage.TYPE_ALERT,
 	                                XUIMessage.SEVERITY_ERROR,
 	                                getLabel(),
 	                                ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )

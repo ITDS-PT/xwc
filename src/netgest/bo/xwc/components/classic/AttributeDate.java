@@ -60,7 +60,7 @@ public class AttributeDate extends AttributeBase {
                 catch( ParseException ex ) {
                     getRequestContext().addMessage( 
                     		getClientId(), new XUIMessage(
-                                    XUIMessage.TYPE_MESSAGE,
+                                    XUIMessage.TYPE_ALERT,
                                     XUIMessage.SEVERITY_ERROR,
                                     getLabel(),
                                     ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
@@ -110,6 +110,10 @@ public class AttributeDate extends AttributeBase {
             	oInpDateConfig.addJSString("name", "" );
             } 
             oInpDateConfig.addJSString("value", sValue );
+            
+            if( oAttrDate.isReadOnly() ) {
+                oInpDateConfig.add("hideTrigger", true );
+            }
 
             return oInpDateConfig;
     	}
