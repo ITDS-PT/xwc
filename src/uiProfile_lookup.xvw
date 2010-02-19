@@ -1,29 +1,18 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by António (Itds) -->
-<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
+<xvw:root 
+xmlns:xvw="http://www.netgest.net/xeo/xvw"
+xmlns:xeo="http://www.netgest.net/xeo/xeo"
+
+>
 	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseLookupList" beanId="viewBean">
-		<xvw:form id="uiProfileLookup">
-			<xvw:window id="lookupWindow" width="550" height="400">
-				<xvw:panel>
-					<xvw:title valueExpression="#{viewBean.title}"/>
-					<xvw:gridPanel 
-						rowSelectionMode="#{viewBean.rowSelectionMode}" 
-						id="lookupPanel" 
-						dataSource="#{viewBean.dataList}" 
-						onRowDoubleClick="#{viewBean.rowDoubleClick}"
-					>
-						<xvw:toolBar>
-							<xvw:menu text="Confirmar" icon='ext-xeo/images/menus/confirmar.gif' serverAction="#{viewBean.confirm}"></xvw:menu>
-							<xvw:menu text="Criar Novo" icon='ext-xeo/images/menus/adicionar-bridge.gif' serverAction="#{viewBean.addNew}"></xvw:menu>
-						</xvw:toolBar>
-						<xvw:columns>
-                			<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
-							<xvw:columnAttribute width="150" dataField="name"/>
-							<xvw:columnAttribute width="150" dataField="description"/>
-						</xvw:columns>
-					</xvw:gridPanel>
-				</xvw:panel>				
-			</xvw:window>
-		</xvw:form>
+		<xeo:formLookupList>
+			<xeo:lookupList>
+				<xvw:columns>
+					<xvw:columnAttribute width="150" dataField="name"/>
+					<xvw:columnAttribute width="150" dataField="description"/>
+				</xvw:columns>
+			</xeo:lookupList>
+		</xeo:formLookupList>
 	</xvw:viewer>
 </xvw:root>

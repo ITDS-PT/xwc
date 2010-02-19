@@ -15,6 +15,8 @@ import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
+import netgest.bo.xwc.xeo.localization.BeansMessages;
+import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
 public class BridgeToolBar extends ToolBar {
 	
@@ -106,7 +108,10 @@ public class BridgeToolBar extends ToolBar {
 		}
 		
 		if( getRenderRemoveBtn() ) {
-			menu = createViewerBeanMethod(  "remove", "Remover", "Remover selecionados","ext-xeo/images/menus/remover-bridge.gif", 
+			menu = createViewerBeanMethod(  "remove", 
+							XEOComponentMessages.BRIDGETB_REMOVE.toString(), 
+							XEOComponentMessages.BRIDGETB_REMOVE_SELECTED.toString(),
+							"ext-xeo/images/menus/remover-bridge.gif", 
 							getParent().getClientId( getFacesContext() ), 
 							"removeFromBridge", "self");
 	
@@ -190,8 +195,8 @@ public class BridgeToolBar extends ToolBar {
 			if( subClassesDef.size() > 0 ) {
 				subClasseDef = subClassesDef.get( 0 );
 				rootMenu = new ViewerMethod();
-				rootMenu.setText( "Novo(a) " );
-				rootMenu.setToolTip("Novo(a) " + subClasseDef.getLabel() );
+				rootMenu.setText( XEOComponentMessages.BRIDGETB_NEW.toString("") );
+				rootMenu.setToolTip(  XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
 				rootMenu.setId( getId() + "_new_" + subClasseDef.getName() );
 				rootMenu.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 				rootMenu.setValue( subClasseDef.getName() );
@@ -199,8 +204,8 @@ public class BridgeToolBar extends ToolBar {
 				
 				if( subClassesDef.size() > 1 ) {
 					ViewerMethod viewerMethod = new ViewerMethod();
-					viewerMethod.setText( "Novo(a) " + subClasseDef.getLabel() );
-					viewerMethod.setToolTip("Novo(a) " + subClasseDef.getLabel() );
+					viewerMethod.setText( XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
+					viewerMethod.setToolTip(  XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
 					viewerMethod.setId( getId() + "_new1_" + subClasseDef.getName() );
 					viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 					viewerMethod.setValue( subClasseDef.getName() );
@@ -212,7 +217,7 @@ public class BridgeToolBar extends ToolBar {
 						subClasseDef = subClassesDef.get( i );
 						viewerMethod = new ViewerMethod();
 						viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
-						viewerMethod.setText( "Novo(a) " + subClasseDef.getLabel() );
+						viewerMethod.setText(  XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
 						
 						viewerMethod.setId( getId() + "_new_" + subClasseDef.getName() );
 						viewerMethod.setTargetMethod( "addNewToBridge" );
@@ -239,8 +244,8 @@ public class BridgeToolBar extends ToolBar {
 			subClasseDef = subClassesDef.get( 0 );
 			
 			rootMenu = new ViewerMethod();
-			rootMenu.setText( " Adicionar " );
-			rootMenu.setToolTip("Adicionar " + subClasseDef.getLabel() );
+			rootMenu.setText( XEOComponentMessages.BRIDGETB_ADD.toString("") );
+			rootMenu.setToolTip( XEOComponentMessages.BRIDGETB_ADD.toString( subClasseDef.getLabel() ) );
 			rootMenu.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 			rootMenu.setId( getId() + "_add_" + subClasseDef.getName() );
 			rootMenu.setValue( subClasseDef.getName() );
@@ -250,7 +255,7 @@ public class BridgeToolBar extends ToolBar {
 				
 				ViewerMethod viewerMethod = new ViewerMethod();
 				viewerMethod.setText( subClasseDef.getLabel() );
-				viewerMethod.setToolTip("Adicionar " + subClasseDef.getLabel() );
+				viewerMethod.setToolTip(XEOComponentMessages.BRIDGETB_ADD.toString( subClasseDef.getLabel() ));
 				viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 				viewerMethod.setId( getId() + "_add1_" + subClasseDef.getName() );
 				viewerMethod.setValue( subClasseDef.getName() );

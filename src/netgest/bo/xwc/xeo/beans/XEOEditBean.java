@@ -34,7 +34,6 @@ import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOBridgeListConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector;
-import netgest.bo.xwc.components.localization.BeansMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIEditableValueHolder;
 import netgest.bo.xwc.framework.XUIMessage;
@@ -45,6 +44,7 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.localization.BeansMessages;
 
 /**
  */
@@ -373,21 +373,30 @@ public class XEOEditBean extends XEOBaseBean {
 		return boql;
     }
 
+
     public String getLookupViewer( AttributeHandler oAttHandler ) {
-    	return getLookupViewer( oAttHandler.getDefAttribute() );
+    	return getLookupViewer( oAttHandler.getDefAttribute(), oAttHandler.getDefAttribute().getReferencedObjectDef() );
+    }
+    
+    public String getLookupViewer( AttributeHandler oAttHandler, boDefHandler relObject ) {
+    	return getLookupViewer( oAttHandler.getDefAttribute(), relObject );
     }
 
     public String getLookupViewer( bridgeHandler oBridgeHandler ) {
-    	return getLookupViewer( oBridgeHandler.getDefAttribute() );
+    	return getLookupViewer( oBridgeHandler.getDefAttribute(), oBridgeHandler.getDefAttribute().getReferencedObjectDef() );
+    }
+    
+    public String getLookupViewer( bridgeHandler oBridgeHandler, boDefHandler relObject ) {
+    	return getLookupViewer( oBridgeHandler.getDefAttribute(), relObject );
     }
 
-    private String getLookupViewer( boDefAttribute defAtt ) {
-    	if( defAtt.getChildIsOrphan() )
+    private String getLookupViewer( boDefAttribute defAtt, boDefHandler relObject ) {
+    	if( defAtt.getChildIsOrphan() && relObject.getBoCanBeOrphan() )
     		return 
-    			getViewerResolver().getViewer( defAtt.getReferencedObjectName(), XEOViewerResolver.ViewerType.LOOKUP );
+    			getViewerResolver().getViewer( relObject.getName(), XEOViewerResolver.ViewerType.LOOKUP );
     	else
     		return 
-    			getViewerResolver().getViewer( defAtt.getReferencedObjectName(), XEOViewerResolver.ViewerType.EDIT );
+    			getViewerResolver().getViewer( relObject.getName(), XEOViewerResolver.ViewerType.EDIT );
     }
     
     /**
@@ -472,27 +481,29 @@ public class XEOEditBean extends XEOBaseBean {
         bridgeHandler   bridge  = ((XEOBridgeListConnector)oGrid.getDataSource()).getBridge();
         boDefAttribute  oAttDef = bridge.getDefAttribute();
         
-        
+        boDefHandler refObj;
         if( objectName == null ) {
-        	boDefHandler refObj = oAttDef.getReferencedObjectDef();        	
-        	objectName = refObj.getName();
+        	refObj = oAttDef.getReferencedObjectDef();        	
+        }
+        else {
+        	refObj = boDefHandler.getBoDefinition( objectName );
         }
         
-        String viewerName = getLookupViewer( bridge );
+        String viewerName = getLookupViewer( bridge, refObj );
         
-        if( objectName != null ) {
-//        	refObj = boDefHandler.getBoDefinition( objectName );
-        	if( oAttDef.getChildIsOrphan() ) {
-        		viewerName = getViewerResolver().getViewer( objectName, XEOViewerResolver.ViewerType.LOOKUP );
-        	}
-        	else {
-        		viewerName = getViewerResolver().getViewer( objectName, XEOViewerResolver.ViewerType.EDIT );
-        	}
-        }
+//        if( objectName != null ) {
+////        	refObj = boDefHandler.getBoDefinition( objectName );
+//        	if( oAttDef.getChildIsOrphan() ) {
+//        		viewerName = getViewerResolver().getViewer( objectName, XEOViewerResolver.ViewerType.LOOKUP );
+//        	}
+//        	else {
+//        		viewerName = getViewerResolver().getViewer( objectName, XEOViewerResolver.ViewerType.EDIT );
+//        	}
+//        }
         
         // Obtem a bean do objecto a ser editado
         // e associa o objecto do parametro
-        if( oAttDef.getChildIsOrphan() )
+        if( oAttDef.getChildIsOrphan() && refObj.getBoCanBeOrphan() )
         {
             XEOBaseLookupList   oBaseBean;
             oViewRoot = oSessionContext.createChildView( viewerName );
@@ -532,7 +543,7 @@ public class XEOEditBean extends XEOBaseBean {
             oBaseBean.setParentBeanId( "viewBean" );
             oBaseBean.setParentComponentId( oGrid.getClientId() );
             
-            oBaseBean.createNew( oAttDef.getReferencedObjectName() );
+            oBaseBean.createNew( refObj.getName() );
             oBaseBean.getXEOObject().addParent( getXEOObject() );
             
             
@@ -590,7 +601,7 @@ public class XEOEditBean extends XEOBaseBean {
 				boObject childObj = boObject.getBoManager().loadObject(
 						getEboContext(), Long.valueOf(sBridgeKeyToEdit));
 				if (securityRights.canRead(getEboContext(), childObj.getName())) {
-					if (oAttDef.getChildIsOrphan()) {
+					if (oAttDef.getChildIsOrphan() && childObj.getBoDefinition().getBoCanBeOrphan() ) {
 						if (oRequestContext.isAjaxRequest()) {
 							// Resubmit the to the command... to save the selected row.
 							oCommand.setValue( oSelectedRow
@@ -977,7 +988,7 @@ public class XEOEditBean extends XEOBaseBean {
 						XUIMessage.TYPE_POPUP_MESSAGE, 
 						XUIMessage.SEVERITY_INFO, 
 						"Duplicar",
-						"O objecto foi duplicado com sucesso!"
+						BeansMessages.CLONE_SUCCESS.toString()
 				)
     	);
     	
@@ -999,10 +1010,10 @@ public class XEOEditBean extends XEOBaseBean {
     			if( !silent ) {
 	        		XUIRequestContext.getCurrentContext().addMessage( "validation" , 
 	        				new XUIMessage(
-	        						XUIMessage.TYPE_POPUP_MESSAGE, 
-	        						XUIMessage.SEVERITY_INFO, 
-	        						"Validação",
-	        						"Não foram encontrados erros"
+        						XUIMessage.TYPE_POPUP_MESSAGE, 
+        						XUIMessage.SEVERITY_INFO, 
+        						BeansMessages.VALID_SUCCESS_TITLE.toString(),
+        						BeansMessages.VALID_SUCCESS.toString()
 	        				)
 	        		);
     			}
@@ -1021,10 +1032,10 @@ public class XEOEditBean extends XEOBaseBean {
 		if( !isValid() ) {
     		XUIRequestContext.getCurrentContext().addMessage( "validation" , 
     				new XUIMessage(
-    						XUIMessage.TYPE_ALERT, 
-    						XUIMessage.SEVERITY_INFO, 
-    						"Erro",
-    						"Os campos assinalados a vermelho tem erros!"
+						XUIMessage.TYPE_ALERT, 
+						XUIMessage.SEVERITY_INFO, 
+						BeansMessages.VALID_ERRORS_TITLE.toString(),
+						BeansMessages.VALID_ERRORS.toString()
     				)
     		);
 		}

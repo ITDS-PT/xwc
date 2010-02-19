@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
+<xvw:root 
+	xmlns:xvw="http://www.netgest.net/xeo/xvw"
+	xmlns:xeo="http://www.netgest.net/xeo/xeo"
+>
     <xvw:viewer 
     	beanClass='netgest.bo.xwc.components.beans.XEOBaseBean' 
     	beanId='viewBean'
     	>
-        <xvw:form id='formUser'>
-            <xvw:title valueExpression='#{viewBean.title}' />
-			<xvw:toolBar id="MyTool">
-				<xvw:menu id="save" text="Guardar" icon="ext-xeo/images/menus/gravar.gif" serverAction="#{viewBean.save}"/>
-				<xvw:menu id="saveandclose" text="Guardar e Fechar" icon="ext-xeo/images/menus/gravar_e_sair.gif" serverAction="#{viewBean.saveAndClose}"/>
-				<xvw:menu id="remove" text="Remover" icon="ext-xeo/images/menus/cancel.gif" serverAction="#{viewBean.remove}"/>
-			</xvw:toolBar>
-            <xvw:errorMessages></xvw:errorMessages>
+        <xvw:formEdit>
             <xvw:panel layout='none'>
                 <xvw:tabs>
                     <xvw:tab label='Geral'>
@@ -61,36 +57,27 @@
 						</xvw:section>                        
 	                    <xvw:tabs>
 	                    	<xvw:tab label='Profiles'>
-								<xvw:gridPanel rowSelectionMode="MULTI_ROW" objectAttribute="iProfile" id="profiles">
-									<xvw:toolBar>
-										<xvw:menu text="Adicionar" icon="ext-xeo/images/menus/adicionar-bridge.gif" value="formUser:profiles" serverAction="#{viewBean.lookupBridge}"/>
-										<xvw:menu text="Remover" icon="ext-xeo/images/menus/remover-bridge.gif" value="formUser:profiles" serverAction="#{viewBean.removeFromBridge}"/>
-									</xvw:toolBar>
+	                    		<xeo:bridge bridgeName='iProfile'>
 									<xvw:columns>
-                						<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
 										<xvw:columnAttribute width="150" dataField="name"/>
 										<xvw:columnAttribute width="150" label="Descrição" dataField="description"/>
 									</xvw:columns>
-								</xvw:gridPanel>
+								</xeo:bridge>
 	                    	</xvw:tab>
 	                    	<xvw:tab label='Groups'>
-								<xvw:gridPanel rowSelectionMode="MULTI_ROW" objectAttribute="groups" id="groups">
-									<xvw:toolBar>
-										<xvw:menu text="Adicionar" icon="ext-xeo/images/menus/adicionar-bridge.gif" value="formUser:groups" serverAction="#{viewBean.lookupBridge}"/>
-										<xvw:menu text="Remover" icon="ext-xeo/images/menus/remover-bridge.gif" value="formUser:groups" serverAction="#{viewBean.removeFromBridge}"/>
-									</xvw:toolBar>
+	                    		<xeo:bridge bridgeName='groups'>
 									<xvw:columns>
                 						<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
 										<xvw:columnAttribute width="150" dataField="id"/>
 										<xvw:columnAttribute width="150" dataField="name"/>
 										<xvw:columnAttribute width="150" label="Descrição" dataField="description"/>
 									</xvw:columns>
-								</xvw:gridPanel>
+								</xeo:bridge>
 	                    	</xvw:tab>
 	                    </xvw:tabs>
                     </xvw:tab>
             	</xvw:tabs>
             </xvw:panel> 
-        </xvw:form>
+		</xvw:formEdit>
     </xvw:viewer>
 </xvw:root>

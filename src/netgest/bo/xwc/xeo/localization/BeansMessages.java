@@ -1,4 +1,4 @@
-package netgest.bo.xwc.components.localization;
+package netgest.bo.xwc.xeo.localization;
 
 import netgest.bo.xwc.framework.localization.XUILocalizedMessage;
 
@@ -55,4 +55,18 @@ public interface BeansMessages {
 	public static final XUILocalizedMessage VIEWER_SECURITY_COMPONENTS = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "VIEWER_SECURITY_COMPONENTS" );
 
+	public static final XUILocalizedMessage CLONE_SUCCESS = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "CLONE_SUCCESS" );
+	
+	public static final XUILocalizedMessage VALID_SUCCESS = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "VALID_SUCCESS" );
+
+	public static final XUILocalizedMessage VALID_SUCCESS_TITLE = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "VALID_SUCCESS_TITLE" );
+	
+	public static final XUILocalizedMessage VALID_ERRORS = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "VALID_ERRORS" );
+
+	public static final XUILocalizedMessage VALID_ERRORS_TITLE = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "VALID_ERRORS_TITLE" );
 }

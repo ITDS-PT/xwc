@@ -5,6 +5,7 @@ import java.util.List;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
 public class LookupListToolBar extends ListToolBar {
 
@@ -33,9 +34,15 @@ public class LookupListToolBar extends ListToolBar {
 		// Render ToolBar Methods
 		
 		getChildren().add( Menu.getMenuSpacer() );
-		createViewerBeanMethod( "Confirmar", "Confirmar","ext-xeo/images/menus/confirmar.gif", "confirm", null );
+		createViewerBeanMethod( 
+				XEOComponentMessages.LOOKUPLISTTB_CONFIRM.toString(), 
+				XEOComponentMessages.LOOKUPLISTTB_CONFIRM_TTIP.toString(),
+				"ext-xeo/images/menus/confirmar.gif", "confirm", null );
 		getChildren().add( Menu.getMenuSpacer() );
-		createViewerBeanMethod( "Cancelar", "Cancelar" , "ext-xeo/images/menus/applications.gif", "canCloseTab", null );
+		createViewerBeanMethod( 
+				XEOComponentMessages.LOOKUPLISTTB_CANCEL.toString(),
+				XEOComponentMessages.LOOKUPLISTTB_CANCEL_TTIP.toString(), 
+				"ext-xeo/images/menus/applications.gif", "canCloseTab", null );
 		//getChildren().add( Menu.getMenuSpacer() );
 		
 		super.initComponent();

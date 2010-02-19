@@ -3,7 +3,11 @@
 	xmlns:xvw="http://www.netgest.net/xeo/xvw"
 	xmlns:xeo="http://www.netgest.net/xeo/xeo"
 >
-    <xvw:viewer beanClass='netgest.bo.xwc.xeo.beans.XEOEditPropertiesBean' beanId='viewBean'>
+    <xvw:viewer 
+	    localizationClasses='netgest.bo.xwc.xeo.localization.XEOViewersMessages' 
+	    beanClass='netgest.bo.xwc.xeo.beans.XEOEditPropertiesBean' 
+	    beanId='viewBean'
+  	>
         <xvw:form>
         	<xvw:window width='500' height='250'>
 	            <xvw:title valueExpression='Propriedades'></xvw:title>
@@ -12,7 +16,7 @@
 				<xvw:rows columns='2' columnWidths='35%,65%' >
 					<xvw:row>
 						<xvw:cell>
-							<xvw:attributeLabel text='Identificação:' />
+							<xvw:attributeLabel text='@{SHW_PROPS_IDENTIFICATION}:' />
 						</xvw:cell>
 						<xvw:cell>
 							<xvw:outputHtml valueExpression='#{viewBean.cardId}' />
@@ -20,7 +24,7 @@
 					</xvw:row>
 					<xvw:row>
 						<xvw:cell>
-							<xvw:attributeLabel text='Criado em:' />
+							<xvw:attributeLabel text='@{SHW_PROPS_CREATION_DATE}:' />
 						</xvw:cell>
 						<xvw:cell>
 							<xvw:outputHtml valueExpression='#{viewBean.creationDate}'/>
@@ -28,7 +32,7 @@
 					</xvw:row>
 					<xvw:row>
 						<xvw:cell>
-							<xvw:attributeLabel text='Criado por:' />
+							<xvw:attributeLabel text='@{SHW_PROPS_CREATED_BY}:' />
 						</xvw:cell>
 						<xvw:cell>
 							<xvw:outputHtml valueExpression='#{viewBean.createdBy}'/>
@@ -36,7 +40,7 @@
 					</xvw:row>
 					<xvw:row>
 						<xvw:cell>
-							<xvw:attributeLabel text='Última modificação em:' />
+							<xvw:attributeLabel text='@{SHW_PROPS_LAST_CHANGE_DATE}:' />
 						</xvw:cell>
 						<xvw:cell>
 							<xvw:outputHtml valueExpression='#{viewBean.lastModificationDate}'/>
@@ -44,7 +48,7 @@
 					</xvw:row>
 					<xvw:row>
 						<xvw:cell>
-							<xvw:attributeLabel text='Última modificação por:' />
+							<xvw:attributeLabel text='@{SHW_PROPS_LAST_CHANGE_BY}:' />
 						</xvw:cell>
 						<xvw:cell>
 							<xvw:outputHtml valueExpression='#{viewBean.lastModificationBy}'/>
@@ -52,7 +56,7 @@
 					</xvw:row>
 					<xvw:row>
 						<xvw:cell>
-							<xvw:attributeLabel text='Versão:' />
+							<xvw:attributeLabel text='@{SHW_PROPS_VERSION}:' />
 						</xvw:cell>
 						<xvw:cell>
 							<xvw:outputHtml valueExpression='#{viewBean.version}'/>
@@ -60,7 +64,7 @@
 					</xvw:row>
 					<xvw:row>
 						<xvw:cell>
-							<xvw:attributeLabel text='Identificador único:' />
+							<xvw:attributeLabel text='@{SHW_PROPS_BOUI}:' />
 						</xvw:cell>
 						<xvw:cell>
 							<xvw:outputHtml valueExpression='#{viewBean.boui}'/>
@@ -71,7 +75,7 @@
 				<xvw:rows columns='2' >
 					<xvw:row>
 						<xvw:cell>
-							<xvw:actionButton serverAction='#{viewBean.canCloseTab}' label='Fechar' />
+							<xvw:actionButton serverAction='#{viewBean.canCloseTab}' label='@{SHW_PROPS_CLOSE_BTN}' />
 						</xvw:cell>
 						<xvw:cell/>
 					</xvw:row>

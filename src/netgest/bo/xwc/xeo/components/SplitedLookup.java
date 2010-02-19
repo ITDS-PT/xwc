@@ -32,6 +32,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
+import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
 public class SplitedLookup extends Attribute {
 	
@@ -357,7 +358,7 @@ public class SplitedLookup extends Attribute {
 				);
 				
 				if( value == null && (inputValue instanceof String && ((String)inputValue).length() > 0 ) ) {
-					lookup.getInputComponent().setInvalidText( "O valor introduzido é inválido!" );
+					lookup.getInputComponent().setInvalidText( XEOComponentMessages.SPLTDLOOKUP_INVALID_VALUE.toString() );
 					lookup.getLookupComponent().setValue(null);
 				}
 				else {

@@ -12,6 +12,7 @@ import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
+import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
 public class ListToolBar extends ToolBar {
 
@@ -104,8 +105,8 @@ public class ListToolBar extends ToolBar {
 		if( subClassesDef.size() > 0 ) {
 			subClasseDef = subClassesDef.get( 0 );
 			rootMenu = new ViewerMethod();
-			rootMenu.setText( "Novo(a) " );
-			rootMenu.setToolTip("Novo(a) " + subClasseDef.getLabel() );
+			rootMenu.setText( XEOComponentMessages.BRIDGETB_NEW.toString("") );
+			rootMenu.setToolTip(XEOComponentMessages.BRIDGETB_NEW.toString(subClasseDef.getLabel()) );
 			rootMenu.setId( getId() + "_new_" + subClasseDef.getName() );
 			rootMenu.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 			rootMenu.setValue( subClasseDef.getName() );
@@ -113,7 +114,7 @@ public class ListToolBar extends ToolBar {
 			
 			if( subClassesDef.size() > 1 ) {
 				ViewerMethod viewerMethod = new ViewerMethod();
-				viewerMethod.setText( "Novo(a) " + subClasseDef.getLabel() );
+				viewerMethod.setText( XEOComponentMessages.BRIDGETB_NEW.toString(subClasseDef.getLabel()) );
 				viewerMethod.setToolTip("Novo(a) " + subClasseDef.getLabel() );
 				viewerMethod.setId( getId() + "_new1_" + subClasseDef.getName() );
 				viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
@@ -126,7 +127,7 @@ public class ListToolBar extends ToolBar {
 					subClasseDef = subClassesDef.get( i );
 					viewerMethod = new ViewerMethod();
 					viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
-					viewerMethod.setText( "Novo(a) " + subClasseDef.getLabel() );
+					viewerMethod.setText( XEOComponentMessages.BRIDGETB_NEW.toString(subClasseDef.getLabel()) );
 					
 					viewerMethod.setId( getId() + "_new_" + subClasseDef.getName() );
 					viewerMethod.setTargetMethod( "addNew" );

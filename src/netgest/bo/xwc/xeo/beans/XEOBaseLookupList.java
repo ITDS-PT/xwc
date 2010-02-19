@@ -8,10 +8,10 @@ import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
-import netgest.bo.xwc.components.localization.BeansMessages;
 import netgest.bo.xwc.framework.XUIActionEvent;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.localization.BeansMessages;
 
 public class XEOBaseLookupList extends XEOBaseList {
     

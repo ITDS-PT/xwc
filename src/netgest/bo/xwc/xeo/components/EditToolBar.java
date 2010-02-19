@@ -11,6 +11,7 @@ import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
+import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
 public class EditToolBar extends ToolBar {
 	
@@ -131,32 +132,60 @@ public class EditToolBar extends ToolBar {
 		int pos = 0;
 
 		if( getRenderUpdateBtn() ) {
-			createViewerBeanMethod( pos++,"Guardar", "Guardar" , "ext-xeo/images/menus/gravar.gif", "save", null );
+			createViewerBeanMethod( 
+					pos++,
+					XEOComponentMessages.EDITTB_SAVE.toString(), 
+					XEOComponentMessages.EDITTB_SAVE_TTIP.toString() , 
+					"ext-xeo/images/menus/gravar.gif", "save", null );
 		}
 		
 		if( getRenderUpdateAndCloseBtn() ) {
 			getChildren().add( pos++, Menu.getMenuSpacer() );
-			createViewerBeanMethod( pos++, null, "Guardar e fechar","ext-xeo/images/menus/gravar_e_sair.gif", "saveAndClose", null );
+			createViewerBeanMethod( 
+					pos++, 
+					null, 
+					XEOComponentMessages.EDITTB_SAVE_CLOSE_TTIP.toString(),
+					"ext-xeo/images/menus/gravar_e_sair.gif", 
+					"saveAndClose", null );
 		}
 
 		if( getRenderDestroyBtn() ) {
 			getChildren().add( pos++, Menu.getMenuSpacer() );
-			createViewerBeanMethod( pos++, null, "Remover","ext-xeo/images/menus/remover.gif", "remove", null );
+			createViewerBeanMethod( pos++, null, 
+					XEOComponentMessages.EDITTB_REMOVE_TTIP.toString(),
+					"ext-xeo/images/menus/remover.gif", "remove", null );
 		}
 		
 		if( getRenderValidateBtn() ) {
 			getChildren().add( pos++,Menu.getMenuSpacer() );
-			createViewerBeanMethod( pos++,null, "Verificar se existem erros de <br/>preenchimento","ext-xeo/images/menus/confirmar.gif", "processValidate", null );
+			createViewerBeanMethod( 
+					pos++,
+					null, 
+					XEOComponentMessages.EDITTB_VALIDATE_TTIP.toString(),
+					"ext-xeo/images/menus/confirmar.gif", 
+					"processValidate", 
+					null 
+				);
 		}
 
 		if( getRenderCloneBtn() ) {
 			getChildren().add( pos++,Menu.getMenuSpacer() );
-			createViewerBeanMethod( pos++,"Duplicar", "Duplicar com os dados actuais" , "ext-xeo/images/menus/applications.gif", "duplicate", "tab" );
+			createViewerBeanMethod( 
+					pos++,
+					XEOComponentMessages.EDITTB_CLONE.toString(), 
+					XEOComponentMessages.EDITTB_CLONE_TTIP.toString() , 
+					"ext-xeo/images/menus/applications.gif", 
+					"duplicate", 
+					"tab" 
+				);
 		}
 
 		if( getRenderPropertiesBtn() ) {
 			getChildren().add( pos++,Menu.getMenuSpacer() );
-			createViewerBeanMethod( pos++,null, "Propriedades" , "extjs/resources/images/default/tree/leaf.gif", "showProperties", "self" );
+			createViewerBeanMethod( pos++,
+					null, 
+					XEOComponentMessages.EDITTB_VIEW_PROPERTIES_TTIP.toString() , 
+					"extjs/resources/images/default/tree/leaf.gif", "showProperties", "self" );
 		}
 		if( getRenderObjectMethodBtns() ) {
 			getChildren().add( pos++,Menu.getMenuSpacer() );

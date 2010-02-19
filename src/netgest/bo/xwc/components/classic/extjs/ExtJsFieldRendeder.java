@@ -153,6 +153,11 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
         		
         	if( oComp.getStateProperty("disabled").wasChanged() )
         		s.w("c.setDisabled(").writeValue( oComp.isDisabled() ).w(")").endStatement();
+
+        	if( oComp.getStateProperty("readOnly").wasChanged() )
+        		s.w("c.setReadOnly(").w( !oComp.isReadOnly() ).w(")").endStatement();
+        	
+        	
     	}
         String invalidText = oComp.getInvalidText();
         if ( invalidText != null && invalidText.length() > 0 ) {

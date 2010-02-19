@@ -37,6 +37,11 @@ public class ScriptBuilder implements CharSequence {
 		this.builder.append( script );
 		return this;
 	}
+
+	public ScriptBuilder w( boolean script ) {
+		this.builder.append( script );
+		return this;
+	}
 	
 	public ScriptBuilder writeValue( Object value, char charToEscape  ) {
 		w( JavaScriptUtils.writeValue( value, charToEscape ) );

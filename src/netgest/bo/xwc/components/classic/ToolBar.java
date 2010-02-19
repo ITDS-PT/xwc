@@ -142,11 +142,9 @@ public class ToolBar extends ViewerSecurityBase {
 	            	if( "-".equals( sText ) ) {
 	                	oItemsCfg.add("'-'");
 	                }
-	                else if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
+	                else if ( oMenuChild.getEffectivePermission( SecurityPermissions.READ ) ) {
 	                        oItemCfg = oItemsCfg.addChild(  );
-	                        
 	                    	configExtMenu( this, (ToolBar)component , oMenuChild, oItemCfg);
-		                        
 		                    if( oMenuChild.getChildCount() > 0 ) {
 		                    	oItemCfg.addJSString( "xtype", "splitbutton" );
 		                    	if( oItemCfg != null ) {

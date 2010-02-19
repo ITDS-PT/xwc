@@ -16,12 +16,12 @@ import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
-import netgest.bo.xwc.components.localization.BeansMessages;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.localization.BeansMessages;
 
 public class XEOBaseList extends XEOBaseBean {
     
@@ -57,47 +57,52 @@ public class XEOBaseList extends XEOBaseBean {
         oGridPanel = (GridPanel)oEvent.getComponent().getParent();
         oActiveRow = oGridPanel.getActiveRow();
         
-        
-        BigDecimal boui = (BigDecimal)oActiveRow.getAttribute("BOUI").getValue();
-        if( boui == null ) {
-        	oRequestContext.addMessage( "bean" ,  
-        			new XUIMessage( 
-        					XUIMessage.TYPE_POPUP_MESSAGE, 
-        					XUIMessage.SEVERITY_ERROR, 
-        					BeansMessages.TITLE_ERROR.toString(), 
-        					BeansMessages.SELECTED_OBJECT_NOT_EXISTS.toString() 
-        			)
-        	);
-        	XUIViewRoot viewRoot = oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Dummy.xvw");
-        	oRequestContext.setViewRoot( viewRoot );
-        	XVWScripts.closeView( viewRoot );
-        }
-        else {
-	        String sObjectName = boObject.getBoManager().getClassNameFromBOUI( boApplication.currentContext().getEboContext(), boui.longValue());
-	
-	        XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createView( 
-	        		getViewerResolver().getViewer( sObjectName, XEOViewerResolver.ViewerType.EDIT )
-	        );
-	        XEOEditBean oEditBean = (XEOEditBean)oEditViewRoot.getBean("viewBean");
-	        
-	        if( oActiveRow == null ) {
+        if( oActiveRow != null ) {
+	        BigDecimal boui = (BigDecimal)oActiveRow.getAttribute("BOUI").getValue();
+	        if( boui == null ) {
 	        	oRequestContext.addMessage( "bean" ,  
 	        			new XUIMessage( 
-	        					XUIMessage.TYPE_ALERT, 
+	        					XUIMessage.TYPE_POPUP_MESSAGE, 
 	        					XUIMessage.SEVERITY_ERROR, 
 	        					BeansMessages.TITLE_ERROR.toString(), 
 	        					BeansMessages.SELECTED_OBJECT_NOT_EXISTS.toString() 
 	        			)
 	        	);
-	        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Error.xvw") );
+	        	XUIViewRoot viewRoot = oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Dummy.xvw");
+	        	oRequestContext.setViewRoot( viewRoot );
+	        	XVWScripts.closeView( viewRoot );
 	        }
 	        else {
-	        	oEditBean.setCurrentObjectKey( String.valueOf( oActiveRow.getAttribute("BOUI").getValue() ) );
-	            oRequestContext.setViewRoot( oEditViewRoot );
-	            oEditViewRoot.processInitComponents();
+		        String sObjectName = boObject.getBoManager().getClassNameFromBOUI( boApplication.currentContext().getEboContext(), boui.longValue());
+		
+		        XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createView( 
+		        		getViewerResolver().getViewer( sObjectName, XEOViewerResolver.ViewerType.EDIT )
+		        );
+		        XEOEditBean oEditBean = (XEOEditBean)oEditViewRoot.getBean("viewBean");
+		        
+		        if( oActiveRow == null ) {
+		        	oRequestContext.addMessage( "bean" ,  
+		        			new XUIMessage( 
+		        					XUIMessage.TYPE_ALERT, 
+		        					XUIMessage.SEVERITY_ERROR, 
+		        					BeansMessages.TITLE_ERROR.toString(), 
+		        					BeansMessages.SELECTED_OBJECT_NOT_EXISTS.toString() 
+		        			)
+		        	);
+		        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Error.xvw") );
+		        }
+		        else {
+		        	oEditBean.setCurrentObjectKey( String.valueOf( oActiveRow.getAttribute("BOUI").getValue() ) );
+		            oRequestContext.setViewRoot( oEditViewRoot );
+		            oEditViewRoot.processInitComponents();
+		        }
+		        
+		        //TODO: Call must be not necessary
+		        oRequestContext.renderResponse();
 	        }
-	        
-	        //TODO: Call must be not necessary
+        }
+        else {
+        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Dummy.xvw") );
 	        oRequestContext.renderResponse();
         }
     }

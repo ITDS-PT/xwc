@@ -10,13 +10,13 @@ import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.components.localization.BeansMessages;
 import netgest.bo.xwc.components.localization.ViewersMessages;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.utils.StringUtils;
 
 public class BuilderBean {

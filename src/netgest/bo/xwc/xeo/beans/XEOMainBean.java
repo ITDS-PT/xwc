@@ -6,7 +6,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import netgest.bo.xwc.components.localization.BeansMessages;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -15,6 +14,7 @@ import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.localization.BeansMessages;
 
 import org.json.JSONObject;
 

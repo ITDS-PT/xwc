@@ -11,6 +11,7 @@ import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
+import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
 public class NonOrphanEditToolBar extends ToolBar {
 	
@@ -97,22 +98,35 @@ public class NonOrphanEditToolBar extends ToolBar {
 		// Render ToolBar Methods
 		if( getRenderConfirmBtn() ) {
 			getChildren().add( Menu.getMenuSpacer() );
-			createViewerBeanMethod( "Confirmar", "Confirmar","ext-xeo/images/menus/confirmar.gif", "confirm", null );
+			createViewerBeanMethod( 
+					XEOComponentMessages.EDITTB_CONFIRM.toString(), 
+					XEOComponentMessages.EDITTB_CONFIRM_TTIP.toString(),
+					"ext-xeo/images/menus/confirmar.gif", "confirm", null );
 		}
 		
 		if( getRenderValidateBtn() ) {
 			getChildren().add( Menu.getMenuSpacer() );
-			createViewerBeanMethod( null, "Verificar se existem erros de <br/>preenchimento","ext-xeo/images/menus/confirmar.gif", "processValidate", null );
+			createViewerBeanMethod( null, 
+					XEOComponentMessages.EDITTB_VALIDATE_TTIP.toString(),
+					"ext-xeo/images/menus/confirmar.gif", 
+					"processValidate", null );
 		}
 		
 		if( getRenderCancelBtn() ) {
 			getChildren().add( Menu.getMenuSpacer() );
-			createViewerBeanMethod( "Cancelar", "Cancelar" , "ext-xeo/images/menus/applications.gif", "cancel", null );
+			createViewerBeanMethod( 
+					XEOComponentMessages.EDITTB_CANCEL.toString(), 
+					XEOComponentMessages.EDITTB_CANCEL_TTIP.toString(), 
+					"ext-xeo/images/menus/applications.gif", "cancel", null );
 		}
 		
 		if( getRenderPropertiesBtn() ) {
 			getChildren().add( Menu.getMenuSpacer() );
-			createViewerBeanMethod( null, "Propriedades" , "extjs/resources/images/default/tree/leaf.gif", "showProperties", "self" );
+			createViewerBeanMethod( 
+					null, 
+					XEOComponentMessages.EDITTB_VIEW_PROPERTIES_TTIP.toString() , 
+					"extjs/resources/images/default/tree/leaf.gif", 
+					"showProperties", "self" );
 			getChildren().add( Menu.getMenuSpacer() );
 		}
 		
