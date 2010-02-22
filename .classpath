@@ -39,10 +39,10 @@
 	<classpathentry kind="lib" path="project_lib/sun-commons-digester.jar"/>
 	<classpathentry kind="lib" path="project_lib/sun-commons-logging.jar"/>
 	<classpathentry kind="lib" path="base_lib/modules_lib/xmlparserv2.jar"/>
-	<classpathentry kind="lib" path="project_lib/itext-2.0.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xeo_v3_core"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="project_lib/iText-2.1.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
