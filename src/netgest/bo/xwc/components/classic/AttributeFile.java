@@ -264,8 +264,11 @@ public class AttributeFile extends AttributeBase {
             dmb.put("link", link );
             dmb.put("action", "open");
             oInpLsnr.add("'render'", "function(){ " +
-            		"this.getEl().dom.onclick=function(){" +
-            		"	if( event.srcElement.value.length > 0 ) {" +
+            		"this.getEl().dom.onclick=function(e){" +
+            		"	var t;" +
+            		"	if( window.event ) t = event.srcElement;" +
+            		"	else t = e.target;" +
+            		"	if( t.value.length > 0 ) {" +
             		"		if( window.top.xeodmstate ) \n" +
             		"			XVW.downloadFile('" + dmb.toUrlString() + "');\n" +
             		"		else \n" +
