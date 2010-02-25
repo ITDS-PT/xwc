@@ -157,7 +157,7 @@ public class ToolBar extends ViewerSecurityBase {
         }
         
         public static final void generateUpdateScript( ScriptBuilder sb, Menu oMenuChild ) {
-        	sb.w( "var m=Ext.getCmp('").writeValue( oMenuChild.getClientId() ).l("');" );
+        	sb.w( "var m=Ext.getCmp('ext-").writeValue( oMenuChild.getClientId() ).l("');" );
         	if( !oMenuChild.isVisible() )
         		sb.w( "m.hide();" );
         	sb.w( "m.setDisabled(").w( oMenuChild.isDisabled() ).l( ");" );
@@ -182,7 +182,7 @@ public class ToolBar extends ViewerSecurityBase {
             oToolBarCfg.addJSString("style","border:0px solid black;" );     
             oToolBarCfg.add( "width" , "'auto'" );
             
-            oToolBarCfg.addJSString( "id", component.getClientId() );
+            oToolBarCfg.addJSString( "id", "ext-" + component.getClientId() );
 
             ExtConfigArray oItemsCfg = oToolBarCfg.addChildArray( "items" );
 
@@ -217,7 +217,7 @@ public class ToolBar extends ViewerSecurityBase {
         }
         
         public static final void configExtMenu( XUIRenderer renderer, ToolBar toolBar,  Menu oMenuChild, ExtConfig  oItemCfg ) {
-            oItemCfg.addJSString( "id", oMenuChild.getClientId() );
+            oItemCfg.addJSString( "id", "ext-" + oMenuChild.getClientId() );
             oItemCfg.addJSString( "text", oMenuChild.getText() );
             if( !toolBar.isVisible() || !oMenuChild.isVisible() )
                 oItemCfg.add( "hidden", true );
