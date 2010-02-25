@@ -57,8 +57,10 @@ ExtXeo.form.NumberField = Ext.extend(Ext.form.TextField,  {
         if(value.length < 1){ // if it's blank and textfield didn't flag it then it's valid
              return true;
         }
-        value = String(value).replace(this.decimalSeparator, ".");
-        if(isNaN(value)){
+        
+        var v2 = String(value).replace(new RegExp("\\" + this.groupSeparator,"g"), "");
+        v2 = parseFloat(String(v2).replace(this.decimalSeparator, "."));
+        if(isNaN(v2)){
             this.markInvalid(String.format(this.nanText, value));
             return false;
         }
@@ -88,7 +90,7 @@ ExtXeo.form.NumberField = Ext.extend(Ext.form.TextField,  {
     },
 
     // private
-    parseValue : function(value){
+    parseValue : function(value) {
         value = String(value).replace(new RegExp("\\" + this.groupSeparator,"g"), "");
         value = parseFloat(String(value).replace(this.decimalSeparator, "."));
         return isNaN(value) ? '' : value;
