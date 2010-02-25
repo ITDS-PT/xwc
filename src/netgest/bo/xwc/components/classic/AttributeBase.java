@@ -56,6 +56,12 @@ public class AttributeBase extends ViewerInputSecurityBase {
 
     private XUIBindProperty<Integer> maxLength = 
     	new XUIBindProperty<Integer>( "maxLength", this, Integer.class );
+
+    private XUIBindProperty<Integer> maxValue = 
+    	new XUIBindProperty<Integer>( "maxValue", this, Double.class );
+
+    private XUIBindProperty<Integer> minValue = 
+    	new XUIBindProperty<Integer>( "minValue", this, Double.class );
     
     private XUIBindProperty<Integer> decimalPrecision  = 
     	new XUIBindProperty<Integer>( "decimalPrecision", this, Integer.class );
@@ -153,6 +159,14 @@ public class AttributeBase extends ViewerInputSecurityBase {
                 createValueExpression( sBeanExpression + ".maxLength}", Integer.class ) 
             );
 
+        this.maxValue.setValue(  
+                createValueExpression( sBeanExpression + ".numberMaxValue}", Integer.class ) 
+            );
+
+        this.minValue.setValue(  
+                createValueExpression( sBeanExpression + ".numberMinValue}", Integer.class ) 
+            );
+        
         this.decimalPrecision.setValue( 
                 createValueExpression( sBeanExpression + ".decimalPrecision}", Integer.class ) 
             );
@@ -434,6 +448,54 @@ public class AttributeBase extends ViewerInputSecurityBase {
         return this.maxLength.getEvaluatedValue();
     }
 
+    
+    /**
+     * Set the number max value of the attribute 
+     * @param maxLength {@linkplain ValueExpression} with the max value of the component
+     */
+    public void setMaxValue( String maxValueExpr ) {
+        this.maxValue.setExpressionText( maxValueExpr );
+    }
+
+    /**
+     * Set the max length of the attribute 
+     * @param maxValue double with the max value of the component
+     */
+    public void setMaxValue( double maxValue ) {
+        this.maxValue.setExpressionText( String.valueOf( maxValue ) );
+    }
+    
+    /**
+     * Return the current maxLength of the component 
+     * @return double with the max value of the component
+     */
+    public double getMaxValue() {
+        return this.maxValue.getEvaluatedValue();
+    }
+
+    /**
+     * Set the number min value of the attribute 
+     * @param maxLength {@linkplain ValueExpression} with the min value of the component
+     */
+    public void setMinValue( String minValueExpr ) {
+        this.minValue.setExpressionText( minValueExpr );
+    }
+
+    /**
+     * Set the min length of the attribute 
+     * @param maxValue double with the min value of the component
+     */
+    public void setMinValue( double minValue ) {
+        this.minValue.setExpressionText( String.valueOf( maxValue ) );
+    }
+    
+    /**
+     * Return the current maxLength of the component 
+     * @return double with the min value of the component
+     */
+    public double getMinValue() {
+        return this.minValue.getEvaluatedValue();
+    }
     
     /**
      * Get the current decimal precision of the component

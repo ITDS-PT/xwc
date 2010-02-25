@@ -665,6 +665,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         XUIWriteBehindStateWriter responseWriter;
         Document oAjaxXmlResp;
 
+		response.setContentType("text/xml;charset=utf-8");
+        
         responseWriter = 
                 new XUIWriteBehindStateWriter(response.getWriter(),
                                          context,
@@ -678,16 +680,12 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
         oAjaxXmlResp = getAjaxXML( context, request, renderKit, (XUIViewRoot)viewToRender );
         
-        response.setContentType("text/xml");
-        
+        ((XMLDocument)oAjaxXmlResp).setEncoding("utf-8");
         String sXml = ngtXMLUtils.getXML( (XMLDocument)oAjaxXmlResp );
-        
-        responseWriter.write(
-                    sXml
-                );
-        
+        responseWriter.write( sXml );
         responseWriter.flushToWriter();
         responseWriter.release();
+        
     }
 
     

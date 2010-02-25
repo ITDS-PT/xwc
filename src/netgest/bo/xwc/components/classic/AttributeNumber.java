@@ -29,8 +29,37 @@ public class AttributeNumber extends AttributeBase {
             if( sSubmitedValue.length() > 0 )
             {
                 try {
-                    oSubmitedBigDecimal = new BigDecimal( String.valueOf( oSubmitedValue ) );
-                    setValue( oSubmitedBigDecimal );
+                    oSubmitedBigDecimal = new BigDecimal( String.valueOf( sSubmitedValue ) );
+                    
+                    double max = getMaxValue();
+                    double min = getMinValue();
+                    if( oSubmitedBigDecimal.doubleValue() > max ) {
+                    	setValid( false );
+                    	setInvalidText( ComponentMessages.VALUE_ERROR_MAX_VALUE.toString( max ) );
+                        getRequestContext().addMessage( getClientId(), 
+                        		new XUIMessage(
+                                        XUIMessage.TYPE_ALERT,
+                                        XUIMessage.SEVERITY_ERROR,
+                                        getLabel(),
+                                        ComponentMessages.VALUE_ERROR_MAX_VALUE.toString( max )
+                                )
+                        );
+                    }
+                    else if ( oSubmitedBigDecimal.doubleValue() < min ) { 
+                    	setValid( false );
+                    	setInvalidText( ComponentMessages.VALUE_ERROR_MIN_VALUE.toString( min ) );
+                        getRequestContext().addMessage( getClientId(), 
+                        		new XUIMessage(
+                                        XUIMessage.TYPE_ALERT,
+                                        XUIMessage.SEVERITY_ERROR,
+                                        getLabel(),
+                                        ComponentMessages.VALUE_ERROR_MIN_VALUE.toString( min )
+                                )
+                        );
+                    } else { 
+                    	clearInvalid();
+                    	setValue( oSubmitedBigDecimal );
+                    }
                 }
                 catch( NumberFormatException ex ) {
                     getRequestContext().addMessage( getClientId(), 
@@ -66,6 +95,10 @@ public class AttributeNumber extends AttributeBase {
 			config.add( "enableKeyEvents" , true );
 			config.add( "decimalPrecision" , oAttr.getDecimalPrecision());
 			config.add( "minDecimalPrecision" , oAttr.getMinDecimalPrecision());
+			
+			config.add( "maxValue", oAttr.getMaxValue() );
+			config.add( "minValue", oAttr.getMinValue() );
+			
 			boolean g = oAttr.getGroupNumber();
 			config.add( "group" , g );
 			config.add( "value" , oAttr.getValue() );
