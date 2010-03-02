@@ -390,7 +390,7 @@ public class XUIViewRoot extends UIViewRoot
             XUIViewRoot viewRoot = (XUIViewRoot)component;
             
             if( renderHead() ) {
-
+            	
                 // Add Scripts and Style
                 XUIResponseWriter headerW = getResponseWriter().getHeaderWriter();
  
@@ -408,6 +408,17 @@ public class XUIViewRoot extends UIViewRoot
 
                 headerW.writeText('\n');
                 headerW.startElement("head", component );
+                
+                headerW.startElement("base", component );
+                
+                HttpServletRequest req = (HttpServletRequest)getRequestContext().getRequest();
+                String link = 
+                	(req.isSecure()?"https":"http") + "://" + 
+                	req.getServerName() +
+                	(req.getServerPort()==80?"":":"+req.getServerPort()) + getRequestContext().getResourceUrl( "" );
+
+                headerW.writeAttribute("href", link, "href"  );
+                
                 headerW.startElement("meta", component);
                 headerW.writeAttribute( "http-equiv" , "X-UA-Compatible", null );
                 headerW.writeAttribute( "content" , "IE=EmulateIE7", null );
