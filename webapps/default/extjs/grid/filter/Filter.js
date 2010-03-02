@@ -138,6 +138,16 @@ Ext.extend(Ext.grid.filter.Filter, Ext.util.Observable, {
 	setValue: Ext.emptyFn,
 	
 	/**
+	 * deSerialize the filter data from transmission to the server.
+	 * @return {Object/Array} An object or collection of objects containing key value pairs representing
+	 * 	the current configuration of the filter.
+	 */
+	deSerialize: function( data ) {
+		this.setActive( data.active );
+		this.setValue( data.value );
+	},
+
+	/**
 	 * Serialize the filter data for transmission to the server.
 	 * @return {Object/Array} An object or collection of objects containing key value pairs representing
 	 * 	the current configuration of the filter.

@@ -48,11 +48,13 @@ Ext.grid.filter.ObjectFilter = Ext.extend(Ext.grid.filter.Filter, {
 	},
 	
 	setValue: function(value) {
-		this.options[value ? 0 : 1].setChecked(true);
+		this.value = value;
+		//this.options[value ? 0 : 1].setChecked(true);
 	},
 	
 	getValue: function() {
-		return this.options[0].checked;
+		return this.value;
+		//return this.options[0].checked;
 	},
 	
 	serialize: function() {

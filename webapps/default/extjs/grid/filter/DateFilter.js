@@ -118,20 +118,37 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
     }	
 		return result;
 	},
-	
+	deSerialize: function( data ) {
+		this.setActive( data.active );
+		if( data.value )
+			for( var i=0; i < data.value.length; i ++ ) {
+				var d = data.value[i];
+				var dt = Date.parseDate( d.value, 'd/m/Y');
+				if( "eq" == d.comparison )
+					this.setValue( { on : dt } );
+				if( "lt" == d.comparison )
+					this.setValue( { before : dt } );
+				if( "gt" == d.comparison )
+					this.setValue( { after : dt } );
+			}
+	},
 	serialize: function() {
 		var args = [];
-		if(this.dates.before.checked) {
-			args = [{active:this.active, type: 'date', comparison: 'lt', value: this.getFieldValue('before').format(this.dateFormat)}];
-    }
-		if(this.dates.after.checked) {
-			args.push({active:this.active, type: 'date', comparison: 'gt', value: this.getFieldValue('after').format(this.dateFormat)});
-    }
+		if(this.dates.before.checked || this.dates.after.checked) {
+			var values =  [];
+			
+			if( this.dates.before.checked )
+				values[ values.length ] = { comparison: 'lt', value: this.getFieldValue('before').format(this.dateFormat) };
+			
+			if( this.dates.after.checked )
+				values[ values.length ] = { comparison: 'gt', value: this.getFieldValue('after').format(this.dateFormat) };
+			
+			args = {active:this.active, type: 'date', value: values};
+		}
 		if(this.dates.on.checked) {
-			args = {active:this.active, type: 'date', comparison: 'eq', value: this.getFieldValue('on').format(this.dateFormat)};
-    }
-
-    this.fireEvent('serialize', args, this);
+			args = {active:this.active, type: 'date', value: [ {comparison: 'eq', value: this.getFieldValue('on').format(this.dateFormat)}] };
+		}
+		this.fireEvent('serialize', args, this);
 		return args;
 	},
 	

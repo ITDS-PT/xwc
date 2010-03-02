@@ -45,7 +45,12 @@ Ext.grid.filter.StringFilter = Ext.extend(Ext.grid.filter.Filter, {
 	getValue: function() {
 		return this.value.getValue();
 	},
-	
+
+	deSerialize: function( data ) {
+		this.setActive( data.active );
+		this.setValue( data.value );
+	},
+
 	serialize: function() {
 		var args = {active:this.active, type: 'string', value: this.getValue()};
 		this.fireEvent('serialize', args, this);

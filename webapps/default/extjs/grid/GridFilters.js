@@ -285,6 +285,31 @@ Ext.extend(Ext.grid.GridFilters, Ext.util.Observable, {
 		Ext.util.Observable.capture(filter, this.onStateChange, this);
 		return filter;
 	},
+	/**
+	 * Update a filter in the collection.
+	 * 
+	 * @param {Object/Ext.grid.filter.Filter} config A filter configuration or a filter object.
+	 * 
+	 * @return {Ext.grid.filter.Filter} The existing or newly created filter object.
+	 */
+	updateFilters: function( state ) {
+		this.suspendStateStore = true;
+		this.clearFilters();
+		if(state) {
+			for(var key in state) {
+				var filter = this.filters.get(key);
+				if(filter) {
+					filter.deSerialize( state[key] );
+				}
+			}
+		}
+    
+		this.deferredUpdate.cancel();
+		if(this.local) {
+			this.reload();
+		}
+		this.suspendStateStore = false;
+	},
 	
 	/**
 	 * Returns a filter for the given dataIndex, if on exists.
@@ -357,19 +382,9 @@ Ext.extend(Ext.grid.GridFilters, Ext.util.Observable, {
 		var jsonf = {};
 		for(var i=0, len=filters.length; i<len; i++) {
 			var f = filters[i];
-			if(!jsonf[f.field]) {
-				jsonf[f.field] = {};
-				jsonf[f.field]['filters'] = [];
-			}
-			
-			var ix = jsonf[f.field]['filters'].length;
-			jsonf[f.field]['filters'][ix] = {};
+			jsonf[f.field] = {};
 			for(var key in f.data) {
-				if( key == 'type' || key=='active' )
-					jsonf[f.field][key]=f.data[key];
-				else
-					jsonf[f.field]['filters'][ix][key] = f.data[key];
-			
+				jsonf[f.field][key]=f.data[key];
 			}
 		}
 		p['filters'] = Ext.util.JSON.encode( jsonf );

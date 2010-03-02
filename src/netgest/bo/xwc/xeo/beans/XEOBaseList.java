@@ -45,7 +45,7 @@ public class XEOBaseList extends XEOBaseBean {
         return new XEOObjectListConnector( this.currentObjectList );
     }
     
-    public void rowDoubleClick(  ) throws Exception {        
+    public void rowDoubleClick(  ) throws Exception {
         ActionEvent oEvent;
         GridPanel oGridPanel;
         DataRecordConnector oActiveRow;

@@ -818,7 +818,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             } 
             
             //TODO: Martelada por causa dos Layouts... este código não devia estar a este nivél.
-            if( newWriter != null ) {
+            if( newWriter != null && request.getAttribute("__skip.Layouts.doLayout") == null ) {
             	Layouts.doLayout( newWriter );
             }
             

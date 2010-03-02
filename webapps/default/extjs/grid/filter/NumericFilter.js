@@ -32,11 +32,17 @@ Ext.grid.filter.NumericFilter = Ext.extend(Ext.grid.filter.Filter, {
 	},
 	
 	serialize: function() {
-		var args = [];
+		var args = {};
+		var argvals = [];
+		
 		var values = this.menu.getValue();
+		
 		for(var key in values) {
-			args.push({active:this.active, type: 'numeric', comparison: key, value: values[key]});
-    }
+			argvals.push({comparison: key, value: values[key]});
+		}
+		
+		args = {active:this.active, type: 'numeric', value: argvals };
+		
 		this.fireEvent('serialize', args, this);
 		return args;
 	},

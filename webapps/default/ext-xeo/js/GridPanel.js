@@ -795,7 +795,6 @@ ExtXeo.data.GroupingStore = Ext.extend(Ext.data.Store, {
     getCount : function() {
     	/*
     	var c=0;
-    	debugger;
     	for( var s=0;s<this.groupStores.length;s++ ) {
     		var gs = this.groupStores[s];
     		if( gs && gs.getCount ) {

@@ -526,6 +526,7 @@ public class MessageBox extends XUIInput {
 				
 				mbConfig.addJSString( "title" , box.getTitle() );
 				mbConfig.addJSString( "msg" , box.getMessage() );
+				mbConfig.addJSString( "id" , box.getClientId() );
 				
 				ExtConfig btnConfig = new ExtConfig();
 				ExtConfig btnTextConfig = new ExtConfig();

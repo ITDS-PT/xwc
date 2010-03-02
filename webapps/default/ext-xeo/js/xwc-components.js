@@ -145,6 +145,7 @@ ExtXeo.MessageBox = function(){
     var dlg, opt, mask, waitTimer;
     var bodyEl, msgEl, textboxEl, textareaEl, progressBar, pp, iconEl, spacerEl;
     var buttons, activeTextEl, bwidth, iconCls = '';
+    var dlgs={};
 
     // private
     var handleButton = function(button){
@@ -199,8 +200,9 @@ ExtXeo.MessageBox = function(){
 
     return {
         
-        getDialog : function(titleText, btns, defaultBtn ){
-           if(!dlg){
+        getDialog : function( id, titleText, btns, defaultBtn ){
+    		
+           if(!dlgs[ id ]){
                 dlg = new Ext.Window({
                     autoCreate : true,
                     title:titleText,
@@ -227,6 +229,9 @@ ExtXeo.MessageBox = function(){
                         }
                     }
                 });
+                
+                dlgs[ id ] = dlg;                
+                
                 buttons = {};
                 var bt = this.buttonText;
                 //TODO: refactor this block into a buttons config to pass into the Window constructor
@@ -267,6 +272,9 @@ ExtXeo.MessageBox = function(){
                 });
                bodyEl.createChild({cls:'x-clear'});
             }
+           	else {
+           		dlg = dlgs[id];
+           	}
             return dlg;
         },
 
@@ -337,9 +345,7 @@ ExtXeo.MessageBox = function(){
             opt = options;
             this.buttonText = opt.buttonText;
             
-            var d = this.getDialog(opt.title || "&#160;", opt.buttons );
-            
-
+            var d = this.getDialog( opt.id , opt.title || "&#160;", opt.buttons );
             d.setTitle(opt.title || "&#160;");
             var allowClose = (opt.closable !== false && opt.progress !== true && opt.wait !== true);
             d.tools.close.setDisplayed(allowClose);

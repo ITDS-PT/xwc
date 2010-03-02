@@ -186,16 +186,11 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
     	
     	try {
     		String column = (String)lookupBean.getAttribute( "lookupColumn" );
-    		
-    		JSONArray  jArr = new JSONArray();
-    		JSONObject value = new JSONObject();
     		JSONArray  values = new JSONArray ( oRowsColl ); 
-    		value.put( "value" , values );
-    		jArr.put( value );
     		
     		JSONObject jObj = new JSONObject( gridPanel.getCurrentFilters() );
     		jObj.getJSONObject( column ).put("active", oRowsColl.size() > 0?true:false );
-    		jObj.getJSONObject( column ).put("filters", jArr );
+    		jObj.getJSONObject( column ).put("value", values );
 	    	gridPanel.setCurrentFilters( jObj.toString() );
 			
 		} catch (JSONException e) {

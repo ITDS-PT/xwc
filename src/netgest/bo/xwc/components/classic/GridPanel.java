@@ -455,65 +455,60 @@ public class GridPanel extends ViewerInputSecurityBase {
 				for (String name : names) {
 
 					JSONObject jsonColDef = jFilters.getJSONObject(name);
-					JSONArray jsonColFilters = jsonColDef
-							.getJSONArray("filters");
 
 					String submitedType = jsonColDef.getString("type");
 
 					boolean active = jsonColDef.getBoolean("active");
 
-					for (int i = 0; active && i < jsonColFilters.length(); i++) {
-
+					if( active ) {
 						boolean bAddCodition = true;
 
-						JSONObject jsonColFilter = jsonColFilters
-								.getJSONObject(i);
+						Object value = null;
+						Byte operator = null;
 
-						String submitedValue = jsonColFilter.optString("value");
+						if ("object".equals(submitedType)) {
+							List<String> valuesList = new ArrayList<String>();
 
-						if (submitedValue != null) {
-							Object value = null;
-							Byte operator = null;
-
-							if ("object".equals(submitedType)) {
-								List<String> valuesList = new ArrayList<String>();
-
-								JSONArray jArray = jsonColFilter
-										.optJSONArray("value");
-								if (jArray != null) {
-									for (int z = 0; z < jArray.length(); z++) {
-										valuesList.add(jArray.getString(z));
-									}
-									value = valuesList.toArray();
-									operator = FilterTerms.OPERATOR_IN;
-								}
-								if (valuesList.size() == 0) {
-									bAddCodition = false;
-								}
-
-							} else if ("list".equals(submitedType)) {
-								List<String> valuesList = new ArrayList<String>();
-								JSONArray jArray = jsonColFilter
-										.getJSONArray("value");
-
+							JSONArray jArray = jsonColDef.optJSONArray("value");
+							if (jArray != null) {
 								for (int z = 0; z < jArray.length(); z++) {
 									valuesList.add(jArray.getString(z));
 								}
 								value = valuesList.toArray();
 								operator = FilterTerms.OPERATOR_IN;
+							}
+							if (valuesList.size() == 0) {
+								bAddCodition = false;
+							}
 
-								if (valuesList.size() == 0) {
-									bAddCodition = false;
-								}
+						} else if ("list".equals(submitedType)) {
+							List<String> valuesList = new ArrayList<String>();
+							JSONArray jArray = jsonColDef
+									.getJSONArray("value");
 
-							} else if ("string".equals(submitedType)) {
-								value = submitedValue;
-								operator = FilterTerms.OPERATOR_CONTAINS;
-							} else if ("date".equals(submitedType)) {
-								SimpleDateFormat sdf = new SimpleDateFormat(
-										"dd/MM/yyyy");
+							for (int z = 0; z < jArray.length(); z++) {
+								valuesList.add(jArray.getString(z));
+							}
+							value = valuesList.toArray();
+							operator = FilterTerms.OPERATOR_IN;
+
+							if (valuesList.size() == 0) {
+								bAddCodition = false;
+							}
+
+						} else if ("string".equals(submitedType)) {
+							value = jsonColDef.getString("value");
+							operator = FilterTerms.OPERATOR_CONTAINS;
+						} else if ("date".equals(submitedType)) {
+							SimpleDateFormat sdf = new SimpleDateFormat(
+									"dd/MM/yyyy");
+							
+							JSONArray jArray = jsonColDef.getJSONArray("value");
+							for( int i=0; i<jArray.length(); i++ ) {
+								
+								JSONObject jsonColFilter = jArray.getJSONObject( i );
 								try {
-									value = sdf.parse(submitedValue);
+									value = sdf.parse( jsonColFilter.getString( "value" ) );
 								} catch (ParseException e) {
 									e.printStackTrace();
 									value = null;
@@ -526,12 +521,20 @@ public class GridPanel extends ViewerInputSecurityBase {
 									operator = FilterTerms.OPERATOR_EQUAL;
 								else
 									operator = FilterTerms.OPERATOR_GREATER_THAN;
-							} else if ("boolean".equals(submitedType)) {
-								value = Boolean.valueOf(submitedValue);
-								operator = FilterTerms.OPERATOR_EQUAL;
-							} else if ("numeric".equals(submitedType)) {
-								String comp = jsonColFilter
-										.getString("comparison");
+								
+								terms = addFilterTerm(terms, name, operator, value);
+							}
+							bAddCodition = false;
+						} else if ("boolean".equals(submitedType)) {
+							value = Boolean.valueOf(jsonColDef.getString("value"));
+							operator = FilterTerms.OPERATOR_EQUAL;
+						} else if ("numeric".equals(submitedType)) {
+							JSONArray jArray = jsonColDef.getJSONArray("value");
+							for( int i=0; i<jArray.length(); i++ ) {
+								JSONObject jsonColFilter = jArray.getJSONObject( i );
+								String submitedValue = jsonColFilter.getString( "value" );
+								
+								String comp = jsonColFilter.getString("comparison");
 								value = new BigDecimal(submitedValue);
 								if ("lt".equals(comp))
 									operator = FilterTerms.OPERATOR_LESS_THAN;
@@ -539,19 +542,16 @@ public class GridPanel extends ViewerInputSecurityBase {
 									operator = FilterTerms.OPERATOR_EQUAL;
 								else
 									operator = FilterTerms.OPERATOR_GREATER_THAN;
-							} else {
-								value = null;
+								
+								terms = addFilterTerm(terms, name, operator, value);
 							}
+							bAddCodition = false;
+						} else {
+							value = null;
+						}
 
-							if (bAddCodition) {
-								if (terms == null) {
-									terms = new FilterTerms(new FilterTerm(
-											name, operator, value));
-								} else {
-									terms.addTerm(FilterTerms.JOIN_AND, name,
-											operator, value);
-								}
-							}
+						if (bAddCodition) {
+							terms = addFilterTerm(terms, name, operator, value);
 						}
 					}
 				}
@@ -563,6 +563,16 @@ public class GridPanel extends ViewerInputSecurityBase {
 		return terms;
 	}
 	
+
+	private FilterTerms addFilterTerm( FilterTerms terms, String name, byte operator, Object value ) {
+		if (terms == null) {
+			terms = new FilterTerms(new FilterTerm( name, operator, value) );
+		} else {
+			terms.addTerm(FilterTerms.JOIN_AND, name,
+					operator, value);
+		}
+		return terms;
+	}
 	/**
 	 * Define the {@link DataListConnector} witch this grid i binding to
 	 * @param dataSource {@link DataListConnector} to bind this grid

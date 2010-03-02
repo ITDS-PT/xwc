@@ -413,9 +413,8 @@ XVW.prv.removeCommand = function( sFormId, sActionId ) {
     var oForm   = document.getElementById( sFormId );
     if( oForm != null )
     {
-        var sId = sFormId+':'+sActionId;
+        var sId = 'dyn:'+sFormId+':'+sActionId;
         var oButton;
-        
         oButton = document.getElementById( sId );
         if( oButton != null ) {
             oButton.parentNode.removeChild( oButton );
@@ -458,7 +457,7 @@ XVW.prv.createCommand = function( sFormId, sActionId ) {
             oButton = document.createElement( 'input' );
             oButton.type='hidden';
             oButton.name = sFormId+':'+sActionId;
-            oButton.id = sFormId+':'+sActionId;
+            oButton.id = 'dyn:' + sFormId + ':' + sActionId;
             if( typeof(sActionValue) != "undefined")
                 oButton.value = sActionValue;
             else

@@ -146,9 +146,22 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             // Place holder for the component
         
             if( oComp.isRenderedOnClient() ) {
-            	if( oGrid.getAutoReloadData() || oGrid.isMarkedToReloadData() ) {
+            	
+            	//if( oGrid.getEnableColumnFilter() && oGrid.getStateProperty("currentFilters").wasChanged() ) {
+	        	//System.out.println( "RES:" +  oGrid.getCurrentFilters() );
+
+            		ScriptBuilder scriptBuilder = new ScriptBuilder();
+            		scriptBuilder.startBlock();
+            		scriptBuilder.w( oGrid.getId()).w("_filters");
+            		scriptBuilder.w( ".updateFilters( ").w( oGrid.getCurrentFilters()).w( " );" );
+            		scriptBuilder.endBlock();
+                	w.getScriptContext().add( XUIScriptContext.POSITION_HEADER , oGrid.getClientId() + "_filters" , scriptBuilder.toString() );
+            	//}
+
+                if( oGrid.getAutoReloadData() || oGrid.isMarkedToReloadData() ) {
             		triggerLoadData( w, oGrid );
             	}
+
             }
             else {
 	            oGridConfig = renderExtComponent( getResponseWriter(), oComp );
@@ -707,7 +720,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
     public ExtConfig buildFiltersConfig( GridPanel oGrid ) {
         
         ExtConfig 		oFilterConfig 	= new ExtConfig( "Ext.grid.GridFilters" );
+        oFilterConfig.addJSString("id", oGrid.getClientId() + "_filters" );
+        
+        
         ExtConfigArray 	oFiltersArray 	= oFilterConfig.addChildArray("filters");
+        
         
         ExtConfig 		oExtFiltersChild;
 
@@ -729,7 +746,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             	if( colFilter == null ) {
             		colFilter = new JSONObject();
             		j.put( col.getDataField(), colFilter );
-            		colFilter.put( "filters" , new JSONArray() );
+            		colFilter.put( "value" , (Object)null );
             		colFilter.put( "active" , false);
             	}
             	

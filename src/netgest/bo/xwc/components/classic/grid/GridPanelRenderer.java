@@ -13,19 +13,17 @@ import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Tab;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
-import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.components.connectors.DataGroupConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.data.JavaScriptArrayProvider;
 import netgest.bo.xwc.components.model.Column;
-import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.xeo.beans.XEOBaseList;
+import netgest.bo.xwc.xeo.beans.XEOEditBean;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -229,11 +227,15 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         
         // Filter terms
         String sFilters = oRequest.getParameter("filters");
+		String sServerFilters = oGridPanel.getCurrentFilters();
         if( sFilters != null ) {
 	        try {
 				// Fix something in json filters.
 	        	// BUG... when setting a value to a objecto, client doesn't send that! so, it must be
 	        	// merged with server side.
+	        	
+	        	System.out.println( "REQ:" + sFilters );
+	        	
 	    		
 	        	JSONObject jFilters;
 	    		JSONObject serverFilters;
@@ -244,7 +246,6 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 					jFilters = new JSONObject( "{}" );
 				}
 				
-				String sServerFilters = oGridPanel.getCurrentFilters();
 				if( sServerFilters != null ) {
 					serverFilters = new JSONObject( sServerFilters );
 				}
@@ -255,19 +256,23 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	    		String[] names = JSONObject.getNames( jFilters );
 	    		if( names != null ) {
 	        		for( String name : names ) {
-	        			String sType = jFilters.getJSONObject(name).getString("type");
-	        			if( "object".equals( sType ) ) {
-		        			JSONObject serverFilter = serverFilters.optJSONObject( name );
-	        				if( serverFilter != null ) {
-	        					serverFilter.put( "active", jFilters.getJSONObject(name).getBoolean("active") );  
-	        					jFilters.put( name, serverFilter );
-	        				}
+	        			JSONObject serverFilter = serverFilters.optJSONObject( name );
+	        			JSONObject clientFilter = jFilters.getJSONObject(name);
+        				if( serverFilter != null && clientFilter.opt("value") != null ) {
+        					serverFilter.put( "active", clientFilter.getBoolean("active") );
+        					// Filter's in objects can't be readed from the client
+        					// because it clears all other searchs
+        					//if( !"object".equals( clientFilter.getString("type") ) ) {
+        						serverFilter.put( "value", clientFilter.get("value") );
+        					//}
+        					jFilters.put( name, serverFilter );
 	        			}
 	        		}
 	    		}
 	    		oGridPanel.setCurrentFilters( jFilters.toString() );
 			} catch (JSONException e) {
 				// Do nothing.. ignore filters...
+				e.printStackTrace();
 			}
         }
 		return reqParam;

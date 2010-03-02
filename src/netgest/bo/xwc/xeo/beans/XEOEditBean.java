@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
+import javax.servlet.ServletRequest;
 
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
@@ -1156,6 +1157,11 @@ public class XEOEditBean extends XEOBaseBean {
         try {
 			AttributeBase oAtt = (AttributeBase)srcComponent.getParent();
 			AttributeHandler    oAttHandler = ((XEOObjectAttributeConnector)oAtt.getDataFieldConnector()).getAttributeHandler();
+			
+			((ServletRequest)oRequestContext.getRequest()).setAttribute(
+					"__skip.Layouts.doLayout", 
+					Boolean.TRUE
+				);
 			
 			if( oAttHandler.getValueObject() != null ) {
 				long boui = oAttHandler.getValueLong();
