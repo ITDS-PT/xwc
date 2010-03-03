@@ -981,6 +981,7 @@ public class XUIResponseWriter extends ResponseWriter {
         //StringBuilder b = attributesBuffer.getBuffer();
         
     	writer.write( attributesBuffer.getBuffer().toString() );
+    	attributesBuffer.reset();
         
         /*
         int totalLength = b.length();
