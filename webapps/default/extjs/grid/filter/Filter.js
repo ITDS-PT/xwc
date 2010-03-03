@@ -144,7 +144,8 @@ Ext.extend(Ext.grid.filter.Filter, Ext.util.Observable, {
 	 */
 	deSerialize: function( data ) {
 		this.setActive( data.active );
-		this.setValue( data.value );
+		if( data.active )
+			this.setValue( data.value );
 	},
 
 	/**
