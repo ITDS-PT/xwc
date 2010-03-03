@@ -978,7 +978,11 @@ public class XUIResponseWriter extends ResponseWriter {
 
         // a little complex, but the end result is, potentially, two
         // fewer temp objects created per call.
-        StringBuilder b = attributesBuffer.getBuffer();
+        //StringBuilder b = attributesBuffer.getBuffer();
+        
+    	writer.write( attributesBuffer.getBuffer().toString() );
+        
+        /*
         int totalLength = b.length();
         if (totalLength != 0) {
             int curIdx = 0;
@@ -997,6 +1001,7 @@ public class XUIResponseWriter extends ResponseWriter {
             }
             attributesBuffer.reset();
         }
+        */
 
     }
 
