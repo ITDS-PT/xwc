@@ -234,7 +234,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        	// BUG... when setting a value to a objecto, client doesn't send that! so, it must be
 	        	// merged with server side.
 	        	
-	        	System.out.println( "REQ:" + sFilters );
+	        	// System.out.println( "REQ:" + sFilters );
 	        	
 	    		
 	        	JSONObject jFilters;

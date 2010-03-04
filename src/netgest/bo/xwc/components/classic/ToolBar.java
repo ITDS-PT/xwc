@@ -160,6 +160,9 @@ public class ToolBar extends ViewerSecurityBase {
         	sb.w( "var m=Ext.getCmp('ext-").writeValue( oMenuChild.getClientId() ).l("');" );
         	if( !oMenuChild.isVisible() )
         		sb.w( "m.hide();" );
+        	else
+        		sb.w( "m.show();" );
+        		
         	sb.w( "m.setDisabled(").w( oMenuChild.isDisabled() ).l( ");" );
         	
         }
