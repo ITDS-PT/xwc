@@ -146,15 +146,16 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
             if( oComp.isRenderedOnClient() ) {
             	
-            	//if( oGrid.getEnableColumnFilter() && oGrid.getStateProperty("currentFilters").wasChanged() ) {
-	        	//System.out.println( "RES:" +  oGrid.getCurrentFilters() );
+            	if( oGrid.getEnableColumnFilter() ) {
             		ScriptBuilder scriptBuilder = new ScriptBuilder();
             		scriptBuilder.startBlock();
-            		scriptBuilder.w( oGrid.getId()).w("_filters");
-            		scriptBuilder.w( ".updateFilters( ").w( oGrid.getCurrentFilters()).w( " );" );
+            		scriptBuilder.w( "var g=Ext.getCmp('").w( oGrid.getClientId() ).w( "');" );
+            		scriptBuilder.w( "if( g && g.plugins ) {");
+            		scriptBuilder.w( "g.plugins.updateFilters( ").w( oGrid.getCurrentFilters()).w( " );" );
+            		scriptBuilder.w( "}" );
             		scriptBuilder.endBlock();
                 	w.getScriptContext().add( XUIScriptContext.POSITION_HEADER , oGrid.getClientId() + "_filters" , scriptBuilder.toString() );
-            	//}
+            	}
 
                 if( oGrid.getAutoReloadData() || oGrid.isMarkedToReloadData() ) {
             		triggerLoadData( w, oGrid );
