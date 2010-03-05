@@ -775,7 +775,10 @@ public class XEOEditBean extends XEOBaseBean {
 								);
 						XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 								.getBean("viewBean");
+
 						oBaseBean.createNew( oObjectName );
+						oBaseBean.getXEOObject().addParent( getXEOObject() );
+						
 						oBaseBean.setParentBeanId("viewBean");
 						oBaseBean.setParentBean( this );
 						oBaseBean.setParentComponentId( oGrid.getClientId() );
