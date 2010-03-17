@@ -56,11 +56,8 @@ public class Dialogs {
 		progressBean.setTitle( title );
 		progressBean.setText( text );
 		progressBean.setProgressText( progressText );
-		
 		progressBean.setTargetAction( actionExpression );
-		
 		requestContext.setViewRoot( progressView );
-		progressView.processInitComponents();
 		
 		requestContext.renderResponse();
 		

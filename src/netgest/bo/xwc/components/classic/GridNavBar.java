@@ -72,7 +72,7 @@ public class GridNavBar extends ToolBar {
      * @return true/false
      */
     public boolean getShowExportToPDF() {
-        return showFullTextSearch.getEvaluatedValue();
+        return showExportToPDF.getEvaluatedValue();
     }
 
 }

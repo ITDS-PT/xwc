@@ -145,7 +145,14 @@ public class BridgeToolBar extends ToolBar {
 				isMySeparator = true;
 				separatorRendered = false;
 				ViewerMethod viewerMethod = (ViewerMethod)comp;
-				if( "lookupBridge".equals( viewerMethod.getTargetMethod() ) ) {
+				if( "addNewToBridge".equals( viewerMethod.getTargetMethod() ) ) {
+					separatorRendered = XEOComponentStateLogic.isBridgeNewVisible( targetBridge ); 
+					viewerMethod.setVisible( Boolean.toString( separatorRendered ));
+					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeNewEnabled(targetBridge) );
+					if( separatorRendered )
+						renderToolBar = true;
+				}				
+				else if( "lookupBridge".equals( viewerMethod.getTargetMethod() ) ) {
 					separatorRendered = XEOComponentStateLogic.isBridgeAddVisible( targetBridge );
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ) );
 					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeAddEnabled(targetBridge) );
@@ -156,13 +163,6 @@ public class BridgeToolBar extends ToolBar {
 					separatorRendered = XEOComponentStateLogic.isBridgeRemoveVisible( targetBridge ); 
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ));
 					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeRemoveEnabled(targetBridge) );
-					if( separatorRendered )
-						renderToolBar = true;
-				}
-				else if( "addNewToBridge".equals( viewerMethod.getTargetMethod() ) ) {
-					separatorRendered = XEOComponentStateLogic.isBridgeNewVisible( targetBridge ); 
-					viewerMethod.setVisible( Boolean.toString( separatorRendered ));
-					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeNewVisible(targetBridge) );
 					if( separatorRendered )
 						renderToolBar = true;
 				}
@@ -322,13 +322,14 @@ public class BridgeToolBar extends ToolBar {
 				}
 			}
 			else {
-				boDefHandler[] subDefs = refDef.getTreeSubClasses();
-				if( refDef.getBoCanBeOrphan() )
-					subClassesDef.add( refDef );
-				for( boDefHandler subDef : subDefs ) { 
-					if( subDef.getBoCanBeOrphan() )
-						subClassesDef.add( subDef );
-				}
+				return ListToolBar.getObjectsForNewMenu( refDef );
+//				boDefHandler[] subDefs = refDef.getTreeSubClasses();
+//				if( refDef.getBoCanBeOrphan() )
+//					subClassesDef.add( refDef );
+//				for( boDefHandler subDef : subDefs ) { 
+//					if( subDef.getBoCanBeOrphan() )
+//						subClassesDef.add( subDef );
+//				}
 			}
 		}
 		return subClassesDef;

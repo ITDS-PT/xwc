@@ -4,6 +4,7 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Panel;
 import netgest.bo.xwc.components.classic.ToolBar;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 
 public class FormEdit extends Form {
@@ -14,14 +15,14 @@ public class FormEdit extends Form {
 	private XUIBindProperty<Boolean> renderToolBar = 
 		new XUIBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
 
-	private XUIBindProperty<Boolean> renderViewerTitle = 
-		new XUIBindProperty<Boolean>("renderViewerTitle", this, true, Boolean.class);
+	private XUIBaseProperty<Boolean> renderViewerTitle = 
+		new XUIBaseProperty<Boolean>("renderViewerTitle", this, true);
 
-	private XUIBindProperty<Boolean> renderViewerMessages = 
-		new XUIBindProperty<Boolean>("renderViewerMessages", this, true, Boolean.class);
+	private XUIBaseProperty<Boolean> renderViewerMessages = 
+		new XUIBaseProperty<Boolean>("renderViewerMessages", this, true);
 
-	private XUIBindProperty<Boolean> renderWindow = 
-		new XUIBindProperty<Boolean>("renderWindow", this, true, Boolean.class);
+	private XUIBaseProperty<Boolean> renderWindow = 
+		new XUIBaseProperty<Boolean>("renderWindow", this, true);
 	
 	private XUIBindProperty<Integer> windowHeight = 
 		new XUIBindProperty<Integer>("windowHeight", this, 400, Integer.class);
@@ -35,7 +36,7 @@ public class FormEdit extends Form {
 	}
 	
 	public boolean getRenderViewerTitle() {
-		return renderViewerTitle.getEvaluatedValue();
+		return renderViewerTitle.getValue();
 	}
 
 	public void setRenderViewerTitle(boolean renderToolbar) {
@@ -50,8 +51,12 @@ public class FormEdit extends Form {
 		this.renderToolBar.setValue( renderToolbar );
 	}
 
+	public void setRenderToolBar(String renderToolbarExpr) {
+		this.renderToolBar.setExpressionText( renderToolbarExpr );
+	}
+
 	public boolean getRenderViewerMessages() {
-		return renderViewerMessages.getEvaluatedValue();
+		return renderViewerMessages.getValue();
 	}
 
 	public void setRenderViewerMessages(boolean renderViewerMessages) {
@@ -59,7 +64,7 @@ public class FormEdit extends Form {
 	}
 
 	public boolean getRenderWindow() {
-		return renderWindow.getEvaluatedValue();
+		return renderWindow.getValue();
 	}
 
 	public void setRenderWindow(boolean renderWindow) {
@@ -74,12 +79,20 @@ public class FormEdit extends Form {
 		this.windowHeight.setValue( windowHeight );
 	}
 
+	public void setWindowHeight(String windowHeightExpr) {
+		this.windowHeight.setExpressionText( windowHeightExpr );
+	}
+
 	public int getWindowWidth() {
 		return windowWidth.getEvaluatedValue();
 	}
 
 	public void setWindowWidth(int windowWidth) {
 		this.windowWidth.setValue( windowWidth );
+	}
+
+	public void setWindowWidth(String windowWidthExpr) {
+		this.windowWidth.setExpressionText( windowWidthExpr );
 	}
 	
 	public void setTargetObject( String sExprText ) {

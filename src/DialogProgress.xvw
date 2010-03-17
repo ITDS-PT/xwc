@@ -9,7 +9,7 @@
         		progress = "#{viewBean.progressPercent}"
         		progressText = "#{viewBean.progressText}"
         		text = "#{viewBean.text}"
-        		/>
+        	/>
         </xvw:form>
     </xvw:viewer>
 </xvw:root>

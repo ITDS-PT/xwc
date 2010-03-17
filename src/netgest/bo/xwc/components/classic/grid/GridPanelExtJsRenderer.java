@@ -605,7 +605,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oGridConfig.add( "autoHeight", oGrid.getAutoHeight() );
         oGridConfig.add( "minHeight", oGrid.getMinHeight());
         oGridConfig.add( "frame", false );
-        oGridConfig.add( "loadMask", "(Ext.isIE?false:new Ext.LoadMask(Ext.getBody(), {msg:'" + ComponentMessages.GRID_REFRESHING_DATA.toString() + "'}))" );
+        oGridConfig.add( "loadMask", "(Ext.isIE?false:new Ext.LoadMask(Ext.get('" + oGrid.getClientId() + "'), {msg:'" + ComponentMessages.GRID_REFRESHING_DATA.toString() + "'}))" );
         oGridConfig.add( "maskDisabled", "(Ext.isIE?false:true)" );
         
         if( !oGrid.getEnableColumnHide() )

@@ -130,9 +130,12 @@ public class DialogProgress extends XUIComponentBase {
 					sb.append( svarName ).append( "=null" );
 				}
 			} else if( !dialog.wasRendered.getValue() ) {
+				String s = dialog.getProgressText();
+				if( s == null || s.length() == 0 ) s = " ";
+				
 				ExtConfig dialogConfig = new ExtConfig();
 				dialogConfig.addJSString( "msg" , dialog.getText() );
-				dialogConfig.addJSString( "progressText" , dialog.getProgressText() );
+				dialogConfig.addJSString( "progressText" , s );
 				dialogConfig.addJSString( "title" , dialog.getTitle() );
 				dialogConfig.add( "width" , 300 );
 				dialogConfig.add( "progress" , true );
@@ -142,7 +145,7 @@ public class DialogProgress extends XUIComponentBase {
 				dialogConfig.renderExtConfig( sb );
 				sb.append( ");" );
 				dialog.wasRendered.setValue( true );
-				
+
 				w.getScriptContext().add(  
 						XUIScriptContext.POSITION_FOOTER, 
 						dialog.actionCmd.getId(), 
