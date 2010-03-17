@@ -35,7 +35,8 @@ public abstract class ExtJsBaseRenderer extends XUIRenderer implements ExtJsRend
     	}
     	
     	// Write the field
-    	if( !oComp.isRenderedOnClient() ) {
+    	if( !oComp.isDestroyOnClient() || reRenderField( oComp ) ) {
+    		oComp.setDestroyOnClient( true );
         	// Create a place holder for the field!
         	encodePlaceHolder( oComp );
 
@@ -54,6 +55,10 @@ public abstract class ExtJsBaseRenderer extends XUIRenderer implements ExtJsRend
     	// Write Scripts
     	encodeComponentScript( oComp );
     	
+    }
+    
+    public boolean reRenderField( XUIComponentBase comp ) {
+    	return false;
     }
     
 	public void encodeExtJs( XUIComponentBase oAtt ) {

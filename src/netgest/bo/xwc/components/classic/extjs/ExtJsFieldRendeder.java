@@ -123,6 +123,11 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
     }
 	
     @Override
+    public boolean reRenderField(XUIComponentBase comp) {
+    	return super.reRenderField(comp) || comp.getStateProperty("readOnly").wasChanged();
+    }
+    
+    @Override
     public ScriptBuilder getBeginComponentScript( XUIComponentBase oComp ) {
     	return getBeginComponentScript( (AttributeBase)oComp, true );
     }
