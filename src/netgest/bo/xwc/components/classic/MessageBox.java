@@ -461,42 +461,78 @@ public class MessageBox extends XUIInput {
 					case OK:
 						getChildren().add( OK );
 						if( jarr != null && jarr.length() > 0 ) {
-							OK.setServerAction( (String)jarr.get( 0 ) );
+							String serverAction = (String)jarr.get( 0 );
+							if( serverAction != null && serverAction.trim().length() > 0 ) {
+								OK.setServerAction( serverAction );
+							}
 						}
 						break;
 					case YES:
 						getChildren().add( YES );
 						if( jarr != null && jarr.length() > 0 ) {
-							OK.setServerAction( (String)jarr.get( 0 ) );
+							String serverAction = (String)jarr.get( 0 );
+							if( serverAction != null && serverAction.trim().length() > 0 ) {
+								OK.setServerAction( serverAction );
+							}
 						}
 						break;
 					case OKCANCEL:
 						getChildren().addAll( OKCANCEL );
 						if( jarr != null ) {
-							if( jarr.length() > 0 ) 
-								OK.setServerAction( (String)jarr.get( 0 ) );
-							if( jarr.length() > 1 ) 
-								CANCEL.setServerAction( (String)jarr.get( 1 ) );
+							if( jarr.length() > 0 ) { 
+								String serverAction = (String)jarr.get( 0 );
+								if( serverAction != null && serverAction.trim().length() > 0 ) {
+									OK.setServerAction( (String)jarr.get( 0 ) );
+								}
+							}
+							if( jarr.length() > 1 ) { 
+								String serverAction = (String)jarr.get( 1 );
+								if( serverAction != null && serverAction.trim().length() > 0 ) {
+									CANCEL.setServerAction( serverAction );
+								}
+							}
 						}
 						break;
 					case YESNO:
 						getChildren().addAll( YESNO );
 						if( jarr != null ) {
-							if( jarr.length() > 0 ) 
-								YES.setServerAction( (String)jarr.get( 0 ) );
-							if( jarr.length() > 1 ) 
-								NO.setServerAction( (String)jarr.get( 1 ) );
+							if( jarr.length() > 0 ) {
+								String serverAction = (String)jarr.get( 0 );
+								if( serverAction != null && serverAction.trim().length() > 0 ) {
+									YES.setServerAction( serverAction );
+								}
+							}
+							if( jarr.length() > 1 ) { 
+								String serverAction = (String)jarr.get( 1 );
+								if( serverAction != null && serverAction.trim().length() > 0 ) {
+									NO.setServerAction( serverAction );
+								}
+							}
 						}
 						break;
 					case YESNOCANCEL:
 						getChildren().addAll( YESNOCANCEL );
 						if( jarr != null ) {
-							if( jarr.length() > 0 ) 
-								YES.setServerAction( (String)jarr.get( 0 ) );
-							if( jarr.length() > 1 ) 
-								NO.setServerAction( (String)jarr.get( 1 ) );
-							if( jarr.length() > 2 ) 
-								NO.setServerAction( (String)jarr.get( 2 ) );
+							if( jarr.length() > 0 ) { 
+								String serverAction = (String)jarr.get( 0 );
+								if( serverAction != null && serverAction.trim().length() > 0 ) {
+									YES.setServerAction( serverAction );
+								}
+							} 
+							
+							if( jarr.length() > 1 ) { 
+								String serverAction = (String)jarr.get( 1 );
+								if( serverAction != null && serverAction.trim().length() > 0 ) {
+									NO.setServerAction( serverAction );
+								}
+							}
+							
+							if( jarr.length() > 2 ) { 
+								String serverAction = (String)jarr.get( 2 );
+								if( serverAction != null && serverAction.trim().length() > 0 ) {
+									NO.setServerAction( serverAction );
+								}
+							}
 						}
 						break;
 				}
