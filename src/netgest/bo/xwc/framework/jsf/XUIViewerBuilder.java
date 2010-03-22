@@ -37,8 +37,7 @@ public class XUIViewerBuilder
     	
     	String phaseEvent;
     	
-    	// RESTORE_VIEW Event
-    	phaseEvent = oViewerDefinition.getBeforeRestoreViewPhase();
+    	phaseEvent = oViewerDefinition.getOnCreateViewPhase();
     	if( !isEmpty( phaseEvent ) ) {
     		root.addPhaseListener(
 				new XUIMethodExpressionPhaseListener(
@@ -48,7 +47,9 @@ public class XUIViewerBuilder
 				)
     		);
     	}
-    	phaseEvent = oViewerDefinition.getAfterRestoreViewPhase();
+    	
+    	// RESTORE_VIEW Event
+    	phaseEvent = oViewerDefinition.getOnRestoreViewPhase();
     	if( !isEmpty( phaseEvent ) ) {
     		root.addPhaseListener(
 				new XUIMethodExpressionPhaseListener(
@@ -58,7 +59,6 @@ public class XUIViewerBuilder
 				)
     		);
     	}
-    	
     	
     	// APPLY_REQUEST_VALUES Event
     	phaseEvent = oViewerDefinition.getBeforeApplyRequestValuesPhase();
