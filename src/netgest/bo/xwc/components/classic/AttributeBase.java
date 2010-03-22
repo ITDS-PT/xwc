@@ -14,6 +14,7 @@ import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 /**
  * This component is not usable in the viewers, is the base of all attribute Type Components
  * 
@@ -365,7 +366,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
     	super.setValueChangeListener(
     			getFacesContext().getApplication().createMethodBinding( 
     					methodBindingExpr,
-    					new Class[]  { FacesEvent.class }
+    					new Class[]  { XUIValueChangeEvent.class }
     			)
     	);
     }

@@ -28,6 +28,7 @@ import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.xwc.framework.XUIEditableValueHolder;
 import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 
 import com.sun.faces.util.MessageFactory;
 
@@ -871,7 +872,7 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
             setValue(newValue);
             setSubmittedValue(null);
             if (compareValues(previous, newValue)) {
-                queueEvent(new ValueChangeEvent(this, previous, newValue));
+                queueEvent(new XUIValueChangeEvent(this, previous, newValue));
             }
         }
 
