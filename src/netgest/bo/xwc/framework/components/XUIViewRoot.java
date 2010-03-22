@@ -607,7 +607,9 @@ public class XUIViewRoot extends UIViewRoot {
 		}
 
 	}
-
+	
+	private static Field phaseListenersField = null;
+	
 	public void notifyPhaseListeners(FacesContext context, PhaseId phaseId,
 			boolean isBefore) {
 		
@@ -628,15 +630,14 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 		}
 		
-		
-		Field f;
-		
 		List<PhaseListener> phaseListeners;
 		
 		try {
-			f = UIViewRoot.class.getDeclaredField("phaseListeners");
-			f.setAccessible( true );
-			phaseListeners = (List<PhaseListener>)f.get( this );
+			if( phaseListenersField == null ) {
+				phaseListenersField = UIViewRoot.class.getDeclaredField("phaseListeners");
+				phaseListenersField.setAccessible( true );
+			}
+			phaseListeners = (List<PhaseListener>)phaseListenersField.get( this );
 		} catch (Exception e1) {
 			throw new RuntimeException(e1);
 		}
