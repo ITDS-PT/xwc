@@ -6,10 +6,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.el.ExpressionFactory;
+import javax.el.MethodExpression;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIViewRoot;
+import javax.faces.context.FacesContext;
+import javax.faces.event.FacesEvent;
+import javax.faces.event.PhaseEvent;
+import javax.faces.event.PhaseId;
 
 import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.components.XUIMethodExpressionPhaseListener;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIComponentDefinition;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.def.XUIViewerDefinitionNode;
@@ -20,16 +27,113 @@ public class XUIViewerBuilder
 {
 //    private static final Log log = LogFactory.getLog(netgest.bo.xwc.framework.jsf.XUIViewerBuilder.class);
     
-    public void buildView( XUIRequestContext oContext, XUIViewerDefinition oViewerDefinition, UIViewRoot oUIViewRoot  )    {
+    public void buildView( XUIRequestContext oContext, XUIViewerDefinition oViewerDefinition, XUIViewRoot oUIViewRoot  )    {
         buildComponentTree( oContext, oViewerDefinition, oUIViewRoot );
     }
 
-    private void buildComponentTree( XUIRequestContext oContext, XUIViewerDefinition oViewerDefinition, UIViewRoot root )
+    private void buildComponentTree( XUIRequestContext oContext, XUIViewerDefinition oViewerDefinition, XUIViewRoot root )
     {
+    	// Set the view root properties
+    	
+    	String phaseEvent;
+    	
+    	// RESTORE_VIEW Event
+    	phaseEvent = oViewerDefinition.getBeforeRestoreViewPhase();
+    	if( !isEmpty( phaseEvent ) ) {
+    		root.addPhaseListener(
+				new XUIMethodExpressionPhaseListener(
+						createEventMethodExpression( phaseEvent ) , 
+						PhaseId.RESTORE_VIEW,
+						true
+				)
+    		);
+    	}
+    	phaseEvent = oViewerDefinition.getAfterRestoreViewPhase();
+    	if( !isEmpty( phaseEvent ) ) {
+    		root.addPhaseListener(
+				new XUIMethodExpressionPhaseListener(
+						createEventMethodExpression( phaseEvent ) , 
+						PhaseId.RESTORE_VIEW,
+						false
+				)
+    		);
+    	}
+    	
+    	
+    	// APPLY_REQUEST_VALUES Event
+    	phaseEvent = oViewerDefinition.getBeforeApplyRequestValuesPhase();
+    	if( !isEmpty( phaseEvent ) ) {
+    		root.addPhaseListener(
+				new XUIMethodExpressionPhaseListener(
+						createEventMethodExpression( phaseEvent ) , 
+						PhaseId.APPLY_REQUEST_VALUES,
+						true
+				)
+    		);
+    	}
+    	phaseEvent = oViewerDefinition.getAfterApplyRequestValuesPhase();
+    	if( !isEmpty( phaseEvent ) ) {
+    		root.addPhaseListener(
+				new XUIMethodExpressionPhaseListener(
+						createEventMethodExpression( phaseEvent ) , 
+						PhaseId.APPLY_REQUEST_VALUES,
+						false
+				)
+    		);
+    	}
+    	
+    	// UPDATE_MODEL_VALUES Event
+    	phaseEvent = oViewerDefinition.getBeforeUpdateModelPhase();
+    	if( !isEmpty( phaseEvent ) ) {
+    		root.addPhaseListener(
+				new XUIMethodExpressionPhaseListener(
+						createEventMethodExpression( phaseEvent ) , 
+						PhaseId.UPDATE_MODEL_VALUES,
+						true
+				)
+    		);
+    	}
+    	phaseEvent = oViewerDefinition.getAfterUpdateModelPhase();
+    	if( !isEmpty( phaseEvent ) ) {
+    		root.addPhaseListener(
+				new XUIMethodExpressionPhaseListener(
+						createEventMethodExpression( phaseEvent ) , 
+						PhaseId.UPDATE_MODEL_VALUES,
+						false
+				)
+    		);
+    	}
+    	
+
+    	// RENDER_RESPONSE Event
+    	phaseEvent = oViewerDefinition.getBeforeRenderPhase();
+    	if( !isEmpty( phaseEvent ) ) {
+    		root.addPhaseListener(
+				new XUIMethodExpressionPhaseListener(
+						createEventMethodExpression( phaseEvent ) , 
+						PhaseId.RENDER_RESPONSE,
+						true
+				)
+    		);
+    	}
+    	phaseEvent = oViewerDefinition.getAfterRenderPhase();
+    	if( !isEmpty( phaseEvent ) ) {
+    		root.addPhaseListener(
+				new XUIMethodExpressionPhaseListener(
+						createEventMethodExpression( phaseEvent ) , 
+						PhaseId.RENDER_RESPONSE,
+						false
+				)
+    		);
+    	}
+    	
+    	
+    	
+    	
         buildComponent( oContext, root, root, oViewerDefinition.getRootComponent() );
     }
     
-    private void buildComponent( XUIRequestContext oContext, UIViewRoot root,UIComponent parent, XUIViewerDefinitionNode dcomponent )
+    private void buildComponent( XUIRequestContext oContext, XUIViewRoot root,UIComponent parent, XUIViewerDefinitionNode dcomponent )
     {
     	
     	UIComponent comp = createComponent( oContext, dcomponent.getName() );
@@ -283,4 +387,19 @@ public class XUIViewerBuilder
     {
     }
 
+    private static final boolean isEmpty( String s ) {
+    	
+    	return s == null || s.trim().length() == 0;
+    	
+    }
+    
+    private static final Class[] EVENT_ARGS = new Class[] { PhaseEvent.class };
+    
+    private MethodExpression createEventMethodExpression( String sMethodExpression ) {
+    	FacesContext f = FacesContext.getCurrentInstance();
+        ExpressionFactory oExFactory = f.getApplication().getExpressionFactory();
+        return oExFactory.createMethodExpression( f.getELContext(), sMethodExpression, null, EVENT_ARGS );
+    }
+    
+    
 }

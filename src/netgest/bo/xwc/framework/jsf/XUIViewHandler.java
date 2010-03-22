@@ -18,6 +18,7 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
+import javax.faces.event.PhaseId;
 import javax.faces.render.RenderKit;
 import javax.faces.render.RenderKitFactory;
 import javax.faces.render.Renderer;
@@ -677,14 +678,17 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                                                        request.getCharacterEncoding());
 
         context.setResponseWriter( newWriter );
-
-        oAjaxXmlResp = getAjaxXML( context, request, renderKit, (XUIViewRoot)viewToRender );
         
+        ((XUIViewRoot)viewToRender).notifyPhaseListeners(context, PhaseId.RENDER_RESPONSE, true);
+        
+    	oAjaxXmlResp = getAjaxXML( context, request, renderKit, (XUIViewRoot)viewToRender );
         ((XMLDocument)oAjaxXmlResp).setEncoding("utf-8");
         String sXml = ngtXMLUtils.getXML( (XMLDocument)oAjaxXmlResp );
         responseWriter.write( sXml );
         responseWriter.flushToWriter();
         responseWriter.release();
+
+        ((XUIViewRoot)viewToRender).notifyPhaseListeners(context, PhaseId.RENDER_RESPONSE, false);
         
     }
 

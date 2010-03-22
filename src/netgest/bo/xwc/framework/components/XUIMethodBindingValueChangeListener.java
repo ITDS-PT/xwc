@@ -16,7 +16,7 @@ import javax.faces.event.ValueChangeListener;
  * object identified by the {@link MethodBinding}.</p>
  */
 
-class XUIMethodBindingValueChangeListener extends XUIMethodBindingAdapterBase implements ValueChangeListener, StateHolder {
+public class XUIMethodBindingValueChangeListener extends XUIMethodBindingAdapterBase implements ValueChangeListener, StateHolder {
 
 
     // ------------------------------------------------------ Instance Variables

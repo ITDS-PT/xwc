@@ -17,6 +17,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIMethodBindingValueChangeListener;
 
 /**
  * This components renders a label and the input component for a {@link DataFieldConnector}
@@ -265,6 +266,16 @@ public class Attribute extends AttributeBase
         
         if( getValueExpression("onChangeSubmit") != null )
             oAttr.setOnChangeSubmit( getValueExpression("onChangeSubmit").getExpressionString() );
+
+        if( getValueExpression("displayValue") != null )
+            oAttr.setDisplayValue( getValueExpression("displayValue").getExpressionString() );
+        
+        XUIMethodBindingValueChangeListener[] valueChangeListener  = 
+        	(XUIMethodBindingValueChangeListener[]) getFacesListeners( XUIMethodBindingValueChangeListener.class );
+        for (int i = 0; i < valueChangeListener.length; i++) {
+			oAttr.addValueChangeListener( valueChangeListener[i] );
+		}
+        
     }
      
 

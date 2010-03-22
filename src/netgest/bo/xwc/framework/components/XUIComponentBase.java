@@ -31,7 +31,7 @@ public abstract class XUIComponentBase extends UIComponentBase
     
     private static final    Object[] EMPTY_OBJECT_ARRAY = new Object[0];
     
-    private LinkedHashMap<String, XUIBaseProperty> oStatePropertyMap;
+    private LinkedHashMap<String, XUIBaseProperty<?>> oStatePropertyMap;
 
     private boolean         isPostBack = false;
     private boolean			wasPreRenderProcessed = false;
@@ -61,7 +61,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 
 	public void addStateProperty( XUIBaseProperty oStateProperty ) {
         if( oStatePropertyMap == null ) {
-            oStatePropertyMap = new LinkedHashMap<String, XUIBaseProperty>();
+            oStatePropertyMap = new LinkedHashMap<String, XUIBaseProperty<?>>();
         }
         oStatePropertyMap.put( oStateProperty.getName(), oStateProperty );
     }
@@ -98,10 +98,10 @@ public abstract class XUIComponentBase extends UIComponentBase
             return true;
         }
         
-        Iterator<Entry<String,XUIBaseProperty>> oStatePropertiesIterator = getStateProperties().iterator();
+        Iterator<Entry<String,XUIBaseProperty<?>>> oStatePropertiesIterator = getStateProperties().iterator();
         if( oStatePropertiesIterator != null ) {
             while( oStatePropertiesIterator.hasNext() ) {
-                XUIBaseProperty oStateProperty;
+                XUIBaseProperty<?> oStateProperty;
                 oStateProperty = oStatePropertiesIterator.next().getValue();
                 if( oStateProperty.wasChanged() ) {
                     return true;
@@ -143,7 +143,7 @@ public abstract class XUIComponentBase extends UIComponentBase
         }
     }
     
-    public Set<Entry<String,XUIBaseProperty>> getStateProperties() {
+    public Set<Entry<String,XUIBaseProperty<?>>> getStateProperties() {
         if( oStatePropertyMap != null ) {
             return oStatePropertyMap.entrySet();
         }
@@ -203,9 +203,14 @@ public abstract class XUIComponentBase extends UIComponentBase
 
         if( this.oStatePropertyMap != null && oStatePropertyMap.size() > 0 ) {
         	oStateProperyState = new Object[ this.oStatePropertyMap.size() ];
-            Iterator<Entry<String,XUIBaseProperty>> oStatePropertiesIt = getStateProperties().iterator();
+            Iterator<Entry<String,XUIBaseProperty<?>>> oStatePropertiesIt = getStateProperties().iterator();
             while( oStatePropertiesIt.hasNext() ) {
             	XUIBaseProperty<?> x = oStatePropertiesIt.next().getValue();
+            	
+//            	if(  "displayValue".equals( x.getName() ) ) {
+//            		System.out.println( "[SAVE][" + this.getId() + "] Default Value:" + x.getValue() );
+//            	}
+            	
             	if( !x.isDefaultValue() )
             		oStateProperyState[ iCntr ] = x.saveState();
             	else
@@ -233,12 +238,17 @@ public abstract class XUIComponentBase extends UIComponentBase
         
         if( this.oStatePropertyMap != null )
         {
-            Iterator<Entry<String,XUIBaseProperty>> oStatePropertiesIt = getStateProperties().iterator();
+            Iterator<Entry<String,XUIBaseProperty<?>>> oStatePropertiesIt = getStateProperties().iterator();
             while( oStatePropertiesIt.hasNext() ) {
+            	XUIBaseProperty<?> prop = oStatePropertiesIt.next().getValue();
+            	
+//            	if(  "displayValue".equals( prop.getName() ) ) {
+//            		System.out.println(  "[REST][" + this.getId() + "] Default Value:" + prop.getValue() );
+//            	}
+            	
+            	
             	if( oPropertiesState[ iCntr ] != null )
-            		oStatePropertiesIt.next().getValue().restoreState( oPropertiesState[ iCntr ]  );
-            	else 
-            		oStatePropertiesIt.next();
+            		prop.restoreState( oPropertiesState[ iCntr ]  );
             	
                 iCntr ++;
             }

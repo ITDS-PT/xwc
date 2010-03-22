@@ -51,7 +51,18 @@ public class XUIViewerDefinitonParser
 
             xwvr.setViewerBean( node.getAttribute( "beanClass" ) );
             xwvr.setViewerBeanId( node.getAttribute( "beanId" ) );
+
+            xwvr.setBeforeRestoreViewPhase( node.getAttribute( "beforeRestoreViewPhase" ) );
+            xwvr.setAfterRestoreViewPhase( node.getAttribute( "afterRestoreViewPhase" ) );
+
+            xwvr.setBeforeApplyRequestValuesPhase( node.getAttribute( "beforeApplyRequestValuesPhase" ) );
+            xwvr.setAfterApplyRequestValuesPhase( node.getAttribute( "afterApplyRequestValuesPhase" ) );
             
+            xwvr.setBeforeUpdateModelPhase( node.getAttribute( "beforeUpdateModelPhase" ) );
+            xwvr.setAfterUpdateModelPhase( node.getAttribute( "afterUpdateModelPhase" ) );
+            
+            xwvr.setBeforeRenderPhase( node.getAttribute( "beforeRenderPhase" ) );
+            xwvr.setAfterRenderPhase( node.getAttribute( "afterRenderPhase" ) );
             
             String localizationClasses = node.getAttribute( "localizationClasses" );
             

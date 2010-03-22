@@ -3,7 +3,10 @@ package netgest.bo.xwc.components.classic;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.el.ELException;
 import javax.el.ValueExpression;
+import javax.faces.FacesException;
+import javax.faces.event.FacesEvent;
 
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.framework.XUIBaseProperty;
@@ -356,6 +359,15 @@ public class AttributeBase extends ViewerInputSecurityBase {
      */
     public void setOnChangeSubmit( boolean onChangeSubmit) {
         this.onChangeSubmit.setExpressionText( String.valueOf( onChangeSubmit ) );
+    }
+    
+    public void setValueChangeListener( String methodBindingExpr ) {
+    	super.setValueChangeListener(
+    			getFacesContext().getApplication().createMethodBinding( 
+    					methodBindingExpr,
+    					new Class[]  { FacesEvent.class }
+    			)
+    	);
     }
     
     /**
@@ -739,9 +751,26 @@ public class AttributeBase extends ViewerInputSecurityBase {
      */
     @Override
     public boolean wasStateChanged() {
-    	
         if( !super.wasStateChanged() ) {
-            if (!XUIStateProperty.compareValues( this.renderedValue.getValue(), getValue() )) {
+        	
+        	
+        	//System.out.println("WASCHANGED:[" + getId() + "]" + this.renderedValue.getValue() + " [Comp] " + getValue() );
+        	
+        	Object value;
+        	ValueExpression ve = getValueExpression("value");
+        	if (ve != null) {
+        	    try {
+        			value = (ve.getValue(getFacesContext().getELContext()));
+        		}
+    		    catch (ELException e) {
+        			throw new FacesException(e);
+    		    }
+        	}
+        	else {
+        		value = getValue();
+        	}
+        	
+            if (!XUIStateProperty.compareValues( this.renderedValue.getValue(), value )) {
                 return true;
             }
         }
