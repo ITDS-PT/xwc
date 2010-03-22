@@ -236,6 +236,16 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                 XTransaction oTransaction = XUIRequestContext.getCurrentContext().getTransactionManager().getTransaction( sTransactionId );
                 oTransaction.activate();
             }
+    		
+            UIViewRoot savedView = context.getViewRoot();
+    		context.setViewRoot( viewRoot );
+
+    		viewRoot.notifyPhaseListeners(context, PhaseId.RESTORE_VIEW, false );
+            
+            if( viewRoot == context.getViewRoot() && savedView != null )
+            	context.setViewRoot( savedView );
+            
+            
         }
         return viewRoot;
     }
@@ -408,7 +418,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             log.debug(
                 "Start building component view " + viewId );
         }
+        
         oViewerBuilder.buildView( oContext, oViewerDef, result );
+
         if (log.isDebugEnabled()) 
         {
             log.debug(
@@ -431,6 +443,15 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        	}
 	        	
     		}
+    		
+    		
+    		UIViewRoot savedView = context.getViewRoot();
+    		context.setViewRoot( result );
+            result.notifyPhaseListeners(context, PhaseId.RESTORE_VIEW, true );
+            
+            if( result == context.getViewRoot() && savedView != null  )
+            	context.setViewRoot( savedView );
+    		
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
