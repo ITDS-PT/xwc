@@ -13,8 +13,8 @@ public class XUIViewerDefinition
 
 	protected XUIViewerDefinitionNode  rootComponent;
 	
-	protected String				   beforeRestoreViewPhase;
-	protected String				   afterRestoreViewPhase;
+	protected String				   onRestoreViewPhase;
+	protected String				   onCreateViewPhase;
 	
 	protected String				   beforeApplyRequestValuesPhase;
 	protected String				   afterApplyRequestValuesPhase;
@@ -30,39 +30,46 @@ public class XUIViewerDefinition
         
     }
     
-    /**
-	 * @return the beforeRestoreViewPhase
+    
+    
+    
+	/**
+	 * @return the onRestoreViewPhase
 	 */
-	public String getBeforeRestoreViewPhase() {
-		return beforeRestoreViewPhase;
+	public String getOnRestoreViewPhase() {
+		return onRestoreViewPhase;
 	}
+
 
 
 
 	/**
-	 * @param beforeRestoreViewPhase the beforeRestoreViewPhase to set
+	 * @param onRestoreViewPhase the onRestoreViewPhase to set
 	 */
-	public void setBeforeRestoreViewPhase(String beforeRestoreViewPhase) {
-		this.beforeRestoreViewPhase = beforeRestoreViewPhase;
+	public void setOnRestoreViewPhase(String onRestoreViewPhase) {
+		this.onRestoreViewPhase = onRestoreViewPhase;
 	}
+
 
 
 
 	/**
-	 * @return the afterRestoreViewPhase
+	 * @return the onCreateViewPhase
 	 */
-	public String getAfterRestoreViewPhase() {
-		return afterRestoreViewPhase;
+	public String getOnCreateViewPhase() {
+		return onCreateViewPhase;
 	}
+
 
 
 
 	/**
-	 * @param afterRestoreViewPhase the afterRestoreViewPhase to set
+	 * @param onCreateViewPhase the onCreateViewPhase to set
 	 */
-	public void setAfterRestoreViewPhase(String afterRestoreViewPhase) {
-		this.afterRestoreViewPhase = afterRestoreViewPhase;
+	public void setOnCreateViewPhase(String onCreateViewPhase) {
+		this.onCreateViewPhase = onCreateViewPhase;
 	}
+
 
 
 
