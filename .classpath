@@ -30,7 +30,7 @@
 	<classpathentry kind="lib" path="base_lib/modules_lib/xeoWin32Client.jar"/>
 	<classpathentry kind="lib" path="project_lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="project_lib/el-ri.jar"/>
-	<classpathentry kind="lib" path="project_lib/jsf-api.jar"/>
+	<classpathentry kind="lib" path="project_lib/jsf-api.jar" sourcepath="C:/lixo/jsf/mojarra-1.2_08-b06-FCS-sources/jsf-api/src"/>
 	<classpathentry kind="lib" path="project_lib/jsf-impl.jar"/>
 	<classpathentry kind="lib" path="project_lib/jstl.jar"/>
 	<classpathentry kind="lib" path="project_lib/servlet_2_4.jar"/>
