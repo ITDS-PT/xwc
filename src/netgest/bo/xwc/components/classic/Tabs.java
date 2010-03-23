@@ -223,10 +223,12 @@ public class Tabs extends XUIComponentBase
                 
             }
             //<li class="x-tab-edge" id="ext-gen14">&nbsp;</li>
+            /*
             w.startElement("li", component );
             w.writeAttribute( "class", "x-tab-edge", null );
             w.writeText( "&nbsp;", null );
             w.endElement("li");
+            */
             
             //<div class="x-clear" id="ext-gen15"></div>
             w.startElement("div", component );
