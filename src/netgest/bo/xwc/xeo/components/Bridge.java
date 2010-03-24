@@ -24,6 +24,10 @@ public class Bridge extends GridPanel {
 	public void setRenderToolBar(boolean renderEditToolbar) {
 		this.renderToolBar.setValue( renderEditToolbar );
 	}
+
+	public void setRenderToolBar(String renderEditToolbarExpr ) {
+		this.renderToolBar.setExpressionText( renderEditToolbarExpr );
+	}
 	
 	@Override
 	public String getRendererType() {
