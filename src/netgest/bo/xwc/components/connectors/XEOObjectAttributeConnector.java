@@ -27,6 +27,7 @@ import netgest.bo.system.LoggerLevels;
 import netgest.bo.system.LoggerLevels.LoggerLevel;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
+import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
 import netgest.io.FSiFile;
 
@@ -351,7 +352,12 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
             ArrayList<Object> list = new ArrayList<Object>();
             try {
             	if( oAttHandler.isObject() ) {
-                	list.add( new Object[] { "", "" } );
+                	
+            		list.add( new Object[] { "", "" } );
+                	
+                	XUIRequestContext r = XUIRequestContext.getCurrentContext();
+            		
+                	
 	                boObjectList oObjectList = 
 	                    boObjectList.list(oAttHandler.getEboContext(), 
 	                                      "select " + oAttHandler.getDefAttribute().getReferencedObjectDef().getName()

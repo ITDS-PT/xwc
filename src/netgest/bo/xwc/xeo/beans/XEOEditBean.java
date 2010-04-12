@@ -111,11 +111,23 @@ public class XEOEditBean extends XEOBaseBean {
      * @param sObjectName
      */
     public void createNew( String sObjectName ) {
+    	createNew( sObjectName, 0 );
+    }
+    
+    /**
+     * @param sObjectName
+     */
+    public void createNew( String sObjectName, long parentBoui ) {
         EboContext oEboContext = boApplication.currentContext().getEboContext();
         try {
-
-            this.oBoObect = 
-                boObject.getBoManager().createObject(oEboContext, sObjectName);
+        	if( parentBoui != 0 ) {
+	            this.oBoObect = 
+	                boObject.getBoManager().createObjectWithParent( oEboContext, sObjectName, parentBoui );
+        	}
+        	else {
+	            this.oBoObect = 
+	                boObject.getBoManager().createObject( oEboContext, sObjectName );
+        	}
             this.oBoObect.poolSetStateFull();
             this.setCurrentObjectKey( String.valueOf( this.oBoObect.getBoui() ) );
 
@@ -544,9 +556,8 @@ public class XEOEditBean extends XEOBaseBean {
             oBaseBean.setParentBeanId( "viewBean" );
             oBaseBean.setParentComponentId( oGrid.getClientId() );
             
-            oBaseBean.createNew( refObj.getName() );
-            oBaseBean.getXEOObject().addParent( getXEOObject() );
-            
+            oBaseBean.createNew( refObj.getName(), getXEOObject().getBoui() );
+//            oBaseBean.getXEOObject().addParent( getXEOObject() );
             
         }
         // Diz a que a view corrente � a criada.
@@ -760,10 +771,17 @@ public class XEOEditBean extends XEOBaseBean {
 											);
 								XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 										.getBean("viewBean");
-								oBaseBean.createNew( oObjectName );
+								
+								if( gridBridge.getDefAttribute().getSetParent() == boDefAttribute.SET_PARENT_YES ) {
+									oBaseBean.createNew( oObjectName, getXEOObject().getBoui() );
+								}
+								else { 
+									oBaseBean.createNew( oObjectName );
+								}
 								oBaseBean.setParentBeanId("viewBean");
 								oBaseBean.setParentBean( this );
 								oBaseBean.setParentComponentId( oGrid.getClientId() );
+								
 							} catch (NumberFormatException e) {
 								throw new RuntimeException(e);
 							}
@@ -776,8 +794,7 @@ public class XEOEditBean extends XEOBaseBean {
 						XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 								.getBean("viewBean");
 
-						oBaseBean.createNew( oObjectName );
-						oBaseBean.getXEOObject().addParent( getXEOObject() );
+						oBaseBean.createNew( oObjectName, getXEOObject().getBoui() );
 						
 						oBaseBean.setParentBeanId("viewBean");
 						oBaseBean.setParentBean( this );
