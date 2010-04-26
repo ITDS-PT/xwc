@@ -117,6 +117,7 @@ public class BuilderDevelopmentBean {
 			    buildOptions.setGenerateAndCompileJava(false);
 			    buildOptions.setMarkDeployedObjects(true);
 			    buildOptions.setBuildWorkplaces(true);
+			    buildOptions.setFullBuild(true);
 				boApplication bapp = boApplication.getApplicationFromStaticContext("XEO");
 				session = bapp.boLogin( "SYSTEM" , boLoginBean.getSystemKey() );
 				ctx = session.createRequestContext(  null, null, null);
