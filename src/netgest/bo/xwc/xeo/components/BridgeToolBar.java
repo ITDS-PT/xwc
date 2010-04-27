@@ -99,15 +99,15 @@ public class BridgeToolBar extends ToolBar {
 		Menu menu;
 		List<UIComponent> children = getChildren();
 		
-		if( getRenderAddBtn() ) {
+//		if( getRenderAddBtn() ) {
 			menu = addAddMenu();
 			if( menu != null ) {
 				children.add( menu );
 				children.add( Menu.getMenuSpacer() );
 			}
-		}
+//		}
 		
-		if( getRenderRemoveBtn() ) {
+//		if( getRenderRemoveBtn() ) {
 			menu = createViewerBeanMethod(  "remove", 
 							XEOComponentMessages.BRIDGETB_REMOVE.toString(), 
 							XEOComponentMessages.BRIDGETB_REMOVE_SELECTED.toString(),
@@ -119,15 +119,15 @@ public class BridgeToolBar extends ToolBar {
 				children.add( menu );
 				children.add( Menu.getMenuSpacer() );
 			}
-		}
+//		}
 		
-		if( getRenderCreateNewBtn() ) {
+//		if( getRenderCreateNewBtn() ) {
 			menu = addCreateNew();
 			if( menu != null ) {
 				children.add( menu );
 				getChildren().add( Menu.getMenuSpacer() );
 			}
-		}
+//		}
 	}
 	
 	@Override
@@ -142,25 +142,25 @@ public class BridgeToolBar extends ToolBar {
 		boolean isMySeparator 	  = false;
 		for( UIComponent comp : getChildren() ) {
 			if( comp instanceof ViewerMethod ) {
-				isMySeparator = true;
+				isMySeparator = true; 
 				separatorRendered = false;
 				ViewerMethod viewerMethod = (ViewerMethod)comp;
 				if( "addNewToBridge".equals( viewerMethod.getTargetMethod() ) ) {
-					separatorRendered = XEOComponentStateLogic.isBridgeNewVisible( targetBridge ); 
+					separatorRendered = getRenderCreateNewBtn() && XEOComponentStateLogic.isBridgeNewVisible( targetBridge ); 
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ));
 					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeNewEnabled(targetBridge) );
 					if( separatorRendered )
 						renderToolBar = true;
 				}				
 				else if( "lookupBridge".equals( viewerMethod.getTargetMethod() ) ) {
-					separatorRendered = XEOComponentStateLogic.isBridgeAddVisible( targetBridge );
+					separatorRendered = getRenderAddBtn() && XEOComponentStateLogic.isBridgeAddVisible( targetBridge );
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ) );
 					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeAddEnabled(targetBridge) );
 					if( separatorRendered )
 						renderToolBar = true;
 				}
 				else if( "removeFromBridge".equals( viewerMethod.getTargetMethod() ) ) {
-					separatorRendered = XEOComponentStateLogic.isBridgeRemoveVisible( targetBridge ); 
+					separatorRendered = getRenderRemoveBtn() && XEOComponentStateLogic.isBridgeRemoveVisible( targetBridge ); 
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ));
 					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeRemoveEnabled(targetBridge) );
 					if( separatorRendered )

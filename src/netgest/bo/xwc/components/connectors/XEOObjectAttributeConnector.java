@@ -11,6 +11,10 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.el.ExpressionFactory;
+import javax.el.MethodExpression;
+import javax.faces.context.FacesContext;
+
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefXeoCode;
 import netgest.bo.lovmanager.LovManager;
@@ -24,15 +28,14 @@ import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
-import netgest.bo.system.LoggerLevels.LoggerLevel;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
-import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
 import netgest.io.FSiFile;
 
 public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData implements DataFieldConnector {
 
+	private final Class[] LOOKUPQUERY_ARGUMENTS = { AttributeHandler.class, String.class };
 	
     private static ThreadLocal<SimpleDateFormat> sdfDT = new ThreadLocal<SimpleDateFormat>() {
         protected synchronized SimpleDateFormat initialValue() {
@@ -354,13 +357,37 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
             	if( oAttHandler.isObject() ) {
                 	
             		list.add( new Object[] { "", "" } );
-                	
-                	XUIRequestContext r = XUIRequestContext.getCurrentContext();
             		
-                	
+            		String sql;
+            		
+            		try {
+	                	FacesContext context = FacesContext.getCurrentInstance();
+	                    ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
+	                    MethodExpression m = oExFactory.createMethodExpression( 
+	                    		context.getELContext(), 
+	                    		"#{viewBean.getLookupQuery}", 
+	                    		String.class,
+	                    		LOOKUPQUERY_ARGUMENTS                    		
+	                    		
+	                    );
+	            		sql = 
+	            			(String)m.invoke( 
+	            					context.getELContext() , 
+	            					new Object[] { 
+	            						oAttHandler, 
+	            						oAttHandler.getDefAttribute().getReferencedObjectDef().getName()
+	            					} 
+	            			);
+            		}
+            		catch ( Exception e ) {
+                		log.severe("Error getting SQL to Object rendered as Lov", e );
+                		sql = "select " + oAttHandler.getDefAttribute().getReferencedObjectDef().getName();
+            		}
+                   
 	                boObjectList oObjectList = 
 	                    boObjectList.list(oAttHandler.getEboContext(), 
-	                                      "select " + oAttHandler.getDefAttribute().getReferencedObjectDef().getName()
+	                                      //"select " + oAttHandler.getDefAttribute().getReferencedObjectDef().getName()
+	                    				  sql
 	                                      ,1,5000
 	                                     );
 	                while (oObjectList.next()) {

@@ -338,9 +338,11 @@ public abstract class XUIComponentBase extends UIComponentBase
     }
 
     private static final Class[] DUMMY_CLASS_ARRAY = new Class[0];
+    
     public MethodExpression createMethodBinding( String sMethodExpression ) {
-        ExpressionFactory oExFactory = getFacesContext().getApplication().getExpressionFactory();
-        return oExFactory.createMethodExpression( getFacesContext().getELContext(), sMethodExpression, null, DUMMY_CLASS_ARRAY );
+    	FacesContext context = FacesContext.getCurrentInstance();
+        ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
+        return oExFactory.createMethodExpression( context.getELContext(), sMethodExpression, null, DUMMY_CLASS_ARRAY );
     }
 
     public MethodExpression createMethodBinding( String sMethodExpression, Class oReturnValue ) {

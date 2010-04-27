@@ -102,45 +102,48 @@ public class ListToolBar extends ToolBar {
 		boDefHandler subClasseDef;
 		rootMenu = null;
 		
+		
+		
 		try {
-			List<boDefHandler> subClassesDef = getObjectsForNewMenu( getTargetList().getObjectList().getBoDef() );
-			if( subClassesDef.size() > 0 ) {
-				subClasseDef = subClassesDef.get( 0 );
-				rootMenu = new ViewerMethod();
-				rootMenu.setText( XEOComponentMessages.BRIDGETB_NEW.toString("") );
-				rootMenu.setToolTip(XEOComponentMessages.BRIDGETB_NEW.toString(subClasseDef.getLabel()) );
-				rootMenu.setId( getId() + "_new_" + subClasseDef.getName() );
-				rootMenu.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
-				rootMenu.setValue( subClasseDef.getName() );
-				rootMenu.setTargetMethod("addNew");
-				
-				if( subClassesDef.size() > 1 ) {
-					ViewerMethod viewerMethod = new ViewerMethod();
-					viewerMethod.setText( XEOComponentMessages.BRIDGETB_NEW.toString(subClasseDef.getLabel()) );
-					viewerMethod.setToolTip("Novo(a) " + subClasseDef.getLabel() );
-					viewerMethod.setId( getId() + "_new1_" + subClasseDef.getName() );
-					viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
-					viewerMethod.setValue( subClasseDef.getName() );
-					viewerMethod.setTargetMethod("addNew");
-
-					rootMenu.getChildren().add( viewerMethod );
+			if( getTargetList().getObjectList().getBoDef().getBoCanBeOrphan() ) {
+				List<boDefHandler> subClassesDef = getObjectsForNewMenu( getTargetList().getObjectList().getBoDef() );
+				if( subClassesDef.size() > 0 ) {
+					subClasseDef = subClassesDef.get( 0 );
+					rootMenu = new ViewerMethod();
+					rootMenu.setText( XEOComponentMessages.BRIDGETB_NEW.toString("") );
+					rootMenu.setToolTip(XEOComponentMessages.BRIDGETB_NEW.toString(subClasseDef.getLabel()) );
+					rootMenu.setId( getId() + "_new_" + subClasseDef.getName() );
+					rootMenu.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
+					rootMenu.setValue( subClasseDef.getName() );
+					rootMenu.setTargetMethod("addNew");
 					
-					for( int i=1; i < subClassesDef.size(); i++ ) {
-						subClasseDef = subClassesDef.get( i );
-						viewerMethod = new ViewerMethod();
-						viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
+					if( subClassesDef.size() > 1 ) {
+						ViewerMethod viewerMethod = new ViewerMethod();
 						viewerMethod.setText( XEOComponentMessages.BRIDGETB_NEW.toString(subClasseDef.getLabel()) );
-						
-						viewerMethod.setId( getId() + "_new_" + subClasseDef.getName() );
-						viewerMethod.setTargetMethod( "addNew" );
+						viewerMethod.setToolTip("Novo(a) " + subClasseDef.getLabel() );
+						viewerMethod.setId( getId() + "_new1_" + subClasseDef.getName() );
+						viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 						viewerMethod.setValue( subClasseDef.getName() );
+						viewerMethod.setTargetMethod("addNew");
+	
 						rootMenu.getChildren().add( viewerMethod );
+						
+						for( int i=1; i < subClassesDef.size(); i++ ) {
+							subClasseDef = subClassesDef.get( i );
+							viewerMethod = new ViewerMethod();
+							viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
+							viewerMethod.setText( XEOComponentMessages.BRIDGETB_NEW.toString(subClasseDef.getLabel()) );
+							
+							viewerMethod.setId( getId() + "_new_" + subClasseDef.getName() );
+							viewerMethod.setTargetMethod( "addNew" );
+							viewerMethod.setValue( subClasseDef.getName() );
+							rootMenu.getChildren().add( viewerMethod );
+						}
 					}
 				}
 			}
 		} catch (boRuntimeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException( e );
 		}
 		return rootMenu;
 	}

@@ -299,8 +299,6 @@ public class XEOEditBean extends XEOBaseBean {
         // Verifica o modo de edi��o do Objecto... se for orf�o
         // abre o edit para associar um novo
         
-        
-        
     	String lookupViewerName = oAtt.getLookupViewer();
     	if( lookupViewerName == null ) {
     		lookupViewerName = getLookupViewer( oAttHandler );
@@ -404,7 +402,7 @@ public class XEOEditBean extends XEOBaseBean {
     }
 
     private String getLookupViewer( boDefAttribute defAtt, boDefHandler relObject ) {
-    	if( defAtt.getChildIsOrphan() && relObject.getBoCanBeOrphan() )
+    	if( defAtt.getChildIsOrphan() )
     		return 
     			getViewerResolver().getViewer( relObject.getName(), XEOViewerResolver.ViewerType.LOOKUP );
     	else
@@ -516,7 +514,7 @@ public class XEOEditBean extends XEOBaseBean {
         
         // Obtem a bean do objecto a ser editado
         // e associa o objecto do parametro
-        if( oAttDef.getChildIsOrphan() && refObj.getBoCanBeOrphan() )
+        if( oAttDef.getChildIsOrphan() )
         {
             XEOBaseLookupList   oBaseBean;
             oViewRoot = oSessionContext.createChildView( viewerName );

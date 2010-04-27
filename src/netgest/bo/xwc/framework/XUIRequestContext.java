@@ -6,24 +6,17 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.el.ELContext;
-
 import javax.faces.context.FacesContext;
-
-import javax.faces.event.ActionEvent;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
-import netgest.bo.system.boMemoryArchive;
-import netgest.bo.system.boPoolManager;
 import netgest.bo.transaction.XTransactionManager;
-import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
-import netgest.bo.xwc.framework.jsf.XUIViewHandler;
-import netgest.bo.xwc.framework.jsf.XUIViewHandlerImpl;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
+import netgest.bo.xwc.framework.jsf.XUIViewHandlerImpl;
 
 
 public class XUIRequestContext {
@@ -33,7 +26,9 @@ public class XUIRequestContext {
     private Boolean                 bIsAjax;
     private boolean                 bIsClosed;
     private boolean                 bIsPostBack;
+
     private XUIScriptContext        oScriptContext;
+    private XUIStyleContext        	oStyleContext;
 
     //TODO: It's not the right place, must be putted on SessionContext
     private XTransactionManager     oTransactionManager;
@@ -68,8 +63,15 @@ public class XUIRequestContext {
         return oScriptContext;
     }
 
+    public XUIStyleContext getStyleContext() {
+        if( oStyleContext == null ) {
+            oStyleContext = new XUIStyleContext();
+        }
+        return oStyleContext;
+    }
+
     public XUISessionContext getSessionContext() {
-        Map oExternalSessionMap = getFacesContext().getExternalContext().getSessionMap();
+        Map<String,Object> oExternalSessionMap = getFacesContext().getExternalContext().getSessionMap();
         return (XUISessionContext)oExternalSessionMap.get(XUISessionContext.SESSION_ATTRIBUTE_ID );
     }
 

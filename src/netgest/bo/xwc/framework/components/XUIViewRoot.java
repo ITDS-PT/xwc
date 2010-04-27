@@ -539,8 +539,9 @@ public class XUIViewRoot extends UIViewRoot {
 				w.getScriptContext().render(headerW, w, footerW);
 				w.getStyleContext().render(headerW, w, footerW);
 				oRequestContext.getScriptContext().render(headerW, w, footerW);
+				oRequestContext.getStyleContext().render(headerW, w, footerW);
 			}
-
+			
 			if (renderHead()) {
 				// Write footer Elements
 				if (getTheme().getHtmlStyle() != null) {

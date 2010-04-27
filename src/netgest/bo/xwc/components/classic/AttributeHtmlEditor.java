@@ -30,6 +30,16 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class AttributeHtmlEditor extends AttributeBase {
 	
+	@Override
+	public void initComponent() {
+		XUIRequestContext.getCurrentContext()
+	        .getStyleContext().addInclude(
+	        		XUIScriptContext.POSITION_HEADER, 
+	        		"ext-xeo-nohtmleditor", 
+	        		"ext-xeo/css/ext-xeo-htmleditor.css" 
+	        );
+	}
+	
 	public AttributeHtmlEditor() {
 		super.setHeight("auto");
 	}
@@ -42,71 +52,54 @@ public class AttributeHtmlEditor extends AttributeBase {
             XUIResponseWriter w = getResponseWriter();
             AttributeHtmlEditor oHtmlComp = (AttributeHtmlEditor)oComp;
             
-//            w.startElement( HTMLTag.STYLE, oComp );
-//            w.writeText(
-            w.getStyleContext().addInclude(
-            		XUIScriptContext.POSITION_HEADER, 
-            		"ext-xeo-nohtmleditor", 
-            		"ext-xeo/css/ext-xeo-htmleditor.css" 
-            );
-//            	null 
-//            );
-//            w.endElement( HTMLTag.STYLE );
-            
-            // Place holder for the component
-            if( oHtmlComp.isDisabled() || oHtmlComp.isReadOnly() ) {
-            	
-                String sActionUrl = getRequestContext().getActionUrl();
-                //'javax.faces.ViewState'
-                String sViewState = getRequestContext().getViewRoot().getViewState();
-                //xvw.servlet
-                String sServletId = oComp.getClientId();
-                
-                if( sActionUrl.indexOf('?') != -1 ) {
-                	sActionUrl += "&";
-                }
-                else {
-                	sActionUrl += "?";
-                }
-                sActionUrl += "javax.faces.ViewState=" + sViewState;
-                sActionUrl += "&xvw.servlet=" + sServletId;
-            	
-            	
-	            w.startElement( HTMLTag.IFRAME, oComp );
-	            w.writeAttribute( ID, oComp.getClientId(), null );
-	            w.writeAttribute( HTMLAttr.CLASS, "x-form-text x-form-field" , null );
-	            w.writeAttribute( HTMLAttr.STYLE, "width:99%;height:" + oHtmlComp.getHeight()+"px" , null );
-	            w.writeAttribute( HTMLAttr.FRAMEBORDER, "0" , null );
-	            w.writeAttribute( HTMLAttr.SCROLLING, "1" , null );
-	            
-	            w.writeAttribute( HTMLAttr.SRC , sActionUrl, null );
-	            
-	            w.endElement( HTMLTag.IFRAME );
-            } else {
-	            w.startElement( DIV, oComp );
-	            w.writeAttribute( ID, oComp.getClientId(), null );
-	            //w.writeAttribute( HTMLAttr.STYLE, "height:" + oHtmlComp.getHeight()+"px" , null );
+            if( !oComp.isRenderedOnClient() ) {
+	            w.getStyleContext().addInclude(
+	            		XUIScriptContext.POSITION_HEADER, 
+	            		"ext-xeo-nohtmleditor", 
+	            		"ext-xeo/css/ext-xeo-htmleditor.css" 
+	            );
+	
+	            // Place holder for the component
+	            if( oHtmlComp.isDisabled() || oHtmlComp.isReadOnly() ) {
+	            	
+	                String sActionUrl = getRequestContext().getActionUrl();
+	                //'javax.faces.ViewState'
+	                String sViewState = getRequestContext().getViewRoot().getViewState();
+	                //xvw.servlet
+	                String sServletId = oComp.getClientId();
+	                
+	                if( sActionUrl.indexOf('?') != -1 ) {
+	                	sActionUrl += "&";
+	                }
+	                else {
+	                	sActionUrl += "?";
+	                }
+	                sActionUrl += "javax.faces.ViewState=" + sViewState;
+	                sActionUrl += "&xvw.servlet=" + sServletId;
+	            	
+		            w.startElement( HTMLTag.IFRAME, oComp );
+		            w.writeAttribute( ID, oComp.getClientId(), null );
+		            w.writeAttribute( HTMLAttr.CLASS, "x-form-text x-form-field" , null );
+		            w.writeAttribute( HTMLAttr.STYLE, "width:99%;height:" + oHtmlComp.getHeight()+"px" , null );
+		            w.writeAttribute( HTMLAttr.FRAMEBORDER, "0" , null );
+		            w.writeAttribute( HTMLAttr.SCROLLING, "1" , null );
+		            
+		            w.writeAttribute( HTMLAttr.SRC , sActionUrl, null );
+		            
+		            w.endElement( HTMLTag.IFRAME );
+	            } else {
+		            w.startElement( DIV, oComp );
+		            w.writeAttribute( ID, oComp.getClientId(), null );
 	                w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, 
 	                        oComp.getId(),
 	                        renderExtJs( oComp )
 	                    );
-                w.endElement( DIV ); 
+	                w.endElement( DIV ); 
+	            }
+	            if( "auto".equals( oHtmlComp.getHeight() ) ) {
+	            	Layouts.registerComponent(  w, oComp, Layouts.LAYOUT_FIT_PARENT );
+	            }
             }
-            if( "auto".equals( oHtmlComp.getHeight() ) ) {
-            	Layouts.registerComponent(  w, oComp, Layouts.LAYOUT_FIT_PARENT );
-            }
-            
-            /*
-            w.writeAttribute( HTMLAttr.STYLE, "position:relative;", null );
-
-            w.startElement( TEXTAREA, oComp );
-            w.writeAttribute( ID, oComp.getClientId(), null );
-            w.writeAttribute( NAME, oComp.getClientId(), null );
-            
-            ((AttributeHtmlEditor)oComp).getDisplayValue();
-            
-            w.endElement( TEXTAREA );
-            */
         }
 
         public String renderExtJs( XUIComponentBase oComp ) {
@@ -116,7 +109,7 @@ public class AttributeHtmlEditor extends AttributeBase {
             AttributeHtmlEditor oHtmlComp = (AttributeHtmlEditor)oComp;
             
             ExtConfig oHtmlCfg = new ExtConfig( "Ext.form.HtmlEditor" );
-            oHtmlCfg.addJSString("id", oComp.getClientId() );
+            oHtmlCfg.addJSString("id", oComp.getClientId() + "_editor" );
             oHtmlCfg.addJSString("name", oComp.getClientId() );
             oHtmlCfg.addJSString("renderTo", oComp.getClientId() );
             oHtmlCfg.addJSString("value", JavaScriptUtils.safeJavaScriptWrite(oHtmlComp.getDisplayValue(), '\'') );

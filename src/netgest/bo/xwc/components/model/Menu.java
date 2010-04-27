@@ -11,8 +11,10 @@ import org.json.JSONObject;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.classic.ViewerCommandSecurityBase;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
+import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.xeo.beans.ViewerConfig;
@@ -24,7 +26,11 @@ public class Menu extends ViewerCommandSecurityBase {
     public XUIStateProperty<String> toolTip = new XUIStateProperty<String>( "toolTip", this );
     public XUIStateProperty<String> iconCls = new XUIStateProperty<String>( "iconCls", this );
     public XUIStateProperty<String> icon = new XUIStateProperty<String>( "icon", this );
+    
     public XUIStateProperty<String> serverAction = new XUIStateProperty<String>( "serverAction", this );
+    public XUIBindProperty<String> 	serverActionWaitMode = 
+    	new XUIBindProperty<String>( "serverActionWaitMode", this ,String.class );
+    
     public XUIStateProperty<String> target = new XUIStateProperty<String>( "target", this );
 
     private XUIStateBindProperty<Boolean> disabled = new XUIStateBindProperty<Boolean>( "disabled", this, "false",Boolean.class );
@@ -37,6 +43,10 @@ public class Menu extends ViewerCommandSecurityBase {
     private XUIStateBindProperty<String> profiles = new XUIStateBindProperty<String>( "profiles", this, String.class );
     private XUIStateBindProperty<String> profile = new XUIStateBindProperty<String>( "profile", this, String.class );
     
+    public Menu() {
+    	
+    }
+    
     public static final Menu getMenuSpacer() {
     	return new Menu("-");
     }
@@ -45,8 +55,16 @@ public class Menu extends ViewerCommandSecurityBase {
     	setText( sText );
     }
     
-    public Menu() {
-    	
+    public void setServerActionWaitMode( String waitModeName ) {
+    	this.serverActionWaitMode.setExpressionText( waitModeName );
+    }
+    
+    public XVWServerActionWaitMode getServerActionWaitMode() {
+    	String value = this.serverActionWaitMode.getEvaluatedValue();
+    	if( value != null ) {
+    		return XVWServerActionWaitMode.valueOf( value );
+    	}
+    	return null;
     }
     
     public void setRoles( String sExpression ) {

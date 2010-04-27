@@ -12,6 +12,7 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
@@ -247,11 +248,14 @@ public class ToolBar extends ViewerSecurityBase {
                 oItemCfg.add( "checked", oMenuChild.getValue() );
             }
             
+            XVWServerActionWaitMode waitMode = oMenuChild.getServerActionWaitMode();
+            if( waitMode == null ) {
+            	waitMode = XVWServerActionWaitMode.STATUS_MESSAGE;
+            }
+            
             oItemCfg.add( "handler", "function(){" +
-            		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, XVWScripts.WAIT_DIALOG )+"}" 
+            		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode.ordinal() )+"}" 
             	);
-                
-        	
         }
         
         
