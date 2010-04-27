@@ -15,7 +15,6 @@ import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
-import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
 public class BridgeToolBar extends ToolBar {
@@ -168,8 +167,10 @@ public class BridgeToolBar extends ToolBar {
 				}
 			}
 			else if ( isMySeparator && comp instanceof Menu ) {
-				if( "-".equals( ((Menu) comp).getText() ) ) {
-					comp.setRendered( separatorRendered );
+				if( isVisible() ) {
+					if( "-".equals( ((Menu) comp).getText() ) ) {
+						comp.setRendered( separatorRendered );
+					}
 				}
 			}
 			else {

@@ -202,7 +202,9 @@ public class ToolBar extends ViewerSecurityBase {
 	            	String sText = oMenuChild.getText();
 	
 	            	if( "-".equals( sText ) ) {
-	                	oItemsCfg.add("'-'");
+	                	if( ((ToolBar)component).isVisible() && oMenuChild.isRendered() ) {
+		                	oItemsCfg.add("'-'");
+	                	}
 	                }
 	                else if ( oMenuChild.getEffectivePermission( SecurityPermissions.READ ) ) {
 	                        oItemCfg = oItemsCfg.addChild(  );
@@ -279,7 +281,9 @@ public class ToolBar extends ViewerSecurityBase {
                 
                 String sText = oMenuChild.getText();
                 if( "-".equals( sText ) ) {
-                	oSubChildCfg.add("'-'");
+                	if( tool.isContainer() && oMenuChild.isRendered() ) {
+                		oSubChildCfg.add("'-'");
+                	}
                 }
                 else if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
                 	oItemCfg = oSubChildCfg.addChild();
