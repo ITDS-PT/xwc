@@ -50,6 +50,10 @@
 		<servlet-name>XWC Servlet</servlet-name>
 		<servlet-class>netgest.bo.xwc.framework.http.XUIServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
+		<init-param>
+			<param-name>DefaultLanguage</param-name>
+			<param-value>pt</param-value>
+		</init-param>
 	</servlet>
 	<filter>
 		<filter-name>DeployFilter</filter-name>
