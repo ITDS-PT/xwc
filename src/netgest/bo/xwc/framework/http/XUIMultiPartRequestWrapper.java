@@ -36,7 +36,7 @@ public class XUIMultiPartRequestWrapper extends HttpServletRequestWrapper{
 
 		try {
 			
-			oMultiPartRequest = new com.oreilly.servlet.MultipartRequest( oRequest, tmpdir.getAbsolutePath(), 64 * 1024 * 1024 );
+			oMultiPartRequest = new com.oreilly.servlet.MultipartRequest( oRequest, tmpdir.getAbsolutePath(), 64 * 1024 * 1024, "utf-8" );
 			
 			Enumeration oEnum = oMultiPartRequest.getParameterNames();
 			while( oEnum.hasMoreElements() ) {

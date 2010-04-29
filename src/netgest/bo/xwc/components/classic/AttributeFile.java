@@ -360,8 +360,8 @@ public class AttributeFile extends AttributeBase {
 				            resp.setHeader("Cache-Control","private");               
 				            ServletOutputStream so = response.getOutputStream(); 
 			                resp.setHeader("Content-Disposition","attachment; filename="+sName);
-			                resp.setHeader("XEODM-FileName",sName);
-			                resp.setHeader("XEODM-ReadOnly", Boolean.toString( oXeoConnector.getAttributeHandler().disableWhen() ) );
+			                resp.setHeader("XEODM-FileName", sName );
+			                resp.setHeader("XEODM-ReadOnly", Boolean.toString( oFile.isDisabled() ) );
 	
 				            Long FileSize = new Long(file.length()); 
 				            int xfsize = FileSize.intValue(); 

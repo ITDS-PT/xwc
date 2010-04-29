@@ -20,6 +20,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.HTMLAttr;
@@ -35,9 +36,13 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
+import netgest.bo.xwc.xeo.beans.FileBrowseBean;
+import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.io.FSiFile;
 import netgest.io.iFile;
 
@@ -79,20 +84,29 @@ public class AttributeWordMacro extends AttributeBase {
             sSubmitedValue = (String)oSubmitedValue;     
             if( sSubmitedValue.length() > 0 )
             {
-                try {
-                    oSubmitedBigDecimal = new BigDecimal( String.valueOf( sSubmitedValue ) );
-                    setValue( oSubmitedBigDecimal );
-                }
-                catch( NumberFormatException ex ) {
-                    getRequestContext().addMessage( getClientId(), new XUIMessage(
-                                                                        XUIMessage.TYPE_MESSAGE,
-                                                                        XUIMessage.SEVERITY_ERROR,
-                                                                        getLabel(),
-                                                                        ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
-                                                                   )
-                                                    );
-                    setValid( false );
-                }
+            	AttributeHandler a = ((XEOObjectAttributeConnector)getDataFieldConnector()).getAttributeHandler();
+            	if( a.isObject() ) {
+	                try {
+	                    oSubmitedBigDecimal = new BigDecimal( String.valueOf( sSubmitedValue ) );
+	                    setValue( oSubmitedBigDecimal );
+	                }
+	                catch( NumberFormatException ex ) {
+	                	
+	                	
+	                	
+	                    getRequestContext().addMessage( getClientId(), new XUIMessage(
+	                                                                        XUIMessage.TYPE_MESSAGE,
+	                                                                        XUIMessage.SEVERITY_ERROR,
+	                                                                        getLabel(),
+	                                                                        ComponentMessages.VALUE_ERROR_ON_FORMAT.toString( oSubmitedValue )
+	                                                                   )
+	                                                    );
+	                    setValid( false );
+	                }
+            	}
+            	else {
+            		setValue( oSubmitedValue );
+            	}
             }
             else {
                 setValue( null );
@@ -105,13 +119,41 @@ public class AttributeWordMacro extends AttributeBase {
     }
 
     protected XUICommand getLookupCommand() {
+    	if(	oLookupCommand == null ) {
+            oLookupCommand = (XUICommand)getChild( 0 );
+    	}
         return oLookupCommand;
     }
 
     public static class LookupActionListener implements ActionListener {
         public void processAction(ActionEvent event) {
-//            ((AttributeNumberLookup)((XUICommand)event.getSource()).getParent()).doLookup();
+            ((AttributeWordMacro)((XUICommand)event.getSource()).getParent()).doLookup();
         }
+    }
+    
+    private void doLookup() {
+    	if( !((XEOObjectAttributeConnector)getDataFieldConnector()).getAttributeHandler().isObject() ) {
+	    	XUISessionContext oSessionContext = getRequestContext().getSessionContext();
+	    	
+	    	XUIViewRoot oViewRoot = oSessionContext.createChildView( "netgest/bo/xwc/components/viewers/FileBrowse.xvw" );
+	    	getRequestContext().setViewRoot( oViewRoot );
+	    	
+	    	FileBrowseBean oFileBrowseBean = (FileBrowseBean)oViewRoot.getBean( "viewBean" );
+	    	
+	    	oFileBrowseBean.setParentComponentId( getClientId() );
+	    	oFileBrowseBean.setParentBeanId("viewBean" );
+	    	
+	    	getRequestContext().renderResponse();
+    	}
+    	else {
+            try {
+                XEOEditBean oXEOBaseBean;
+                oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean("viewBean");
+                oXEOBaseBean.lookupAttribute( this.getClientId() );
+            } catch (boRuntimeException e) {
+                throw new RuntimeException(e);
+            }
+    	}
     }
     
     public static class XEOHTMLRenderer extends XUIRenderer implements XUIRendererServlet {
@@ -174,34 +216,52 @@ public class AttributeWordMacro extends AttributeBase {
            
             oInpConfig.addJSString("value", sJsValue );
             oInpConfig.add("readOnly", true );
-
-            if( oAttr.isDisabled() ) {
-	            oInpConfig.add("disabled", true);
-            }
             
-            if( !oAttr.isDisabled() ) {
+            if( !((XEOObjectAttributeConnector)oAttr.getDataFieldConnector()).getAttributeHandler().isObject() ) 
+            {
 	            if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
-		            oInpConfig.add("onTrigger1Click", "function(){ " +
-//		            		"Ext.ComponentMgr.get('" + oAttr.getClientId() + "_c').setValue('');\n" + 
-//		            		"document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';\n" + 
-                    "XVW.AjaxCommand( '" + oAttr.getNamingContainerId() +  "','" + oAttr.getId() + "_clear','true')" +
-//		            		XVWScripts.getAjaxCommandScript(,"NaN"  ,XVWScripts.WAIT_STATUS_MESSAGE ) + 
-		            		"}"
+		            oInpConfig.add("onTrigger1Click", "function(){ if(!this.disabled){ " +
+		            		"Ext.ComponentMgr.get('" + oAttr.getClientId() + "_c').setValue('');\n" + 
+		            		"document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';\n" + 
+		            		XVWScripts.getAjaxCommandScript(oAttr,  XVWScripts.WAIT_STATUS_MESSAGE ) + 
+		            		"}}"
 		            );
 	            }
 	            else {
-		            oInpConfig.add("onTrigger1Click", "function(){ " +
-		            		"Ext.ComponentMgr.get('" + oAttr.getClientId() + "_c').setValue('');\n" + 
+		            oInpConfig.add("onTrigger1Click", "function(){ if(!this.disabled){" +
+		            		"Ext.ComponentMgr.get('" + oAttr.getClientId() + "').setValue('');\n" + 
 		            		"document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';\n" + 
+		            		"}}"
+		            );
+	            }
+	            oInpConfig.add("onTrigger2Click", "function(){if(!this.disabled){ " +
+	            		XVWScripts.getOpenCommandWindow( oAttr.getLookupCommand(), 
+	            				oAttr.getLookupCommand() + "_" + System.currentTimeMillis() ) +
+	            		"}}"
+	            );
+            }
+	        else {
+	            if( !oAttr.isDisabled() ) {
+		            if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
+			            oInpConfig.add("onTrigger1Click", "function(){ " +
+	                    "XVW.AjaxCommand( '" + oAttr.getNamingContainerId() +  "','" + oAttr.getId() + "_clear','true')" +
+			            		"}"
+			            );
+		            }
+		            else {
+			            oInpConfig.add("onTrigger1Click", "function(){ " +
+			            		"Ext.ComponentMgr.get('" + oAttr.getClientId() + "_c').setValue('');\n" + 
+			            		"document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';\n" + 
+			            		"}"
+			            );
+		            }
+		
+		            oInpConfig.add("onTrigger2Click", "function(){ " +
+		            		XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_DIALOG ) +
 		            		"}"
 		            );
 	            }
-	
-	            oInpConfig.add("onTrigger2Click", "function(){ " +
-	            		XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_DIALOG ) +
-	            		"}"
-	            );
-            }
+	        }
  
             oInpConfig.add("width", oAttr.getWidth() );
             oInpConfig.addJSString("renderTo", oComp.getClientId());
@@ -276,11 +336,16 @@ public class AttributeWordMacro extends AttributeBase {
             } else {
                             
                 String value = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() + "_ci" );
-                if( "NaN".equals( value ) ) {
-                    oAttrComp.setSubmittedValue( "" );
-                }
-                else {
-                    oAttrComp.setSubmittedValue( value );
+                
+                if( value != null ) {
+	                if( "NaN".equals( value ) ) {
+	                    oAttrComp.setSubmittedValue( "" );
+	                }
+	                else {
+	                	if( ((XEOObjectAttributeConnector)oAttrComp.getDataFieldConnector()).getAttributeHandler().isObject() ) {
+	                		oAttrComp.setSubmittedValue( value );
+	                	}
+	                }
                 }
             }
             super.decode(component);
@@ -301,24 +366,34 @@ public class AttributeWordMacro extends AttributeBase {
         	if( oConnector instanceof XEOObjectAttributeConnector ) {
         		try {
 	        		XEOObjectAttributeConnector oXeoConnector = (XEOObjectAttributeConnector)oConnector;
+	        		String   objAtt = "file"; 
 	        		boObject docObj = oXeoConnector.getAttributeHandler().getObject();
 	        		
+	        		if( docObj == null ) {
+	        			objAtt = oFile.getObjectAttribute();
+	        			docObj = oXeoConnector.getAttributeHandler().getParent();
+	        		}
+	        		
 		        	if( "POST".equals( hRequest.getMethod() ) && hRequest instanceof XUIMultiPartRequestWrapper ) {
-		        		XUIMultiPartRequestWrapper mRequest = (XUIMultiPartRequestWrapper)hRequest;
-						Enumeration enumFiles = mRequest.getFileNames();
-		        		if( enumFiles.hasMoreElements() ) {
-		        			String fname = (String)enumFiles.nextElement();
-		        			File file = mRequest.getFile( fname );
-		        			try {
-		        				docObj.getAttribute("file").setValueiFile( new FSiFile( null, file, null ) );
-							} catch (boRuntimeException e) {
-								// TODO Auto-generated catch block
-								throw new RuntimeException(e);
-							}
-		        		}
+						if( oFile.isDisabled() ) {
+							resp.sendError(403,ComponentMessages.FILE_NOT_EDITABLE.toString());
+						} else {
+			        		XUIMultiPartRequestWrapper mRequest = (XUIMultiPartRequestWrapper)hRequest;
+							Enumeration enumFiles = mRequest.getFileNames();
+			        		if( enumFiles.hasMoreElements() ) {
+			        			String fname = (String)enumFiles.nextElement();
+			        			File file = mRequest.getFile( fname );
+			        			try {
+			        				docObj.getAttribute( objAtt ).setValueiFile( new FSiFile( null, file, null ) );
+								} catch (boRuntimeException e) {
+									// TODO Auto-generated catch block
+									throw new RuntimeException(e);
+								}
+			        		}
+						}
 		        	}
 		        	else {
-						iFile file = docObj.getAttribute("file").getValueiFile();
+						iFile file = docObj.getAttribute( objAtt ).getValueiFile();
 						if( file != null ) {
 							String sName = file.getName();
 							
@@ -329,6 +404,9 @@ public class AttributeWordMacro extends AttributeBase {
 				            resp.setHeader("Cache-Control","private");               
 				            ServletOutputStream so = response.getOutputStream(); 
 			                resp.setHeader("Content-Disposition","attachment; filename="+sName);
+			                
+			                resp.setHeader("XEODM-FileName", sName );
+			                resp.setHeader("XEODM-ReadOnly", Boolean.toString( oFile.isDisabled() ) );
 	
 				            Long FileSize = new Long(file.length()); 
 				            int xfsize = FileSize.intValue(); 
