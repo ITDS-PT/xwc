@@ -20,7 +20,6 @@ public class XEODMBuilder {
 			
 			first = false;
 		}
-		System.out.println( sb );
 		return sb.toString();
 	}
 	

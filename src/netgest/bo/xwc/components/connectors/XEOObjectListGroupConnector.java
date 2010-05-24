@@ -97,13 +97,12 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		if( boql.startsWith( "{" ) ) {
 			nativeQlTag1 = "";
 			nativeQlTag2 = "";
-                        if( defObj.getAttributeRef( this.groupAttribute ) != null )
-			groupFieldName = defObj.getAttributeRef( this.groupAttribute ).getDbName();
-                        else
-                            groupFieldName = this.groupAttribute;
+            if( defObj.getAttributeRef( this.groupAttribute ) != null ) {
+            	groupFieldName = defObj.getAttributeRef( this.groupAttribute ).getDbName();
+            } else {
+                groupFieldName = this.groupAttribute;
+            }
 		}
-		
-		
 		isDate = isDateValue( defObj.getName() );
 
 		String groupWhere;

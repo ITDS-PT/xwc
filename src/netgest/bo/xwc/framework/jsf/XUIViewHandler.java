@@ -234,7 +234,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             
             if( sTransactionId != null ) {
                 XTransaction oTransaction = XUIRequestContext.getCurrentContext().getTransactionManager().getTransaction( sTransactionId );
-                oTransaction.activate();
+                if( oTransaction != null ) {
+                	oTransaction.activate();
+                }
             }
     		
             UIViewRoot savedView = context.getViewRoot();

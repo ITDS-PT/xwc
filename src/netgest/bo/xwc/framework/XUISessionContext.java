@@ -2,12 +2,17 @@ package netgest.bo.xwc.framework;
 
 import com.sun.faces.util.Util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Map;
 import netgest.bo.system.Logger;
 
 import javax.faces.context.FacesContext;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import netgest.bo.transaction.XTransactionManager;
@@ -112,7 +117,46 @@ public class XUISessionContext {
 
         return viewRoot;
     }
-
+    
+    public StringBuilder renderViewToBuffer( String renderKit, String viewStateId ) throws IOException {
+    	XUIRequestContext r;
+    	StringBuilder sb = null;
+    	r = XUIRequestContext.getCurrentContext();
+    	String url = r.getAjaxURL();
+    	if( !url.toLowerCase().startsWith( "http" ) ) {
+    		HttpServletRequest request =  (HttpServletRequest)r.getRequest();
+    		String host = request.getServerName();
+    		String protocol = request.getProtocol();
+    		int port = request.getServerPort();
+    		
+    		if( request.isSecure() ) {
+    			url = protocol + "://" + host + ( port != 80?Integer.toString(port):"" ) + "/" + url;
+    		} else {
+    			url = protocol + "://" + host + ( port != 443?Integer.toString(port):"" ) + "/" + url;
+    		}
+    		
+    		if( viewStateId != null ) {
+    			if( url.indexOf( '?' ) == -1 ) {
+    				url += "?" + "javax.faces.ViewState=" + viewStateId; 
+    			}
+    		}
+    		
+    		URL oUrl = new URL( url );
+    		URLConnection con = oUrl.openConnection();
+    		con.setDoInput( true );
+    		con.setDoOutput( false );
+    		
+    		sb = new StringBuilder();
+    		
+    		InputStream is = con.getInputStream();
+    		byte[] buffer = new byte[8192];
+    		int br;
+    		while( (br = is.read( buffer )) > 0 ) {
+    			sb.append( new String( buffer, "utf-8" ) );
+    		}
+    	}
+    	return sb;
+    }
     
     public Object getAttribute( String sName ) {
         Map<String,Object> oExternalSession = getExternalSessionMap();

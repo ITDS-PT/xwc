@@ -70,17 +70,15 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
     @Override
 	public void encodeChildren( XUIComponentBase oComp ) throws IOException {
         Iterator<UIComponent> oChildIterator;
-        UIComponent           oChildComp;
+        XUIComponentBase      oChildComp;
         oChildIterator = oComp.getChildren().iterator();
         while( oChildIterator.hasNext() ) {
-            oChildComp = oChildIterator.next();
+            oChildComp = (XUIComponentBase)oChildIterator.next();
+            if (!oChildComp.isRendered()) {
+                continue;
+            }            
 
             if( oChildComp instanceof ActionButton ) {
-
-                if (!oChildComp.isRendered()) {
-                    return;
-                }
-                
                 String rendererType;
                 rendererType = oChildComp.getRendererType();
                 if (rendererType != null) {
@@ -96,9 +94,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                 }
             }
             if( oChildComp instanceof ToolBar ) {
-                if (!oChildComp.isRendered()) {
-                    return;
-                }
                 
                 if( ((ToolBar) oChildComp).isRenderedOnClient() ) {
                 	ScriptBuilder sb = ToolBar.XEOHTMLRenderer.updateMenuItems( (ToolBar) oChildComp );
@@ -125,9 +120,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	                        
 	                    }
 	                }
-	                ((ToolBar)oChildComp).setRenderedOnClient( true );
                 }
             }
+            
+            oChildComp.setRenderedOnClient( true );
+            
         }
     }
     
@@ -149,7 +146,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             	if( oGrid.getEnableColumnFilter() ) {
             		ScriptBuilder scriptBuilder = new ScriptBuilder();
             		scriptBuilder.startBlock();
-            		scriptBuilder.w( "var g=Ext.getCmp('").w( oGrid.getClientId() ).w( "');" );
+            		scriptBuilder.w( "debugger;\n" +
+            				"var g=Ext.getCmp('").w( oGrid.getClientId() ).w( "');" );
             		scriptBuilder.w( "if( g && g.plugins ) {");
             		scriptBuilder.w( "g.plugins.updateFilters( ").w( oGrid.getCurrentFilters()).w( " );" );
             		scriptBuilder.w( "}" );

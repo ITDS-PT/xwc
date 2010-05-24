@@ -293,6 +293,15 @@ public class XEOEditBean extends XEOBaseBean {
         AttributeHandler    oAttHandler = ((XEOObjectAttributeConnector)oAtt.getDataFieldConnector()).getAttributeHandler();
         boDefAttribute      oAttDef     = oAttHandler.getDefAttribute();
         
+    	String className = oAttDef.getName(); 
+    	if( "boObject".equals( oAttDef.getReferencedObjectName() ) ) {
+    		String[] objects = oAttDef.getObjectsName();
+    		if( objects != null && objects.length > 0 ) {
+    			className = objects[0];
+    		}
+    	}
+        
+        
         // Obtem a bean do objecto a ser editado
         // e associa o objecto do parametro
         
@@ -342,6 +351,7 @@ public class XEOEditBean extends XEOBaseBean {
             oBaseBean.setParentBean( this ); 
             oBaseBean.setParentAttributeName( oAttHandler.getName() );
             oBaseBean.setLookupObjects( getLookupObjectsMap( oAttHandler ) );
+            oBaseBean.setSelectedObject( className );
             oBaseBean.setParentParentBeanId( "viewBean" );
             oBaseBean.setParentComponentId( oAtt.getClientId() );
             String sBoql = getLookupQuery( oAttHandler, null );
@@ -378,6 +388,12 @@ public class XEOEditBean extends XEOBaseBean {
 			
 			if( lookupObject.length() == 0 ) {
 				lookupObject = oAttHandler.getDefAttribute().getReferencedObjectName();
+				if( "boObject".equals( lookupObject ) ) {
+					String[] classNames = oAttHandler.getDefAttribute().getObjectsName();
+					if( classNames != null && classNames.length > 0 ) {
+						lookupObject = classNames[0];
+					}
+				}
 			}
 			boql = "select " + lookupObject;
 		}
@@ -402,12 +418,20 @@ public class XEOEditBean extends XEOBaseBean {
     }
 
     private String getLookupViewer( boDefAttribute defAtt, boDefHandler relObject ) {
-    	if( defAtt.getChildIsOrphan() )
-    		return 
-    			getViewerResolver().getViewer( relObject.getName(), XEOViewerResolver.ViewerType.LOOKUP );
-    	else
+    	
+    	if( defAtt.getChildIsOrphan() ) {
+        	String className = defAtt.getName(); 
+        	if( "boObject".equals( relObject.getName() ) ) {
+        		String[] objects = defAtt.getObjectsName();
+        		if( objects != null && objects.length > 0 ) {
+        			className = objects[0];
+        		}
+        	}
+    		return getViewerResolver().getViewer( className, XEOViewerResolver.ViewerType.LOOKUP );
+    	} else {
     		return 
     			getViewerResolver().getViewer( relObject.getName(), XEOViewerResolver.ViewerType.EDIT );
+    	}
     }
     
     /**

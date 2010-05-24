@@ -169,6 +169,7 @@ public class TreePanel extends XUIComponentBase {
         public ExtConfig renderExtJs( TreePanel oTreeComp ) {
         	ExtConfig oTreeConfig = new ExtConfig("Ext.tree.TreePanel");
         	
+        	oTreeConfig.add( "id" , oTreeComp.getClientId() );
 			StringBuilder sActionUrl = new StringBuilder( getRequestContext().getAjaxURL() );
 			if( sActionUrl.indexOf("?") == -1 ) {
 				sActionUrl.append("?");
@@ -225,6 +226,7 @@ public class TreePanel extends XUIComponentBase {
                 if( oMenuChild.canAcess() ) {
                     if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
 		                oItemCfg = oItemsCfg.addChild();
+                    	oItemCfg.addJSString( "id", oMenuChild.getClientId() );
                     	oItemCfg.addJSString( "text", oMenuChild.getText() );
                     	if( !oMenuChild.isVisible() )
                     		oItemCfg.add( "hidden", true );
@@ -282,6 +284,7 @@ public class TreePanel extends XUIComponentBase {
                 if( oMenuChild.canAcess() && oMenuChild.isVisible() ) {
                     if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
 		                oItemCfg = oChildren.addChild();
+                    	oItemCfg.addJSString( "id", oMenuChild.getClientId() );
                     	oItemCfg.addJSString( "text", oMenuChild.getText() );
                     	if( !oMenuChild.isVisible() )
                     		oItemCfg.add( "hidden", true );

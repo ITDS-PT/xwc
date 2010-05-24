@@ -59,6 +59,9 @@ public class BuilderBean {
 		}
 		return "";
 	}
+
+	public void setLogText( String sText ) {
+	}
 	
 	public float getOverallProgress() {
 		if( this.buildProgress != null ) {
