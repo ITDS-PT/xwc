@@ -341,10 +341,16 @@ XVW.handleAjaxResponse = function( oXmlReq ) {
             window.eval( sScriptToEval );
         }
         catch( e ) {
-            XVW.ErrorDialog( XVW.Messages.AJAXERROR_MESSAGE, "["+oScriptId+"]" +
-                e.description + "\n" +
-                sScriptToEval
-            );    
+        	debugger;
+        	try {
+        		window.eval( sScriptToEval );
+        	}
+        	catch( e ) {
+	            XVW.ErrorDialog( XVW.Messages.AJAXERROR_MESSAGE, "["+oScriptId+"]" +
+	                e.description + "\n" +
+	                sScriptToEval
+	            );
+        	}
         }
     }
 

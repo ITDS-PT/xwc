@@ -163,7 +163,6 @@ XVW.openTab = function( sFrameName, sTitle ) {
 	            closable: true,
 	            style: "overflow:visible;",
 	            html: '<iframe name="'+sFrameName+'" src="about:blank" scrolling="no" frameBorder="0" width="100%" height="'+(Ext.isChrome?'99%':'100%' )+'"></iframe>'
-	            //html: '<div id="tabdiv'+ ( ++tabdividx ) + '" name="'+sFrameName+'" style="width:100%;height=100%"></div>'
 	        }
 	    );
 	    var tab  = tabs.add( formLayout );
@@ -707,3 +706,39 @@ Ext.apply(Ext.form.ComboBox.prototype, {
 //Disable back
 window.history.forward(1);
 
+XVW.MenuCounter = {
+	counters : {},
+	registerCounter : function( sUrl, sContId, sNodeId, interval ) {
+		this.counters[sNodeId] = { url: sUrl, containerId: sContId, nodeId: sNodeId, interval: interval, lastUpdate: (new Date())-0 };
+		window.setInterval( function() { XVW.MenuCounter.updateCounter( sNodeId, interval ) }, interval*1000 )
+	},
+	updateCounter : function( sNodeId, loop ) {
+		var x = null;
+		x = this.counters[sNodeId];
+		if( !x ) {
+			if( !loop && window.parent.XVW.MenuCounter )
+				x = window.parent.XVW.MenuCounter.updateCounter( sNodeId, true )
+		} else {
+			var x = this.counters[sNodeId];
+			var xh = XVW.createXMLHttpRequest();
+			xh.open( 'GET',x.url, false );
+			xh.send();
+			eval( 'var r = ' + xh.responseText);
+			var c = Ext.getCmp( x.containerId );
+			if(c) {
+				var n = c.getNodeById( x.nodeId );
+				if(n) n.setText( r.counterHtml );
+    		}
+			x.lastUpdate = (new Date())-0;
+		}
+	},
+	updateCounters : function( loop ) {
+		for( x in this.counters ) {
+			XVW.MenuCounter.updateCounter( x );
+		}
+		if( !loop )
+			if( window.parent.XVW.MenuCounter ) {
+				window.parent.XVW.MenuCounter.updateCounters( true );
+			}
+	}
+}

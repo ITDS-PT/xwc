@@ -115,6 +115,7 @@ XEOLayout.onCloseTab = function( oTabCont, oComp ) {
 				for( var k = 0;k < y.length; k++ ) {
 					var cmd = y[i].value;
 					x[i].contentWindow.XVW.AjaxCommand( cmd.split(':')[0],cmd.split(':')[1],"",2,true );
+					oTabCont.activate( oComp );
 					return false;
 					break;
 				}
@@ -160,6 +161,7 @@ XEOLayoutInit = function()
 	action += "?javax.faces.ViewState=" + viewState + "&xvw.servlet=formMain:tree";
 	
 	window.layoutTree = new Ext.tree.TreePanel({
+		id:'formMain:tree',
 	    border:false,
 	    useArrows:true,
 	    autoScroll:true,
