@@ -262,6 +262,13 @@ public class Attribute extends AttributeBase
         if( getValueExpression( "groupNumber" ) != null )
             oAttr.setGroupNumber( getValueExpression("groupNumber").getExpressionString() );
 
+        if( getValueExpression( "maxValue" ) != null )
+            oAttr.setMaxValue( getValueExpression("maxValue").getExpressionString() );
+        
+        if( getValueExpression( "minValue" ) != null )
+            oAttr.setMinValue( getValueExpression("minValue").getExpressionString() );
+        
+        
         oAttr.setInstanceId( getInstanceId() );
         
         if( getValueExpression("onChangeSubmit") != null )

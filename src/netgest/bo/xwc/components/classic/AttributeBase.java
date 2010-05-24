@@ -164,11 +164,11 @@ public class AttributeBase extends ViewerInputSecurityBase {
             );
 
         this.maxValue.setValue(  
-                createValueExpression( sBeanExpression + ".numberMaxValue}", Integer.class ) 
+                createValueExpression( sBeanExpression + ".numberMaxValue}", Double.class ) 
             );
 
         this.minValue.setValue(  
-                createValueExpression( sBeanExpression + ".numberMinValue}", Integer.class ) 
+                createValueExpression( sBeanExpression + ".numberMinValue}", Double.class ) 
             );
         
         this.decimalPrecision.setValue( 
@@ -483,7 +483,14 @@ public class AttributeBase extends ViewerInputSecurityBase {
      * @return double with the max value of the component
      */
     public double getMaxValue() {
-        return this.maxValue.getEvaluatedValue();
+        Object x = this.maxValue.getEvaluatedValue();
+        if( x == null ) {
+        	return 0;
+        }
+        if( x != null && !(x instanceof Double) ) {
+        	return Double.parseDouble( x.toString() );
+        }
+        return (Double)x;
     }
 
     /**
@@ -499,7 +506,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
      * @param maxValue double with the min value of the component
      */
     public void setMinValue( double minValue ) {
-        this.minValue.setExpressionText( String.valueOf( maxValue ) );
+        this.minValue.setExpressionText( String.valueOf( minValue ) );
     }
     
     /**
@@ -507,7 +514,14 @@ public class AttributeBase extends ViewerInputSecurityBase {
      * @return double with the min value of the component
      */
     public double getMinValue() {
-        return this.minValue.getEvaluatedValue();
+        Object x = this.minValue.getEvaluatedValue();
+        if( x == null ) {
+        	return 0;
+        }
+        if( !(x instanceof Double) ) {
+        	return Double.parseDouble( x.toString() );
+        }
+        return (Double)x;
     }
     
     /**
