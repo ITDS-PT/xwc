@@ -293,7 +293,7 @@ public class XEOEditBean extends XEOBaseBean {
         AttributeHandler    oAttHandler = ((XEOObjectAttributeConnector)oAtt.getDataFieldConnector()).getAttributeHandler();
         boDefAttribute      oAttDef     = oAttHandler.getDefAttribute();
         
-    	String className = oAttDef.getName(); 
+    	String className = oAttDef.getReferencedObjectName(); 
     	if( "boObject".equals( oAttDef.getReferencedObjectName() ) ) {
     		String[] objects = oAttDef.getObjectsName();
     		if( objects != null && objects.length > 0 ) {
@@ -420,7 +420,7 @@ public class XEOEditBean extends XEOBaseBean {
     private String getLookupViewer( boDefAttribute defAtt, boDefHandler relObject ) {
     	
     	if( defAtt.getChildIsOrphan() ) {
-        	String className = defAtt.getName(); 
+        	String className = relObject.getName(); 
         	if( "boObject".equals( relObject.getName() ) ) {
         		String[] objects = defAtt.getObjectsName();
         		if( objects != null && objects.length > 0 ) {
