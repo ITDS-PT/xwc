@@ -313,7 +313,7 @@ public class XEOEditBean extends XEOBaseBean {
     		lookupViewerName = getLookupViewer( oAttHandler );
     	}
         
-        if( !oAttDef.getChildIsOrphan() ) {
+        if( !oAttDef.getChildIsOrphan( className ) ) {
             XEOBaseOrphanEdit   oBaseBean;
             
             oViewRoot = oSessionContext.createChildView( lookupViewerName );
@@ -418,15 +418,14 @@ public class XEOEditBean extends XEOBaseBean {
     }
 
     private String getLookupViewer( boDefAttribute defAtt, boDefHandler relObject ) {
-    	
-    	if( defAtt.getChildIsOrphan() ) {
-        	String className = relObject.getName(); 
-        	if( "boObject".equals( relObject.getName() ) ) {
-        		String[] objects = defAtt.getObjectsName();
-        		if( objects != null && objects.length > 0 ) {
-        			className = objects[0];
-        		}
-        	}
+    	String className = relObject.getName(); 
+    	if( "boObject".equals( relObject.getName() ) ) {
+    		String[] objects = defAtt.getObjectsName();
+    		if( objects != null && objects.length > 0 ) {
+    			className = objects[0];
+    		}
+    	}
+    	if( defAtt.getChildIsOrphan( className ) ) {
     		return getViewerResolver().getViewer( className, XEOViewerResolver.ViewerType.LOOKUP );
     	} else {
     		return 
@@ -538,7 +537,7 @@ public class XEOEditBean extends XEOBaseBean {
         
         // Obtem a bean do objecto a ser editado
         // e associa o objecto do parametro
-        if( oAttDef.getChildIsOrphan() )
+        if( oAttDef.getChildIsOrphan( refObj.getName() ) )
         {
             XEOBaseLookupList   oBaseBean;
             oViewRoot = oSessionContext.createChildView( viewerName );
@@ -635,7 +634,7 @@ public class XEOEditBean extends XEOBaseBean {
 				boObject childObj = boObject.getBoManager().loadObject(
 						getEboContext(), Long.valueOf(sBridgeKeyToEdit));
 				if (securityRights.canRead(getEboContext(), childObj.getName())) {
-					if (oAttDef.getChildIsOrphan() && childObj.getBoDefinition().getBoCanBeOrphan() ) {
+					if (oAttDef.getChildIsOrphan( childObj.getName() ) ) {
 						if (oRequestContext.isAjaxRequest()) {
 							// Resubmit the to the command... to save the selected row.
 							oCommand.setValue( oSelectedRow
@@ -773,7 +772,7 @@ public class XEOEditBean extends XEOBaseBean {
         if( oAttDef != null ) {
     		try {
 				if (securityRights.canRead(getEboContext(), oObjectName )) {
-					if (oAttDef.getChildIsOrphan()) {
+					if (oAttDef.getChildIsOrphan( oObjectName ) ) {
 						if (oRequestContext.isAjaxRequest()) {
 							// Resubmit the to the command... to save the selected row.
 							oCommand.setValue( oObjectName );
@@ -1214,7 +1213,7 @@ public class XEOEditBean extends XEOBaseBean {
 					securityOPL.canRead( boObject.getBoManager().loadObject( getEboContext() , boui) );
 				
 				if( canacess ) {
-					if( oAttHandler.getDefAttribute().getChildIsOrphan() ) {
+					if( oAttHandler.getDefAttribute().getChildIsOrphan( cls ) ) {
 						if( oRequestContext.isAjaxRequest() ) {  
 							oRequestContext.getScriptContext().add( 
 									XUIScriptContext.POSITION_HEADER , 
@@ -1226,7 +1225,7 @@ public class XEOEditBean extends XEOBaseBean {
 						}
 					}
 					XUIViewRoot 	oViewRoot;
-					if( oAttHandler.getDefAttribute().getChildIsOrphan() )
+					if( oAttHandler.getDefAttribute().getChildIsOrphan( cls ) )
 						oViewRoot = oSessionContext.createView( 
 								getViewerResolver().getViewer( cls, XEOViewerResolver.ViewerType.EDIT )
 							);
