@@ -39,7 +39,7 @@ public class ExtJsTheme implements XUITheme {
         
         // Grid Searc
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-xeo", composeUrl( "ext-xeo/js/ext-xeo.js" ) );
-        scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-xeo1", composeUrl( "ext-xeo/js/SearchField.js" ) );
+//        scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-xeo1", composeUrl( "ext-xeo/js/SearchField.js" ) );
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ExtXeo.grid", composeUrl( "ext-xeo/js/GridPanel.js" ) );
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "xwc-components", composeUrl( "ext-xeo/js/xwc-components.js" ) );
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ExtXeo.tabs", composeUrl( "ext-xeo/js/Tabs.js" ) );
