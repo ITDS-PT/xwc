@@ -20,6 +20,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 import javax.servlet.http.HttpServletRequest;
 
+import netgest.bo.runtime.boObjectList;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
@@ -522,7 +523,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 								else
 									operator = FilterTerms.OPERATOR_GREATER_THAN;
 								
-								terms = addFilterTerm(terms, name, operator, value);
+								terms = addFilterTerm(terms, name, getColumn( name ).getSqlExpression(),operator, value);
 							}
 							bAddCodition = false;
 						} else if ("boolean".equals(submitedType)) {
@@ -543,7 +544,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 								else
 									operator = FilterTerms.OPERATOR_GREATER_THAN;
 								
-								terms = addFilterTerm(terms, name, operator, value);
+								terms = addFilterTerm(terms, name, getColumn( name ).getSqlExpression(), operator, value);
 							}
 							bAddCodition = false;
 						} else {
@@ -551,7 +552,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 						}
 
 						if (bAddCodition) {
-							terms = addFilterTerm(terms, name, operator, value);
+							terms = addFilterTerm(terms, name, getColumn( name ).getSqlExpression() ,operator, value);
 						}
 					}
 				}
@@ -564,11 +565,11 @@ public class GridPanel extends ViewerInputSecurityBase {
 	}
 	
 
-	private FilterTerms addFilterTerm( FilterTerms terms, String name, byte operator, Object value ) {
+	private FilterTerms addFilterTerm( FilterTerms terms, String name, String sqlExpression, byte operator, Object value ) {
 		if (terms == null) {
-			terms = new FilterTerms(new FilterTerm( name, operator, value) );
+			terms = new FilterTerms(new FilterTerm( name, sqlExpression, operator, value) ); 
 		} else {
-			terms.addTerm(FilterTerms.JOIN_AND, name,
+			terms.addTerm(FilterTerms.JOIN_AND, name, getColumn( name ).getSqlExpression(),
 					operator, value);
 		}
 		return terms;
@@ -1258,6 +1259,24 @@ public class GridPanel extends ViewerInputSecurityBase {
 		}
 	}
 
+	public void applySqlFields(DataListConnector listConnector) {
+		
+		List<boObjectList.SqlField> sqlFields = new ArrayList<boObjectList.SqlField>(1);
+		for( Column col : getColumns() ) {
+			if( !col.isHidden() ) {
+				String sqlExpression = col.getSqlExpression();
+				if( sqlExpression != null ) {
+					sqlFields.add( new boObjectList.SqlField( sqlExpression, col.getDataField() ) );
+				}
+			}
+		}
+		
+		if( sqlFields.size() > 0 ) {
+			listConnector.setSqlFields( sqlFields );
+		}
+		
+	}
+	
 	public Iterator<DataRecordConnector> applyLocalSort(
 			Iterator<DataRecordConnector> dataListIterator) {
 

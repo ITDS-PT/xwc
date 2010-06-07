@@ -151,9 +151,17 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
                     }
             }
         	oGrid.setGroupBy( oGrid.getGroupBy() );
+
         	DataListConnector c = oGrid.getDataSource();
+        	oGrid.applyFilters( c );
+        	oGrid.applySort( c );
+        	oGrid.applyFullTextSearch( c );
+        	oGrid.applySqlFields(c);
+        	
         	c.setGroupBy( new String[] { oGrid.getGroupBy() } );
         	DataGroupConnector groupConnector = c.getGroups( 1, null, null, reqParam.getPage(), reqParam.getPageSize() );
+        	
+        	
             StringBuilder s = new StringBuilder(200);
             s.append( '{' );
             s.append( oGrid.getId() ); 

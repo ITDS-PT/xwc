@@ -73,10 +73,10 @@ public class XEOBaseList extends XEOBaseBean {
 	        	XVWScripts.closeView( viewRoot );
 	        }
 	        else {
-		        String sObjectName = boObject.getBoManager().getClassNameFromBOUI( boApplication.currentContext().getEboContext(), boui.longValue());
+		        boObject sObjectToOpen = boObject.getBoManager().loadObject( boApplication.currentContext().getEboContext(), boui.longValue());
 		
 		        XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createView( 
-		        		getViewerResolver().getViewer( sObjectName, XEOViewerResolver.ViewerType.EDIT )
+		        		getViewerResolver().getViewer( sObjectToOpen, XEOViewerResolver.ViewerType.EDIT )
 		        );
 		        XEOEditBean oEditBean = (XEOEditBean)oEditViewRoot.getBean("viewBean");
 		        

@@ -1,6 +1,12 @@
 package netgest.bo.xwc.components.classic;
 
+import java.io.CharArrayWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+
 import javax.el.ValueExpression;
+
+import org.json.JSONObject;
 
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.model.Column;
@@ -18,7 +24,9 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class ColumnAttribute extends XUIComponentBase implements Column {
 	
-    private XUIBaseProperty<String>         	dataField   = new XUIBaseProperty<String>( "dataField", this );
+    private XUIBaseProperty<String>         	dataField   	= new XUIBaseProperty<String>( "dataField", this );
+    private XUIBaseProperty<String>         	sqlExpression  	= new XUIBaseProperty<String>( "sqlExpression", this );
+    
     private XUIStateBindProperty<String>    	label       = new XUIStateBindProperty<String>( "label", this, String.class );
     private XUIBaseProperty<String>    			width       = new XUIBaseProperty<String>( "width", this );
 	private XUIBaseProperty<Boolean>    		searchable  = new XUIBaseProperty<Boolean>( "searchable", this, true );
@@ -27,12 +35,30 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 	private XUIBaseProperty<Boolean>    		hideable 	= new XUIBaseProperty<Boolean>( "hideable", this, true );
     private XUIBaseProperty<Boolean>    		hidden  	= new XUIBaseProperty<Boolean>( "hidden", this, false );
 	private XUIBaseProperty<Boolean>    		resizable   = new XUIBaseProperty<Boolean>( "resizable", this, true );
-	private XUIBaseProperty<Boolean>    		contentHtml   = new XUIBaseProperty<Boolean>( "contentHtml", this, false );
+	
+	private XUIBaseProperty<Boolean>    		contentHtml   	= new XUIBaseProperty<Boolean>( "contentHtml", this, false );
+	private XUIBaseProperty<String>    			renderTemplate 	= new XUIBaseProperty<String>( "renderTemplate", this, null );
 
     private XUIBindProperty<String>             lookupViewer= new XUIBindProperty<String>( "lookupViewer", this, String.class );
 
     private XUIBindProperty<GridColumnRenderer> renderer    = new XUIBindProperty<GridColumnRenderer>( "renderer", this, GridColumnRenderer.class );
 
+    
+    public void setSqlExpression( String sqlexpressionEl ) {
+    	this.sqlExpression.setValue( sqlexpressionEl );
+    }
+    
+    public String getSqlExpression() {
+    	return this.sqlExpression.getValue();
+    }
+    
+    public void setRenderTemplate( String renderTemplate ) {
+    	this.renderTemplate.setValue( renderTemplate );
+    }
+    
+    public String getRenderTemplate() {
+    	return this.renderTemplate.getValue();
+    }
     
     /**
      * Set if the column can be hidden by the user
@@ -252,6 +278,48 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 		return this.renderer.getEvaluatedValue();
 	}
 	
+	PrintWriter 	templateWriter;
+	CharArrayWriter templateBuffer;
+	JSONObject		templateJson;
 	
-	
+	public String applyRenderTemplate( Object value ) {
+		String template = getRenderTemplate();
+		if( template != null ) {
+			
+			if( value == null ) {
+				value = "";
+			}
+			
+			if( templateBuffer == null ) {
+				templateBuffer = new CharArrayWriter();
+				templateWriter = new PrintWriter( templateBuffer );
+				try {
+					templateJson = new JSONObject( template );
+				}
+				catch( Exception e ) {
+					e.printStackTrace();
+				}
+			}
+			else {
+				templateBuffer.reset();
+			}
+			if( templateJson != null ) {
+				template = templateJson.optString(  value.toString(), null );
+				if( template == null ) {
+					template = templateJson.optString( "default" );
+				}
+				if( template != null ) {
+					templateWriter.printf( template, value );
+				}
+			}
+			else {
+				templateWriter.printf( template, value );
+			}
+			if( template != null ) {
+				String ret = templateBuffer.toString();
+				return ret;
+			}
+		}
+		return null;
+	}
 }

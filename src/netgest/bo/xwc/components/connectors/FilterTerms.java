@@ -36,8 +36,8 @@ public class FilterTerms {
 		addJoin( null, term );
 	}
 	
-	public void addTerm( byte joinCondition, String dataField, byte operator, Object value ) {
-		addJoin( joinCondition, new FilterTerm( dataField, operator, value ) );
+	public void addTerm( byte joinCondition, String dataField, String sqlExpression, byte operator, Object value ) {
+		addJoin( joinCondition, new FilterTerm( dataField, sqlExpression, operator, value ) );
 	}
 
 	public void addTerm( byte joinCondition, FilterTerm term ) {
@@ -63,13 +63,15 @@ public class FilterTerms {
 	public static class FilterTerm {
 		
 		private String dataField;
+		private String sqlExpression;
 		private Object value;
 		private byte   operator;
 		
-		public FilterTerm( String dataField, Byte operator, Object value ) {
+		public FilterTerm( String dataField, String sqlExpression, Byte operator, Object value ) {
 			
 			this.dataField = dataField;
 			this.value     = value;
+			this.sqlExpression = sqlExpression;
 			this.operator  = operator;
 			
 		}
@@ -84,7 +86,15 @@ public class FilterTerms {
 		public byte getOperator() {
 			return operator;
 		}
-
+		
+		public String getSqlExpression() {
+			return this.sqlExpression;
+		}
+		
+		public void setSqlExpression( String sqlExpression ) {
+			this.sqlExpression = sqlExpression;
+		}
+		
 	}
 
 	public boolean isEmpty() {

@@ -12,6 +12,7 @@ import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.framework.XUIBaseProperty;
+import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
@@ -22,8 +23,22 @@ public class Tabs extends XUIComponentBase
 {
     public XUIStateProperty<String> activeTab = new XUIStateProperty<String>( "activeTab", this );
     
+    public XUIBindProperty<Boolean> renderTabBar = new XUIBindProperty<Boolean>( "renderTabBar", this, true, Boolean.class );
+    
     public XUIBaseProperty<String> layout = new XUIBaseProperty<String>( "layout", this, Layouts.LAYOUT_FIT_PARENT );
     public XUIBaseProperty<String> height = new XUIBaseProperty<String>( "height", this, "150px" );
+    
+    public void setRenderTabBar( String renderTabBarExpr ) {
+    	this.renderTabBar.setExpressionText( renderTabBarExpr );
+    }
+
+    public void setRenderTabBar( boolean renderTabBar ) {
+    	this.renderTabBar.setValue( renderTabBar );
+    }
+    
+    public boolean getRenderTabBar() {
+    	return this.renderTabBar.getEvaluatedValue();
+    }
     
     public void setLayout( String layout ) {
     	this.layout.setValue( layout );
@@ -143,114 +158,116 @@ public class Tabs extends XUIComponentBase
             w.writeAttribute( "id", component.getClientId(), null );
             w.writeAttribute( "class", "x-tab-panel", null );
             w.writeAttribute( "style", "width:100%", null );
-
-            //<div class="x-tab-panel-header x-unselectable" id="ext-gen7" style="WIDTH: 99%; MozUserSelect: none; KhtmlUserSelect: none" unselectable="on">
-            w.startElement("div", component);
-            w.writeAttribute( "id", component.getClientId() + ":h" , null );
-            w.writeAttribute( "class", "x-tab-panel-header x-unselectable", null );
-            w.writeAttribute( "style", "WIDTH: 100%; MozUserSelect: none; KhtmlUserSelect: none", null );
-            w.writeAttribute( "unselectable", "on", null );
-            //<div class="x-tab-strip-wrap" id="ext-gen11">
-            w.startElement("div", component);
-            w.writeAttribute( "id", component.getClientId() + ":sw" , null );
-            w.writeAttribute( "class", "x-tab-strip-wrap", null );
-            //<ul class="x-tab-strip x-tab-strip-top" id="ext-gen13">
-            w.startElement("ul", component);
-            w.writeAttribute( "id", component.getClientId() + ":st" , null );
-            w.writeAttribute( "class", "x-tab-strip x-tab-strip-top", null );
-
-            boolean bIsActiveTab;
-            Iterator<UIComponent> oChildsIt = component.getChildren().iterator();
-            while( oChildsIt.hasNext() ) {
-                Tab oChildTab = (Tab)oChildsIt.next();
-                
-                if( oChildTab.isRendered() && oChildTab.isVisible() )
-                {
-                    if( oTabs.getActiveTab() == null ) {
-                        oTabs.setActiveTab( oChildTab.getId() );
-                    }
-                    
-                    bIsActiveTab = false;
-                    if( oTabs.getActiveTab().equals(  oChildTab.getId() ) ) {
-                        bIsActiveTab = true;                    
-                    }
-    
-                    //            <li class="" id="ext-comp-1001__ext-comp-1002">
-                    //              <a class="x-tab-right" onclick="return false;" href="http://extjs.com/deploy/dev/examples/tabs/tabs.html#"><em class="x-tab-left">
-                    //                    <span class="x-tab-strip-inner">
-                    //                        <span class="x-tab-strip-text ">Short Text</span>
-                    //                    </span></em>
-                    //              </a>
-                    //            </li>
-                    w.startElement("li", component );
-                    w.writeAttribute("id", oTabs.getId() +":" + oChildTab.getId(), null );
-                    if( bIsActiveTab ) {
-                        w.writeAttribute("class", "x-tab-strip-active", null);
-                    }
-                    w.startElement("a", component );
-                    w.writeAttribute("class", "x-tab-right", null);
-                    w.writeAttribute("tabIndex", "100", null);
-                    
-                    if( bIsActiveTab ) {
-                        w.writeAttribute("href", "javascript:void(0)", null );
-                    }
-                    else {
-                        w.writeAttribute("href", "javascript:" + XVWScripts.getAjaxCommandScript( oChildTab, XVWScripts.WAIT_STATUS_MESSAGE ), null );
-                    }
-    
-                    w.startElement("em", component );
-                    w.writeAttribute("class", "x-tab-left", null);
-    
-                    w.startElement("span", component );
-                    w.writeAttribute("class", "x-tab-strip-inner", null);
-                    
-                    w.startElement("span", component );
-                    w.writeAttribute("id", oTabs.getId() +":" + oChildTab.getId() + ":t", null );
-                    w.writeAttribute("class", "x-tab-strip-text", null);
-
-                    String sLabel = oChildTab.getLabel();
-                    
-                    if( sLabel != null ) {
-                    	w.writeText( sLabel, component, null );
-                    }
-                    
-                    w.endElement("span");
-                    w.endElement("span");
-                    w.endElement("em");
-                    w.endElement("a");
-                    w.endElement("li");
-                }
-                
+            
+            if( oTabs.getRenderTabBar() ) {
+            
+	            //<div class="x-tab-panel-header x-unselectable" id="ext-gen7" style="WIDTH: 99%; MozUserSelect: none; KhtmlUserSelect: none" unselectable="on">
+	            w.startElement("div", component);
+	            w.writeAttribute( "id", component.getClientId() + ":h" , null );
+	            w.writeAttribute( "class", "x-tab-panel-header x-unselectable", null );
+	            w.writeAttribute( "style", "WIDTH: 100%; MozUserSelect: none; KhtmlUserSelect: none", null );
+	            w.writeAttribute( "unselectable", "on", null );
+	            //<div class="x-tab-strip-wrap" id="ext-gen11">
+	            w.startElement("div", component);
+	            w.writeAttribute( "id", component.getClientId() + ":sw" , null );
+	            w.writeAttribute( "class", "x-tab-strip-wrap", null );
+	            //<ul class="x-tab-strip x-tab-strip-top" id="ext-gen13">
+	            w.startElement("ul", component);
+	            w.writeAttribute( "id", component.getClientId() + ":st" , null );
+	            w.writeAttribute( "class", "x-tab-strip x-tab-strip-top", null );
+	
+	            boolean bIsActiveTab;
+	            Iterator<UIComponent> oChildsIt = component.getChildren().iterator();
+	            while( oChildsIt.hasNext() ) {
+	                Tab oChildTab = (Tab)oChildsIt.next();
+	                
+	                if( oChildTab.isRendered() && oChildTab.isVisible() )
+	                {
+	                    if( oTabs.getActiveTab() == null ) {
+	                        oTabs.setActiveTab( oChildTab.getId() );
+	                    }
+	                    
+	                    bIsActiveTab = false;
+	                    if( oTabs.getActiveTab().equals(  oChildTab.getId() ) ) {
+	                        bIsActiveTab = true;                    
+	                    }
+	    
+	                    //            <li class="" id="ext-comp-1001__ext-comp-1002">
+	                    //              <a class="x-tab-right" onclick="return false;" href="http://extjs.com/deploy/dev/examples/tabs/tabs.html#"><em class="x-tab-left">
+	                    //                    <span class="x-tab-strip-inner">
+	                    //                        <span class="x-tab-strip-text ">Short Text</span>
+	                    //                    </span></em>
+	                    //              </a>
+	                    //            </li>
+	                    w.startElement("li", component );
+	                    w.writeAttribute("id", oTabs.getId() +":" + oChildTab.getId(), null );
+	                    if( bIsActiveTab ) {
+	                        w.writeAttribute("class", "x-tab-strip-active", null);
+	                    }
+	                    w.startElement("a", component );
+	                    w.writeAttribute("class", "x-tab-right", null);
+	                    w.writeAttribute("tabIndex", "100", null);
+	                    
+	                    if( bIsActiveTab ) {
+	                        w.writeAttribute("href", "javascript:void(0)", null );
+	                    }
+	                    else {
+	                        w.writeAttribute("href", "javascript:" + XVWScripts.getAjaxCommandScript( oChildTab, XVWScripts.WAIT_STATUS_MESSAGE ), null );
+	                    }
+	    
+	                    w.startElement("em", component );
+	                    w.writeAttribute("class", "x-tab-left", null);
+	    
+	                    w.startElement("span", component );
+	                    w.writeAttribute("class", "x-tab-strip-inner", null);
+	                    
+	                    w.startElement("span", component );
+	                    w.writeAttribute("id", oTabs.getId() +":" + oChildTab.getId() + ":t", null );
+	                    w.writeAttribute("class", "x-tab-strip-text", null);
+	
+	                    String sLabel = oChildTab.getLabel();
+	                    
+	                    if( sLabel != null ) {
+	                    	w.writeText( sLabel, component, null );
+	                    }
+	                    
+	                    w.endElement("span");
+	                    w.endElement("span");
+	                    w.endElement("em");
+	                    w.endElement("a");
+	                    w.endElement("li");
+	                }
+	                
+	            }
+	            //<li class="x-tab-edge" id="ext-gen14">&nbsp;</li>
+	            /*
+	            w.startElement("li", component );
+	            w.writeAttribute( "class", "x-tab-edge", null );
+	            w.writeText( "&nbsp;", null );
+	            w.endElement("li");
+	            */
+	            
+	            //<div class="x-clear" id="ext-gen15"></div>
+	            w.startElement("div", component );
+	            w.writeAttribute( "class", "x-clear", null );
+	            w.endElement("div");
+	
+	            w.endElement( "ul" );
+	            w.endElement( "div" );
+	            
+	            //<div class="x-tab-strip-spacer" id="ext-gen12"></div>
+	            w.startElement( "div", component );
+	            w.writeAttribute( "class", "x-tab-strip-spacer", null );
+	            w.endElement( "div" );
+	            
+	            w.endElement("div");
+	            
+	            //<div class="x-tab-panel-bwrap" id="ext-gen8">
+	            //    <div class="x-tab-panel-body x-tab-panel-body-top" id="ext-gen9" style="WIDTH: 99%">
+	            
+	            //w.startElement( "div", component );
+	            //w.writeAttribute( "class", "x-ie-shadow", null );
             }
-            //<li class="x-tab-edge" id="ext-gen14">&nbsp;</li>
-            /*
-            w.startElement("li", component );
-            w.writeAttribute( "class", "x-tab-edge", null );
-            w.writeText( "&nbsp;", null );
-            w.endElement("li");
-            */
-            
-            //<div class="x-clear" id="ext-gen15"></div>
-            w.startElement("div", component );
-            w.writeAttribute( "class", "x-clear", null );
-            w.endElement("div");
-
-            w.endElement( "ul" );
-            w.endElement( "div" );
-            
-            //<div class="x-tab-strip-spacer" id="ext-gen12"></div>
-            w.startElement( "div", component );
-            w.writeAttribute( "class", "x-tab-strip-spacer", null );
-            w.endElement( "div" );
-            
-            w.endElement("div");
-            
-            //<div class="x-tab-panel-bwrap" id="ext-gen8">
-            //    <div class="x-tab-panel-body x-tab-panel-body-top" id="ext-gen9" style="WIDTH: 99%">
-            
-            //w.startElement( "div", component );
-            //w.writeAttribute( "class", "x-ie-shadow", null );
-
             w.startElement( "div", component );
             w.writeAttribute( "class", "x-tab-panel-bwrap", null );
             

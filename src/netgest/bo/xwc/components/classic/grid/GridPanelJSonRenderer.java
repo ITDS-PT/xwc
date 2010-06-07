@@ -81,12 +81,15 @@ public class GridPanelJSonRenderer {
     
     protected static Iterator<DataRecordConnector> getDataListIterator( GridPanel oGrid, DataListConnector oDataCon ) {
 
+		oGrid.applySqlFields( oDataCon );
+
 		if( (oDataCon.dataListCapabilities() & DataListConnector.CAP_FULLTEXTSEARCH) > 0 )
 			oGrid.applyFullTextSearch( oDataCon );
 		if( (oDataCon.dataListCapabilities() & DataListConnector.CAP_FILTER) > 0 )
 				oGrid.applyFilters( oDataCon );
 		if( (oDataCon.dataListCapabilities() & DataListConnector.CAP_SORT) > 0 )
 			oGrid.applySort( oDataCon );
+		
 		
         oDataCon.refresh();
         

@@ -1,5 +1,9 @@
 package netgest.bo.xwc.components.connectors;
 
+import java.util.List;
+
+import netgest.bo.runtime.boObjectList.SqlField;
+
 
 
 public interface DataListConnector {
@@ -9,6 +13,7 @@ public interface DataListConnector {
 	public static final int CAP_SORT = 4;
 	public static final int CAP_FILTER = 8;
 	public static final int CAP_GROUPING = 16;
+	public static final int CAP_SQLFIELDS = 32;
 	
     public DataListIterator iterator();
     
@@ -43,6 +48,8 @@ public interface DataListConnector {
     public DataFieldMetaData getAttributeMetaData( String attributeName );
     
     public void setGroupBy( String[] attributes );
+    
+    public void setSqlFields( List<SqlField> sqlFields );
     
     public DataGroupConnector getGroups( int deep, String[] parentGroups, Object[] parentValues, int page, int pageSize );
 

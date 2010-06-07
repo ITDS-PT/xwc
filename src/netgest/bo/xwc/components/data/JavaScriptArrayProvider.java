@@ -148,8 +148,20 @@ public class JavaScriptArrayProvider {
                         oStringBuilder.append( '\'' );
                 	}
                 	else {
-	                    oDataFieldValue = oDataField.getValue();
-	                    if( oDataFieldValue != null )
+	                    
+                		oDataFieldValue = oDataField.getValue();
+	                    sDisplayValue = grid.getColumn( sDataFields[i] ).applyRenderTemplate( oDataFieldValue );
+                        
+	                    if( sDisplayValue != null ) {
+                            oStringBuilder.append( '\'' );
+                            JavaScriptUtils.safeJavaScriptWrite( 
+                                oStringBuilder, 
+                                sDisplayValue,
+                                '\''
+                            );
+                            oStringBuilder.append( '\'' );
+	                    }
+	                    else if ( oDataFieldValue != null )
 	                    {
 	                    	
 	                        if( sDataFields[i].equals( keyField ) ) {
@@ -157,7 +169,7 @@ public class JavaScriptArrayProvider {
 	                        		selRowNums += iCntr + "|";
 	                        	}
 	                        }
-	                    	
+	                        
 	                    	sDisplayValue = oDataField.getDisplayValue(); 
 	                    	if( sDisplayValue != null ) {
 	                            oStringBuilder.append( '\'' );

@@ -37,6 +37,8 @@ public class ActionButton extends XUICommand
     private XUIStateProperty<String>     	label = new XUIStateProperty<String>( "label", this, "#Button#" );
     private XUIStateProperty<String>     	action = new XUIStateProperty<String>( "action", this );
 
+    private XUIStateProperty<String> 		target = new XUIStateProperty<String>( "target", this );
+
     private XUIStateBindProperty<Boolean> 	disabled = new XUIStateBindProperty<Boolean>( "disabled", this, "false",Boolean.class );
     private XUIStateBindProperty<Boolean> 	visible  = new XUIStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
     
@@ -190,7 +192,16 @@ public class ActionButton extends XUICommand
         return this.visible.getEvaluatedValue();
     }
     
+    public void setTarget(String sText) {
+        this.target.setValue( sText );
+    }
 
+    public String getTarget() {
+        return target.getValue();
+    }
+
+    
+    
     public static class XEOHTMLRenderer extends XUIRenderer implements ExtJsRenderer {
 
         @Override
@@ -246,7 +257,7 @@ public class ActionButton extends XUICommand
             if( oActionButton.getActionExpression() != null ) {
                 oConfig.add( "handler", 
                              "function(){" + 
-                             	XVWScripts.getAjaxCommandScript( oActionButton, oActionButton.getWaitMode() ) +
+                             	XVWScripts.getCommandScript( oActionButton.getTarget() , oActionButton, oActionButton.getWaitMode() ) +
                              "}"
                             );
             }

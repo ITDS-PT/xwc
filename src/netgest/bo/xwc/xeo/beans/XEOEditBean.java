@@ -314,7 +314,7 @@ public class XEOEditBean extends XEOBaseBean {
     	}
         
         if( !oAttDef.getChildIsOrphan( className ) ) {
-            XEOBaseOrphanEdit   oBaseBean;
+            XEOEditBean   oBaseBean;
             
             oViewRoot = oSessionContext.createChildView( lookupViewerName );
             
@@ -322,7 +322,7 @@ public class XEOEditBean extends XEOBaseBean {
             if( oWnd != null ) {
             	oWnd.setAnimateTarget( sCompId );
             }
-            oBaseBean = (XEOBaseOrphanEdit)oViewRoot.getBean( "viewBean" );
+            oBaseBean = (XEOEditBean)oViewRoot.getBean( "viewBean" );
             	
             if( oAttHandler.getValueObject() == null ) {
                 oBaseBean.createNew( oAttDef.getReferencedObjectName() );
@@ -562,7 +562,7 @@ public class XEOEditBean extends XEOBaseBean {
             oBaseBean.setMultiLookup( true );
         }
         else {
-            XEOBaseOrphanEdit   oBaseBean;
+            XEOEditBean   oBaseBean;
 
             oViewRoot = oSessionContext.createChildView( viewerName );
             if( oRequestContext.getEvent() != null ) {  
@@ -572,10 +572,11 @@ public class XEOEditBean extends XEOBaseBean {
 	            }
             }
 
-            oBaseBean = (XEOBaseOrphanEdit)oViewRoot.getBean("viewBean");
+            oBaseBean = (XEOEditBean)oViewRoot.getBean("viewBean");
 
             oBaseBean.setParentBeanId( "viewBean" );
             oBaseBean.setParentComponentId( oGrid.getClientId() );
+            
             
             oBaseBean.createNew( refObj.getName(), getXEOObject().getBoui() );
 //            oBaseBean.getXEOObject().addParent( getXEOObject() );
@@ -650,17 +651,17 @@ public class XEOEditBean extends XEOBaseBean {
 									
 							oRequestContext.renderResponse();
 						} else {
-							String sClassName;
+							boObject sObjectToOpen;
 							try {
-								sClassName = boObject
+								sObjectToOpen = boObject
 										.getBoManager()
-										.getClassNameFromBOUI(
+										.loadObject(
 												getEboContext(),
 												Long
 														.parseLong(sBridgeKeyToEdit));
 								oViewRoot = oSessionContext
 										.createChildView(
-								        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+								        		getViewerResolver().getViewer( sObjectToOpen, XEOViewerResolver.ViewerType.EDIT )
 											);
 								XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 										.getBean("viewBean");
@@ -698,7 +699,7 @@ public class XEOEditBean extends XEOBaseBean {
 						oViewRoot = oSessionContext.createChildView(
 				        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
 							);
-						XEOBaseOrphanEdit oBaseBean = (XEOBaseOrphanEdit) oViewRoot
+						XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 								.getBean("viewBean");
 
 						oBaseBean.setParentBeanId("viewBean");
@@ -1206,14 +1207,14 @@ public class XEOEditBean extends XEOBaseBean {
 			
 			if( oAttHandler.getValueObject() != null ) {
 				long boui = oAttHandler.getValueLong();
-				String cls = boObject.getBoManager().getClassNameFromBOUI(  getEboContext(),  boui );
+				boObject objectToLookup = boObject.getBoManager().loadObject( getEboContext(),  boui );
 				
 				boolean canacess = 
-					securityRights.canRead(  getEboContext(), cls) &&
+					securityRights.canRead(  getEboContext(), objectToLookup.getName()) &&
 					securityOPL.canRead( boObject.getBoManager().loadObject( getEboContext() , boui) );
 				
 				if( canacess ) {
-					if( oAttHandler.getDefAttribute().getChildIsOrphan( cls ) ) {
+					if( oAttHandler.getDefAttribute().getChildIsOrphan( objectToLookup.getName() ) ) {
 						if( oRequestContext.isAjaxRequest() ) {  
 							oRequestContext.getScriptContext().add( 
 									XUIScriptContext.POSITION_HEADER , 
@@ -1225,13 +1226,13 @@ public class XEOEditBean extends XEOBaseBean {
 						}
 					}
 					XUIViewRoot 	oViewRoot;
-					if( oAttHandler.getDefAttribute().getChildIsOrphan( cls ) )
+					if( oAttHandler.getDefAttribute().getChildIsOrphan( objectToLookup.getName() ) )
 						oViewRoot = oSessionContext.createView( 
-								getViewerResolver().getViewer( cls, XEOViewerResolver.ViewerType.EDIT )
+								getViewerResolver().getViewer( objectToLookup, XEOViewerResolver.ViewerType.EDIT )
 							);
 					else
 						oViewRoot = oSessionContext.createChildView(
-								getViewerResolver().getViewer( cls, XEOViewerResolver.ViewerType.EDIT )
+								getViewerResolver().getViewer( objectToLookup, XEOViewerResolver.ViewerType.EDIT )
 							);
 					
 					((XEOEditBean)oViewRoot.getBean("viewBean"))

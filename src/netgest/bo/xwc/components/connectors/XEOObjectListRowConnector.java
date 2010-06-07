@@ -20,9 +20,10 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 				DataSet dataSet = this.oObjectList.getRslt().getDataSet();
 				int col = dataSet.findColumn( name );
 				if( col > 0 ) {
+					Object value = dataSet.rows( row ).getObject( col );
 					ret = new XEOObjectConnector.GenericFieldConnector( 
 							name, 
-							String.valueOf( dataSet.rows( row ).getObject( col ) ), 
+							value!=null?String.valueOf( value ):null, 
 							DataFieldTypes.VALUE_CHAR 
 					);
 				}

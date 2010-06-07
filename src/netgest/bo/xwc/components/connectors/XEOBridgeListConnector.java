@@ -1,9 +1,12 @@
 package netgest.bo.xwc.components.connectors;
 
+import java.util.List;
+
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefBridge;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.bridgeHandler;
+import netgest.bo.runtime.boObjectList.SqlField;
 
 public class XEOBridgeListConnector implements DataListConnector {
     
@@ -20,7 +23,13 @@ public class XEOBridgeListConnector implements DataListConnector {
 	public void setGroupBy(String[] attributes) {
 		
 	}
-
+	
+	@Override
+	public void setSqlFields(List<SqlField> sqlFields) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public String[] getGroupItens(String groupAttribute, int page, int pageSize) {
 		return null;
 	}

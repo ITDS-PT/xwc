@@ -3,6 +3,7 @@ package netgest.bo.xwc.components.connectors;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +13,7 @@ import netgest.bo.def.boDefAttribute;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.runtime.boObjectList.SqlField;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
@@ -42,7 +44,23 @@ public class XEOObjectListConnector implements DataListConnector {
     public int getRowCount() {
         return this.oObjectList.getRowCount();
     }
-
+    
+    @Override
+    public void setSqlFields(List<SqlField> sqlFields) {
+    	if( sqlFields != null )
+    		this.oObjectList.setSqlFields( sqlFields.toArray( new SqlField[ sqlFields.size() ] ) );
+    	else
+    		this.oObjectList.setSqlFields( null );
+    }
+    
+    public List<SqlField> getSqlFields() {
+    	SqlField[] fields = this.oObjectList.getSqlFields();
+    	if( fields != null ) {
+    		return Arrays.asList( fields );
+    	}
+    	return null; 
+    }
+    
     public void setSortTerms(SortTerms sortTerms) {
     	StringBuilder sb = new StringBuilder();
     	Iterator<SortTerm> it = sortTerms.iterator();
@@ -107,7 +125,17 @@ public class XEOObjectListConnector implements DataListConnector {
     		}
 			FilterTerm t =  j.getTerm();
 			
-			Object val = t.getValue();
+			String name = t.getDataField();
+			String sqlExpr = t.getSqlExpression();
+			
+			if( sqlExpr != null ) {
+				sqlExpr = "[" + sqlExpr + "]";
+			}
+			else {
+				sqlExpr = name;
+			}
+			
+			Object val 	= t.getValue();
 			
 			String parVal = "?";
 			if( val != null ) {
@@ -117,22 +145,22 @@ public class XEOObjectListConnector implements DataListConnector {
 						val = "%" + val + "%";
 					}
 					parVal = "?";
-					query.append( "UPPER(" + t.getDataField() + ")" );
+					query.append( "UPPER(" + sqlExpr + ")" );
 					pars.add( val );
 				} else if ( val instanceof Boolean ) {
 					val = ((Boolean)val).booleanValue()?"1":"0";
-					query.append( t.getDataField() );
+					query.append( sqlExpr );
 					parVal = "?";
 					pars.add( val );
 				} else if ( val instanceof java.util.Date ) {
 					val = new Timestamp( ((Date)val).getTime() );
-					query.append( dutl.fnTruncateDate( t.getDataField() ) );
+					query.append( dutl.fnTruncateDate( sqlExpr ) );
 					parVal = dutl.fnTruncateDate( "?" );
 					pars.add( val );
 				} else if ( val instanceof Object[] ) {
 					
 					StringBuilder parValues = new StringBuilder("(");
-					query.append( t.getDataField() );
+					query.append( sqlExpr );
 					Object[] parArray = (Object[])val;
 					
 					for( Object parArrayVal : parArray ) {
@@ -149,12 +177,12 @@ public class XEOObjectListConnector implements DataListConnector {
 					parVal = parValues.toString();
 					
 				} else {
-					query.append( t.getDataField() );
+					query.append( sqlExpr );
 					parVal = "?";
 					pars.add( val );
 				}
 			} else {
-				query.append( t.getDataField() );
+				query.append( sqlExpr );
 				parVal = "?";
 				pars.add( val );
 			}

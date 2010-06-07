@@ -1,5 +1,7 @@
 package netgest.bo.xwc.xeo.beans;
 
+import netgest.bo.runtime.boObject;
+
 
 public class XEOViewerResolver {
 	
@@ -8,6 +10,10 @@ public class XEOViewerResolver {
 		EDIT,
 		LOOKUP,
 		PREVIEW
+	}
+
+	public String getViewer( boObject forObject, ViewerType type ) {
+		return getViewer( forObject.getName(), type );
 	}
 
 	public String getViewer( String className, ViewerType type ) {

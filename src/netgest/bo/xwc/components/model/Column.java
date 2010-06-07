@@ -1,6 +1,7 @@
 package netgest.bo.xwc.components.model;
 
 public interface Column {
+    public String getSqlExpression();
     public String getLabel();
     public String getDataField();
     public String getWidth();
@@ -13,5 +14,6 @@ public interface Column {
     public byte getSecurityPermissions();
     public String getLookupViewer();
     public boolean isContentHtml();
+    public String applyRenderTemplate( Object value );
     
 }

@@ -15,6 +15,7 @@ import netgest.bo.def.boDefHandler;
 import netgest.bo.ql.QLParser;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.runtime.boObjectList.SqlField;
 import netgest.bo.system.boApplication;
 import netgest.bo.utils.XEOQLModifier;
 
@@ -89,8 +90,13 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		
 		XEOQLModifier q = new XEOQLModifier( boql, qlArgsList );
 		
+		
+		List<SqlField> sqlFieldsList = getRootList().getSqlFields();
+		
 		boolean isDate;
 		boolean isNull = false;
+		boolean isSqlField = false; 
+			
 		String nativeQlTag1 = "[";
 		String nativeQlTag2 = "]";
 		String groupFieldName = this.groupAttribute;
@@ -103,6 +109,17 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
                 groupFieldName = this.groupAttribute;
             }
 		}
+		
+        if( sqlFieldsList != null ) {
+        	for( SqlField field : sqlFieldsList ) {
+        		 if( this.groupAttribute.equals( field.getSqlAlias() ) ) {
+        			 groupFieldName = "[(" + field.getSqlExpression() + ")]";
+        			 isSqlField = true;
+        		 }
+        	}
+        }
+		
+		
 		isDate = isDateValue( defObj.getName() );
 
 		String groupWhere;
@@ -153,7 +170,15 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		q.setWherePart( wherePart );
 		
 		if( orderBy != null && orderBy.length() > 0 ) {
-			q.setOrderByPart( orderBy );
+        	for( SqlField field : sqlFieldsList ) {
+				if( this.groupAttribute.equals( field.getSqlAlias() ) ) {
+					q.setOrderByPart( "[" + field.getSqlAlias() + "]" );
+					isSqlField = true;
+				}
+        	}
+        	if( !isSqlField ) {
+				q.setOrderByPart( orderBy );
+        	}
 			q.getOrderByPartParameters().clear();
 		}
 		
@@ -167,6 +192,10 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 				this.pageSize, 
 				true
 			);
+
+		if( sqlFieldsList != null ) {
+			list.setSqlFields( sqlFieldsList.toArray( new SqlField[ sqlFieldsList.size() ] ) );
+		}
 		
 		return new XEOObjectListConnector( list );
 	}
@@ -241,7 +270,11 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		boolean isObject = false;
 		String nativeQlTag1 = "[";
 		String nativeQlTag2 = "]";
-		String groupFieldName = this.groupAttribute;
+		
+		String groupByExpression = this.groupAttribute;
+		String groupFieldExpression = this.groupAttribute;
+		
+		List<SqlField> sqlFields = this.rootList.getSqlFields();
 		
 		boDefHandler def = qp.getObjectDef();
 		if( def != null ) {
@@ -251,26 +284,33 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 				if( boql.startsWith( "{" ) ) {
 					nativeQlTag1 = "";
 					nativeQlTag2 = "";
-					groupFieldName = defAtt.getDbName();
+					groupByExpression = defAtt.getDbName();
+				}
+			}
+			else if ( sqlFields != null && sqlFields.size() > 0 ) {
+				for( SqlField field : sqlFields ) {
+					if( this.groupAttribute.equals( field.getSqlAlias() ) ) {
+						groupByExpression = "[(" + field.getSqlExpression() + ")]";
+						groupFieldExpression = "[(" + field.getSqlExpression() + ")] " + field.getSqlAlias();
+						break;
+					}
 				}
 			}
 		}
-		
-		
 		boolean isDate;
 		isDate = isObject && isDateValue( qp.getObjectName() );
 		if ( !isDate ) {
-			fields += groupFieldName + ", "+nativeQlTag1 +"count(*) as count" + nativeQlTag2;
+			fields += groupFieldExpression + ", "+nativeQlTag1 +"count(*) as count" + nativeQlTag2;
 		} else {
-			fields += nativeQlTag1 + dutl.fnTruncateDate( groupFieldName ) + " as " + groupFieldName + nativeQlTag2 + ", " + nativeQlTag1 + "count(*) as count" + nativeQlTag2;
+			fields += nativeQlTag1 + dutl.fnTruncateDate( groupFieldExpression ) + " as " + groupFieldExpression + nativeQlTag2 + ", " + nativeQlTag1 + "count(*) as count" + nativeQlTag2;
 		}
 		
 		q.setFieldsPart( fields );
 		
 		if( !isDate )
-			q.setGroupByPart( groupFieldName );
+			q.setGroupByPart( groupByExpression );
 		else
-			q.setGroupByPart( nativeQlTag1 + dutl.fnTruncateDate( groupFieldName ) + nativeQlTag2 );
+			q.setGroupByPart( nativeQlTag1 + dutl.fnTruncateDate( groupByExpression ) + nativeQlTag2 );
 		
 		
 		q.setFieldsPart( fields );
@@ -295,7 +335,7 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 			} else if ( uOrderBy.endsWith( " DESC" ) ) {
 				orderField = orderBy.substring( 0, orderBy.length() - 5 );
 			}
-			if( orderField.equals( groupFieldName ) ) {
+			if( orderField.equals( this.groupAttribute ) ) {
 				q.setOrderByPart( orderBy );
 				q.getOrderByPartParameters().clear();
 			}
