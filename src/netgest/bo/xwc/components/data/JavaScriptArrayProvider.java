@@ -15,6 +15,7 @@ import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
+import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.util.DateUtils;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 
@@ -148,9 +149,14 @@ public class JavaScriptArrayProvider {
                         oStringBuilder.append( '\'' );
                 	}
                 	else {
-	                    
+                		
+                		sDisplayValue = null;
+                		
                 		oDataFieldValue = oDataField.getValue();
-	                    sDisplayValue = grid.getColumn( sDataFields[i] ).applyRenderTemplate( oDataFieldValue );
+                		
+                		Column c = grid.getColumn( sDataFields[i] );
+                		if( c != null )
+                			sDisplayValue = c.applyRenderTemplate( oDataFieldValue );
                         
 	                    if( sDisplayValue != null ) {
                             oStringBuilder.append( '\'' );
