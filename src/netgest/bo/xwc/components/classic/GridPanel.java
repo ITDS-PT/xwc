@@ -1263,12 +1263,12 @@ public class GridPanel extends ViewerInputSecurityBase {
 		
 		List<boObjectList.SqlField> sqlFields = new ArrayList<boObjectList.SqlField>(1);
 		for( Column col : getColumns() ) {
-			if( !col.isHidden() ) {
+//			if( !col.isHidden() ) {
 				String sqlExpression = col.getSqlExpression();
 				if( sqlExpression != null ) {
 					sqlFields.add( new boObjectList.SqlField( sqlExpression, col.getDataField() ) );
 				}
-			}
+//			}
 		}
 		
 		if( sqlFields.size() > 0 ) {
