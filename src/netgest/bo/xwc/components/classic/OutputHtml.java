@@ -4,9 +4,12 @@ import java.io.IOException;
 
 import javax.el.ValueExpression;
 
+import netgest.bo.xwc.components.HTMLAttr;
+import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
@@ -14,6 +17,7 @@ public class OutputHtml extends ViewerOutputSecurityBase {
 
     private XUIStateProperty<String> valueExpression = new XUIStateProperty<String>( "valueExpression", this );
     private XUIStateProperty<Object> renderedValue  = new XUIStateProperty<Object>( "renderedValue", this );
+    private XUIStateBindProperty<Boolean> visible  = new XUIStateBindProperty<Boolean>( "visible", this, Boolean.class );
 
     @Override
     public boolean wasStateChanged() {
@@ -32,6 +36,33 @@ public class OutputHtml extends ViewerOutputSecurityBase {
     public Object saveState() {
         this.renderedValue.setValue( getValue() );
         return super.saveState();
+    }
+    
+    /**
+     * Sets the visible.
+     * 
+     * @param sExpression the new EL Expression for visible
+     */
+    public void setVisible( String sExpression ) {
+    	this.visible.setExpressionText( sExpression );
+    }
+
+    /**
+     * Sets the visible.
+     * 
+     * @param bVisible the new visible
+     */
+    public void setVisible( boolean bVisible ) {
+    	this.visible.setExpressionText( Boolean.toString( bVisible ) );
+    }
+    
+    /**
+     * Gets the visible.
+     * 
+     * @return the visible
+     */
+    public boolean getVisible() {
+    	return this.visible.getEvaluatedValue();
     }
     
     /**
@@ -76,14 +107,13 @@ public class OutputHtml extends ViewerOutputSecurityBase {
             OutputHtml oOut = (OutputHtml)component;
             
             XUIResponseWriter w = getResponseWriter();
-            w.startElement( "SPAN", component );
-            
-            if ( oOut.getEffectivePermission(SecurityPermissions.READ) ) {
+            w.startElement( HTMLTag.SPAN, component );
+            w.writeAttribute( HTMLAttr.ID , component.getClientId(), null );
+            if ( oOut.getEffectivePermission(SecurityPermissions.READ) && oOut.getVisible() ) {
             	w.write( (String)((OutputHtml)component).getValue() );
             } else {
             	w.write( "" );            	
             }
-
         }
 
 		@Override

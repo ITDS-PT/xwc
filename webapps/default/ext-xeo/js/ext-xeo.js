@@ -721,15 +721,19 @@ XVW.MenuCounter = {
 		} else {
 			var x = this.counters[sNodeId];
 			var xh = XVW.createXMLHttpRequest();
-			xh.open( 'GET',x.url, false );
+			xh.open( 'GET',x.url, true );
+			xh.onreadystatechange = function() {
+				if( xh.readyState==4 ) {
+					eval( 'var r = ' + xh.responseText);
+					var c = Ext.getCmp( x.containerId );
+					if(c) {
+						var n = c.getNodeById( x.nodeId );
+						if(n) n.setText( r.counterHtml );
+		    		}
+					x.lastUpdate = (new Date())-0;
+				}
+			}
 			xh.send();
-			eval( 'var r = ' + xh.responseText);
-			var c = Ext.getCmp( x.containerId );
-			if(c) {
-				var n = c.getNodeById( x.nodeId );
-				if(n) n.setText( r.counterHtml );
-    		}
-			x.lastUpdate = (new Date())-0;
 		}
 	},
 	updateCounters : function( loop ) {
