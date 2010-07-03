@@ -17,7 +17,7 @@ public class OutputHtml extends ViewerOutputSecurityBase {
 
     private XUIStateProperty<String> valueExpression = new XUIStateProperty<String>( "valueExpression", this );
     private XUIStateProperty<Object> renderedValue  = new XUIStateProperty<Object>( "renderedValue", this );
-    private XUIStateBindProperty<Boolean> visible  = new XUIStateBindProperty<Boolean>( "visible", this, Boolean.class );
+    private XUIStateBindProperty<Boolean> visible  = new XUIStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
 
     @Override
     public boolean wasStateChanged() {
@@ -101,7 +101,6 @@ public class OutputHtml extends ViewerOutputSecurityBase {
     
     public static class XEOHTMLRenderer extends XUIRenderer {
 
-    	
         @Override
 		public void encodeBegin(XUIComponentBase component) throws IOException {
             OutputHtml oOut = (OutputHtml)component;
