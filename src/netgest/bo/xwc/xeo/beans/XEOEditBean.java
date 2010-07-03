@@ -68,6 +68,9 @@ public class XEOEditBean extends XEOBaseBean {
     
     private boolean 				bValid = true;
     
+    private Boolean					editInOrphanMode = null;
+    private boolean 				bTransactionStarted = false;
+    
     /**
      * @return	The current XEO Object associated to this bean
      */
@@ -81,6 +84,15 @@ public class XEOEditBean extends XEOBaseBean {
 	            if( !oBoObect.userReadThis() )
 	            	oBoObect.markAsRead(); 
 	            
+				if( !this.bTransactionStarted ) {
+					oBoObect.poolSetStateFull();
+					oBoObect.transactionBegins();
+					bTransactionStarted = true;
+					Window wnd = (Window)XUIRequestContext.getCurrentContext().getViewRoot().findComponent( Window.class );
+					if( wnd != null && wnd.getOnClose() == null ) {
+						wnd.setOnClose( "#{viewBean.cancel}" );
+					}
+				}
 	            return oBoObect;
             }
             return null;
@@ -112,6 +124,17 @@ public class XEOEditBean extends XEOBaseBean {
      */
     public void createNew( String sObjectName ) {
     	createNew( sObjectName, 0 );
+    }
+    
+    public boolean getEditInOrphanMode() {
+    	if( this.editInOrphanMode == null ) {
+    		this.editInOrphanMode = getXEOObject().getBoDefinition().getBoCanBeOrphan();
+    	}
+    	return this.editInOrphanMode;
+    }
+
+    public void setEditInOrphanMode( boolean editInOrphanMode ) {
+    	this.editInOrphanMode = editInOrphanMode;
     }
     
     /**
@@ -163,10 +186,10 @@ public class XEOEditBean extends XEOBaseBean {
     }
     
     public void processUpdate() throws boRuntimeException {
-    	
-    	update();
-    	updateParentComponents();
-    	
+		update();
+    	if( getEditInOrphanMode() ) {
+    		updateParentComponents();
+    	}
     }
     
     public void remove() throws boRuntimeException {
@@ -228,51 +251,67 @@ public class XEOEditBean extends XEOBaseBean {
     public void update() throws boRuntimeException {
     	XUIRequestContext oRequestContext;
     	
-    	oRequestContext = XUIRequestContext.getCurrentContext();
     	
-    	try {
-    		getXEOObject().update();
-    		getXEOObject().setChanged( false );
-    		oRequestContext.addMessage(
-	                "Bean",
-	                new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, 
-	                    BeansMessages.TITLE_SUCCESS.toString(), 
-	                    BeansMessages.BEAN_SAVE_SUCESS.toString() 
-	                )
-	            );
-    	} catch ( Exception e ) {
-    		if( e instanceof boRuntimeException ) {
-    			boRuntimeException boEx = (boRuntimeException)e;
-    			if ( "BO-3022".equals( boEx.getErrorCode() ) ) {
-    		        XUIRequestContext.getCurrentContext().addMessage(
-    		                "Bean",
-    		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
-    		                    BeansMessages.TITLE_ERROR.toString(), 
-    		                    BeansMessages.DATA_CHANGED_BY_OTHER_USER.toString() 
-    		                )
-    		            );
-    			} else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
-    				if( boEx.getSrcObject() != getXEOObject() ) {
-    					oRequestContext.addMessage( "viewBean_erros", new XUIMessage(
-    							XUIMessage.TYPE_ALERT, 
-    							XUIMessage.SEVERITY_ERROR,
-    							BeansMessages.ERROR_SAVING_RELATED_OBJECT.toString(),
-    							boEx.getMessage()
-    						)
-    					);
-    				}
-    				else {
-        				showObjectErrors();
-    				}
-    				setValid(false);
-    			}
-    			else {
-    				throw new RuntimeException( e );
-    			}
-    		}
-    		else {
-    			throw new RuntimeException( e );
-    		}
+    	if( !getEditInOrphanMode() ) {
+			// Commit changes on object
+	        boObject currentObject = getXEOObject();
+	        currentObject.transactionEnds( true );
+	        this.bTransactionStarted = false;
+	        XEOEditBean oParentBean = getParentBean();
+	
+	        if( oParentBean != null )
+	        {
+	            oParentBean.setOrphanEdit( this );
+	        }
+	    	
+    	}
+    	else {
+	    	oRequestContext = XUIRequestContext.getCurrentContext();
+	    	
+	    	try {
+	    		getXEOObject().update();
+	    		getXEOObject().setChanged( false );
+	    		oRequestContext.addMessage(
+		                "Bean",
+		                new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, 
+		                    BeansMessages.TITLE_SUCCESS.toString(), 
+		                    BeansMessages.BEAN_SAVE_SUCESS.toString() 
+		                )
+		            );
+	    	} catch ( Exception e ) {
+	    		if( e instanceof boRuntimeException ) {
+	    			boRuntimeException boEx = (boRuntimeException)e;
+	    			if ( "BO-3022".equals( boEx.getErrorCode() ) ) {
+	    		        XUIRequestContext.getCurrentContext().addMessage(
+	    		                "Bean",
+	    		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
+	    		                    BeansMessages.TITLE_ERROR.toString(), 
+	    		                    BeansMessages.DATA_CHANGED_BY_OTHER_USER.toString() 
+	    		                )
+	    		            );
+	    			} else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
+	    				if( boEx.getSrcObject() != getXEOObject() ) {
+	    					oRequestContext.addMessage( "viewBean_erros", new XUIMessage(
+	    							XUIMessage.TYPE_ALERT, 
+	    							XUIMessage.SEVERITY_ERROR,
+	    							BeansMessages.ERROR_SAVING_RELATED_OBJECT.toString(),
+	    							boEx.getMessage()
+	    						)
+	    					);
+	    				}
+	    				else {
+	        				showObjectErrors();
+	    				}
+	    				setValid(false);
+	    			}
+	    			else {
+	    				throw new RuntimeException( e );
+	    			}
+	    		}
+	    		else {
+	    			throw new RuntimeException( e );
+	    		}
+	    	}
     	}
     }
     
@@ -1208,13 +1247,16 @@ public class XEOEditBean extends XEOBaseBean {
 			if( oAttHandler.getValueObject() != null ) {
 				long boui = oAttHandler.getValueLong();
 				boObject objectToLookup = boObject.getBoManager().loadObject( getEboContext(),  boui );
+
+				boolean openInOrphanEdit = 
+					!( !objectToLookup.exists() || !objectToLookup.getBoDefinition().getBoCanBeOrphan() );
 				
 				boolean canacess = 
 					securityRights.canRead(  getEboContext(), objectToLookup.getName()) &&
 					securityOPL.canRead( boObject.getBoManager().loadObject( getEboContext() , boui) );
 				
 				if( canacess ) {
-					if( oAttHandler.getDefAttribute().getChildIsOrphan( objectToLookup.getName() ) ) {
+					if( openInOrphanEdit ) {
 						if( oRequestContext.isAjaxRequest() ) {  
 							oRequestContext.getScriptContext().add( 
 									XUIScriptContext.POSITION_HEADER , 
@@ -1226,7 +1268,7 @@ public class XEOEditBean extends XEOBaseBean {
 						}
 					}
 					XUIViewRoot 	oViewRoot;
-					if( oAttHandler.getDefAttribute().getChildIsOrphan( objectToLookup.getName() ) )
+					if( openInOrphanEdit )
 						oViewRoot = oSessionContext.createView( 
 								getViewerResolver().getViewer( objectToLookup, XEOViewerResolver.ViewerType.EDIT )
 							);
@@ -1237,6 +1279,9 @@ public class XEOEditBean extends XEOBaseBean {
 					
 					((XEOEditBean)oViewRoot.getBean("viewBean"))
 						.setCurrentObjectKey( String.valueOf( boui ) );
+					
+					((XEOEditBean)oViewRoot.getBean("viewBean"))
+						.setEditInOrphanMode( openInOrphanEdit );
 					
 					oRequestContext.setViewRoot( oViewRoot );
 			        oViewRoot.processInitComponents();
@@ -1428,5 +1473,70 @@ public class XEOEditBean extends XEOBaseBean {
 			}
     	}
     }
+    
+    /*
+     * 
+     * Non Orphan Mode Methods
+     * 
+     * 
+     */
+    
+    
+    public void confirm() throws boRuntimeException {
+        
+        XUIRequestContext oRequestContext;
+        oRequestContext = XUIRequestContext.getCurrentContext();
+         
+    	processValidate(); 
+    	if( this.isValid() ) {
+    		processUpdate();
+    		
+	        // Get the window in the viewer and close it!
+	        Window oWndComp 		= (Window)getViewRoot().findComponent( Window.class );
+    		if( oWndComp != null ) {
+    			oWndComp.destroy();
+    		}
+    		else {
+        		XVWScripts.closeView( oRequestContext.getViewRoot() );
+        		oRequestContext.getViewRoot().setRendered( false );
+        		oRequestContext.renderResponse();
+    		}
+    		
+	        // Trigger parent view sync with server
+	        XUIViewRoot oParentViewRoot = getParentView();
+	        if( oParentViewRoot != null ) {
+		        oParentViewRoot.syncClientView();
+	        }
+	        
+	        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/components/viewers/Dummy.xvw" ) );
+    	}
+
+    }
+
+    
+    public void processCancel() throws boRuntimeException
+    {
+    	cancel();
+    }
+
+    public void cancel() throws boRuntimeException
+    {
+        XUIRequestContext oRequestContext;
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        
+        // Rollback object changes
+        boObject currentObject = getXEOObject();
+        currentObject.transactionEnds( false );
+
+        
+        // Get the window in the viewer and destroy it!
+        Window oWndComp 		= (Window)getViewRoot().findComponent( Window.class );
+        oWndComp.destroy();
+
+        this.bTransactionStarted = false;
+        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/components/viewers/Dummy.xvw" ) );
+
+    }
+    
     
 }

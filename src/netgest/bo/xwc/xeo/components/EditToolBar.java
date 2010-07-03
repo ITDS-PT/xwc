@@ -26,6 +26,16 @@ public class EditToolBar extends ToolBar {
 	public static final List<String> MapViewerMethods = Arrays.asList(
 			new String[] {"save","saveAndClose","processValidate","duplicate", "remove" }
 	);
+
+	public static final List<String> staticNonOrphanMethods = Arrays.asList(
+			new String[] {"cofirmar","cancelar","valid", "update", "destroy", "cloneObject" }
+		);
+
+	private XUIBindProperty<Boolean>  renderConfirmBtn    = 
+		new XUIBindProperty<Boolean>( "renderConfirmBtn", this, true, Boolean.class );
+
+	private XUIBindProperty<Boolean>  renderCancelBtn    = 
+		new XUIBindProperty<Boolean>( "renderCancelBtn", this, true, Boolean.class );
 	
 	private XUIBindProperty<boObject> 	targetObject = 
 		new XUIBindProperty<boObject>("targetObject", this ,boObject.class, "#{viewBean.XEOObject}" );
@@ -51,9 +61,27 @@ public class EditToolBar extends ToolBar {
 	private XUIBindProperty<Boolean>  renderPropertiesBtn    = 
 		new XUIBindProperty<Boolean>( "renderPropertiesBtn", this, true, Boolean.class );
 
+	private XUIBindProperty<Boolean> orphanMode = 
+		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class, "#{viewBean.editInOrphanMode}" );
+		
+	public boolean getRenderConfirmBtn() {
+		return renderConfirmBtn.getEvaluatedValue();
+	}
 
-		
-		
+	public void setRenderConfirmBtn( String expression ) {
+		this.renderConfirmBtn.setExpressionText( expression );
+	}
+
+	public boolean getRenderCancelBtn() {
+		return renderCancelBtn.getEvaluatedValue();
+	}
+
+	public void setRenderCancelBtn( String expression ) {
+		this.renderCancelBtn.setExpressionText( expression );
+	}
+
+
+	
 	@Override
 	public String getRendererType() {
 		return "toolBar";
@@ -124,8 +152,37 @@ public class EditToolBar extends ToolBar {
 		return this.targetObject.getEvaluatedValue();
 	}
 	
+	
+	public boolean getOrphanMode() {
+		return this.orphanMode.getEvaluatedValue();
+	}
+	
+	public void setOrphanMode( String orphanModeExpr ) {
+		this.orphanMode.setExpressionText( orphanModeExpr );
+	}
+	
+	
 	@Override
-	public void initComponent() { 
+	public void initComponent() {
+		if( getOrphanMode() )
+			initOrphanComponent();
+		else
+			initNonOrphanComponent();
+	}
+	
+	@Override
+	public void preRender() {
+		if( getOrphanMode() ) {
+			preOrphanRender();
+		}
+		else {
+			preNonOrphanRender();
+		}
+		
+	};
+	
+	
+	public void initOrphanComponent() { 
 		boObject xeoObject = getTargetObject();
 		// Render ToolBar Methods
 		
@@ -216,8 +273,7 @@ public class EditToolBar extends ToolBar {
 		return xeoMethod;
 	}
 	
-	@Override
-	public void preRender() {
+	public void preOrphanRender() {
 		boObject xeoObject = getTargetObject();
 		for( UIComponent comp : getChildren() ) {
 			if( comp instanceof ModelMethod ) {
@@ -262,6 +318,102 @@ public class EditToolBar extends ToolBar {
 		
 		return xeoMethod;
 	}
+	
+	public void initNonOrphanComponent() { 
+		boObject xeoObject = getTargetObject();
+		// Render ToolBar Methods
+		if( getRenderConfirmBtn() ) {
+			getChildren().add( Menu.getMenuSpacer() );
+			createNonOrphanViewerBeanMethod( 
+					XEOComponentMessages.EDITTB_CONFIRM.toString(), 
+					XEOComponentMessages.EDITTB_CONFIRM_TTIP.toString(),
+					"ext-xeo/images/menus/confirmar.gif", "confirm", null );
+		}
+		
+		if( getRenderValidateBtn() ) {
+			getChildren().add( Menu.getMenuSpacer() );
+			createNonOrphanViewerBeanMethod( null, 
+					XEOComponentMessages.EDITTB_VALIDATE_TTIP.toString(),
+					"ext-xeo/images/menus/confirmar.gif", 
+					"processValidate", null );
+		}
+		
+		if( getRenderCancelBtn() ) {
+			getChildren().add( Menu.getMenuSpacer() );
+			createNonOrphanViewerBeanMethod( 
+					XEOComponentMessages.EDITTB_CANCEL.toString(), 
+					XEOComponentMessages.EDITTB_CANCEL_TTIP.toString(), 
+					"ext-xeo/images/menus/applications.gif", "cancel", null );
+		}
+		
+		if( getRenderPropertiesBtn() ) {
+			getChildren().add( Menu.getMenuSpacer() );
+			createNonOrphanViewerBeanMethod( 
+					null, 
+					XEOComponentMessages.EDITTB_VIEW_PROPERTIES_TTIP.toString() , 
+					"extjs/resources/images/default/tree/leaf.gif", 
+					"showProperties", "self" );
+			getChildren().add( Menu.getMenuSpacer() );
+		}
+		
+		if( getRenderObjectMethodBtns() ) {
+			boDefMethod[] methods = xeoObject.getToolbarMethods();
+			for( boDefMethod m : methods ) {
+				if( !staticNonOrphanMethods.contains( m.getName() ) ) {
+					createNonOrphanMenuMethod( m.getLabel(), m.getLabel(), m.getName() );
+				}
+			}
+		}
+		super.initComponent();
+	}
+	
+	private ViewerMethod createNonOrphanViewerBeanMethod( String label, String toolTip, String icon, String methodName, String target ) {
+		ViewerMethod xeoMethod;
+	
+		xeoMethod = new ViewerMethod();
+		xeoMethod.setId( getId() + "_" + methodName );
+		if( target != null ) {
+			xeoMethod.setTarget( target );
+		}
+		xeoMethod.setText( label );
+		xeoMethod.setTargetMethod( methodName );
+		xeoMethod.setIcon( icon );
+		xeoMethod.setToolTip( toolTip );
+		getChildren().add( xeoMethod );
+	
+		return xeoMethod;
+	}
+	
+	public void preNonOrphanRender() {
+		boObject xeoObject = getTargetObject();
+		for( UIComponent comp : getChildren() ) {
+			if( comp instanceof ModelMethod ) {
+				ModelMethod meth = (ModelMethod)comp;
+				((ModelMethod)comp).setVisible(
+					Boolean.toString( !XEOComponentStateLogic.isMethodHidden(xeoObject, meth.getTargetMethod()) )
+				);
+				meth.setDisabled( 
+						Boolean.toString( XEOComponentStateLogic.isMethodDisabled(xeoObject, meth.getTargetMethod()) )
+				);
+			}
+		}
+	}
+	
+	private ModelMethod createNonOrphanMenuMethod( String label, String toolTip, String methodName ) {
+		
+		ModelMethod xeoMethod;
+		
+		xeoMethod = new ModelMethod();
+		xeoMethod.setId( getId() + "_" + methodName );
+		xeoMethod.setText( label );
+		xeoMethod.setTargetObject( this.targetObject.getExpressionString() );
+		xeoMethod.setTargetMethod( methodName );
+		xeoMethod.setToolTip( toolTip );
+		getChildren().add( xeoMethod );
+		
+		return xeoMethod;
+	}
+	
 	
 }
 

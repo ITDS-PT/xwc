@@ -30,9 +30,20 @@ public class FormEdit extends Form {
 	private XUIBindProperty<Integer> windowWidth = 
 		new XUIBindProperty<Integer>("windowWidth", this, 600, Integer.class);
 
+	private XUIBindProperty<Boolean> orphanMode = 
+		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class, "#{viewBean.editInOrphanMode}" );
+
 	@Override
 	public String getRendererType() {
 		return "form";
+	}
+	
+	public boolean getOrphanMode() {
+		return this.orphanMode.getEvaluatedValue();
+	}
+	
+	public void setOrphanMode( String orphanModeExpr ) {
+		this.orphanMode.setExpressionText( orphanModeExpr );
 	}
 	
 	public boolean getRenderViewerTitle() {
@@ -131,7 +142,7 @@ public class FormEdit extends Form {
 	
 	private void createEditToolBar( int pos ) {
 		ToolBar toolBar;
-		if( getTargetObject().getBoDefinition().getBoCanBeOrphan() ) {
+		if( getOrphanMode() ) {
 			toolBar = new EditToolBar();
 			toolBar.setId( getId() + "_editToolBar" );
 			getChildren().add( pos, toolBar );
@@ -168,7 +179,7 @@ public class FormEdit extends Form {
 		if( wnd == null ) {
 			boObject object = getTargetObject();
 			//TODO: Check to see if the parent attribute have the flag orphanRelation = true....
-			if( !object.getBoDefinition().getBoCanBeOrphan() ) {
+			if( !getOrphanMode() ) {
 				wnd = new ViewerWindow();
 				wnd.setId( getId() + "_editWnd" );
 				

@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.servlet.ServletRequest;
@@ -15,6 +17,7 @@ import netgest.bo.ql.QLParser;
 import netgest.bo.ql.boqlParserException;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
+import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.classic.TreePanel;
 import netgest.bo.xwc.components.model.Menu;
@@ -68,7 +71,7 @@ public class MenuCounter extends Menu {
 	}
 	
 	public void setBoql( String boql ) {
-		this.boql.setValue( boql );
+		this.boql.setExpressionText( boql );
 	}
 	
 	public String getBoql() {
@@ -128,6 +131,8 @@ public class MenuCounter extends Menu {
 	
 	public static class XEOHTMLRenderer extends XUIRenderer implements XUIRendererServlet {
 		
+		public static final List<Object> EMPTY_ARGS = new ArrayList<Object>(0);
+		
 		@Override
 		public void service(ServletRequest oRequest, ServletResponse oResponse, XUIComponentBase oComp) throws IOException {
 			
@@ -142,6 +147,8 @@ public class MenuCounter extends Menu {
 					
 					if( boql != null ) {
 						QLParser qp = new QLParser();
+						XEOQLModifier qm = new XEOQLModifier(boql, EMPTY_ARGS);
+						qm.setFieldsPart("[count(*)]");
 						sql = qp.toSql( boql , ctx);
 						sql = "select count(*) from ( " + sql + " ) t";
 					}
