@@ -228,4 +228,33 @@ public class XEOMainBean extends XEOBaseBean {
 		}
     }
     
+    public void openXEO21Viewer() {
+    	///__explorer.jsp?objectName=Ebo_Perf&form=explorer&label=Utilizadores&imagem=resources%2FEbo_Perf%2Fico16.gif&myIDX=0
+        XUIRequestContext   oRequestContext;
+        XUISessionContext   oSessionContext;
+        XUIViewRoot         oViewRoot;
+
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        oSessionContext = oRequestContext.getSessionContext();
+        try  {
+	        JSONObject o = new JSONObject( 
+	                (String)((XUICommand)oRequestContext.getEvent().getSource()).getValue() 
+	        );
+	        
+	        String mode = o.optString("mode");
+	        if( "explorer".equalsIgnoreCase( mode ) ) {
+	        	String url = 
+	        		"__explorer.jsp?objectName="+o.optString("object")+"&form="+o.optString("form")+"&label="+ 
+	        			((Menu)oRequestContext.getEvent().getSource()).getText() + "&imagem=" + ((Menu)oRequestContext.getEvent().getSource()).getIcon();
+	        	
+	        	((HttpServletResponse)oRequestContext.getResponse()).sendRedirect( url );
+	        	oRequestContext.responseComplete();
+	        }
+        }
+        catch( Exception e ) {
+        	throw new RuntimeException(e);
+        }
+    	
+    }
+    
 }

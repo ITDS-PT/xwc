@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.EboContext;
+import netgest.bo.runtime.boObject;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boLoginException;
 import netgest.bo.system.boSession;
@@ -27,6 +29,12 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 	private String password;
 	private String profile = "";
 	private boolean showProfiles = false;
+	
+	public XEOLoginBean() {
+		showProfiles = getIsLoggedIn();
+		if( showProfiles && getProfileLovMap().size() <= 1 )
+			login();
+	}
 	
 	public String getUserName() {
 		return getIsLoggedIn()?getBoSession().getUser().getUserName():this.userName;
@@ -105,12 +113,58 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 		return oProfilesMap;
 	}
 	
-	public String getMainViewer() {
-		String mViewer = (String)((HttpServletRequest)XUIRequestContext.getCurrentContext().getRequest()).getAttribute("__xwcMainViewer");
-		if( mViewer == null ) {  
-			return "Main.xvw";
+	
+	public String getMainViewer( boSession oXeoSession ) {
+		
+		String mainViewer;
+		
+		mainViewer = null;
+		
+		boDefHandler defH =  boDefHandler.getBoDefinition("uiWorkPlace");
+		if( defH != null && defH.getAttributeRef("defaultViewer") != null ) {
+				EboContext loginCtx;
+				loginCtx = null;
+				if( boApplication.currentContext().getEboContext() == null ) {
+					loginCtx = oXeoSession.createRequestContext( null, null, null );
+					boApplication.currentContext().addEboContext( loginCtx );
+				}
+				else {
+					loginCtx = boApplication.currentContext().getEboContext();
+				}
+				try {
+					boObject workPlace;
+					long boui = oXeoSession.getPerformerIProfileBoui();
+					if( boui == 0 ) {
+						workPlace = boObject.getBoManager().loadObject(loginCtx,"uiWorkPlace" ,"name='default'");
+					}
+					else {
+						workPlace = boObject.getBoManager().loadObject(loginCtx,
+								"SELECT uiWorkPlace WHERE profile=?", 
+								new Object[] { boui }
+							);
+					}
+					if( workPlace != null && workPlace.exists() ) { 
+						mainViewer = workPlace.getAttribute("defaultViewer").getValueString();
+						if( mainViewer.length()==0 ) {
+							mainViewer = null;
+						}
+					}
+				}
+				catch ( Exception e ) {
+					e.printStackTrace();
+				}
+				finally {
+				}
+			
 		}
-		return mViewer;
+		
+		if( mainViewer == null ) {
+			mainViewer = (String)((HttpServletRequest)XUIRequestContext.getCurrentContext().getRequest()).getAttribute("__xwcMainViewer");
+			if( mainViewer == null ) {  
+				return "Main.xvw";
+			}
+		}
+		return mainViewer;
 	}
 	
 	public void login() {
@@ -135,13 +189,13 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 					oRequestContext.getScriptContext().add(
 						XUIScriptContext.POSITION_HEADER,
 						"Login_Logout", 
-						"document.location.href='" + oRequestContext.getActionUrl( getMainViewer() ) + "'"
+						"document.location.href='" + oRequestContext.getActionUrl( getMainViewer( oXeoSession ) ) + "'"
 					);
 					oRequestContext.renderResponse();
 				}
 				else {
 					try {
-						oHttpResponse.sendRedirect( oRequestContext.getActionUrl( getMainViewer() ) );
+						oHttpResponse.sendRedirect( oRequestContext.getActionUrl( getMainViewer( oXeoSession ) ) );
 						oRequestContext.responseComplete();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -187,13 +241,13 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 							oRequestContext.getScriptContext().add(
 								XUIScriptContext.POSITION_HEADER,
 								"Login_Logout", 
-								"document.location.href='" + oRequestContext.getActionUrl( getMainViewer() ) + "'"
+								"document.location.href='" + oRequestContext.getActionUrl( getMainViewer( oXeoSession ) ) + "'"
 							);
 							oRequestContext.renderResponse();
 						}
 						else {
 							try {
-								oHttpResponse.sendRedirect( oRequestContext.getActionUrl( getMainViewer() ) );
+								oHttpResponse.sendRedirect( oRequestContext.getActionUrl( getMainViewer( oXeoSession ) ) );
 								oRequestContext.responseComplete();
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
