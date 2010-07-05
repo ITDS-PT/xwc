@@ -8,16 +8,10 @@ import javax.faces.component.UIComponent;
 import netgest.bo.def.boDefMethod;
 import netgest.bo.runtime.boObject;
 import netgest.bo.xwc.components.classic.ToolBar;
-import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
-<<<<<<< .working
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
-=======
-import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
-import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
->>>>>>> .merge-right.r3071
 
 public class EditToolBar extends ToolBar {
 	
@@ -66,31 +60,10 @@ public class EditToolBar extends ToolBar {
 	
 	private XUIBindProperty<Boolean>  renderPropertiesBtn    = 
 		new XUIBindProperty<Boolean>( "renderPropertiesBtn", this, true, Boolean.class );
-	
-	private XUIStateBindProperty<Boolean>  renderDependentsBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderDependentsBtn", this, "true", Boolean.class );
-	
-	private XUIStateBindProperty<Boolean>  renderDependenciesBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderDependenciesBtn", this, "true", Boolean.class );
-	
-	private XUIStateBindProperty<Boolean>  renderListVersionBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderListVersionBtn", this, "true", Boolean.class );
 
-<<<<<<< .working
 	private XUIBindProperty<Boolean> orphanMode = 
 		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class, "#{viewBean.editInOrphanMode}" );
 		
-=======
-	private XUIStateBindProperty<Boolean>  renderHTMLBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderHTMLBtn", this, "true", Boolean.class );
-	
-	private XUIStateBindProperty<Boolean>  renderPdfBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderPdfBtn", this, "true", Boolean.class );
-	
-	private XUIStateBindProperty<Boolean>  renderExcelBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderExcelBtn", this, "true", Boolean.class );
-	
->>>>>>> .merge-right.r3071
 	public boolean getRenderConfirmBtn() {
 		return renderConfirmBtn.getEvaluatedValue();
 	}
@@ -179,7 +152,6 @@ public class EditToolBar extends ToolBar {
 		return this.targetObject.getEvaluatedValue();
 	}
 	
-<<<<<<< .working
 	
 	public boolean getOrphanMode() {
 		return this.orphanMode.getEvaluatedValue();
@@ -190,59 +162,6 @@ public class EditToolBar extends ToolBar {
 	}
 	
 	
-=======
-	
-	public boolean getRenderHTMLBtn() {
-		return renderHTMLBtn.getEvaluatedValue();
-	}
-
-	public void setRenderHTMLBtn( String expression ) {
-		this.renderHTMLBtn.setExpressionText( expression );
-	}
-	
-	public boolean getRenderPdfBtn() {
-		return renderPdfBtn.getEvaluatedValue();
-	}
-
-	public void setRenderPdfBtn( String expression ) {
-		this.renderPdfBtn.setExpressionText( expression );
-	}
-	
-	public boolean getRenderExcelBtn() {
-		return renderExcelBtn.getEvaluatedValue();
-	}
-
-	public void setRenderExcelBtn( String expression ) {
-		this.renderExcelBtn.setExpressionText( expression );
-	}
-	
-	public boolean getRenderDependentsBtn(){
-		return renderDependentsBtn.getEvaluatedValue();
-	}
-	
-	public void setRenderDependentsBtn(String expression){
-		this.renderDependentsBtn.setExpressionText(expression);
-	}
-	
-	public boolean getRenderDependenciesBtn(){
-		return renderDependenciesBtn.getEvaluatedValue();
-	}
-	
-	public void setRenderDependenciesBtn(String expression){
-		this.renderDependenciesBtn.setExpressionText(expression);
-	}
-	
-	public boolean getRenderListVersionBtn(){
-		return this.renderListVersionBtn.getEvaluatedValue();
-	}
-	
-	public void setRenderListVersionBtn(String expression){
-		this.renderListVersionBtn.setExpressionText(expression);
-	}
-	
-	
-	
->>>>>>> .merge-right.r3071
 	@Override
 	public void initComponent() {
 		if( getOrphanMode() )
@@ -269,7 +188,6 @@ public class EditToolBar extends ToolBar {
 		
 		int pos = 0;
 
-<<<<<<< .working
 		if( getRenderUpdateBtn() ) {
 			createViewerBeanMethod( 
 					pos++,
@@ -277,12 +195,7 @@ public class EditToolBar extends ToolBar {
 					XEOComponentMessages.EDITTB_SAVE_TTIP.toString() , 
 					"ext-xeo/images/menus/gravar.gif", "save", null );
 		}
-=======
-		createViewerBeanMethod( pos++,ComponentMessages.EDIT_TOOLBAR_BTN_SAVE.toString(), 
-				ComponentMessages.EDIT_TOOLBAR_BTN_SAVE_TOOLTIP.toString() , "ext-xeo/images/menus/gravar.gif", "save", null );
->>>>>>> .merge-right.r3071
 		
-<<<<<<< .working
 		if( getRenderUpdateAndCloseBtn() ) {
 			getChildren().add( pos++, Menu.getMenuSpacer() );
 			createViewerBeanMethod( 
@@ -292,30 +205,14 @@ public class EditToolBar extends ToolBar {
 					"ext-xeo/images/menus/gravar_e_sair.gif", 
 					"saveAndClose", null );
 		}
-=======
-		getChildren().add( pos++, Menu.getMenuSpacer( renderUpdateBtn.getExpressionString() ) );
-		createViewerBeanMethod( pos++, null, ComponentMessages.EDIT_TOOLBAR_BTN_SAVE_AND_CLOSE_TOOLTIP.toString(),
-				"ext-xeo/images/menus/gravar_e_sair.gif", "saveAndClose", null );
->>>>>>> .merge-right.r3071
 
-<<<<<<< .working
 		if( getRenderDestroyBtn() ) {
 			getChildren().add( pos++, Menu.getMenuSpacer() );
 			createViewerBeanMethod( pos++, null, 
 					XEOComponentMessages.EDITTB_REMOVE_TTIP.toString(),
 					"ext-xeo/images/menus/remover.gif", "remove", null );
 		}
-=======
-		getChildren().add( pos++, Menu.getMenuSpacer( renderUpdateAndCreateNewBtn.getExpressionString() ) );
-		createViewerBeanMethod( pos++, null, ComponentMessages.EDIT_TOOLBAR_BTN_SAVE_AND_NEW_TOOLTIP.toString(),
-				"ext-xeo/images/menus/gravar_e_criar_novo.gif", "saveAndCreateNew", null );
-
-		getChildren().add( pos++, Menu.getMenuSpacer( renderUpdateAndCloseBtn.getExpressionString() ) );
-		createViewerBeanMethod( pos++, null, ComponentMessages.EDIT_TOOLBAR_BTN_REMOVE_TOOLTIP.toString(),
-				"ext-xeo/images/menus/remover.gif", "remove", null );
->>>>>>> .merge-right.r3071
 		
-<<<<<<< .working
 		if( getRenderValidateBtn() ) {
 			getChildren().add( pos++,Menu.getMenuSpacer() );
 			createViewerBeanMethod( 
@@ -327,13 +224,7 @@ public class EditToolBar extends ToolBar {
 					null 
 				);
 		}
-=======
-		getChildren().add( pos++,Menu.getMenuSpacer( renderDestroyBtn.getExpressionString() ) );
-		createViewerBeanMethod( pos++,null, ComponentMessages.EDIT_TOOLBAR_BTN_VALIDATE_TOOLTIP.toString(),
-				"ext-xeo/images/menus/confirmar.gif", "processValidate", null );
->>>>>>> .merge-right.r3071
 
-<<<<<<< .working
 		if( getRenderCloneBtn() ) {
 			getChildren().add( pos++,Menu.getMenuSpacer() );
 			createViewerBeanMethod( 
@@ -345,14 +236,7 @@ public class EditToolBar extends ToolBar {
 					"tab" 
 				);
 		}
-=======
-		getChildren().add( pos++,Menu.getMenuSpacer( renderValidateBtn.getExpressionString() ) );
-		createViewerBeanMethod( pos++,ComponentMessages.EDIT_TOOLBAR_BTN_DUPLICATE.toString(), 
-				ComponentMessages.EDIT_TOOLBAR_BTN_DUPLICATE_TOOLTIP.toString(), 
-				"ext-xeo/images/menus/applications.gif", "duplicate", "tab" );
->>>>>>> .merge-right.r3071
 
-<<<<<<< .working
 		if( getRenderPropertiesBtn() ) {
 			getChildren().add( pos++,Menu.getMenuSpacer() );
 			createViewerBeanMethod( pos++,
@@ -367,146 +251,9 @@ public class EditToolBar extends ToolBar {
 				if( !staticMethods.contains( m.getName() ) ) {
 					createMenuMethod( pos++, m.getLabel(), m.getLabel(), m.getName() );
 				}
-=======
-		getChildren().add( pos++,Menu.getMenuSpacer( renderObjectMethodBtns.getExpressionString() ) );
-		boDefMethod[] methods = xeoObject.getToolbarMethods();
-		for( boDefMethod m : methods ) {
-			if( !staticMethods.contains( m.getName() ) ) {
-				ModelMethod m1 = createMenuMethod( pos++, m.getLabel(), m.getLabel(), m.getName() );
-				m1.setVisible( renderObjectMethodBtns.getExpressionString() );
-				
->>>>>>> .merge-right.r3071
 			}
 		}
-		
-		//Add the information Menus
-		if (	getRenderDependenciesBtn()  
-			|| 	getRenderDependentsBtn() 
-			|| 	getRenderPropertiesBtn()
-			|| 	getRenderListVersionBtn()	)
-		{
-			getChildren().add(pos++,createInformationMenu());
-		}
-		
-		//Add the Export Menus
-		if (	getRenderExcelBtn() 
-			||	getRenderPdfBtn()
-			|| 	getRenderHTMLBtn()
-		)
-		{	
-			getChildren().add( pos++, Menu.getMenuSpacer() );	
-			getChildren().add( pos++,createExportMenu());
-		}
-		
 		super.initComponent();
-	}
-	
-	
-	/**
-	 * 
-	 * Creates a menu with the information options
-	 * (dependents, dependencies, properties and versioning)
-	 * 
-	 * @return A menu with the information options
-	 */
-	private Menu createInformationMenu()
-	{
-		Menu informationGroup = new Menu();
-		informationGroup.setIcon("ext-xeo/images/menus/information.gif");
-		informationGroup.setToolTip(XEOComponentMessages.EDITTB_INFORMATION_TTIP.toString());
-		
-		//Only show if all are enabled
-		if (getRenderDependenciesBtn() && getRenderDependentsBtn() && getRenderPropertiesBtn() )
-		{
-			Menu propertiesMenu = new Menu();
-			propertiesMenu.setText(XEOViewersMessages.LBL_PROPERTIES.toString());
-			propertiesMenu.setServerAction("#{viewBean.showProperties}");
-			propertiesMenu.setTarget("window");
-			informationGroup.getChildren().add(propertiesMenu);
-			
-			Menu dependenciesMenu = new Menu();
-			dependenciesMenu.setText(XEOViewersMessages.LBL_DEPENDENCIES.toString());
-			dependenciesMenu.setServerAction("#{viewBean.showDependencies}");
-			dependenciesMenu.setTarget("window");
-			informationGroup.getChildren().add(dependenciesMenu);
-			
-			Menu dependents = new Menu();
-			dependents.setText(XEOViewersMessages.LBL_DEPENDENTS.toString());
-			dependents.setServerAction("#{viewBean.showDependents}");
-			dependents.setTarget("window");
-			informationGroup.getChildren().add(dependents);
-		}
-		
-		if (getRenderListVersionBtn() && getTargetObject().getVersioning())
-		{
-			Menu versioningMenu = new Menu();
-			versioningMenu.setText(XEOComponentMessages.EDITTB_LIST_VERSIONS_TTIP.toString());
-			versioningMenu.setServerAction("#{viewBean.listVersions}");
-			versioningMenu.setTarget("window");
-			informationGroup.getChildren().add(versioningMenu);
-		}
-		
-		//if (getTargetObject().isCheckSecurity())
-		//{
-			Menu oplMenu = new Menu();
-			oplMenu.setText("OPL - Security");
-			oplMenu.setServerAction("#{viewBean.showOPL}");
-			oplMenu.setTarget("window");
-			informationGroup.getChildren().add(oplMenu);
-		//}
-		
-		
-		
-		return informationGroup;
-	}
-	
-	/**
-	 * 
-	 * Creates the Export Menu with all options for export (HTML, PDF, Excel)
-	 * 
-	 * @return A Menu item with all export options
-	 */
-	private Menu createExportMenu()
-	{
-		Menu exportGroup = new Menu();
-		exportGroup.setIcon("ext-xeo/images/menus/export-group.gif");
-		exportGroup.setToolTip(XEOComponentMessages.EDITTB_EXPORT_TTIP.toString());
-		
-		if (getRenderExcelBtn())
-		{
-			Menu exportExcelMenu = new Menu();
-			exportExcelMenu.setText(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_EXCEL_TOOLTIP.toString());
-			exportExcelMenu.setToolTip(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_EXCEL_TOOLTIP.toString());
-			exportExcelMenu.setIcon("ext-xeo/images/menus/exportar-excel.gif");
-			exportExcelMenu.setServerAction("#{viewBean.exportExcel}");
-			exportExcelMenu.setTarget("download");
-			exportGroup.getChildren().add(exportExcelMenu);
-		}
-		
-		if (getRenderHTMLBtn())
-		{
-			Menu exportHTMLMenu = new Menu();
-			exportHTMLMenu.setText(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_HTML.toString());
-			exportHTMLMenu.setIcon("ext-xeo/images/menus/exportar-html.gif");
-			exportHTMLMenu.setToolTip(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_HTML_TOOLTIP.toString());
-			exportHTMLMenu.setServerAction("#{viewBean.exportHTML}");
-			String parameters = "{width:700, height:550, title:''}";
-			exportHTMLMenu.setTarget("window:" + parameters);
-			exportGroup.getChildren().add(exportHTMLMenu);
-		}
-		
-		if (getRenderPdfBtn())
-		{
-			Menu exportPDFMenu = new Menu();
-			exportPDFMenu.setText(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_PDF_TOOLTIP.toString());
-			exportPDFMenu.setIcon("ext-xeo/images/menus/exportar-pdf.gif");
-			exportPDFMenu.setToolTip(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_PDF_TOOLTIP.toString());
-			exportPDFMenu.setServerAction("#{viewBean.exportPDF}");
-			exportPDFMenu.setTarget("download");
-			exportGroup.getChildren().add(exportPDFMenu);
-		}
-		
-		return exportGroup;
 	}
 	
 	private ViewerMethod createViewerBeanMethod( int pos, String label, String toolTip, String icon, String methodName, String target ) {
@@ -609,7 +356,6 @@ public class EditToolBar extends ToolBar {
 			getChildren().add( Menu.getMenuSpacer() );
 		}
 		
-<<<<<<< .working
 		if( getRenderObjectMethodBtns() ) {
 			boDefMethod[] methods = xeoObject.getToolbarMethods();
 			for( boDefMethod m : methods ) {
@@ -619,28 +365,6 @@ public class EditToolBar extends ToolBar {
 			}
 		}
 		super.initComponent();
-=======
-		if( "duplicate".equals( vm.getTargetMethod() ) )
-			return getRenderCloneBtn();
-		
-		if( "showProperties".equals( vm.getTargetMethod() ) )
-			return getRenderPropertiesBtn();
-		
-		if( "exportHTML".equals( vm.getTargetMethod() ) )
-			return getRenderHTMLBtn();
-		
-		if( "exportPDF".equals( vm.getTargetMethod() ) )
-			return getRenderPdfBtn();
-		
-		if( "exportExcel".equals( vm.getTargetMethod() ) )
-			return getRenderExcelBtn();
-		
-		boDefMethod[] methods = getTargetObject().getToolbarMethods();
-		if( Arrays.asList( methods ).indexOf( vm.getTargetMethod() ) > -1 )
-			return getRenderObjectMethodBtns();
-			
-		return true;
->>>>>>> .merge-right.r3071
 	}
 	
 	private ViewerMethod createNonOrphanViewerBeanMethod( String label, String toolTip, String icon, String methodName, String target ) {
