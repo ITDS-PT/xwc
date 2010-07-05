@@ -8,8 +8,9 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 public class XUIStateProperty<V> extends XUIBaseProperty<V> {
     
     private boolean bWasChanged;
-    private Object  lastEvalValue;
+   	private Object  lastEvalValue;
     private boolean lastEvalValueWasSet;
+    private Object  savedValue;
     
     public XUIStateProperty( String sPropertyName, 
                             XUIComponentBase oComponent ) {
@@ -39,52 +40,9 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
     @SuppressWarnings("unchecked")
 	public Object saveState() {
         Object oValue = getValue();
-        if( oValue instanceof ValueExpression ) {
-            try {
-	        	ValueExpression oValExpr = (ValueExpression)oValue;
-	            if( oValExpr != null )
-	            {
-	            	if( !lastEvalValueWasSet ) {
-		                if ( oValExpr.isLiteralText() ) {
-		                    
-		                    String sLiteralText = oValExpr.getExpressionString();
-		                    if( oValExpr.getExpectedType() == String.class ) {
-		                    	lastEvalValue = (V)sLiteralText;
-		                    }
-		                    else if( oValExpr.getExpectedType() == Double.class ) {
-		                    	lastEvalValue = (V)Double.valueOf( sLiteralText );
-		                    }
-		                    else if( oValExpr.getExpectedType() == Integer.class ) {
-		                    	lastEvalValue = (V)Integer.valueOf( sLiteralText );
-		                    }
-		                    else if( oValExpr.getExpectedType() == Long.class ) {
-		                    	lastEvalValue = (V)Long.valueOf( sLiteralText );
-		                    }
-		                    else if( oValExpr.getExpectedType() == Boolean.class ) {
-		                    	lastEvalValue = (V)Boolean.valueOf( sLiteralText );
-		                    }
-		                    else if( oValExpr.getExpectedType() == Byte.class ) {
-		                    	lastEvalValue = (V)Byte.valueOf( sLiteralText );
-		                    } else {
-		                    	throw new RuntimeException( "Cannot conver expression text ["+sLiteralText+"] in " + oValExpr.getExpectedType().getName() );
-		                    }
-		                }
-		                else {
-		                	lastEvalValue = (V)oValExpr.getValue( getComponent().getELContext() );
-		                }
-	            	}
-	            	
-	            }
-            }
-            catch( Exception e )
-            {
-                System.err.println( "Saving evaluated value on [" +
-                			this.getComponent().getId()+"].["+
-                			this.getComponent().getClass().getName()+"].[" + 
-                			this.getName() + "]:" + e.getClass().getName() + 
-                			" - " + e.getMessage() 
-                );
-            }
+        
+        if( this instanceof XUIStateBindProperty ) {
+        	lastEvalValue = ((XUIStateBindProperty)this).evaluateValue( (ValueExpression)oValue );
         }
         else {
         	lastEvalValue = oValue;
@@ -141,30 +99,52 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
     }
 
     public boolean wasChanged() {
-        
-        Object oValue = super.getValue();
-        
-        if( this.bWasChanged ) {
+
+    	if( this.isDefaultValue() ) {
+    		return false;
+    	}
+    	
+    	if( this.bWasChanged ) {
         	return true;
         }
         
-        if( oValue instanceof ValueExpression ) {
-            try {
-                
-                Object oNewValue = ((ValueExpression)oValue).getValue( XUIRequestContext.getCurrentContext().getELContext() );
-                if( lastEvalValue == null ) {
-                	return false;
-                }
-                return !compareValues( lastEvalValue, oNewValue );
-
-            }
-            catch( Exception e )
-            {}
+        Object oNewValue = super.getValue();
+        if( this instanceof XUIStateBindProperty<?> ) {
+        	oNewValue = ((XUIStateBindProperty<?>)this).evaluateValue( (ValueExpression)oNewValue );
         }
-        return this.bWasChanged;
+        
+        return !compareValues( this.savedValue , oNewValue );
+        
+//        if( oValue instanceof ValueExpression ) {
+//            try {
+//                
+//                Object oNewValue = ((ValueExpression)oValue).getValue( XUIRequestContext.getCurrentContext().getELContext() );
+////                if( lastEvalValue == null ) {
+////                	return false;
+////                }
+//                return !compareValues( lastEvalValue, oNewValue );
+//
+//            }
+//            catch( Exception e )
+//            {}
+//        }
+//        return this.bWasChanged;
+        
     }
     
     public void setChanged( boolean changed ) {
     	this.bWasChanged = changed;
     }
+    
+    public V getSavedValue() {
+        Object oNewValue = super.getValue();
+        if( this instanceof XUIStateBindProperty<?> ) {
+        	oNewValue = ((XUIStateBindProperty<?>)this).evaluateValue( (ValueExpression)oNewValue );
+        }
+        return (V)oNewValue;
+    	
+    }
+    
 }
+
+

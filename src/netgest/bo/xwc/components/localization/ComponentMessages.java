@@ -61,6 +61,44 @@ public interface ComponentMessages {
 	public static final XUILocalizedMessage XEO_ERROR_TITLE = 
 		new XUILocalizedMessage( ComponentMessages.class.getName(), "XEO_ERROR_TITLE" );
 	
+	//EditToolbar Messages 
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_SAVE = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_SAVE");
 	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_SAVE_TOOLTIP = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_SAVE_TOOLTIP");
 	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_SAVE_AND_CLOSE_TOOLTIP = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_SAVE_AND_CLOSE_TOOLTIP");
+	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_SAVE_AND_NEW_TOOLTIP = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_SAVE_AND_NEW_TOOLTIP");
+	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_REMOVE_TOOLTIP = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_REMOVE_TOOLTIP");
+	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_DUPLICATE = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_DUPLICATE");
+	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_DUPLICATE_TOOLTIP = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_DUPLICATE_TOOLTIP");
+	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_VALIDATE_TOOLTIP = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_VALIDATE_TOOLTIP");
+	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_PROPERTIES_TOOLTIP = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_PROPERTIES_TOOLTIP");
+	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_EXPORT_HTML_TOOLTIP = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_EXPORT_HTML_TOOLTIP");
+	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_EXPORT_HTML = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_EXPORT_HTML");
+	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_EXPORT_PDF_TOOLTIP = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_EXPORT_PDF_TOOLTIP");
+	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_EXPORT_EXCEL_TOOLTIP = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_EXPORT_EXCEL_TOOLTIP");
+		
 }

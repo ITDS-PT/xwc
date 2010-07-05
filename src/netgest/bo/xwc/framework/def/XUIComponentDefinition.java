@@ -46,6 +46,8 @@ public class XUIComponentDefinition
         return description;
     }
     
+    
+    
     public void addProperty( String name, String type )
     {
         oProperties.put( name, type );

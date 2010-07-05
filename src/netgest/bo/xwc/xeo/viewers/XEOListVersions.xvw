@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xvw:root 
+	xmlns:xvw="http://www.netgest.net/xeo/xvw"
+	xmlns:xeo="http://www.netgest.net/xeo/xeo"
+>
+    <xvw:viewer 
+	    localizationClasses='netgest.bo.xwc.xeo.localization.XEOViewersMessages' 
+	    beanClass='netgest.bo.xwc.xeo.beans.XEOVersionListBean' 
+	    beanId='viewBean'
+  	>
+        <xeo:formEdit id='listVersionForm' renderToolBar="false">
+        	<script>
+        		<![CDATA[
+        		
+        		/*
+        		
+        		Checks the number of options selected and activates the buttons accordingly
+        		One check box selected activates the button to compare with the current version
+        		Two checkboxes selected activates the button to compare the two versions
+        		
+        		Zero checkboxes or more than tow checkboxes selected disables the buttons
+        		
+        		@param field The radio list to verify
+        		
+        		*/
+        		function checkButtons(field)
+        		{
+        			var counter = 0;
+        			var buttonActual = document.getElementById('compareCurrent');
+        			for (i = 0; i < field.length; i++)
+						if (field[i].checked)
+							counter++;
+							
+					if (counter == 1)
+					{
+						buttonActual.disabled = false;
+					}
+					
+				}
+				
+				/*
+				
+				Opens a Window with the comparison of the two versions of the object
+				
+				@param url 			The URL to open the window
+				@param bouiCurrent 	The boui of the first object
+				@param bouiOther 	The boui of the second object	
+				
+				*/
+				function openDiffWindow(url, field, title)
+				{
+					
+					var counter = 0;
+					var version = 0;
+					for (i = 0; i < field.length; i++)
+					{
+						if (field[i].checked)
+						{
+							version = field[i].value;
+						}
+					}
+						
+					var urlToLoad = url;
+					urlToLoad = urlToLoad + '&version=' + version 
+					
+					//This trick with new "window.parent" is because the window
+					//we're opening is inside an iframe. Without this, the opened
+					//would be stuck inside the first one
+					var winWithDifferences = new window.parent.Ext.Window({
+                	 title: title
+                	,width       : 700
+                	,autoScroll : true
+                	,height      : 300
+                	,autoLoad       : urlToLoad
+                	});
+                	
+                	winWithDifferences.show();
+            		
+				}
+				
+				/*
+				
+				Opens a window with the specified URL
+				
+				@param url The URL of the data
+				
+				*/
+				
+				function openLogWindow(url,title)
+				{
+					var urlToLoad = url;
+					urlToLoad = urlToLoad 
+					
+					//This trick with new "window.parent" is because the window
+					//we're opening is inside an iframe. Without this, the opened
+					//would be stuck inside the first one
+					var winWithDifferences = new window.parent.Ext.Window({
+                	 title: title
+                	,width       : 700
+                	,id			: 'logWindow'
+                	,autoScroll : true
+                	,height      : 300
+                	,autoLoad       : urlToLoad
+                	});
+                	
+                	winWithDifferences.show();
+				}
+        		
+        		]]>
+        	</script>
+        	<style>
+        	
+        	a.logs
+        	{
+        		text-decoration: underline;
+        		color: blue;
+        		cursor:pointer;
+        	}	
+        		
+        	  div.body
+        	  {
+        	  	background-color:white;
+        	  }
+        		
+			  table.relations 
+			  {
+				  margin: 1em 1em 1em 2em;
+				  border-collapse: collapse;
+				  width:90%;
+			  }
+			
+			
+			table.relations td 
+			{
+			    border-left: 1px solid #C1DAD7;
+				border-right: 1px solid #C1DAD7;
+				border-bottom: 1px solid #C1DAD7;
+				background: #fff;
+				padding: 6px 6px 6px 12px;
+				color: #6D929B;
+			}
+			
+			table.relations th 
+			{
+				font: bold 10px "Trebuchet MS", Verdana, Arial, Helvetica,
+				sans-serif;
+				color: #003399;
+				border-right: 1px solid #C1DAD7;
+				border-left: 1px solid #C1DAD7;
+				border-bottom: 1px solid #C1DAD7;
+				border-top: 1px solid #C1DAD7;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+				text-align: left;
+				padding: 3px 3px 3px 6px;
+				background: #B0C4DE;
+			}
+		</style>	
+        	<xvw:window width='600' height='300'>
+	            <xvw:section label='@{LBL_PROPERTIES}'>
+					<xvw:outputHtml valueExpression='#{viewBean.listOfVersions}'/>
+				</xvw:section>
+			</xvw:window>
+        </xeo:formEdit>
+    </xvw:viewer>
+</xvw:root>

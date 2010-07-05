@@ -41,6 +41,15 @@ public interface XEOComponentMessages {
 	
 	public static final XUILocalizedMessage EDITTB_VALIDATE_TTIP = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_VALIDATE_TTIP" );
+	
+	public static final XUILocalizedMessage EDITTB_LIST_VERSIONS_TTIP = 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_LIST_VERSIONS_TTIP" );
+	
+	public static final XUILocalizedMessage EDITTB_INFORMATION_TTIP = 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_INFORMATION_TTIP" );
+	
+	public static final XUILocalizedMessage EDITTB_EXPORT_TTIP = 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_EXPORT_TTIP" );
 
 	public static final XUILocalizedMessage EDITTB_VIEW_PROPERTIES_TTIP = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_VIEW_PROPERTIES_TTIP" );

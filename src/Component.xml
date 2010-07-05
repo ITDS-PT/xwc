@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form id="v17_j_id0">
+
+    <toolbar visible="true" disabled="false" id="v17_j_id0:v17_j_id0_editToolBar">
+        <menu expanded="false" visible="true" disabled="false"
+            icon="ext-xeo/images/menus/gravar.gif" tooltip="Guardar" text="Guardar"
+            id="v17_j_id0:v17_j_id0_editToolBar_save"/>
+        <menu expanded="false" visible="true" disabled="false" text="-" id="v17_j_id0:v17_j_id60"/>
+        <menu expanded="false" visible="true" disabled="false"
+            icon="ext-xeo/images/menus/gravar_e_sair.gif" tooltip="Guardar e fechar"
+            id="v17_j_id0:v17_j_id0_editToolBar_saveAndClose"/>
+        <menu expanded="false" visible="true" disabled="false" text="-" id="v17_j_id0:v17_j_id61"/>
+        <menu expanded="false" visible="true" disabled="false"
+            icon="ext-xeo/images/menus/gravar_e_criar_novo.gif" tooltip="Guardar e Criar Novo"
+            id="v17_j_id0:v17_j_id0_editToolBar_saveAndCreateNew"/>
+        <menu expanded="false" visible="true" disabled="false" text="-" id="v17_j_id0:v17_j_id62"/>
+        <menu expanded="false" visible="true" disabled="false"
+            icon="ext-xeo/images/menus/remover.gif" tooltip="Remover"
+            id="v17_j_id0:v17_j_id0_editToolBar_remove"/>
+        <menu expanded="false" visible="true" disabled="false" text="-" id="v17_j_id0:v17_j_id63"/>
+        <menu expanded="false" visible="true" disabled="false"
+            icon="ext-xeo/images/menus/confirmar.gif"
+            tooltip="Verificar se existem erros de &lt;br/&gt;preenchimento"
+            id="v17_j_id0:v17_j_id0_editToolBar_processValidate"/>
+        <menu expanded="false" visible="true" disabled="false" text="-" id="v17_j_id0:v17_j_id64"/>
+        <menu expanded="false" visible="false" disabled="false" target="tab"
+            icon="ext-xeo/images/menus/applications.gif" tooltip="Duplicar com os dados actuais"
+            text="Duplicar" id="v17_j_id0:v17_j_id0_editToolBar_duplicate"/>
+        <menu expanded="false" visible="false" disabled="false" text="-" id="v17_j_id0:v17_j_id65"/>
+        <menu expanded="false" visible="true" disabled="false" target="self"
+            icon="extjs/resources/images/default/tree/leaf.gif" tooltip="Propriedades"
+            id="v17_j_id0:v17_j_id0_editToolBar_showProperties"/>
+        <menu expanded="false" visible="true" disabled="false" text="-" id="v17_j_id0:v17_j_id66"/>
+    </toolbar>
+    <errormessages id="v17_j_id0:v17_j_id0_viewerMsgs"/>
+    <panel layout="" id="v17_j_id0:v17_j_id1">
+        <tabs height="150px" layout="fit-parent" activetab="v17_j_id3" id="v17_j_id0:v17_j_id2">
+            <tab visible="true" label="Geral" id="v17_j_id0:v17_j_id3">
+                <section label="Bora Lá" id="v17_j_id0:v17_j_id4">
+                    <rows labelwidth="100" labelposition="left" columnwidths="auto" columns="4"
+                        height="99.9%" width="99.9%" cellpadding="5" cellspacing="5"
+                        id="v17_j_id0:v17_j_id5">
+                        <row id="v17_j_id0:v17_j_id5:v17_j_id6">
+                            <cell id="v17_j_id0:v17_j_id5:v17_j_id7">
+                                <attributelabel name="v17_j_id0:v17_j_id5:v17_j_id8_l"
+                                    recommended="false" modelrequired="false" visible="true"
+                                    text="Amigo" id="v17_j_id0:v17_j_id5:v17_j_id8_l"/>
+                                <attributeboolean name="v17_j_id0:v17_j_id5:v17_j_id8_i"
+                                    displayvalue="Yes" enablecardidlink="false" label="Amigo"
+                                    recommended="false" modelrequired="false" visible="true"
+                                    disabled="false" groupnumber="false" mindecimalprecision="0"
+                                    decimalprecision="0" maxlength="10" height="100"
+                                    dependences="[Ljava.lang.String;@623e2b64"
+                                    onchangesubmit="false" isloveditable="false"
+                                    id="v17_j_id0:v17_j_id5:v17_j_id8_i">1</attributeboolean>
+                            </cell>
+                        </row>
+                        <row id="v17_j_id0:v17_j_id5:v17_j_id9">
+                            <cell id="v17_j_id0:v17_j_id5:v17_j_id10">
+                                <attributelabel name="v17_j_id0:v17_j_id5:v17_j_id11_l"
+                                    recommended="false" modelrequired="false" visible="true"
+                                    text="Em que data ficou amigo"
+                                    id="v17_j_id0:v17_j_id5:v17_j_id11_l"/>
+                                <attributedate name="v17_j_id0:v17_j_id5:v17_j_id11_i"
+                                    displayvalue="08/04/2010" enablecardidlink="false"
+                                    label="Em que data ficou amigo" recommended="false"
+                                    modelrequired="false" visible="true" disabled="false"
+                                    groupnumber="false" mindecimalprecision="0" decimalprecision="0"
+                                    maxlength="10" height="100"
+                                    dependences="[Ljava.lang.String;@29444c60"
+                                    onchangesubmit="false" isloveditable="false"
+                                    id="v17_j_id0:v17_j_id5:v17_j_id11_i">2010-04-08
+                                    00:00:00.0</attributedate>
+                            </cell>
+                            <cell id="v17_j_id0:v17_j_id5:v17_j_id10">
+                                <attributelabel name="v17_j_id0:v17_j_id5:v17_j_id11_l"
+                                    recommended="false" modelrequired="false" visible="true"
+                                    text="Em que data ficou amigo"
+                                    id="v17_j_id0:v17_j_id5:v17_j_id11_l"/>
+                                <attributedate name="v17_j_id0:v17_j_id5:v17_j_id11_i"
+                                    displayvalue="08/04/2010" enablecardidlink="false"
+                                    label="Em que data ficou amigo" recommended="false"
+                                    modelrequired="false" visible="true" disabled="false"
+                                    groupnumber="false" mindecimalprecision="0" decimalprecision="0"
+                                    maxlength="10" height="100"
+                                    dependences="[Ljava.lang.String;@29444c60"
+                                    onchangesubmit="false" isloveditable="false"
+                                    id="v17_j_id0:v17_j_id5:v17_j_id11_i">2010-04-08
+                                    00:00:00.0</attributedate>
+                            </cell>
+                        </row>
+                        <row id="v17_j_id0:v17_j_id5:v17_j_id12">
+                            <cell id="v17_j_id0:v17_j_id5:v17_j_id13">
+                                <attributelabel name="v17_j_id0:v17_j_id5:v17_j_id14_l"
+                                    recommended="false" modelrequired="false" visible="true"
+                                    text="De One" id="v17_j_id0:v17_j_id5:v17_j_id14_l"/>
+                                <attributelov name="v17_j_id0:v17_j_id5:v17_j_id14_i"
+                                    displayvalue="Teste" enablecardidlink="false" label="De One"
+                                    recommended="false" modelrequired="false" visible="true"
+                                    disabled="false" groupnumber="false" mindecimalprecision="0"
+                                    decimalprecision="0" maxlength="10" height="100"
+                                    dependences="[Ljava.lang.String;@4b9658db"
+                                    onchangesubmit="false" isloveditable="false"
+                                    id="v17_j_id0:v17_j_id5:v17_j_id14_i">Teste</attributelov>
+                            </cell>
+                        </row>
+                        <row id="v17_j_id0:v17_j_id5:v17_j_id15">
+                            <cell id="v17_j_id0:v17_j_id5:v17_j_id16">
+                                <attributelabel name="v17_j_id0:v17_j_id5:v17_j_id17_l"
+                                    recommended="false" modelrequired="false" visible="true"
+                                    text="Descrição" id="v17_j_id0:v17_j_id5:v17_j_id17_l"/>
+                                <attributepassword name="v17_j_id0:v17_j_id5:v17_j_id17_i"
+                                    displayvalue="Teste de descição para valore sinteresasdna jad"
+                                    enablecardidlink="false" label="Descrição" recommended="false"
+                                    modelrequired="false" visible="true" disabled="false"
+                                    groupnumber="false" mindecimalprecision="0" decimalprecision="0"
+                                    maxlength="2147483647" height="100"
+                                    dependences="[Ljava.lang.String;@7ba3b8a1"
+                                    onchangesubmit="false" isloveditable="false"
+                                    id="v17_j_id0:v17_j_id5:v17_j_id17_i">Teste de descição para
+                                    valore sinteresasdna jad</attributepassword>
+                            </cell>
+                        </row>
+                        <row id="v17_j_id0:v17_j_id5:v17_j_id18">
+                            <cell id="v17_j_id0:v17_j_id5:v17_j_id19">
+                                <attributelabel name="v17_j_id0:v17_j_id5:v17_j_id20_l"
+                                    recommended="false" modelrequired="false" visible="true"
+                                    text="Idade" id="v17_j_id0:v17_j_id5:v17_j_id20_l"/>
+                                <attributenumber name="v17_j_id0:v17_j_id5:v17_j_id20_i"
+                                    displayvalue="23" enablecardidlink="false" label="Idade"
+                                    recommended="false" modelrequired="false" visible="true"
+                                    disabled="false" groupnumber="false" mindecimalprecision="0"
+                                    decimalprecision="0" maxlength="10" height="100"
+                                    dependences="[Ljava.lang.String;@39ae9171"
+                                    onchangesubmit="false" isloveditable="false"
+                                    id="v17_j_id0:v17_j_id5:v17_j_id20_i">23</attributenumber>
+                            </cell>
+                        </row>
+                        <row id="v17_j_id0:v17_j_id5:v17_j_id21">
+                            <cell id="v17_j_id0:v17_j_id5:v17_j_id22">
+                                <attributelabel name="v17_j_id0:v17_j_id5:v17_j_id23_l"
+                                    recommended="false" modelrequired="false" visible="true"
+                                    text="Ficheiro" id="v17_j_id0:v17_j_id5:v17_j_id23_l"/>
+                                <attributefile name="v17_j_id0:v17_j_id5:v17_j_id23_i"
+                                    displayvalue="BarChart.png" enablecardidlink="false"
+                                    label="Ficheiro" recommended="false" modelrequired="false"
+                                    visible="true" disabled="false" groupnumber="false"
+                                    mindecimalprecision="0" decimalprecision="0" maxlength="10"
+                                    height="100" dependences="[Ljava.lang.String;@73ceaf4c"
+                                    onchangesubmit="false" isloveditable="false"
+                                    id="v17_j_id0:v17_j_id5:v17_j_id23_i"
+                                    >//basic/1/BarChart.png</attributefile>
+                            </cell>
+                        </row>
+                        <row id="v17_j_id0:v17_j_id5:v17_j_id24">
+                            <cell id="v17_j_id0:v17_j_id5:v17_j_id25">
+                                <attributelabel name="v17_j_id0:v17_j_id5:v17_j_id26_l"
+                                    recommended="false" modelrequired="false" visible="true"
+                                    text="Dinheiro" id="v17_j_id0:v17_j_id5:v17_j_id26_l"/>
+                                <attributenumber name="v17_j_id0:v17_j_id5:v17_j_id26_i"
+                                    displayvalue="12344554" enablecardidlink="false"
+                                    label="Dinheiro" recommended="false" modelrequired="false"
+                                    visible="true" disabled="false" groupnumber="false"
+                                    mindecimalprecision="0" decimalprecision="0" maxlength="10"
+                                    height="100" dependences="[Ljava.lang.String;@656e1fa"
+                                    onchangesubmit="false" isloveditable="false"
+                                    id="v17_j_id0:v17_j_id5:v17_j_id26_i">12344554</attributenumber>
+                            </cell>
+                        </row>
+                        <row id="v17_j_id0:v17_j_id5:v17_j_id27">
+                            <cell id="v17_j_id0:v17_j_id5:v17_j_id28">
+                                <attributelabel name="v17_j_id0:v17_j_id5:v17_j_id29_l"
+                                    recommended="false" modelrequired="false" visible="true"
+                                    text="Pai" id="v17_j_id0:v17_j_id5:v17_j_id29_l"/>
+                                <attributenumberlookup name="v17_j_id0:v17_j_id5:v17_j_id29_i"
+                                    displayvalue="Default superuser ,SYSUSER"
+                                    enablecardidlink="false" label="Pai" recommended="false"
+                                    modelrequired="false" visible="true" disabled="false"
+                                    groupnumber="false" mindecimalprecision="0" decimalprecision="0"
+                                    maxlength="10" height="100"
+                                    dependences="[Ljava.lang.String;@320de756"
+                                    onchangesubmit="false" isloveditable="false"
+                                    id="v17_j_id0:v17_j_id5:v17_j_id29_i"
+                                    >11059</attributenumberlookup>
+                            </cell>
+                        </row>
+                    </rows>
+                     <gridpanel name="v24_j_id0:v24_j_id1" enableheadermenu="true" enablecolumnresize="true"
+                        enablecolumnmove="true" enablecolumnhide="true" enablecolumnfilter="true"
+                        enablecolumnsort="true" enablegroupby="false" minheight="60" autoheight="false" height="250"
+                        layout="fit-parent" rowclicktarget="" rowdblclicktarget="tab" forcecolumnsfitwidth="true"
+                        rowselectionmode="CELL" id="v24_j_id0:v24_j_id1">
+                        <gridheaderrow>
+                            <gridheadercolumn>Amigo</gridheadercolumn>
+                            <gridheadercolumn>Inimigo</gridheadercolumn>
+                            <gridheadercolumn>Em que data ficou amigo</gridheadercolumn>
+                            <gridheadercolumn>De One</gridheadercolumn>
+                            <gridheadercolumn>Descrição</gridheadercolumn>
+                            <gridheadercolumn>Idade</gridheadercolumn>
+                            <gridheadercolumn>Ficheiro</gridheadercolumn>
+                            <gridheadercolumn>Dinheiro</gridheadercolumn>
+                        </gridheaderrow>
+                        <gridrow>
+                            <gridcolumn displayvalue="Yes">Yes</gridcolumn>
+                            <gridcolumn/>
+                            <gridcolumn displayvalue="08/04/2010">08/04/2010</gridcolumn>
+                            <gridcolumn displayvalue="Teste">Teste</gridcolumn>
+                            <gridcolumn displayvalue="Teste de descição para valore sinteresasdna jad">Teste de
+                                descição para valore sinteresasdna jad</gridcolumn>
+                            <gridcolumn displayvalue="23">23</gridcolumn>
+                            <gridcolumn displayvalue="BarChart.png">BarChart.png</gridcolumn>
+                            <gridcolumn displayvalue="12344554">12344554</gridcolumn>
+                        </gridrow>
+                        <toolbar visible="true" disabled="false" id="v24_j_id0:v24_j_id1_listToolBar">
+                            <menu expanded="false" visible="true" disabled="false" text="-"
+                                id="v24_j_id0:v24_j_id11"/>
+                            <menu expanded="false" visible="true" disabled="false" icon="resources/Export/ico16.gif"
+                                tooltip="New Modelo de teste para exportação" text="New "
+                                id="v24_j_id0:v24_j_id1_listToolBar_new_Export"/>
+                            <menu expanded="false" visible="true" disabled="false" text="-"
+                                id="v24_j_id0:v24_j_id12"/>
+                        </toolbar>
+                    </gridpanel>   
+                </section>
+                <tabs height="150px" layout="fit-parent" activetab="v17_j_id34"
+                    id="v17_j_id0:v17_j_id33">
+                    <tab visible="true" label="Mockup1" id="v17_j_id0:v17_j_id34">
+                        <rows labelwidth="100" labelposition="left" columnwidths="auto" columns="2"
+                            height="99.9%" width="99.9%" cellpadding="5" cellspacing="5"
+                            id="v17_j_id0:v17_j_id35">
+                            <row id="v17_j_id0:v17_j_id35:v17_j_id36">
+                                <cell id="v17_j_id0:v17_j_id35:v17_j_id37">
+                                    <attributelabel name="v17_j_id0:v17_j_id35:v17_j_id38_l"
+                                        recommended="false" modelrequired="false" visible="true"
+                                        text="De One" id="v17_j_id0:v17_j_id35:v17_j_id38_l"/>
+                                    <attributelov name="v17_j_id0:v17_j_id35:v17_j_id38_i"
+                                        displayvalue="Teste" enablecardidlink="false" label="De One"
+                                        recommended="false" modelrequired="false" visible="true"
+                                        disabled="false" groupnumber="false" mindecimalprecision="0"
+                                        decimalprecision="0" maxlength="10" height="100"
+                                        dependences="[Ljava.lang.String;@2eced8c6"
+                                        onchangesubmit="false" isloveditable="false"
+                                        id="v17_j_id0:v17_j_id35:v17_j_id38_i">Teste</attributelov>
+                                </cell>
+                            </row>
+                            <row id="v17_j_id0:v17_j_id35:v17_j_id39">
+                                <cell id="v17_j_id0:v17_j_id35:v17_j_id40">
+                                    <attributelabel name="v17_j_id0:v17_j_id35:v17_j_id41_l"
+                                        recommended="false" modelrequired="false" visible="true"
+                                        text="Descrição" id="v17_j_id0:v17_j_id35:v17_j_id41_l"/>
+                                    <attributetextarea name="v17_j_id0:v17_j_id35:v17_j_id41_i"
+                                        displayvalue="Teste de descição para valore sinteresasdna jad"
+                                        enablecardidlink="false" label="Descrição"
+                                        recommended="false" modelrequired="false" visible="true"
+                                        disabled="false" groupnumber="false" mindecimalprecision="0"
+                                        decimalprecision="0" maxlength="2147483647" height="100"
+                                        dependences="[Ljava.lang.String;@df9c72c"
+                                        onchangesubmit="false" isloveditable="false"
+                                        id="v17_j_id0:v17_j_id35:v17_j_id41_i">Teste de descição
+                                        para valore sinteresasdna jad</attributetextarea>
+                                </cell>
+                            </row>
+                        </rows>
+                        <!--<gridpanel name="v24_j_id0:v24_j_id1" enableheadermenu="true" enablecolumnresize="true"
+                            enablecolumnmove="true" enablecolumnhide="true" enablecolumnfilter="true"
+                            enablecolumnsort="true" enablegroupby="false" minheight="60" autoheight="false" height="250"
+                            layout="fit-parent" rowclicktarget="" rowdblclicktarget="tab" forcecolumnsfitwidth="true"
+                            rowselectionmode="CELL" id="v24_j_id0:v24_j_id1">
+                            <gridheaderrow>
+                                <gridheadercolumn>Amigo</gridheadercolumn>
+                                <gridheadercolumn>Inimigo</gridheadercolumn>
+                                <gridheadercolumn>Em que data ficou amigo</gridheadercolumn>
+                                <gridheadercolumn>De One</gridheadercolumn>
+                                <gridheadercolumn>Descrição</gridheadercolumn>
+                                <gridheadercolumn>Idade</gridheadercolumn>
+                                <gridheadercolumn>Ficheiro</gridheadercolumn>
+                                <gridheadercolumn>Dinheiro</gridheadercolumn>
+                            </gridheaderrow>
+                            <gridrow>
+                                <gridcolumn displayvalue="Yes">Yes</gridcolumn>
+                                <gridcolumn/>
+                                <gridcolumn displayvalue="08/04/2010">08/04/2010</gridcolumn>
+                                <gridcolumn displayvalue="Teste">Teste</gridcolumn>
+                                <gridcolumn displayvalue="Teste de descição para valore sinteresasdna jad">Teste de
+                                    descição para valore sinteresasdna jad</gridcolumn>
+                                <gridcolumn displayvalue="23">23</gridcolumn>
+                                <gridcolumn displayvalue="BarChart.png">BarChart.png</gridcolumn>
+                                <gridcolumn displayvalue="12344554">12344554</gridcolumn>
+                            </gridrow>
+                            <toolbar visible="true" disabled="false" id="v24_j_id0:v24_j_id1_listToolBar">
+                                <menu expanded="false" visible="true" disabled="false" text="-"
+                                    id="v24_j_id0:v24_j_id11"/>
+                                <menu expanded="false" visible="true" disabled="false" icon="resources/Export/ico16.gif"
+                                    tooltip="New Modelo de teste para exportação" text="New "
+                                    id="v24_j_id0:v24_j_id1_listToolBar_new_Export"/>
+                                <menu expanded="false" visible="true" disabled="false" text="-"
+                                    id="v24_j_id0:v24_j_id12"/>
+                            </toolbar>
+                            </gridpanel> --> 
+                    </tab>
+                    <tab visible="true" label="Tarzan" id="v17_j_id0:v17_j_id42">
+                        <rows labelwidth="100" labelposition="left" columnwidths="auto" columns="2"
+                            height="99.9%" width="99.9%" cellpadding="5" cellspacing="5"
+                            id="v17_j_id0:v17_j_id43">
+                            <row id="v17_j_id0:v17_j_id43:v17_j_id44">
+                                <cell id="v17_j_id0:v17_j_id43:v17_j_id45">
+                                    <attributelabel name="v17_j_id0:v17_j_id43:v17_j_id46_l"
+                                        recommended="false" modelrequired="false" visible="true"
+                                        text="Amigo" id="v17_j_id0:v17_j_id43:v17_j_id46_l"/>
+                                    <attributeboolean name="v17_j_id0:v17_j_id43:v17_j_id46_i"
+                                        displayvalue="Yes" enablecardidlink="false" label="Amigo"
+                                        recommended="false" modelrequired="false" visible="true"
+                                        disabled="false" groupnumber="false" mindecimalprecision="0"
+                                        decimalprecision="0" maxlength="10" height="100"
+                                        dependences="[Ljava.lang.String;@7fe31559"
+                                        onchangesubmit="false" isloveditable="false"
+                                        id="v17_j_id0:v17_j_id43:v17_j_id46_i">1</attributeboolean>
+                                </cell>
+                            </row>
+                            <row id="v17_j_id0:v17_j_id43:v17_j_id47">
+                                <cell id="v17_j_id0:v17_j_id43:v17_j_id48">
+                                    <attributelabel name="v17_j_id0:v17_j_id43:v17_j_id49_l"
+                                        recommended="false" modelrequired="false" visible="true"
+                                        text="Em que data ficou amigo"
+                                        id="v17_j_id0:v17_j_id43:v17_j_id49_l"/>
+                                    <attributedate name="v17_j_id0:v17_j_id43:v17_j_id49_i"
+                                        displayvalue="08/04/2010" enablecardidlink="false"
+                                        label="Em que data ficou amigo" recommended="false"
+                                        modelrequired="false" visible="true" disabled="false"
+                                        groupnumber="false" mindecimalprecision="0"
+                                        decimalprecision="0" maxlength="10" height="100"
+                                        dependences="[Ljava.lang.String;@158ec7a7"
+                                        onchangesubmit="false" isloveditable="false"
+                                        id="v17_j_id0:v17_j_id43:v17_j_id49_i">2010-04-08
+                                        00:00:00.0</attributedate>
+                                </cell>
+                            </row>
+                        </rows>
+                    </tab>
+                </tabs>
+            </tab>
+            <tab visible="true" label="Amigos" id="v17_j_id0:v17_j_id50">
+                <rows labelwidth="100" labelposition="left" columnwidths="auto" columns="2"
+                    height="99.9%" width="99.9%" cellpadding="5" cellspacing="5"
+                    id="v17_j_id0:v17_j_id51">
+                    <row id="v17_j_id0:v17_j_id51:v17_j_id52">
+                        <cell id="v17_j_id0:v17_j_id51:v17_j_id53">
+                            <attributelabel name="v17_j_id0:v17_j_id51:v17_j_id54_l"
+                                recommended="false" modelrequired="false" visible="true"
+                                text="Dinheiro" id="v17_j_id0:v17_j_id51:v17_j_id54_l"/>
+                            <attributenumber name="v17_j_id0:v17_j_id51:v17_j_id54_i"
+                                displayvalue="12344554" enablecardidlink="false" label="Dinheiro"
+                                recommended="false" modelrequired="false" visible="true"
+                                disabled="false" groupnumber="false" mindecimalprecision="0"
+                                decimalprecision="0" maxlength="10" height="100"
+                                dependences="[Ljava.lang.String;@50d5afff" onchangesubmit="false"
+                                isloveditable="false" id="v17_j_id0:v17_j_id51:v17_j_id54_i"
+                                >12344554</attributenumber>
+                        </cell>
+                    </row>
+                   <!-- <row id="v17_j_id0:v17_j_id51:v17_j_id55">
+                        <cell id="v17_j_id0:v17_j_id51:v17_j_id56">
+                             <gridpanel name="v17_j_id0:v17_j_id51:v17_j_id57"
+                                enableheadermenu="true" enablecolumnresize="true"
+                                enablecolumnmove="true" enablecolumnhide="true"
+                                enablecolumnfilter="true" enablecolumnsort="true"
+                                enablegroupby="false" minheight="60" autoheight="false" height="250"
+                                layout="fit-parent" rowclicktarget="" rowdblclicktarget="self"
+                                forcecolumnsfitwidth="true" rowselectionmode="MULTI_ROW"
+                                id="v17_j_id0:v17_j_id51:v17_j_id57">
+                                <toolbar visible="true" disabled="false"
+                                    id="v17_j_id0:v17_j_id51:v17_j_id57_bridgeToolbar">
+                                    <menu expanded="false" visible="true" disabled="false"
+                                        icon="resources/Ebo_Perf/ico16.gif"
+                                        tooltip="Add Funcionário" text="Add "
+                                        id="v17_j_id0:v17_j_id51:v17_j_id57_bridgeToolbar_add_Ebo_Perf"/>
+                                    <menu expanded="false" visible="true" disabled="false" text="-"
+                                        id="v17_j_id0:v17_j_id51:v17_j_id67"/>
+                                    <menu expanded="false" visible="true" disabled="false"
+                                        target="self" icon="ext-xeo/images/menus/remover-bridge.gif"
+                                        text="Remove"
+                                        id="v17_j_id0:v17_j_id51:v17_j_id57_bridgeToolbar_remove"/>
+                                    <menu expanded="false" visible="true" disabled="false" text="-"
+                                        id="v17_j_id0:v17_j_id51:v17_j_id68"/>
+                                    <menu expanded="false" visible="true" disabled="false"
+                                        icon="resources/Ebo_Perf/ico16.gif"
+                                        tooltip="New Funcionário" text="New "
+                                        id="v17_j_id0:v17_j_id51:v17_j_id57_bridgeToolbar_new_Ebo_Perf"/>
+                                    <menu expanded="false" visible="true" disabled="false" text="-"
+                                        id="v17_j_id0:v17_j_id51:v17_j_id69"/>
+                                </toolbar>
+                            </gridpanel>
+                        </cell>
+                    </row>-->
+                </rows>
+            </tab>
+        </tabs>
+    </panel>
+</form>

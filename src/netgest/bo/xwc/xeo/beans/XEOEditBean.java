@@ -1,5 +1,15 @@
 package netgest.bo.xwc.xeo.beans;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,6 +19,14 @@ import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
@@ -27,6 +45,8 @@ import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
+import netgest.bo.xwc.components.classic.Tab;
+import netgest.bo.xwc.components.classic.Tabs;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
@@ -35,6 +55,7 @@ import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOBridgeListConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector;
+import netgest.bo.xwc.components.model.ExportMenu;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIEditableValueHolder;
 import netgest.bo.xwc.framework.XUIMessage;
@@ -45,12 +66,25 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.components.FormEdit;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
+import netgest.utils.ngtXMLUtils;
+import oracle.xml.parser.v2.XMLDocument;
+
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  */
-public class XEOEditBean extends XEOBaseBean {
+public class XEOEditBean extends XEOBaseBean 
+{
     
+	
+	
     public static final Logger log = Logger.getLogger( XEOEditBean.class.getName() );
     
 	private byte 					initialPermissions = SecurityPermissions.FULL_CONTROL;
@@ -176,6 +210,303 @@ public class XEOEditBean extends XEOBaseBean {
     		closeView();
     	}
     }
+    
+
+    
+    /** 
+	 * 
+	 * Reads the contents of a file to a string
+	 * 
+	 * @param filePath Stream to the file
+	 */ 
+	    private String readFileAsString(InputStream filePath) throws java.io.IOException
+	    {
+	        StringBuffer fileData = new StringBuffer(1000);
+	        BufferedReader reader = new BufferedReader(new InputStreamReader(filePath));
+	        char[] buf = new char[1024];
+	        int numRead=0;
+	        while((numRead=reader.read(buf)) != -1)
+	        {
+	            String readData = String.valueOf(buf, 0, numRead);
+	            fileData.append(readData);
+	            buf = new char[1024];
+	        }
+	        reader.close();
+	        return fileData.toString();
+	    }
+    
+    /**
+     * 
+     * Retrieves a XSLT that's the merge of the system and project XSLT
+     * 
+     * @param systemXSLT A stream to the system XSLT
+     * @param projectXSLT A stream to the project XSLT
+     * 
+     * @return A string with the contents of the two XSLTs merged
+     */
+    private String getMergedXSLT(InputStream systemXSLT, InputStream projectXSLT)
+    {
+    	try 
+    	{
+    		if (projectXSLT != null)
+    		{
+    			XMLDocument systemDoc = ngtXMLUtils.loadXML(systemXSLT);
+    			XMLDocument projectDoc = ngtXMLUtils.loadXML(projectXSLT);
+    			
+    			XMLDocument doc = new XMLDocument();
+    			
+    			String namespace = "http://www.w3.org/1999/XSL/Transform";
+    			Element root = doc.createElementNS(namespace,"stylesheet");
+    			root.setPrefix("xsl");
+    			root.setAttribute("version", "1.0");
+    			
+    			NodeList childNodes = systemDoc.getChildNodes().item(0).getChildNodes();
+    			for (int k = 0; k < childNodes.getLength(); k++)
+    			{
+    				Node currentProjectNode = childNodes.item(k);
+    				Node clonedNode = doc.importNode(currentProjectNode, true);
+    				root.appendChild(clonedNode);
+    			}
+    			
+    			//Get the Children of the First (Root) node
+    			NodeList childProjectNodes = projectDoc.getChildNodes().item(0).getChildNodes();
+    			for (int i = 0; i < childProjectNodes.getLength(); i++)
+    			{
+    				Node currentSystemNode = childProjectNodes.item(i);
+    				Node clonedNode = doc.importNode(currentSystemNode, true);
+    				root.appendChild(clonedNode);
+    			}
+    			
+    			doc.appendChild(root);
+    			
+    			return ngtXMLUtils.getXML(doc);
+    		}
+    		else
+    		{
+    			return this.readFileAsString(systemXSLT);	
+    		}
+    	} 
+    	catch (IOException e) 
+		{
+			e.printStackTrace();
+			return null;
+		}
+    }
+    
+    /**
+     * 
+     *  Given a System XSLT and a Project XSLT and the XML content, renders the XML content with
+     *  the merge of the two XSLTs
+     * 
+     * @param systemXSLT The name of the system XSLT
+     * @param projectXSLT The name of the project XSLT
+     * @param xmlSourceContent The XML content to render 
+     * 
+     * @return The rendered content
+     * 
+     * @throws boRuntimeException If the transformation fails for some reason
+     */
+    private String renderXSLT(String systemXSLT, String projectXSLT, String xmlSourceContent) throws boRuntimeException
+    {
+    	
+    	//Retrieve the system default templates 
+    	InputStream systemTransformer = Thread.currentThread().getContextClassLoader().getResourceAsStream( systemXSLT ); 
+    		
+    	//Retrieve the project-specific templates
+    	InputStream projectTransformer = null;
+    	if (projectXSLT != null)
+    		projectTransformer = Thread.currentThread().getContextClassLoader().getResourceAsStream( projectXSLT );
+    	
+    	//Merge the Two transforms 
+    	String finalTransformer = getMergedXSLT(systemTransformer, projectTransformer);
+    	
+    	//FIXME: Add a condition if "finalTransformer" is null to throw exception
+    	
+    	// JAXP reads data using the Source interface
+        Source xmlSource = new StreamSource(new StringReader(xmlSourceContent));
+        Source xsltSource = new StreamSource(new StringReader(finalTransformer));
+
+        StringWriter pw = new StringWriter();
+        try
+        {
+            TransformerFactory transFact =
+	                TransformerFactory.newInstance();
+	        Transformer trans = transFact.newTransformer(xsltSource);
+	        trans.transform(xmlSource, new StreamResult(pw));
+        }
+        catch (Exception e) 
+        {
+        	throw new boRuntimeException("XEOEditBean - XSLT Transformation Error", e.getMessage(), e);
+        }
+        
+        return pw.getBuffer().toString();
+    }
+    
+    
+    /**
+     * 
+     * Temporary function that retrieves the content of a system file
+     * 
+     * @return
+     */
+    private String getViewerContentAsXML()
+    {
+    	String pathXML = "C:\\ITDS\\XWC - Exportação para XML\\MegaObjecto.xml";
+    	XMLDocument doc;
+		try 
+		{
+			doc = ngtXMLUtils.loadXML(new FileInputStream(new File(pathXML)));
+			return ngtXMLUtils.getXML(doc);
+		} 
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+			return null;
+		}
+    	
+    }
+    
+    /**
+     * 
+     * Exports the Edit Form to HTML
+     * 
+     * @throws boRuntimeException
+     */
+    public void exportHTML() throws boRuntimeException
+    {
+    	final String		HTML_TEMPLATES = "html_templates.xsl";
+    	final String		PROJECT_HTML_TEMPLATES = "projectHtmlTemplates.xsl";
+    	
+    	String customXSLT = null;
+    	
+    	//If we have a custom XSLT via an exportMenu component, retrieve the value
+    	XUIComponentBase c =  getRequestContext().getEvent().getComponent();
+    	if (c != null)
+    	{
+	        if( c instanceof ExportMenu ) 
+	        {
+	        	customXSLT = ((ExportMenu)c).getStyleSheet();
+	        }
+    	}
+    	
+    	String xmlContent = this.getViewerContentAsXML();
+    	
+    	String result = null;
+    	if (customXSLT != null)
+    		result = this.renderXSLT(customXSLT, null, xmlContent);
+    	else
+    		result = this.renderXSLT(HTML_TEMPLATES, PROJECT_HTML_TEMPLATES, xmlContent);
+    	try 
+    	{
+    		HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(result);
+			getRequestContext().responseComplete();
+		} 
+    	catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+    	
+    }
+    
+    /**
+     * 
+     * Exports the Edit Form to a PDF file
+     * 
+     * @throws boRuntimeException
+     */
+    public void exportPDF() throws boRuntimeException
+    {
+    	final String		PDF_TEMPLATES = "pdf_templates.xsl";
+    	final String		PROJECT_PDF_TEMPLATES = "projectPdfTemplates.xsl";
+    	
+    	String xmlContent = this.getViewerContentAsXML();
+        
+    	String result = this.renderXSLT(PDF_TEMPLATES, PROJECT_PDF_TEMPLATES, xmlContent);
+    	FopFactory fopFactory = FopFactory.newInstance();
+
+    	// Step 2: Set up output stream.
+    	// Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
+    	
+    	try 
+    	{
+    		
+    	  HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
+      	  //response.setCharacterEncoding("UTF-8");
+    	  response.setContentType("application/pdf");
+    	  response.setHeader("Content-disposition","attachment; filename="+this.oBoObect.getTextCARDID()+".pdf"); 
+      	  OutputStream out = response.getOutputStream();
+    		
+    	  // Step 3: Construct fop with desired output format
+    	  Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
+
+    	  // Step 4: Setup JAXP using identity transformer (could not use Oracle)
+    	  System.setProperty("javax.xml.transform.TransformerFactory","net.sf.saxon.TransformerFactoryImpl");
+    	  
+    	  TransformerFactory factory = TransformerFactory.newInstance();
+    	  Transformer transformer = factory.newTransformer(); // identity transformer
+    	           
+    	  // Step 5: Setup input and output for XSLT transformation 
+    	  // Setup input stream
+    	  Source src = new StreamSource(new StringReader(result));
+
+    	  // Resulting SAX events (the generated FO) must be piped through to FOP
+    	  Result res = new SAXResult(fop.getDefaultHandler());
+    	            
+    	  // Step 6: Start XSLT transformation and FOP processing
+    	  transformer.transform(src, res);
+    	  
+    	  getRequestContext().responseComplete();
+    	} 
+    	catch (Exception e) 
+    	{
+			e.printStackTrace();
+		} 
+    	
+    }
+    
+    /**
+     * 
+     * Exports the edit form as an Excel file (basically HTML with a XLS extension)
+     * 
+     * @throws boRuntimeException
+     */
+    public void exportExcel() throws boRuntimeException
+    {
+    	final String		EXCEL_TEMPLATES = "excel_templates.xsl";
+    	final String		PROJECT_EXCEL_TEMPLATES = "projectExcelTemplates.xsl";
+    	
+    	String xmlContent = this.getViewerContentAsXML();
+        
+    	String result = this.renderXSLT(EXCEL_TEMPLATES, PROJECT_EXCEL_TEMPLATES, xmlContent);
+    	
+    	HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
+    	response.setContentType("application/excel");
+  	  	response.setHeader("Content-disposition","attachment; filename="+this.oBoObect.getTextCARDID()+".xls"); 
+  	  	try 
+  	  	{
+			response.getOutputStream().write(result.getBytes());
+		} 
+  	  	catch (IOException e) 
+  	  	{
+  	  		getRequestContext().responseComplete();
+			throw new boRuntimeException("XEOEditBean - exportExcel", "", e);
+		}
+  	  	getRequestContext().responseComplete();
+    }
+    
+    
+    public void saveAndCreateNew() throws boRuntimeException 
+    {
+    	this.save();
+    	if( this.isValid() ) {
+    		createNew(
+    			getXEOObject().getName()
+    		);
+    	}
+    }
+    
     
     /**
      * 
@@ -1294,10 +1625,20 @@ public class XEOEditBean extends XEOBaseBean {
         
 	}
 	
-	public void canCloseTab() {
+	
+	
+	/**
+	 * Checks if the current tab where the form is being displayed can be closed
+	 * If the form was changed, when the user tries to close the tab a message box
+	 * appear informing the user that he has unsaved changes, if the form was not changed
+	 */
+	public void canCloseTab() 
+	{
 		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
 		XUIViewRoot viewRoot = oRequestContext.getViewRoot();
-		if( getIsChanged() ) {
+		
+		if( getIsChanged() ) 
+		{
 			String closeScript;
 			Window xWnd = (Window)viewRoot.findComponent(Window.class);
 			if( xWnd != null ) {
@@ -1315,12 +1656,50 @@ public class XEOEditBean extends XEOBaseBean {
 			else {
 				closeScript = XVWScripts.getCloseViewScript( viewRoot );
 			}
+			
+			boolean showDiffButton = false;
+			if (viewRoot.findComponent(FormEdit.class) != null)
+				showDiffButton = ((FormEdit)viewRoot.findComponent(FormEdit.class)).getShowDifferences();
+			
 			ExtConfig messageBoxConfig = new ExtConfig(); 
 			messageBoxConfig.addJSString( "title" , BeansMessages.CHANGES_NOT_SAVED_TITLE.toString() );
 			messageBoxConfig.addJSString( "msg" , BeansMessages.CHANGES_NOT_SAVED_MESSAGE.toString() );
-			messageBoxConfig.add( "buttons" , "Ext.MessageBox.YESNO ");
-			messageBoxConfig.add( "fn",  "function(a1) { if( a1=='yes' ) { "+closeScript+" } }" );
+			if (getIsChanged() && showDiffButton)
+				messageBoxConfig.add( "buttons" , " {yes:'Ok', cancel:'Show differences', no:'Cancel'}  "); //FIXME: Internacionalizar as mensagens
+			else
+				messageBoxConfig.add( "buttons" , " Ext.MessageBox.YESNO  ");
+			messageBoxConfig.add( "fn",  "function(a1) { if( a1=='yes' ) { "+closeScript+" } if (a1=='cancel') { openDiffWindow(); } }" );
 			messageBoxConfig.add( "icon", "Ext.MessageBox.WARNING" );
+			
+			//FIXME: isto fica feio aqui
+			String url = getRequestContext().getAjaxURL();
+			if (url.indexOf('?') == -1)
+				{ url += '?'; }
+			else
+				{ url += '&'; }
+			
+			url += "javax.faces.ViewState=" + getRequestContext().getViewRoot().getViewState();
+			String cliendID = ((FormEdit)viewRoot.findComponent(FormEdit.class)).getClientId();
+			url += "&xvw.servlet="+ cliendID;
+			
+			String openWindowScript = "function openDiffWindow() {" +
+					"var winDiff = new Ext.Window({ " +
+                	" title:' Show Differences '" +
+                	",width       : 500" +
+                	",autoScroll : true" +
+                	",height      : 500" +
+                	",autoLoad       : '"+ url +"'" +
+                	"});" +
+            		"winDiff.show();}";
+			
+			//Add the function to open a new Window
+			if (getIsChanged())
+			oRequestContext.getScriptContext().add(  
+					XUIScriptContext.POSITION_HEADER,
+					"openDifferencesWindow",openWindowScript
+					);
+			
+			//
 			oRequestContext.getScriptContext().add(  
 					XUIScriptContext.POSITION_HEADER,
 					"canCloseDialog", 
@@ -1425,6 +1804,9 @@ public class XEOEditBean extends XEOBaseBean {
     	
     }
     
+    /**
+     * Opens the viewer with the properties of the current object
+     */
     public void showProperties() {
     	
         XUIRequestContext   oRequestContext;
@@ -1437,9 +1819,98 @@ public class XEOEditBean extends XEOBaseBean {
         oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/XEOEditProperties.xvw");
         ((XEOEditBean)oViewRoot.getBean("viewBean")).setCurrentObjectKey( Long.toString( getXEOObject().getBoui() ) );
         
+        Tab props = (Tab) oViewRoot.findComponent("formProps:tbProperties");
+        ((Tabs) props.getParent()).setActiveTab(props);
+        
         oRequestContext.setViewRoot( oViewRoot );
         oRequestContext.renderResponse();
     	
+    }
+    
+    
+    public void showOPL()
+    {
+    	 XUIRequestContext   oRequestContext;
+         XUISessionContext   oSessionContext;
+         XUIViewRoot         oViewRoot;
+
+         oRequestContext = XUIRequestContext.getCurrentContext();
+         oSessionContext = oRequestContext.getSessionContext();
+         
+         oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/XEOSecurityProperties.xvw");
+         
+         XEOSecurityOPLBean bean = (XEOSecurityOPLBean)oViewRoot.getBean("viewBean"); 
+         bean.setCurrentObjectKey( Long.toString( getXEOObject().getBoui()) );
+         //bean.init();
+         
+         oRequestContext.setViewRoot( oViewRoot );
+         oRequestContext.renderResponse();
+    }
+    
+    
+    /**
+     * Opens the viewer with the dependencies of the current object
+     */
+    public void showDependencies() {
+    	
+        XUIRequestContext   oRequestContext;
+        XUISessionContext   oSessionContext;
+        XUIViewRoot         oViewRoot;
+
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        oSessionContext = oRequestContext.getSessionContext();
+        
+        oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/XEOEditProperties.xvw");
+        ((XEOEditBean)oViewRoot.getBean("viewBean")).setCurrentObjectKey( Long.toString( getXEOObject().getBoui() ) );
+        
+        Tab dependencies = (Tab) oViewRoot.findComponent("formProps:tbDependencies");
+        ((Tabs) dependencies.getParent()).setActiveTab(dependencies);
+        
+        oRequestContext.setViewRoot( oViewRoot );
+        oRequestContext.renderResponse();
+    	
+    }
+    
+    /**
+     * Opens the viewer with the dependents of the current object
+     */
+    public void showDependents() {
+    	
+        XUIRequestContext   oRequestContext;
+        XUISessionContext   oSessionContext;
+        XUIViewRoot         oViewRoot;
+
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        oSessionContext = oRequestContext.getSessionContext();
+        
+        oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/XEOEditProperties.xvw");
+        ((XEOEditBean)oViewRoot.getBean("viewBean")).setCurrentObjectKey( Long.toString( getXEOObject().getBoui() ) );
+        
+        Tab dependents = (Tab) oViewRoot.findComponent("formProps:tbDependents");
+        ((Tabs) dependents.getParent()).setActiveTab(dependents);
+        
+        oRequestContext.setViewRoot( oViewRoot );
+        oRequestContext.renderResponse();
+    	
+    }
+    
+    /**
+     * Opens the viewers with the list of versions for the current object
+     */
+    public void listVersions()
+    {
+    	XUIRequestContext   oRequestContext;
+        XUISessionContext   oSessionContext;
+        XUIViewRoot         oViewRoot;
+
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        oSessionContext = oRequestContext.getSessionContext();
+        
+        oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/XEOListVersions.xvw");
+        ((XEOVersionListBean)oViewRoot.getBean("viewBean")).setCurrentObjectKey( Long.toString( getXEOObject().getBoui() ) );
+        
+        oRequestContext.setViewRoot( oViewRoot );
+        oRequestContext.renderResponse();
     }
 
     public void setParentComponentId(String sParentComponentId) {

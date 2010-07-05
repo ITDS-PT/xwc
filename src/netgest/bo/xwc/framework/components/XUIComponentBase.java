@@ -1,6 +1,7 @@
 package netgest.bo.xwc.framework.components;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,43 +16,61 @@ import javax.faces.component.NamingContainer;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
+import javax.faces.render.RenderKit;
+import javax.servlet.http.HttpServletRequest;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.sun.faces.io.FastStringWriter;
+
+import netgest.bo.xwc.framework.PackageIAcessor;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIComponentPugIn;
+import netgest.bo.xwc.framework.XUIComponentPlugIn;
 import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUISessionContext;
+import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
+import netgest.bo.xwc.framework.properties.XUIProperty;
+import netgest.bo.xwc.framework.properties.XUIPropertyVisibility;
 
 
 public abstract class XUIComponentBase extends UIComponentBase 
 {
-    XUIBindProperty<Boolean> 			renderComponent = new XUIBindProperty<Boolean>( "renderComponent", this, Boolean.class );
+    @XUIProperty( label="Render Component" )
+	XUIBindProperty<Boolean> 			renderComponent = new XUIBindProperty<Boolean>( "renderComponent", this, Boolean.class );
 
-    XUIBindProperty<XUIComponentPugIn> 	plugIn = new XUIBindProperty<XUIComponentPugIn>( "plugIn", this, XUIComponentPugIn.class );
+    @XUIProperty( label="PlugIn" )
+    XUIBindProperty<XUIComponentPlugIn> plugIn = new XUIBindProperty<XUIComponentPlugIn>( "plugIn", this, XUIComponentPlugIn.class );
     
     private static final    Object[] EMPTY_OBJECT_ARRAY = new Object[0];
     
     private LinkedHashMap<String, XUIBaseProperty<?>> oStatePropertyMap;
 
-    private boolean         isPostBack = false;
-    private boolean			wasPreRenderProcessed = false;
-    private boolean			wasInitComponentProcessed = false;
-    private XUIBaseProperty<Boolean> 	isRenderedOnClient 
-    	= new XUIBaseProperty<Boolean>("isRenderedOnClient", this, false);
-    private boolean 		_isRenderedOnClient = false;
-    private boolean			destroyOnClient = false;
+    private boolean isPostBack = false;
+    private boolean	wasPreRenderProcessed = false;
+    private boolean	wasInitComponentProcessed = false;
     
+
+    private XUIBaseProperty<Boolean> isRenderedOnClient = 
+    	new XUIBaseProperty<Boolean>("isRenderedOnClient", this, false);
+    
+    private boolean _isRenderedOnClient = false;
+    private boolean	destroyOnClient = false;
+     
     @Override
 	public String getId() {
 		return super.getId();
 	}
 
 	@Override
+    @XUIProperty(name="id",label="Component Id", visibility=XUIPropertyVisibility.DOCUMENTATION )
 	public void setId(String id) {
 		super.setId(id);
 	}
 	
-	public XUIComponentPugIn getPlugIn() {
+	public XUIComponentPlugIn getPlugIn() {
 		return this.plugIn.getEvaluatedValue();
 	}
 	
@@ -59,14 +78,14 @@ public abstract class XUIComponentBase extends UIComponentBase
 		this.plugIn.setExpressionText( expressionText );
 	}
 
-	public void addStateProperty( XUIBaseProperty oStateProperty ) {
+	public void addStateProperty( XUIBaseProperty<?> oStateProperty ) {
         if( oStatePropertyMap == null ) {
             oStatePropertyMap = new LinkedHashMap<String, XUIBaseProperty<?>>();
         }
         oStatePropertyMap.put( oStateProperty.getName(), oStateProperty );
     }
 	
-	public XUIBaseProperty getStateProperty( String propertyName ) {
+	public XUIBaseProperty<?> getStateProperty( String propertyName ) {
         return oStatePropertyMap.get( propertyName );
 	}
     
@@ -94,7 +113,7 @@ public abstract class XUIComponentBase extends UIComponentBase
         
         // If not a post back to this component, assume state changed
         // to force render of the component
-        if( !isPostBack() ) {
+        if( !isPostBack() || !isRenderedOnClient() ) {
             return true;
         }
         
@@ -114,7 +133,7 @@ public abstract class XUIComponentBase extends UIComponentBase
     public void processStateChanged( List<XUIComponentBase> oRenderList ) {
         boolean bChanged;
         UIComponent oKid;
-
+        
         List<UIComponent> oKids = this.getChildren();
         for (int i = 0; i < oKids.size(); i++) {
             
@@ -124,7 +143,7 @@ public abstract class XUIComponentBase extends UIComponentBase
             
             if( oKid instanceof XUIComponentBase ) {
             	
-            	XUIComponentPugIn plugIn = getPlugIn();
+            	XUIComponentPlugIn plugIn = getPlugIn();
             	
             	if( plugIn != null &&  plugIn.wasStateChanged() ) {
                     oRenderList.add( (XUIComponentBase)oKid );
@@ -140,6 +159,28 @@ public abstract class XUIComponentBase extends UIComponentBase
 	                }
             	}
             }
+            else
+            	recursiveProcessStateChanged(oKid, oRenderList);
+        }
+    }
+    
+    /**
+     * 
+     * Recursively calls the <code>processStateChanged</code> 
+     * 
+     * @param oComponent The component to process
+     * @param oRenderList The list of components whose state was changed
+     */
+    private void recursiveProcessStateChanged(UIComponent oComponent, List<XUIComponentBase> oRenderList)
+    {
+    	Iterator<UIComponent> kids = oComponent.getFacetsAndChildren();
+        while (kids.hasNext()) {
+            UIComponent kid = kids.next();
+            if( kid instanceof XUIComponentBase ) {
+                ((XUIComponentBase)kid).processStateChanged(oRenderList);
+            }
+            else
+            	recursiveProcessStateChanged(kid, oRenderList);
         }
     }
     
@@ -157,7 +198,7 @@ public abstract class XUIComponentBase extends UIComponentBase
         return null;
     }
     
-    public XUIComponentBase findParentComponent( Class cType ) {
+    public XUIComponentBase findParentComponent( Class<?> cType ) {
     	UIComponent oParentComp;
     	
     	oParentComp = getParent();
@@ -167,7 +208,7 @@ public abstract class XUIComponentBase extends UIComponentBase
     	return (XUIComponentBase)oParentComp;
     }
     
-    public XUIComponentBase findComponent( Class cType ) {
+    public XUIComponentBase findComponent( Class<?> cType ) {
     	
     	assert cType != null;
     	
@@ -186,13 +227,55 @@ public abstract class XUIComponentBase extends UIComponentBase
     			oRet = (XUIComponentBase)child;
     			break;
     		}
-    		oRet = ((XUIComponentBase)child).findComponent( cType );
-    		if( oRet != null ) {
-    			break;
+    		if (child instanceof XUIComponentBase)
+    		{
+    			oRet = ((XUIComponentBase)child).findComponent( cType );
+        		if( oRet != null ) {
+        			break;
+        		}
     		}
+    		else
+    		{
+    			XUIComponentBase other = findComponent(child, cType);
+    			if (other != null)
+    				return other;
+    		}
+    			
+    			
     	}
     	return oRet;
     }
+    
+    private XUIComponentBase findComponent(UIComponent current, Class<?> cType )
+	{
+		XUIComponentBase oComp = null;
+		if (current != null)
+		{
+			List<UIComponent> list = current.getChildren();
+			for (UIComponent component : list)
+			{
+				if (component instanceof XUIComponentBase)
+				{
+					oComp = ((XUIComponentBase) component).findComponent(cType);
+					if (oComp != null) {
+						return oComp;
+					}
+				}
+				else
+				{
+					List<UIComponent> listChildren = component.getChildren();
+					for (UIComponent chilCmp: listChildren)
+					{
+						return findComponent(chilCmp,cType);
+					}
+				}
+			}
+			
+		}
+		
+		return null;
+		
+	}
     
     
     public Object saveState() 
@@ -324,28 +407,100 @@ public abstract class XUIComponentBase extends UIComponentBase
     public void encodeAll() throws IOException {
     	this.isRenderedOnClient.setValue( true );
     	super.encodeAll( FacesContext.getCurrentInstance() );
+    	
+        HttpServletRequest request = (HttpServletRequest)getRequestContext().getRequest();
+        
+    	if( XUIRequestContext.getCurrentContext().isAjaxRequest() && request.getAttribute( "__xwcAjaxTagOpened") == null ) {
+            XUIResponseWriter newWriter;
+            
+            try {
+            	request.setAttribute( "__xwcAjaxTagOpened" , Boolean.TRUE );
+            
+	            RenderKit renderKit = 
+	            	(RenderKit)request.getAttribute("__xwcRenderKit");
+	
+	            Document oAjaxXmlResp = 
+	            	(Document)request.getAttribute("__xwcAjaxDomDoc");
+	            
+	            Element oRenderElement = 
+	            	(Element)request.getAttribute("__xwcRenderElement");
+	            
+	            XUIResponseWriter previousWriter = 
+	            	(XUIResponseWriter) getFacesContext().getResponseWriter();
+	
+	            Writer oComponentWriter = new FastStringWriter(4192/4);
+	            
+	            // Setup new writer for each component to render
+	            XUIWriteBehindStateWriter oCompBodyWriter =
+	                  new XUIWriteBehindStateWriter(    oComponentWriter,
+	                                                    getFacesContext(),
+	                                                    4192/4
+	                                                );
+	            
+	            newWriter = (XUIResponseWriter)renderKit.createResponseWriter(oCompBodyWriter,
+	                                                           null,
+	                                                           "utf-8");
+	            
+	            PackageIAcessor.setScriptContextToWriter( newWriter, previousWriter.getScriptContext() );
+	            
+	            getFacesContext().setResponseWriter(newWriter);
+	            
+	            // Sets the header and footer wr
+	            PackageIAcessor.setHeaderAndFooterToWriter( 
+	            		newWriter, 
+	            		previousWriter.getHeaderWriter(), 
+	            		previousWriter.getFooterWriter() 
+	            );
+	            
+	            newWriter.startDocument();
+	
+	            super.encodeAll( getFacesContext() );
+	                        
+	            newWriter.endDocument();
+	
+	            oCompBodyWriter.flushToWriter( false );
+	            oCompBodyWriter.release();
+	
+	            Element  oCompElement;
+	            oCompElement = oAjaxXmlResp.createElement( "component" );
+	            oCompElement.setAttribute("id", getClientId() );
+	        	oCompElement.setAttribute("destroy", Boolean.toString( isDestroyOnClient() ) );
+	            
+	            String s = oComponentWriter.toString();
+	            if( s != null && s.length() > 0 ) {
+	            	oCompElement.appendChild( oAjaxXmlResp.createCDATASection( s ) );
+	            }
+	            oRenderElement.appendChild( oCompElement );
+            }
+            finally {
+            	request.removeAttribute( "__xwcAjaxTagOpened" );
+            }
+    	}
+    	else {
+	    	this.isRenderedOnClient.setValue( true );
+	    	super.encodeAll( FacesContext.getCurrentInstance() );
+    	}
     }
 
     public String getClientId() {
         return super.getClientId(getFacesContext());
     }
 
-    public ValueExpression createValueExpression( String sValueExpression, Class cType ) {
+    public ValueExpression createValueExpression( String sValueExpression, Class<?> cType ) {
         ExpressionFactory oExFactory = getFacesContext().getApplication().getExpressionFactory();
         return oExFactory.createValueExpression( 
                     getFacesContext().getELContext(), sValueExpression, cType
                 ); 
     }
 
-    private static final Class[] DUMMY_CLASS_ARRAY = new Class[0];
-    
+    private static final Class<?>[] DUMMY_CLASS_ARRAY = new Class[0];
     public MethodExpression createMethodBinding( String sMethodExpression ) {
     	FacesContext context = FacesContext.getCurrentInstance();
         ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
         return oExFactory.createMethodExpression( context.getELContext(), sMethodExpression, null, DUMMY_CLASS_ARRAY );
     }
 
-    public MethodExpression createMethodBinding( String sMethodExpression, Class oReturnValue ) {
+    public MethodExpression createMethodBinding( String sMethodExpression, Class<?> oReturnValue ) {
         ExpressionFactory oExFactory = getFacesContext().getApplication().getExpressionFactory();
         return oExFactory.createMethodExpression( getFacesContext().getELContext(), sMethodExpression, null, DUMMY_CLASS_ARRAY );
     }
@@ -370,7 +525,7 @@ public abstract class XUIComponentBase extends UIComponentBase
     	XUIComponentBase component = this;
     	
     	if( !wasInitComponentProcessed ) {
-        	XUIComponentPugIn plugIn = getPlugIn();
+        	XUIComponentPlugIn plugIn = getPlugIn();
     		
         	if( plugIn != null ) {
         		plugIn.setComponent( this );
@@ -400,9 +555,32 @@ public abstract class XUIComponentBase extends UIComponentBase
             if( kid instanceof XUIComponentBase ) {
                 ((XUIComponentBase)kid).processInitComponents();
             }
+            else
+            	recursiveProcessInitComponents(kid);
         }
-        
-        
+    }
+    
+    /**
+     * 
+     * Recursively invokes the <code>processInitComponents()</code> method
+     * If a component is a {@link UIComponentBase} call the function
+     * on its children, if it's a {@link XUIComponentBase} call the 
+     * <code>processInitComponents()</code> 
+     * 
+     * @param oComponent The component to process
+     */
+    private void recursiveProcessInitComponents(UIComponent oComponent){
+    	
+    	Iterator<UIComponent> kids = oComponent.getFacetsAndChildren();
+        while (kids.hasNext()) {
+            UIComponent kid = kids.next();
+            if( kid instanceof XUIComponentBase ) {
+                ((XUIComponentBase)kid).processInitComponents();
+            }
+            else
+            	recursiveProcessInitComponents(kid);
+        }
+    	
     }
 
     public void preRender() {
@@ -415,7 +593,7 @@ public abstract class XUIComponentBase extends UIComponentBase
     	XUIComponentBase component = this;
 
     	if( !wasPreRenderProcessed ) {
-        	XUIComponentPugIn plugIn = getPlugIn();
+        	XUIComponentPlugIn plugIn = getPlugIn();
         	
         	if( plugIn != null ) {
         		plugIn.setComponent( this );
@@ -448,6 +626,30 @@ public abstract class XUIComponentBase extends UIComponentBase
                 ((XUIComponentBase)kid).processPreRender();
 
             }
+            else
+            	recursiveProcessPreRender(kid);
+        }
+    }
+    
+    /**
+     * 
+     * Recursively calls the <code>processPreRender()</code> method
+     * on all children of a component
+     * 
+     * @param oComponent The component to process
+     */
+    private void recursiveProcessPreRender(UIComponent oComponent)
+    {
+    	Iterator<UIComponent> kids = oComponent.getFacetsAndChildren();
+        while (kids.hasNext()) {
+            UIComponent kid = kids.next();
+            if( kid instanceof XUIComponentBase ) {
+            	
+                ((XUIComponentBase)kid).processPreRender();
+
+            }
+            else
+            	recursiveProcessPreRender(kid);
         }
     }
 
@@ -466,7 +668,30 @@ public abstract class XUIComponentBase extends UIComponentBase
             if( kid instanceof XUIComponentBase ) {
                 ((XUIComponentBase)kid).processValidateModel();
             }
+            else
+            	recursiveProcessValidateModel(kid);
         }
+    }
+    
+    /**
+     * 
+     * Recursively calls the <code>processValidateModel()</code> method
+     * on all children of a component
+     * 
+     * @param oComponent The component to process
+     */
+    private void recursiveProcessValidateModel(UIComponent oComponent)
+    {
+    	Iterator<UIComponent> kids = getFacetsAndChildren();
+        while (kids.hasNext()) {
+            UIComponent kid = (UIComponent) kids.next();
+            if( kid instanceof XUIComponentBase ) {
+                ((XUIComponentBase)kid).processValidateModel();
+            }
+            else
+            	recursiveProcessValidateModel(kid);
+        }
+        
     }
 
     public String getNamingContainerId() {
@@ -575,20 +800,66 @@ public abstract class XUIComponentBase extends UIComponentBase
 	public void resetRenderedOnClient() {
 		this.isRenderedOnClient.setValue( false );
 		List<UIComponent> children = getChildren();
-		for( UIComponent child : children ) {
+		for( UIComponent child : children ) 
+		{
 			if( child instanceof XUIComponentBase ) {
 				((XUIComponentBase)child).resetRenderedOnClient();
 			}
+			else
+				recursiveResetRenderedOnClient(child);
+		}
+	}
+	
+	/**
+	 * 
+	 * Recursively calls the <code>resetRenderedOnClient()</code> method
+	 * on all children
+	 * 
+	 * @param oComponent The component to process
+	 */
+	private void recursiveResetRenderedOnClient(UIComponent oComponent)
+	{
+		List<UIComponent> children = oComponent.getChildren();
+		for( UIComponent child : children ) 
+		{
+			if( child instanceof XUIComponentBase ) {
+				((XUIComponentBase)child).resetRenderedOnClient();
+			}
+			else
+				recursiveResetRenderedOnClient(child);
 		}
 	}
 	
 	public void forceRenderOnClient() {
 		this._isRenderedOnClient = false;
 		List<UIComponent> children = getChildren();
-		for( UIComponent child : children ) {
+		for( UIComponent child : children ) 
+		{
 			if( child instanceof XUIComponentBase ) {
 				((XUIComponentBase)child).forceRenderOnClient();
 			}
+			else
+				recursiveForceRenderOnClient(child);
+		}
+	}
+	
+	/**
+	 * 
+	 * Recursively calls the <code>forceRenderOnClient()</code> on all
+	 * children of a component
+	 * 
+	 * @param oComponent The component to process
+	 */
+	private void recursiveForceRenderOnClient(UIComponent oComponent)
+	{
+		List<UIComponent> children = oComponent.getChildren();
+		for( UIComponent child : children ) 
+		{
+			if( child instanceof XUIComponentBase ) {
+				((XUIComponentBase)child).forceRenderOnClient();
+			}
+			else
+				recursiveForceRenderOnClient(child);
 		}
 	}
 	

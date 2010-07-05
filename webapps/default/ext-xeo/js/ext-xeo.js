@@ -177,12 +177,14 @@ XVW.openTab = function( sFrameName, sTitle ) {
 }
 
 
-XVW.OpenCommandWindow = function( sFrameName, sFormId, sActionId, sActionValue ){
-    sFrameName += (new Date() - 1)
+XVW.OpenCommandWindow = function( sFrameName, sFormId, sActionId, sActionValue, sWidth, sHeight, sTitle ){
+	
+	sFrameName += (new Date() - 1)
     var win = new Ext.Window({
         layout:'fit',
-        width:500,
-        height:300,
+        width: Number(sWidth),
+        height:Number(sHeight),
+        title: sTitle,
         closeAction:'hide', 
         plain: true,
         html: '<iframe name="'+sFrameName+'" src="about:blank" frameBorder="0" width="100%" height="100%"></iframe>'

@@ -6,15 +6,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
+import javax.el.ValueExpression;
+import javax.faces.application.Application;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.event.FacesEvent;
+import javax.faces.el.ValueBinding;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 
 import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIMethodExpressionPhaseListener;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIComponentDefinition;
@@ -34,6 +38,14 @@ public class XUIViewerBuilder
     private void buildComponentTree( XUIRequestContext oContext, XUIViewerDefinition oViewerDefinition, XUIViewRoot root )
     {
     	// Set the view root properties
+    	
+    	
+    	String renderKitId = oViewerDefinition.getRenderKitId();
+    	
+    	if( !isEmpty( renderKitId ) ) {
+    		root.setRenderKitId( renderKitId );
+    	}
+    	
     	
     	String phaseEvent;
     	
@@ -203,11 +215,11 @@ public class XUIViewerBuilder
             
             if( !wasSet && isInt ) {
             	wasSet = setComponentProperty( comp, setterName, (int)valueLong );
-            	wasSet = !wasSet && setComponentProperty( comp, setterName, (long)valueLong );
-            	wasSet = !wasSet && setComponentProperty( comp, setterName, (short)valueLong );
-            	wasSet = !wasSet && setComponentProperty( comp, setterName, (byte)valueLong );
-            	wasSet = !wasSet && setComponentProperty( comp, setterName, (float)valueLong );
-            	wasSet = !wasSet && setComponentProperty( comp, setterName, (double)valueLong );
+            	wasSet = wasSet || setComponentProperty( comp, setterName, (long)valueLong );
+            	wasSet = wasSet || setComponentProperty( comp, setterName, (short)valueLong );
+            	wasSet = wasSet || setComponentProperty( comp, setterName, (byte)valueLong );
+            	wasSet = wasSet || setComponentProperty( comp, setterName, (float)valueLong );
+            	wasSet = wasSet || setComponentProperty( comp, setterName, (double)valueLong );
             }
 
             if( !wasSet && isFloat ) {
@@ -215,10 +227,49 @@ public class XUIViewerBuilder
             	wasSet = !wasSet && setComponentProperty( comp, setterName, (double)valueDouble );
             }
             
-            if( !wasSet ) {
+            if( !wasSet && (comp instanceof XUIComponentBase)) {
             	wasSet = setComponentProperty( comp, setterName, value );
             	wasSet = !wasSet && setComponentProperty( comp, setterName, (Object)value );
             }
+            else
+            {
+            	if (!wasSet && !(comp instanceof XUIComponentBase))
+            	{
+	            	//Added so that the JSF Components can be binded to beans
+	                // Apparently there's something in the JSF platform that makes
+	                // binding automatically and we need to make some adjustments
+	                //in out platform (like setting the property value as a valueExpression)
+	            	FacesContext context = FacesContext.getCurrentInstance();
+	            	ELContext elContext = context.getELContext();
+	            	Application jsfApp = context.getApplication();
+	            	ExpressionFactory exprFactory = jsfApp.getExpressionFactory();
+	            	ValueExpression vExpr = exprFactory.createValueExpression(elContext, value, Object.class);
+					try 
+					{
+	            		comp.setValueExpression(keyName, vExpr);
+	            	} catch (IllegalArgumentException e)
+					{
+						e.printStackTrace();
+					}
+	            	if (vExpr.isLiteralText())
+	            		setComponentProperty(comp, setterName, value);
+				
+	            	
+	            	
+	            	//comp.setValueExpression(keyName, vExpr);
+	            	
+	            	
+	            	/*
+	            	if (!vExpr.isLiteralText())
+	            		comp.setValueExpression(keyName, vExpr);
+	            	else
+	            		setComponentProperty(comp, setterName, value);
+	            		*/
+	            }
+            }
+            
+            
+            
             
             /*
             try
@@ -246,8 +297,10 @@ public class XUIViewerBuilder
             }
             */
         }
-        
-        parent.getChildren().add( comp );
+        if (dcomponent.getName().equals("f:facet"))
+        	parent.getFacets().put(dcomponent.getProperty("name"), comp);
+        else
+        	parent.getChildren().add( comp );
 
         List<XUIViewerDefinitionNode> children = dcomponent.getChildren();
         Iterator<XUIViewerDefinitionNode> it = children.iterator();

@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xvw:root 
+	xmlns:xvw="http://www.netgest.net/xeo/xvw"
+	xmlns:xeo="http://www.netgest.net/xeo/xeo"
+>
+    <xvw:viewer 
+	    localizationClasses='netgest.bo.xwc.xeo.localization.XEOViewersMessages' 
+	    beanClass='netgest.bo.xwc.xeo.beans.XEOSecurityOPLBean' 
+	    beanId='viewBean'
+  	>
+        <xvw:form>
+        
+        	<xvw:window width='300' height='300'>
+	            	<xvw:section title='@{OPL_WND_TITLE}'>
+	            		<xvw:rows>
+	            			<xvw:row>
+	            				<xvw:cell>
+	            					<xvw:attributeLabel text='@{OPL_TARGET_TYPE}' />
+	            				</xvw:cell>
+	            				<xvw:cell>
+	            					<xvw:attributeLov 
+	            					disabled='#{viewBean.inEdition}' 
+	            					lovMap="#{viewBean.validTargets}"
+	            					renderedValue="#{viewBean.displayType}" 
+	            					onChangeSubmit="true" 
+	            					valueExpression='#{viewBean.currentType}'/>
+	            				</xvw:cell>
+	            			</xvw:row>
+	            			
+	            		</xvw:rows>
+	            		<xvw:attributeLabel text='@{OPL_TARGET_OBJECT}' />
+	            		<xvw:attributeNumberLookup
+							disabled='#{viewBean.inEdition}'
+	            			valueExpression='#{viewBean.targetObject}'
+	            			onChangeSubmit="true"
+	            			displayValue='#{viewBean.display}'
+	            			>
+	            		</xvw:attributeNumberLookup>
+	            		<xvw:rows>
+	            			<xvw:row>
+	            				<xvw:cell>
+	            					<xvw:attributeLabel text='@{OPL_READ_PERMISSION}'>
+	            					</xvw:attributeLabel>
+	            				</xvw:cell>
+	            				<xvw:cell>
+	            					<xvw:attributeBoolean valueExpression="#{viewBean.readPermission}">
+	            					</xvw:attributeBoolean>
+	            				</xvw:cell>
+	            			</xvw:row>
+	            			<xvw:row>
+	            				<xvw:cell>
+	            					<xvw:attributeLabel text='@{OPL_WRITE_PERMISSION}'>
+	            					</xvw:attributeLabel>
+	            				</xvw:cell>
+	            				<xvw:cell>
+	            					<xvw:attributeBoolean valueExpression="#{viewBean.writePermission}">
+	            					</xvw:attributeBoolean>
+	            				</xvw:cell>
+	            			</xvw:row>
+	            			<xvw:row>
+	            				<xvw:cell>
+	            					<xvw:attributeLabel text='@{OPL_DELETE_PERMISSION}'>
+	            					</xvw:attributeLabel>
+	            				</xvw:cell>
+	            				<xvw:cell>
+	            					<xvw:attributeBoolean valueExpression="#{viewBean.deletePermission}">
+	            					</xvw:attributeBoolean>
+	            				</xvw:cell>
+	            			</xvw:row>
+	            			<xvw:row>
+	            				<xvw:cell>
+	            					<xvw:attributeLabel text='@{OPL_FULL_PERMISSION}'>
+	            					</xvw:attributeLabel>
+	            				</xvw:cell>
+	            				<xvw:cell>
+	            					<xvw:attributeBoolean 
+	            						valueExpression="#{viewBean.fullControlPermission}">
+	            					</xvw:attributeBoolean>
+	            				</xvw:cell>
+	            			</xvw:row>
+	            		</xvw:rows>
+	            		<xvw:actionButton label='@{OPL_BTN_SAVE_LBL}'
+	            		 action="#{viewBean.saveOPL}"
+	            		 disabled="#{viewBean.buttonVisible}"
+	            		 ></xvw:actionButton>
+	            	</xvw:section>
+			</xvw:window>
+        </xvw:form>
+    </xvw:viewer>
+</xvw:root>

@@ -197,6 +197,9 @@ XVW.handleAjaxResponse = function( oXmlReq ) {
     var bIsPostBack = "true" == oDocElm.getAttribute("isPostBack");
     var oViewDiv    = null;
     
+    
+    debugger;
+    
     oViewDiv = document.getElementById( sViewId );
     if( !bIsPostBack && oViewDiv == null ) {
         // The result of the ajax request is a new view to render
@@ -262,7 +265,7 @@ XVW.handleAjaxResponse = function( oXmlReq ) {
                         );    
                     }
                 }
-                else {
+                else if( oCompNode.text ) {
             		// If first child is null... there is nothing to render
             		// The component didn't write anything to the output
             		if( oCompNode.text != "" ) {

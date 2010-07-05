@@ -27,4 +27,57 @@ public class XEOViewersMessages {
 	
 	public static final XUILocalizedMessage SHW_PROPS_CLOSE_BTN = 
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "SHW_PROPS_CLOSE_BTN" );
+	
+	public static final XUILocalizedMessage LBL_PROPERTIES = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "LBL_PROPERTIES" );
+	
+	public static final XUILocalizedMessage LBL_DEPENDENTS = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "LBL_DEPENDENTS" );
+	
+	public static final XUILocalizedMessage LBL_DEPENDENCIES = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "LBL_DEPENDENCIES" );
+	
+	//Messages from the List of Logs
+	
+	//Messages from the OPL
+	public static final XUILocalizedMessage OPL_TARGET_TYPE = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_TARGET_TYPE" );
+	
+	public static final XUILocalizedMessage OPL_TARGET_OBJECT = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_TARGET_OBJECT" );
+	
+	public static final XUILocalizedMessage OPL_READ_PERMISSION = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_READ_PERMISSION" );
+	
+	public static final XUILocalizedMessage OPL_WRITE_PERMISSION = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_WRITE_PERMISSION" );
+	
+	public static final XUILocalizedMessage OPL_DELETE_PERMISSION = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_DELETE_PERMISSION" );
+	
+	public static final XUILocalizedMessage OPL_FULL_PERMISSION = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_FULL_PERMISSION" );
+	
+	public static final XUILocalizedMessage OPL_BTN_SAVE_LBL = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_BTN_SAVE_LBL" );
+	
+	public static final XUILocalizedMessage OPL_BTN_ADD_PERM_LBL = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_BTN_ADD_PERM_LBL" );
+	
+	public static final XUILocalizedMessage OPL_WND_TITLE = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_WND_TITLE" );
+	
+	public static final XUILocalizedMessage OPL_COLUMN_LBL_CARDID = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_COLUMN_LBL_CARDID" );
+	
+	public static final XUILocalizedMessage OPL_COLUMN_LBL_CLASSNAME = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_COLUMN_LBL_CLASSNAME" );
+	
+	public static final XUILocalizedMessage OPL_COLUMN_LBL_PERMISSIONS = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_COLUMN_LBL_PERMISSIONS" );
+	
+	public static final XUILocalizedMessage OPL_COLUMN_LBL_TYPE_PERM = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_COLUMN_LBL_TYPE_PERM" );
+	
+	
 }

@@ -3,6 +3,7 @@
     <xwc:renderKits>
     	<!-- To Register RenderKits Class Names -->
         <xwc:renderKit name='XEOHTML' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
+        <xwc:renderKit name='XEOXML' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
 <!--         <xwc:renderKit name='XEOPDF' 	className='netgest.bo.xwc.components.render.pdf.PdfRenderKit' /> -->
         <xwc:renderKit name='XEOV2' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
 		
@@ -47,6 +48,10 @@
 <!--             <xwc:render for='title'>xeo.viewers.render.TitleRenderer</xwc:render>  -->
 <!-- 			<xwc:render for='borderLayout'>netgest.bo.xwc.components.classic.BorderLayout$XEOHTMLRenderer</xwc:render>  -->
 
+			<xwc:render for='pieChart'>netgest.bo.xwc.components.classic.charts.PieChart$XEOHTMLRenderer</xwc:render>
+			 <xwc:render for='barChart'>netgest.bo.xwc.components.classic.charts.BarChart$XEOHTMLRenderer</xwc:render>
+			<xwc:render for='lineChart'>netgest.bo.xwc.components.classic.charts.LineChart$XEOHTMLRenderer</xwc:render> 
+
             <xwc:render for='treePanel'>netgest.bo.xwc.components.classic.TreePanel$XEOHTMLRenderer</xwc:render>
 
 			<!--- Dialogs Components -->
@@ -83,6 +88,10 @@
             <xwc:render for='areas'>netgest.bo.xwc.components.classic.Areas$XEOHTMLRenderer</xwc:render>
             <xwc:render for='area'>netgest.bo.xwc.components.classic.Area$XEOHTMLRenderer</xwc:render>
             <xwc:render for='panel'>netgest.bo.xwc.components.classic.Panel$XEOHTMLRenderer</xwc:render>
+            
+			<xwc:render for='advancedPanel'>netgest.bo.xwc.components.classic.AdvancedPanel$XEOHTMLRenderer</xwc:render>
+			<xwc:render for='gridExplorer'>netgest.bo.xwc.components.classic.GridExplorer$XEOHTMLRenderer</xwc:render>
+			
             <xwc:render for='tabs'>netgest.bo.xwc.components.classic.Tabs$XEOHTMLRenderer</xwc:render>
             <xwc:render for='tab'>netgest.bo.xwc.components.classic.Tab$XEOHTMLRenderer</xwc:render>
             <xwc:render for='section'>netgest.bo.xwc.components.classic.Section$XEOHTMLRenderer</xwc:render>
@@ -92,6 +101,10 @@
             <xwc:render for='actionButton'>netgest.bo.xwc.components.classic.ActionButton$XEOHTMLRenderer</xwc:render>
             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.ToolBar$XEOHTMLRenderer</xwc:render>
 
+			<xwc:render for='pieChart'>netgest.bo.xwc.components.classic.charts.PieChart$XEOHTMLRenderer</xwc:render>
+			 <xwc:render for='barChart'>netgest.bo.xwc.components.classic.charts.BarChart$XEOHTMLRenderer</xwc:render>
+			<xwc:render for='lineChart'>netgest.bo.xwc.components.classic.charts.LineChart$XEOHTMLRenderer</xwc:render>
+	
             <xwc:render for='attribute'>netgest.bo.xwc.components.classic.Attribute$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeText'>netgest.bo.xwc.components.classic.AttributeText$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeTextArea'>netgest.bo.xwc.components.classic.AttributeTextArea$XEOHTMLRenderer</xwc:render>
@@ -153,6 +166,122 @@
         <xwc:renderKit name="XEOHTML" componentNamespace="xeo" >
       		<xwc:render for='splitedLookup'>netgest.bo.xwc.xeo.components.SplitedLookup$XEOHTMLRenderer</xwc:render>
       		<xwc:render for='menuCounter'>netgest.bo.xwc.xeo.components.MenuCounter$XEOHTMLRenderer</xwc:render>
+      		<xwc:render for="formEdit">netgest.bo.xwc.xeo.components.FormEdit$XEOHTMLRenderer</xwc:render>
+      		<!-- <xwc:render for="bridge">netgest.bo.xwc.xeo.components.Bridge$XEOHTMLRenderer</xwc:render> -->
+        </xwc:renderKit>
+
+        
+        <!-- *********** JSF RENDERKITS ********************** -->
+        <xwc:renderKit name="XEOHTML" componentNamespace="h">
+           <xwc:render for='javax.faces.Text'       family='javax.faces.Output'         component='outputText'>com.sun.faces.renderkit.html_basic.OutputMessageRenderer</xwc:render>
+           <xwc:render for='javax.faces.Button'     family='javax.faces.Command'        component='commandButton'>com.sun.faces.renderkit.html_basic.ButtonRenderer</xwc:render>
+           <xwc:render for='javax.faces.Image'      family='javax.faces.Graphic'        component='graphicImage'>com.sun.faces.renderkit.html_basic.ImageRenderer</xwc:render>
+           <xwc:render for='javax.faces.Text'       family='javax.faces.Input'          component='inputText'>com.sun.faces.renderkit.html_basic.TextRenderer</xwc:render>
+           <xwc:render for='javax.faces.Link'       family='javax.faces.Command'        component='commandLink'>netgest.bo.xwc.framework.jsf.renderers.XUICommandLinkRenderer</xwc:render>
+           <xwc:render for='javax.faces.Format'     family='javax.faces.Output'         component='outputFormat'>com.sun.faces.renderkit.html_basic.OutputMessageRenderer</xwc:render>
+           <xwc:render for="javax.faces.Table"      family="javax.faces.Data"           component="dataTable">com.sun.faces.renderkit.html_basic.TableRenderer</xwc:render>    
+            <xwc:render for="javax.faces.Hidden"    family="javax.faces.Input"          component="inputHidden">com.sun.faces.renderkit.html_basic.HiddenRenderer</xwc:render> 
+            <xwc:render for="javax.faces.Secret"    family="javax.faces.Input"          component="inputSecret">com.sun.faces.renderkit.html_basic.SecretRenderer</xwc:render>
+            <xwc:render for="javax.faces.Textarea"  family="javax.faces.Input"          component="inputTextarea">com.sun.faces.renderkit.html_basic.TextareaRenderer</xwc:render>
+            <xwc:render for="javax.faces.Message"   family="javax.faces.Message"        component="message">netgest.bo.xwc.framework.jsf.renderers.XUIMessageRenderer</xwc:render>
+            <xwc:render for="javax.faces.Messages"  family="javax.faces.Message"        component="messages">com.sun.faces.renderkit.html_basic.MessagesRenderer</xwc:render>
+            <xwc:render for="javax.faces.Label"     family="javax.faces.Output"         component="outputLabel">com.sun.faces.renderkit.html_basic.LabelRenderer</xwc:render>
+            <xwc:render for="javax.faces.Link"      family="javax.faces.Output"         component="outputLink">com.sun.faces.renderkit.html_basic.OutputLinkRenderer</xwc:render>
+            <xwc:render for="javax.faces.Grid"      family="javax.faces.Panel"          component="panelGrid">com.sun.faces.renderkit.html_basic.GridRenderer</xwc:render>
+            <xwc:render for="javax.faces.Group"     family="javax.faces.Panel"          component="panelGroup">com.sun.faces.renderkit.html_basic.GroupRenderer</xwc:render>
+            <xwc:render for="javax.faces.Checkbox"  family="javax.faces.SelectBoolean"  component="selectBooleanCheckbox">com.sun.faces.renderkit.html_basic.CheckboxRenderer</xwc:render>
+            <xwc:render for="javax.faces.Checkbox"  family="javax.faces.SelectMany"     component="selectManyCheckbox">com.sun.faces.renderkit.html_basic.SelectManyCheckboxListRenderer</xwc:render>            
+            <xwc:render for="javax.faces.Listbox"   family="javax.faces.SelectMany"     component="selectManyListbox">com.sun.faces.renderkit.html_basic.ListboxRenderer</xwc:render>            
+            <xwc:render for="javax.faces.Menu"      family="javax.faces.SelectMany"     component="selectManyMenu">com.sun.faces.renderkit.html_basic.MenuRenderer</xwc:render>
+            <xwc:render for="javax.faces.Listbox"   family="javax.faces.SelectOne"      component="selectOneListbox">com.sun.faces.renderkit.html_basic.ListboxRenderer</xwc:render>
+            <xwc:render for="javax.faces.Menu"      family="javax.faces.SelectOne"      component="selectOneMenu">com.sun.faces.renderkit.html_basic.MenuRenderer</xwc:render>
+            <xwc:render for="javax.faces.Radio"     family="javax.faces.SelectOne"      component="selectOneRadio">com.sun.faces.renderkit.html_basic.RadioRenderer</xwc:render>
+            
+        </xwc:renderKit>
+        
+        <xwc:renderKit name="XEOHTML" componentNamespace="f">
+            
+        </xwc:renderKit>
+        
+		<xwc:renderKit name='XEOXML' componentNamespace='xvw' >
+            <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for="form">netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='menu'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='areas'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='area'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='panel'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='tabs'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='tab'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='section'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='rows'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='row'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='cell'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='actionButton'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+
+            <xwc:render for='attribute'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
+            <xwc:render for='attributeText'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeTextArea'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeLabel'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeHtmlEditor'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeDate'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeTime'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeDateTime'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeLov'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeBoolean'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeNumber'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeNumberLookup'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeOutput'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeFile'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributePassword'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+
+            <xwc:render for='mainLayout'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            
+            <xwc:render for='gridPanel'>netgest.bo.xwc.components.classic.renderers.XMLGridPanelRenderer</xwc:render>
+            <xwc:render for='window'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+			<xwc:render for='HTMLFileBrowse'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+			<xwc:render for='title'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+			
+<!-- 			<xwc:render for='borderLayout'>netgest.bo.xwc.components.classic.BorderLayout$XEOHTMLRenderer</xwc:render>  -->
+
+            <xwc:render for='treePanel'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+
+			<!--- Dialogs Components -->
+			<xwc:render for='dialogProgress'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+
+			<xwc:render for='progressBar'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+
+			<xwc:render for='messageBox'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+
+
+			<!--- HTML Graphics -->
+            <xwc:render for='attributeImage'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+			<!--- HTML Graphics -->
+
+			<!--- HTML Components -->
+			<xwc:render for='buttonHtml'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='outputHtml'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+
+	        <!-- pcampos begin OE consolidar-->
+            <xwc:render for='fileBrowserHtml'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <!-- pcampos begin OE -->
+
+			<!-- FIM HTML Components -->
+
+			<!-- Generic Viewer Tag -->
+			<xwc:render for='genericTag'>netgest.bo.xwc.components.html.GenericTag$XEOHTMLRenderer</xwc:render>
+			<!-- FIM Viewer Tag -->
+			
+			<xwc:render for='attributeWordMacro'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+
+			<xwc:render for='attributeObjectLookup'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+			
+        </xwc:renderKit>
+        <xwc:renderKit name="XEOXML" componentNamespace="xeo" >
+      		<xwc:render for='splitedLookup'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+      		<xwc:render for='formEdit'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+      		<xwc:render for='bridge'>netgest.bo.xwc.components.classic.renderers.XMLGridPanelRenderer</xwc:render>
         </xwc:renderKit>
     </xwc:renderKits>
     
@@ -291,10 +420,22 @@
             <xwc:className>netgest.bo.xwc.components.classic.Form</xwc:className>
             <xwc:description>Form</xwc:description>
         </xwc:component>
+
         <xwc:component name='panel'>
             <xwc:className>netgest.bo.xwc.components.classic.Panel</xwc:className>
             <xwc:description>Panel</xwc:description>
         </xwc:component>
+        
+        <xwc:component name='advancedPanel'>
+            <xwc:className>netgest.bo.xwc.components.classic.AdvancedPanel</xwc:className>
+            <xwc:description>Advanced Panel</xwc:description>
+        </xwc:component>
+
+        <xwc:component name='gridExplorer'>
+            <xwc:className>netgest.bo.xwc.components.classic.GridExplorer</xwc:className>
+            <xwc:description>Grid Explorer Panel</xwc:description>
+        </xwc:component>
+        
         <xwc:component name='tabs'>
             <xwc:className>netgest.bo.xwc.components.classic.Tabs</xwc:className>
             <xwc:description>Tabs</xwc:description>
@@ -346,6 +487,24 @@
         </xwc:component>
 <!-- End Window Components -->
 
+	<!-- Chart Components -->
+	
+	<xwc:component name="barChart">
+		<xwc:className>netgest.bo.xwc.components.classic.charts.BarChart</xwc:className>
+		<xwc:description>A BarChart Component</xwc:description>
+	</xwc:component>
+	
+	<xwc:component name="pieChart">
+		<xwc:className>netgest.bo.xwc.components.classic.charts.PieChart</xwc:className>
+		<xwc:description>A PieChart Component</xwc:description>
+	</xwc:component>
+	
+	<xwc:component name="lineChart">
+		<xwc:className>netgest.bo.xwc.components.classic.charts.LineChart</xwc:className>
+		<xwc:description>A LineChart Component</xwc:description>
+	</xwc:component>
+	
+	<!-- End of Chart Components -->		
 <!-- Dialog Components -->
         <xwc:component name='dialogProgress'>
             <xwc:className>netgest.bo.xwc.components.classic.DialogProgress</xwc:className>
@@ -362,6 +521,13 @@
         <xwc:component name='menu'>
             <xwc:className>netgest.bo.xwc.components.model.Menu</xwc:className>
             <xwc:description>Menu</xwc:description>
+        </xwc:component>
+        
+        <!-- This Component is used in EditToolBars to enable the
+        customization of the XSLT used when exporting forms to HTML/PDF/Excel -->
+        <xwc:component name='exportMenu'>
+            <xwc:className>netgest.bo.xwc.components.model.ExportMenu</xwc:className>
+            <xwc:description>ExportMenu</xwc:description>
         </xwc:component>
 
         <xwc:component name='columns'>
@@ -409,8 +575,161 @@
             <xwc:description>Message Box component</xwc:description>
         </xwc:component>
 
+
     </xwc:components>
     
+    <!-- **************** JSF COMPONENTS ********************************** -->
+    
+    <xwc:components namespace="f">
+        <xwc:component name="selectItem">
+            <xwc:className>javax.faces.component.UISelectItem</xwc:className>
+            <xwc:description>Add a child UISelectItem component to the UIComponent associated with the closed parent UIComponent custom action.</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="selectItems">
+            <xwc:className>javax.faces.component.UISelectItems</xwc:className>
+            <xwc:description>Add a child UISelectItem component to the UIComponent associated with the closed parent UIComponent custom action.</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="facet">
+            <xwc:className>javax.faces.component.UINamingContainer</xwc:className>
+            <xwc:description>Register a named facet on the UIComponent associated with the closest parent UIComponent custom action.</xwc:description>
+        </xwc:component>
+        
+    </xwc:components>
+    
+    <xwc:components namespace="h">
+        <xwc:component name='outputText'>
+        	<xwc:className>javax.faces.component.html.HtmlOutputText</xwc:className>
+            <xwc:description>Outputs Text to the viewer</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name='commandButton'>
+        	<xwc:className>javax.faces.component.html.HtmlCommandButton</xwc:className> -->
+            <xwc:description>Creates an HTML Submit button</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name='graphicImage'>
+        	<xwc:className>javax.faces.component.html.HtmlGraphicImage</xwc:className> -->
+            <xwc:description>Renders an img tag to display an image</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name='inputText'>
+        	<xwc:className>javax.faces.component.html.HtmlInputText</xwc:className> -->
+            <xwc:description>Render an input field to keep text</xwc:description>
+        </xwc:component>
+        
+        
+        <xwc:component name="commandLink">
+            <xwc:className>javax.faces.component.html.HtmlCommandLink</xwc:className>
+            <xwc:description>Render an HTML "a" anchor element that acts like a form submit button when clicked.</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="outputFormat">
+            <xwc:className>javax.faces.component.html.HtmlOutputFormat</xwc:className>
+            <xwc:description>Render parameterized text.</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="dataTable">
+            <xwc:className>javax.faces.component.html.HtmlDataTable</xwc:className>
+            <xwc:description>Renders an HTML "table" element compliant with the HTML 401 specification</xwc:description>
+        </xwc:component>
+        
+    
+        <xwc:component name="inputHidden">
+            <xwc:className>javax.faces.component.html.HtmlInputHidden</xwc:className>
+            <xwc:description>Renders an HTML "input" element of type "hidden".</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="inputSecret">
+            <xwc:className>javax.faces.component.html.HtmlInputSecret</xwc:className>
+            <xwc:description>Renders an HTML "input" element of "type" "password".</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="inputTextarea">
+            <xwc:className>javax.faces.component.html.HtmlInputTextarea</xwc:className>
+            <xwc:description>Renders an HTML "textarea" element.</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="message">
+            <xwc:className>javax.faces.component.html.HtmlMessage</xwc:className>
+            <xwc:description>Render a single message for a specific component.</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="messages">
+            <xwc:className>javax.faces.component.html.HtmlMessages</xwc:className>
+            <xwc:description>The same as for the Message renderer, but output all the messages</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="outputLabel">
+            <xwc:className>javax.faces.component.html.HtmlOutputLabel</xwc:className>
+            <xwc:description>Renders an HTML "label" element</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="outputLink">
+            <xwc:className>javax.faces.component.html.HtmlOutputLink</xwc:className>
+            <xwc:description>Render an HTML "a" anchor element</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="panelGrid">
+            <xwc:className>javax.faces.component.html.HtmlPanelGrid</xwc:className>
+            <xwc:description>Renders an HTML "table" element, conforming to the rules in the HTML 401 specification.</xwc:description>
+        </xwc:component>
+
+        <xwc:component name="panelGroup">
+            <xwc:className>javax.faces.component.html.HtmlPanelGroup</xwc:className>
+            <xwc:description>Intended for use in situations when only one UIComponent child
+                can be nested, such as in the case of facets.</xwc:description>
+        </xwc:component>
+
+        
+        <xwc:component name="selectBooleanCheckbox">
+            <xwc:className>javax.faces.component.html.HtmlSelectBooleanCheckbox</xwc:className>
+            <xwc:description>Renders an HTML "input" element of type "checkbox".</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="selectManyCheckbox">
+            <xwc:className>javax.faces.component.html.HtmlSelectManyCheckbox</xwc:className>
+            <xwc:description>Render an HTML checkbox list.</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="selectManyListbox">
+            <xwc:className>javax.faces.component.html.HtmlSelectManyListbox</xwc:className>
+            <xwc:description>Render an HTML option list.</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="selectManyMenu">
+            <xwc:className>javax.faces.component.html.HtmlSelectManyMenu</xwc:className>
+            <xwc:description>Render an HTML option list.</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="selectOneListbox">
+            <xwc:className>javax.faces.component.html.HtmlSelectOneListbox</xwc:className>
+            <xwc:description>Render an HTML option list.</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="selectOneMenu">
+            <xwc:className>javax.faces.component.html.HtmlSelectOneMenu</xwc:className>
+            <xwc:description>Render an HTML option list.</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="selectOneRadio">
+            <xwc:className>javax.faces.component.html.HtmlSelectOneRadio</xwc:className>
+            <xwc:description>Render a set of html "input" elements of type "radio".</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="column">
+            <xwc:className>javax.faces.component.html.HtmlColumn</xwc:className>
+            <xwc:description>Renders a UIComponent that represents a single column of data within a parent UIData component.</xwc:description>
+        </xwc:component>
+        
+        
+        
+        
+    </xwc:components>
+    
+    
+    <!-- ********************** XEO Components *************************** -->
     <xwc:components namespace='xeo'>
 		<!--  XEO Components -->
         <xwc:component name='attribute'>

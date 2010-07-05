@@ -4,15 +4,15 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
 
 public class Bridge extends GridPanel {
 
 	private XUIBindProperty<boObject> 	targetObject 			= 
 		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
 		
-	private XUIStateBindProperty<String>  bridgeName 	= 
-		new XUIStateBindProperty<String>( "bridgeName", this, String.class );
+	private XUIViewBindProperty<String>  bridgeName 	= 
+		new XUIViewBindProperty<String>( "bridgeName", this, String.class );
 
 	private XUIBindProperty<Boolean> renderToolBar = 
 		new XUIBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
@@ -46,11 +46,13 @@ public class Bridge extends GridPanel {
         this.bridgeName.setValue( createValueExpression( sExpressionText, String.class ) );
     }
     
-    public String getBridgeName(  ) {
-        if ( this.bridgeName.getValue().isLiteralText() ) {
-            return String.valueOf( this.bridgeName.getValue().getExpressionString() );
-        }
-        return (String)this.bridgeName.getValue().getValue( getELContext() );
+    public String getBridgeName(  ) 
+    {
+        /*if ( this.bridgeName.getValue().isLiteralText() ) 
+        {
+            return String.valueOf( this.bridgeName.getEvaluatedValue() );
+        }*/
+        return (String)this.bridgeName.getEvaluatedValue();
     }
 	
 	@Override
@@ -90,6 +92,5 @@ public class Bridge extends GridPanel {
 		return bridgeToolbar;
 		
 	}
-	
 	
 }

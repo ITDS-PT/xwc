@@ -116,7 +116,7 @@ public class XUIComponentParser
     }
     
     
-    private void parseComponentRenders( XUIComponentStore oComponents, XMLElement oRenderKitsElement ) throws Exception
+    /*private void parseComponentRenders( XUIComponentStore oComponents, XMLElement oRenderKitsElement ) throws Exception
     {
         try 
         {
@@ -146,6 +146,10 @@ public class XUIComponentParser
                     
                     sRenderFor = oRenderElement.getAttribute( "for" );
                     
+                    if( "outputText".equals( sRenderFor ) ) {
+                    	System.out.println( "todebug" );
+                    }
+                    
                     assert sRenderFor != null:"for attribute must be defined in element";
                     oComponent = oComponents.getComponent( sComponentNamespace +":" + sRenderFor );
                     
@@ -153,6 +157,89 @@ public class XUIComponentParser
                     {
                         sRenderClassName = oRenderElement.getText();
                         oComponent.addRenderKit( sRenderKitName, sRenderClassName );
+                    }
+                    else{
+                        if ( log.isLoggable( LoggerLevels.FINER ) ){
+                            log.warn("Component id ["+sRenderFor+"] not found parsing renderKit" );
+                        }
+                    }
+                }
+            }
+            
+        } 
+        finally 
+        {
+        
+        }
+
+    }*/
+    
+    
+    /**
+     * 
+     * Loads all renderers into the {@link XUIComponentStore} from the XML
+     * 
+     * @param oComponents The component store
+     * @param oRenderKitsElement The XML element with the definition
+     * 
+     * @throws Exception
+     */
+    private void parseComponentRenders( XUIComponentStore oComponents, XMLElement oRenderKitsElement ) throws Exception
+    {
+        try 
+        {
+        	//The name of the renderkit
+            String sRenderKitName;
+            //To keep the name of the component renderer type
+            String sRenderFor;
+            //To keep the class name that renders the 
+            String sRenderClassName;
+            //The name space of the component
+            String sComponentNamespace;
+            //The renderer family
+            String sRenderFamily;
+
+            NodeList    oRendersNodeList;
+            XMLElement  oRenderElement;
+            XUIComponentDefinition oComponent;
+            
+            //Select all renderkits and iterate through them
+            NodeList listRenderKits = oRenderKitsElement.selectNodes("xwc:renderKit",nr);
+            for (int i = 0; i < listRenderKits.getLength(); i++)  
+            {
+            	//Select the current render kit from the list
+                XMLElement oRenderKitElement = (XMLElement)listRenderKits.item( i );    
+                
+                //Retrieve the necessary attributes
+                sRenderKitName 		= oRenderKitElement.getAttribute("name");
+                sComponentNamespace = oRenderKitElement.getAttribute("componentNamespace");
+               
+                //Select the child nodes representing the renderers
+                oRendersNodeList = oRenderKitElement.selectNodes("xwc:render",nr);
+                
+                //Iterate through all renderers for this render kit
+                for (int j = 0; j < oRendersNodeList.getLength(); j++)  {
+                    
+                    oRenderElement = (XMLElement)oRendersNodeList.item( j );
+                    
+                    sRenderFor = oRenderElement.getAttribute( "for" );
+                    sRenderFamily = oRenderElement.getAttribute( "family" );
+                    
+                    if (sRenderFamily.length() == 0)
+                    	sRenderFamily = sRenderFor;
+                    
+                    assert sRenderFor != null:"for attribute must be defined in element";
+                    oComponent = oComponents.getComponent( sComponentNamespace +":" + sRenderFor );
+                    
+                    if (oComponent == null)
+                    {
+                    	oComponent = oComponents.getComponent(sComponentNamespace+ ":" + oRenderElement.getAttribute("component"));
+                    }
+                    
+                    if( oComponent != null )
+                    {
+                    	sRenderClassName = oRenderElement.getText();
+                        oComponents.registerRenderKit(sRenderKitName, sRenderClassName, sRenderFamily, sRenderFor );
                     }
                     else{
                         if ( log.isLoggable( LoggerLevels.FINER ) ){

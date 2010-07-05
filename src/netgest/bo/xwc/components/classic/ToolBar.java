@@ -20,7 +20,6 @@ import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 

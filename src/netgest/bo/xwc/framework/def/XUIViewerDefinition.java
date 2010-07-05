@@ -7,6 +7,8 @@ public class XUIViewerDefinition
     protected String                   viewerBean;
     protected String                   viewerBeanId;
     
+    protected String				   renderKitId;
+    
     protected String[] 				   localizationClasses;
     
     protected boolean				   btransient;
@@ -228,4 +230,24 @@ public class XUIViewerDefinition
     public void setViewerBeanId(String viewerBeanId) {
         this.viewerBeanId = viewerBeanId;
     }
+
+
+
+
+	/**
+	 * @return the renderKitId
+	 */
+	public String getRenderKitId() {
+		return renderKitId;
+	}
+
+
+
+
+	/**
+	 * @param renderKitId the renderKitId to set
+	 */
+	public void setRenderKitId(String renderKitId) {
+		this.renderKitId = renderKitId;
+	}
 }

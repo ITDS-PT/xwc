@@ -26,6 +26,7 @@ import javax.faces.webapp.FacesServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.xwc.components.HTMLAttr;
+import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.Window;
@@ -38,6 +39,7 @@ import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl;
 
+import com.lowagie.text.html.HtmlTags;
 import com.sun.faces.util.LRUMap;
 import com.sun.faces.util.RequestStateManager;
 import com.sun.faces.util.TypedCollections;
@@ -227,12 +229,56 @@ public class XUIViewRoot extends UIViewRoot {
 
 		list = getChildren();
 		for (UIComponent component : list) {
-			oComp = ((XUIComponentBase) component).findComponent(cType);
-			if (oComp != null) {
-				return oComp;
+			
+			if (component instanceof XUIComponentBase)
+			{
+				oComp = ((XUIComponentBase) component).findComponent(cType);
+				if (oComp != null) {
+					return oComp;
+				}
 			}
+			else
+			{
+				List<UIComponent> listChildren = component.getChildren();
+				for (UIComponent chilCmp: listChildren)
+				{
+					findComponent(chilCmp, cType);
+				}
+			}
+			
 		}
 		return oComp;
+	}
+	
+	private XUIComponentBase findComponent(UIComponent current, Class cType )
+	{
+		XUIComponentBase oComp = null;
+		if (current != null)
+		{
+			List<UIComponent> list = current.getChildren();
+			for (UIComponent component : list)
+			{
+				if (component instanceof XUIComponentBase)
+				{
+					oComp = ((XUIComponentBase) component).findComponent(cType);
+					if (oComp != null) {
+						return oComp;
+					}
+				}
+				else
+				{
+					List<UIComponent> listChildren = component.getChildren();
+					for (UIComponent chilCmp: listChildren)
+					{
+						return findComponent(chilCmp,cType);
+					}
+				}
+			}
+			
+		}
+		
+		return null;
+		
 	}
 
 	public void setParentViewState(String sParentViewId) {
@@ -444,10 +490,17 @@ public class XUIViewRoot extends UIViewRoot {
 						+ getRequestContext().getResourceUrl("");
 
 				headerW.writeAttribute("href", link, "href");
-
-				headerW.startElement("meta", component);
+				
+				// <meta http-equiv="X-UA-Compatible" content="chrome=1">
+				headerW.startElement( HtmlTags.META, component);
+				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
+				headerW.writeAttribute("content", "chrome=1", null);
+				headerW.endElement( HtmlTags.META );
+				
+				headerW.startElement( HtmlTags.META, component);
 				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
 				headerW.writeAttribute("content", "IE=EmulateIE7", null);
+				headerW.endElement( HtmlTags.META );
 
 				headerW.startElement("meta", component);
 				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);

@@ -1,11 +1,31 @@
 package netgest.bo.xwc.xeo.components;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
+import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Panel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIRendererServlet;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
+import netgest.utils.ngtXMLUtils;
+import oracle.xml.parser.v2.XMLDocument;
 
 public class FormEdit extends Form {
 
@@ -29,13 +49,20 @@ public class FormEdit extends Form {
 
 	private XUIBindProperty<Integer> windowWidth = 
 		new XUIBindProperty<Integer>("windowWidth", this, 600, Integer.class);
+	
+	/**
+	 * If the show differences button should appear in the dialog 
+	 * that appears if the  close tab button is pressed and the object was changed
+	 */
+	private XUIBindProperty<Boolean> showDifferences = 
+		new XUIBindProperty<Boolean>("showDifferences", this, false, Boolean.class);
 
 	private XUIBindProperty<Boolean> orphanMode = 
 		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class, "#{viewBean.editInOrphanMode}" );
 
 	@Override
 	public String getRendererType() {
-		return "form";
+		return "formEdit";
 	}
 	
 	public boolean getOrphanMode() {
@@ -52,6 +79,29 @@ public class FormEdit extends Form {
 
 	public void setRenderViewerTitle(boolean renderToolbar) {
 		this.renderViewerTitle.setValue( renderToolbar );
+	}
+	
+	/**
+	 * 
+	 * Whether or not the "show differences" button should appear when
+	 * an edited object's tab is closed
+	 * 
+	 * @return True if the button should appear and false otherwise
+	 */
+	public boolean getShowDifferences()
+	{
+		return showDifferences.getEvaluatedValue();
+	}
+	
+	/**
+	 * 
+	 * Sets the showDifferences button option
+	 * 
+	 * @param showDifferences If the button should appear or not
+	 */
+	public void setShowDifferences(boolean showDifferences)
+	{
+		this.showDifferences.setValue(showDifferences);
 	}
 
 	public boolean getRenderToolBar() {
@@ -186,12 +236,143 @@ public class FormEdit extends Form {
 				wnd.setHeight( getWindowHeight() );
 				wnd.setWidth( getWindowWidth() );
 				
-				// Muda todos os descendentes directos do form, para filhos da janela
+				//Muda todos os descendentes directos do form, para filhos da janela
 				wnd.getChildren().addAll( getChildren() );
 				getChildren().clear();
 				getChildren().add( wnd );
 			}
 		}
+	}
+	
+	public static class XEOHTMLRenderer extends Form.XEOHTMLRenderer implements XUIRendererServlet
+	{
+		public XEOHTMLRenderer()
+		{
+			super();
+		}
+		
+		 public void decode( XUIComponentBase component ) 
+		 {
+             super.decode(component);
+	     }
+
+	     @Override
+	     public void encodeBegin(XUIComponentBase component) throws IOException 
+         {
+	        super.encodeBegin(component);
+	     }
+	    
+	    
+        @Override
+        public void encodeEnd( XUIComponentBase component) throws IOException
+        {
+        	super.encodeEnd(component);
+        }
+
+      
+        
+        @Override
+		public void encodeChildren(FacesContext context, UIComponent component)
+				throws IOException {
+        	super.encodeChildren(context, component);
+        }
+        
+        @Override
+        public void encodeChildren(XUIComponentBase component)
+		throws IOException {
+        	super.encodeChildren(component);
+        }
+        
+        /**
+         * 
+         * Temporary function that retrieves the content of a system file
+         * 
+         * @return
+         */
+        private XMLDocument getViewerContentAsXML()
+        {
+        	String pathXML = "/Users/useruser/Desktop/Tese/ITDS/XWC - Exportação para XML/MegaObjecto.xml";
+        	XMLDocument doc;
+    		try 
+    		{
+    			doc = ngtXMLUtils.loadXML(new FileInputStream(new File(pathXML)));
+    			return doc;
+    		} 
+    		catch (FileNotFoundException e) 
+    		{
+    			e.printStackTrace();
+    			return null;
+    		}
+        	
+        }
+        
+        
+        /* (non-Javadoc)
+         * 
+         * 
+         * 
+		 * @see netgest.bo.xwc.framework.XUIRendererServlet#service(javax.servlet.ServletRequest, javax.servlet.ServletResponse, netgest.bo.xwc.framework.components.XUIComponentBase)
+		 */
+		@Override
+		public void service(ServletRequest oRequest, ServletResponse oResponse,
+				XUIComponentBase oComp) throws IOException 
+		{
+			
+			HttpServletRequest request = 
+				(HttpServletRequest) getRequestContext().getRequest();
+			HttpServletResponse response = 
+				(HttpServletResponse) getRequestContext().getResponse();
+	        response.setCharacterEncoding("UTF-8");
+	        
+	        //Get the FormEdit component
+			FormEdit 		frmComponent = (FormEdit) oComp;
+	        
+			/*
+			 * Shows the Logs of the version of the object
+			 * 
+			 * */
+	        if (request.getParameter("showLogs") != null)
+	        {
+	        	
+	        	//Get the BOUI of the object
+	        	long			bouiOfVersion = Long.valueOf(request.getParameter("versionBoui"));
+	        	
+	        	//Produce the HTML result
+	        	String 			result = XEOListVersionHelper.getListOfLogsObject(bouiOfVersion, frmComponent);
+	        	
+	        	response.getWriter().write(result);
+    			getRequestContext().responseComplete();
+	        }
+	        else if (request.getParameter("version") != null)
+			{
+	        	boSession 		session = frmComponent.getTargetObject().getEboContext().getBoSession();
+	        	EboContext		newContext = session.createRequestContextInServlet(
+        				(HttpServletRequest)getRequestContext().getRequest(), 
+        				(HttpServletResponse)getRequestContext().getResponse(), 
+        				(ServletContext)getRequestContext().getServletContext());
+	        	long 			bouiVersion = Long.valueOf(request.getParameter("version"));
+	        	String 			result = XEOListVersionHelper.renderDifferencesWithPreviousVersion(frmComponent,bouiVersion,getViewerContentAsXML(),newContext);
+	        	
+	        	response.getWriter().write(result);
+				getRequestContext().responseComplete();
+			}
+			else
+			{
+				/*
+				 * Renders the difference between the current object and the object
+				 * saved in the database
+				 * 
+				 * */
+				String result = XEOListVersionHelper.renderDifferencesWithFlashBack(frmComponent, getViewerContentAsXML());
+				response.getWriter().write(result);
+				getRequestContext().responseComplete();
+			}
+		}
+		
+		
+		
+	
+		
 	}
 
 }

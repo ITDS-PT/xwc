@@ -69,4 +69,82 @@ public interface BeansMessages {
 
 	public static final XUILocalizedMessage VALID_ERRORS_TITLE = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "VALID_ERRORS_TITLE" );
+	
+	// Messages for the Properties View
+	public static final XUILocalizedMessage OBJECT_TYPE = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "OBJECT_TYPE" );
+	
+	public static final XUILocalizedMessage REFERENCED_OBJECT = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "REFERENCED_OBJECT" );
+	
+	public static final XUILocalizedMessage NO_REFERENCED_OBJECTS = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "NO_REFERENCED_OBJECTS" );
+	
+	public static final XUILocalizedMessage NO_REFERENCED_BY_OBJECT = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "NO_REFERENCED_BY_OBJECT" );
+	
+	//Messages for the Version List View
+	public static final XUILocalizedMessage VERSION_NUMBER = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "VERSION_NUMBER" );
+	
+	public static final XUILocalizedMessage CREATION_DATE = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "CREATION_DATE" );
+	
+	public static final XUILocalizedMessage CREATOR_USER = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "CREATOR_USER" );
+	
+	public static final XUILocalizedMessage NO_VERSIONS_EXIST = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "NO_VERSIONS_EXIST" );
+	
+	public static final XUILocalizedMessage VERSIONING_NOT_ACTIVE = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "VERSIONING_NOT_ACTIVE" );
+	
+	public static final XUILocalizedMessage SHOW_LOGS = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "SHOW_LOGS" );
+	
+	public static final XUILocalizedMessage LBL_DIFFERENCES_RESUME = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "LBL_DIFFERENCES_RESUME" );
+	
+	public static final XUILocalizedMessage MSG_ERROR_IN_DIFFERENCES_RENDER = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "MSG_ERROR_IN_DIFFERENCES_RENDER" );
+	
+	public static final XUILocalizedMessage MSG_ERROR_IN_LOGS = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "MSG_ERROR_IN_LOGS" );
+	
+	public static final XUILocalizedMessage LBL_BTN_CMP_ACTUAL = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "LBL_BTN_CMP_ACTUAL" );
+	
+	public static final XUILocalizedMessage LBL_WND_SHOW_DIFF = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "LBL_WND_SHOW_DIFF" );
+	
+	public static final XUILocalizedMessage LBL_WND_SHOW_LOGS = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "LBL_WND_SHOW_LOGS" );
+	
+	//Messages for the OPL Viewers
+	
+	public static final XUILocalizedMessage OPL_READ_PERMISSION = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "OPL_READ_PERMISSION" );
+	
+	public static final XUILocalizedMessage OPL_WRITE_PERMISSION = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "OPL_WRITE_PERMISSION" );
+	
+	public static final XUILocalizedMessage OPL_DELETE_PERMISSION = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "OPL_DELETE_PERMISSION" );
+	
+	public static final XUILocalizedMessage OPL_FULL_PERMISSION = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "OPL_FULL_PERMISSION" );
+	
+	public static final XUILocalizedMessage OPL_RUNTIME_PERMISSION = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "OPL_RUNTIME_PERMISSION" );
+	
+	public static final XUILocalizedMessage OPL_DESIGN_TIME_PERMISSION = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "OPL_DESIGN_TIME_PERMISSION" );
+	
+	public static final XUILocalizedMessage OPL_ERROR_REQ_FIELDS_TITLE = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "OPL_ERROR_REQ_FIELDS_TITLE" );
+	
+	public static final XUILocalizedMessage OPL_ERROR_REQ_FIELDS_MESSAGE = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "OPL_ERROR_REQ_FIELDS_MESSAGE" );
+	
+	
 }

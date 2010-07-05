@@ -51,6 +51,7 @@ public class XUIViewerDefinitonParser
 
             xwvr.setViewerBean( node.getAttribute( "beanClass" ) );
             xwvr.setViewerBeanId( node.getAttribute( "beanId" ) );
+            xwvr.setRenderKitId( node.getAttribute( "renderKitId" ) ); 
 
             xwvr.setOnRestoreViewPhase( node.getAttribute( "onRestoreViewPhase" ) );
             xwvr.setOnCreateViewPhase( node.getAttribute( "onCreateViewPhase" ) );

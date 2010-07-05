@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xvw:root 
+	xmlns:xvw="http://www.netgest.net/xeo/xvw"
+	xmlns:xeo="http://www.netgest.net/xeo/xeo"
+>
+    <xvw:viewer 
+	    localizationClasses='netgest.bo.xwc.xeo.localization.XEOViewersMessages' 
+	    beanClass='netgest.bo.xwc.xeo.beans.XEOSecurityOPLBean' 
+	    beanId='viewBean'
+  	>
+        <xeo:formEdit renderToolBar='false'>
+        
+         	<xvw:window width='650' height='300' title='@{OPL_WND_TITLE}'>
+	            <xvw:section>
+	            
+             		<xeo:bridge bridgeName='KEYS' 
+             			renderExcelBtn='false' renderPdfBtn='false' 
+             			renderToolBar='false'
+             			rowDblClickTarget='self' onRowDoubleClick='#{viewBean.openDblClick}'
+             			>
+             		  <xeo:bridgeToolBar 
+             				renderAddBtn='false'
+             				renderRemoveBtn='#{viewBean.canRemoveBtn}'
+             				renderCreateNewBtn='false'
+             				bridgeName='KEYS'>
+             			
+             				<xvw:menu 
+             					text="@{OPL_BTN_ADD_PERM_LBL}"
+             					icon="ext-xeo/images/menus/add_permission.gif"
+             					disabled="#{viewBean.disabledAddBtn}"
+             					serverAction="#{viewBean.addPermission}"
+             					>
+             				</xvw:menu>
+             			
+             		</xeo:bridgeToolBar> 
+						<xvw:columns>
+							<xvw:columnAttribute width="120" 
+								label="@{OPL_COLUMN_LBL_CARDID}" dataField="SYS_CARDID" />
+							 <xvw:columnAttribute width='60' 
+								label='@{OPL_COLUMN_LBL_CLASSNAME}' dataField='CLASSNAME'/>
+							<xvw:columnAttribute width='50' 
+								label='@{OPL_COLUMN_LBL_PERMISSIONS}' dataField='securityCode' 
+								renderer="#{viewBean.renderSecurity}"/>
+							<xvw:columnAttribute width='50' 
+								label='@{OPL_COLUMN_LBL_TYPE_PERM}' dataField='securityType' 
+								renderer="#{viewBean.renderType}"/>
+							<xvw:columnAttribute width='20' label='&nbsp;' dataField='BOUI' hidden='true'/>
+											
+						</xvw:columns>
+						<xvw:gridNavBar
+							showExportToExcel="false"
+							showExportToPDF="false">
+						</xvw:gridNavBar>
+					</xeo:bridge>
+					  
+	            </xvw:section>
+	        </xvw:window>
+	       
+        </xeo:formEdit>
+    </xvw:viewer>
+</xvw:root>
