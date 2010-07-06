@@ -1,3 +1,37 @@
+
+Ext.ns('ExtXeo','ExtXeo.Toolbar');
+
+ExtXeo.Toolbar.Separator = function( config ){
+    ExtXeo.Toolbar.Separator.superclass.constructor.call(this, config );
+};
+Ext.extend(ExtXeo.Toolbar.Separator, Ext.Component, {
+    enable:Ext.emptyFn,
+    disable:Ext.emptyFn,
+    focus:Ext.emptyFn,
+	setDisabled:Ext.emptyFn,
+    hidden: false,
+    onRender: function(container, position) {
+    	this.el = document.createElement("span");
+    	this.el.className = "ytb-sep";
+    	Ext.menu.Item.superclass.onRender.call(this, container, position);
+    	if( this.hidden )
+    		this.el.dom.style.display = 'none';
+	},
+    hide: function() {
+		if( !this.hidden ) {
+			this.el.dom.style.display = 'none';
+			this.hidden = true;
+		}
+	},
+	show: function() {
+		if( !this.hidden ) {
+			this.el.dom.style.display = '';
+			this.hidden = false;
+		}
+	}
+});
+
+
 Ext.ns('ExtXeo','ExtXeo.form');
 
 ExtXeo.form.NumberField = Ext.extend(Ext.form.TextField,  {

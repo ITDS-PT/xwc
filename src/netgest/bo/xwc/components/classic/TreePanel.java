@@ -167,7 +167,6 @@ public class TreePanel extends XUIComponentBase {
 		}
         
         public ExtConfig renderExtJs( TreePanel oTreeComp ) {
-        	
         	ExtConfig oTreeConfig = new ExtConfig("Ext.tree.TreePanel");
         	
         	oTreeConfig.addJSString( "id" , oTreeComp.getClientId() );

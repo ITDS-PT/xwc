@@ -9,9 +9,11 @@ import javax.faces.event.ActionEvent;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.properties.XUIProperty;
 
 public class RequestAction extends XUIComponentBase {
 
+	@XUIProperty(label="Request Parameter")
 	private XUIBaseProperty<String> requestParameter = new XUIBaseProperty<String>( "requestParameter", this );
 
 	public String getRequestParameter() {

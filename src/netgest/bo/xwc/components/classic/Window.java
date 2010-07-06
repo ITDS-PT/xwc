@@ -21,18 +21,21 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIForm;
 
 public class Window extends XUIComponentBase {
     
     
-    public XUIStateProperty<Integer> width = new XUIStateProperty<Integer>( "width", this, 500 );
-    public XUIStateProperty<Integer> height = new XUIStateProperty<Integer>( "height", this, 300 );
+    public XUIViewProperty<Integer> width = new XUIViewProperty<Integer>( "width", this, 500 );
+    public XUIViewProperty<Integer> height = new XUIViewProperty<Integer>( "height", this, 300 );
     
     public String animateTarget = null;
     
-    public XUIStateProperty<String> title = new XUIStateProperty<String>( "title", this, "" );
+    public XUIViewStateProperty<String> title = new XUIViewStateProperty<String>( "title", this, "" );
     public XUIMethodBindProperty onclose = new XUIMethodBindProperty( "onclose", this );
     public XUIMethodBindProperty onbeforeclose = new XUIMethodBindProperty( "onbeforeclose", this, "#{viewBean.canCloseTab}" );
     public XUIBaseProperty<Boolean> useExtJsRenderer = 
@@ -132,7 +135,7 @@ public class Window extends XUIComponentBase {
         XUIRequestContext oRequestContext; 
         oRequestContext = XUIRequestContext.getCurrentContext();
         
-        String namingContainerId = getNamingContainerId();
+        String namingContainerId = findParentComponent(XUIForm.class).getClientId();
 
         oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER, this.getClientId() + "_closeWnd", 
 		      "window.setTimeout( function() { " +

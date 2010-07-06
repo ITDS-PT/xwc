@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
+import netgest.bo.system.boApplication;
 import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Panel;
@@ -22,6 +23,7 @@ import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRendererServlet;
+import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
 import netgest.utils.ngtXMLUtils;
@@ -35,18 +37,23 @@ public class FormEdit extends Form {
 	private XUIBindProperty<Boolean> renderToolBar = 
 		new XUIBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
 
-	private XUIBaseProperty<Boolean> renderViewerTitle = 
-		new XUIBaseProperty<Boolean>("renderViewerTitle", this, true);
+	/** The render viewer title. */
+	private XUIBindProperty<Boolean>  renderViewerTitle = 
+		new XUIBindProperty<Boolean>("renderViewerTitle", this, true, Boolean.class);
 
-	private XUIBaseProperty<Boolean> renderViewerMessages = 
-		new XUIBaseProperty<Boolean>("renderViewerMessages", this, true);
+	/** The render viewer messages. */
+	private XUIBindProperty<Boolean>  renderViewerMessages = 
+		new XUIBindProperty<Boolean>("renderViewerMessages", this, true, Boolean.class);
 
-	private XUIBaseProperty<Boolean> renderWindow = 
-		new XUIBaseProperty<Boolean>("renderWindow", this, true);
+	/** The render window. */
+	private XUIBindProperty<Boolean>  renderWindow = 
+		new XUIBindProperty<Boolean>("renderWindow", this, true, Boolean.class);
 	
+	/** The window height. */
 	private XUIBindProperty<Integer> windowHeight = 
 		new XUIBindProperty<Integer>("windowHeight", this, 400, Integer.class);
 
+	/** The window width. */
 	private XUIBindProperty<Integer> windowWidth = 
 		new XUIBindProperty<Integer>("windowWidth", this, 600, Integer.class);
 	
@@ -74,10 +81,15 @@ public class FormEdit extends Form {
 	}
 	
 	public boolean getRenderViewerTitle() {
-		return renderViewerTitle.getValue();
+		return renderViewerTitle.getEvaluatedValue();
 	}
 
-	public void setRenderViewerTitle(boolean renderToolbar) {
+	/**
+	 * Sets the render viewer title.
+	 * 
+	 * @param renderToolbar the new render viewer title
+	 */
+	public void setRenderViewerTitle( boolean renderToolbar ) {
 		this.renderViewerTitle.setValue( renderToolbar );
 	}
 	
@@ -104,66 +116,171 @@ public class FormEdit extends Form {
 		this.showDifferences.setValue(showDifferences);
 	}
 
+	/**
+	 * Sets the render viewer title.
+	 * 
+	 * @param renderTitleExpr the new render viewer title
+	 */
+	public void setRenderViewerTitle( String renderTitleExpr ) {
+		this.renderViewerTitle.setExpressionText( renderTitleExpr );
+	}
+
+	/**
+	 * Gets the render tool bar.
+	 * 
+	 * @return the render tool bar
+	 */
 	public boolean getRenderToolBar() {
 		return renderToolBar.getEvaluatedValue();
 	}
 
-	public void setRenderToolBar(boolean renderToolbar) {
+	/**
+	 * Sets the render tool bar.
+	 * 
+	 * @param renderToolbar the new render tool bar
+	 */
+	public void setRenderToolBar( boolean renderToolbar ) {
 		this.renderToolBar.setValue( renderToolbar );
 	}
 
-	public void setRenderToolBar(String renderToolbarExpr) {
+	/**
+	 * Sets the render tool bar.
+	 * 
+	 * @param renderToolbarExpr the new render tool bar
+	 */
+	public void setRenderToolBar( String renderToolbarExpr ) {
 		this.renderToolBar.setExpressionText( renderToolbarExpr );
 	}
 
+	/**
+	 * Gets the render viewer messages.
+	 * 
+	 * @return the render viewer messages
+	 */
 	public boolean getRenderViewerMessages() {
-		return renderViewerMessages.getValue();
+		return renderViewerMessages.getEvaluatedValue();
 	}
 
-	public void setRenderViewerMessages(boolean renderViewerMessages) {
+	/**
+	 * Sets the render viewer messages.
+	 * 
+	 * @param renderViewerMessages the new render viewer messages
+	 */
+	public void setRenderViewerMessages( boolean renderViewerMessages ) {
 		this.renderViewerMessages.setValue( renderViewerMessages );
 	}
 
-	public boolean getRenderWindow() {
-		return renderWindow.getValue();
+	/**
+	 * Sets the render viewer messages.
+	 * 
+	 * @param renderViewerMessagesExpr the new render viewer messages
+	 */
+	public void setRenderViewerMessages( String renderViewerMessagesExpr ) {
+		this.renderViewerMessages.setExpressionText( renderViewerMessagesExpr );
 	}
 
-	public void setRenderWindow(boolean renderWindow) {
+	/**
+	 * Gets the render window.
+	 * 
+	 * @return the render window
+	 */
+	public boolean getRenderWindow() {
+		return renderWindow.getEvaluatedValue();
+	}
+
+	/**
+	 * Sets the render window.
+	 * 
+	 * @param renderWindow the new render window
+	 */
+	public void setRenderWindow( boolean renderWindow ) {
 		this.renderWindow.setValue( renderWindow );
 	}
 
+	/**
+	 * Sets the render window.
+	 * 
+	 * @param renderWindowExpr the new render window
+	 */
+	public void setRenderWindow( String renderWindowExpr ) {
+		this.renderWindow.setExpressionText( renderWindowExpr );
+	}
+
+	/**
+	 * Gets the window height.
+	 * 
+	 * @return the window height
+	 */
 	public int getWindowHeight() {
 		return windowHeight.getEvaluatedValue();
 	}
 
-	public void setWindowHeight(int windowHeight) {
+	/**
+	 * Sets the window height.
+	 * 
+	 * @param windowHeight the new window height
+	 */
+	public void setWindowHeight( int windowHeight ) {
 		this.windowHeight.setValue( windowHeight );
 	}
 
-	public void setWindowHeight(String windowHeightExpr) {
+	/**
+	 * Sets the window height.
+	 * 
+	 * @param windowHeightExpr the new window height
+	 */
+	public void setWindowHeight( String windowHeightExpr ) {
 		this.windowHeight.setExpressionText( windowHeightExpr );
 	}
 
+	/**
+	 * Gets the window width.
+	 * 
+	 * @return the window width
+	 */
 	public int getWindowWidth() {
 		return windowWidth.getEvaluatedValue();
 	}
 
+	/**
+	 * Sets the window width.
+	 * 
+	 * @param windowWidth the new window width
+	 */
 	public void setWindowWidth(int windowWidth) {
 		this.windowWidth.setValue( windowWidth );
 	}
 
+	/**
+	 * Sets the window width.
+	 * 
+	 * @param windowWidthExpr the new window width
+	 */
 	public void setWindowWidth(String windowWidthExpr) {
 		this.windowWidth.setExpressionText( windowWidthExpr );
 	}
 	
+	/**
+	 * Sets the target object.
+	 * 
+	 * @param sExprText the new target object
+	 */
 	public void setTargetObject( String sExprText ) {
 		this.targetObject.setExpressionText( sExprText );
 	}
 	
+	/**
+	 * Gets the target object.
+	 * 
+	 * @return the target object
+	 */
 	public boObject getTargetObject() {
 		return this.targetObject.getEvaluatedValue();
 	}
 
+	/* (non-Javadoc)
+	 * @see netgest.bo.xwc.framework.components.XUIComponentBase#initComponent()
+	 */
 	@Override
 	public void initComponent() {
 		int position = 0;
@@ -190,6 +307,11 @@ public class FormEdit extends Form {
 		super.initComponent();
 	}
 	
+	/**
+	 * Creates the edit tool bar.
+	 * 
+	 * @param pos the pos
+	 */
 	private void createEditToolBar( int pos ) {
 		ToolBar toolBar;
 		if( getOrphanMode() ) {
@@ -206,6 +328,11 @@ public class FormEdit extends Form {
 		}
 	}
 
+	/**
+	 * Creates the viewer messages.
+	 * 
+	 * @param pos the pos
+	 */
 	private void createViewerMessages( int pos ) {
 		ViewerMessages viewerMessages = (ViewerMessages)findComponent( getId() + "_viewerMsgs" );
 		if( viewerMessages == null ) {
@@ -215,6 +342,11 @@ public class FormEdit extends Form {
 		}
 	}
 
+	/**
+	 * Creates the viewer title.
+	 * 
+	 * @param pos the pos
+	 */
 	private void createViewerTitle( int pos ) {
 		ViewerTitle viewerTitle = (ViewerTitle)findComponent( getId() + "_viewerTitle" );
 		if( viewerTitle == null ) {
@@ -224,6 +356,9 @@ public class FormEdit extends Form {
 		}
 	}
 	
+	/**
+	 * Creates the edit window.
+	 */
 	private void createEditWindow() {
 		ViewerWindow wnd = (ViewerWindow)findComponent( getId() + "_editWnd" );
 		if( wnd == null ) {
@@ -291,14 +426,15 @@ public class FormEdit extends Form {
          */
         private XMLDocument getViewerContentAsXML()
         {
-        	String pathXML = "/Users/useruser/Desktop/Tese/ITDS/XWC - Exportação para XML/MegaObjecto.xml";
+        	XUIRequestContext r = XUIRequestContext.getCurrentContext();
         	XMLDocument doc;
     		try 
     		{
-    			doc = ngtXMLUtils.loadXML(new FileInputStream(new File(pathXML)));
+            	String s =  r.getSessionContext().renderViewToBuffer("XEOXML", r.getViewRoot().getViewState() ).toString();
+    			doc = ngtXMLUtils.loadXML(s);
     			return doc;
     		} 
-    		catch (FileNotFoundException e) 
+    		catch (Exception e) 
     		{
     			e.printStackTrace();
     			return null;
@@ -323,6 +459,10 @@ public class FormEdit extends Form {
 			HttpServletResponse response = 
 				(HttpServletResponse) getRequestContext().getResponse();
 	        response.setCharacterEncoding("UTF-8");
+	        
+	        
+	        XUIRequestContext.getCurrentContext().getTransactionManager().release();
+	        boApplication.currentContext().getEboContext().close();
 	        
 	        //Get the FormEdit component
 			FormEdit 		frmComponent = (FormEdit) oComp;

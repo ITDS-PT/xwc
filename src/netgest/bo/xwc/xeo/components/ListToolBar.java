@@ -12,6 +12,7 @@ import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
@@ -20,8 +21,8 @@ public class ListToolBar extends ToolBar {
 	private XUIBindProperty<XEOObjectListConnector> targetList = 
 		new XUIBindProperty<XEOObjectListConnector>("targetList", this, XEOObjectListConnector.class, "#{viewBean.dataList}" );
 
-	private XUIBindProperty<Boolean>  renderCreateNewBtn    = 
-		new XUIBindProperty<Boolean>( "renderCreateNewBtn", this, Boolean.TRUE, Boolean.class );
+	private XUIStateBindProperty<Boolean>  renderCreateNewBtn    = 
+		new XUIStateBindProperty<Boolean>( "renderCreateNewBtn", this, "true", Boolean.class );
 	
 //	private XUIBindProperty<Boolean>  renderDestroyBtn    = 
 //		new XUIBindProperty<Boolean>( "renderDestroyBtn", this, Boolean.FALSE, Boolean.class );
@@ -72,24 +73,13 @@ public class ListToolBar extends ToolBar {
 		Menu menu;
 		List<UIComponent> children = getChildren();
 		
-		if( getRenderCreateNewBtn() ) {
-			menu = addCreateNew();
-			if( menu != null ) {
-				getChildren().add( Menu.getMenuSpacer() );
-				children.add( menu );
-				getChildren().add( Menu.getMenuSpacer() );
-			}
+		menu = addCreateNew();
+		if( menu != null ) {
+			menu.setVisible( renderCreateNewBtn.getExpressionString() );
+			getChildren().add( 0, Menu.getMenuSpacer( renderCreateNewBtn.getExpressionString() ) );
+			children.add( 0, menu );
+			getChildren().add( 0, Menu.getMenuSpacer( renderCreateNewBtn.getExpressionString() ) );
 		}
-//		if( getRenderDestroyBtn() ) {
-//			menu = createViewerBeanMethod(  "remove", "Remover", "Remover selecionados","ext-xeo/images/menus/remover-bridge.gif", 
-//							getParent().getClientId( getFacesContext() ), 
-//							"removeFromBridge", "self");
-//	
-//			if( menu != null ) {
-//				children.add( menu );
-//				children.add( Menu.getMenuSpacer() );
-//			}
-//		}
 	}
 	
 	@Override
@@ -101,8 +91,6 @@ public class ListToolBar extends ToolBar {
 		ViewerMethod rootMenu;
 		boDefHandler subClasseDef;
 		rootMenu = null;
-		
-		
 		
 		try {
 			if( getTargetList().getObjectList().getBoDef().getBoCanBeOrphan() ) {

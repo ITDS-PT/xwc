@@ -15,13 +15,14 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
 
 public class HTMLFileBrowse extends XUIInput {
 	
-	XUIStateBindProperty<String> label = new XUIStateBindProperty<String>("label", this, String.class );
+	XUIViewStateBindProperty<String> label = new XUIViewStateBindProperty<String>("label", this, String.class );
 	
 	private File	submitedFile = null;
 	

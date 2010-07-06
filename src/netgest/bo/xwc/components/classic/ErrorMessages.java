@@ -32,7 +32,8 @@ public class ErrorMessages extends XUIComponentBase {
     
     // Property to save if last request where messages writen in the request before this.
     // This is to trigger a render of the component to clear messages. Needed for Ajax.
-    private XUIStateProperty<Boolean> lastRequestWasChanged = new XUIStateProperty<Boolean>( "lastRequestWasChanged", this, false );
+    private XUIStateProperty<Boolean> lastRequestWasChanged = 
+    	new XUIStateProperty<Boolean>( "lastRequestWasChanged", this, false );
     
     public ErrorMessages() {
     }

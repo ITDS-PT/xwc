@@ -1,5 +1,6 @@
 package netgest.bo.xwc.xeo.beans;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -14,6 +15,7 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boPoolOwner;
+import netgest.bo.xwc.components.classic.GridExplorer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeMetaData;
@@ -23,6 +25,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUIViewBean;
 import netgest.bo.xwc.framework.components.XUICommand;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 import org.json.JSONArray;
@@ -34,6 +37,12 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 	private String sViewStateId;
     private String sParentBeanId;
 	private String sTitle;
+	
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
+    private static final byte	  USER_ROLES = 1;
+    private static final byte	  USER_WORKQUEUES = 2;
+    private static final byte	  USER_GROUPS = 3;
+    private static final byte	  USER_PROFILES = 4;
 	
 	private XEOViewerResolver viewerResolver = new XEOViewerResolver();
 	
@@ -234,12 +243,6 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
     	return "SYSUSER".equals( getEboContext().getSysUser().getUserName() );
     }
 
-    private static final String[] EMPTY_STRING_ARRAY = new String[0];
-    private static final byte	  USER_ROLES = 1;
-    private static final byte	  USER_WORKQUEUES = 2;
-    private static final byte	  USER_GROUPS = 3;
-    private static final byte	  USER_PROFILES = 4;
-    
     private String[] getUserBridge( byte type ) {
 		try {
 			String ret[] = null; //cacheUserBriges.get( type );
@@ -304,6 +307,38 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 	
 	public XUISessionContext getSessionContext() {
 		return getRequestContext().getSessionContext();
+	}
+	
+	public void previewObject() {
+		XUIRequestContext oRequestContext;
+		XUISessionContext oSessionContext;
+		
+		oRequestContext = XUIRequestContext.getCurrentContext();
+		oSessionContext = oRequestContext.getSessionContext();
+		
+		XUIViewRoot viewRoot = oRequestContext.getViewRoot();
+		GridExplorer gridExplorer = (GridExplorer)viewRoot.findComponent( GridExplorer.class );
+		
+		DataRecordConnector drc = gridExplorer.getActiveRow();
+		
+		if( drc != null ) {
+			try {
+				// Calculate the correct viewer
+				long boui =((BigDecimal)drc.getAttribute("BOUI").getValue()).longValue();
+				String objectName = boObject.getBoManager().getClassNameFromBOUI( getEboContext(), boui );
+				String sViewerName = getViewerResolver().getViewer( objectName , XEOViewerResolver.ViewerType.EDIT );
+				XUIViewRoot newViewRoot = oSessionContext.createView( sViewerName );
+				((XEOEditBean)newViewRoot.getBean("viewBean")).setCurrentObjectKey( Long.toString( boui ) );
+				//newViewRoot.setRenderKitId("XEOXML");
+				oRequestContext.setViewRoot( newViewRoot );
+				
+				// After the request discard the view!
+				// newViewRoot.setTransient( false );
+				
+			} catch (boRuntimeException e) {
+				throw new RuntimeException( e );
+			}
+		}
 	}
 	
 }

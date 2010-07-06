@@ -8,6 +8,21 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 		},
 		setMinHeight : function( minHeight ) {
 			this.minHeight = minHeight; 
+		},
+		getVisibleColumns : function() {
+			var columns = this.getColumnModel().getColumnsBy(function(c){
+				  return !c.hidden;
+				});
+			var s = "[";
+			for( var c in columns ) {
+				if( columns[c].id ) { 
+					if( s.length > 1 )
+						s += ",";
+					s += "'" + columns[c].id + "'";
+				}
+			}
+			s+="]";
+			return s;
 		}
 	}
 );

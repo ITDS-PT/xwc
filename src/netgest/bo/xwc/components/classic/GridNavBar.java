@@ -23,9 +23,12 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class GridNavBar extends ToolBar {
 
-    XUIStateBindProperty<Boolean> showFullTextSearch = new XUIStateBindProperty<Boolean>( "showFullTextSearch", this, "true", Boolean.class );
-    XUIStateBindProperty<Boolean> showExportToExcel = new XUIStateBindProperty<Boolean>( "showExportToExcel", this, "true", Boolean.class );
-    XUIStateBindProperty<Boolean> showExportToPDF = new XUIStateBindProperty<Boolean>( "showExportToPDF", this, "true", Boolean.class );
+    XUIStateBindProperty<Boolean> showFullTextSearch = 
+    	new XUIStateBindProperty<Boolean>( "showFullTextSearch", this, "true", Boolean.class );
+    XUIStateBindProperty<Boolean> showExportToExcel = 
+    	new XUIStateBindProperty<Boolean>( "showExportToExcel", this, "true", Boolean.class );
+    XUIStateBindProperty<Boolean> showExportToPDF = 
+    	new XUIStateBindProperty<Boolean>( "showExportToPDF", this, "true", Boolean.class );
 
     /**
      * Set if the user can perform a fulltextsearch in the Grid

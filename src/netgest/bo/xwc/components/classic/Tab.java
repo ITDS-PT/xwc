@@ -10,12 +10,14 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class Tab extends ViewerCommandSecurityBase
 {
-    protected XUIStateProperty<String> 		label 	= new XUIStateProperty<String>( "label", this );
-    protected XUIStateBindProperty<Boolean> visible = new XUIStateBindProperty<Boolean>( "visible", this, "true", Boolean.class ); 	
+    protected XUIViewStateProperty<String> 		label 	= new XUIViewStateProperty<String>( "label", this );
+    protected XUIViewStateBindProperty<Boolean> visible = new XUIViewStateBindProperty<Boolean>( "visible", this, "true", Boolean.class ); 	
     
     public void setLabel(String label)
     {

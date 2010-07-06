@@ -1,5 +1,7 @@
 package netgest.bo.xwc.framework;
 
+import java.io.Writer;
+
 import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
 
 public class PackageIAcessor {
@@ -20,8 +22,8 @@ public class PackageIAcessor {
 
     public static final void setHeaderAndFooterToWriter( 
         XUIResponseWriter oWriter,  
-        XUIWriteBehindStateWriter oHeader,
-        XUIWriteBehindStateWriter oFooter
+        Writer oHeader,
+        Writer oFooter
         ) {
             
         oWriter.setHeaderAndFooterWriters( oHeader, oFooter );

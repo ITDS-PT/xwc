@@ -34,10 +34,13 @@ public class AttributeDate extends AttributeBase {
 
         super.initComponent();
         
+        
+        if( getValueExpression( "value" ) != null ) {
         // Overwrite datatype;
         this.setValueExpression(
             "value", createValueExpression( getValueExpression( "value" ).getExpressionString(), Timestamp.class ) 
         );
+        }
 
     }
     

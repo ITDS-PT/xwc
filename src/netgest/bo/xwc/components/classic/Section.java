@@ -8,10 +8,11 @@ import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class Section extends ViewerSecurityBase {
-    public XUIStateProperty<String> label = new XUIStateProperty<String>( "label", this );
+    public XUIViewStateProperty<String> label = new XUIViewStateProperty<String>( "label", this );
 
     public void setLabel(String label)
     {

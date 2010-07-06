@@ -20,14 +20,16 @@ import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 
 public class ToolBar extends ViewerSecurityBase {
 
 	
-    private XUIStateBindProperty<Boolean> disabled = new XUIStateBindProperty<Boolean>( "disabled", this, "false",Boolean.class );
-    private XUIStateBindProperty<Boolean> visible  = new XUIStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
+    private XUIViewStateBindProperty<Boolean> disabled = new XUIViewStateBindProperty<Boolean>( "disabled", this, "false" ,Boolean.class );
+    private XUIViewStateBindProperty<Boolean> visible  = new XUIViewStateBindProperty<Boolean>( "visible", this, "true" ,Boolean.class );
 	
     public void setDisabled(String disabled) {
         this.disabled.setExpressionText( disabled );
@@ -114,7 +116,9 @@ public class ToolBar extends ViewerSecurityBase {
     		}
     		else {
     			// update menu options
+    			
             	ScriptBuilder sb = ToolBar.XEOHTMLRenderer.updateMenuItems( (ToolBar) component );
+            	generateToolBarUpdateScript( sb, (ToolBar) component );
                 if( sb.length() > 0 ) {
                 	getResponseWriter().getScriptContext().add( 
                 			XUIScriptContext.POSITION_FOOTER, 
@@ -137,6 +141,9 @@ public class ToolBar extends ViewerSecurityBase {
                     	generateUpdateScript(sb, oMenuChild );
                     	sb.endBlock();
                 	}
+                	if( oMenuChild.getChildCount() > 0 ) {
+                		updateChildMenuItems(sb, oMenuChild);
+                	}
                 }
             }
             return sb;
@@ -153,7 +160,19 @@ public class ToolBar extends ViewerSecurityBase {
 	                	sb.endBlock();
 	            	}
                 }
+            	if( oMenuChild.getChildCount() > 0 ) {
+            		updateChildMenuItems(sb, oMenuChild);
+            	}
             }
+        }
+        
+        public static final void generateToolBarUpdateScript( ScriptBuilder sb, ToolBar toolBar ) {
+        	sb.w( "var m=Ext.getCmp('ext-").writeValue( toolBar.getClientId() ).l("');" );
+        	if( !toolBar.isVisible() )
+        		sb.w( "m.hide();" );
+        	else
+        		sb.w( "m.show();" );
+        	sb.w( "m.setDisabled(").w( toolBar.isDisabled() ).l( ");" );
         }
         
         public static final void generateUpdateScript( ScriptBuilder sb, Menu oMenuChild ) {
@@ -166,6 +185,8 @@ public class ToolBar extends ViewerSecurityBase {
         	sb.w( "m.setDisabled(").w( oMenuChild.isDisabled() ).l( ");" );
         	
         }
+        
+        
         
         @Override
         public void encodeChildren(XUIComponentBase component) throws IOException {
@@ -181,11 +202,15 @@ public class ToolBar extends ViewerSecurityBase {
         }
 
         public ExtConfig renderExtJs( XUIComponentBase component ) {
+            ToolBar toolBar = (ToolBar)component;
+            
             ExtConfig oToolBarCfg = new ExtConfig( "Ext.Toolbar" );
             oToolBarCfg.addJSString("style","border:0px solid black;" );     
             oToolBarCfg.add( "width" , "'auto'" );
-            
+            oToolBarCfg.add( "hidden" , !toolBar.isVisible() );
+            oToolBarCfg.add( "disabled" , toolBar.isDisabled() );
             oToolBarCfg.addJSString( "id", "ext-" + component.getClientId() );
+            
 
             ExtConfigArray oItemsCfg = oToolBarCfg.addChildArray( "items" );
 
@@ -195,23 +220,25 @@ public class ToolBar extends ViewerSecurityBase {
                 ExtConfig oItemCfg = null;
                 
                 Menu oMenuChild = (Menu)childs.next();
+                oMenuChild.setRenderedOnClient( true );
                 
                 if( oMenuChild.isRendered() ) {
                 
 	            	String sText = oMenuChild.getText();
 	
 	            	if( "-".equals( sText ) ) {
-	                	if( ((ToolBar)component).isVisible() && oMenuChild.isRendered() ) {
-		                	oItemsCfg.add("'-'");
-	                	}
+            			ExtConfig sep = oItemsCfg.addChild( "ExtXeo.Toolbar.Separator" );
+            			sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
+            			sep.add( "hidden", !toolBar.isVisible() || !oMenuChild.isVisible()  );
+            			
 	                }
 	                else if ( oMenuChild.getEffectivePermission( SecurityPermissions.READ ) ) {
 	                        oItemCfg = oItemsCfg.addChild(  );
-	                    	configExtMenu( this, (ToolBar)component , oMenuChild, oItemCfg);
+	                    	configExtMenu( this, toolBar , oMenuChild, oItemCfg);
 		                    if( oMenuChild.getChildCount() > 0 ) {
 		                    	oItemCfg.addJSString( "xtype", "splitbutton" );
 		                    	if( oItemCfg != null ) {
-		    	                    encodeSubMenuJS( (ToolBar)component,oItemCfg.addChild( "menu" ), oMenuChild );
+		    	                    encodeSubMenuJS( toolBar,oItemCfg.addChild( "menu" ), oMenuChild );
 		                    	}
 		                    }
 	                }
@@ -224,7 +251,7 @@ public class ToolBar extends ViewerSecurityBase {
         public static final void configExtMenu( XUIRenderer renderer, ToolBar toolBar,  Menu oMenuChild, ExtConfig  oItemCfg ) {
             oItemCfg.addJSString( "id", "ext-" + oMenuChild.getClientId() );
             oItemCfg.addJSString( "text", oMenuChild.getText() );
-            if( !toolBar.isVisible() || !oMenuChild.isVisible() )
+            if( !oMenuChild.isVisible() )
                 oItemCfg.add( "hidden", true );
 
             if( toolBar.isDisabled() || oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
@@ -277,12 +304,13 @@ public class ToolBar extends ViewerSecurityBase {
                 ExtConfig oItemCfg;
                 
                 Menu oMenuChild = (Menu)oSubChildren.next();
+                oMenuChild.setRenderedOnClient( true );
                 
                 String sText = oMenuChild.getText();
                 if( "-".equals( sText ) ) {
-                	if( tool.isContainer() && oMenuChild.isRendered() ) {
-                		oSubChildCfg.add("'-'");
-                	}
+        			ExtConfig sep = oSubChildCfg.addChild( "ExtXeo.Toolbar.Separator" );
+        			sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
+        			sep.add( "hidden", !tool.isVisible() || !oMenuChild.isVisible()  );
                 }
                 else if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
                 	oItemCfg = oSubChildCfg.addChild();

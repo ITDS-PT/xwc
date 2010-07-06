@@ -4,11 +4,9 @@
     	<!-- To Register RenderKits Class Names -->
         <xwc:renderKit name='XEOHTML' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
         <xwc:renderKit name='XEOXML' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
-<!--         <xwc:renderKit name='XEOPDF' 	className='netgest.bo.xwc.components.render.pdf.PdfRenderKit' /> -->
         <xwc:renderKit name='XEOV2' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
 		
 		<xwc:renderKit name='XEOV2' componentNamespace='xvw' >
-<!--              <xwc:render for="button_pb">netgest.bo.xwc.components.html.Button_pb$XEOHTMLRenderer</xwc:render> -->
             <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.ErrorMessages$XEOHTMLRenderer</xwc:render>
             <xwc:render for="form">netgest.bo.xwc.components.classic.Form$XEOHTMLRenderer</xwc:render>
             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.ToolBar$XEOHTMLRenderer</xwc:render>
@@ -45,8 +43,6 @@
             <xwc:render for='gridPanel'>netgest.bo.xwc.components.classic.grid.GridPanelRenderer</xwc:render>
             <xwc:render for='window'>netgest.bo.xwc.components.classic.Window$XEOHTMLRenderer</xwc:render>
 			<xwc:render for='HTMLFileBrowse'>netgest.bo.xwc.components.classic.HTMLFileBrowse$XEOHTMLRenderer</xwc:render>
-<!--             <xwc:render for='title'>xeo.viewers.render.TitleRenderer</xwc:render>  -->
-<!-- 			<xwc:render for='borderLayout'>netgest.bo.xwc.components.classic.BorderLayout$XEOHTMLRenderer</xwc:render>  -->
 
 			<xwc:render for='pieChart'>netgest.bo.xwc.components.classic.charts.PieChart$XEOHTMLRenderer</xwc:render>
 			 <xwc:render for='barChart'>netgest.bo.xwc.components.classic.charts.BarChart$XEOHTMLRenderer</xwc:render>

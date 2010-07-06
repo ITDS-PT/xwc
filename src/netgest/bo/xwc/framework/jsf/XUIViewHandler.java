@@ -1,5 +1,7 @@
 package netgest.bo.xwc.framework.jsf;
 
+import java.io.CharArrayReader;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -25,6 +27,10 @@ import javax.faces.render.Renderer;
 import javax.faces.render.ResponseStateManager;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import netgest.bo.def.boDefHandler;
 import netgest.bo.system.boApplication;
@@ -74,6 +80,11 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     //
     private static final Log log = LogFactory.getLog(netgest.bo.xwc.framework.jsf.XUIViewHandler.class);
     
+	// 1. Instantiate a TransformerFactory.
+	 javax.xml.transform.TransformerFactory tFactory = 
+	                   javax.xml.transform.TransformerFactory.newInstance();
+
+	 javax.xml.transform.Transformer transformer;
 
 
     //
@@ -102,6 +113,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
         RenderKitFactory renderFactory = (RenderKitFactory)
             FactoryFinder.getFactory(FactoryFinder.RENDER_KIT_FACTORY);
+        
         RenderKit renderKit =
                 renderFactory.getRenderKit(context, viewToRender.getRenderKitId());
 
@@ -229,7 +241,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        		((XUIViewBean)viewRoot.getBean("viewBean")).setViewRoot( viewRoot.getViewState() );
 	        }
 	        
-	        // Se existe view restora a transacção associada a view.
+	        // Se existe view restora a transacç£¯ associada a view.
             String sTransactionId = viewRoot.getTransactionId();
             
             if( sTransactionId != null ) {
@@ -779,6 +791,11 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         oRenderElement = oAjaxXmlResp.createElement("render");
         oXvwAjaxResp.appendChild( oRenderElement );
         
+        ((HttpServletRequest)request).setAttribute( "__xwcAjaxDomDoc" , oAjaxXmlResp );
+        ((HttpServletRequest)request).setAttribute( "__xwcRenderElement" , oRenderElement );
+        ((HttpServletRequest)request).setAttribute( "__xwcRenderKit" , renderKit );
+        
+        
         if( oViewToRender.isPostBack() )
         {
         	for( UIComponent comp : oToRenderList ) {
@@ -787,64 +804,47 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         		}
         	}
         	
+                
+            Writer oComponentWriter = new FastStringWriter(bufSize/4);
+    
+            // Setup new writer for each component to render
+            XUIWriteBehindStateWriter oCompBodyWriter =
+                  new XUIWriteBehindStateWriter(    oComponentWriter,
+                                                    context,
+                                                    bufSize/4
+                                                );
+                
+            newWriter = (XUIResponseWriter)renderKit.createResponseWriter(oCompBodyWriter,
+                                                           null,
+                                                           request.getCharacterEncoding());
+                
+            // ForÃ§a o ScriptContext guardado da Writer anterior.
+            if( oSavedScriptContext != null ) {
+                //newWriter.setScriptContext( oSavedScriptContext );
+                PackageIAcessor.setScriptContextToWriter( newWriter, oSavedScriptContext );
+            }
+            
+            context.setResponseWriter(newWriter);
+            
+            // Sets the header and footer wr
+            PackageIAcessor.setHeaderAndFooterToWriter( newWriter, headWriter, footerWriter );
+            //newWriter.setHeaderAndFooterWriters( headWriter, footerWriter );
+
+            newWriter.startDocument();
+            oSavedScriptContext = newWriter.getScriptContext();
+        	newWriter.getStyleContext();
+    
             // Phase 2... callRenders for the Objects
             for (int i = 0; i < oToRenderList.size(); i++) {
-                
-                Writer oComponentWriter = new FastStringWriter(bufSize/4);
-    
-                // Setup new writer for each component to render
-                XUIWriteBehindStateWriter oCompBodyWriter =
-                      new XUIWriteBehindStateWriter(    oComponentWriter,
-                                                        context,
-                                                        bufSize/4
-                                                    );
-                
-                newWriter = (XUIResponseWriter)renderKit.createResponseWriter(oCompBodyWriter,
-                                                               null,
-                                                               request.getCharacterEncoding());
-                
-                // ForÃ§a o ScriptContext guardado da Writer anterior.
-                if( oSavedScriptContext != null ) {
-                    //newWriter.setScriptContext( oSavedScriptContext );
-                    PackageIAcessor.setScriptContextToWriter( newWriter, oSavedScriptContext );
-                }
-                
-                context.setResponseWriter(newWriter);
-                
-                // Sets the header and footer wr
-                PackageIAcessor.setHeaderAndFooterToWriter( newWriter, headWriter, footerWriter );
-                //newWriter.setHeaderAndFooterWriters( headWriter, footerWriter );
-    
-                newWriter.startDocument();
-    
-                UIComponent oComp = oToRenderList.get( i );
-                
-                oComp.encodeAll( context );
-                            
-                newWriter.endDocument();
-    
-                oCompBodyWriter.flushToWriter( false );
-                oCompBodyWriter.release();
-    
-                oCompElement = oAjaxXmlResp.createElement( "component" );
-                oCompElement.setAttribute("id", oComp.getClientId( context ) );
-                if( oComp instanceof XUIComponentBase ) {
-                	oCompElement.setAttribute("destroy", Boolean.toString( ((XUIComponentBase)oComp).isDestroyOnClient() ) );
-                }
-                oCompElement.appendChild( oAjaxXmlResp.createCDATASection( oComponentWriter.toString() ) );
-                oRenderElement.appendChild( oCompElement );
-                
-                // Verifica se foi criada uma Writer, se sim guarda o script context
-                // para passar Ã  nova que Ã© criada especificamente para 
-                // este componente.
-                
-                if( newWriter != null ) {
-                    oSavedScriptContext = newWriter.getScriptContext();
-                }
-    
-            } 
+                XUIComponentBase oComp = oToRenderList.get( i );
+                oComp.encodeAll();
+            }
+            newWriter.endDocument();
             
-            //TODO: Martelada por causa dos Layouts... este código não devia estar a este nivél.
+            oCompBodyWriter.flushToWriter( false );
+            oCompBodyWriter.release();
+            
+            //TODO: Martelada por causa dos Layouts... este cÃ³digo nÃ£o devia estar a este nivÃ©l.
             if( newWriter != null && request.getAttribute("__skip.Layouts.doLayout") == null ) {
             	Layouts.doLayout( newWriter );
             }
@@ -885,9 +885,54 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             oCompBodyWriter.flushToWriter( false );
             oCompBodyWriter.release();
             
+            String sResult = oComponentWriter.toString();
+            
+            if( "XEOXML".equals( oViewToRender.getRenderKitId() ) ) {
+            	
+                sResult = sResult.replaceAll("&aacute;", "Ã¡");
+            	
+            	long init = System.currentTimeMillis();
+            	
+	             try {
+	
+					 // 2. Use the TransformerFactory to process the stylesheet Source and
+	//                 generate a Transformer.
+	            	 
+	            	 if( transformer == null ) {
+	            		 transformer = tFactory.newTransformer
+	            	     	(new javax.xml.transform.stream.StreamSource("c:\\lixo\\XEOViewerToHTML.xsl"));	            		 
+	            	 }
+	
+					 // 3. Use the Transformer to transform an XML Source and send the
+	//                 output to a Result object.
+					 CharArrayWriter out = new CharArrayWriter();
+					 
+					 transformer.transform
+					     (new javax.xml.transform.stream.StreamSource( new CharArrayReader( 
+					    		 sResult.toCharArray() ) ), 
+					      new javax.xml.transform.stream.StreamResult( out ));
+					 
+					 sResult = out.toString();
+					 
+				} catch (TransformerConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (TransformerFactoryConfigurationError e) {
+					// TODO Auto-generated catch block 
+					e.printStackTrace();
+				} catch (TransformerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}                
+				
+				System.out.println( "Tempo XSL:" + (System.currentTimeMillis()-init) );
+				
+            }
+            
+            
             oCompElement = oAjaxXmlResp.createElement( "component" );
             oCompElement.setAttribute("id", oViewToRender.getClientId() );
-            oCompElement.appendChild( oAjaxXmlResp.createCDATASection( oComponentWriter.toString() ) );
+            oCompElement.appendChild( oAjaxXmlResp.createCDATASection( sResult ) );
             oRenderElement.appendChild( oCompElement );
             
             // Verifica se foi criada uma Writer, se sim guarda o script context

@@ -5,6 +5,7 @@ import com.sun.faces.util.Util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
@@ -126,23 +127,25 @@ public class XUISessionContext {
     	if( !url.toLowerCase().startsWith( "http" ) ) {
     		HttpServletRequest request =  (HttpServletRequest)r.getRequest();
     		String host = request.getServerName();
-    		String protocol = request.getProtocol();
-    		int port = request.getServerPort();
+    		String protocol = "http";
+    		int port = 81;//request.getServerPort();
     		
     		if( request.isSecure() ) {
-    			url = protocol + "://" + host + ( port != 80?Integer.toString(port):"" ) + "/" + url;
+    			url = protocol + "s://" + host + ( port != 80?":"+Integer.toString(port):"" ) + "/" + url;
     		} else {
-    			url = protocol + "://" + host + ( port != 443?Integer.toString(port):"" ) + "/" + url;
+    			url = protocol + "://" + host + ( port != 443?":"+Integer.toString(port):"" ) + "/" + url;
     		}
     		
     		if( viewStateId != null ) {
     			if( url.indexOf( '?' ) == -1 ) {
-    				url += "?" + "javax.faces.ViewState=" + viewStateId; 
+    				url += "?" + "javax.faces.ViewState=" + viewStateId + "&__renderKit=" + renderKit; 
     			}
     		}
     		
     		URL oUrl = new URL( url );
-    		URLConnection con = oUrl.openConnection();
+    		HttpURLConnection con = (HttpURLConnection)oUrl.openConnection();
+    		con.addRequestProperty("Cookie",  request.getHeader("Cookie") );
+    		
     		con.setDoInput( true );
     		con.setDoOutput( false );
     		
@@ -152,7 +155,7 @@ public class XUISessionContext {
     		byte[] buffer = new byte[8192];
     		int br;
     		while( (br = is.read( buffer )) > 0 ) {
-    			sb.append( new String( buffer, "utf-8" ) );
+    			sb.append( new String( buffer,0,br, "utf-8" ) );
     		}
     	}
     	return sb;

@@ -122,6 +122,10 @@ XVW.NoWait = function() {
 	}
 }
 
+XVW.openViewOnElement = function( sFormId, sActionId, sActionValue, renderOnElementId ) {
+	XVW.AjaxCommand( sFormId, sActionId, sActionValue, '0', true, document.getElementById( renderOnElementId ) );
+}
+
 XVW.openCommandTab = function( sFrameName, sFormId, sActionId, sActionValue, sTabTitle ) {
     // Create new Tab
 	if( XVW.getXApp() != null ) {
@@ -494,6 +498,12 @@ XVW.setTitle = function( sTitle ) {
 	    	}
 		}
 	}
+}
+
+
+XVW.canCloseTab = function( sFormId, sCmdId ) {
+	XVW.AjaxCommand( sFormId, sCmdId,"",2,true );
+	return false;
 }
 
 XVW.closeView = function( sId ) {

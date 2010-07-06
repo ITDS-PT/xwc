@@ -13,15 +13,17 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class Panel extends ViewerSecurityBase {
     
-    private XUIStateProperty<String> height = new XUIStateProperty<String>( "height", this );
-    private XUIStateProperty<String> width = new XUIStateProperty<String>( "width", this );
-	private XUIStateBindProperty<String> title = new XUIStateBindProperty<String>( "title", this, String.class );
-    
-	private XUIStateProperty<String> layout = new XUIStateProperty<String>( "layout", this, "" );
+    private XUIViewStateProperty<String> height = new XUIViewStateProperty<String>( "height", this );
+    private XUIViewStateProperty<String> width = new XUIViewStateProperty<String>( "width", this );
+	private XUIViewStateBindProperty<String> title = new XUIViewStateBindProperty<String>( "title", this, String.class );
+	private XUIViewProperty<String> layout = new XUIViewProperty<String>( "layout", this, "" );
 	
 	/**
 	 * Returns the title of the panel 
@@ -77,6 +79,12 @@ public class Panel extends ViewerSecurityBase {
 			return false;
 		}
 		return super.isRendered();
+	}
+	
+	@Override
+	public boolean wasStateChanged() {
+		// TODO Auto-generated method stub
+		return super.wasStateChanged();
 	}
 	
 	public static class XEOHTMLRenderer extends XUIRenderer {

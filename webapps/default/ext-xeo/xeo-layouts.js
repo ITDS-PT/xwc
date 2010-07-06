@@ -1,4 +1,4 @@
-var xeoUserDisplayName = null;
+	var xeoUserDisplayName = null;
 XEOLayout = function() 
 {
     this.desktop = new XEOLayout.ViewPort();    
@@ -114,9 +114,10 @@ XEOLayout.onCloseTab = function( oTabCont, oComp ) {
 				var y = x[i].contentWindow.document.getElementsByName("__isChanged");
 				for( var k = 0;k < y.length; k++ ) {
 					var cmd = y[i].value;
-					x[i].contentWindow.XVW.AjaxCommand( cmd.split(':')[0],cmd.split(':')[1],"",2,true );
-					oTabCont.activate( oComp );
-					return false;
+					if( !x[i].contentWindow.XVW.canCloseTab( cmd.split(':')[0], cmd.split(':')[1] ) ) {
+ 						oTabCont.activate( oComp );
+						return false;
+					}
 					break;
 				}
 			}

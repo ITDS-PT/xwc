@@ -20,6 +20,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 import javax.servlet.http.HttpServletRequest;
 
+import netgest.bo.preferences.Preference;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
@@ -38,8 +39,14 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMethodBindProperty;
+import netgest.bo.xwc.framework.XUIPreferenceManager;
+import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
+import netgest.bo.xwc.framework.XUIViewProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIInput;
 
@@ -61,7 +68,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIMethodBindProperty filterLookup = new XUIMethodBindProperty(
 			"filterLookup", this, "#{viewBean.lookupFilterObject}");
 
-	public XUIStateBindProperty<String> rowSelectionMode = new XUIStateBindProperty<String>(
+	private XUIMethodBindProperty advancedFilterViewer = new XUIMethodBindProperty(
+			"advancedFilter", this, "#{viewBean.adavancedFilter}");
+
+	public XUIViewStateBindProperty<String> rowSelectionMode = new XUIViewStateBindProperty<String>(
 			"rowSelectionMode", this, String.class);
 
 	private XUIStateBindProperty<String> objectAttribute = new XUIStateBindProperty<String>(
@@ -70,19 +80,19 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIStateProperty<String> rowUniqueIdentifier = new XUIStateProperty<String>(
 			"rowUniqueIdentifier", this, "BOUI");
 
-	private XUIStateProperty<String> autoExpandColumn = new XUIStateProperty<String>(
+	private XUIViewStateProperty<String> autoExpandColumn = new XUIViewStateProperty<String>(
 			"autoExpandColumn", this);
 
-	private XUIBaseProperty<Boolean> forceColumnsFitWidth = new XUIBaseProperty<Boolean>(
+	private XUIViewProperty<Boolean> forceColumnsFitWidth = new XUIViewProperty<Boolean>(
 			"forceColumnsFitWidth", this, true);
 
 	private XUIStateProperty<String> pageSize = new XUIStateProperty<String>(
 			"pageSize", this, "50");
 
-	private XUIBaseProperty<String> rowDblClickTarget = new XUIBaseProperty<String>(
+	private XUIViewProperty<String> rowDblClickTarget = new XUIViewProperty<String>(
 			"rowDblClickTarget", this, "tab");
 
-	private XUIBaseProperty<String> rowClickTarget = new XUIBaseProperty<String>(
+	private XUIViewProperty<String> rowClickTarget = new XUIViewProperty<String>(
 			"rowClickTarget", this, "");
 
 	private XUIBaseProperty<String> sActiveRow = new XUIBaseProperty<String>(
@@ -91,50 +101,54 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIBaseProperty<String> currentFilters = new XUIBaseProperty<String>(
 			"currentFilters", this);
 
+
 	private String[] sSelectedRowsUniqueIdentifiers;
 
 	private transient Column[] oGridColumns;
 
-	private XUIStateProperty<String> layout = new XUIStateProperty<String>(
+	private XUIViewProperty<String> layout = new XUIViewProperty<String>(
 			"layout", this, "fit-parent");
 
-	private XUIBaseProperty<String> height = new XUIBaseProperty<String>(
+	private XUIBaseProperty<String> region = new XUIBaseProperty<String>(
+			"region", this);
+
+	private XUIViewProperty<String> height = new XUIViewProperty<String>(
 			"height", this, "250");
 
-	private XUIBaseProperty<Boolean> autoHeight = new XUIBaseProperty<Boolean>(
+	private XUIViewProperty<Boolean> autoHeight = new XUIViewProperty<Boolean>(
 			"autoHeight", this, false);
 
-	private XUIBaseProperty<Integer> minHeight = new XUIBaseProperty<Integer>(
+	private XUIViewProperty<Integer> minHeight = new XUIViewProperty<Integer>(
 			"minHeight", this, 60);
 
-	private XUIStateBindProperty<String> groupBy = new XUIStateBindProperty<String>(
+	private XUIViewStateBindProperty<String> groupBy = new XUIViewStateBindProperty<String>(
 			"groupBy", this, String.class);
 
 	private XUIBindProperty<GridRowRenderClass> rowClass = new XUIBindProperty<GridRowRenderClass>(
 			"rowClass", this, GridRowRenderClass.class);
 
-	private XUIBindProperty<Boolean> enableGroupBy = new XUIBindProperty<Boolean>(
+	private XUIViewBindProperty<Boolean> enableGroupBy = new XUIViewBindProperty<Boolean>(
 			"enableGroupBy", this, false, Boolean.class);
 
-	private XUIBindProperty<Boolean> enableColumnSort = new XUIBindProperty<Boolean>(
+	private XUIViewBindProperty<Boolean> enableColumnSort = new XUIViewBindProperty<Boolean>(
 			"enableColumnSort", this, true, Boolean.class);
 
-	private XUIBindProperty<Boolean> enableColumnFilter = new XUIBindProperty<Boolean>(
+	private XUIViewBindProperty<Boolean> enableColumnFilter = new XUIViewBindProperty<Boolean>(
 			"enableColumnFilter", this, true, Boolean.class);
 
-	private XUIBindProperty<Boolean> enableColumnHide = new XUIBindProperty<Boolean>(
+	private XUIViewBindProperty<Boolean> enableColumnHide = new XUIViewBindProperty<Boolean>(
 			"enableColumnHide", this, true, Boolean.class);
 
-	private XUIBindProperty<Boolean> enableColumnMove = new XUIBindProperty<Boolean>(
+	private XUIViewBindProperty<Boolean> enableColumnMove = new XUIViewBindProperty<Boolean>(
 			"enableColumnMove", this, true, Boolean.class);
 
-	private XUIBindProperty<Boolean> enableColumnResize = new XUIBindProperty<Boolean>(
+	private XUIViewBindProperty<Boolean> enableColumnResize = new XUIViewBindProperty<Boolean>(
 			"enableColumnResize", this, true, Boolean.class);
 
-	private XUIBindProperty<Boolean> enableHeaderMenu = new XUIBindProperty<Boolean>(
+	private XUIViewBindProperty<Boolean> enableHeaderMenu = new XUIViewBindProperty<Boolean>(
 			"enableHeaderMenu", this, true, Boolean.class);
 
-	private XUIBaseProperty<String> currentSortTerms = new XUIBaseProperty<String>(
+	private XUIViewProperty<String> currentSortTerms = new XUIViewProperty<String>(
 			"currentSortTerms", this, null);
 
 	private XUIMethodBindProperty	onRowDoubleClick 	= new XUIMethodBindProperty("onRowDoubleClick", this );
@@ -208,6 +222,12 @@ public class GridPanel extends ViewerInputSecurityBase {
 		return super.isRendered();
 	}
 
+	@Override
+	public void initComponent() {
+		super.initComponent();
+		loadUserPreferences();
+	}
+	
 	/**
 	 * Process a preRender Actions
 	 */
@@ -453,10 +473,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 			JSONObject jFilters = new JSONObject(sCFilter);
 			String[] names = JSONObject.getNames(jFilters);
 			if (names != null) {
+
 				for (String name : names) {
 
-					JSONObject jsonColDef = jFilters.getJSONObject(name);
-
+					JSONObject jsonColDef = jFilters.getJSONObject( name );
 					String submitedType = jsonColDef.getString("type");
 
 					boolean active = jsonColDef.getBoolean("active");
@@ -599,6 +619,20 @@ public class GridPanel extends ViewerInputSecurityBase {
 		this.layout.setValue(layoutMan);
 	}
 	
+	/**
+	 * @return the region
+	 */
+	public String getRegion() {
+		return region.getValue();
+	}
+
+	/**
+	 * @param region the region to set
+	 */
+	public void setRegion(String region) {
+		this.region.setValue( region );
+	}
+
 	/**
 	 * Get the default height of the GridPanel when the Layout is set to a EmptyString
 	 * @return the height
@@ -1234,6 +1268,65 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public void setCurrentFullTextSearch(String fullTextSearch) {
 		this.currentFullTextSearch = fullTextSearch;
 	}
+
+	public void loadUserPreferences() {
+		/*
+		Preference p = XUIPreferenceManager.getUserPreference(
+				GridPanel.class + ".user", 
+				XUIRequestContext.getCurrentContext().getViewRoot().getViewId()
+		);
+		String filters = p.getString("currentFilters");
+		if( filters != null ) {
+			setCurrentFilters( filters );
+		}
+		String columnsState = p.getString("columnsState");
+		if( columnsState != null ) {
+			try {
+				JSONArray jcolarray = new JSONArray( columnsState );
+				for( int i = 0; i < jcolarray.length(); i++ ) {
+					JSONObject 	jcolstate = jcolarray.getJSONObject( i );
+					String		colName   = jcolstate.getString("dataField");
+					ColumnAttribute c = (ColumnAttribute)getColumn( colName );
+					if( c != null )  {
+						boolean hidden;
+						hidden = jcolstate.getBoolean("hidden");
+						c.setHidden( Boolean.toString( hidden ) );
+					}
+					
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		*/
+	}
+	
+	public void saveUserPreferences() {
+		/*
+		Preference p = XUIPreferenceManager.getUserPreference(
+				GridPanel.class + ".user", 
+				XUIRequestContext.getCurrentContext().getViewRoot().getViewId()
+		);
+		String currentFilters = getCurrentFilters();
+		p.setString( "currentFilters" , currentFilters );
+		try {
+			Column[] columns = getColumns();
+			JSONArray jcolarray = new JSONArray();
+			for( Column col : columns ) {
+				JSONObject jcol = new JSONObject();
+				jcol.put("dataField", col.getDataField() );
+				jcol.put("hidden", col.isHidden() );
+				jcolarray.put( jcol );
+			}
+			p.setString("columnsState", jcolarray.toString() );
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		p.savePreference();
+		*/
+	}
+	
 
 	public void applyFilters(DataListConnector listConnector) {
 		if ((listConnector.dataListCapabilities() & DataListConnector.CAP_FILTER) > 0) {

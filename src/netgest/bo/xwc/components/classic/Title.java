@@ -5,13 +5,14 @@ import java.io.IOException;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIOutput;
 
 public class Title extends XUIOutput {
 
-    private XUIStateProperty<String> valueExpression = new XUIStateProperty<String>( "valueExpression", this );
-    private XUIStateProperty<Object> renderedValue  = new XUIStateProperty<Object>( "renderedValue", this );
+    private XUIViewStateProperty<String> valueExpression = new XUIViewStateProperty<String>( "valueExpression", this );
+    private XUIViewStateProperty<Object> renderedValue  = new XUIViewStateProperty<Object>( "renderedValue", this );
 
     @Override
     public boolean wasStateChanged() {

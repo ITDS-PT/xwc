@@ -17,16 +17,18 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class Tabs extends XUIComponentBase
 {
-    public XUIStateProperty<String> activeTab = new XUIStateProperty<String>( "activeTab", this );
+    public XUIViewStateProperty<String> activeTab = new XUIViewStateProperty<String>( "activeTab", this );
+    public XUIViewProperty<String> layout = new XUIViewProperty<String>( "layout", this, Layouts.LAYOUT_FIT_PARENT );
+    public XUIViewProperty<String> height = new XUIViewProperty<String>( "height", this, "150px" );
     
     public XUIBindProperty<Boolean> renderTabBar = new XUIBindProperty<Boolean>( "renderTabBar", this, true, Boolean.class );
     
-    public XUIBaseProperty<String> layout = new XUIBaseProperty<String>( "layout", this, Layouts.LAYOUT_FIT_PARENT );
-    public XUIBaseProperty<String> height = new XUIBaseProperty<String>( "height", this, "150px" );
     
     public void setRenderTabBar( String renderTabBarExpr ) {
     	this.renderTabBar.setExpressionText( renderTabBarExpr );

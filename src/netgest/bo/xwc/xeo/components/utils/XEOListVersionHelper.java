@@ -125,10 +125,10 @@ public class XEOListVersionHelper
 					if (listOfCells[n] != null)
 					{
 						CellPositionValue cellCurrent = listOfCells[n];
-						Node label = doc.createElement("attributelabel");
-						((Element) label).setAttribute("text","");
-						Node value = doc.createElement("attributetext");
-						((Element) value).setTextContent(cellCurrent.getValue());
+						Element label = doc.createElement("attributelabel");
+						label.setAttribute("text","");
+						Element value = doc.createElement("attributetext");
+						value.setTextContent(cellCurrent.getValue());
 						cellOfRow.appendChild(label);
 						cellOfRow.appendChild(value);
 					}

@@ -11,6 +11,8 @@ import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 /**
  * This component renders a label for a input component
@@ -19,11 +21,11 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class AttributeLabel extends ViewerOutputSecurityBase {
 
-    public XUIStateProperty<String> text 		= new XUIStateProperty<String>("text", this, " Label Text ");
+    public XUIViewStateProperty<String> text 		= new XUIViewStateProperty<String>("text", this, " Label Text ");
     
-    private XUIStateProperty<ValueExpression> 	visible        = new XUIStateProperty<ValueExpression>( "visible", this );
-    private XUIStateBindProperty<Boolean> 		modelRequired  = new XUIStateBindProperty<Boolean>( "modelRequired", this, Boolean.class );
-    private XUIStateBindProperty<Boolean> 		recommended    = new XUIStateBindProperty<Boolean>( "recommended", this, Boolean.class );
+    private XUIViewStateProperty<ValueExpression> 	visible        = new XUIViewStateProperty<ValueExpression>( "visible", this );
+    private XUIViewStateBindProperty<Boolean> 		modelRequired  = new XUIViewStateBindProperty<Boolean>( "modelRequired", this, Boolean.class );
+    private XUIViewStateBindProperty<Boolean> 		recommended    = new XUIViewStateBindProperty<Boolean>( "recommended", this, Boolean.class );
     
     public void setText( String sText ) {
         this.text.setValue( sText );

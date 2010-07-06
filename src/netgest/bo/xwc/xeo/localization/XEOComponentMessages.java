@@ -36,6 +36,9 @@ public interface XEOComponentMessages {
 	public static final XUILocalizedMessage EDITTB_SAVE_CLOSE_TTIP = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_SAVE_CLOSE_TTIP" );
 	
+	public static final XUILocalizedMessage EDITTB_SAVE_CREATE_NEW_TTIP = 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_SAVE_CREATE_NEW_TTIP" );
+	
 	public static final XUILocalizedMessage EDITTB_REMOVE_TTIP = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_REMOVE_TTIP" );
 	

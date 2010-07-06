@@ -56,9 +56,8 @@ public class List extends GridPanel {
 		if( getRenderIconColumn() ) {
 			addIconColumn();
 		}
-		if( getRenderToolBar() ) {
-			createToolBar( 0 );
-		}
+
+		createToolBar( 0 );
 		
 	}
 	
@@ -95,6 +94,7 @@ public class List extends GridPanel {
 	public void createToolBar( int pos ) {
 		ToolBar toolBar;
 		toolBar = new ListToolBar();
+		toolBar.setVisible( renderToolBar.getExpressionString() );
 		toolBar.setId( getId() + "_listToolBar" );
 		getChildren().add( pos, toolBar );
 	}

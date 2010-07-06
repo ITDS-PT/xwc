@@ -163,7 +163,7 @@ public class XUIScriptContext {
                         // Do not render this elements for now
                         break;
                     case 2:
-                        // Do not render inline 
+                        // Render inline elements 
                         w.writeText("\n", null );
                         w.startElement("script", null );
                         w.writeAttribute("type", "text/javascript", null);

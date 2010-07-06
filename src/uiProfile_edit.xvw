@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by António (Itds) -->
-<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
 	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseBean" beanId="viewBean">
-		<xvw:form id="form1">
-			<xvw:title valueExpression="#{viewBean.title}"/>
-			<xvw:toolBar id="MyTool">
-				<xvw:menu id="save" text="Save" icon="ext-xeo/images/menus/gravar.gif" serverAction="#{viewBean.save}"/>
-				<xvw:menu id="saveandclose" text="Save and Close" icon="ext-xeo/images/menus/gravar_e_sair.gif" serverAction="#{viewBean.saveAndClose}"/>
-				<xvw:menu id="remove" text="Remove" icon="ext-xeo/images/menus/cancel.gif" serverAction="#{viewBean.remove}"/>
-			</xvw:toolBar>
-            <xvw:panel layout='none'> 
-                <xvw:errorMessages></xvw:errorMessages>
-            </xvw:panel>
+		<xeo:formEdit id="form1">
 			<xvw:panel>
 				<xvw:rows>
 					<xvw:row>
@@ -27,6 +18,6 @@
 					</xvw:row>
 				</xvw:rows>
 			</xvw:panel>
-		</xvw:form>
+		</xeo:formEdit>
 	</xvw:viewer>
 </xvw:root>

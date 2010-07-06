@@ -23,19 +23,8 @@ public abstract class ExtJsBaseRenderer extends XUIRenderer implements ExtJsRend
 	
     public void encodeEnd(XUIComponentBase oComp) throws IOException {
     	
-    	// If the component is not visible by security reason, only render the
-    	// place holder.
-    	if( oComp instanceof SecurableComponent ) {
-    		if (!((SecurableComponent)oComp).getEffectivePermission(SecurityPermissions.READ) ) {
-    	    	if( !oComp.isRenderedOnClient() ) {
-    	    		encodePlaceHolder( oComp );
-    	    	}
-            	return;
-    		}
-    	}
-    	
     	// Write the field
-    	if( !oComp.isDestroyOnClient() || reRenderField( oComp ) ) {
+    	if( !oComp.isRenderedOnClient() || reRenderField( oComp ) ) {
     		oComp.setDestroyOnClient( true );
         	// Create a place holder for the field!
         	encodePlaceHolder( oComp );

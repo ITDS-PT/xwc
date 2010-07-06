@@ -11,7 +11,6 @@ import javax.faces.render.RenderKit;
 import javax.faces.render.RenderKitFactory;
 import javax.faces.render.Renderer;
 
-
 import netgest.bo.system.Logger;
 import netgest.bo.xwc.components.classic.renderers.XMLViewRootRenderer;
 import netgest.bo.xwc.framework.components.XUIViewRoot;

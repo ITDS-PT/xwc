@@ -30,6 +30,7 @@ import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.io.iFile;
 /**
@@ -45,11 +46,11 @@ public class AttributeImage extends ViewerOutputSecurityBase {
     private XUIBaseProperty<ValueExpression> dataType       	= new XUIBaseProperty<ValueExpression>( "dataType", this );
     private XUIBaseProperty<ValueExpression> dataFieldConnector = new XUIBaseProperty<ValueExpression>( "dataFieldConnector", this );
     
-    private XUIStateBindProperty<String> width = new XUIStateBindProperty<String>( "width", this, String.class );
-	private XUIStateBindProperty<String> height = new XUIStateBindProperty<String>( "height", this, String.class );
+    private XUIViewStateBindProperty<String> width = new XUIViewStateBindProperty<String>( "width", this, String.class );
+	private XUIViewStateBindProperty<String> height = new XUIViewStateBindProperty<String>( "height", this, String.class );
 	private XUIStateBindProperty<String> objectAttribute = new XUIStateBindProperty<String>( "objectAttribute", this, String.class );
 	private XUIStateBindProperty<String> className = new XUIStateBindProperty<String>( "className", this, String.class );
-	private XUIStateBindProperty<String> align = new XUIStateBindProperty<String>( "align", this, String.class );
+	private XUIViewStateBindProperty<String> align = new XUIViewStateBindProperty<String>( "align", this, String.class );
 	private XUIStateBindProperty<String> emptyImage = new XUIStateBindProperty<String>( "emptyImage", this, String.class );
     private XUIStateBindProperty<String> label  = new XUIStateBindProperty<String>( "label", this, String.class );
 

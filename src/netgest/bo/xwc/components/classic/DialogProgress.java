@@ -12,8 +12,11 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIForm;
+import netgest.bo.xwc.framework.properties.XUIProperty;
 
 /**
  * A dialog progress component
@@ -22,16 +25,32 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class DialogProgress extends XUIComponentBase {
 
-	private XUIStateBindProperty<String> 	title 			= 
-		new XUIStateBindProperty<String>( "title", this, ComponentMessages.DIALOG_PROGRESS.toString(), String.class );
+	@XUIProperty(label="Title")
+	private XUIViewStateBindProperty<String> 	title 			= 
+		new XUIViewStateBindProperty<String>( "title", this, ComponentMessages.DIALOG_PROGRESS.toString(), String.class );
 	
-	private XUIStateBindProperty<Boolean> 	finished 		= new XUIStateBindProperty<Boolean>( "finished", this, "false",Boolean.class );
-	private XUIStateBindProperty<Integer> 	updateInterval 	= new XUIStateBindProperty<Integer>( "updateInterval", this, "5" , Integer.class );
-	private XUIStateBindProperty<Integer> 	progress 		= new XUIStateBindProperty<Integer>( "progress", this, "0" , Integer.class );
-	private XUIStateBindProperty<String> 	progressText 	= new XUIStateBindProperty<String>( "progressText", this, "" , String.class );
-	private XUIStateBindProperty<String> 	text 			= new XUIStateBindProperty<String>( "localText", this, "" , String.class );
+	@XUIProperty(label="Finished")
+	private XUIStateBindProperty<Boolean> 	finished 		= 
+		new XUIStateBindProperty<Boolean>( "finished", this, "false",Boolean.class );
 
-	protected XUIStateProperty<Boolean> 		wasRendered 	= new XUIStateProperty<Boolean>( "text", this );
+	@XUIProperty(label="Update Interval")
+	private XUIViewStateBindProperty<Integer> 	updateInterval 	= 
+		new XUIViewStateBindProperty<Integer>( "updateInterval", this, "5" , Integer.class );
+
+	@XUIProperty(label="Progress Value")
+	private XUIViewStateBindProperty<Integer> 	progress 		= 
+		new XUIViewStateBindProperty<Integer>( "progress", this, "0" , Integer.class );
+
+	@XUIProperty(label="Progress Text")
+	private XUIViewStateBindProperty<String> 	progressText 	= 
+		new XUIViewStateBindProperty<String>( "progressText", this, "" , String.class );
+
+	@XUIProperty(label="Text")
+	private XUIViewStateBindProperty<String> 	text 			= 
+		new XUIViewStateBindProperty<String>( "localText", this, "" , String.class );
+	
+	protected XUIStateProperty<Boolean> 		wasRendered 	= 
+		new XUIStateProperty<Boolean>( "text", this );
 
 	public String getTitle() {
 		return title.getEvaluatedValue();
@@ -165,7 +184,7 @@ public class DialogProgress extends XUIComponentBase {
     			XUIRequestContext.getCurrentContext().getScriptContext().add(
     					XUIScriptContext.POSITION_FOOTER, 
     					dialog.getClientId() + "_syncView", 
-    	                "window.setTimeout( \"XVW.syncView('" + dialog.getNamingContainerId() + "');\", " + dialog.getUpdateInterval() * 1000 + " );"
+    	                "window.setTimeout( \"XVW.syncView('" + dialog.findParentComponent(XUIForm.class).getClientId() + "');\", " + dialog.getUpdateInterval() * 1000 + " );"
     				);
 			}
 			w.getScriptContext().add( XUIScriptContext.POSITION_FOOTER , dialog.getClientId(), sb );

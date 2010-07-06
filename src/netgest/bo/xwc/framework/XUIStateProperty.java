@@ -10,7 +10,7 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
     private boolean bWasChanged;
    	private Object  lastEvalValue;
     private boolean lastEvalValueWasSet;
-    private Object  savedValue;
+    private Object	savedValue;
     
     public XUIStateProperty( String sPropertyName, 
                             XUIComponentBase oComponent ) {
@@ -39,20 +39,21 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
     
     @SuppressWarnings("unchecked")
 	public Object saveState() {
-        Object oValue = getValue();
-        
-        if( this instanceof XUIStateBindProperty ) {
-        	lastEvalValue = ((XUIStateBindProperty)this).evaluateValue( (ValueExpression)oValue );
-        }
-        else {
-        	lastEvalValue = oValue;
-        }
+    	if( !lastEvalValueWasSet ) {
+	        Object oValue = getValue();
+	        if( this instanceof XUIStateBindProperty ) {
+	        	lastEvalValue = ((XUIStateBindProperty)this).evaluateValue( (ValueExpression)oValue );
+	        }
+	        else {
+	        	lastEvalValue = oValue;
+	        }
+    	}
         return new Object[] { lastEvalValue, super.saveState() };
     }
     
     @SuppressWarnings("unchecked")
 	public void restoreState( Object oStateValue ) {
-    	lastEvalValue = (V)((Object[])oStateValue)[0];
+    	savedValue = (V)((Object[])oStateValue)[0];
         super.restoreState( ((Object[])oStateValue)[1] );
     }
 

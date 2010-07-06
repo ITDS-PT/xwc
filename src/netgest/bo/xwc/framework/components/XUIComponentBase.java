@@ -324,12 +324,6 @@ public abstract class XUIComponentBase extends UIComponentBase
             Iterator<Entry<String,XUIBaseProperty<?>>> oStatePropertiesIt = getStateProperties().iterator();
             while( oStatePropertiesIt.hasNext() ) {
             	XUIBaseProperty<?> prop = oStatePropertiesIt.next().getValue();
-            	
-//            	if(  "displayValue".equals( prop.getName() ) ) {
-//            		System.out.println(  "[REST][" + this.getId() + "] Default Value:" + prop.getValue() );
-//            	}
-            	
-            	
             	if( oPropertiesState[ iCntr ] != null )
             		prop.restoreState( oPropertiesState[ iCntr ]  );
             	
@@ -406,10 +400,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 
     public void encodeAll() throws IOException {
     	this.isRenderedOnClient.setValue( true );
-    	super.encodeAll( FacesContext.getCurrentInstance() );
-    	
         HttpServletRequest request = (HttpServletRequest)getRequestContext().getRequest();
-        
     	if( XUIRequestContext.getCurrentContext().isAjaxRequest() && request.getAttribute( "__xwcAjaxTagOpened") == null ) {
             XUIResponseWriter newWriter;
             
@@ -477,7 +468,6 @@ public abstract class XUIComponentBase extends UIComponentBase
             }
     	}
     	else {
-	    	this.isRenderedOnClient.setValue( true );
 	    	super.encodeAll( FacesContext.getCurrentInstance() );
     	}
     }

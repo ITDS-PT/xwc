@@ -16,7 +16,7 @@ XVW.AjaxRenderComp = function( sFormId, sCompId, bSubmitValues ) {
 }
 
 // Send Command via Ajax
-XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubmitValues ) {
+XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubmitValues, renderOnElement ) {
 	
 	//XVW.Command(sFormId, sActionId, sActionValue, iWaitScreen );
 	
@@ -58,7 +58,9 @@ XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubm
             if( sActionId.indexOf(':')==0 ) {
             	sId = sActionId.substring(1);
             }
-            else {
+            else if ( sActionId.indexOf(sFormId+':') == 0 ) {
+            	sId = sActionId;
+            } else {
             	sId = sFormId + ':' + sActionId;
             }
 
@@ -88,12 +90,12 @@ XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubm
         }
         
         var sActionUrl = XVW.prv.getFormInput( oForm, 'xvw.ajax.submitUrl').value;
-        submitAjax( sActionUrl, reqDoc );
+        submitAjax( sActionUrl, reqDoc, renderOnElement );
         
     }    
 }
 
-function submitAjax( sActionUrl, reqDoc ) {
+function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
     var oXmlReq = XVW.createXMLHttpRequest(  );
     oXmlReq.open('POST', sActionUrl, true );
     oXmlReq.setRequestHeader('Content-Type', 'text/xml');
@@ -104,7 +106,7 @@ function submitAjax( sActionUrl, reqDoc ) {
                 try
                 {
                     window.ts2 = new Date();
-                    XVW.handleAjaxResponse( oXmlReq );
+                    XVW.handleAjaxResponse( oXmlReq, renderOnElement );
                 }
                 catch( e ) {
                     XVW.handleAjaxError( e.description );
@@ -189,16 +191,13 @@ XVW.handleAjaxError = function( sErrorMessage, sDetails ) {
 XVW.ErrorDialog = function( sTitle, sMessage ) {}
 
 
-XVW.handleAjaxResponse = function( oXmlReq ) {
+XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
 	// Handle view Element -- Update ViewId
     var oScriptId;
     var oDocElm = oXmlReq.responseXML.documentElement;
     var sViewId     = oDocElm.getAttribute("viewId");
     var bIsPostBack = "true" == oDocElm.getAttribute("isPostBack");
     var oViewDiv    = null;
-    
-    
-    debugger;
     
     oViewDiv = document.getElementById( sViewId );
     if( !bIsPostBack && oViewDiv == null ) {
@@ -213,7 +212,12 @@ XVW.handleAjaxResponse = function( oXmlReq ) {
         //var xdiv = document.getElementById('tabdiv' + tabdividx );
         //xdiv.appendChild( oViewDiv );
         
-        document.body.appendChild( oViewDiv );
+        // Render the viewer in certain area
+        if( renderOnElement ) {
+        	renderOnElement.appendChild( oViewDiv );
+        } else {
+        	document.body.appendChild( oViewDiv );
+    	}
     }
     
     // Mozilla have diferent variable contexts in evals.
@@ -245,7 +249,6 @@ XVW.handleAjaxResponse = function( oXmlReq ) {
             var oCompDNode = document.getElementById( oCompId );
             if( oCompDNode != null ) {
         		var pNode = oCompDNode.parentNode; 
-
         		XVW.beforeApplyHtml( oCompDNode, oCompNode.getAttribute("destroy")=='true' );
                 if(oCompNode.textContent /*Mozilla*/) {
             		// If first child is null... there is nothing to render
@@ -344,18 +347,14 @@ XVW.handleAjaxResponse = function( oXmlReq ) {
             window.eval( sScriptToEval );
         }
         catch( e ) {
-        	debugger;
-        	try {
+        		debugger;
         		window.eval( sScriptToEval );
-        	}
-        	catch( e ) {
 	            XVW.ErrorDialog( XVW.Messages.AJAXERROR_MESSAGE, "["+oScriptId+"]" +
 	                e.description + "\n" +
 	                sScriptToEval
 	            );
         	}
         }
-    }
 
     //window.setTimeout( function() { alert( (new Date()) - init ) },1);
     
@@ -457,7 +456,13 @@ XVW.prv.createCommand = function( sFormId, sActionId ) {
     var oForm   = document.getElementById( sFormId );
     if( oForm != null )
     {
-        var sId = sFormId+':'+sActionId;
+        var sId;
+
+        if( sActionId.indexOf( sFormId + ':' ) == 0  ) {
+        	sId = sActionId;
+        } else {
+        	sId = sFormId + ':' + sActionId;
+        }
         var oButton;
         
         oButton = document.getElementById( sId );
@@ -465,7 +470,7 @@ XVW.prv.createCommand = function( sFormId, sActionId ) {
         {
             oButton = document.createElement( 'input' );
             oButton.type='hidden';
-            oButton.name = sFormId+':'+sActionId;
+            oButton.name = sId;
             oButton.id = 'dyn:' + sFormId + ':' + sActionId;
             if( typeof(sActionValue) != "undefined")
                 oButton.value = sActionValue;

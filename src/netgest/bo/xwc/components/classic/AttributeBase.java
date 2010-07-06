@@ -14,6 +14,8 @@ import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 /**
  * This component is not usable in the viewers, is the base of all attribute Type Components
@@ -34,17 +36,17 @@ public class AttributeBase extends ViewerInputSecurityBase {
     private XUIBindProperty<Boolean> isLov = 
     	new XUIBindProperty<Boolean>( "isLov", this, Boolean.class );
     
-    private XUIBindProperty<Boolean> isLovEditable   = 
-    	new XUIBindProperty<Boolean>( "isLovEditable", this, Boolean.class );
+    private XUIViewBindProperty<Boolean> isLovEditable   = 
+    	new XUIViewBindProperty<Boolean>( "isLovEditable", this, Boolean.class );
 
     private XUIMethodBindProperty validation	= 
     	new XUIMethodBindProperty( "validation", this );
     
-    private XUIBindProperty<Boolean> onChangeSubmit = 
-    	new XUIBindProperty<Boolean>( "onChangeSubmit", this, Boolean.class );
+    private XUIViewBindProperty<Boolean> onChangeSubmit = 
+    	new XUIViewBindProperty<Boolean>( "onChangeSubmit", this, Boolean.class );
     
-    private XUIBindProperty<String[]> dependences = 
-    	new XUIBindProperty<String[]>( "dependences", this, String[].class );
+    private XUIViewBindProperty<String[]> dependences = 
+    	new XUIViewBindProperty<String[]>( "dependences", this, String[].class );
     	
     private XUIBindProperty<Byte> 	dataType = 
     	new XUIBindProperty<Byte>( "dataType", this, Byte.class );
@@ -52,14 +54,14 @@ public class AttributeBase extends ViewerInputSecurityBase {
     private XUIBindProperty<Byte> 	inputRenderType	= 
     	new XUIBindProperty<Byte>( "inputRenderType", this, Byte.class );
 
-    private XUIStateBindProperty<String> width = 
-    	new XUIStateBindProperty<String>( "width", this, String.class );
+    private XUIViewStateBindProperty<String> width = 
+    	new XUIViewStateBindProperty<String>( "width", this, String.class );
 
-    private XUIStateBindProperty<String> height = 
-    	new XUIStateBindProperty<String>( "height", this, "100",String.class );
+    private XUIViewStateBindProperty<String> height = 
+    	new XUIViewStateBindProperty<String>( "height", this, "100",String.class );
 
-    private XUIBindProperty<Integer> maxLength = 
-    	new XUIBindProperty<Integer>( "maxLength", this, Integer.class );
+    private XUIViewBindProperty<Integer> maxLength = 
+    	new XUIViewBindProperty<Integer>( "maxLength", this, Integer.class );
 
     private XUIBindProperty<Integer> maxValue = 
     	new XUIBindProperty<Integer>( "maxValue", this, Double.class );
@@ -67,41 +69,41 @@ public class AttributeBase extends ViewerInputSecurityBase {
     private XUIBindProperty<Integer> minValue = 
     	new XUIBindProperty<Integer>( "minValue", this, Double.class );
     
-    private XUIBindProperty<Integer> decimalPrecision  = 
-    	new XUIBindProperty<Integer>( "decimalPrecision", this, Integer.class );
+    private XUIViewBindProperty<Integer> decimalPrecision  = 
+    	new XUIViewBindProperty<Integer>( "decimalPrecision", this, Integer.class );
 
-    private XUIBindProperty<Integer> minDecimalPrecision  = 
-    	new XUIBindProperty<Integer>( "minDecimalPrecision", this, Integer.class );
+    private XUIViewBindProperty<Integer> minDecimalPrecision  = 
+    	new XUIViewBindProperty<Integer>( "minDecimalPrecision", this, Integer.class );
 
-    private XUIBindProperty<Boolean> groupNumber  = 
-    	new XUIBindProperty<Boolean>( "groupNumber", this, Boolean.class );
+    private XUIViewBindProperty<Boolean> groupNumber  = 
+    	new XUIViewBindProperty<Boolean>( "groupNumber", this, Boolean.class );
 
     protected XUIBaseProperty<Object> renderedValue     = 
     	new XUIBaseProperty<Object>( "renderedValue", this, Object.class );
 
-    private XUIStateBindProperty<Boolean> disabled       	= 
-    	new XUIStateBindProperty<Boolean>( "disabled", this, Boolean.class );
+    private XUIViewStateBindProperty<Boolean> disabled       	= 
+    	new XUIViewStateBindProperty<Boolean>( "disabled", this, Boolean.class );
     
-    private XUIStateBindProperty<Boolean> readOnly       		= 
-    	new XUIStateBindProperty<Boolean>( "readOnly", this, Boolean.class );
+    private XUIViewStateBindProperty<Boolean> readOnly       		= 
+    	new XUIViewStateBindProperty<Boolean>( "readOnly", this, Boolean.class );
     
-    private XUIStateBindProperty<Boolean> visible        	= 
-    	new XUIStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
+    private XUIViewStateBindProperty<Boolean> visible        	= 
+    	new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
     
-    private XUIStateBindProperty<Boolean> modelRequired  	= 
-    	new XUIStateBindProperty<Boolean>( "modelRequired", this, Boolean.class );
+    private XUIViewStateBindProperty<Boolean> modelRequired  	= 
+    	new XUIViewStateBindProperty<Boolean>( "modelRequired", this, Boolean.class );
     
-    private XUIStateBindProperty<Boolean> recommended     	= 
-    	new XUIStateBindProperty<Boolean>( "recommended", this, Boolean.class );
+    private XUIViewStateBindProperty<Boolean> recommended     	= 
+    	new XUIViewStateBindProperty<Boolean>( "recommended", this, Boolean.class );
     
-    private XUIStateBindProperty<String> label          	= 
-    	new XUIStateBindProperty<String>( "label", this, String.class );
+    private XUIViewStateBindProperty<String> label          	= 
+    	new XUIViewStateBindProperty<String>( "label", this, String.class );
 
-    private XUIStateBindProperty<Boolean> enableCardIdLink  = 
-    	new XUIStateBindProperty<Boolean>( "enableCardIdLink", this, "false",Boolean.class );
+    private XUIViewStateBindProperty<Boolean> enableCardIdLink  = 
+    	new XUIViewStateBindProperty<Boolean>( "enableCardIdLink", this, "false",Boolean.class );
 
-    private XUIStateBindProperty<String> displayValue = 
-    	new XUIStateBindProperty<String>( "displayValue", this, String.class );
+    private XUIViewStateBindProperty<String> displayValue = 
+    	new XUIViewStateBindProperty<String>( "displayValue", this, String.class );
     
     private XUIBindProperty<String> lookupViewer = 
     	new XUIBindProperty<String>( "lookupViewer", this, String.class );
@@ -109,8 +111,8 @@ public class AttributeBase extends ViewerInputSecurityBase {
     private XUIBindProperty<Map<Object,String>> lovMap = 
     	new XUIBindProperty<Map<Object,String>>( "lovMap", this, Map.class );
 
-    private XUIStateBindProperty<String> invalidText = 
-    	new XUIStateBindProperty<String>("invalidText", this, String.class ); 
+    private XUIViewStateBindProperty<String> invalidText = 
+    	new XUIViewStateBindProperty<String>("invalidText", this, String.class ); 
     
     /**
      * Initialize the component
@@ -767,10 +769,6 @@ public class AttributeBase extends ViewerInputSecurityBase {
     @Override
     public boolean wasStateChanged() {
         if( !super.wasStateChanged() ) {
-        	
-        	
-        	//System.out.println("WASCHANGED:[" + getId() + "]" + this.renderedValue.getValue() + " [Comp] " + getValue() );
-        	
         	Object value;
         	ValueExpression ve = getValueExpression("value");
         	if (ve != null) {

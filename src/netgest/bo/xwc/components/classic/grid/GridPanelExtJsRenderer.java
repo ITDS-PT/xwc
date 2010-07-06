@@ -7,6 +7,9 @@ import static netgest.bo.xwc.components.HTMLTag.DIV;
 import static netgest.bo.xwc.components.HTMLTag.INPUT;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -40,6 +43,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -70,15 +74,17 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
     @Override
 	public void encodeChildren( XUIComponentBase oComp ) throws IOException {
         Iterator<UIComponent> oChildIterator;
-        XUIComponentBase      oChildComp;
+        UIComponent           oChildComp;
         oChildIterator = oComp.getChildren().iterator();
         while( oChildIterator.hasNext() ) {
-            oChildComp = (XUIComponentBase)oChildIterator.next();
-            if (!oChildComp.isRendered()) {
-                continue;
-            }            
+            oChildComp = oChildIterator.next();
 
             if( oChildComp instanceof ActionButton ) {
+
+            if (!oChildComp.isRendered()) {
+                    return;
+            }            
+
                 String rendererType;
                 rendererType = oChildComp.getRendererType();
                 if (rendererType != null) {
@@ -94,9 +100,13 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                 }
             }
             if( oChildComp instanceof ToolBar ) {
+                if (!oChildComp.isRendered()) {
+                    return;
+                }
                 
                 if( ((ToolBar) oChildComp).isRenderedOnClient() ) {
                 	ScriptBuilder sb = ToolBar.XEOHTMLRenderer.updateMenuItems( (ToolBar) oChildComp );
+                	ToolBar.XEOHTMLRenderer.generateToolBarUpdateScript(sb, (ToolBar) oChildComp );
                     if( sb.length() > 0 ) {
                     	getResponseWriter().getScriptContext().add( 
                     			XUIScriptContext.POSITION_FOOTER, 
@@ -120,11 +130,9 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	                        
 	                    }
 	                }
+	                ((ToolBar)oChildComp).setRenderedOnClient( true );
                 }
             }
-            
-            oChildComp.setRenderedOnClient( true );
-            
         }
     }
     
@@ -146,8 +154,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             	if( oGrid.getEnableColumnFilter() ) {
             		ScriptBuilder scriptBuilder = new ScriptBuilder();
             		scriptBuilder.startBlock();
-            		scriptBuilder.w( "debugger;\n" +
-            				"var g=Ext.getCmp('").w( oGrid.getClientId() ).w( "');" );
+            		scriptBuilder.w( "var g=Ext.getCmp('").w( oGrid.getClientId() ).w( "');" );
             		scriptBuilder.w( "if( g && g.plugins ) {");
             		scriptBuilder.w( "g.plugins.updateFilters( ").w( oGrid.getCurrentFilters()).w( " );" );
             		scriptBuilder.w( "}" );
@@ -477,13 +484,15 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         		"	if(!this.baseParams['xvw.servlet'])" +
         		" 		this.baseParams = " + oBaseParamsConfig.renderExtConfig() + ";\n" +
         		"	" +
-        		"	var inp=document.getElementById('" + oGrid.getClientId() + "_srs');\n" +
-        		"	if(inp!=null) this.baseParams.selectedRows = inp.value;\n" +
-        		"	var inp=document.getElementById('" + oGrid.getClientId() + "_act');\n" +
-        		"	if(inp!=null) this.baseParams.activeRow = inp.value;\n" +
+        		"	var x;" +
+        		"	x=document.getElementById('" + oGrid.getClientId() + "_srs');\n" +
+        		"	if( x ) this.baseParams.selectedRows = x.value;\n" +
+        		"	x=document.getElementById('" + oGrid.getClientId() + "_act');\n" +
+        		"	if( x ) this.baseParams.activeRow = x.value;\n" +
+        		"	x=Ext.ComponentMgr.get('" + oGrid.getClientId() + "');\n" +
+        		"	if( x ) this.baseParams.visibleColumns = x.getVisibleColumns();\n" +
         		"}" );
 
-        
         ExtConfig oSelLoad = oExtListeners.addChild( "'load'");
         oSelLoad.add( "fn", "function() { \n" +
         		"var ogrid = '" + oGrid.getId() + "_sm';\n" + 
@@ -605,6 +614,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oGridConfig.add( "frame", false );
         oGridConfig.add( "loadMask", "(Ext.isIE?false:new Ext.LoadMask(Ext.get('" + oGrid.getClientId() + "'), {msg:'" + ComponentMessages.GRID_REFRESHING_DATA.toString() + "'}))" );
         oGridConfig.add( "maskDisabled", "(Ext.isIE?false:true)" );
+
+        oGridConfig.addJSString( "region", oGrid.getRegion() );
         
         if( !oGrid.getEnableColumnHide() )
             oGridConfig.add( "enableColumnHide", false );
@@ -634,6 +645,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             ExtConfig oView =  oGridConfig.addChild( "view" );
             oView.setComponentType( "ExtXeo.grid.GridView" );
             oView.add("forceFit", oGrid.getForceColumnsFitWidth() );
+            oView.add("showPreview", true );
             oView.add("getRowClass", "function(record, index){ return record.json['__rc']; }" );
         }
         //oGridConfig.addJSString("layout", "fit");
@@ -727,7 +739,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
     	String v = oGrid.getCurrentFilters();
     	
-    	if( v == null ) {
+    	if( v == null || v.trim().length() == 0 ) {
     		v = "{}";
     	}
     	
@@ -754,12 +766,18 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             		throw new RuntimeException( ComponentMessages.GRID_DATASOURCE_IS_NULL.toString() );
             	}
 				metaData = oGrid.getDataSource().getAttributeMetaData( col.getDataField() );
+				
+				String dataField = col.getDataField();
 
 				oExtFiltersChild = oFiltersArray.addChild();
-            	oExtFiltersChild.addJSString( "dataIndex", col.getDataField() );
+            	oExtFiltersChild.addJSString( "dataIndex", dataField );
             	oExtFiltersChild.add( "active" , colFilter.getBoolean("active"));
             	oExtFiltersChild.add( "searchable", col.isSearchable() );
-            	if( metaData != null ) {
+        		
+            	JSONArray filters;
+            	String	  filterValue;
+
+        		if( metaData != null ) {
 	            	
 	            	if( metaData.getIsLov() ) {
 	            		Map<Object,String> lovMap = metaData.getLovMap();
@@ -783,6 +801,14 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		                    		first = false;
 	                    		}
 	                    	}
+	                    	
+	            			filters = colFilter.optJSONArray("filters");
+	            			if( filters != null && filters.length() > 0 ) {
+		            			String value = filters.getJSONObject(0).getJSONArray("value").toString();
+		            			oExtFiltersChild.add("value", value );
+	            			}
+	                    	
+	                    	
 	            		}
 	            	}
 	            	else if( metaData.getInputRenderType() == DataFieldTypes.RENDER_OBJECT_LOOKUP ) {
@@ -796,25 +822,61 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	                	);
 	            	}
 	            	else {
+	            		
+	            		
 		            	switch( metaData.getDataType() ) {
 		            		case DataFieldTypes.VALUE_CHAR:
 		            		case DataFieldTypes.VALUE_BLOB:
 		            		case DataFieldTypes.VALUE_CLOB:
 		                    	oExtFiltersChild.addJSString( "type", "string" );
 		            			colFilter.put("type", "string");
+		            			filterValue = colFilter.optString("value");
+		            			if( filterValue != null ) {
+		                			oExtFiltersChild.addString("value", filterValue );
+		            			}
 		                    	break;
 		            		case DataFieldTypes.VALUE_BOOLEAN:
 		                    	oExtFiltersChild.addJSString( "type", "boolean" );
 		            			colFilter.put("type", "boolean");
+		            			filters = colFilter.optJSONArray("filters");
+		            			if( filters != null && filters.length() > 0 ) {
+			            			filterValue = filters.getJSONObject(0).getString("value");
+			            			oExtFiltersChild.add("value", filterValue );
+		            			}
 		                    	break;
 		            		case DataFieldTypes.VALUE_DATETIME:
 		            		case DataFieldTypes.VALUE_DATE:
 		                    	oExtFiltersChild.addJSString( "type", "date" );
 		            			colFilter.put("type", "date");
+		            			filters = colFilter.optJSONArray("filters");
+		            			if( filters != null && filters.length() > 0 ) {
+		            				ExtConfig values = oExtFiltersChild.addChild("value");
+		            				for( int i=0; i < filters.length(); i++ ) {
+		            					JSONObject fltObj = filters.getJSONObject( i );
+		            					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		            					Calendar c = Calendar.getInstance();
+		            					try {
+											c.setTime( sdf.parse( fltObj.optString("value") ) );
+											values.add( 
+													fltObj.optString("comparison"),
+													"new Date(" + c.getTimeInMillis() + ")" 
+												);
+										} catch (ParseException e) {
+										}
+		            				}
+		            			}
 		                    	break;
 		            		case DataFieldTypes.VALUE_NUMBER:
 		                    	oExtFiltersChild.addJSString( "type", "numeric" );
 		            			colFilter.put("type", "numeric");
+		            			filters = colFilter.optJSONArray("filters");
+		            			if( filters != null && filters.length() > 0 ) {
+		            				ExtConfig values = oExtFiltersChild.addChild("value");
+		            				for( int i=0; i < filters.length(); i++ ) {
+		            					JSONObject fltObj = filters.getJSONObject( i );
+		            					values.addJSString( fltObj.optString("comparison"), fltObj.optString("value") );
+		            				}
+		            			}
 		                    	break;
 		            	}
 	            	}
@@ -822,15 +884,17 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             	else {
                 	oExtFiltersChild.addJSString( "type", "string" );
         			colFilter.put("type", "string");
+        			filterValue = colFilter.optString("value");
+        			if( filterValue != null ) {
+            			oExtFiltersChild.addString("value", filterValue );
+        			}
             	}
             }
     	}
     	catch( JSONException e ) {
     		throw new RuntimeException( e );
     	}
-    	
     	oGrid.setCurrentFilters( j.toString() );
-    	
     	return oFilterConfig;
     }
     

@@ -21,6 +21,7 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 
@@ -38,7 +39,9 @@ import com.sun.faces.renderkit.RenderKitUtils;
 public class Form extends XUIForm
 {
 	
-	private XUIStateProperty<String> 	encType 			= new XUIStateProperty<String>("encType", this, null );
+	private XUIViewStateProperty<String> 	encType 			= 
+		new XUIViewStateProperty<String>("encType", this, null );
+	
 	private XUIBindProperty<Byte> 		securityPermissions = 
 		new XUIBindProperty<Byte>("securityPermissions", this, Byte.class, "#{viewBean.securityPermissions}" );
 

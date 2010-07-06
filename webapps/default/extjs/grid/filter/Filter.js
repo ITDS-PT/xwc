@@ -44,7 +44,7 @@ Ext.grid.filter.Filter = function(config){
 	if(config && config.value) {
 		this.setValue(config.value);
 		this.setActive(config.active !== false, true);
-		this.setSearchable( config.searchable !== false, true )
+		//this.setSearchable( config.searchable !== false, true )
 		delete config.value;
 	}
 };

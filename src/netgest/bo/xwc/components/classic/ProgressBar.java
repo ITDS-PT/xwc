@@ -11,14 +11,15 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIOutput;
 
 public class ProgressBar extends XUIOutput {
 
-	private XUIStateBindProperty<Float>    valueExpression	= new XUIStateBindProperty<Float>( "valueExpression", this, "0", Float.class );
-	private XUIStateBindProperty<String>   width 			= new XUIStateBindProperty<String>( "width", this, "auto", String.class );
-	private XUIStateBindProperty<String>   text 			= new XUIStateBindProperty<String>( "text", this, "", String.class );
+	private XUIViewStateBindProperty<Float>    valueExpression	= new XUIViewStateBindProperty<Float>( "valueExpression", this, "0", Float.class );
+	private XUIViewStateBindProperty<String>   width 			= new XUIViewStateBindProperty<String>( "width", this, "auto", String.class );
+	private XUIViewStateBindProperty<String>   text 			= new XUIViewStateBindProperty<String>( "text", this, "", String.class );
 
 	public String getWidth() {
 		return width.getEvaluatedValue();

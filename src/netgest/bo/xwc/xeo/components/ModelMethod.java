@@ -8,7 +8,7 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 
-public class ModelMethod extends Menu {
+public class ModelMethod extends ViewerMethod {
 	
 	@Override
 	public String getRendererType() {
@@ -29,6 +29,7 @@ public class ModelMethod extends Menu {
 		return this.targetObject.getEvaluatedValue();
 	}
 	
+/*
 	public void setTargetMethod( String expressionString ) {
 		this.targetMethod.setExpressionText( expressionString );
 	}
@@ -36,6 +37,7 @@ public class ModelMethod extends Menu {
 	public String getTargetMethod() {
 		return this.targetMethod.getEvaluatedValue();
 	}
+*/
 
 	@Override
 	public void actionPerformed(ActionEvent event) {

@@ -7,6 +7,7 @@ import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 import org.json.JSONException;
@@ -139,58 +140,50 @@ public class XVWScripts {
     
     public static final String getOpenCommandWindow(  XUIComponentBase oComponent, String sActionValue, String parameters )    {
         String sFrameName = "Frame_" + oComponent.getId();
-        return 
-            "XVW.OpenCommandWindow( " +
-            "'" + sFrameName + "'," +
-            "'" + oComponent.getNamingContainerId() + "'," +
-            "'" + oComponent.getId() + "'" +
-            (sActionValue == null?"":
-            	",'" + JavaScriptUtils.writeValue( sActionValue ) + "'" ) +
-            ");";
       
-        	String width = "500";
-        	String height = "500";
-        	String title = "";
-        	try
+    	String width = "500";
+    	String height = "500";
+    	String title = "";
+    	try
+    	{
+        	if (parameters != null)
         	{
-	        	if (parameters != null)
-	        	{
-	        		parameters = parameters.replace( "window:" , "" );
-	        		if (parameters.contains("{"))
-	        		{	//We assume that if a "{" is present then we have a JSON object
-	        			//with the values
-		        		JSONObject jsonParameters = new JSONObject(parameters);
-						if (jsonParameters.has("width"))
-							width = jsonParameters.getString("width");
-						if (jsonParameters.has("height"))
-							height = jsonParameters.getString("height");
-						if (jsonParameters.has("title"))
-							title = jsonParameters.getString("title");
-	        		}
-	        	}
+        		parameters = parameters.replace( "window:" , "" );
+        		if (parameters.contains("{"))
+        		{	//We assume that if a "{" is present then we have a JSON object
+        			//with the values
+	        		JSONObject jsonParameters = new JSONObject(parameters);
+					if (jsonParameters.has("width"))
+						width = jsonParameters.getString("width");
+					if (jsonParameters.has("height"))
+						height = jsonParameters.getString("height");
+					if (jsonParameters.has("title"))
+						title = jsonParameters.getString("title");
+        		}
         	}
-        	catch (JSONException e)
-        	{
-        		e.printStackTrace();
-        	}
+    	}
+    	catch (JSONException e)
+    	{
+    		e.printStackTrace();
+    	}
 				
-	        	String command = 
-	        	"XVW.OpenCommandWindow( " +
-	            "'" + sFrameName + "'," +
-	            "'" + oComponent.findParentComponent(XUIForm.class).getClientId() + "'," +
-	            "'" + oComponent.getId() + "'" +
-	            
-	            (sActionValue == null?",'',":
-	            	",'" 
-	            	+ JavaScriptUtils.writeValue( sActionValue ) + "'," ) +
-	            	
-	            "'" + width +  "'," +
-	            "'" + height + "'," +
-	            "'" + title + "'" +
-	            ");"
-	            ;
+    	String command = 
+	    	"XVW.OpenCommandWindow( " +
+	        "'" + sFrameName + "'," +
+	        "'" + oComponent.findParentComponent(XUIForm.class).getClientId() + "'," +
+	        "'" + oComponent.getId() + "'" +
+	        
+	        (sActionValue == null?",'',":
+	        	",'" 
+	        	+ JavaScriptUtils.writeValue( sActionValue ) + "'," ) +
 	        	
-	        	return command;
+	        "'" + width +  "'," +
+	        "'" + height + "'," +
+	        "'" + title + "'" +
+	        ");"
+	        ;
+	        	
+    	return command;
     }
    
 

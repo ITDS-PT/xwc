@@ -14,7 +14,9 @@ import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
+import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
 public class BridgeToolBar extends ToolBar {
@@ -98,41 +100,36 @@ public class BridgeToolBar extends ToolBar {
 		Menu menu;
 		List<UIComponent> children = getChildren();
 		
-//		if( getRenderAddBtn() ) {
-			menu = addAddMenu();
-			if( menu != null ) {
-				children.add( menu );
-				children.add( Menu.getMenuSpacer() );
-			}
-//		}
-		
-//		if( getRenderRemoveBtn() ) {
-			menu = createViewerBeanMethod(  "remove", 
-							XEOComponentMessages.BRIDGETB_REMOVE.toString(), 
-							XEOComponentMessages.BRIDGETB_REMOVE_SELECTED.toString(),
-							"ext-xeo/images/menus/remover-bridge.gif", 
-							getParent().getClientId( getFacesContext() ), 
-							"removeFromBridge", "self");
+		menu = addAddMenu();
+		if( menu != null ) {
+			children.add( menu );
+			children.add( Menu.getMenuSpacer() );
+		}
+
+		menu = createViewerBeanMethod(  "remove", 
+			XEOComponentMessages.BRIDGETB_REMOVE.toString(), 
+			XEOComponentMessages.BRIDGETB_REMOVE_SELECTED.toString(),
+			"ext-xeo/images/menus/remover-bridge.gif", 
+			getParent().getClientId( getFacesContext() ), 
+			"removeFromBridge", "self")
+		;
 	
-			if( menu != null ) {
-				children.add( menu );
-				children.add( Menu.getMenuSpacer() );
-			}
-//		}
-		
-//		if( getRenderCreateNewBtn() ) {
-			menu = addCreateNew();
-			if( menu != null ) {
-				children.add( menu );
-				getChildren().add( Menu.getMenuSpacer() );
-			}
-//		}
+		if( menu != null ) {
+			children.add( menu );
+			children.add( Menu.getMenuSpacer() );
+		}
+
+		menu = addCreateNew();
+		if( menu != null ) {
+			children.add( menu );
+			getChildren().add( Menu.getMenuSpacer() );
+		}
 	}
 	
 	@Override
 	public void preRender() {
 		
-		boolean renderToolBar = false;
+		//boolean renderToolBar = false;
 		
 		boObject 		targetObject = getTargetObject();
 		bridgeHandler 	targetBridge = targetObject.getBridge( getBridgeName() );
@@ -148,37 +145,28 @@ public class BridgeToolBar extends ToolBar {
 					separatorRendered = getRenderCreateNewBtn() && XEOComponentStateLogic.isBridgeNewVisible( targetBridge ); 
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ));
 					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeNewEnabled(targetBridge) );
-					if( separatorRendered )
-						renderToolBar = true;
 				}				
 				else if( "lookupBridge".equals( viewerMethod.getTargetMethod() ) ) {
 					separatorRendered = getRenderAddBtn() && XEOComponentStateLogic.isBridgeAddVisible( targetBridge );
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ) );
 					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeAddEnabled(targetBridge) );
-					if( separatorRendered )
-						renderToolBar = true;
 				}
 				else if( "removeFromBridge".equals( viewerMethod.getTargetMethod() ) ) {
 					separatorRendered = getRenderRemoveBtn() && XEOComponentStateLogic.isBridgeRemoveVisible( targetBridge ); 
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ));
 					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeRemoveEnabled(targetBridge) );
-					if( separatorRendered )
-						renderToolBar = true;
 				}
 			}
 			else if ( isMySeparator && comp instanceof Menu ) {
-				if( isVisible() ) {
-					if( "-".equals( ((Menu) comp).getText() ) ) {
-						comp.setRendered( separatorRendered );
-					}
+				if( "-".equals( ((Menu) comp).getText() ) ) {
+					((Menu) comp).setVisible( Boolean.toString( separatorRendered ) );
 				}
 			}
 			else {
-				renderToolBar = true;
 				isMySeparator = false;
 			}
 		}
-		setRendered( renderToolBar );
+		//setRendered( renderToolBar );
 		
 	}
 	

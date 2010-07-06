@@ -1,7 +1,14 @@
+/*
+ * ITDS - Copyright 2009
+ * 
+ * Classe para converter HTML entities
+ * 
+ */
 package netgest.bo.xwc.components.classic.grid;
 
 public class HTMLEntityDecoder {
 
+	/** The Constant htmlEntities. */
 	public final static String htmlEntities[] = { "&quot;", "&apos;", "&amp;",
 			"&lt;", "&gt;", "&nbsp;", "&iexcl;", "&cent;", "&pound;",
 			"&curren;", "&yen;", "&brvbar;", "&sect;", "&uml;", "&copy;",
@@ -21,6 +28,8 @@ public class HTMLEntityDecoder {
 			"&oacute;", "&ocirc;", "&otilde;", "&ouml;", "&oslash;",
 			"&ugrave;", "&uacute;", "&ucirc;", "&uuml;", "&yacute;", "&thorn;",
 			"&yuml;" };
+	
+	/** The Constant htmlCodes. */
 	public final static String htmlCodes[] = { "&#34;", "&#39;", "&#38;",
 			"&#60;", "&#62;", "&#160;", "&#161;", "&#162;", "&#163;", "&#164;",
 			"&#165;", "&#166;", "&#167;", "&#168;", "&#169;", "&#170;",
@@ -39,6 +48,7 @@ public class HTMLEntityDecoder {
 			"&#243;", "&#244;", "&#245;", "&#246;", "&#248;", "&#249;",
 			"&#250;", "&#251;", "&#252;", "&#253;", "&#254;", "&#255;" };
 
+	/** The Constant chars. */
 	public final static char[] chars = { '"', '\'', '&', '<', '>', ' ', '¡',
 			'¢', '£', '¤', '¥', '¦', '§', '¨', '©', 'ª', '«', '¬', '®', '¯',
 			'°', '±', '²', '³', '´', 'µ', '¶', '·', '¸', '¹', 'º', '»', '¼',
@@ -49,7 +59,56 @@ public class HTMLEntityDecoder {
 			'ð', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', 'ø', 'ù', 'ú', 'û', 'ü', 'ý',
 			'þ', 'ÿ' };
 
-	public static String htmlEntityToChar(String s) {
+	/**
+	 * Convert a CharSequente to HTML Entities
+	 * 
+	 * @param s the CharSequence to convert
+	 * 
+	 * @return the converted CharSequence
+	 */
+	public static final String charsToHtmlEntity(CharSequence s) {
+		StringBuilder ret;
+		char c;
+		int i;
+		boolean bfound;
+		ret = new StringBuilder( s.length() );
+		for (i = 0; i < s.length(); i++) {
+			bfound = false;
+			c = s.charAt(i);
+			if( c == ' ' ) {
+               ret.append( c );
+               continue;
+			}
+			for( int k=0; k < chars.length; k++ ) {
+				if( chars[k] == c ) {
+					ret.append( htmlEntities[k] );
+					bfound = true;
+					break;
+				}
+			}
+			if( !bfound ) {
+	           if ( c>='a' && c<='z' || c>='A' && c<='Z' || c>='0' && c<='9' )
+	           {
+	               ret.append( c );
+	           }
+	           else
+	           {
+	               ret.append("&#").append((int)c).append(";");
+	           }
+			}
+		}
+		return ret.toString();
+		
+	}
+	
+	/**
+	 * Convert a CharSequente with HTML Entities to normal characters
+	 * 
+	 * @param s the CharSequence to convert
+	 * 
+	 * @return the converted CharSequence
+	 */
+	public static final String htmlEntityToChar(CharSequence s) {
 
 		boolean entityStart = false;
 		boolean codeStart = false;
@@ -71,6 +130,7 @@ public class HTMLEntityDecoder {
 			case '#':
 				if (i > 0 && s.charAt(i - 1) == '&')
 					codeStart = true;
+				
 				break;
 			case ';':
 				if (entityStart) {
@@ -89,11 +149,16 @@ public class HTMLEntityDecoder {
 				}
 				break;
 			}
-			
 			if (!entityStart)
 				ret.append(c);
-			else
+			else {
 				buffer.append(c);
+				if( buffer.length() > 15 ) {
+					ret.append( buffer );
+					buffer.delete(0, buffer.length() );
+					entityStart = false;
+				}
+			}
 		}
 		ret.append(buffer);
 		return ret.toString();

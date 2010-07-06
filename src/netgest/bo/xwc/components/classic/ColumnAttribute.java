@@ -14,6 +14,8 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 /**
  * This component represents a Column in a Grid panel
@@ -27,14 +29,14 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
     private XUIBaseProperty<String>         	dataField   	= new XUIBaseProperty<String>( "dataField", this );
     private XUIBaseProperty<String>         	sqlExpression  	= new XUIBaseProperty<String>( "sqlExpression", this );
     
-    private XUIStateBindProperty<String>    	label       = new XUIStateBindProperty<String>( "label", this, String.class );
-    private XUIBaseProperty<String>    			width       = new XUIBaseProperty<String>( "width", this );
-	private XUIBaseProperty<Boolean>    		searchable  = new XUIBaseProperty<Boolean>( "searchable", this, true );
-    private XUIBaseProperty<Boolean>    		sortable    = new XUIBaseProperty<Boolean>( "sortable", this, true );
-    private XUIBaseProperty<Boolean>    		groupable	= new XUIBaseProperty<Boolean>( "groupable", this, true );
-	private XUIBaseProperty<Boolean>    		hideable 	= new XUIBaseProperty<Boolean>( "hideable", this, true );
-    private XUIBaseProperty<Boolean>    		hidden  	= new XUIBaseProperty<Boolean>( "hidden", this, false );
-	private XUIBaseProperty<Boolean>    		resizable   = new XUIBaseProperty<Boolean>( "resizable", this, true );
+    private XUIViewStateBindProperty<String>    	label       = new XUIViewStateBindProperty<String>( "label", this, String.class );
+    private XUIViewProperty<String>    			width       = new XUIViewProperty<String>( "width", this );
+	private XUIViewProperty<Boolean>    		searchable  = new XUIViewProperty<Boolean>( "searchable", this, true );
+    private XUIViewProperty<Boolean>    		sortable    = new XUIViewProperty<Boolean>( "sortable", this, true );
+    private XUIViewProperty<Boolean>    		groupable	= new XUIViewProperty<Boolean>( "groupable", this, true );
+	private XUIViewProperty<Boolean>    		hideable 	= new XUIViewProperty<Boolean>( "hideable", this, true );
+    private XUIViewProperty<Boolean>    		hidden  	= new XUIViewProperty<Boolean>( "hidden", this, false );
+	private XUIViewProperty<Boolean>    		resizable   = new XUIViewProperty<Boolean>( "resizable", this, true );
 	
 	private XUIBaseProperty<Boolean>    		contentHtml   	= new XUIBaseProperty<Boolean>( "contentHtml", this, false );
 	private XUIBaseProperty<String>    			renderTemplate 	= new XUIBaseProperty<String>( "renderTemplate", this, null );

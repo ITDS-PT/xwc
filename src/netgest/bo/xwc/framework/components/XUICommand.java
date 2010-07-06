@@ -388,9 +388,8 @@ public class XUICommand extends XUIComponentBase implements ActionSource2 {
     	super.decode();
     	
         if( wasClicked( getRequestContext() ) ) {
-            queueEvent( 
-            		new ActionEvent( this ) 
-            );
+        	ActionEvent e = new ActionEvent( this ); 
+            queueEvent( e );
         }
 
     }

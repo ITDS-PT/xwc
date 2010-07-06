@@ -25,6 +25,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.beans.XEOBaseList;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -182,6 +183,8 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	public GridPanelRequestParameters decodeServiceParmeters( GridPanel oGridPanel, HttpServletRequest oRequest ) {
 		
 		// Paramterers at gridLevel
+		
+		String selectedColumns 	= oRequest.getParameter( "visibleColumns" );
 		String selectedRows = oRequest.getParameter( "selectedRows" );
         String activeRow 	= oRequest.getParameter( "activeRow" );
         String groupBy 		= oRequest.getParameter( "groupBy" );
@@ -233,6 +236,30 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         		oGridPanel.setCurrentSortTerms( null );
         }
         
+        // Column State
+        if( selectedColumns != null ) {
+        	try {
+				Map<String,Boolean> map = new HashMap<String, Boolean>();
+				JSONArray jcols = new JSONArray( selectedColumns );
+				for( int i=0; i < jcols.length(); i++ ) {
+					map.put( jcols.getString( i ), Boolean.TRUE );
+					
+				}
+				Column[] columns = oGridPanel.getColumns();
+				for( Column c : columns ) {
+					if( map.containsKey( c.getDataField() ) ) {
+						((ColumnAttribute)c).setHidden( "false" );
+					}
+					else {
+						((ColumnAttribute)c).setHidden( "true" );
+					}
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        
         // Filter terms
         String sFilters = oRequest.getParameter("filters");
 		String sServerFilters = oGridPanel.getCurrentFilters();
@@ -242,8 +269,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        	// BUG... when setting a value to a objecto, client doesn't send that! so, it must be
 	        	// merged with server side.
 	        	
-	        	// System.out.println( "REQ:" + sFilters );
-	        	
+//	        	System.out.println( "REQ:" + sFilters );
 	    		
 	        	JSONObject jFilters;
 	    		JSONObject serverFilters;
@@ -283,6 +309,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 				e.printStackTrace();
 			}
         }
+        oGridPanel.saveUserPreferences();
 		return reqParam;
 	}
 	

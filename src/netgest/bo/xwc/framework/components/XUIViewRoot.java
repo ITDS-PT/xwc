@@ -60,6 +60,10 @@ public class XUIViewRoot extends UIViewRoot {
 
 	private XUIViewRoot oParentView = null;
 	private boolean isPostBack = false;
+	
+	private String	_renderKit = null;
+
+	private static Lifecycle lifecycle;
 
 	private boolean wasInitComponentsProcessed = false;
 
@@ -120,8 +124,23 @@ public class XUIViewRoot extends UIViewRoot {
 
 	@Override
 	public String getRenderKitId() {
-		return "XEOHTML";
-	}
+		if( _renderKit == null ) {
+	    	_renderKit = super.getRenderKitId();
+	    	if( _renderKit == null || "HTML_BASIC".equals( _renderKit ) ) {
+		    	XUIRequestContext requestContext;
+		    	requestContext = XUIRequestContext.getCurrentContext();
+		    	
+		    	_renderKit = requestContext.getRequestParameterMap().get("__renderKit");
+		    	if( _renderKit != null ) { 
+		    		_renderKit = "XEOXML";
+		    	}
+		    	else {
+		    		_renderKit = "XEOHTML";
+		    	}
+	    	}
+		}
+    	return _renderKit; 
+    } 
 
 	public XUITheme getTheme() {
 		return oTheme;
@@ -451,11 +470,16 @@ public class XUIViewRoot extends UIViewRoot {
 		@Deprecated
 		public void encodeBegin(FacesContext context, UIComponent component)
 				throws IOException {
+			
+			if( "XEOXML".equals( ((XUIViewRoot)component).getRenderKitId() ) ) {
+				return;
+			}
+			
 			XUIResponseWriter w = getResponseWriter();
 
 			XUIViewRoot viewRoot = (XUIViewRoot) component;
 
-			if (renderHead()) {
+			if (renderHead() && !"XEOXML".equals( viewRoot.getRenderKitId() ) ) {
 
 				// Add Scripts and Style
 				XUIResponseWriter headerW = getResponseWriter()
@@ -472,8 +496,9 @@ public class XUIViewRoot extends UIViewRoot {
 				headerW.writeText('\n');
 				headerW.startElement("html", component);
 				// headerW.writeAttribute("SCROLL", "no", null );
-				headerW.writeAttribute("style", getTheme().getHtmlStyle(),
-						"style");
+				if( getTheme() != null )
+					headerW.writeAttribute("style", getTheme().getHtmlStyle(),
+							"style");
 
 				headerW.writeText('\n');
 				headerW.startElement("head", component);
@@ -494,11 +519,6 @@ public class XUIViewRoot extends UIViewRoot {
 				// <meta http-equiv="X-UA-Compatible" content="chrome=1">
 				headerW.startElement( HtmlTags.META, component);
 				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
-				headerW.writeAttribute("content", "chrome=1", null);
-				headerW.endElement( HtmlTags.META );
-				
-				headerW.startElement( HtmlTags.META, component);
-				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
 				headerW.writeAttribute("content", "IE=EmulateIE7", null);
 				headerW.endElement( HtmlTags.META );
 
@@ -506,9 +526,15 @@ public class XUIViewRoot extends UIViewRoot {
 				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
 				headerW.writeAttribute("content", "IE=7", null);
 
+				headerW.startElement( HtmlTags.META, component);
+				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
+				headerW.writeAttribute("content", "chrome=1", null);
+				headerW.endElement( HtmlTags.META );
+				
+				
 				// Write Body
 				w.startElement("body", component);
-				if (getTheme().getBodyStyle() != null) {
+				if (getTheme() != null && getTheme().getBodyStyle() != null) {
 					w.writeAttribute("style", getTheme().getBodyStyle()
 							+ ";height:100%;width:100%", "style");
 				}
@@ -558,7 +584,7 @@ public class XUIViewRoot extends UIViewRoot {
 				w.writeAttribute("style", "width:100%;height:100%", null);
 			}
 
-			if (renderScripts()) {
+			if (renderScripts() && getTheme() != null ) {
 				getTheme().addScripts(w.getScriptContext());
 				getTheme().addStyle(w.getStyleContext());
 			}
@@ -569,10 +595,14 @@ public class XUIViewRoot extends UIViewRoot {
 		public void encodeEnd(FacesContext context, UIComponent component)
 				throws IOException {
 			XUIRequestContext oRequestContext;
-
+			
+			if( "XEOXML".equals( ((XUIViewRoot)component).getRenderKitId() ) ) {
+				return;
+			}
+			
 			oRequestContext = XUIRequestContext.getCurrentContext();
 			XUIResponseWriter w = getResponseWriter();
-
+			
 			if (getRequestContext().isPortletRequest()) {
 				String sWidth = (String) ((HttpServletRequest) getRequestContext()
 						.getRequest()).getAttribute("xvw.width");
@@ -595,9 +625,9 @@ public class XUIViewRoot extends UIViewRoot {
 				oRequestContext.getStyleContext().render(headerW, w, footerW);
 			}
 			
-			if (renderHead()) {
+			if (renderHead() ) {
 				// Write footer Elements
-				if (getTheme().getHtmlStyle() != null) {
+				if ( getTheme() != null && getTheme().getHtmlStyle() != null) {
 					w.writeAttribute("style", getTheme().getHtmlStyle(),
 							"style");
 				}
@@ -716,9 +746,6 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 		}
 	}
-
-	
-	private static Lifecycle lifecycle;
 	
 	private static PhaseEvent createPhaseEvent(FacesContext context,
 			PhaseId phaseId) throws FacesException {
