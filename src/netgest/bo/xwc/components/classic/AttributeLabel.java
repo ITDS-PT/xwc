@@ -73,7 +73,14 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 	
 	@Override
 	public boolean wasStateChanged() {
-		return super.wasStateChanged();
+		
+		boolean ret = super.wasStateChanged();
+		if( ret ) {
+			System.out.println( "Label waschanged:" + ret );
+			ret = super.wasStateChanged();
+		}
+		
+		return ret;
 	}
 
 	public static class XEOHTMLRenderer extends ExtJsBaseRenderer {

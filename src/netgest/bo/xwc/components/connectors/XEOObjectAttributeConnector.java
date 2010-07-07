@@ -113,6 +113,9 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 				
 				if( value != null && lovMap.size() > 0 )
 				{
+					if( !(value instanceof String) ) {
+						value = String.valueOf( value );
+					}
 					if( lovMap.containsKey( value ) ) {
 						return lovMap.get( value );
 					}

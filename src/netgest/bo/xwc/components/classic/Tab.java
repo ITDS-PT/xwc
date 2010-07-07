@@ -53,9 +53,7 @@ public class Tab extends ViewerCommandSecurityBase
 
 	@Override
     public boolean wasStateChanged() {
-
         return getId().equals( ((Tabs)getParent()).getActiveTab() ) && super.wasStateChanged();
-
     }
 
     @Override

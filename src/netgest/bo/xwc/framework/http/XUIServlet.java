@@ -16,8 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
+import netgest.bo.system.boApplicationLogger;
 import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -26,6 +29,7 @@ import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 
 public class XUIServlet extends HttpServlet
 {
+	Logger				logger = Logger.getLogger( XUIServlet.class ); 
     FacesServlet        facesServlet;
 //    boSession           oXEOSession;
     boApplication       oBoApplication;
@@ -120,6 +124,12 @@ public class XUIServlet extends HttpServlet
         	throw e;
         }
         catch( ServletException e ) {
+        	
+        	if( e.getRootCause() != null )
+        		logger.error( "", e.getRootCause() );
+        	else
+        		logger.error( "", e.getRootCause() );
+        	
         	if( !Boolean.parseBoolean( (String)oRequest.getAttribute("xvw.portlet") ) ) {
 	        	if( e.getRootCause() instanceof ViewExpiredException && oRequest.getSession() != null && oRequest.getSession().isNew() ) {
 	        		// Handle expired view
