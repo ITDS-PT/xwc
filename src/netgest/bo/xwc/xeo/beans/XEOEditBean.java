@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -364,11 +363,6 @@ public class XEOEditBean extends XEOBaseBean
 		String s;
 		try {
 			s = sessionContext.renderViewToBuffer("XEOXML", requestContext.getViewRoot().getViewState()  ).toString();
-			
-			FileWriter fviewer = new FileWriter("c:\\lixo\\viewer.xml");
-			fviewer.write( s );
-			fviewer.close();
-			
 			doc = ngtXMLUtils.loadXML( s );
 			return ngtXMLUtils.getXML(doc);
 		} catch (IOException e) {

@@ -8,7 +8,7 @@ import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
 public class LookupListToolBar extends ListToolBar {
-
+	
 	XUIBindProperty<XEOObjectListConnector> 	targetList = 
 		new XUIBindProperty<XEOObjectListConnector>("targetList", this ,XEOObjectListConnector.class, "#{viewBean.dataList}" );
 		
@@ -33,17 +33,16 @@ public class LookupListToolBar extends ListToolBar {
 	public void initComponent() { 
 		// Render ToolBar Methods
 		
-		getChildren().add( Menu.getMenuSpacer() );
+		getChildren().add( currentMenuPos++, Menu.getMenuSpacer() );
 		createViewerBeanMethod( 
 				XEOComponentMessages.LOOKUPLISTTB_CONFIRM.toString(), 
 				XEOComponentMessages.LOOKUPLISTTB_CONFIRM_TTIP.toString(),
 				"ext-xeo/images/menus/confirmar.gif", "confirm", null );
-		getChildren().add( Menu.getMenuSpacer() );
+		getChildren().add( currentMenuPos++, Menu.getMenuSpacer() );
 		createViewerBeanMethod( 
 				XEOComponentMessages.LOOKUPLISTTB_CANCEL.toString(),
 				XEOComponentMessages.LOOKUPLISTTB_CANCEL_TTIP.toString(), 
 				"ext-xeo/images/menus/applications.gif", "canCloseTab", null );
-		//getChildren().add( Menu.getMenuSpacer() );
 		
 		super.initComponent();
 	}
@@ -60,7 +59,7 @@ public class LookupListToolBar extends ListToolBar {
 		xeoMethod.setTargetMethod( methodName );
 		xeoMethod.setIcon( icon );
 		xeoMethod.setToolTip( toolTip );
-		getChildren().add( xeoMethod );
+		getChildren().add( currentMenuPos++, xeoMethod );
 	
 		return xeoMethod;
 	}

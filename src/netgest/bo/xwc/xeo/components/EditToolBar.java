@@ -16,18 +16,18 @@ import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
 
-public class EditToolBar extends ToolBar {
+public class EditToolBar extends ToolBarMenuPositions {
 	
 	public static final List<String> staticMethods = Arrays.asList(
 			new String[] {"update","destroy","cloneObject","valid" }
 		);
 
 	public static final List<String> MapObjectMethods = Arrays.asList(
-			new String[] {"update", "update","valid","cloneObject", "destroy" }
+			new String[] {"update", "update","update","valid","cloneObject", "destroy" }
 	);
 	
 	public static final List<String> MapViewerMethods = Arrays.asList(
-			new String[] {"save","saveAndClose","processValidate","duplicate", "remove" }
+			new String[] {"save","saveAndClose","saveAndCreateNew","processValidate","duplicate", "remove" }
 	);
 
 	public static final List<String> staticNonOrphanMethods = Arrays.asList(
@@ -263,40 +263,36 @@ public class EditToolBar extends ToolBar {
 		
 		boObject xeoObject = getTargetObject();
 		
-		// Render ToolBar Methods
-		int pos = 0;
-
-		createViewerBeanMethod( pos++,ComponentMessages.EDIT_TOOLBAR_BTN_SAVE.toString(), 
+		createViewerBeanMethod( currentMenuPos++,ComponentMessages.EDIT_TOOLBAR_BTN_SAVE.toString(), 
 				ComponentMessages.EDIT_TOOLBAR_BTN_SAVE_TOOLTIP.toString() , "ext-xeo/images/menus/gravar.gif", "save", null );
 		
-		getChildren().add( pos++, Menu.getMenuSpacer( renderUpdateBtn.getExpressionString() ) );
-		createViewerBeanMethod( pos++, null, ComponentMessages.EDIT_TOOLBAR_BTN_SAVE_AND_CLOSE_TOOLTIP.toString(),
+		getChildren().add( currentMenuPos++, Menu.getMenuSpacer( renderUpdateBtn.getExpressionString() ) );
+		createViewerBeanMethod( currentMenuPos++, null, ComponentMessages.EDIT_TOOLBAR_BTN_SAVE_AND_CLOSE_TOOLTIP.toString(),
 				"ext-xeo/images/menus/gravar_e_sair.gif", "saveAndClose", null );
 
-		getChildren().add( pos++, Menu.getMenuSpacer( renderUpdateAndCreateNewBtn.getExpressionString() ) );
-		createViewerBeanMethod( pos++, null, ComponentMessages.EDIT_TOOLBAR_BTN_SAVE_AND_NEW_TOOLTIP.toString(),
+		getChildren().add( currentMenuPos++, Menu.getMenuSpacer( renderUpdateAndCreateNewBtn.getExpressionString() ) );
+		createViewerBeanMethod( currentMenuPos++, null, ComponentMessages.EDIT_TOOLBAR_BTN_SAVE_AND_NEW_TOOLTIP.toString(),
 				"ext-xeo/images/menus/gravar_e_criar_novo.gif", "saveAndCreateNew", null );
 
-		getChildren().add( pos++, Menu.getMenuSpacer( renderUpdateAndCloseBtn.getExpressionString() ) );
-		createViewerBeanMethod( pos++, null, ComponentMessages.EDIT_TOOLBAR_BTN_REMOVE_TOOLTIP.toString(),
+		getChildren().add( currentMenuPos++, Menu.getMenuSpacer( renderUpdateAndCloseBtn.getExpressionString() ) );
+		createViewerBeanMethod( currentMenuPos++, null, ComponentMessages.EDIT_TOOLBAR_BTN_REMOVE_TOOLTIP.toString(),
 				"ext-xeo/images/menus/remover.gif", "remove", null );
 		
-		getChildren().add( pos++,Menu.getMenuSpacer( renderDestroyBtn.getExpressionString() ) );
-		createViewerBeanMethod( pos++,null, ComponentMessages.EDIT_TOOLBAR_BTN_VALIDATE_TOOLTIP.toString(),
+		getChildren().add( currentMenuPos++,Menu.getMenuSpacer( renderDestroyBtn.getExpressionString() ) );
+		createViewerBeanMethod( currentMenuPos++,null, ComponentMessages.EDIT_TOOLBAR_BTN_VALIDATE_TOOLTIP.toString(),
 				"ext-xeo/images/menus/confirmar.gif", "processValidate", null );
 
-		getChildren().add( pos++,Menu.getMenuSpacer( renderValidateBtn.getExpressionString() ) );
-		createViewerBeanMethod( pos++,ComponentMessages.EDIT_TOOLBAR_BTN_DUPLICATE.toString(), 
+		getChildren().add( currentMenuPos++,Menu.getMenuSpacer( renderValidateBtn.getExpressionString() ) );
+		createViewerBeanMethod( currentMenuPos++,ComponentMessages.EDIT_TOOLBAR_BTN_DUPLICATE.toString(), 
 				ComponentMessages.EDIT_TOOLBAR_BTN_DUPLICATE_TOOLTIP.toString(), 
 				"ext-xeo/images/menus/applications.gif", "duplicate", "tab" );
 
-		getChildren().add( pos++,Menu.getMenuSpacer( renderObjectMethodBtns.getExpressionString() ) );
 		boDefMethod[] methods = xeoObject.getToolbarMethods();
 		for( boDefMethod m : methods ) {
 			if( !staticMethods.contains( m.getName() ) ) {
-				ModelMethod m1 = createMenuMethod( pos++, m.getLabel(), m.getLabel(), m.getName() );
+				getChildren().add( currentMenuPos++,Menu.getMenuSpacer( renderObjectMethodBtns.getExpressionString() ) );
+				ModelMethod m1 = createMenuMethod( currentMenuPos++, m.getLabel(), m.getLabel(), m.getName() );
 				m1.setVisible( renderObjectMethodBtns.getExpressionString() );
-				
 			}
 		}
 		
@@ -306,7 +302,7 @@ public class EditToolBar extends ToolBar {
 			|| 	getRenderPropertiesBtn()
 			|| 	getRenderListVersionBtn()	)
 		{
-			getChildren().add(pos++,createInformationMenu());
+			getChildren().add(currentMenuPos++,createInformationMenu());
 		}
 		
 		//Add the Export Menus
@@ -315,8 +311,8 @@ public class EditToolBar extends ToolBar {
 			|| 	getRenderHTMLBtn()
 		)
 		{	
-			getChildren().add( pos++, Menu.getMenuSpacer() );	
-			getChildren().add( pos++,createExportMenu());
+			getChildren().add( currentMenuPos++, Menu.getMenuSpacer() );	
+			getChildren().add( currentMenuPos++,createExportMenu());
 		}
 	}
 	
@@ -503,19 +499,20 @@ public class EditToolBar extends ToolBar {
 			Menu propertiesMenu = new Menu();
 			propertiesMenu.setText(XEOViewersMessages.LBL_PROPERTIES.toString());
 			propertiesMenu.setServerAction("#{viewBean.showProperties}");
-			propertiesMenu.setTarget("window");
+			propertiesMenu.setIcon("extjs/resources/images/default/tree/leaf.gif");
+			propertiesMenu.setTarget("self");
 			informationGroup.getChildren().add(propertiesMenu);
 			
 			Menu dependenciesMenu = new Menu();
 			dependenciesMenu.setText(XEOViewersMessages.LBL_DEPENDENCIES.toString());
 			dependenciesMenu.setServerAction("#{viewBean.showDependencies}");
-			dependenciesMenu.setTarget("window");
+			dependenciesMenu.setTarget("self");
 			informationGroup.getChildren().add(dependenciesMenu);
 			
 			Menu dependents = new Menu();
 			dependents.setText(XEOViewersMessages.LBL_DEPENDENTS.toString());
 			dependents.setServerAction("#{viewBean.showDependents}");
-			dependents.setTarget("window");
+			dependents.setTarget("self");
 			informationGroup.getChildren().add(dependents);
 		}
 		
@@ -524,7 +521,7 @@ public class EditToolBar extends ToolBar {
 			Menu versioningMenu = new Menu();
 			versioningMenu.setText(XEOComponentMessages.EDITTB_LIST_VERSIONS_TTIP.toString());
 			versioningMenu.setServerAction("#{viewBean.listVersions}");
-			versioningMenu.setTarget("window");
+			versioningMenu.setTarget("self");
 			informationGroup.getChildren().add(versioningMenu);
 		}
 		
@@ -533,7 +530,7 @@ public class EditToolBar extends ToolBar {
 			Menu oplMenu = new Menu();
 			oplMenu.setText("OPL - Security");
 			oplMenu.setServerAction("#{viewBean.showOPL}");
-			oplMenu.setTarget("window");
+			oplMenu.setTarget("self");
 			informationGroup.getChildren().add(oplMenu);
 		}
 		
@@ -597,8 +594,8 @@ public class EditToolBar extends ToolBar {
 		if( "saveAndClose".equals(  vm.getTargetMethod() ) )
 			return getRenderUpdateAndCloseBtn();
 		
-		if( "saveAndClose".equals(  vm.getTargetMethod() ) )
-			return getRenderUpdateAndCloseBtn();
+		if( "saveAndCreateNew".equals(  vm.getTargetMethod() ) )
+			return getRenderUpdateAndCreateNewBtn();
 		
 		if( "remove".equals( vm.getTargetMethod() ) )
 			return getRenderDestroyBtn();

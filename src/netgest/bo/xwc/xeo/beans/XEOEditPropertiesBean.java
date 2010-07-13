@@ -190,4 +190,8 @@ public class XEOEditPropertiesBean extends XEOEditBean {
 		return false;
 	}
 	
+	@Override
+	public void cancel() throws boRuntimeException {
+	}
+	
 }

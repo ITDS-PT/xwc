@@ -19,7 +19,7 @@ import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
-public class BridgeToolBar extends ToolBar {
+public class BridgeToolBar extends ToolBarMenuPositions {
 	
 	private XUIBindProperty<boObject> 	targetObject 	= 
 		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
@@ -102,8 +102,8 @@ public class BridgeToolBar extends ToolBar {
 		
 		menu = addAddMenu();
 		if( menu != null ) {
-			children.add( menu );
-			children.add( Menu.getMenuSpacer() );
+			children.add( currentMenuPos++, menu );
+			children.add( currentMenuPos++, Menu.getMenuSpacer() );
 		}
 
 		menu = createViewerBeanMethod(  "remove", 
@@ -114,15 +114,11 @@ public class BridgeToolBar extends ToolBar {
 			"removeFromBridge", "self")
 		;
 	
-		if( menu != null ) {
-			children.add( menu );
-			children.add( Menu.getMenuSpacer() );
-		}
-
 		menu = addCreateNew();
 		if( menu != null ) {
-			children.add( menu );
-			getChildren().add( Menu.getMenuSpacer() );
+			children.add( currentMenuPos++, Menu.getMenuSpacer() );
+			children.add( currentMenuPos++, menu );
+			children.add( currentMenuPos++, Menu.getMenuSpacer() );
 		}
 	}
 	
@@ -337,7 +333,7 @@ public class BridgeToolBar extends ToolBar {
 		toolBarOpt.setTargetMethod( action );
 		toolBarOpt.setIcon( icon );
 		toolBarOpt.setValue( findParentComponent(GridPanel.class).getClientId() );
-		getChildren().add( toolBarOpt );
+		getChildren().add( currentMenuPos++, toolBarOpt );
 		
 		return toolBarOpt;
 	}

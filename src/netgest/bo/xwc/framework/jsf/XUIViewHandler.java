@@ -878,6 +878,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             
             newWriter.startDocument();
             
+            request.setAttribute( "__xwcAjaxTagOpened", Boolean.TRUE );
             oViewToRender.encodeAll( context );
                         
             newWriter.endDocument();
@@ -889,10 +890,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             
             if( "XEOXML".equals( oViewToRender.getRenderKitId() ) ) {
             	
-                sResult = sResult.replaceAll("&aacute;", "á");
-            	
             	long init = System.currentTimeMillis();
-            	
 	             try {
 	
 					 // 2. Use the TransformerFactory to process the stylesheet Source and

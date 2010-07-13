@@ -16,16 +16,13 @@ import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
-public class ListToolBar extends ToolBar {
+public class ListToolBar extends ToolBarMenuPositions {
 
 	private XUIBindProperty<XEOObjectListConnector> targetList = 
 		new XUIBindProperty<XEOObjectListConnector>("targetList", this, XEOObjectListConnector.class, "#{viewBean.dataList}" );
 
 	private XUIStateBindProperty<Boolean>  renderCreateNewBtn    = 
 		new XUIStateBindProperty<Boolean>( "renderCreateNewBtn", this, "true", Boolean.class );
-	
-//	private XUIBindProperty<Boolean>  renderDestroyBtn    = 
-//		new XUIBindProperty<Boolean>( "renderDestroyBtn", this, Boolean.FALSE, Boolean.class );
 	
 	@Override
 	public String getRendererType() {
@@ -64,9 +61,7 @@ public class ListToolBar extends ToolBar {
 	@Override
 	public void initComponent() {
 		super.initComponent();
-		
 		createToolBar();
-		
 	}
 	
 	public void createToolBar() {
@@ -76,9 +71,9 @@ public class ListToolBar extends ToolBar {
 		menu = addCreateNew();
 		if( menu != null ) {
 			menu.setVisible( renderCreateNewBtn.getExpressionString() );
-			getChildren().add( 0, Menu.getMenuSpacer( renderCreateNewBtn.getExpressionString() ) );
-			children.add( 0, menu );
-			getChildren().add( 0, Menu.getMenuSpacer( renderCreateNewBtn.getExpressionString() ) );
+			getChildren().add(  currentMenuPos++, Menu.getMenuSpacer( renderCreateNewBtn.getExpressionString() ) );
+			children.add(  currentMenuPos++, menu );
+			getChildren().add(  currentMenuPos++, Menu.getMenuSpacer( renderCreateNewBtn.getExpressionString() ) );
 		}
 	}
 	

@@ -116,9 +116,10 @@ public class ToolBar extends ViewerSecurityBase {
     		}
     		else {
     			// update menu options
-    			
-            	ScriptBuilder sb = ToolBar.XEOHTMLRenderer.updateMenuItems( (ToolBar) component );
+    			ScriptBuilder sb = new ScriptBuilder();
             	generateToolBarUpdateScript( sb, (ToolBar) component );
+            	ScriptBuilder sb2 = ToolBar.XEOHTMLRenderer.updateMenuItems( (ToolBar) component );
+            	sb.w( sb2 );
                 if( sb.length() > 0 ) {
                 	getResponseWriter().getScriptContext().add( 
                 			XUIScriptContext.POSITION_FOOTER, 
@@ -165,15 +166,24 @@ public class ToolBar extends ViewerSecurityBase {
             	}
             }
         }
-        
+         
         public static final void generateToolBarUpdateScript( ScriptBuilder sb, ToolBar toolBar ) {
-        	sb.w( "var m=Ext.getCmp('ext-").writeValue( toolBar.getClientId() ).l("');" );
-        	if( !toolBar.isVisible() )
-        		sb.w( "m.hide();" );
-        	else
-        		sb.w( "m.show();" );
-        	sb.w( "m.setDisabled(").w( toolBar.isDisabled() ).l( ");" );
-        }
+        	boolean vChged = toolBar.visible.wasChanged();
+        	boolean dChged = toolBar.disabled.wasChanged();
+        	
+        	if( vChged || dChged ) {
+	        	sb.w( "var m=Ext.getCmp('ext-").writeValue( toolBar.getClientId() ).l("');" );
+	        	if( vChged ) {
+		        	if( !toolBar.isVisible() )
+		        		sb.w( "m.hide();" );
+		        	else
+		        		sb.w( "m.show();" );
+	        	}
+	        	
+	        	if( dChged )
+	        		sb.w( "m.setDisabled(").w( toolBar.isDisabled() ).l( ");" );
+        	}
+        } 
         
         public static final void generateUpdateScript( ScriptBuilder sb, Menu oMenuChild ) {
         	sb.w( "var m=Ext.getCmp('ext-").writeValue( oMenuChild.getClientId() ).l("');" );
