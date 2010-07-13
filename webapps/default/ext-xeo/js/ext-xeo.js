@@ -228,21 +228,26 @@ ExtXeo.layoutMan.unRegister = function( sDomId ) {
 ExtXeo.layoutMan.layoutTimeoutId = null;
 ExtXeo.layoutMan.doLayout = function( sViewId ) {
 	//window.setTimeout("ExtXeo.layoutMan.doLayout1();",0);
-	var x = new Date();
-	if ( "__allViews" ==  sViewId ) {
-		// Do Layout for all views
-		ExtXeo.layoutMan.layoutTimeoutId = null;		
-		for( var v in ExtXeo.layoutMan.comp ) {
-			ExtXeo.layoutMan.doLayout1( v );
+	try {
+		var x = new Date();
+		if ( "__allViews" ==  sViewId ) {
+			// Do Layout for all views
+			ExtXeo.layoutMan.layoutTimeoutId = null;		
+			for( var v in ExtXeo.layoutMan.comp ) {
+				ExtXeo.layoutMan.doLayout1( v );
+			}
+		}
+		else if( sViewId ) {
+			ExtXeo.layoutMan.doLayout1( sViewId )
+		}
+		else {
+			if( ExtXeo.layoutMan.layoutTimeoutId  != null )
+				window.clearTimeout( ExtXeo.layoutMan.layoutTimeoutId  );
+			ExtXeo.layoutMan.layoutTimeoutId = window.setTimeout("ExtXeo.layoutMan.doLayout('__allViews');", 100);
 		}
 	}
-	else if( sViewId ) {
-		ExtXeo.layoutMan.doLayout1( sViewId )
-	}
-	else {
-		if( ExtXeo.layoutMan.layoutTimeoutId  != null )
-			window.clearTimeout( ExtXeo.layoutMan.layoutTimeoutId  );
-		ExtXeo.layoutMan.layoutTimeoutId = window.setTimeout("ExtXeo.layoutMan.doLayout('__allViews');", 100);
+	catch(e) {
+		//TODO: Handle do layout errors
 	}
 }
 

@@ -386,7 +386,12 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
                 		log.severe("Error getting SQL to Object rendered as Lov", e );
                 		sql = "select " + oAttHandler.getDefAttribute().getReferencedObjectDef().getName();
             		}
-                   
+            		
+            		
+            		if("boObject".equals(oAttHandler.getDefAttribute().getReferencedObjectDef().getName())) {
+            			return null;
+            		}
+            		
 	                boObjectList oObjectList = 
 	                    boObjectList.list(oAttHandler.getEboContext(), 
 	                                      //"select " + oAttHandler.getDefAttribute().getReferencedObjectDef().getName()

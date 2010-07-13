@@ -471,15 +471,11 @@ public class XUIViewRoot extends UIViewRoot {
 		public void encodeBegin(FacesContext context, UIComponent component)
 				throws IOException {
 			
-			if( "XEOXML".equals( ((XUIViewRoot)component).getRenderKitId() ) ) {
-				return;
-			}
-			
 			XUIResponseWriter w = getResponseWriter();
 
 			XUIViewRoot viewRoot = (XUIViewRoot) component;
 
-			if (renderHead() && !"XEOXML".equals( viewRoot.getRenderKitId() ) ) {
+			if (renderHead() ) {
 
 				// Add Scripts and Style
 				XUIResponseWriter headerW = getResponseWriter()
@@ -595,10 +591,6 @@ public class XUIViewRoot extends UIViewRoot {
 		public void encodeEnd(FacesContext context, UIComponent component)
 				throws IOException {
 			XUIRequestContext oRequestContext;
-			
-			if( "XEOXML".equals( ((XUIViewRoot)component).getRenderKitId() ) ) {
-				return;
-			}
 			
 			oRequestContext = XUIRequestContext.getCurrentContext();
 			XUIResponseWriter w = getResponseWriter();

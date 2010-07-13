@@ -1,6 +1,7 @@
 package netgest.bo.xwc.components.classic.renderers;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -14,6 +15,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.utils.IOUtils;
 
 public class XMLViewRootRenderer extends XUIRenderer {
 
@@ -30,7 +32,23 @@ public class XMLViewRootRenderer extends XUIRenderer {
 
             // Write Header
             
-        	headerW.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        	headerW.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE foo-bar [\n");
+        	
+        	InputStream is1 = Thread.currentThread().getContextClassLoader().getResourceAsStream("xhtml-lat1.ent");
+        	headerW.write( new String(IOUtils.copyByte( is1 )) );
+        	headerW.write("\n");
+        	is1.close();
+        	
+        	InputStream is2 = Thread.currentThread().getContextClassLoader().getResourceAsStream("xhtml-special.ent");
+        	headerW.write( new String(IOUtils.copyByte( is2 )) );
+        	headerW.write("\n");
+        	is2.close();
+
+        	InputStream is3 = Thread.currentThread().getContextClassLoader().getResourceAsStream("xhtml-symbol.ent");
+        	headerW.write( new String(IOUtils.copyByte( is3 )) );
+        	headerW.write("\n]>\n");
+        	is3.close();
+        	
             headerW.startElement("html", component);
 
             XUITheme t = getTheme();

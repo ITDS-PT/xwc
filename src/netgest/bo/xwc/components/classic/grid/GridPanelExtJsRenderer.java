@@ -150,8 +150,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             // Place holder for the component
         
             if( oComp.isRenderedOnClient() ) {
-            	
             	if( oGrid.getEnableColumnFilter() ) {
+            		oGrid.getStateProperty("currentFilters").wasChanged();
             		ScriptBuilder scriptBuilder = new ScriptBuilder();
             		scriptBuilder.startBlock();
             		scriptBuilder.w( "var g=Ext.getCmp('").w( oGrid.getClientId() ).w( "');" );

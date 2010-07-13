@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -163,6 +164,11 @@ public class XEOEditBean extends XEOBaseBean
     public boolean getEditInOrphanMode() {
     	if( this.editInOrphanMode == null ) {
     		this.editInOrphanMode = getXEOObject().getBoDefinition().getBoCanBeOrphan();
+    		if(!this.editInOrphanMode) {
+    			if( getParentBean() == null ) {
+    				this.editInOrphanMode = true;
+    			}
+    		}
     	}
     	return this.editInOrphanMode;
     }
@@ -351,19 +357,25 @@ public class XEOEditBean extends XEOBaseBean
      */
     private String getViewerContentAsXML()
     {
-    	String pathXML = "C:\\ITDS\\XWC - Exportação para XML\\MegaObjecto.xml";
     	XMLDocument doc;
-		try 
-		{
-			doc = ngtXMLUtils.loadXML(new FileInputStream(new File(pathXML)));
+		XUIRequestContext requestContext = XUIRequestContext.getCurrentContext();
+		
+		XUISessionContext sessionContext = requestContext.getSessionContext();
+		String s;
+		try {
+			s = sessionContext.renderViewToBuffer("XEOXML", requestContext.getViewRoot().getViewState()  ).toString();
+			
+			FileWriter fviewer = new FileWriter("c:\\lixo\\viewer.xml");
+			fviewer.write( s );
+			fviewer.close();
+			
+			doc = ngtXMLUtils.loadXML( s );
 			return ngtXMLUtils.getXML(doc);
-		} 
-		catch (FileNotFoundException e) 
-		{
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
 		}
-    	
+		return null;
     }
     
     /**

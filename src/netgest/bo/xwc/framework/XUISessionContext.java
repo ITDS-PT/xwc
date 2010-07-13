@@ -9,7 +9,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
+
+import netgest.bo.runtime.EboContext;
 import netgest.bo.system.Logger;
+import netgest.bo.system.boApplication;
 
 import javax.faces.context.FacesContext;
 
@@ -122,7 +125,15 @@ public class XUISessionContext {
     public StringBuilder renderViewToBuffer( String renderKit, String viewStateId ) throws IOException {
     	XUIRequestContext r;
     	StringBuilder sb = null;
+    	
+    	// Release the objects to another thread can use 
     	r = XUIRequestContext.getCurrentContext();
+    	r.getTransactionManager().release();
+
+    	// Release the objects to another thread can use 
+    	EboContext ctx = boApplication.currentContext().getEboContext();
+    	ctx.releaseObjects();
+    	
     	String url = r.getAjaxURL();
     	if( !url.toLowerCase().startsWith( "http" ) ) {
     		HttpServletRequest request =  (HttpServletRequest)r.getRequest();
@@ -157,6 +168,7 @@ public class XUISessionContext {
     		while( (br = is.read( buffer )) > 0 ) {
     			sb.append( new String( buffer,0,br, "utf-8" ) );
     		}
+    		
     	}
     	return sb;
     }
