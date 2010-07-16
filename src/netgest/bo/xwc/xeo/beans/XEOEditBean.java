@@ -1,9 +1,6 @@
 package netgest.bo.xwc.xeo.beans;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,7 +13,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.el.ExpressionFactory;
+import javax.el.MethodExpression;
 import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,6 +64,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.FormEdit;
@@ -438,10 +439,12 @@ public class XEOEditBean extends XEOBaseBean
     	try 
     	{
     		
+    	  boObject currentEditObject = getXEOObject();
+    		
     	  HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
       	  //response.setCharacterEncoding("UTF-8");
     	  response.setContentType("application/pdf");
-    	  response.setHeader("Content-disposition","attachment; filename="+this.oBoObect.getTextCARDID()+".pdf"); 
+    	  response.setHeader("Content-disposition","attachment; filename="+currentEditObject.getTextCARDID()+".pdf"); 
       	  OutputStream out = response.getOutputStream();
     		
     	  // Step 3: Construct fop with desired output format
@@ -487,9 +490,11 @@ public class XEOEditBean extends XEOBaseBean
         
     	String result = this.renderXSLT(EXCEL_TEMPLATES, PROJECT_EXCEL_TEMPLATES, xmlContent);
     	
+    	boObject currentEditObject = getXEOObject();
+    	
     	HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
     	response.setContentType("application/excel");
-  	  	response.setHeader("Content-disposition","attachment; filename="+this.oBoObect.getTextCARDID()+".xls"); 
+  	  	response.setHeader("Content-disposition","attachment; filename="+currentEditObject.getTextCARDID()+".xls"); 
   	  	try 
   	  	{
 			response.getOutputStream().write(result.getBytes());
@@ -1646,10 +1651,30 @@ public class XEOEditBean extends XEOBaseBean
 		if( getIsChanged() ) 
 		{
 			String closeScript;
+			
+			String openDiffScript = "openDiffWindow()" ;
+			
+			XUIForm formComponent = (XUIForm)viewRoot.findComponent( XUIForm.class);
+			
+			XUICommand oShowDiffCommand;
+			if (formComponent.findComponent(formComponent.getId() + "_showDiff") != null){
+				oShowDiffCommand = (XUICommand) formComponent.findComponent(formComponent.getId() + "_showDiff");
+			}
+			else{
+				oShowDiffCommand = new XUICommand();
+				oShowDiffCommand.setId(formComponent.getId() +"_showDiff" );
+				oShowDiffCommand.setActionExpression( createMethodBinding( "#{viewBean.showProperties}" ) );
+				formComponent.getChildren().add(oShowDiffCommand);
+			}
+			
+			openDiffScript = 
+				XVWScripts.getAjaxCommandScript( oShowDiffCommand , XVWScripts.WAIT_STATUS_MESSAGE )+";";
+			
+			
 			Window xWnd = (Window)viewRoot.findComponent(Window.class);
 			if( xWnd != null ) {
 				if( xWnd.getOnClose() != null ) {
-		        	XUICommand closeCmd = (XUICommand)xWnd.findComponent( xWnd.getId() + "_closecmd" );
+					XUICommand closeCmd = (XUICommand)xWnd.findComponent( xWnd.getId() + "_closecmd" );
 		        	closeScript = 
 		        			XVWScripts.getAjaxCommandScript( closeCmd , XVWScripts.WAIT_STATUS_MESSAGE )+";";
 	            }
@@ -1674,7 +1699,7 @@ public class XEOEditBean extends XEOBaseBean
 				messageBoxConfig.add( "buttons" , " {yes:'Ok', cancel:'Show differences', no:'Cancel'}  "); //FIXME: Internacionalizar as mensagens
 			else
 				messageBoxConfig.add( "buttons" , " Ext.MessageBox.YESNO  ");
-			messageBoxConfig.add( "fn",  "function(a1) { if( a1=='yes' ) { "+closeScript+" } if (a1=='cancel') { openDiffWindow(); } }" );
+			messageBoxConfig.add( "fn",  "function(a1) { if( a1=='yes' ) { "+closeScript+" } if (a1=='cancel') { "+ openDiffScript +" } }" );
 			messageBoxConfig.add( "icon", "Ext.MessageBox.WARNING" );
 			
 			//FIXME: isto fica feio aqui
@@ -1728,6 +1753,16 @@ public class XEOEditBean extends XEOBaseBean
 		}
 		oRequestContext.renderResponse();
 	}
+	
+	//FIXME: Será preciso isto?
+	//////////////////////////////////////////////////////////////
+	private static final Class<?>[] DUMMY_CLASS_ARRAY = new Class[0];
+	private MethodExpression createMethodBinding( String sMethodExpression ) {
+    	FacesContext context = FacesContext.getCurrentInstance();
+        ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
+        return oExFactory.createMethodExpression( context.getELContext(), sMethodExpression, null, DUMMY_CLASS_ARRAY );
+    }
+	////////////////////////////////////////////////////////////////
 	
 	public Object validateLookupValue( AttributeHandler att, String[] atts, Object[] values ) throws boRuntimeException 
 	{

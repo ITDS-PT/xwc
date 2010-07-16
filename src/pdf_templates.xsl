@@ -139,18 +139,45 @@
             
             <fo:page-sequence master-reference="content">
                 <fo:flow flow-name="xsl-region-body">
-                    <xsl:apply-templates></xsl:apply-templates>
+                    <xsl:apply-templates select="html/body/div/*"/>
                  </fo:flow>
             </fo:page-sequence>
             </fo:root>
     </xsl:template>
     
     <!-- ***** Tab Templates -->
-    <xsl:template match="formedit/panel/tabs/tab" priority="-1">
+    <!-- <xsl:template match="formEdit/panel/tabs/tab" priority="-1">
             <fo:block xsl:use-attribute-sets="tabTitle">
                 <xsl:value-of select="./@label"/>
             </fo:block>
         <xsl:apply-templates></xsl:apply-templates>
+    </xsl:template>
+    -->
+    
+    <xsl:template match="formEdit" priority="-2">
+        <xsl:apply-templates/>
+    </xsl:template>
+    
+    <xsl:template match="panel/tabs" priority="-1">
+        <xsl:for-each select="tab">
+            <fo:block xsl:use-attribute-sets="tabTitle">
+                <xsl:value-of select="./@label"/>
+            </fo:block>
+            <xsl:apply-templates/>
+        </xsl:for-each>
+    </xsl:template>
+    
+    <xsl:template match="tab/tabs" priority="-1">
+        <xsl:for-each select="tab">
+            <fo:block xsl:use-attribute-sets="innerTabTitle">
+                <xsl:value-of select="./@label"/>
+            </fo:block>
+            <xsl:apply-templates/>
+        </xsl:for-each>
+    </xsl:template>
+    
+    <xsl:template match="panel" priority="-2">
+        <xsl:apply-templates/>
     </xsl:template>
     
     <xsl:template match="tab/tabs/tab" priority="-1">
@@ -188,7 +215,7 @@
         <!-- Cria uma nova linha numa tabela existente -->
         <fo:table-row>
             <xsl:apply-templates/>
-        </fo:table-row>
+        </fo:table-row> 
     </xsl:template>    
     
     <xsl:template match="cell" priority="-1">
@@ -196,7 +223,7 @@
     </xsl:template>      
     
     <!-- A Label for the attributes -->
-    <xsl:template match="attributelabel" priority="-1">
+    <xsl:template match="attributeLabel" priority="-1">
         <fo:table-cell>
             <fo:block xsl:use-attribute-sets="labelFormatting">
                 <xsl:value-of select="@text"/>
@@ -205,7 +232,7 @@
     </xsl:template>
     
     <!-- Simple textual attribute -->
-    <xsl:template match="attributetext" priority="-1">
+    <xsl:template match="attributeText" priority="-1">
         <fo:table-cell>
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count"><xsl:value-of select="count(../../cell)"/></xsl:with-param>
@@ -218,7 +245,7 @@
     </xsl:template>
     
     <!-- Boolean attribute -->
-    <xsl:template match="attributeboolean" priority="-1">
+    <xsl:template match="attributeBoolean" priority="-1">
         <fo:table-cell>
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count"><xsl:value-of select="count(../../cell)"/></xsl:with-param>
@@ -236,20 +263,32 @@
     </xsl:template>
     
     <!-- Atributos do tipo data -->
-    <xsl:template match="attributedate" priority="-1">
+    <xsl:template match="attributeDate" priority="-1">
         <fo:table-cell>
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count"><xsl:value-of select="count(../../cell)"/></xsl:with-param>
                 <xsl:with-param name="total"><xsl:value-of select="../../../@columns"/></xsl:with-param>
             </xsl:call-template>
             <fo:block xsl:use-attribute-sets="attributeTextFormatting" >
-                <xsl:value-of select="./@displayvalue"/>
+                    <xsl:value-of select="./@displayValue"/>    
+            </fo:block>
+        </fo:table-cell>
+    </xsl:template>
+    
+    <xsl:template match="attributeDateTime" priority="-1">
+        <fo:table-cell>
+            <xsl:call-template name="checkColSpan">
+                <xsl:with-param name="count"><xsl:value-of select="count(../../cell)"/></xsl:with-param>
+                <xsl:with-param name="total"><xsl:value-of select="../../../@columns"/></xsl:with-param>
+            </xsl:call-template>
+            <fo:block xsl:use-attribute-sets="attributeTextFormatting" >
+                <xsl:value-of select="./@displayValue"/>    
             </fo:block>
         </fo:table-cell>
     </xsl:template>
     
     <!-- Atributos do tipo texto longo -->
-    <xsl:template match="attributetextarea" priority="-1">
+    <xsl:template match="attributeTextArea" priority="-1">
         <fo:table-cell>
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count"><xsl:value-of select="count(../../cell)"/></xsl:with-param>
@@ -262,7 +301,7 @@
     </xsl:template>
     
     <!-- Atributos do tipo número -->
-    <xsl:template match="attributenumber" priority="-1">
+    <xsl:template match="attributeNumber" priority="-1">
         <fo:table-cell>
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count"><xsl:value-of select="count(../../cell)"/></xsl:with-param>
@@ -275,46 +314,51 @@
     </xsl:template>
     
     <!-- Atributos do tipo ficheiro -->
-    <xsl:template match="attributefile" priority="-1">
+    <xsl:template match="attributeFile" priority="-1">
         <fo:table-cell>
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count"><xsl:value-of select="count(../../cell)"/></xsl:with-param>
                 <xsl:with-param name="total"><xsl:value-of select="../../../@columns"/></xsl:with-param>
             </xsl:call-template>
             <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                <xsl:value-of select="./@displayvalue"/>
+                <xsl:value-of select="./@displayValue"/>
             </fo:block>
         </fo:table-cell>
      </xsl:template>
     
     <!-- Atributos do tipo object -->
-    <xsl:template match="attributenumberlookup" priority="-1">
+    <xsl:template match="attributeNumberLookup" priority="-1">
         <fo:table-cell>
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count"><xsl:value-of select="count(../../cell)"/></xsl:with-param>
                 <xsl:with-param name="total"><xsl:value-of select="../../../@columns"/></xsl:with-param>
             </xsl:call-template>
             <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                <xsl:value-of select="./@displayvalue"/>
+                <xsl:if test="string-length(./@displayValue) > 0">
+                    <xsl:value-of select="./@displayValue"/>    
+                </xsl:if>
+                <xsl:if test="string-length(./@displayValue) = 0">
+                    <xsl:text></xsl:text>  
+                </xsl:if>
             </fo:block>
         </fo:table-cell>
     </xsl:template>
     
     <!-- Attribute whose value comes from a list of values -->
-    <xsl:template match="attributelov" priority="-1">
+    <xsl:template match="attributeLov" priority="-1">
         <fo:table-cell>
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count"><xsl:value-of select="count(../../cell)"/></xsl:with-param>
                 <xsl:with-param name="total"><xsl:value-of select="../../../@columns"/></xsl:with-param>
             </xsl:call-template>
             <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                <xsl:value-of select="./@displayvalue"/>
+                <xsl:value-of select="./@displayValue"/>
             </fo:block>
         </fo:table-cell>
     </xsl:template>
     
     <!-- Attribute with a password (to not show the value) -->
-    <xsl:template match="attributepassword" priority="-1">
+    <xsl:template match="attributePassword" priority="-1">
         <fo:table-cell>
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count"><xsl:value-of select="count(../../cell)"/></xsl:with-param>
@@ -360,9 +404,28 @@
     <xsl:template match="gridcolumn" priority="-1">
         <fo:table-cell>
             <fo:block>
-                <xsl:value-of select="text()"/>
+                <xsl:if test="string-length(*//text()) > 0">
+                    <xsl:value-of select="*//text()"/>    
+                </xsl:if>
+                <xsl:if test="string-length(*//text()) = 0">
+                    <xsl:value-of select="./@displayValue"/>    
+                </xsl:if>
             </fo:block>
         </fo:table-cell>
+    </xsl:template>
+    
+    <xsl:template match="*|@*" priority="-10">
+        <!--   <xsl:copy> -->
+        <!-- <xsl:apply-templates select="*|@*|text()"/> -->
+        <!-- </xsl:copy> -->
+    </xsl:template>
+    
+    <xsl:template match="toolbar" priority="-1">
+        <!-- Não se faz render da toolbar -->
+    </xsl:template>
+    
+    <xsl:template match="script" priority="-1">
+        <!-- Não se faz render da toolbar -->
     </xsl:template>
     
 </xsl:stylesheet>

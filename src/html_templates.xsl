@@ -6,6 +6,7 @@
     <xsl:template match="/" priority="-1">
         <html>
             <head>
+                <BASE href="../../" ></BASE>
                 <!-- As CSS desta página -->
                 <style type="text/css" media="screen">
                 	body
@@ -109,33 +110,49 @@
                 </style>
             </head>
             <body>
-                <xsl:apply-templates/>
+            <a href='#' onClick="window.print();">
+                <img src="ext-xeo/images/print-icon.png" alt="Print" width="16" height="16"/>
+            </a><br/><br/>
+            
+                <xsl:apply-templates select="html/body/div/*"/>
+                <!-- <xsl:value-of select="html/body/div/@id"/> -->
             </body>
         </html>
     </xsl:template>
 
     <!-- Tabs de primeiro nível -->
-    <xsl:template match="formedit/panel/tabs/tab" priority="-1">
-        <div class="tab">
-            <h1>
-                <xsl:value-of select="./@label"/>
-            </h1>
-        </div>
+    <xsl:template match="panel/tabs" priority="-1">
+        <xsl:for-each select="tab">
+         <div class="tab">
+             <h1>
+                 <xsl:value-of select="./@label"/>
+             </h1>
+         </div>
+         <xsl:apply-templates/>
+        </xsl:for-each>
+    </xsl:template>
+    
+    <xsl:template match="tab/tabs" priority="-1">
+        <xsl:for-each select="tab">
+            <div class="tab">
+                <h2>
+                    <xsl:value-of select="./@label"/>
+                </h2>
+            </div>
+            <xsl:apply-templates/>
+        </xsl:for-each>
+    </xsl:template>
+    
+    <xsl:template match="formEdit" priority="-2">
+        <xsl:value-of select="./title/text()" disable-output-escaping="yes"/>
         <xsl:apply-templates/>
     </xsl:template>
 
     <!-- Inner Tabs -->
     <xsl:template match="section/tabs/tab" priority="-1"> </xsl:template>
 
-    <xsl:template match="panel" priority="-1">
+    <xsl:template match="panel" priority="-2">
         <div>
-            <!-- 
-                consome quaisquer atributos que o panel tenha e inclui aqui (cria) como filhos
-                **** não quero fazer isto ****
-            -->
-            <!-- <xsl:copy-of select="@*"/>-->
-
-            <!-- agora processa qualquer filho lá dentro .. -->
             <xsl:apply-templates/>
         </div>
     </xsl:template>
@@ -185,11 +202,11 @@
     </xsl:template>
 
 
-    <xsl:template match="attributelabel" priority="-1">
+    <xsl:template match="attributeLabel" priority="-1">
         <!-- ignorei os outros atributos do HTML -->
         <td width="{ancestor::rows/@labelWidth}" class="label">
             <label>
-                <xsl:value-of select="@text"/>
+                <xsl:value-of select="./@text"/>
             </label>
         </td>
     </xsl:template>
@@ -207,7 +224,7 @@
         
     </xsl:template>
 
-    <xsl:template match="attributetext" priority="-1">
+    <xsl:template match="attributeText" priority="-1">
         <!-- ignorei os outros atributos do HTML -->
         <td class="value">
             <xsl:call-template name="checkColSpan">
@@ -233,7 +250,7 @@
     </xsl:template>
 
     <!-- Atributos booleanos -->
-    <xsl:template match="attributeboolean" priority="-1">
+    <xsl:template match="attributeBoolean" priority="-1">
         <td class="boolean">
             <xsl:if test="count(../../cell) = 1">
                 <xsl:attribute name="colspan">
@@ -251,7 +268,7 @@
     </xsl:template>
 
     <!-- Atributos do tipo data -->
-    <xsl:template match="attributedate" priority="-1">
+    <xsl:template match="attributeDate" priority="-1">
         <td class="value">
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count">
@@ -261,11 +278,11 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayvalue"/>
+            <xsl:value-of select="./@displayValue"/>
         </td>
     </xsl:template>
     
-    <xsl:template match="attributedatetime" priority="-1">
+    <xsl:template match="attributeDateTime" priority="-1">
         <td class="value">
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count">
@@ -275,12 +292,12 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayvalue"/>
+            <xsl:value-of select="./@displayValue"/>
         </td>
     </xsl:template>
 
     <!-- Atributos do tipo texto longo -->
-    <xsl:template match="attributetextarea" priority="-1">
+    <xsl:template match="attributeTextArea" priority="-1">
         <td class="value">
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count">
@@ -295,7 +312,7 @@
     </xsl:template>
 
     <!-- Atributos do tipo número -->
-    <xsl:template match="attributenumber" priority="-1">
+    <xsl:template match="attributeNumber" priority="-1">
         <td class="value">
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count">
@@ -310,7 +327,7 @@
     </xsl:template>
 
     <!-- Atributos do tipo ficheiro -->
-    <xsl:template match="attributefile" priority="-1">
+    <xsl:template match="attributeFile" priority="-1">
         <td class="value">
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count">
@@ -321,13 +338,13 @@
                 </xsl:with-param>
             </xsl:call-template>
             <a href="#">
-                <xsl:value-of select="./@displayvalue"/>
+                <xsl:value-of select="./@displayValue"/>
             </a>
         </td>
     </xsl:template>
 
     <!-- Atributos do tipo object -->
-    <xsl:template match="attributenumberlookup" priority="-1">
+    <xsl:template match="attributeNumberLookup" priority="-1">
         <td class="value">
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count">
@@ -337,12 +354,12 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayvalue"/>
+            <xsl:value-of select="./@displayValue"/>
         </td>
     </xsl:template>
 
     <!-- Attribute Lov -->
-    <xsl:template match="attributelov" priority="-1">
+    <xsl:template match="attributeLov" priority="-1">
         <td class="value">
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count">
@@ -352,12 +369,12 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayvalue"/>
+            <xsl:value-of select="./@displayValue"/>
         </td>
     </xsl:template>
     
     <!-- Attribute Password -->
-    <xsl:template match="attributepassword" priority="-1"> 
+    <xsl:template match="attributePassword" priority="-1"> 
         <td class="value">
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count">
@@ -373,7 +390,7 @@
 
 
     <!-- Editor HTML -->
-    <xsl:template match="attributehtmleditor" priority="-1">
+    <xsl:template match="attributeHtmlEditor" priority="-1">
         <td class="value">
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count">
@@ -383,7 +400,7 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayvalue"/>
+            <xsl:value-of select="./@displayValue"/>
         </td>
     </xsl:template>
 
@@ -415,7 +432,7 @@
     
     <xsl:template match="gridcolumn" priority="-1">
         <td>
-            <xsl:value-of select="./@displayvalue"/>
+            <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
     
@@ -424,11 +441,15 @@
     <!-- copia tudo o resto que não conheço, ou seja html. Funciona pela prioridade baixa e devido à ordem de avaliação dos templates -->
     <xsl:template match="*|@*" priority="-10">
         <!--   <xsl:copy> -->
-        <xsl:apply-templates select="*|@*|text()"/>
+            <!-- <xsl:apply-templates select="*|@*|text()"/> -->
         <!-- </xsl:copy> -->
     </xsl:template>
-
+    
     <xsl:template match="toolbar" priority="-1">
+        <!-- Não se faz render da toolbar -->
+    </xsl:template>
+    
+    <xsl:template match="script" priority="-1">
         <!-- Não se faz render da toolbar -->
     </xsl:template>
 
