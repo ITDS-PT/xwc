@@ -12,6 +12,8 @@ import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
@@ -34,56 +36,56 @@ public class EditToolBar extends ToolBar {
 			new String[] {"cofirmar","cancelar","valid", "update", "destroy", "cloneObject" }
 		);
 
-	private XUIBindProperty<Boolean>  renderConfirmBtn    = 
-		new XUIBindProperty<Boolean>( "renderConfirmBtn", this, true, Boolean.class );
+	private XUIViewBindProperty<Boolean>  renderConfirmBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderConfirmBtn", this, true, Boolean.class );
 
-	private XUIBindProperty<Boolean>  renderCancelBtn    = 
-		new XUIBindProperty<Boolean>( "renderCancelBtn", this, true, Boolean.class );
+	private XUIViewBindProperty<Boolean>  renderCancelBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderCancelBtn", this, true, Boolean.class );
 	
-	private XUIBindProperty<boObject> 	targetObject = 
-		new XUIBindProperty<boObject>("targetObject", this ,boObject.class, "#{viewBean.XEOObject}" );
+	private XUIViewBindProperty<boObject> 	targetObject = 
+		new XUIViewBindProperty<boObject>("targetObject", this ,boObject.class, "#{viewBean.XEOObject}" );
 
-		private XUIBindProperty<Boolean>  renderUpdateBtn    = 
-		new XUIBindProperty<Boolean>( "renderUpdateBtn", this, true, Boolean.class );
+	private XUIViewBindProperty<Boolean>  renderUpdateBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderUpdateBtn", this, true, Boolean.class );
 
-	private XUIBindProperty<Boolean>  renderUpdateAndCloseBtn    = 
-		new XUIBindProperty<Boolean>( "renderUpdateAndCloseBtn", this, true, Boolean.class );
+	private XUIViewBindProperty<Boolean>  renderUpdateAndCloseBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderUpdateAndCloseBtn", this, true, Boolean.class );
 	
-	private XUIStateBindProperty<Boolean>  renderUpdateAndCreateNewBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderUpdateAndCreateNewBtn", this, "true", Boolean.class );
+	private XUIViewStateBindProperty<Boolean>  renderUpdateAndCreateNewBtn    = 
+		new XUIViewStateBindProperty<Boolean>( "renderUpdateAndCreateNewBtn", this, "true", Boolean.class );
 
-	private XUIBindProperty<Boolean>  renderDestroyBtn    = 
-		new XUIBindProperty<Boolean>( "renderDestroyBtn", this, true, Boolean.class );
+	private XUIViewBindProperty<Boolean>  renderDestroyBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderDestroyBtn", this, true, Boolean.class );
 	
-	private XUIBindProperty<Boolean>  renderValidateBtn    = 
-		new XUIBindProperty<Boolean>( "renderValidateBtn", this, true, Boolean.class );
+	private XUIViewBindProperty<Boolean>  renderValidateBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderValidateBtn", this, true, Boolean.class );
 	
-	private XUIBindProperty<Boolean>  renderCloneBtn    = 
-		new XUIBindProperty<Boolean>( "renderCloneBtn", this, false, Boolean.class );
+	private XUIViewBindProperty<Boolean>  renderCloneBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderCloneBtn", this, false, Boolean.class );
 
-	private XUIBindProperty<Boolean>  renderObjectMethodBtns    = 
-		new XUIBindProperty<Boolean>( "renderObjectMethodBtns", this, true, Boolean.class );
+	private XUIViewBindProperty<Boolean>  renderObjectMethodBtns    = 
+		new XUIViewBindProperty<Boolean>( "renderObjectMethodBtns", this, true, Boolean.class );
 	
-	private XUIBindProperty<Boolean>  renderPropertiesBtn    = 
-		new XUIBindProperty<Boolean>( "renderPropertiesBtn", this, true, Boolean.class );
+	private XUIViewBindProperty<Boolean>  renderPropertiesBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderPropertiesBtn", this, true, Boolean.class );
 
-	private XUIStateBindProperty<Boolean>  renderDependentsBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderDependentsBtn", this, "true", Boolean.class );
+	private XUIViewStateBindProperty<Boolean>  renderDependentsBtn    = 
+		new XUIViewStateBindProperty<Boolean>( "renderDependentsBtn", this, "true", Boolean.class );
 	
-	private XUIStateBindProperty<Boolean>  renderDependenciesBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderDependenciesBtn", this, "true", Boolean.class );
+	private XUIViewStateBindProperty<Boolean>  renderDependenciesBtn    = 
+		new XUIViewStateBindProperty<Boolean>( "renderDependenciesBtn", this, "true", Boolean.class );
 	
-	private XUIStateBindProperty<Boolean>  renderListVersionBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderListVersionBtn", this, "true", Boolean.class );
+	private XUIViewStateBindProperty<Boolean>  renderListVersionBtn    = 
+		new XUIViewStateBindProperty<Boolean>( "renderListVersionBtn", this, "true", Boolean.class );
 
-	private XUIStateBindProperty<Boolean>  renderHTMLBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderHTMLBtn", this, "true", Boolean.class );
+	private XUIViewStateBindProperty<Boolean>  renderHTMLBtn    = 
+		new XUIViewStateBindProperty<Boolean>( "renderHTMLBtn", this, "true", Boolean.class );
 	
-	private XUIStateBindProperty<Boolean>  renderPdfBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderPdfBtn", this, "true", Boolean.class );
+	private XUIViewStateBindProperty<Boolean>  renderPdfBtn    = 
+		new XUIViewStateBindProperty<Boolean>( "renderPdfBtn", this, "true", Boolean.class );
 	
-	private XUIStateBindProperty<Boolean>  renderExcelBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderExcelBtn", this, "true", Boolean.class );
+	private XUIViewStateBindProperty<Boolean>  renderExcelBtn    = 
+		new XUIViewStateBindProperty<Boolean>( "renderExcelBtn", this, "true", Boolean.class );
 
 	private XUIBindProperty<Boolean> orphanMode = 
 		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class, "#{viewBean.editInOrphanMode}" );
@@ -290,13 +292,12 @@ public class EditToolBar extends ToolBar {
 				ComponentMessages.EDIT_TOOLBAR_BTN_DUPLICATE_TOOLTIP.toString(), 
 				"ext-xeo/images/menus/applications.gif", "duplicate", "tab" );
 
-		getChildren().add( pos++,Menu.getMenuSpacer( renderObjectMethodBtns.getExpressionString() ) );
 		boDefMethod[] methods = xeoObject.getToolbarMethods();
 		for( boDefMethod m : methods ) {
 			if( !staticMethods.contains( m.getName() ) ) {
+				getChildren().add( pos++,Menu.getMenuSpacer( renderObjectMethodBtns.getExpressionString() ) );
 				ModelMethod m1 = createMenuMethod( pos++, m.getLabel(), m.getLabel(), m.getName() );
 				m1.setVisible( renderObjectMethodBtns.getExpressionString() );
-				
 			}
 		}
 		
