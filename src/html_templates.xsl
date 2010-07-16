@@ -110,7 +110,7 @@
                 </style>
             </head>
             <body>
-            <a href='#' onClick="window.print();">
+            <a href='javascript:void(0)' onClick="window.print();">
                 <img src="ext-xeo/images/print-icon.png" alt="Print" width="16" height="16"/>
             </a><br/><br/>
             
