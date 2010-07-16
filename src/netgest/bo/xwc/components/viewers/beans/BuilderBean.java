@@ -179,8 +179,8 @@ public class BuilderBean {
 			XUIRequestContext requestContext = XUIRequestContext.getCurrentContext();
 			XUIViewRoot		  viewRoot		 = requestContext.getViewRoot();
 			
-			XUICommand 	hiddenCommand = (XUICommand)viewRoot.findComponent( "buildBtnHidden" );
-    		XUICommand 	updateCommand = (XUICommand)viewRoot.findComponent( "updateBtnHidden" );
+			XUICommand 	hiddenCommand = (XUICommand)viewRoot.findComponent( "builder:buildBtnHidden" );
+    		XUICommand 	updateCommand = (XUICommand)viewRoot.findComponent( "builder:updateBtnHidden" );
 			
 			builderInProgress = true;
 			this.buildProgress = new boBuilderProgress();
