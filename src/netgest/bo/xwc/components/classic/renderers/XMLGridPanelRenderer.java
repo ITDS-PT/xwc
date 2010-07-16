@@ -40,7 +40,6 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 	public void encodeBegin(XUIComponentBase component) throws IOException {
 		
 		super.encodeBegin( component );
-		System.out.println("Entrei");
 		GridPanel 		grid = (GridPanel)component;
 		
 		Column[] columns = grid.getColumns();
@@ -77,28 +76,19 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
             
             w.startElement("gridrow", null);
             
-            for (int i = 0; i < sDataFields.length; i++) 
+            for (int i = 0; i < columns.length; i++) 
             { 
-            	oDataField = oDataRecord.getAttribute( sDataFields[i] );
             	
-                w.startElement("gridcolumn", null);
+            	oDataField = oDataRecord.getAttribute( columns[i].getDataField() );
+            	
+            	w.startElement("gridcolumn", null);
                 
                 if( oDataField != null ) 
                 {	
-                	//FIXME: Tem de haver uma maneira de só mostrar as colunas que estão presentes no column
-                	if (true) //Tinha isto antes columnsUsed.contains(oDataField.getLabel())
+                	if (!columns[i].isHidden()) //Tinha isto antes columnsUsed.contains(oDataField.getLabel())
                 	{
 	                	if( columnRenderers != null && columnRenderers.containsKey( sDataFields[i] ) ) 
-	                	{
-	                		/*oDataFieldValue = columnRenderers.get( sDataFields[i] ).render(  grid, oDataRecord, oDataField );
-	                        oStringBuilder.append( '\'' );
-	                        JavaScriptUtils.safeJavaScriptWrite( 
-	                            oStringBuilder, 
-	                            ((String)oDataFieldValue),
-	                            '\''
-	                        );
-	                        oStringBuilder.append( '\'' );*/
-	                	}
+	                	{}
 	                	else 
 	                	{
 		                    oDataFieldValue = oDataField.getValue();
