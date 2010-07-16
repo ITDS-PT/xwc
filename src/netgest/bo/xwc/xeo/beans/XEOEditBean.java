@@ -1,12 +1,13 @@
 package netgest.bo.xwc.xeo.beans;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -250,52 +251,44 @@ public class XEOEditBean extends XEOBaseBean
      * 
      * @return A string with the contents of the two XSLTs merged
      */
-    private String getMergedXSLT(InputStream systemXSLT, InputStream projectXSLT)
+    private InputStream getMergedXSLT(InputStream systemXSLT, InputStream projectXSLT)
     {
-    	try 
-    	{
-    		if (projectXSLT != null)
-    		{
-    			XMLDocument systemDoc = ngtXMLUtils.loadXML(systemXSLT);
-    			XMLDocument projectDoc = ngtXMLUtils.loadXML(projectXSLT);
-    			
-    			XMLDocument doc = new XMLDocument();
-    			
-    			String namespace = "http://www.w3.org/1999/XSL/Transform";
-    			Element root = doc.createElementNS(namespace,"stylesheet");
-    			root.setPrefix("xsl");
-    			root.setAttribute("version", "1.0");
-    			
-    			NodeList childNodes = systemDoc.getChildNodes().item(0).getChildNodes();
-    			for (int k = 0; k < childNodes.getLength(); k++)
-    			{
-    				Node currentProjectNode = childNodes.item(k);
-    				Node clonedNode = doc.importNode(currentProjectNode, true);
-    				root.appendChild(clonedNode);
-    			}
-    			
-    			//Get the Children of the First (Root) node
-    			NodeList childProjectNodes = projectDoc.getChildNodes().item(0).getChildNodes();
-    			for (int i = 0; i < childProjectNodes.getLength(); i++)
-    			{
-    				Node currentSystemNode = childProjectNodes.item(i);
-    				Node clonedNode = doc.importNode(currentSystemNode, true);
-    				root.appendChild(clonedNode);
-    			}
-    			
-    			doc.appendChild(root);
-    			
-    			return ngtXMLUtils.getXML(doc);
-    		}
-    		else
-    		{
-    			return this.readFileAsString(systemXSLT);	
-    		}
-    	} 
-    	catch (IOException e) 
+		if (projectXSLT != null)
 		{
-			e.printStackTrace();
-			return null;
+			XMLDocument systemDoc = ngtXMLUtils.loadXML(systemXSLT);
+			XMLDocument projectDoc = ngtXMLUtils.loadXML(projectXSLT);
+			
+			XMLDocument doc = new XMLDocument();
+			
+			String namespace = "http://www.w3.org/1999/XSL/Transform";
+			Element root = doc.createElementNS(namespace,"stylesheet");
+			root.setPrefix("xsl");
+			root.setAttribute("version", "1.0");
+			doc.setEncoding("utf-8");
+			 
+			NodeList childNodes = systemDoc.getChildNodes().item(0).getChildNodes();
+			for (int k = 0; k < childNodes.getLength(); k++)
+			{
+				Node currentProjectNode = childNodes.item(k);
+				Node clonedNode = doc.importNode(currentProjectNode, true);
+				root.appendChild(clonedNode);
+			}
+			
+			//Get the Children of the First (Root) node
+			NodeList childProjectNodes = projectDoc.getChildNodes().item(0).getChildNodes();
+			for (int i = 0; i < childProjectNodes.getLength(); i++)
+			{
+				Node currentSystemNode = childProjectNodes.item(i);
+				Node clonedNode = doc.importNode(currentSystemNode, true);
+				root.appendChild(clonedNode);
+			}
+			
+			doc.appendChild(root);
+			return new ByteArrayInputStream( ngtXMLUtils.getXMLBytes( doc ) );
+		}
+		else
+		{
+			return systemXSLT;	
 		}
     }
     
@@ -312,40 +305,43 @@ public class XEOEditBean extends XEOBaseBean
      * 
      * @throws boRuntimeException If the transformation fails for some reason
      */
-    private String renderXSLT(String systemXSLT, String projectXSLT, String xmlSourceContent) throws boRuntimeException
+    private byte[] renderXSLT(String systemXSLT, String projectXSLT, String xmlSourceContent) throws boRuntimeException
     {
     	
     	//Retrieve the system default templates 
     	InputStream systemTransformer = Thread.currentThread().getContextClassLoader().getResourceAsStream( systemXSLT ); 
-    		
+    	ngtXMLUtils.loadXML( systemTransformer );
+    	systemTransformer = Thread.currentThread().getContextClassLoader().getResourceAsStream( systemXSLT ); 
+    	
+    	
     	//Retrieve the project-specific templates
     	InputStream projectTransformer = null;
     	if (projectXSLT != null)
     		projectTransformer = Thread.currentThread().getContextClassLoader().getResourceAsStream( projectXSLT );
     	
     	//Merge the Two transforms 
-    	String finalTransformer = getMergedXSLT(systemTransformer, projectTransformer);
+    	InputStream finalTransformer = getMergedXSLT(systemTransformer, projectTransformer);
     	
     	//FIXME: Add a condition if "finalTransformer" is null to throw exception
     	
     	// JAXP reads data using the Source interface
         Source xmlSource = new StreamSource(new StringReader(xmlSourceContent));
-        Source xsltSource = new StreamSource(new StringReader(finalTransformer));
+        Source xsltSource = new StreamSource(finalTransformer);
 
-        StringWriter pw = new StringWriter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         try
         {
             TransformerFactory transFact =
 	                TransformerFactory.newInstance();
 	        Transformer trans = transFact.newTransformer(xsltSource);
-	        trans.transform(xmlSource, new StreamResult(pw));
+	        trans.transform(xmlSource, new StreamResult(out) );
         }
         catch (Exception e) 
         {
         	throw new boRuntimeException("XEOEditBean - XSLT Transformation Error", e.getMessage(), e);
         }
         
-        return pw.getBuffer().toString();
+        return out.toByteArray();
     }
     
     
@@ -398,7 +394,7 @@ public class XEOEditBean extends XEOBaseBean
     	
     	String xmlContent = this.getViewerContentAsXML();
     	
-    	String result = null;
+    	byte[] result = null;
     	if (customXSLT != null)
     		result = this.renderXSLT(customXSLT, null, xmlContent);
     	else
@@ -406,8 +402,7 @@ public class XEOEditBean extends XEOBaseBean
     	try 
     	{
     		HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write(result);
+    		response.getOutputStream().write( result );
 			getRequestContext().responseComplete();
 		} 
     	catch (IOException e) 
@@ -430,7 +425,7 @@ public class XEOEditBean extends XEOBaseBean
     	
     	String xmlContent = this.getViewerContentAsXML();
         
-    	String result = this.renderXSLT(PDF_TEMPLATES, PROJECT_PDF_TEMPLATES, xmlContent);
+    	byte[] result = this.renderXSLT(PDF_TEMPLATES, PROJECT_PDF_TEMPLATES, xmlContent);
     	FopFactory fopFactory = FopFactory.newInstance();
 
     	// Step 2: Set up output stream.
@@ -442,9 +437,8 @@ public class XEOEditBean extends XEOBaseBean
     	  boObject currentEditObject = getXEOObject();
     		
     	  HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
-      	  //response.setCharacterEncoding("UTF-8");
     	  response.setContentType("application/pdf");
-    	  response.setHeader("Content-disposition","attachment; filename="+currentEditObject.getTextCARDID()+".pdf"); 
+    	  response.setHeader("Content-disposition","attachment; filename=" + currentEditObject.getTextCARDID() + ".pdf"); 
       	  OutputStream out = response.getOutputStream();
     		
     	  // Step 3: Construct fop with desired output format
@@ -458,7 +452,7 @@ public class XEOEditBean extends XEOBaseBean
     	           
     	  // Step 5: Setup input and output for XSLT transformation 
     	  // Setup input stream
-    	  Source src = new StreamSource(new StringReader(result));
+    	  Source src = new StreamSource( new ByteArrayInputStream(result) );
 
     	  // Resulting SAX events (the generated FO) must be piped through to FOP
     	  Result res = new SAXResult(fop.getDefaultHandler());
@@ -488,7 +482,7 @@ public class XEOEditBean extends XEOBaseBean
     	
     	String xmlContent = this.getViewerContentAsXML();
         
-    	String result = this.renderXSLT(EXCEL_TEMPLATES, PROJECT_EXCEL_TEMPLATES, xmlContent);
+    	byte[] result = this.renderXSLT(EXCEL_TEMPLATES, PROJECT_EXCEL_TEMPLATES, xmlContent);
     	
     	boObject currentEditObject = getXEOObject();
     	
@@ -497,7 +491,7 @@ public class XEOEditBean extends XEOBaseBean
   	  	response.setHeader("Content-disposition","attachment; filename="+currentEditObject.getTextCARDID()+".xls"); 
   	  	try 
   	  	{
-			response.getOutputStream().write(result.getBytes());
+			response.getOutputStream().write( result );
 		} 
   	  	catch (IOException e) 
   	  	{
