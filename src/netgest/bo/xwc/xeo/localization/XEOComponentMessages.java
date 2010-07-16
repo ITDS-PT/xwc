@@ -62,6 +62,9 @@ public interface XEOComponentMessages {
 
 	public static final XUILocalizedMessage EDITTB_CLONE_TTIP = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_CLONE_TTIP" );
+	
+	public static final XUILocalizedMessage EDITTB_OPL = 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_OPL" );
 
 	public static final XUILocalizedMessage LOOKUPLISTTB_CONFIRM = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "LOOKUPLISTTB_CONFIRM" );
@@ -77,6 +80,7 @@ public interface XEOComponentMessages {
 
 	public static final XUILocalizedMessage SPLTDLOOKUP_INVALID_VALUE = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "SPLTDLOOKUP_INVALID_VALUE" );
+	
 	
 	
 }
