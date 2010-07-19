@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.el.MethodExpression;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -23,7 +22,6 @@ import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.charts.configurations.IPieChartConfiguration;
 import netgest.bo.xwc.components.classic.charts.datasets.PieDataSet;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -95,21 +93,24 @@ public class PieChart extends XUIComponentBase
 	/**
 	 * The source of data for the chart
 	 */
-	private XUIMethodBindProperty dataSet = 
-		new XUIMethodBindProperty("dataSet", this, "#{viewBean.dataSet}" );
+	private XUIBindProperty<PieDataSet> dataSet = 
+		new XUIBindProperty<PieDataSet>("dataSet", this, PieDataSet.class );
 	
 	
 	/**
 	 * Optional configurations for the 
 	 */
-	private XUIMethodBindProperty configOptions = 
-		new XUIMethodBindProperty("configOption", this, "#{viewBean.configOptions}");
+	private XUIBindProperty<IPieChartConfiguration> configOptions = 
+		new XUIBindProperty<IPieChartConfiguration>("configOptions", this, IPieChartConfiguration.class);
 	
 	/**
 	 * The width of the chart (rendered on the client)
 	 */
 	private XUIBindProperty<Integer> width = 
 		new XUIBindProperty<Integer>("width", this, Integer.class);
+	
+	private XUIBindProperty<Integer> sqlResultLimit = 
+		new XUIBindProperty<Integer>("sqlResultLimit", this, Integer.class);
 	
 	/**
 	 * The height of the chart (rendered on the client)
@@ -156,6 +157,20 @@ public class PieChart extends XUIComponentBase
 	public void initComponent() {
 		super.initComponent();
 	}
+	
+	/**
+	 * @param sqlResultLimit the sqlResultLimit to set
+	 */
+	public void setSqlResultLimit(String resultExprt) {
+		this.sqlResultLimit.setExpressionText(resultExprt);
+	}
+
+	/**
+	 * @return the sqlResultLimit
+	 */
+	public Integer getSqlResultLimit() {
+		return sqlResultLimit.getEvaluatedValue();
+	}
 
 	/**
 	 * 
@@ -174,9 +189,9 @@ public class PieChart extends XUIComponentBase
 	 * 
 	 * @return The expression that will be used to retrieve the data set
 	 */
-	public MethodExpression getDataSet()
+	public PieDataSet getDataSet()
 	{
-		return this.dataSet.getValue();
+		return this.dataSet.getEvaluatedValue();
 	}
 	
 	/**
@@ -186,9 +201,20 @@ public class PieChart extends XUIComponentBase
 	 * 
 	 * @return The expression used to retrieve the configuration options
 	 */
-	public MethodExpression getConfigOptions()
+	public IPieChartConfiguration getConfigOptions()
 	{
-		return this.configOptions.getValue();
+		return this.configOptions.getEvaluatedValue();
+	}
+	
+	/**
+	 * 
+	 * Sets the chart configuration expression
+	 * 
+	 * @param chartConfExpr
+	 */
+	public void setConfigOptions(String chartConfExpr)
+	{
+		this.configOptions.setExpressionText(chartConfExpr);
 	}
 	
 	/**
@@ -357,6 +383,8 @@ public class PieChart extends XUIComponentBase
 		return super.saveState();
 	}
 	
+
+
 	/**
 	 * 
 	 * The class that renders the Graph in the Viewer (depending on the type, uses HTML+Servlet to render
@@ -399,11 +427,17 @@ public class PieChart extends XUIComponentBase
 						Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
 	                            ResultSet.CONCUR_READ_ONLY);
 						ResultSet srs = stmt.executeQuery(component.getSql());
+						int count = 0;
 						while (srs.next()) 
 						{
+								if (component.getSqlResultLimit() != null){
+									if (count >= component.getSqlResultLimit())
+										break;
+								}
 						        String name = srs.getString(component.getSqlAttCategory());
 						        float value = srs.getFloat(component.getSqlAttValues());
 						        data.setValue(name,value);
+						        count++;
 						}
 					}
 					catch (Exception e)
@@ -413,7 +447,7 @@ public class PieChart extends XUIComponentBase
 				}
 				else
 				{ //Fill the values from a 
-					setMine = (PieDataSet) component.getDataSet().invoke(getRequestContext().getELContext(), null);
+					setMine = (PieDataSet) component.getDataSet();
 					Iterator<String> it = setMine.getCategories().iterator();
 					while (it.hasNext())
 					{
@@ -457,56 +491,60 @@ public class PieChart extends XUIComponentBase
 				if (height == 0)
 					height = DEFAULT_HEIGHT;
 				
-				IPieChartConfiguration chartConfigurations = (IPieChartConfiguration) component.getConfigOptions().invoke(getRequestContext().getELContext(), null);
-				if (chartConfigurations != null)
-				{
-					if (chartConfigurations.getBackgroundColour() != null)
+				if (component.getConfigOptions() != null){
+					IPieChartConfiguration chartConfigurations = (IPieChartConfiguration) component.getConfigOptions();
+					if (chartConfigurations != null)
 					{
-						Color color = chartConfigurations.getBackgroundColour();
-						plot.setBackgroundPaint(color);
-					}
-					
-					if (!chartConfigurations.showLabels())
-						plot.setLabelGenerator(null);
-					
-					if (chartConfigurations.getColours() != null)
-					{
-						Color[] colorArray = chartConfigurations.getColours();
-						int index = 0;
-						for (Color p : colorArray)
+						if (chartConfigurations.getBackgroundColour() != null)
 						{
-							String val = (String) plot.getDataset().getKey(index);
-							plot.setSectionPaint(val, p);
-							index++;
+							Color color = chartConfigurations.getBackgroundColour();
+							plot.setBackgroundPaint(color);
 						}
-					}
-					else
-					{
-						Color[] colorArray = ChartUtils.DEFAULT_COLORS;
-						int index = 0;
-						for (Color p : colorArray)
+						
+						if (!chartConfigurations.showLabels())
+							plot.setLabelGenerator(null);
+						
+						if (chartConfigurations.getColours() != null)
 						{
-							String val = (String) plot.getDataset().getKey(index);
-							plot.setSectionPaint(val, p);
-							index++;
+							Color[] colorArray = chartConfigurations.getColours();
+							int index = 0;
+							for (Color p : colorArray)
+							{
+								String val = (String) plot.getDataset().getKey(index);
+								plot.setSectionPaint(val, p);
+								index++;
+							}
+						}
+						else
+						{
+							Color[] colorArray = ChartUtils.DEFAULT_COLORS;
+							int index = 0;
+							for (Color p : colorArray)
+							{
+								String val = (String) plot.getDataset().getKey(index);
+								plot.setSectionPaint(val, p);
+								index++;
+							}
+							
+						}
+						
+						if (!chartConfigurations.showChartTitle())
+							chart.setTitle("");
+						
+						if (chartConfigurations.getTooltipString() != null)
+						{
+							String expression = chartConfigurations.getTooltipString();
+							expression = expression.replace("$key", "{0}");
+							expression = expression.replace("$val", "{1}");
+							expression = expression.replace("$percent", "{2}");
+							PieSectionLabelGenerator generatorAlternative = new StandardPieSectionLabelGenerator(expression);
+							plot.setLabelGenerator(generatorAlternative);
 						}
 						
 					}
 					
-					if (!chartConfigurations.showChartTitle())
-						chart.setTitle("");
-					
-					if (chartConfigurations.getTooltipString() != null)
-					{
-						String expression = chartConfigurations.getTooltipString();
-						expression = expression.replace("$key", "{0}");
-						expression = expression.replace("$val", "{1}");
-						expression = expression.replace("$percent", "{2}");
-						PieSectionLabelGenerator generatorAlternative = new StandardPieSectionLabelGenerator(expression);
-						plot.setLabelGenerator(generatorAlternative);
-					}
-					
 				}
+				
 				
 				//Render the chart as a PNG image
 				ChartUtilities.writeChartAsPNG(out, chart, width, height);
@@ -526,7 +564,7 @@ public class PieChart extends XUIComponentBase
 				
 				chartElements.setTooltip("#val# of #total#<br>#percent# of 100%");
 				
-				IPieChartConfiguration chartConfigurations = (IPieChartConfiguration) component.getConfigOptions().invoke(getRequestContext().getELContext(), null);
+				IPieChartConfiguration chartConfigurations = (IPieChartConfiguration) component.getConfigOptions();
 				boolean addColors = false;
 				
 				//Set configurations if we have them
@@ -588,7 +626,7 @@ public class PieChart extends XUIComponentBase
 				}
 				else
 				{
-					PieDataSet setMine = (PieDataSet) component.getDataSet().invoke(getRequestContext().getELContext(), null);
+					PieDataSet setMine = (PieDataSet) component.getDataSet();
 					Iterator<String> it = setMine.getCategories().iterator();
 					
 					while (it.hasNext())
