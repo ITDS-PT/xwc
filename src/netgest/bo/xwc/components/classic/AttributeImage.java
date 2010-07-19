@@ -49,12 +49,12 @@ public class AttributeImage extends ViewerOutputSecurityBase {
     private XUIViewStateBindProperty<String> width = new XUIViewStateBindProperty<String>( "width", this, String.class );
 	private XUIViewStateBindProperty<String> height = new XUIViewStateBindProperty<String>( "height", this, String.class );
 	private XUIStateBindProperty<String> objectAttribute = new XUIStateBindProperty<String>( "objectAttribute", this, String.class );
-	private XUIStateBindProperty<String> className = new XUIStateBindProperty<String>( "className", this, String.class );
+	private XUIViewStateBindProperty<String> className = new XUIViewStateBindProperty<String>( "className", this, String.class );
 	private XUIViewStateBindProperty<String> align = new XUIViewStateBindProperty<String>( "align", this, String.class );
 	private XUIStateBindProperty<String> emptyImage = new XUIStateBindProperty<String>( "emptyImage", this, String.class );
-    private XUIStateBindProperty<String> label  = new XUIStateBindProperty<String>( "label", this, String.class );
+    private XUIViewStateBindProperty<String> label  = new XUIViewStateBindProperty<String>( "label", this, String.class );
 
-    private XUIStateBindProperty<Boolean> 	renderLabel = new XUIStateBindProperty<Boolean>( "renderLabel", this, "true", Boolean.class );
+    private XUIViewStateBindProperty<Boolean> 	renderLabel = new XUIViewStateBindProperty<Boolean>( "renderLabel", this, "true", Boolean.class );
 
     private XUIBaseProperty<Object>     renderedValue = new XUIBaseProperty<Object>( "renderedValue", this );
 
@@ -290,7 +290,7 @@ public class AttributeImage extends ViewerOutputSecurityBase {
 
             Object oValue = oImg.getValue();
             String sEmptyImg = oImg.getEmptyImage();
-            if( sEmptyImg.length() > 0 || oValue != null ) {
+            if( (sEmptyImg != null && sEmptyImg.length() > 0) || oValue != null ) {
 	            w.startElement( HTMLTag.IMG , oComp);
 	            if( oImg.getWidth() != null )
 	            	w.writeAttribute("width", oImg.getWidth(), null);

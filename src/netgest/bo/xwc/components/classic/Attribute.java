@@ -16,6 +16,8 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIMethodBindingValueChangeListener;
 
@@ -52,8 +54,8 @@ public class Attribute extends AttributeBase
     private AttributeLabel      oLabel = null;
     private AttributeBase       oInput = null;
 
-    private XUIStateProperty<String> renderLabel = new XUIStateProperty<String>( "renderLabel", this, "1" );
-    private XUIStateBindProperty<String> inputType   = new XUIStateBindProperty<String>( "inputType", this,"", String.class );
+    private XUIViewStateProperty<String> renderLabel = new XUIViewStateProperty<String>( "renderLabel", this, "1" );
+    private XUIViewStateBindProperty<String> inputType   = new XUIViewStateBindProperty<String>( "inputType", this,"", String.class );
 
 
     public Attribute() {}
@@ -395,6 +397,7 @@ public class Attribute extends AttributeBase
             }
             
             w.startElement( TABLE, oComp );
+            w.writeAttribute( HTMLAttr.ID, oComp.getClientId(), null ); 
             w.writeAttribute( CELLPADDING, "0", null );
             w.writeAttribute( CELLSPACING, "0", null );
             w.writeAttribute( HTMLAttr.STYLE, "table-layout:fixed;width:100%", null ); 

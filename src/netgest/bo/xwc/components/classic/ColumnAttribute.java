@@ -14,6 +14,7 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -38,10 +39,10 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
     private XUIViewProperty<Boolean>    		hidden  	= new XUIViewProperty<Boolean>( "hidden", this, false );
 	private XUIViewProperty<Boolean>    		resizable   = new XUIViewProperty<Boolean>( "resizable", this, true );
 	
-	private XUIBaseProperty<Boolean>    		contentHtml   	= new XUIBaseProperty<Boolean>( "contentHtml", this, false );
+	private XUIViewProperty<Boolean>    		contentHtml   	= new XUIViewProperty<Boolean>( "contentHtml", this, false );
 	private XUIBaseProperty<String>    			renderTemplate 	= new XUIBaseProperty<String>( "renderTemplate", this, null );
 
-    private XUIBindProperty<String>             lookupViewer= new XUIBindProperty<String>( "lookupViewer", this, String.class );
+    private XUIViewBindProperty<String>             lookupViewer= new XUIViewBindProperty<String>( "lookupViewer", this, String.class );
 
     private XUIBindProperty<GridColumnRenderer> renderer    = new XUIBindProperty<GridColumnRenderer>( "renderer", this, GridColumnRenderer.class );
 

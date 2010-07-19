@@ -27,7 +27,7 @@ public class XUIStateBindProperty<V> extends XUIStateProperty<ValueExpression> {
     		super.setValue( null );
     	}
     }
-
+    
     public boolean isNull() {
     	return super.getValue() == null;
     }

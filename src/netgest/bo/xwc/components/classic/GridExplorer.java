@@ -19,6 +19,7 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
@@ -31,17 +32,17 @@ public class GridExplorer extends GridPanel {
 		BOTTOM
 	}
 	
-	private XUIBaseProperty<PreviewPanelPosition> previewPanelPosition = 
-		new XUIBaseProperty<PreviewPanelPosition>("previewPanelPosition", this, PreviewPanelPosition.BOTTOM );
+	private XUIViewProperty<PreviewPanelPosition> previewPanelPosition = 
+		new XUIViewProperty<PreviewPanelPosition>("previewPanelPosition", this, PreviewPanelPosition.BOTTOM );
 	
-	private XUIBaseProperty<Boolean> enablePreviewPanel = 
-		new XUIBaseProperty<Boolean>("enablePreviewPanel", this, true );
+	private XUIViewProperty<Boolean> enablePreviewPanel = 
+		new XUIViewProperty<Boolean>("enablePreviewPanel", this, true );
 
-	private XUIBaseProperty<Integer> previewPanelHeight = 
-		new XUIBaseProperty<Integer>("previewPanelHeight", this, 250 );
+	private XUIViewProperty<Integer> previewPanelHeight = 
+		new XUIViewProperty<Integer>("previewPanelHeight", this, 250 );
 
-	private XUIBaseProperty<Integer> previewPanelWidth = 
-		new XUIBaseProperty<Integer>("previewPanelWidth", this, 350 );
+	private XUIViewProperty<Integer> previewPanelWidth = 
+		new XUIViewProperty<Integer>("previewPanelWidth", this, 350 );
 	
 	private XUIBaseProperty<String> previewCommand = 
 		new XUIBaseProperty<String>("previewCommand", this, "#{viewBean.previewObject}");

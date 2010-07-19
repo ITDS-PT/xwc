@@ -5,17 +5,18 @@ import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Columns;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
 
 public class List extends GridPanel {
 	
 	private XUIBindProperty<XEOObjectListConnector> targetList = 
 		new XUIBindProperty<XEOObjectListConnector>("targetList", this, XEOObjectListConnector.class, "#{viewBean.dataList}" );
 	
-	private XUIBindProperty<Boolean> renderToolBar = 
-		new XUIBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
+	private XUIViewBindProperty<Boolean> renderToolBar = 
+		new XUIViewBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
 	
-	private XUIBindProperty<Boolean> renderIconColumn = 
-		new XUIBindProperty<Boolean>("renderIconColumn", this, true, Boolean.class);
+	private XUIViewBindProperty<Boolean> renderIconColumn = 
+		new XUIViewBindProperty<Boolean>("renderIconColumn", this, true, Boolean.class);
 	
 	
 	public boolean getRenderIconColumn() {

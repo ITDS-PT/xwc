@@ -24,6 +24,7 @@ public class Panel extends ViewerSecurityBase {
     private XUIViewStateProperty<String> width = new XUIViewStateProperty<String>( "width", this );
 	private XUIViewStateBindProperty<String> title = new XUIViewStateBindProperty<String>( "title", this, String.class );
 	private XUIViewProperty<String> layout = new XUIViewProperty<String>( "layout", this, "" );
+	private XUIViewStateBindProperty<Boolean> visible = new XUIViewStateBindProperty<Boolean>( "visible", this, "true", Boolean.class );
 	
 	/**
 	 * Returns the title of the panel 
@@ -56,6 +57,15 @@ public class Panel extends ViewerSecurityBase {
 	public void setWidth(String width) {
 		this.width.setValue( width );
 	}
+	
+	public void setVisible( String visibleExpr ) {
+		this.visible.setExpressionText( visibleExpr );
+	}
+	
+	public boolean getVisible() {
+		return this.visible.getEvaluatedValue();
+	}
+	
 	
 	/**
 	 * Set the layout type to this panel
@@ -104,8 +114,10 @@ public class Panel extends ViewerSecurityBase {
         	sWidth = oPanel.getWidth();
         	
         	w.startElement( DIV , component);
-        	w.writeAttribute( ID, component.getId(), null );
-        	//w.writeAttribute( CLASS, "x-panel-bwrap", null );
+        	w.writeAttribute( ID, component.getClientId(), null );
+        	
+        	if( !oPanel.getVisible() )
+        		w.writeAttribute( HTMLAttr.CLASS, "x-hidden", null );
         	
         	/*            
         <DIV class="x-panel-tl">

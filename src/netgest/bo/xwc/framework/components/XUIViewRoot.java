@@ -500,7 +500,6 @@ public class XUIViewRoot extends UIViewRoot {
 				headerW.startElement("head", component);
 
 				headerW.startElement("base", component);
-
 				HttpServletRequest req = (HttpServletRequest) getRequestContext()
 						.getRequest();
 				String link = (req.isSecure() ? "https" : "http")
@@ -509,7 +508,6 @@ public class XUIViewRoot extends UIViewRoot {
 						+ (req.getServerPort() == 80 ? "" : ":"
 								+ req.getServerPort())
 						+ getRequestContext().getResourceUrl("");
-
 				headerW.writeAttribute("href", link, "href");
 				
 				// <meta http-equiv="X-UA-Compatible" content="chrome=1">

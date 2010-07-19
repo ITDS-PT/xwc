@@ -27,6 +27,7 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 import org.json.JSONException;
@@ -37,8 +38,8 @@ public class MenuCounter extends Menu {
 	XUIBindProperty<String> boql 			= new XUIBindProperty<String>("boql", this, String.class );
 	XUIBindProperty<String> sql 			= new XUIBindProperty<String>("sql", this, String.class );
 	XUIBindProperty<String> counterValue	= new XUIBindProperty<String>("counterValue", this, String.class );
-	XUIBaseProperty<String> counterMask		= new XUIBaseProperty<String>("counterMask", this, "(<span style='font-weight:normal;color:blue;'>%s</span>)" );
-	XUIBaseProperty<Integer> updateInterval	= new XUIBaseProperty<Integer>("updateInterval", this, 60 );
+	XUIViewProperty<String> counterMask		= new XUIViewProperty<String>("counterMask", this, "(<span style='font-weight:normal;color:blue;'>%s</span>)" );
+	XUIViewProperty<Integer> updateInterval	= new XUIViewProperty<Integer>("updateInterval", this, 60 );
 	
 	@Override
 	public void initComponent() {

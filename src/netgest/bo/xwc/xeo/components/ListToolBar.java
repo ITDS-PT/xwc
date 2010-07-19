@@ -13,6 +13,7 @@ import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
@@ -21,8 +22,8 @@ public class ListToolBar extends ToolBarMenuPositions {
 	private XUIBindProperty<XEOObjectListConnector> targetList = 
 		new XUIBindProperty<XEOObjectListConnector>("targetList", this, XEOObjectListConnector.class, "#{viewBean.dataList}" );
 
-	private XUIStateBindProperty<Boolean>  renderCreateNewBtn    = 
-		new XUIStateBindProperty<Boolean>( "renderCreateNewBtn", this, "true", Boolean.class );
+	private XUIViewStateBindProperty<Boolean>  renderCreateNewBtn    = 
+		new XUIViewStateBindProperty<Boolean>( "renderCreateNewBtn", this, "true", Boolean.class );
 	
 	@Override
 	public String getRendererType() {

@@ -30,6 +30,7 @@ import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
@@ -42,14 +43,14 @@ public class SplitedLookup extends Attribute {
 	private XUIBaseProperty<String> targetLookupAttribute 	=
 			new XUIBaseProperty<String>("targetLookupAttribute", this);
 	
-	private XUIBaseProperty<String>  lookupWidth		=
-			new XUIBaseProperty<String>("lookupWidth", this, "60%" );
+	private XUIViewProperty<String>  lookupWidth		=
+			new XUIViewProperty<String>("lookupWidth", this, "60%" );
 		
-	private XUIBaseProperty<String>  keyInputWidth		=
-		new XUIBaseProperty<String>("keyInputWidth", this, "30%" );
+	private XUIViewProperty<String>  keyInputWidth		=
+		new XUIViewProperty<String>("keyInputWidth", this, "30%" );
 
-	private XUIBaseProperty<String>  keyInputType		=
-		new XUIBaseProperty<String>("keyInputType", this, "attributeText" );
+	private XUIViewProperty<String>  keyInputType		=
+		new XUIViewProperty<String>("keyInputType", this, "attributeText" );
 	
 	public String getLookupWidth() {
 		return this.lookupWidth.getValue();

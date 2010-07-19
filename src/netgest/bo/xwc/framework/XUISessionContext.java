@@ -139,7 +139,7 @@ public class XUISessionContext {
     		HttpServletRequest request =  (HttpServletRequest)r.getRequest();
     		String host = request.getServerName();
     		String protocol = "http";
-    		int port = 81;//request.getServerPort();
+    		int port = request.getServerPort();
     		
     		if( request.isSecure() ) {
     			url = protocol + "s://" + host + ( port != 80?":"+Integer.toString(port):"" ) + "/" + url;

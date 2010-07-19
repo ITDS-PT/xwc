@@ -2,6 +2,7 @@ package netgest.bo.xwc.xeo.components;
 
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
 
 public class FormLookupList extends Form {
 
@@ -11,11 +12,11 @@ public class FormLookupList extends Form {
 	private XUIBindProperty<Boolean> renderWindow = 
 		new XUIBindProperty<Boolean>("renderWindow", this, true, Boolean.class);
 	
-	private XUIBindProperty<Integer> windowHeight = 
-		new XUIBindProperty<Integer>("windowHeight", this, 400, Integer.class);
+	private XUIViewBindProperty<Integer> windowHeight = 
+		new XUIViewBindProperty<Integer>("windowHeight", this, 400, Integer.class);
 
-	private XUIBindProperty<Integer> windowWidth = 
-		new XUIBindProperty<Integer>("windowWidth", this, 600, Integer.class);
+	private XUIViewBindProperty<Integer> windowWidth = 
+		new XUIViewBindProperty<Integer>("windowWidth", this, 600, Integer.class);
 
 	public boolean getRenderViewerTitle() {
 		return renderViewerTitle.getEvaluatedValue();

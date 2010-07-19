@@ -1,10 +1,12 @@
 package netgest.bo.xwc.framework.def;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
+import netgest.bo.system.boApplication;
 import netgest.bo.xwc.framework.XUIApplicationContext;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.NSResolver;
@@ -41,9 +43,51 @@ public class XUIComponentParser
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		}
-
+		
+        boApplication boapp = boApplication.getApplicationFromStaticContext( "XEO" );
+        File modulesDir = new File( boapp.getApplicationConfig().getModulesDir() );
+        File[] modulesFiles = modulesDir.listFiles();
+        if( modulesFiles != null ) {
+	        for( File moduleFile : modulesFiles ) {
+	        	String componentsFileName = moduleFile.getName();
+	        	if( componentsFileName.endsWith(".jar") ) {
+	        		componentsFileName = componentsFileName.substring(0, componentsFileName.lastIndexOf(".") );
+	        		componentsFileName = "XVWComponents_" + componentsFileName + ".xml";
+	    			InputStream moduleComponents = Thread.currentThread().getContextClassLoader().getResourceAsStream( componentsFileName );
+	    			if( moduleComponents != null ) {
+	    				loadComponents( oXUIApplication, moduleComponents );
+	    				try {
+							moduleComponents.close();
+	    				} catch (IOException e) {
+	    					// TODO Auto-generated catch block
+	    					e.printStackTrace();
+	    				}
+	    			}
+	        	}
+	        }
+        } else {
+	        modulesDir = new File( boapp.getApplicationConfig().getModuleWebBaseDir() );
+	        modulesFiles = modulesDir.listFiles();
+	        if( modulesFiles != null ) {
+		        for( File moduleFile : modulesFiles ) {
+		        	String componentsFileName = moduleFile.getName();
+		        	if( moduleFile.isDirectory() ) {
+		        		componentsFileName = "XVWComponents_" + componentsFileName + ".xml";
+		    			InputStream moduleComponents = Thread.currentThread().getContextClassLoader().getResourceAsStream( componentsFileName );
+		    			if( moduleComponents != null ) {
+		    				loadComponents( oXUIApplication, moduleComponents );
+		    				try {
+								moduleComponents.close();
+		    				} catch (IOException e) {
+		    					// TODO Auto-generated catch block
+		    					e.printStackTrace();
+		    				}
+		    			}
+		        	}
+		        }
+	        }
+	    }
     	InputStream projectComponents = null;
     	try {
 			projectComponents = Thread.currentThread().getContextClassLoader().getResourceAsStream( "XWVProjectComponents.xml" );

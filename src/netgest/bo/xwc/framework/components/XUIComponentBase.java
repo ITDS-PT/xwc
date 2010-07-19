@@ -24,6 +24,8 @@ import org.w3c.dom.Element;
 
 import com.sun.faces.io.FastStringWriter;
 
+import netgest.bo.xwc.components.HTMLAttr;
+import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.framework.PackageIAcessor;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -134,33 +136,40 @@ public abstract class XUIComponentBase extends UIComponentBase
         boolean bChanged;
         UIComponent oKid;
         
-        List<UIComponent> oKids = this.getChildren();
-        for (int i = 0; i < oKids.size(); i++) {
-            
-        	bChanged = false;
-            
-            oKid = oKids.get( i );
-            
-            if( oKid instanceof XUIComponentBase ) {
-            	
-            	XUIComponentPlugIn plugIn = getPlugIn();
-            	
-            	if( plugIn != null &&  plugIn.wasStateChanged() ) {
-                    oRenderList.add( (XUIComponentBase)oKid );
-                    bChanged = true;                    
-            	}
-            	else {
-	                if( ((XUIComponentBase)oKid).wasStateChanged() ) {
+        if( _isRenderedOnClient != getRenderComponent() ) {
+        	oRenderList.add( this );
+        	return;
+        }
+        
+        if( getRenderComponent() ) {
+	        List<UIComponent> oKids = this.getChildren();
+	        for (int i = 0; i < oKids.size(); i++) {
+	            
+	        	bChanged = false;
+	            
+	            oKid = oKids.get( i );
+	            
+	            if( oKid instanceof XUIComponentBase ) {
+	            	
+	            	XUIComponentPlugIn plugIn = getPlugIn();
+	            	
+	            	if( plugIn != null &&  plugIn.wasStateChanged() ) {
 	                    oRenderList.add( (XUIComponentBase)oKid );
 	                    bChanged = true;                    
-	                }
-	                if( !bChanged ) {
-	                    ((XUIComponentBase)oKid).processStateChanged( oRenderList );    
-	                }
-            	}
-            }
-            else
-            	recursiveProcessStateChanged(oKid, oRenderList);
+	            	}
+	            	else {
+		                if( ((XUIComponentBase)oKid).wasStateChanged() ) {
+		                    oRenderList.add( (XUIComponentBase)oKid );
+		                    bChanged = true;                    
+		                }
+		                if( !bChanged ) {
+		                    ((XUIComponentBase)oKid).processStateChanged( oRenderList );    
+		                }
+	            	}
+	            }
+	            else
+	            	recursiveProcessStateChanged(oKid, oRenderList);
+	        }
         }
     }
     
@@ -399,7 +408,11 @@ public abstract class XUIComponentBase extends UIComponentBase
     }
 
     public void encodeAll() throws IOException {
-    	this.isRenderedOnClient.setValue( true );
+    	encodeAll( getFacesContext() );
+    }
+    
+    @Override
+    public void encodeAll( FacesContext context ) throws IOException {
         HttpServletRequest request = (HttpServletRequest)getRequestContext().getRequest();
     	if( XUIRequestContext.getCurrentContext().isAjaxRequest() && request.getAttribute( "__xwcAjaxTagOpened") == null ) {
             XUIResponseWriter newWriter;
@@ -417,14 +430,14 @@ public abstract class XUIComponentBase extends UIComponentBase
 	            	(Element)request.getAttribute("__xwcRenderElement");
 	            
 	            XUIResponseWriter previousWriter = 
-	            	(XUIResponseWriter) getFacesContext().getResponseWriter();
+	            	(XUIResponseWriter) context.getResponseWriter();
 	
 	            Writer oComponentWriter = new FastStringWriter(4192/4);
 	            
 	            // Setup new writer for each component to render
 	            XUIWriteBehindStateWriter oCompBodyWriter =
 	                  new XUIWriteBehindStateWriter(    oComponentWriter,
-	                                                    getFacesContext(),
+	                		  							context,
 	                                                    4192/4
 	                                                );
 	            
@@ -434,7 +447,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 	            
 	            PackageIAcessor.setScriptContextToWriter( newWriter, previousWriter.getScriptContext() );
 	            
-	            getFacesContext().setResponseWriter(newWriter);
+	            context.setResponseWriter(newWriter);
 	            
 	            // Sets the header and footer wr
 	            PackageIAcessor.setHeaderAndFooterToWriter( 
@@ -445,10 +458,16 @@ public abstract class XUIComponentBase extends UIComponentBase
 	            
 	            newWriter.startDocument();
 	
-	            super.encodeAll( getFacesContext() );
+	        	if( getRenderComponent() ) {
+	        		this.isRenderedOnClient.setValue( true );
+	        		super.encodeAll( context );
+	        	}
+	        	else {
+	        		this.isRenderedOnClient.setValue( false );
+	        		encodePlaceHolder( newWriter );
+	        	}
 	                        
 	            newWriter.endDocument();
-	
 	            oCompBodyWriter.flushToWriter( false );
 	            oCompBodyWriter.release();
 	
@@ -468,10 +487,24 @@ public abstract class XUIComponentBase extends UIComponentBase
             }
     	}
     	else {
-	    	super.encodeAll( FacesContext.getCurrentInstance() );
+        	if( getRenderComponent() ) {
+        		this.isRenderedOnClient.setValue( true );
+        		super.encodeAll( context );
+        	}
+        	else {
+        		this.isRenderedOnClient.setValue( false );
+        		encodePlaceHolder( (XUIResponseWriter)context.getResponseWriter() );
+        	}
     	}
     }
-
+    
+    public void encodePlaceHolder( XUIResponseWriter w ) throws IOException {
+    	w.startElement( HTMLTag.SPAN, this );
+    	w.writeAttribute( HTMLAttr.STYLE, "display:none", "style" );
+    	w.writeAttribute( HTMLAttr.ID, getClientId(), "id" );
+    	w.endElement( HTMLTag.SPAN );
+    }
+    
     public String getClientId() {
         return super.getClientId(getFacesContext());
     }
@@ -699,17 +732,6 @@ public abstract class XUIComponentBase extends UIComponentBase
 
     public XUISessionContext getSessionContext() {
         return getRequestContext().getSessionContext();
-    }
-
-    /**
-     * @deprecated Use in X components
-     * decode
-     * @see #encodeAll()
-     */
-     @Deprecated
-    public void encodeAll(FacesContext context) throws IOException {
-        super.encodeAll(context);
-        this.isRenderedOnClient.setValue( true );
     }
 
     /**

@@ -12,13 +12,16 @@
             <xvw:errorMessages></xvw:errorMessages>
 			<xvw:panel>
 				<xvw:section label='Dados Gerais'>
-				<xvw:rows>
+				<xvw:rows columns='3'>
 					<xvw:row>
 						<xvw:cell>
 							<xvw:attribute objectAttribute="name"/>
 						</xvw:cell>
 						<xvw:cell>
 							<xvw:attribute objectAttribute="label"/>
+						</xvw:cell>
+						<xvw:cell>
+							<xvw:attribute objectAttribute="SYS_DTCREATE"/>
 						</xvw:cell>
 					</xvw:row>
 					<xvw:row>

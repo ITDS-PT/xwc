@@ -15,6 +15,7 @@ import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
@@ -27,14 +28,14 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 	private XUIBindProperty<String>  bridgeName    = 
 		new XUIBindProperty<String>( "bridgeName", this, String.class );
 	
-	private XUIBindProperty<Boolean>  renderAddBtn    = 
-		new XUIBindProperty<Boolean>( "renderAddBtn", this, true, Boolean.class );
+	private XUIViewBindProperty<Boolean>  renderAddBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderAddBtn", this, true, Boolean.class );
 
-	private XUIBindProperty<Boolean>  renderRemoveBtn    = 
-		new XUIBindProperty<Boolean>( "renderRemoveBtn", this, true, Boolean.class );
+	private XUIViewBindProperty<Boolean>  renderRemoveBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderRemoveBtn", this, true, Boolean.class );
 	
-	private XUIBindProperty<Boolean>  renderCreateNewBtn    = 
-		new XUIBindProperty<Boolean>( "renderCreateNewBtn", this, true, Boolean.class );
+	private XUIViewBindProperty<Boolean>  renderCreateNewBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderCreateNewBtn", this, true, Boolean.class );
 
 	
 	public boolean getRenderAddBtn() {

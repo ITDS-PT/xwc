@@ -18,6 +18,9 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
@@ -33,16 +36,16 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 public class ActionButton extends XUICommand
 {
     
-    private XUIStateProperty<Integer>    	width = new XUIStateProperty<Integer>( "width", this, 75 );
-    private XUIStateProperty<String>     	label = new XUIStateProperty<String>( "label", this, "#Button#" );
-    private XUIStateProperty<String>     	action = new XUIStateProperty<String>( "action", this );
+    private XUIViewStateProperty<Integer>   width 	= new XUIViewStateProperty<Integer>( "width", this, 75 );
+    private XUIViewStateProperty<String>    label 	= new XUIViewStateProperty<String>( "label", this, "#Button#" );
+    private XUIStateProperty<String>     	action 	= new XUIStateProperty<String>( "action", this );
 
-    private XUIStateProperty<String> 		target = new XUIStateProperty<String>( "target", this );
+    private XUIStateProperty<String> 		target 	= new XUIStateProperty<String>( "target", this );
 
-    private XUIStateBindProperty<Boolean> 	disabled = new XUIStateBindProperty<Boolean>( "disabled", this, "false",Boolean.class );
-    private XUIStateBindProperty<Boolean> 	visible  = new XUIStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
+    private XUIViewStateBindProperty<Boolean> 	disabled = new XUIViewStateBindProperty<Boolean>( "disabled", this, "false",Boolean.class );
+    private XUIViewStateBindProperty<Boolean> 	visible  = new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
     
-    private XUIBaseProperty<Integer>		waitMode = new XUIBaseProperty<Integer>( "waitMode" , this, XVWScripts.WAIT_DIALOG );		
+    private XUIViewProperty<Integer>		waitMode = new XUIViewProperty<Integer>( "waitMode" , this, XVWScripts.WAIT_DIALOG );		
     
     
     public ActionButton()

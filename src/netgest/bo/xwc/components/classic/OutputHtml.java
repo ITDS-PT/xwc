@@ -11,13 +11,14 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class OutputHtml extends ViewerOutputSecurityBase {
 
     private XUIStateProperty<String> valueExpression = new XUIStateProperty<String>( "valueExpression", this );
     private XUIStateProperty<Object> renderedValue  = new XUIStateProperty<Object>( "renderedValue", this );
-    private XUIStateBindProperty<Boolean> visible  = new XUIStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
+    private XUIViewStateBindProperty<Boolean> visible  = new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
 
     @Override
     public boolean wasStateChanged() {

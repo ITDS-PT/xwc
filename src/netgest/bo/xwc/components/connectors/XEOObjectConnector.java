@@ -64,7 +64,7 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 				return new GenericFieldConnector( ConnectorsMessages.OBJECT_LABEL.toString(), getXEOObject().getLabel(), DataFieldTypes.VALUE_CHAR );
 			
 			if( name.equals("SYS_OBJECT_ICON_16") ) 
-				return new GenericFieldConnector( ConnectorsMessages.OBJECT_LABEL.toString(), "<img src='" + getXEOObject().getSrcForIcon16()+"'>", DataFieldTypes.VALUE_CHAR );
+				return new GenericFieldConnector( ConnectorsMessages.OBJECT_LABEL.toString(), "<img src='" + getXEOObject().getSrcForIcon16()+"'/>", DataFieldTypes.VALUE_CHAR );
 
 			if( name.equals("SYS_ICON_COMPOSED_STATE") ) 
 				return new GenericFieldConnector( ConnectorsMessages.OBJECT_LABEL.toString(), getXEOObject().getICONComposedState(), DataFieldTypes.VALUE_CHAR );

@@ -17,9 +17,9 @@ import netgest.bo.xwc.framework.components.XUIOutput;
 
 public class ProgressBar extends XUIOutput {
 
-	private XUIViewStateBindProperty<Float>    valueExpression	= new XUIViewStateBindProperty<Float>( "valueExpression", this, "0", Float.class );
-	private XUIViewStateBindProperty<String>   width 			= new XUIViewStateBindProperty<String>( "width", this, "auto", String.class );
-	private XUIViewStateBindProperty<String>   text 			= new XUIViewStateBindProperty<String>( "text", this, "", String.class );
+	private XUIStateBindProperty<Float>    valueExpression	= new XUIStateBindProperty<Float>( "valueExpression", this, "0", Float.class );
+	private XUIViewStateBindProperty<String>   width 		= new XUIViewStateBindProperty<String>( "width", this, "auto", String.class );
+	private XUIViewStateBindProperty<String>   text 		= new XUIViewStateBindProperty<String>( "text", this, "", String.class );
 
 	public String getWidth() {
 		return width.getEvaluatedValue();

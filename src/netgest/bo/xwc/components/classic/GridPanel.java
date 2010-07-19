@@ -20,7 +20,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 import javax.servlet.http.HttpServletRequest;
 
-import netgest.bo.preferences.Preference;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
@@ -39,8 +38,6 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMethodBindProperty;
-import netgest.bo.xwc.framework.XUIPreferenceManager;
-import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
@@ -86,7 +83,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIViewProperty<Boolean> forceColumnsFitWidth = new XUIViewProperty<Boolean>(
 			"forceColumnsFitWidth", this, true);
 
-	private XUIStateProperty<String> pageSize = new XUIStateProperty<String>(
+	private XUIViewStateProperty<String> pageSize = new XUIViewStateProperty<String>(
 			"pageSize", this, "50");
 
 	private XUIViewProperty<String> rowDblClickTarget = new XUIViewProperty<String>(
@@ -111,6 +108,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 	private XUIBaseProperty<String> region = new XUIBaseProperty<String>(
 			"region", this);
+
+	private XUIViewBindProperty<String> title = new XUIViewBindProperty<String>(
+			"title", this, String.class );
 
 	private XUIViewProperty<String> height = new XUIViewProperty<String>(
 			"height", this, "250");
@@ -631,6 +631,20 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 */
 	public void setRegion(String region) {
 		this.region.setValue( region );
+	}
+
+	/**
+	 * @return the region
+	 */
+	public String getTitle() {
+		return title.getEvaluatedValue();
+	}
+
+	/**
+	 * @param region the region to set
+	 */
+	public void setTitle(String sTitleExpr ) {
+		this.title.setExpressionText( sTitleExpr );
 	}
 
 	/**

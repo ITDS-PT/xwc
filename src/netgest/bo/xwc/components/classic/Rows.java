@@ -15,21 +15,23 @@ import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 
 public class Rows extends XUIComponentBase
 {
-    XUIStateProperty<Integer> cellSpacing = new XUIStateProperty<Integer>( "cellSpacing", this, 5 );
-    XUIStateProperty<Integer> cellPadding = new XUIStateProperty<Integer>( "cellPadding", this, 5 );
+    XUIViewStateProperty<Integer> cellSpacing = new XUIViewStateProperty<Integer>( "cellSpacing", this, 5 );
+    XUIViewStateProperty<Integer> cellPadding = new XUIViewStateProperty<Integer>( "cellPadding", this, 5 );
 
-    XUIStateProperty<String> width 			= new XUIStateProperty<String>( "width", this, "99.9%" );
-    XUIStateProperty<String> height 		= new XUIStateProperty<String>( "height", this, "99.9%" );
+    XUIViewStateProperty<String> width 			= new XUIViewStateProperty<String>( "width", this, "99.9%" );
+    XUIViewStateProperty<String> height 		= new XUIViewStateProperty<String>( "height", this, "99.9%" );
 
-    XUIBaseProperty<String> columns 		= new XUIBaseProperty<String>( "columns", this, "2" );
-    XUIBaseProperty<String> columnWidths 	= new XUIBaseProperty<String>( "columnWidths", this, "auto" );
-    XUIBaseProperty<String> labelPosition 	= new XUIBaseProperty<String>( "labelPosition", this, "left" );
-    XUIBaseProperty<Integer> labelWidth 	= new XUIBaseProperty<Integer>( "labelWidth", this, 100 );
+    XUIViewProperty<String> columns 		= new XUIViewProperty<String>( "columns", this, "2" );
+    XUIViewProperty<String> columnWidths 	= new XUIViewProperty<String>( "columnWidths", this, "auto" );
+    XUIViewProperty<String> labelPosition 	= new XUIViewProperty<String>( "labelPosition", this, "left" );
+    XUIViewProperty<Integer> labelWidth 	= new XUIViewProperty<Integer>( "labelWidth", this, 100 );
     
     @Override
 	public boolean getRendersChildren()

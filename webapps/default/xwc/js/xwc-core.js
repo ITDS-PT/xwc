@@ -224,6 +224,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
     // Now header and footer scripts are evaluated in the same bock.
     var sScriptToEval = "";
     
+    
     // Handle header Scripts - Run Header Scripts
     var oHeaderScriptNodeList = oDocElm.getElementsByTagName("headerScripts");
     for( var nl3=0;nl3<oHeaderScriptNodeList.length; nl3++ )
@@ -237,6 +238,23 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
 
         }            
     }        
+    
+    if( sScriptToEval != "" )
+    {
+        try 
+        {
+            window.eval( sScriptToEval );
+        }
+        catch( e ) {
+            XVW.ErrorDialog( XVW.Messages.AJAXERROR_MESSAGE, "["+oScriptId+"]" +
+                e.description + "\n" +
+                sScriptToEval
+            );
+        }
+        finally {
+        	sScriptToEval = "";
+        }
+    }
     
     // Handle Render Elements - Render the elements in XML
     var oRenderNodeList = oDocElm.getElementsByTagName("render");

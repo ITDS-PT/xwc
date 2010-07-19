@@ -8,20 +8,38 @@ import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIStateProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class Section extends ViewerSecurityBase {
-    public XUIViewStateProperty<String> label = new XUIViewStateProperty<String>( "label", this );
+	
+    public XUIViewStateBindProperty<String> label = new XUIViewStateBindProperty<String>( "label", this, String.class );
+    public XUIViewStateBindProperty<Boolean> visible = new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
 
     public void setLabel(String label)
     {
-        this.label.setValue( label );
+        this.label.setExpressionText( label );
     }
 
     public String getLabel()
     {
-        return label.getValue();
+        return label.getEvaluatedValue();
+    }
+
+    public void setVisible(boolean visible )
+    {
+        this.visible.setExpressionText( Boolean.toString( visible ) );
+    }
+
+    public void setVisible(String visibleExpr )
+    {
+        this.visible.setExpressionText( visibleExpr );
+    }
+
+    public boolean getVisible()
+    {
+        return visible.getEvaluatedValue();
     }
 
 	@Override
@@ -43,17 +61,15 @@ public class Section extends ViewerSecurityBase {
             ResponseWriter w = getResponseWriter();
 
         	w.startElement( "fieldset", component );
-        	w.writeAttribute( "id", oSection.getId(), null );
-        	w.writeAttribute( "class", "x-fieldset x-form-label-left", null );
+        	w.writeAttribute( "id", oSection.getClientId(), null );
+        	
+        	String classes = "x-fieldset x-form-label-left";
+        	if( !oSection.getVisible() ) {
+        		classes += " x-hidden";
+        	}
+        	w.writeAttribute( "class", classes, null );
+        	
         	if( !XUIRenderer.Util.isEmpty( oSection.getLabel() ) ) {
-//                <legend class="x-fieldset-header x-unselectable" id="static-ext-gen90"
-//                        style="MozUserSelect: none; KhtmlUserSelect: none"
-//                        unselectable="on">
-//                      <input id="static-ext-gen94" type="checkbox"
-//                             name="static-ext-comp-1011-checkbox" value="on"/>
-//                      <span class="x-fieldset-header-text" id="static-ext-gen96">User
-//                                                                          Information</span>
-//                </legend>
         		w.startElement("legend", oSection );
         		w.writeAttribute("class","x-fieldset-header x-unselectable", null);
         		w.writeAttribute("style","MozUserSelect: none; KhtmlUserSelect: none", null);
@@ -64,7 +80,6 @@ public class Section extends ViewerSecurityBase {
         		w.endElement("span");
         		w.endElement("legend"); 
         	}
-            
         }
 
         @Override

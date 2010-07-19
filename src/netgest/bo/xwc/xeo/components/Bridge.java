@@ -11,11 +11,11 @@ public class Bridge extends GridPanel {
 	private XUIBindProperty<boObject> 	targetObject 			= 
 		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
 		
-	private XUIViewBindProperty<String>  bridgeName 	= 
-		new XUIViewBindProperty<String>( "bridgeName", this, String.class );
+	private XUIBindProperty<String>  bridgeName 	= 
+		new XUIBindProperty<String>( "bridgeName", this, String.class );
 
-	private XUIBindProperty<Boolean> renderToolBar = 
-		new XUIBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
+	private XUIViewBindProperty<Boolean> renderToolBar = 
+		new XUIViewBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
 	
 	public boolean getRenderToolBar() {
 		return renderToolBar.getEvaluatedValue();

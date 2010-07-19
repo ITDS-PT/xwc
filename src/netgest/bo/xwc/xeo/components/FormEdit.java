@@ -24,6 +24,7 @@ import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
 import netgest.utils.ngtXMLUtils;
@@ -31,31 +32,31 @@ import oracle.xml.parser.v2.XMLDocument;
 
 public class FormEdit extends Form {
 
-	private XUIBindProperty<boObject> targetObject = 
-		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
+	private XUIViewBindProperty<boObject> targetObject = 
+		new XUIViewBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
 	
-	private XUIBindProperty<Boolean> renderToolBar = 
-		new XUIBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
+	private XUIViewBindProperty<Boolean> renderToolBar = 
+		new XUIViewBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
 
 	/** The render viewer title. */
-	private XUIBindProperty<Boolean>  renderViewerTitle = 
-		new XUIBindProperty<Boolean>("renderViewerTitle", this, true, Boolean.class);
+	private XUIViewBindProperty<Boolean>  renderViewerTitle = 
+		new XUIViewBindProperty<Boolean>("renderViewerTitle", this, true, Boolean.class);
 
 	/** The render viewer messages. */
-	private XUIBindProperty<Boolean>  renderViewerMessages = 
-		new XUIBindProperty<Boolean>("renderViewerMessages", this, true, Boolean.class);
+	private XUIViewBindProperty<Boolean>  renderViewerMessages = 
+		new XUIViewBindProperty<Boolean>("renderViewerMessages", this, true, Boolean.class);
 
 	/** The render window. */
 	private XUIBindProperty<Boolean>  renderWindow = 
 		new XUIBindProperty<Boolean>("renderWindow", this, true, Boolean.class);
 	
 	/** The window height. */
-	private XUIBindProperty<Integer> windowHeight = 
-		new XUIBindProperty<Integer>("windowHeight", this, 400, Integer.class);
+	private XUIViewBindProperty<Integer> windowHeight = 
+		new XUIViewBindProperty<Integer>("windowHeight", this, 400, Integer.class);
 
 	/** The window width. */
-	private XUIBindProperty<Integer> windowWidth = 
-		new XUIBindProperty<Integer>("windowWidth", this, 600, Integer.class);
+	private XUIViewBindProperty<Integer> windowWidth = 
+		new XUIViewBindProperty<Integer>("windowWidth", this, 600, Integer.class);
 	
 	/**
 	 * If the show differences button should appear in the dialog 

@@ -25,7 +25,6 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUIViewBean;
 import netgest.bo.xwc.framework.components.XUICommand;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 import org.json.JSONArray;

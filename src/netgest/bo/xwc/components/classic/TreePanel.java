@@ -13,6 +13,7 @@ import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -21,6 +22,7 @@ import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
@@ -32,8 +34,8 @@ public class TreePanel extends XUIComponentBase {
 	private XUIBindProperty<Menu> root = 
 		new XUIBindProperty<Menu>( "root", this,  Menu.class );
 	
-	private XUIBindProperty<Boolean> hideRoot = 
-		new XUIBindProperty<Boolean>( "hideRoot", this,  Boolean.class );
+	private XUIViewBindProperty<Boolean> hideRoot = 
+		new XUIViewBindProperty<Boolean>( "hideRoot", this,  Boolean.class );
 	
 	private XUIBindProperty<Boolean> reload = 
 		new XUIBindProperty<Boolean>( "reload", this,  false, Boolean.class );
@@ -249,8 +251,13 @@ public class TreePanel extends XUIComponentBase {
 		
 		                if( oMenuChild.getActionExpression() != null ) {
 		                	ExtConfig oItemListeners = oItemCfg.addChild("listeners");
+		                	
+		                	int waitMode = XVWScripts.WAIT_DIALOG;
+		                	waitMode = oMenuChild.getServerActionWaitMode() == XVWServerActionWaitMode.NONE?
+		                			XVWScripts.WAIT_STATUS_MESSAGE:XVWScripts.WAIT_DIALOG;
+		                	
 		                	oItemListeners.add( "'click'", "function(){" +
-		                    		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, XVWScripts.WAIT_DIALOG )+"}" 
+		                    		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode )+"}" 
 		                    	);
 		                	
 		                }
@@ -303,8 +310,14 @@ public class TreePanel extends XUIComponentBase {
 		
 		                if( oMenuChild.getActionExpression() != null ) {
 		                	ExtConfig oItemListeners = oItemCfg.addChild("listeners");
+		                	
+		                	int waitMode = XVWScripts.WAIT_DIALOG;
+		                	waitMode = oMenuChild.getServerActionWaitMode() == XVWServerActionWaitMode.NONE?~
+		                			XVWScripts.WAIT_STATUS_MESSAGE:XVWScripts.WAIT_DIALOG;
+		                	
+		                	
 		                	oItemListeners.add( "'click'", "function(){" +
-		                    		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, XVWScripts.WAIT_DIALOG )+"}" 
+		                    		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode )+"}" 
 		                    	);
 		                }
 		                

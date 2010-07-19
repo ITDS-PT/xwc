@@ -21,6 +21,7 @@ public class Row extends XUIComponentBase
         public void encodeBegin(XUIComponentBase component) throws IOException {
             XUIResponseWriter w = getResponseWriter();
             w.startElement("tr", null );
+            w.writeAttribute("id", component.getClientId(), null );
             w.writeAttribute("valign","top", null);
             w.writeAttribute( CLASS, "xwc-rows-row", null);
         }
@@ -31,9 +32,6 @@ public class Row extends XUIComponentBase
             w.endElement("tr" );
         }
 
-
-
-
         @Override
         public boolean getRendersChildren() {
             return true;
@@ -42,17 +40,13 @@ public class Row extends XUIComponentBase
         @Override
         public void encodeChildren(XUIComponentBase component) throws IOException {
             if (component.getChildCount() > 0) {
-
-                XUIResponseWriter w = getResponseWriter();
                 Iterator<UIComponent> kids = component.getChildren().iterator();
                 while (kids.hasNext()) {
-                    w.startElement("td",component);
-                    if( component.getChildCount() == 1 ) {
-                        w.writeAttribute("colspan","2", null );
-                    }
                     UIComponent kid = kids.next();
+                    if( component.getChildCount() == 1 && kid instanceof Cell ) {
+                    	((Cell)kid).setColSpan( 2 );
+                    }
                     kid.encodeAll(getFacesContext());
-                    w.endElement("td");
                 }
             }
         }

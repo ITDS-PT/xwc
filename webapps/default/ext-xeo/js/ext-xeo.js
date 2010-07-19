@@ -1,9 +1,9 @@
-
 // Set ExtJS Timeout for Ajax.
 if( Ext.Ajax )
 	Ext.Ajax.timeout = 300000;
 
 ExtXeo = function() {};
+ExtXeo.frameLess = false;
 
 XVW.getXApp = function() {
 	var oRet = null;
@@ -135,15 +135,18 @@ XVW.openCommandTab = function( sFrameName, sFormId, sActionId, sActionValue, sTa
 			XApp.desktop.tabPanel.setActiveTab( tab );
 			return;
 		}
-	    this.openTab( sFrameName, sTabTitle );
 	    // Submit the form to the new tab
-	    var oForm = document.getElementById( sFormId );
-	    
-	    var sOldTarget = oForm.target;
-	    oForm.target = sFrameName;
-	    XVW.Command( sFormId, sActionId, sActionValue );
-	    oForm.target = sOldTarget;
-//	    XVW.AjaxCommand( sFormId, sActionId, sActionValue );
+	    this.openTab( sFrameName, sTabTitle );
+	    if( ExtXeo.frameLess ) {
+		    XVW.AjaxCommand( sFormId, sActionId, sActionValue, null, true, document.getElementById( sFrameName ) );
+	    }
+	    else {
+		    var oForm = document.getElementById( sFormId );
+		    var sOldTarget = oForm.target;
+		    oForm.target = sFrameName; 
+	    	XVW.Command( sFormId, sActionId, sActionValue );
+		    oForm.target = sOldTarget;
+	    }
 	}
 	else {
 		// Redirect the page to complete the action if the viewer is not integrated with an application
@@ -166,7 +169,9 @@ XVW.openTab = function( sFrameName, sTitle ) {
 	            frame:false,
 	            closable: true,
 	            style: "overflow:visible;",
-	            html: '<iframe name="'+sFrameName+'" src="about:blank" scrolling="no" frameBorder="0" width="100%" height="'+(Ext.isChrome?'99%':'100%' )+'"></iframe>'
+	            html: (ExtXeo.frameLess)?
+	            ('<span id="'+sFrameName+'" width="100%" height="'+(Ext.isChrome?'99%':'100%' )+'"></span>'):
+	            ('<iframe name="'+sFrameName+'" src="about:blank" scrolling="no" frameBorder="0" width="100%" height="'+(Ext.isChrome?'99%':'100%' )+'"></iframe>')
 	        }
 	    );
 	    var tab  = tabs.add( formLayout );
@@ -638,6 +643,34 @@ XVW.findTabByFrameName = function ( sFrameName ) {
 	}
 	return null;
 }
+
+XVW.findTabByFormId = function ( sFormId ) {
+	var ret;
+	if( XVW.getXApp() != null ) {
+	 	var tabs = XVW.getXApp().desktop.tabPanel; 
+		var tabItems = tabs.items;
+	    for ( var i = 0; i < tabItems.getCount(); i++) {
+	    	var oFrames = tabItems.get(i).el.dom.getElementsByTagName('iframe');
+	    	if( oFrames.length > 0 ) {
+	    		for ( var k = 0; k < oFrames.length; k++) {
+	    			var frame = oFrames[k];
+	    			if( frame ) {
+	    				form = frame.contentWindow.document.getElementById( sFormId );
+	    				if( form != null ) {
+	    					ret = tabItems.get(i);
+	    					break;
+	    				}
+					}
+				}
+	    	}
+	    	if( ret ) {
+	    		break;
+	    	}
+		}
+	}
+	return ret;
+}
+
 
 
 

@@ -1,5 +1,7 @@
 package netgest.bo.xwc.components.classic.theme;
 
+import java.io.File;
+
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
@@ -31,7 +33,42 @@ public class ExtJsTheme implements XUITheme {
     	
         // Extjs
     	scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-base", composeUrl( getResourceBaseUri() + "adapter/ext/ext-base.js" ) );
-        scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all", composeUrl( getResourceBaseUri() + "ext-all.js" ) );
+    	scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all", composeUrl( getResourceBaseUri() + "ext-all-debug.js" ) );
+
+//    	File[] x = new File( "C:\\projects_eclipse\\xeo\\xeo_v3_xwc\\webapps\\default\\extjs\\pkgs" ).listFiles();
+//		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-allext-dd-debug.js", 
+//				composeUrl( getResourceBaseUri() + "pkgs/ext-foundation-debug.js" ) );
+//		
+//		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-allext-dd-debug1.js", 
+//				composeUrl( getResourceBaseUri() + "pkgs/ext-dd-debug.js" ) );    			
+    	
+//    	for( File y : x ) {
+//    		if( y.getName().indexOf("ext-") > -1 && y.getName().indexOf("-debug.js") > -1 ) {
+//    			scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all" + y.getName() , 
+//    					composeUrl( getResourceBaseUri() + "pkgs/" + y.getName() ) );    			
+//    		}
+//    	}
+
+//    	for( File y : x ) {
+//    		if( y.getName().indexOf("ext-") == -1 && y.getName().indexOf("-debug.js") > -1 && y.getName().indexOf("foundation") > -1) {
+//    			System.out.println( y.getName() );
+//    			scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all" + y.getName() , 
+//    					composeUrl(  getResourceBaseUri() + "pkgs/" + y.getName() ) );    			
+//    		} 
+//    	}
+//
+//    	for( File y : x ) {
+//    		if( y.getName().indexOf("grid-property") == -1 && y.getName().indexOf("editor-debug") == -1 && y.getName().indexOf("ext-") == -1 && y.getName().indexOf("-debug.js") > -1 ) {
+//    			System.out.println( y.getName() );
+//    			scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all" + y.getName() , 
+//    					composeUrl( getResourceBaseUri() + "pkgs/" + y.getName() ) );    			
+//    		}
+//    	}
+//    	
+        
+        
+        
+        
         
         // xwc
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "xwc-core", composeUrl( "xwc/js/xwc-core.js" ) );
@@ -67,7 +104,7 @@ public class ExtJsTheme implements XUITheme {
         oRequestContext = XUIRequestContext.getCurrentContext();
         
         scriptContext.add( XUIScriptContext.POSITION_HEADER , "s.gif", "Ext.BLANK_IMAGE_URL = '" + 
-        						oRequestContext.getResourceUrl( ExtJsTheme.composeUrl("extjs/images/default/s.gif") ) + 
+        						oRequestContext.getResourceUrl( ExtJsTheme.composeUrl("extjs/resources/images/default/s.gif") ) + 
         						"';"
         					);
         

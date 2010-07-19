@@ -63,3 +63,17 @@ ul.x-tab-strip {
     font-style: italic;  
     font-weight: bold;
 }
+
+.x-item-disabled {
+    color: black;
+    cursor: default;
+    opacity: .6;
+    -moz-opacity: .6;
+    filter: alpha(opacity=60);
+}
+
+.x-item-disabled * {
+    color: black !important;
+    cursor: default !important;
+}
+
