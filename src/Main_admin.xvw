@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
-    <xvw:viewer 
-    		beanClass='netgest.bo.xwc.components.beans.XEOMainBean' 
-    		beanId='viewBean'
-    >  
+	<xvw:viewer beanClass='netgest.bo.xwc.components.beans.XEOMainBean'
+		beanId='viewBean'>
 		<xvw:form id="formMain">
 			<style>
-			.api-title {
+				.api-title {
 				-x-system-font:none;
 				color:white;
 				font-family:tahoma,arial,sans-serif;
@@ -18,152 +16,110 @@
 				font-weight:normal;
 				line-height:normal;
 				margin-left:10px;
-			}
-			#header {
-				background:#1E4176 url(ext-xeo/images/hd-bg.gif) repeat-x scroll 0 0;
+				}
+				#header {
+				background:#1E4176
+				url(ext-xeo/images/hd-bg.gif) repeat-x scroll 0
+				0;
 				border:0 none;
 				padding-left:3px;
 				padding-top:3px;
 				padding-left:5px
-			}			
+				}			
 			</style>
 			<script>
 				var treeName = 'Default ';
 			</script>
- 			<xvw:mainLayout></xvw:mainLayout>
-            <xvw:treePanel renderComponent='false' id='tree'>
-              <xvw:menu
-		                        text='Home' 
-		                        value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/home.xvw'}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.openViewer}" 
-	            		/>
-	            		
-            	<xvw:menu text='Administration' expanded='true' >
-	                 	<xvw:menu
-		                        text='Background Threads' 
-		                        value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/threads.xvw'}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.openViewer}" 
-	            		/>
-	            		<xvw:menu
-		                        text='Sessions' 
-		                        value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/sessions.xvw'}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.openViewer}" 
-	            		/>
-	            		<xvw:menu
-		                        text='Logs' 
-		                        value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/logs.xvw'}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.openViewer}" 
-	            		/>
-	            		<xvw:menu
-		                        text='boQL' 
-		                        value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/boQL.xvw'}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.openViewer}" 
-	            		/>
-	            		<xvw:menu
-		                        text='Maintenance' 
-		                        value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/maintenance.xvw'}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.openViewer}" 
-	            		/>
-	            		<xvw:menu
-		                        text='boConfig' 
-		                        value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/boconfig.xvw'}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.openViewer}" 
-	            		/>
-            	</xvw:menu>
-            	
-            	<xvw:menu text='Welcome' expanded='true' >
-	            		<xvw:menu
-		                        text='Welcome Page' 
-		                        value="{viewerName:'Ebo_Perf_list.xvw', boql:select Ebo_Perf}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.listObject}" 
-	            		/>
-            	</xvw:menu>
-            	<xvw:menu text='XEO Developers' expanded='true' >
-	            		<xvw:menu
-		                        text='XEO Model Builder' 
-		                        value="{viewerName:'netgest/bo/xwc/components/viewers/Builder.xvw', boql:select Ebo_Perf}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.openViewer}" 
-	            		/>
-            	</xvw:menu>
-            	<xvw:menu text='XEO Administration' profile='admin' expanded='true' >
-            		<xvw:menu text='XEO Models' expanded='true'>
-	            		<xvw:menu
-	            				icon='resources/Ebo_Package/ico16.gif'
-		                        text='Packages' 
-		                        value="{viewerName:'Ebo_Package_list.xvw', boql:'select Ebo_Package where deployed=\'1\''}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.listObject}" 
-	            		/>
-	            		<xvw:menu
-	            				icon='resources/Ebo_ClsReg/ico16.gif'
-		                        text='Models Registry' 
-		                        value="{viewerName:'Ebo_ClsReg_list.xvw', boql:'select Ebo_ClsReg where deployed=\'1\''}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.listObject}" 
-	            		/>
-	            		<xvw:menu
-	            				icon='resources/Ebo_Policy/ico16.gif'
-		                        text='Models Policies' 
-		                        value="{viewerName:'Ebo_Policy_list.xvw', boql:select Ebo_Policy}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.listObject}" 
-	            		/>
-	            		<xvw:menu
-	            				icon='resources/Ebo_Schedule/ico16.gif'
-		                        text='Schedules' 
-		                        value="{viewerName:'Ebo_Schedule_list.xvw', boql:select Ebo_Schedule}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.listObject}" 
-	            		/>
-            		</xvw:menu>
-            		<xvw:menu text='XEO Viewers' expanded='true'>
-		                <xvw:menu 
-		                        text='Viewers Security' 
-		                        value="{viewerName:'netgest/bo/xwc/components/security/ComponentSecurityViewer.xvw'}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.openViewer}" 
-		                />
-		                <xvw:menu 
-		                        text='Convert old XEO Viewers to XWC'  
-		                        value="{viewerName:'netgest/bo/xwc/components/viewers/MigrateXEOViewersToXWC.xvw',boql:select Ebo_Package}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.listObject}"
-		                />	
-	                </xvw:menu>
-            		<xvw:menu text='User Administration' expanded='true'>
-	            		<xvw:menu
-	            				icon='resources/Ebo_Perf/ico16.gif'
-		                        text='Users' 
-		                        value="{viewerName:'Ebo_Perf_list.xvw', boql:select Ebo_Perf}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.listObject}" 
-	            		/>
-	            		<xvw:menu
-	            				icon='resources/Ebo_Group/ico16.gif'
-		                        text='Groups' 
-		                        value="{viewerName:'Ebo_Group_list.xvw', boql:select Ebo_Group}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.listObject}" 
-	            		/>
-	            		<xvw:menu
-	            				icon='resources/uiProfile/ico16.gif'
-		                        text='Profiles' 
-		                        value="{viewerName:'uiProfile_list.xvw', boql:select uiProfile}" 
-		                        target='Tab' 
-		                        serverAction="#{viewBean.listObject}" 
-	            		/>
-	                </xvw:menu>
-            	</xvw:menu>
-            </xvw:treePanel>
-        </xvw:form>
-    </xvw:viewer> 
+			<xvw:mainLayout></xvw:mainLayout>
+			<xvw:treePanel renderComponent='false' id='tree'>
+
+				<xvw:menu id='home' icon='ext-xeo/admin/home.gif' profile='admin'
+					text='Home'
+					value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/home.xvw'}"
+					target='Tab' serverAction="#{viewBean.openViewer}" />
+
+				<xvw:menu text='User Management' profile='admin' expanded='true'>
+
+					<xvw:menu icon='ext-xeo/admin/users.gif' text='Users'
+						value="{viewerName:'Ebo_Perf_list.xvw', boql:select Ebo_Perf}"
+						target='Tab' serverAction="#{viewBean.listObject}" />
+					<xvw:menu icon='ext-xeo/admin/groups.gif' text='Groups'
+						value="{viewerName:'Ebo_Group_list.xvw', boql:select Ebo_Group}"
+						target='Tab' serverAction="#{viewBean.listObject}" />
+					<xvw:menu icon='ext-xeo/admin/functions.gif' text='Functions'
+						value="{viewerName:'', boql:}" target='Tab' serverAction="#{viewBean.listObject}" />
+					<xvw:menu icon='ext-xeo/admin/roles.gif' text='Roles'
+						value="{viewerName:'', boql:}" target='Tab' serverAction="#{viewBean.listObject}" />
+					<xvw:menu icon='ext-xeo/admin/profiles.gif' text='Profiles'
+						value="{viewerName:'uiProfile_list.xvw', boql:select uiProfile}"
+						target='Tab' serverAction="#{viewBean.listObject}" />
+
+				</xvw:menu>
+
+				<xvw:menu text='Security' profile='admin' expanded='true'>
+
+					<xvw:menu icon='ext-xeo/admin/policies.gif' text='Policies'
+						value="{viewerName:'Ebo_Policy_list.xvw', boql:select Ebo_Policy}"
+						target='Tab' serverAction="#{viewBean.listObject}" />
+					<xvw:menu icon='ext-xeo/admin/viewers.gif' text='Viewers'
+						value="{viewerName:'netgest/bo/xwc/components/security/ComponentSecurityViewer.xvw'}"
+						target='Tab' serverAction="#{viewBean.openViewer}" />
+					<xvw:menu icon='ext-xeo/admin/objects.gif' text='Objects'
+						value="{viewerName:''}" target='Tab' serverAction="#{viewBean.openViewer}" />
+
+				</xvw:menu>
+
+				<xvw:menu text='Administration' profile='admin' expanded='true'>
+
+					<xvw:menu icon='ext-xeo/admin/threads.gif' text='Background Threads'
+						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/threads.xvw'}"
+						target='Tab' serverAction="#{viewBean.openViewer}" />
+					<xvw:menu icon='ext-xeo/admin/schedules.gif' text='Schedules'
+						value="{viewerName:'Ebo_Schedule_list.xvw', boql:select Ebo_Schedule}"
+						target='Tab' serverAction="#{viewBean.listObject}" />
+					<xvw:menu icon='ext-xeo/admin/maintenance.gif' text='Maintenance'
+						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/maintenance.xvw'}"
+						target='Tab' serverAction="#{viewBean.openViewer}" />
+					<xvw:menu icon='ext-xeo/admin/sessions.gif' text='Sessions'
+						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/sessions.xvw'}"
+						target='Tab' serverAction="#{viewBean.openViewer}" />
+					<xvw:menu icon='ext-xeo/admin/boconfig.gif' text='boConfig'
+						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/boconfig.xvw'}"
+						target='Tab' serverAction="#{viewBean.openViewer}" />
+					<xvw:menu icon='ext-xeo/admin/jvm-settings.gif' text='JVM Settings'
+						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/jvm.xvw'}"
+						target='Tab' serverAction="#{viewBean.openViewer}" />
+					<xvw:menu icon='ext-xeo/admin/logs.gif' text='Logs'
+						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/logs.xvw'}"
+						target='Tab' serverAction="#{viewBean.openViewer}" />
+				</xvw:menu>
+
+				<xvw:menu text='Development' profile='admin' expanded='true'>
+					<xvw:menu icon='ext-xeo/admin/xeoQL.gif' text='XEOql'
+						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/boQL.xvw'}"
+						target='Tab' serverAction="#{viewBean.openViewer}" />
+					<xvw:menu text='Model Builder'
+						value="{viewerName:'netgest/bo/xwc/components/viewers/Builder.xvw', boql:select Ebo_Perf}"
+						target='Tab' serverAction="#{viewBean.openViewer}" />
+					<xvw:menu icon='ext-xeo/admin/convert-viewers.gif' text='Convert old XEO Viewers to XWC'
+						value="{viewerName:'netgest/bo/xwc/components/viewers/MigrateXEOViewersToXWC.xvw',boql:select Ebo_Package}"
+						target='Tab' serverAction="#{viewBean.listObject}" />
+				</xvw:menu>
+
+			</xvw:treePanel>
+			<script>
+				function openMyWork() {
+				var c = Ext.getCmp('formMain:tree');
+				if( c ) {
+				var n = c.getNodeById('formMain:home')
+				if( n ) {
+				XVW.openCommandTab('home','formMain','home','');
+				}
+				}
+				}
+				openMyWork();
+				window.setTimeout( openMyWork, 1000 );
+               </script>
+		</xvw:form>
+	</xvw:viewer>
 </xvw:root> 
