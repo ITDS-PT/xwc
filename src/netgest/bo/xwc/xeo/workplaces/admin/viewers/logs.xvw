@@ -6,14 +6,22 @@
 			<xvw:title valueExpression='Logs'></xvw:title>
 			<xvw:tabs renderTabBar='false'>
 				<xvw:tab>
-					<xvw:gridPanel layout ='' pageSize="6" title="boConfig Logs"
-						rowSelectionMode="SELECTION_ROW" DataSource="#{viewBean.logs}"
-						onRowClick="#{viewBean.onRowClick}">
-						<xvw:columns>
-							<xvw:columnAttribute width="40" dataField="NAME" />
-						</xvw:columns>
-					</xvw:gridPanel>
+
+
+					<xvw:attribute label='Logs' inputType='attributeText'
+						isLov='true' lovMap='#{viewBean.logsLov}' onChangeSubmit='true'
+						valueExpression='#{viewBean.selectedLog}' />
+
+					<xvw:attribute label='num lines' inputType='attributeNumber'
+						valueExpression='#{viewBean.numLines}' maxValue='9999' />
+
+
 					<xvw:outputHtml valueExpression='#{viewBean.logString}'></xvw:outputHtml>
+
+
+
+
+
 				</xvw:tab>
 			</xvw:tabs>
 		</xvw:form>

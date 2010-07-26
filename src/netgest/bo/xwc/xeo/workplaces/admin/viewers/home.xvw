@@ -3,7 +3,7 @@
 	<xvw:viewer beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.HomeBean"
 		beanId="viewBean">
 		<xvw:form id="form">
-			<xvw:title valueExpression='Administration Home'></xvw:title>
+			<xvw:title valueExpression='Home'></xvw:title>
 			<xvw:tabs renderTabBar='false'>
 				<xvw:tab>
 					<xvw:rows>

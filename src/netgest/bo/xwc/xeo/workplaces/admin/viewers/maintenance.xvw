@@ -48,20 +48,20 @@
 						rowSelectionMode="MULTI_ROW" pageSize="99999" onRowDoubleClick=''
 						autoReloadData='false'>
 						<xeo:listToolBar renderCreateNew="false">
-							<xvw:menu text='Rebuild Objects References' value="{viewerName:'admin/maintenanceLog.xvw'}"
+							<xvw:menu text='Rebuild Objects References' value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/maintenanceLog.xvw'}"
 								target='self' serverAction="#{viewBean.rebuildReferences}">
 							</xvw:menu>
 							<xvw:menu text='Rebuild Security Keys'>
 								<xvw:menu text='Rebuild all same table'
-									value="{viewerName:'admin/maintenanceLog.xvw'}" target='self'
+									value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/maintenanceLog.xvw'}" target='self'
 									serverAction="#{viewBean.allOnSameTable}">
 								</xvw:menu>
 								<xvw:menu text="Don't rebuild all same table"
-									value="{viewerName:'admin/maintenanceLog.xvw'}" target='self'
+									value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/maintenanceLog.xvw'}" target='self'
 									serverAction="#{viewBean.notAllOnSameTable}">
 								</xvw:menu>
 							</xvw:menu>
-							<xvw:menu text='Rebuild Text Index' value="{viewerName:'admin/maintenanceLog.xvw'}"
+							<xvw:menu text='Rebuild Text Index' value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/maintenanceLog.xvw'}"
 								target='self' serverAction="#{viewBean.rebuildTextIndex}">
 							</xvw:menu>
 						</xeo:listToolBar>
