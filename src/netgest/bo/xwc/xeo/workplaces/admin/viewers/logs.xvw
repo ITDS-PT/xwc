@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer beanClass="netgest.bo.bpm.admin.viewersbeans.LogsBean"
+		beanId="viewBean">
+		<xvw:form id="form">
+			<xvw:title valueExpression='Logs'></xvw:title>
+			<xvw:tabs renderTabBar='false'>
+				<xvw:tab>
+					<xvw:gridPanel layout ='' pageSize="6" title="boConfig Logs"
+						rowSelectionMode="SELECTION_ROW" DataSource="#{viewBean.logs}"
+						onRowClick="#{viewBean.onRowClick}">
+						<xvw:columns>
+							<xvw:columnAttribute width="40" dataField="NAME" />
+						</xvw:columns>
+					</xvw:gridPanel>
+					<xvw:outputHtml valueExpression='#{viewBean.logString}'></xvw:outputHtml>
+				</xvw:tab>
+			</xvw:tabs>
+		</xvw:form>
+	</xvw:viewer>
+</xvw:root>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer beanClass="netgest.bo.bpm.admin.viewersbeans.MaintenanceBean"
+		beanId="viewBean">
+		<xeo:formList id="form">
+			<xvw:errorMessages></xvw:errorMessages>
+			<xvw:title valueExpression='Maintenance'></xvw:title>
+			<xvw:tabs>
+				<xvw:tab label="Global Operations">
+					<xvw:section label='MD5 User Keys'>
+						<xvw:actionButton label='Rebuild' serverAction='#{viewBean.rebuildMD5}' />
+					</xvw:section>
+					<xvw:section label='bodef Handlers'>
+						<xvw:actionButton label='Clear'
+							serverAction='#{viewBean.clearHandler}' />
+					</xvw:section>
+					<xvw:section label='BOUI cache'>
+						<xvw:rows>
+							<xvw:row>
+								<xvw:cell>
+									<xvw:attribute readOnly='true' label='Number in cache'
+										inputType='attributeText' valueExpression='#{viewBean.bouisSize}' />
+								</xvw:cell>
+							</xvw:row>
+							<xvw:row>
+								<xvw:cell>
+									<xvw:attribute readOnly='true' label='Number of hits'
+										inputType='attributeText' valueExpression='#{viewBean.cacheBouisHits}' />
+								</xvw:cell>
+							</xvw:row>
+							<xvw:row>
+								<xvw:cell>
+									<xvw:attribute readOnly='true' label='Number of invalid bouis'
+										inputType='attributeText' valueExpression='#{viewBean.invalidBouis}' />
+								</xvw:cell>
+							</xvw:row>
+							<xvw:row>
+								<xvw:cell>
+									<xvw:actionButton label='Clean'
+										serverAction='#{viewBean.cleanCache}' />
+								</xvw:cell>
+							</xvw:row>
+						</xvw:rows>
+					</xvw:section>
+				</xvw:tab>
+				<xvw:tab label="Object Operations">
+					<xeo:list id="objList" renderToolBar="false"
+						rowSelectionMode="MULTI_ROW" pageSize="99999" onRowDoubleClick=''
+						autoReloadData='false'>
+						<xeo:listToolBar renderCreateNew="false">
+							<xvw:menu text='Rebuild Objects References' value="{viewerName:'admin/maintenanceLog.xvw'}"
+								target='self' serverAction="#{viewBean.rebuildReferences}">
+							</xvw:menu>
+							<xvw:menu text='Rebuild Security Keys'>
+								<xvw:menu text='Rebuild all same table'
+									value="{viewerName:'admin/maintenanceLog.xvw'}" target='self'
+									serverAction="#{viewBean.allOnSameTable}">
+								</xvw:menu>
+								<xvw:menu text="Don't rebuild all same table"
+									value="{viewerName:'admin/maintenanceLog.xvw'}" target='self'
+									serverAction="#{viewBean.notAllOnSameTable}">
+								</xvw:menu>
+							</xvw:menu>
+							<xvw:menu text='Rebuild Text Index' value="{viewerName:'admin/maintenanceLog.xvw'}"
+								target='self' serverAction="#{viewBean.rebuildTextIndex}">
+							</xvw:menu>
+						</xeo:listToolBar>
+						<xvw:columns>
+							<xvw:columnAttribute width="100" dataField="name" />
+							<xvw:columnAttribute width="400" dataField="description" />
+						</xvw:columns>
+					</xeo:list>
+				</xvw:tab>
+			</xvw:tabs>
+		</xeo:formList>
+	</xvw:viewer>
+</xvw:root>

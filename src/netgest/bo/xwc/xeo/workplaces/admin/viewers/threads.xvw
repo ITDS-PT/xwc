@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer beanClass="netgest.bo.bpm.admin.viewersbeans.ThreadsBean"
+		beanId="viewBean">
+		<xvw:form id="form">
+			<xvw:title valueExpression='Background Threads'></xvw:title>
+			<xvw:toolBar>
+				<xvw:menu text="Start Agents" serverAction="#{viewBean.startAgents}"></xvw:menu>
+				<xvw:menu text="Suspend Agents" serverAction="#{viewBean.suspendAgents}"></xvw:menu>
+			</xvw:toolBar>
+			<xvw:gridPanel title="#{viewBean.title}" DataSource="#{viewBean.threads}" 
+			rowSelectionMode="SELECTION_ROW">
+				<xvw:columns plugIn="#{viewBean.colPlugIn}">
+					<xvw:columnAttribute renderer="#{viewBean.buttonGridRenderer}"
+						width="30" dataField="START" />
+					<xvw:columnAttribute renderer="#{viewBean.buttonGridRenderer}"
+						width="30" dataField="STOP" />
+				</xvw:columns>
+			</xvw:gridPanel>
+			<xvw:actionButton renderComponent='false' id="startButton"
+				serverAction="#{viewBean.startThread}"></xvw:actionButton>
+			<xvw:actionButton renderComponent='false' id="stopButton"
+				serverAction="#{viewBean.stopThread}"></xvw:actionButton>
+		</xvw:form>
+	</xvw:viewer>
+</xvw:root>
