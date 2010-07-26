@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
-	<xvw:viewer beanClass="netgest.bo.bpm.admin.viewersbeans.MaintenanceBean"
+	<xvw:viewer beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.MaintenanceBean"
 		beanId="viewBean">
 		<xeo:formList id="form">
 			<xvw:errorMessages></xvw:errorMessages>
