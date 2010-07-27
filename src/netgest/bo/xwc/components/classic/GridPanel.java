@@ -817,6 +817,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public String[] getDataColumns() {
 		Column[] oColumns;
 		String sDataColumn;
+		String sRowUniqueId;
+		
+		sRowUniqueId = getRowUniqueIdentifier();
 		List<String> dataColumns;
 		boolean bAddUniqueIdentifier = true;
 
@@ -825,12 +828,12 @@ public class GridPanel extends ViewerInputSecurityBase {
 		for (int i = 0; i < oColumns.length; i++) {
 			sDataColumn = oColumns[i].getDataField();
 			dataColumns.add(sDataColumn);
-			if (getRowUniqueIdentifier().equals(sDataColumn)) {
+			if ( sRowUniqueId != null && sRowUniqueId.equals(sDataColumn)) {
 				bAddUniqueIdentifier = false;
 			}
 		}
-		if (bAddUniqueIdentifier) {
-			dataColumns.add(getRowUniqueIdentifier());
+		if (bAddUniqueIdentifier && sRowUniqueId != null ) {
+			dataColumns.add(sRowUniqueId);
 		}
 		return dataColumns.toArray(new String[dataColumns.size()]);
 

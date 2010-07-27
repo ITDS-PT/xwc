@@ -132,7 +132,7 @@ public class JavaScriptArrayProvider {
                     oStringBuilder.append( ',' );
                 
 
-                oStringBuilder.append( sDataFields[i].replaceAll("\\.", "__") );	
+                oStringBuilder.append('\'').append( sDataFields[i].replaceAll("\\.", "__") ).append('\'');	
                 oStringBuilder.append(':');
 
                 oDataField = oDataRecord.getAttribute( sDataFields[i] );

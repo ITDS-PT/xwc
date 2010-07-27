@@ -35,19 +35,21 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 	}
 
 	public boObject getXEOObject() {
-        boObject oBoObject;
-        EboContext oEboContext = boApplication.currentContext().getEboContext();
-        try {
-        	
-        	//oBoObject = boObject.getBoManager().getObjectInContext( oEboContext , lBoObjectBoui);
-        	
-        	//if( oBoObject == null ) {
-	            oBoObject = 
-	                    boObject.getBoManager().loadObject(oEboContext, lBoObjectBoui );
-        	//}
-        	
-        } catch (boRuntimeException e) {
-            throw new RuntimeException(e);
+        boObject oBoObject = null;
+        if( lBoObjectBoui != 0 ) {
+	        EboContext oEboContext = boApplication.currentContext().getEboContext();
+	        try {
+	        	
+	        	//oBoObject = boObject.getBoManager().getObjectInContext( oEboContext , lBoObjectBoui);
+	        	
+	        	//if( oBoObject == null ) {
+		            oBoObject = 
+		                    boObject.getBoManager().loadObject(oEboContext, lBoObjectBoui );
+	        	//}
+	        	
+	        } catch (boRuntimeException e) {
+	            throw new RuntimeException(e);
+	        }
         }
         return oBoObject;
     }
