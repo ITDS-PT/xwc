@@ -3,24 +3,44 @@
 	<xvw:viewer beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.LogsBean"
 		beanId="viewBean">
 		<xvw:form id="form">
+			<style>
+				#log {
+				overflow-x:auto;
+				overflow-y:auto;
+				color:red;
+				}			
+		</style>
 			<xvw:title valueExpression='Logs'></xvw:title>
 			<xvw:tabs renderTabBar='false'>
-				<xvw:tab>
+				<xvw:tab id="logTab">
+					<xvw:rows>
+						<xvw:row>
+							<xvw:cell>
+								<xvw:attribute label='boConfig defined logs'
+									inputType='attributeText' isLov='true' lovMap='#{viewBean.logsLov}'
+									valueExpression='#{viewBean.selectedLog}' />
+							</xvw:cell>
+							<xvw:cell>
+								<xvw:actionButton label='Download Log'
+									serverAction='#{viewBean.downLoadLog}' target="DOWNLOAD"/>
+							</xvw:cell>
+						</xvw:row>
+						<xvw:row>
+							<xvw:cell>
+								<xvw:attribute label='Number of lines to show'
+									inputType='attributeNumber' valueExpression='#{viewBean.numLines}'
+									maxLength='9999' maxValue='9999' />
+							</xvw:cell>
+							<xvw:cell>
+								<xvw:actionButton label='Show Log'
+									serverAction='#{viewBean.showLog}' />
+							</xvw:cell>
+						</xvw:row>
+					</xvw:rows>
 
-
-					<xvw:attribute label='Logs' inputType='attributeText'
-						isLov='true' lovMap='#{viewBean.logsLov}' onChangeSubmit='true'
-						valueExpression='#{viewBean.selectedLog}' />
-
-					<xvw:attribute label='num lines' inputType='attributeNumber'
-						valueExpression='#{viewBean.numLines}' maxValue='9999' />
-
+					<xvw:outputHtml valueExpression='#{viewBean.loggerDetails}'></xvw:outputHtml>
 
 					<xvw:outputHtml valueExpression='#{viewBean.logString}'></xvw:outputHtml>
-
-
-
-
 
 				</xvw:tab>
 			</xvw:tabs>

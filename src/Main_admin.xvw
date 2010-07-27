@@ -28,7 +28,7 @@
 				}			
 			</style>
 			<script>
-				var treeName = 'Default ';
+				var treeName = 'Administration';
 			</script>
 			<xvw:mainLayout></xvw:mainLayout>
 			<xvw:treePanel renderComponent='false' id='tree'>
