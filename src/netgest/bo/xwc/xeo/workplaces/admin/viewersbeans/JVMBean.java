@@ -6,8 +6,6 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
 
-import com.jezhumble.javasysmon.OsProcess;
-
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 
 public class JVMBean extends XEOBaseBean  {
