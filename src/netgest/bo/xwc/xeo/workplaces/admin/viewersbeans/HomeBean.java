@@ -45,18 +45,6 @@ public class HomeBean extends XEOBaseBean {
 		this.jvmIBarchartConf = new JVMIBarCharConf();
 	}
 
-	public long getMaxMemory() {
-		return Runtime.getRuntime().maxMemory()/1024/1024;
-	}
-
-	public long getTotalMemory() {
-		return Runtime.getRuntime().totalMemory()/1024/1024;
-	}
-
-	public long getFreeMemory() {
-		return Runtime.getRuntime().freeMemory()/1024/1024;
-	}
-	
 	public IBarChartConfiguration getJvmIBarchartConf() {
 		return jvmIBarchartConf;
 	}

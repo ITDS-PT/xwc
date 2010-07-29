@@ -9,15 +9,16 @@
 					<xvw:rows>
 						<xvw:row>
 							<xvw:cell>
-								<xvw:section label='JVM Memory'>
+								<xvw:panel>
+									<xvw:toolBar>
+										<xvw:menu text="JVM Memory" icon='ext-xeo/admin/refresh.gif'
+											serverAction="#{viewBean.refreshJvmMemoryGraphs}"></xvw:menu>
+									</xvw:toolBar>
 									<xvw:barChart dataSet="#{viewBean.jvmMemory}"
 										label="" width="1000" height="150" type="IMG" orientation="horizontal"
 										configOptions="#{viewBean.jvmIBarchartConf}">
 									</xvw:barChart>
-
-									<xvw:actionButton label='Refresh'
-										serverAction='#{viewBean.refreshJvmMemoryGraphs}' />
-								</xvw:section>
+								</xvw:panel>
 							</xvw:cell>
 						</xvw:row>
 						<xvw:row>
