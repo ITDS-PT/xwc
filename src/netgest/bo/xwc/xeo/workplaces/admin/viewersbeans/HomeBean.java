@@ -2,30 +2,33 @@ package netgest.bo.xwc.xeo.workplaces.admin.viewersbeans;
 
 import java.sql.SQLException;
 
+import netgest.bo.xwc.components.classic.charts.configurations.IBarChartConfiguration;
 import netgest.bo.xwc.components.classic.charts.configurations.IPieChartConfiguration;
 import netgest.bo.xwc.components.classic.charts.datasets.PieDataSet;
+import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSet;
+import netgest.bo.xwc.components.classic.charts.datasets.impl.SeriesDataSetImpl;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.framework.XUIComponentPlugIn;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
-import netgest.bo.xwc.xeo.workplaces.admin.charts.HomeChartDataSet;
-import netgest.bo.xwc.xeo.workplaces.admin.charts.JVMMmemPieChartConf;
+import netgest.bo.xwc.xeo.workplaces.admin.charts.JVMIBarCharConf;
 import netgest.bo.xwc.xeo.workplaces.admin.charts.ObjectsPieChartConf;
+import netgest.bo.xwc.xeo.workplaces.admin.charts.PieChartDataSet;
 import netgest.bo.xwc.xeo.workplaces.admin.connectors.ObjectsDataListConnector;
 import netgest.bo.xwc.xeo.workplaces.admin.connectors.SessionsDataListConnector;
 import netgest.bo.xwc.xeo.workplaces.admin.connectors.ThreadsDataListConnector;
 
 public class HomeBean extends XEOBaseBean {
 
-	private static HomeChartDataSet packageObjects;
-	private static HomeChartDataSet objectInstances;
-	private HomeChartDataSet jvmTotalMemory;
-	private HomeChartDataSet jvmAllocatedMemory;
+	private static PieChartDataSet packageObjects;
+	private static PieChartDataSet objectInstances;
+	private SeriesDataSetImpl jvmMemory;
+	private IBarChartConfiguration jvmIBarchartConf;
 	private DataListConnector sessions;
 	private ThreadsDataListConnector threads;
 	private DataListConnector lastSavedObjects;
 	private DataListConnector lastCreatedObjects;
 
-	public HomeBean() throws SQLException {
+	public HomeBean() throws Exception {
 		super();
 		this.refreshJvmMemoryGraphs();
 	
@@ -39,6 +42,7 @@ public class HomeBean extends XEOBaseBean {
 		this.threads = new ThreadsDataListConnector();
 		this.lastCreatedObjects = new ObjectsDataListConnector("SYS_DTCREATE desc");
 		this.lastSavedObjects = new ObjectsDataListConnector("SYS_DTSAVE desc");
+		this.jvmIBarchartConf = new JVMIBarCharConf();
 	}
 
 	public long getMaxMemory() {
@@ -52,21 +56,13 @@ public class HomeBean extends XEOBaseBean {
 	public long getFreeMemory() {
 		return Runtime.getRuntime().freeMemory()/1024/1024;
 	}
-
-	public PieDataSet getJvmTotalMemory() {
-		return jvmTotalMemory;
+	
+	public IBarChartConfiguration getJvmIBarchartConf() {
+		return jvmIBarchartConf;
 	}
 
-	public PieDataSet getJvmAllocatedMemory() {
-		return jvmAllocatedMemory;
-	}
-
-	public IPieChartConfiguration getJvmTotalMemoryPieChartConf() {	
-		return jvmTotalMemory.getiPieChartConfiguration();
-	}
-
-	public IPieChartConfiguration getJvmAllocatedMemoryPieChartConf() {	
-		return jvmAllocatedMemory.getiPieChartConfiguration();
+	public SeriesDataSet getJvmMemory() {
+		return this.jvmMemory;
 	}
 
 	public IPieChartConfiguration getPackageObjectsPieChartConf() {	
@@ -77,22 +73,25 @@ public class HomeBean extends XEOBaseBean {
 		return objectInstances.getiPieChartConfiguration();
 	}
 
-	public void refreshJvmMemoryGraphs() {
-		Long max = this.getMaxMemory();
-		Long total = this.getTotalMemory();;
-		Long free = this.getFreeMemory();
+	public void refreshJvmMemoryGraphs() throws Exception {
+		Long freeMemory = Runtime.getRuntime().freeMemory()/1024/1024;
+		Long totalMemory = Runtime.getRuntime().totalMemory()/1024/1024;
+		
+		Long maxMemory =  Runtime.getRuntime().maxMemory() == Long.MAX_VALUE ? 
+				totalMemory : Runtime.getRuntime().maxMemory()/1024/1024; 
+		
+		this.jvmMemory = new SeriesDataSetImpl();
+		
+		this.jvmMemory.addColumn("");
 
-		IPieChartConfiguration conf  = new JVMMmemPieChartConf();
-
-		jvmTotalMemory = new HomeChartDataSet();
-		jvmTotalMemory.setiPieChartConfiguration(conf);
-		jvmTotalMemory.addCategory("Free", (max-(total+free)) );
-		jvmTotalMemory.addCategory("Occupied", (total+free) );
-
-		jvmAllocatedMemory = new HomeChartDataSet();
-		jvmAllocatedMemory.setiPieChartConfiguration(conf);
-		jvmAllocatedMemory.addCategory("Free", (total-free));
-		jvmAllocatedMemory.addCategory("Occupied", free);
+		
+		this.jvmMemory.addSeries("Max");
+		this.jvmMemory.addSeries("Total");
+		this.jvmMemory.addSeries("Free");
+		
+		this.jvmMemory.addValue("Max","", maxMemory);
+		this.jvmMemory.addValue("Total","", totalMemory);
+		this.jvmMemory.addValue("Free","", freeMemory);
 
 	}
 
@@ -119,7 +118,7 @@ public class HomeBean extends XEOBaseBean {
 			+ " GROUP BY CLSID" 
 			+ " ORDER BY total DESC";
 
-		objectInstances = new HomeChartDataSet(sql,"name","total",limit);
+		objectInstances = new PieChartDataSet(sql,"name","total",limit);
 		objectInstances.setiPieChartConfiguration(new ObjectsPieChartConf("Instances"));
 	}
 
@@ -131,7 +130,7 @@ public class HomeBean extends XEOBaseBean {
 			+" where OEBO_CLSREG.xeopackage$ = OEBO_PACKAGE.BOUI"
 			+" GROUP BY OEBO_PACKAGE.name ORDER BY total DESC";
 
-		packageObjects = new HomeChartDataSet(sql,"name","total",limit);
+		packageObjects = new PieChartDataSet(sql,"name","total",limit);
 		packageObjects.setiPieChartConfiguration(new ObjectsPieChartConf("Objects"));
 	}
 

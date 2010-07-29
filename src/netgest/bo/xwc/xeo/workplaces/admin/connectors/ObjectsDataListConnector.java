@@ -28,6 +28,7 @@ public class ObjectsDataListConnector extends GenericDataListConnector {
 			String sql = "select name,SYS_DTCREATE,SYS_DTSAVE" +
 					" from oebo_registry" +
 					" where clsid <> 'Ebo_TextIndex'" +
+					" and clsid <> 'Ebo_Login'" +
 					" order by " + this.orderBy;
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

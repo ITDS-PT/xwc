@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.JVMBean"
+		beanId="viewBean">
+		<xvw:form id="form">
+			<xvw:title valueExpression='JVM Settings'></xvw:title>
+			<xvw:tabs renderTabBar='false'>
+				<xvw:tab id="logTab">
+	
+					<xvw:outputHtml valueExpression='#{viewBean.something}'></xvw:outputHtml>
+
+				</xvw:tab>
+			</xvw:tabs>
+		</xvw:form>
+	</xvw:viewer>
+</xvw:root>

@@ -10,39 +10,19 @@
 						<xvw:row>
 							<xvw:cell>
 								<xvw:section label='JVM Memory'>
-									<xvw:rows>
-										<xvw:row>
-											<xvw:cell>
-												<xvw:outputHtml valueExpression='bvvvvvvvvvvvvvvvvvvvvvvvv'></xvw:outputHtml>
-											</xvw:cell>
-											<xvw:cell>
-												<xvw:outputHtml
-													valueExpression='offffffffffffffffffffffffffffffffffffffffffff'></xvw:outputHtml>
-											</xvw:cell>
-										</xvw:row>
-										<xvw:row>
-											<xvw:cell>
-												<xvw:pieChart configOptions="#{viewBean.jvmAllocatedMemoryPieChartConf}"
-													dataSet="#{viewBean.jvmAllocatedMemory}" width="250"
-													height="150" type="FLASH">
-												</xvw:pieChart>
-												<xvw:actionButton label='Refresh'
-													serverAction='#{viewBean.refreshJvmMemoryGraphs}' />
-											</xvw:cell>
-											<xvw:cell>
-												<xvw:pieChart configOptions="#{viewBean.jvmTotalMemoryPieChartConf}"
-													dataSet="#{viewBean.jvmTotalMemory}" width="250" height="150"
-													type="FLASH">
-												</xvw:pieChart>
-											</xvw:cell>
-										</xvw:row>
-									</xvw:rows>
+									<xvw:barChart dataSet="#{viewBean.jvmMemory}"
+										label="" width="1000" height="150" type="IMG" orientation="horizontal"
+										configOptions="#{viewBean.jvmIBarchartConf}">
+									</xvw:barChart>
+
+									<xvw:actionButton label='Refresh'
+										serverAction='#{viewBean.refreshJvmMemoryGraphs}' />
 								</xvw:section>
 							</xvw:cell>
 						</xvw:row>
 						<xvw:row>
 							<xvw:cell>
-								<xvw:gridPanel layout ='' title='Background Threads'
+								<xvw:gridPanel layout='' title='Background Threads'
 									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.threads}">
 									<xvw:columns plugIn="#{viewBean.threadsColPlugIn}" />
 									<xvw:gridNavBar showExportToExcel="false"
@@ -51,8 +31,8 @@
 								</xvw:gridPanel>
 							</xvw:cell>
 							<xvw:cell>
-								<xvw:gridPanel layout ='' title='Sessions' pageSize="12"
-									rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.sessions}">
+								<xvw:gridPanel layout='' title='Sessions'
+									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.sessions}">
 									<xvw:columns>
 										<xvw:columnAttribute width="40" dataField="USER" />
 										<xvw:columnAttribute width="40" dataField="CLIENT_NAME" />
@@ -86,7 +66,7 @@
 						</xvw:row>
 						<xvw:row>
 							<xvw:cell>
-								<xvw:gridPanel layout ='' title='Last saved objects'
+								<xvw:gridPanel layout='' title='Last saved objects'
 									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.lastSavedObjects}">
 									<xvw:columns>
 										<xvw:columnAttribute width="30" dataField="name" />
@@ -98,7 +78,7 @@
 								</xvw:gridPanel>
 							</xvw:cell>
 							<xvw:cell>
-								<xvw:gridPanel layout ='' title='Last created objects'
+								<xvw:gridPanel layout='' title='Last created objects'
 									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.lastCreatedObjects}">
 									<xvw:columns>
 										<xvw:columnAttribute width="30" dataField="name" />

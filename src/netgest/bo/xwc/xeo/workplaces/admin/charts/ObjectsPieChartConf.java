@@ -14,7 +14,7 @@ public class ObjectsPieChartConf implements IPieChartConfiguration {
 
 	@Override
 	public Color getBackgroundColour() {
-		return Color.black;
+		return Color.white;
 	}
 
 	@Override
