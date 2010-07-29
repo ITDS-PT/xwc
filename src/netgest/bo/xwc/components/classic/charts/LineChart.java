@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.el.MethodExpression;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -29,7 +28,6 @@ import netgest.bo.xwc.components.classic.charts.configurations.ILineChartConfigu
 import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSet;
 import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSetSQL;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -58,7 +56,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  *   
  * 
  */
-public class LineChart extends XUIComponentBase {
+public class LineChart extends XUIComponentBase implements netgest.bo.xwc.components.classic.charts.Chart {
 
 	
 	/**
@@ -89,14 +87,14 @@ public class LineChart extends XUIComponentBase {
 	/**
 	 * The source of data for the chart
 	 */
-	private XUIMethodBindProperty dataSet = 
-		new XUIMethodBindProperty("dataSet", this, "#{viewBean.dataSet}" );
+	private XUIBindProperty<SeriesDataSet> dataSet = 
+		new XUIBindProperty<SeriesDataSet>("dataSet", this, SeriesDataSet.class );
 	
 	/**
 	 * Optional configurations for the 
 	 */
-	private XUIMethodBindProperty configOptions = 
-		new XUIMethodBindProperty("configOption", this, "#{viewBean.configOptions}");
+	private XUIBindProperty<ILineChartConfiguration> configOptions = 
+		new XUIBindProperty<ILineChartConfiguration>("configOptions", this, ILineChartConfiguration.class);
 	
 	/**
 	 * The width of the chart (rendered on the client)
@@ -174,9 +172,9 @@ public class LineChart extends XUIComponentBase {
 	 * 
 	 * @return The expression that will be used to retrieve the data set
 	 */
-	public MethodExpression getDataSet()
+	public SeriesDataSet getDataSet()
 	{
-		return this.dataSet.getValue();
+		return this.dataSet.getEvaluatedValue();
 	}
 	
 	/**
@@ -186,9 +184,9 @@ public class LineChart extends XUIComponentBase {
 	 * 
 	 * @return The expression used to retrieve the configuration options
 	 */
-	public MethodExpression getConfigOptions()
+	public ILineChartConfiguration getConfigOptions()
 	{
-		return this.configOptions.getValue();
+		return this.configOptions.getEvaluatedValue();
 	}
 	
 	/**
@@ -392,6 +390,161 @@ public class LineChart extends XUIComponentBase {
 	
 	/**
 	 * 
+	 * Renders the LineChart as an image to the given output stream
+	 * 
+	 * @param out The output stream to write the chart to
+	 * @param force If the charts type is not image, forces the chart to be rendered as image
+	 */
+	public void outputChartAsImageToStream(OutputStream out, boolean force){
+		
+		if (getType().equalsIgnoreCase(TYPE_CHART_IMG) || force)
+		{
+			
+			List<String> colors = new LinkedList<String>();
+			
+			ILineChartConfiguration chartConfigurations = null;
+			if (getConfigOptions() != null)
+				chartConfigurations = (ILineChartConfiguration) getConfigOptions();
+			
+			DefaultCategoryDataset data = new DefaultCategoryDataset();
+			
+			if (getSql() != null)
+			{
+				try
+				{
+					EboContext ctx = boApplication.currentContext().getEboContext();
+					java.sql.Connection conn = ctx.getConnectionData();
+					Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                            ResultSet.CONCUR_READ_ONLY);
+					ResultSet srs = stmt.executeQuery(getSql());
+					HashSet<String> seriesMaps = new HashSet<String>();
+					
+					while (srs.next()) 
+					{
+					        String column = srs.getString(getSqlAttColumn());
+					        String series = srs.getString(getSqlAttSeries());
+					        float value = srs.getFloat(getSqlAttValues());
+					        data.setValue(value, series, column);
+					        
+					        //Add the name of the series to the set, so that we can reuse it later
+					        seriesMaps.add(series);
+					}
+					colors.addAll(seriesMaps);
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				SeriesDataSet setMine = (SeriesDataSet) getDataSet();
+				
+				Iterator<String> it = setMine.getColumnKeys().iterator();
+				while (it.hasNext())
+				{
+					String currColum = (String) it.next();
+					Iterator<String> itRows = setMine.getSeriesKeys().iterator();
+					while (itRows.hasNext())
+					{
+						String currSeries = (String) itRows.next();
+						Number val = setMine.getValue(currSeries, currColum);
+						data.addValue(val, currSeries, currColum);
+					}
+				}
+				
+				colors = setMine.getSeriesKeys();
+			}
+			
+			// create the chart... 
+			JFreeChart chart = ChartFactory.createLineChart(
+			getLabel(), // chart title 
+			"", // domain axis label 
+			"", // range axis label 
+			data, // data
+			PlotOrientation.VERTICAL, // orientation 
+			true, // include legend 
+			true, // tooltips 
+			false // urls
+			);
+			
+			chart.setBackgroundPaint(Color.WHITE);
+			chart.setBorderVisible(false);
+			
+			CategoryPlot plot = (CategoryPlot) chart.getCategoryPlot();
+			
+			plot.setRangeGridlinePaint(Color.BLACK);
+			plot.setBackgroundPaint(Color.WHITE);
+			
+			LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer(); 
+			renderer.setDrawOutlines(true); 
+			renderer.setUseFillPaint(true);
+			
+			//Draw colors
+			Color[] mapOfColors = ChartUtils.DEFAULT_COLORS;
+			if (chartConfigurations != null)
+				if (chartConfigurations.getColours() != null)
+					mapOfColors = chartConfigurations.getColours();
+			
+			int colorCounter = 0;
+			
+			Iterator<String> itSeries = colors.iterator();
+			while(itSeries.hasNext())
+			{
+				itSeries.next();
+				if (colorCounter <= mapOfColors.length-1)
+					renderer.setSeriesPaint(colorCounter, mapOfColors[colorCounter]);
+				else
+					renderer.setSeriesPaint(colorCounter, ChartUtils.getRandomDarkColor());
+				if (chartConfigurations != null){	
+					if (chartConfigurations.getStrokeSize() > 0)
+						renderer.setSeriesStroke(colorCounter, new BasicStroke(chartConfigurations.getStrokeSize()));
+				}
+				else
+					renderer.setSeriesStroke(colorCounter, new BasicStroke(DEFAULT_STROKE_SIZE));
+				colorCounter++;
+			}
+			
+			
+			
+			//Label Renderer
+			CategoryItemRenderer renderer2 = plot.getRenderer(); 
+			CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(
+					"{2}", new DecimalFormat("0.00")); 
+			renderer2.setBaseItemLabelGenerator(generator);
+			renderer2.setBaseItemLabelsVisible(true);
+			
+			//Chart Size (width/height)
+			Integer width = getWidth();
+			if (width == null)
+				width = DEFAULT_WIDTH;
+			Integer height = getHeight();
+			if (height == null)
+				height = DEFAULT_HEIGHT;
+			
+			plot.getRangeAxis().setUpperMargin(0.1);
+			
+			if (chartConfigurations != null)
+			{
+				if (chartConfigurations.getBackgroundColour() != null)
+					chart.setBackgroundPaint(chartConfigurations.getBackgroundColour());
+				
+				if (!chartConfigurations.showChartTitle())
+					chart.setTitle("");
+				
+			}
+			
+			//Render that chart
+			try {
+				ChartUtilities.writeChartAsPNG(out, chart, width, height);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * 
 	 * The class that renders the Graph in the Viewer (depending on the type, uses HTML+Servlet to render
 	 * the image or HTML+Flash)
 	 * 
@@ -416,148 +569,18 @@ public class LineChart extends XUIComponentBase {
 			LineChart component = (LineChart)oComp;
 			OutputStream out = oResponse.getOutputStream();
 			
-			List<String> colors = new LinkedList<String>();
-			
-			ILineChartConfiguration chartConfigurations = null;
-			if (component.getConfigOptions() != null)
-				chartConfigurations = (ILineChartConfiguration) component.getConfigOptions().invoke(getRequestContext().getELContext(), null);
-			
 			//If the Chart is image based
 			if (component.getType().equalsIgnoreCase(TYPE_CHART_IMG))
 			{
-				
-				DefaultCategoryDataset data = new DefaultCategoryDataset();
-				
-				if (component.getSql() != null)
-				{
-					try
-					{
-						EboContext ctx = boApplication.currentContext().getEboContext();
-						java.sql.Connection conn = ctx.getConnectionData();
-						Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-	                            ResultSet.CONCUR_READ_ONLY);
-						ResultSet srs = stmt.executeQuery(component.getSql());
-						HashSet<String> seriesMaps = new HashSet<String>();
-						
-						while (srs.next()) 
-						{
-						        String column = srs.getString(component.getSqlAttColumn());
-						        String series = srs.getString(component.getSqlAttSeries());
-						        float value = srs.getFloat(component.getSqlAttValues());
-						        data.setValue(value, series, column);
-						        
-						        //Add the name of the series to the set, so that we can reuse it later
-						        seriesMaps.add(series);
-						}
-						colors.addAll(seriesMaps);
-					}
-					catch (Exception e)
-					{
-						e.printStackTrace();
-					}
-				}
-				else
-				{
-					SeriesDataSet setMine = (SeriesDataSet) component.getDataSet().invoke(getRequestContext().getELContext(), null);
-					
-					Iterator<String> it = setMine.getColumnKeys().iterator();
-					while (it.hasNext())
-					{
-						String currColum = (String) it.next();
-						Iterator<String> itRows = setMine.getSeriesKeys().iterator();
-						while (itRows.hasNext())
-						{
-							String currSeries = (String) itRows.next();
-							Number val = setMine.getValue(currSeries, currColum);
-							data.addValue(val, currSeries, currColum);
-						}
-					}
-					
-					colors = setMine.getSeriesKeys();
-				}
-				
-				// create the chart... 
-				JFreeChart chart = ChartFactory.createLineChart(
-				component.getLabel(), // chart title 
-				"", // domain axis label 
-				"", // range axis label 
-				data, // data
-				PlotOrientation.VERTICAL, // orientation 
-				true, // include legend 
-				true, // tooltips 
-				false // urls
-				);
-				
-				chart.setBackgroundPaint(Color.WHITE);
-				chart.setBorderVisible(false);
-				
-				CategoryPlot plot = (CategoryPlot) chart.getCategoryPlot();
-				
-				plot.setRangeGridlinePaint(Color.BLACK);
-				plot.setBackgroundPaint(Color.WHITE);
-				
-				LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer(); 
-				renderer.setDrawOutlines(true); 
-				renderer.setUseFillPaint(true);
-				
-				//Draw colors
-				Color[] mapOfColors = ChartUtils.DEFAULT_COLORS;
-				if (chartConfigurations.getColours() != null)
-					mapOfColors = chartConfigurations.getColours();
-				
-				int colorCounter = 0;
-				
-				Iterator<String> itSeries = colors.iterator();
-				while(itSeries.hasNext())
-				{
-					itSeries.next();
-					if (colorCounter <= mapOfColors.length-1)
-						renderer.setSeriesPaint(colorCounter, mapOfColors[colorCounter]);
-					else
-						renderer.setSeriesPaint(colorCounter, ChartUtils.getRandomDarkColor());
-						
-					if (chartConfigurations.getStrokeSize() > 0)
-						renderer.setSeriesStroke(colorCounter, new BasicStroke(chartConfigurations.getStrokeSize()));
-					else
-						renderer.setSeriesStroke(colorCounter, new BasicStroke(DEFAULT_STROKE_SIZE));
-					colorCounter++;
-				}
-				
-				
-				
-				//Label Renderer
-				CategoryItemRenderer renderer2 = plot.getRenderer(); 
-				CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(
-						"{2}", new DecimalFormat("0.00")); 
-				renderer2.setBaseItemLabelGenerator(generator);
-				renderer2.setBaseItemLabelsVisible(true);
-				
-				//Chart Size (width/height)
 				oResponse.setContentType("image/png");
-				Integer width = component.getWidth();
-				if (width == null)
-					width = DEFAULT_WIDTH;
-				Integer height = component.getHeight();
-				if (height == null)
-					height = DEFAULT_HEIGHT;
-				
-				plot.getRangeAxis().setUpperMargin(0.1);
-				
-				if (chartConfigurations != null)
-				{
-					if (chartConfigurations.getBackgroundColour() != null)
-						chart.setBackgroundPaint(chartConfigurations.getBackgroundColour());
-					
-					if (!chartConfigurations.showChartTitle())
-						chart.setTitle("");
-					
-				}
-				
-				//Render that chart
-				ChartUtilities.writeChartAsPNG(out, chart, width, height);
+				component.outputChartAsImageToStream(out, false);
 			}
 			else if (component.getType().equalsIgnoreCase(TYPE_CHART_FLASH)) //If the Chart is flash based
 			{
+				ILineChartConfiguration chartConfigurations = null;
+				if (component.getConfigOptions() != null)
+					chartConfigurations = (ILineChartConfiguration) component.getConfigOptions();
+				
 				Chart c = new Chart();
 				
 				jofc2.model.elements.LineChart chartElements = new jofc2.model.elements.LineChart();
@@ -589,7 +612,7 @@ public class LineChart extends XUIComponentBase {
 				else
 				{
 					//Fill the values
-					setMine = (SeriesDataSet) component.getDataSet().invoke(getRequestContext().getELContext(), null);
+					setMine = (SeriesDataSet) component.getDataSet();
 					
 					//Fill the data set
 					Iterator<String> it = setMine.getSeriesKeys().iterator();

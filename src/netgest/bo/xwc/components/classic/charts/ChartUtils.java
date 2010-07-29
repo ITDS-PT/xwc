@@ -1,6 +1,9 @@
 package netgest.bo.xwc.components.classic.charts;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
@@ -97,6 +100,51 @@ public class ChartUtils
 		
 		return url;
 	}
+	
+	/**
+	 * Creates a temporary file on the file system from a InputStream
+	 * 
+	 * @param name file name
+	 * @param stream InputStream for the file
+	 * 
+	 * @return the temp file
+	 * 
+	 * 
+	 */
+	public static File getTempFile(String name, InputStream stream) {
+		try {
+			String tmpFolder = netgest.bo.impl.document.Ebo_DocumentImpl.getTempDir();
+			if(tmpFolder.endsWith("\\") || tmpFolder.endsWith("/"))
+			{
+				tmpFolder =  tmpFolder + System.currentTimeMillis() + File.separator;
+			}
+			else
+			{
+				tmpFolder =  tmpFolder + File.separator + System.currentTimeMillis();
+			}
+			java.io.File tmpdir = new java.io.File(tmpFolder);
+			if(!tmpdir.exists()) 
+			{
+				tmpdir.mkdirs();
+			}
+			File tempFile = new File( tmpdir +File.separator+ name );
+			FileOutputStream fout = new FileOutputStream( tempFile );
+			InputStream is = stream;
+			byte[] buffer = new byte[ 8192 ];
+			int br = 0;
+			while( (br=is.read( buffer )) > 0 ) {
+				fout.write( buffer, 0, br );
+			}
+			fout.close();
+			is.close();
+
+			return tempFile;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	
 	/**
 	 * 

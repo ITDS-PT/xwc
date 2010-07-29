@@ -10,7 +10,6 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import javax.el.MethodExpression;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -26,7 +25,6 @@ import netgest.bo.xwc.components.classic.charts.configurations.IBarChartConfigur
 import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSet;
 import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSetSQL;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -53,7 +51,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * 
  * 
  */
-public class BarChart extends XUIComponentBase {
+public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.components.classic.charts.Chart{
 
 	/**
 	 * The default height for a pie chart
@@ -88,8 +86,8 @@ public class BarChart extends XUIComponentBase {
 	/**
 	 * The source of data for the chart
 	 */
-	private XUIMethodBindProperty dataSet = 
-		new XUIMethodBindProperty("dataSet", this, "#{viewBean.dataSet}" );
+	private XUIBindProperty<SeriesDataSet> dataSet = 
+		new XUIBindProperty<SeriesDataSet>("dataSet", this, SeriesDataSet.class );
 	
 	/**
 	 * The orientation of the bar char (horizontal / vertical
@@ -100,8 +98,8 @@ public class BarChart extends XUIComponentBase {
 	/**
 	 * Optional configurations for the 
 	 */
-	private XUIMethodBindProperty configOptions = 
-		new XUIMethodBindProperty("configOptions", this, "#{viewBean.configOptions}");
+	private XUIBindProperty<IBarChartConfiguration> configOptions = 
+		new XUIBindProperty<IBarChartConfiguration>("configOptions", this, IBarChartConfiguration.class);
 	
 	/**
 	 * The width of the chart (rendered on the client)
@@ -180,9 +178,9 @@ public class BarChart extends XUIComponentBase {
 	 * 
 	 * @return The expression that will be used to retrieve the data set
 	 */
-	public MethodExpression getDataSet()
+	public SeriesDataSet getDataSet()
 	{
-		return this.dataSet.getValue();
+		return this.dataSet.getEvaluatedValue();
 	}
 	
 	/**
@@ -192,9 +190,9 @@ public class BarChart extends XUIComponentBase {
 	 * 
 	 * @return The expression used to retrieve the configuration options
 	 */
-	public MethodExpression getConfigOptions()
+	public IBarChartConfiguration getConfigOptions()
 	{
-		return this.configOptions.getValue();
+		return this.configOptions.getEvaluatedValue();
 	}
 	
 	/**
@@ -418,6 +416,171 @@ public class BarChart extends XUIComponentBase {
 		return super.saveState();
 	}
 	
+	
+	
+	/**
+	 * 
+	 * Renders the LineChart as an image to the given output stream
+	 * 
+	 * @param out The output stream to write the chart to
+	 * @param force If the charts type is not image, forces the chart to be rendered as image
+	 */
+	public void outputChartAsImageToStream(OutputStream out, boolean force){
+		
+		if (getType().equalsIgnoreCase(TYPE_CHART_IMG) || force)
+		{
+			
+			String xAxisLabel = "";
+			String yAxisLabel = "";
+			
+			//Retrieve the data
+			DefaultCategoryDataset data = new DefaultCategoryDataset();
+			
+			if (getSql() != null)
+			{
+				try
+				{
+					EboContext ctx = boApplication.currentContext().getEboContext();
+					java.sql.Connection conn = ctx.getConnectionData();
+					Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                            ResultSet.CONCUR_READ_ONLY);
+					ResultSet srs = stmt.executeQuery(getSql());
+					while (srs.next()) 
+					{
+					        String column = srs.getString(getSqlAttColumn());
+					        String series = srs.getString(getSqlAttSeries());
+					        float value = srs.getFloat(getSqlAttValues());
+					        data.setValue(value, series, column);
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				SeriesDataSet setMine = (SeriesDataSet) getDataSet();
+				//Add the values to the data set
+				Iterator<String> it = setMine.getColumnKeys().iterator();
+				while (it.hasNext())
+				{
+					String currColum = (String) it.next();
+					Iterator<String> itRows = setMine.getSeriesKeys().iterator();
+					while (itRows.hasNext())
+					{
+						String currSeries = (String) itRows.next();
+						Number val = setMine.getValue(currSeries, currColum);
+						data.addValue(val, currSeries, currColum);
+					}
+				}
+				xAxisLabel = setMine.getXAxisLabel(); 
+				yAxisLabel = setMine.getYAxisLabel(); 
+			}
+			
+			
+			
+			//Set the chart orientation
+			PlotOrientation orientation = PlotOrientation.VERTICAL;
+			if (getOrientation() != null)
+			{
+				if (getOrientation().equalsIgnoreCase(CHART_ORIENTATION_HORIZONTAL))
+					orientation = PlotOrientation.HORIZONTAL;
+				if (getOrientation().equalsIgnoreCase(CHART_ORIENTATION_VERTICAL))
+					orientation = PlotOrientation.VERTICAL;
+			}
+			
+			//Create the chart
+			JFreeChart chart = ChartFactory.createBarChart
+			(
+				getLabel(), //Chart Title
+				xAxisLabel,
+				yAxisLabel,
+				data, // data 
+				orientation, // orientation
+				true, // include legend
+				true, // tooltips?
+				false // URLs?
+			);
+			
+			//Set Border visibility and background color
+			chart.setBackgroundPaint(Color.WHITE);
+			chart.setBorderVisible(false);
+			CategoryPlot plot = (CategoryPlot) chart.getCategoryPlot();
+			//Set the upper margin so that labels show inside the chart
+			plot.getRangeAxis().setUpperMargin(0.1);
+			//Set space between Items
+			BarRenderer renderer = (BarRenderer) plot.getRenderer();
+			renderer.setItemMargin(0.0);
+			
+			
+			
+			//Set colors
+			plot.setRangeGridlinePaint(Color.BLACK);
+			plot.setBackgroundPaint(Color.white);
+			
+			//Tooltip Generator
+			//CategoryItemRenderer renderer = plot.getRenderer(); 
+			CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(
+					"{2}", new DecimalFormat("0.00")); 
+			renderer.setBaseItemLabelGenerator(generator);
+			renderer.setBaseItemLabelsVisible(true);
+			
+			//Chart size
+			Integer width = getWidth();
+			if (width == null)
+				width = DEFAULT_WIDTH;
+			Integer height = getHeight();
+			if (height == null)
+				height = DEFAULT_HEIGHT;
+			
+			//Apply the Configuration options for the Bar Chart
+			if (getConfigOptions() != null)
+			{
+				IBarChartConfiguration chartConfigurations = (IBarChartConfiguration) getConfigOptions();
+				if (chartConfigurations != null)
+				{
+					if (!chartConfigurations.showChartTitle())
+						chart.setTitle("");
+					
+					if (chartConfigurations.getTooltipString() != null)
+					{
+						String expression = chartConfigurations.getTooltipString();
+						expression = expression.replace("$val", "{2}");
+						CategoryItemRenderer rendererLabel = plot.getRenderer(); 
+						CategoryItemLabelGenerator generatorCustom = new StandardCategoryItemLabelGenerator(
+								expression, new DecimalFormat("0.00"));
+						rendererLabel.setBaseItemLabelGenerator(generatorCustom);
+					}
+					
+					if (chartConfigurations.getColours() != null)
+					{
+						Color[] colors = chartConfigurations.getColours();
+						BarRenderer rendererColors = (BarRenderer) plot.getRenderer();
+						int pos = 0;
+						for (Color p : colors)
+						{
+							rendererColors.setSeriesPaint(pos,p);
+							pos++;
+						}
+					}
+					
+					if (chartConfigurations.getBackgroundColour() != null)
+					{
+						chart.setBackgroundPaint(chartConfigurations.getBackgroundColour());
+					}
+				}
+			}
+			
+			//Render the chart
+			try {
+				ChartUtilities.writeChartAsPNG(out, chart, width, height);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public static class XEOHTMLRenderer extends XUIRenderer implements XUIRendererServlet {
 			
 		/* (non-Javadoc)
@@ -432,163 +595,20 @@ public class BarChart extends XUIComponentBase {
 				XUIComponentBase oComp) throws IOException 
 		{
 			BarChart component = (BarChart)oComp;
-			
-			
 			OutputStream out = oResponse.getOutputStream();
-			String xAxisLabel = "";
-			String yAxisLabel = "";
 			
 			if (component.getType().equalsIgnoreCase(TYPE_CHART_IMG))
 			{
-				//Retrieve the data
-				DefaultCategoryDataset data = new DefaultCategoryDataset();
-				
-				if (component.getSql() != null)
-				{
-					try
-					{
-						EboContext ctx = boApplication.currentContext().getEboContext();
-						java.sql.Connection conn = ctx.getConnectionData();
-						Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-	                            ResultSet.CONCUR_READ_ONLY);
-						ResultSet srs = stmt.executeQuery(component.getSql());
-						while (srs.next()) 
-						{
-						        String column = srs.getString(component.getSqlAttColumn());
-						        String series = srs.getString(component.getSqlAttSeries());
-						        float value = srs.getFloat(component.getSqlAttValues());
-						        data.setValue(value, series, column);
-						}
-					}
-					catch (Exception e)
-					{
-						e.printStackTrace();
-					}
-				}
-				else
-				{
-					SeriesDataSet setMine = (SeriesDataSet) component.getDataSet().invoke(getRequestContext().getELContext(), null);
-					//Add the values to the data set
-					Iterator<String> it = setMine.getColumnKeys().iterator();
-					while (it.hasNext())
-					{
-						String currColum = (String) it.next();
-						Iterator<String> itRows = setMine.getSeriesKeys().iterator();
-						while (itRows.hasNext())
-						{
-							String currSeries = (String) itRows.next();
-							Number val = setMine.getValue(currSeries, currColum);
-							data.addValue(val, currSeries, currColum);
-						}
-					}
-					xAxisLabel = setMine.getXAxisLabel(); 
-					yAxisLabel = setMine.getYAxisLabel(); 
-				}
-				
-				
-				
-				//Set the chart orientation
-				PlotOrientation orientation = PlotOrientation.VERTICAL;
-				if (component.getOrientation() != null)
-				{
-					if (component.getOrientation().equalsIgnoreCase(CHART_ORIENTATION_HORIZONTAL))
-						orientation = PlotOrientation.HORIZONTAL;
-					if (component.getOrientation().equalsIgnoreCase(CHART_ORIENTATION_VERTICAL))
-						orientation = PlotOrientation.VERTICAL;
-				}
-				
-				//Create the chart
-				JFreeChart chart = ChartFactory.createBarChart
-				(
-					component.getLabel(), //Chart Title
-					xAxisLabel,
-					yAxisLabel,
-					data, // data 
-					orientation, // orientation
-					true, // include legend
-					true, // tooltips?
-					false // URLs?
-				);
-				
-				//Set Border visibility and background color
-				chart.setBackgroundPaint(Color.WHITE);
-				chart.setBorderVisible(false);
-				CategoryPlot plot = (CategoryPlot) chart.getCategoryPlot();
-				//Set the upper margin so that labels show inside the chart
-				plot.getRangeAxis().setUpperMargin(0.1);
-				//Set space between Items
-				BarRenderer renderer = (BarRenderer) plot.getRenderer();
-				renderer.setItemMargin(0.0);
-				
-				
-				
-				//Set colors
-				plot.setRangeGridlinePaint(Color.BLACK);
-				plot.setBackgroundPaint(Color.white);
-				
-				//Tooltip Generator
-				//CategoryItemRenderer renderer = plot.getRenderer(); 
-				CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator(
-						"{2}", new DecimalFormat("0.00")); 
-				renderer.setBaseItemLabelGenerator(generator);
-				renderer.setBaseItemLabelsVisible(true);
-				
 				//Chart size
 				oResponse.setContentType("image/png");
-				Integer width = component.getWidth();
-				if (width == null)
-					width = DEFAULT_WIDTH;
-				Integer height = component.getHeight();
-				if (height == null)
-					height = DEFAULT_HEIGHT;
-				
-				//Apply the Configuration options for the Bar Chart
-				if (component.getConfigOptions() != null)
-				{
-					IBarChartConfiguration chartConfigurations = (IBarChartConfiguration) component.getConfigOptions().invoke(getRequestContext().getELContext(), null);
-					if (chartConfigurations != null)
-					{
-						if (!chartConfigurations.showChartTitle())
-							chart.setTitle("");
-						
-						if (chartConfigurations.getTooltipString() != null)
-						{
-							String expression = chartConfigurations.getTooltipString();
-							expression = expression.replace("$val", "{2}");
-							CategoryItemRenderer rendererLabel = plot.getRenderer(); 
-							CategoryItemLabelGenerator generatorCustom = new StandardCategoryItemLabelGenerator(
-									expression, new DecimalFormat("0.00"));
-							rendererLabel.setBaseItemLabelGenerator(generatorCustom);
-						}
-						
-						if (chartConfigurations.getColours() != null)
-						{
-							Color[] colors = chartConfigurations.getColours();
-							BarRenderer rendererColors = (BarRenderer) plot.getRenderer();
-							int pos = 0;
-							for (Color p : colors)
-							{
-								rendererColors.setSeriesPaint(pos,p);
-								pos++;
-							}
-						}
-						
-						if (chartConfigurations.getBackgroundColour() != null)
-						{
-							chart.setBackgroundPaint(chartConfigurations.getBackgroundColour());
-						}
-					}
-				}
-				
-				//Render the chart
-				ChartUtilities.writeChartAsPNG(out, chart, width, height);
+				component.outputChartAsImageToStream(out, false);
 			}
 			else if (component.getType().equalsIgnoreCase(TYPE_CHART_FLASH))
 			{
 				Chart c = new Chart();
 				IBarChartConfiguration chartConfigurations = null;
 				if (component.getConfigOptions() != null)
-					chartConfigurations = (IBarChartConfiguration) component.getConfigOptions().invoke(getRequestContext().getELContext(), null);
+					chartConfigurations = (IBarChartConfiguration) component.getConfigOptions();
 				
 				//Default background colour
 				c.setBackgroundColour("#FFFFFF");
@@ -611,7 +631,7 @@ public class BarChart extends XUIComponentBase {
 				}
 				else
 				{
-					setMine = (SeriesDataSet) component.getDataSet().invoke(getRequestContext().getELContext(), null);
+					setMine = (SeriesDataSet) component.getDataSet();
 				}
 				
 				Iterator<String> it = setMine.getSeriesKeys().iterator();

@@ -15,6 +15,7 @@ import javax.servlet.ServletResponse;
 
 import jofc2.model.Chart;
 import jofc2.model.Text;
+import netgest.bo.ql.V2.QLParser;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.HTMLAttr;
@@ -59,14 +60,14 @@ import org.jfree.data.general.DefaultPieDataset;
  * 		configOptions="#{viewBean.configOptions}"
  * 		sql = "SQL_EXPRESSION"
  * 		sqlAttCategory = "SQL_COLUMN_NAME_FOR_CATEGORIES"
- * 		sqlAttValue = "SQL_COLUMN_NAME_FOR_VALUES"
+ * 		sqlAttValues = "SQL_COLUMN_NAME_FOR_VALUES"
  * />
  * 
  * 
  *   
  * 
  */
-public class PieChart extends XUIComponentBase 
+public class PieChart extends XUIComponentBase implements netgest.bo.xwc.components.classic.charts.Chart 
 {
 
 	/**
@@ -109,8 +110,17 @@ public class PieChart extends XUIComponentBase
 	private XUIBindProperty<Integer> width = 
 		new XUIBindProperty<Integer>("width", this, Integer.class);
 	
-	private XUIBindProperty<Integer> sqlResultLimit = 
-		new XUIBindProperty<Integer>("sqlResultLimit", this, Integer.class);
+	/**
+	 * The maximum number of results to show from a given query 
+	 */
+	private XUIBindProperty<Integer> resultLimit = 
+		new XUIBindProperty<Integer>("resultLimit", this, Integer.class);
+	
+	/**
+	 * A BOQL Expression to use as a data source
+	 */
+	private XUIBindProperty<String> boql = 
+		new XUIBindProperty<String>("boql", this, String.class);
 	
 	/**
 	 * The height of the chart (rendered on the client)
@@ -161,15 +171,29 @@ public class PieChart extends XUIComponentBase
 	/**
 	 * @param sqlResultLimit the sqlResultLimit to set
 	 */
-	public void setSqlResultLimit(String resultExprt) {
-		this.sqlResultLimit.setExpressionText(resultExprt);
+	public void setResultLimit(String resultExprt) {
+		this.resultLimit.setExpressionText(resultExprt);
 	}
 
 	/**
 	 * @return the sqlResultLimit
 	 */
-	public Integer getSqlResultLimit() {
-		return sqlResultLimit.getEvaluatedValue();
+	public Integer getResultLimit() {
+		return resultLimit.getEvaluatedValue();
+	}
+	
+	/**
+	 * @param resultExpr the sqlResultLimit to set
+	 */
+	public void setBoql(String resultExpr) {
+		this.boql.setExpressionText(resultExpr);
+	}
+
+	/**
+	 * @return the sqlResultLimit
+	 */
+	public String getBoql() {
+		return boql.getEvaluatedValue();
 	}
 
 	/**
@@ -383,59 +407,56 @@ public class PieChart extends XUIComponentBase
 		return super.saveState();
 	}
 	
-
-
+	
 	/**
 	 * 
-	 * The class that renders the Graph in the Viewer (depending on the type, uses HTML+Servlet to render
-	 * the image or HTML+Flash)
+	 * Outputs the rendered chart (as image) to a stream
 	 * 
-	 * @author Pedro Pereira
-	 *
+	 * @param out The {@link OutputStream} where to write the chart
+	 * @param force If the chart is of type flash, using the force parameter as true
+	 * will render the flash chart as an image
+	 * 
 	 */
-	public static class XEOHTMLRenderer extends XUIRenderer implements XUIRendererServlet 
-	{
+	public void outputChartAsImageToStream(OutputStream out, boolean force){
 		
-		/* (non-Javadoc)
-		 * 
-		 * Used for the Image Based Graph, implements a servlet service so that
-		 * the HTML tag <img src="URL"/> can be used
-		 * 
-		 * @see netgest.bo.xwc.framework.XUIRendererServlet#service(javax.servlet.ServletRequest, javax.servlet.ServletResponse, netgest.bo.xwc.framework.components.XUIComponentBase)
-		 */
-		@Override
-		public void service(ServletRequest oRequest, ServletResponse oResponse,
-				XUIComponentBase oComp) throws IOException 
-		{
-			PieChart component = (PieChart)oComp;
-			OutputStream out = oResponse.getOutputStream();
+		try {
 			
-			if (component.getType().equalsIgnoreCase(TYPE_CHART_IMG))
+			//XUIRequestContext oRequestContext = getRequestContext();
+			if (getType().equalsIgnoreCase(TYPE_CHART_IMG) || force)
 			{
 				DefaultPieDataset data = new DefaultPieDataset(); 
 				
 				PieDataSet setMine = null;
 				
 				//Check where the input data is coming from
-				if (component.getSql() != null)
+				if (getSql() != null || getBoql() != null)
 				{ //Fill the values from a SQL Query
 					
 					try
 					{
 						EboContext ctx = boApplication.currentContext().getEboContext();
+						
+						String sqlToExecute = "";
+						if (getBoql() != null){
+							QLParser boqlParser = new QLParser();
+							sqlToExecute = boqlParser.toSql(getBoql(), ctx);;	
+						}
+						if (getSql() != null)
+							sqlToExecute = getSql();
+						
 						java.sql.Connection conn = ctx.getConnectionData();
 						Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
 	                            ResultSet.CONCUR_READ_ONLY);
-						ResultSet srs = stmt.executeQuery(component.getSql());
+						ResultSet srs = stmt.executeQuery(sqlToExecute);
 						int count = 0;
 						while (srs.next()) 
 						{
-								if (component.getSqlResultLimit() != null){
-									if (count >= component.getSqlResultLimit())
+								if (getResultLimit() > 0){
+									if (count >= getResultLimit())
 										break;
 								}
-						        String name = srs.getString(component.getSqlAttCategory());
-						        float value = srs.getFloat(component.getSqlAttValues());
+						        String name = srs.getString(getSqlAttCategory());
+						        double value = srs.getDouble(getSqlAttValues());
 						        data.setValue(name,value);
 						        count++;
 						}
@@ -447,7 +468,7 @@ public class PieChart extends XUIComponentBase
 				}
 				else
 				{ //Fill the values from a 
-					setMine = (PieDataSet) component.getDataSet();
+					setMine = (PieDataSet) getDataSet();
 					Iterator<String> it = setMine.getCategories().iterator();
 					while (it.hasNext())
 					{
@@ -456,10 +477,8 @@ public class PieChart extends XUIComponentBase
 					}
 				}
 					
-				
-				
 				JFreeChart chart = ChartFactory.createPieChart(
-						component.getLabel(), 
+						getLabel(), 
 						data,
 						true, //legend 
 						true, //tooltips
@@ -469,30 +488,29 @@ public class PieChart extends XUIComponentBase
 				chart.setBorderVisible(false);
 				PiePlot plot = (PiePlot) chart.getPlot();
 				
-				//Muda a cor de background das labels para branco
+				//CHanges background of labels to white
 				plot.setLabelBackgroundPaint(new Color(255,255,255));
 				
-				//Muda a cor de background do gráfico para branco
+				//Changes background color to white
 				plot.setBackgroundPaint(new Color(255,255,255));
 				
 				//Mete o border a false
 				plot.setOutlineVisible(false);
 				
-				//Expressão das Labels 
+				//Label expression 
 				PieSectionLabelGenerator generator = new StandardPieSectionLabelGenerator(" {0} has {1} ({2})");
 				plot.setLabelGenerator(generator);
 				
-				//Tamanho do gráfico
-				oResponse.setContentType("image/png");
-				Integer width = component.getWidth();
+				//Chart size
+				Integer width = getWidth();
 				if (width == 0)
 					width = DEFAULT_WIDTH;
-				Integer height = component.getHeight();
+				Integer height = getHeight();
 				if (height == 0)
 					height = DEFAULT_HEIGHT;
 				
-				if (component.getConfigOptions() != null){
-					IPieChartConfiguration chartConfigurations = (IPieChartConfiguration) component.getConfigOptions();
+				if (getConfigOptions() != null){
+					IPieChartConfiguration chartConfigurations = (IPieChartConfiguration) getConfigOptions();
 					if (chartConfigurations != null)
 					{
 						if (chartConfigurations.getBackgroundColour() != null)
@@ -525,7 +543,6 @@ public class PieChart extends XUIComponentBase
 								plot.setSectionPaint(val, p);
 								index++;
 							}
-							
 						}
 						
 						if (!chartConfigurations.showChartTitle())
@@ -545,9 +562,49 @@ public class PieChart extends XUIComponentBase
 					
 				}
 				
-				
 				//Render the chart as a PNG image
 				ChartUtilities.writeChartAsPNG(out, chart, width, height);
+			}
+			
+		} catch 
+		(IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	
+
+
+	/**
+	 * 
+	 * The class that renders the Graph in the Viewer (depending on the type, uses HTML+Servlet to render
+	 * the image or HTML+Flash)
+	 * 
+	 * @author Pedro Pereira
+	 *
+	 */
+	public static class XEOHTMLRenderer extends XUIRenderer implements XUIRendererServlet 
+	{
+		
+		/* (non-Javadoc)
+		 * 
+		 * Used for the Image Based Graph, implements a servlet service so that
+		 * the HTML tag <img src="URL"/> can be used
+		 * 
+		 * @see netgest.bo.xwc.framework.XUIRendererServlet#service(javax.servlet.ServletRequest, javax.servlet.ServletResponse, netgest.bo.xwc.framework.components.XUIComponentBase)
+		 */
+		@Override
+		public void service(ServletRequest oRequest, ServletResponse oResponse,
+				XUIComponentBase oComp) throws IOException 
+		{
+			PieChart component = (PieChart)oComp;
+			OutputStream out = oResponse.getOutputStream();
+			
+			if (component.getType().equalsIgnoreCase(TYPE_CHART_IMG))
+			{
+				component.outputChartAsImageToStream(out,false);
 			}
 			else if (component.getType().equalsIgnoreCase(TYPE_CHART_FLASH))
 			{
@@ -610,12 +667,18 @@ public class PieChart extends XUIComponentBase
 						Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
 	                            ResultSet.CONCUR_READ_ONLY);
 						ResultSet srs = stmt.executeQuery(component.getSql());
+						int count = 0;
 						while (srs.next()) 
 						{
-						        String name = srs.getString(component.getSqlAttCategory());
-						        float value = srs.getFloat(component.getSqlAttValues());
-						        chartElements.addSlice(value,name);
-						        categoriesList.add(name);
+							if (component.getResultLimit() > 0){
+								if (count >= component.getResultLimit())
+									break;
+							}
+					        String name = srs.getString(component.getSqlAttCategory());
+					        double value = srs.getDouble(component.getSqlAttValues());
+					        chartElements.addSlice(value,name);
+					        categoriesList.add(name);
+					        count++;
 						}
 					}
 					catch (Exception e)
