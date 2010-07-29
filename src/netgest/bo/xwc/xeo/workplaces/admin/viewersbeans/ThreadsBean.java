@@ -70,28 +70,23 @@ public class ThreadsBean extends XEOBaseBean  {
 		@Override
 		public String render(GridPanel grid, DataRecordConnector record, DataFieldConnector field) {
 			String compId;
-			String label;
+			String icon;
 			
 			String threadName = (String)record.getAttribute("NAME").getValue();
 			boolean threadActive = threads.isThreadActive(threadName);
-	
-			if (threadActive && "START".equalsIgnoreCase(field.getLabel().trim())) 
-				return "";
-			
-			if (!threadActive && "STOP".equalsIgnoreCase(field.getLabel().trim())) 
-				return "";
-					
+
 			if (threadActive) {
 				compId = "form:stopButton";
-				label = "Stop";
+			
+				icon = "stop.gif";
 			} else {
 				compId = "form:startButton";
-				label = "Start";
+				icon = "start.gif";
 			}
 				
 			XUICommand comp = (XUICommand)getViewRoot().findComponent(compId);
 			
-			return "<input value='"+label+"' type='button' onclick=\""+
+			return "<input type='image' width='16' height='16' src='ext-xeo/admin/"+icon+"' onclick=\""+
 			XVWScripts.getAjaxCommandScript(comp, threadName,XVWScripts.WAIT_DIALOG)+
 			"\" \">	";
 		}

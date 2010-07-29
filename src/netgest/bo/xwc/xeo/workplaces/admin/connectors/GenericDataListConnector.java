@@ -169,7 +169,7 @@ public class GenericDataListConnector implements DataListConnector {
 
 		@Override
 		public void beforePreRender() {
-			int currentColSize = getComponent().getChildren().size();
+			getComponent().getChildren().clear();
 			for (Map.Entry<String, GenericDataFieldMetaData> entry : cols.entrySet()) {
 				ColumnAttribute ca = new ColumnAttribute();
 				ca.setDataField(entry.getKey());
@@ -178,7 +178,7 @@ public class GenericDataListConnector implements DataListConnector {
 					ca.setWidth(entry.getValue().getColWidth().toString());
 				
 				if (this.addColsStart)
-					getComponent().getChildren().add(getComponent().getChildren().size()-currentColSize,ca);
+					getComponent().getChildren().add(ca);
 				else
 					getComponent().getChildren().add(ca);
 			}
