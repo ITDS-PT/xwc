@@ -9,7 +9,6 @@
 	    beanId='viewBean'
   	>
         <xvw:form>
-        
         	<xvw:window width='300' height='300'>
 	            	<xvw:section title='@{OPL_WND_TITLE}'>
 	            		<xvw:rows>

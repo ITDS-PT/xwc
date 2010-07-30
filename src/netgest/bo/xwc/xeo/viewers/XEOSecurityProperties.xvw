@@ -9,30 +9,26 @@
 	    beanId='viewBean'
   	>
         <xeo:formEdit renderToolBar='false'>
-        
-         	<xvw:window width='650' height='300' title='@{OPL_WND_TITLE}'>
-	            <xvw:section>
-	            
-             		<xeo:bridge bridgeName='KEYS' 
+         	<xvw:window width='700' height='400' title='@{OPL_WND_TITLE}'>
+	            	<xeo:bridge bridgeName='KEYS' 
              			renderExcelBtn='false' renderPdfBtn='false' 
              			renderToolBar='false'
              			rowDblClickTarget='self' onRowDoubleClick='#{viewBean.openDblClick}'
              			>
-             		  <xeo:bridgeToolBar 
-             				renderAddBtn='false'
-             				renderRemoveBtn='#{viewBean.canRemoveBtn}'
-             				renderCreateNewBtn='false'
-             				bridgeName='KEYS'>
-             			
-             				<xvw:menu 
-             					text="@{OPL_BTN_ADD_PERM_LBL}"
-             					icon="ext-xeo/images/menus/add_permission.gif"
-             					disabled="#{viewBean.disabledAddBtn}"
-             					serverAction="#{viewBean.addPermission}"
-             					>
-             				</xvw:menu>
-             			
-             		</xeo:bridgeToolBar> 
+	             		  <xeo:bridgeToolBar 
+	             				renderAddBtn='false'
+	             				renderRemoveBtn='#{viewBean.canRemoveBtn}'
+	             				renderCreateNewBtn='false'
+	             				bridgeName='KEYS'>
+	             				<xvw:menu 
+	             					text="@{OPL_BTN_ADD_PERM_LBL}"
+	             					icon="ext-xeo/images/menus/add_permission.gif"
+	             					disabled="#{viewBean.disabledAddBtn}"
+	             					serverAction="#{viewBean.addPermission}"
+	             					target='self'
+	             					>
+	             				</xvw:menu>
+	             		</xeo:bridgeToolBar> 
 						<xvw:columns>
 							<xvw:columnAttribute width="120" 
 								label="@{OPL_COLUMN_LBL_CARDID}" dataField="SYS_CARDID" />
@@ -45,17 +41,13 @@
 								label='@{OPL_COLUMN_LBL_TYPE_PERM}' dataField='securityType' 
 								renderer="#{viewBean.renderType}"/>
 							<xvw:columnAttribute width='20' label='&nbsp;' dataField='BOUI' hidden='true'/>
-											
 						</xvw:columns>
 						<xvw:gridNavBar
 							showExportToExcel="false"
 							showExportToPDF="false">
 						</xvw:gridNavBar>
 					</xeo:bridge>
-					  
-	            </xvw:section>
-	        </xvw:window>
-	       
-        </xeo:formEdit>
+			</xvw:window>
+	    </xeo:formEdit>
     </xvw:viewer>
 </xvw:root>

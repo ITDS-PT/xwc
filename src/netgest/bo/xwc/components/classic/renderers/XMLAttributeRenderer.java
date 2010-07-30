@@ -10,7 +10,6 @@ import javax.faces.component.ValueHolder;
 
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
@@ -19,11 +18,14 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
-public class XMLBasicRenderer extends XUIRenderer {
-
-	/* (non-Javadoc)
-	 * @see netgest.bo.xwc.framework.XUIRenderer#encodeBegin(netgest.bo.xwc.framework.components.XUIComponentBase)
-	 */
+/**
+ * 
+ * Renders the xvw:attribute component as XML
+ * 
+ * @author PedroRio
+ *
+ */
+public class XMLAttributeRenderer extends XMLBasicRenderer {
 	@Override
 	public void encodeBegin(XUIComponentBase component) throws IOException {
 		XUIResponseWriter rw = getResponseWriter();
@@ -74,23 +76,12 @@ public class XMLBasicRenderer extends XUIRenderer {
 		if( component instanceof ValueHolder ) {
 			rw.writeAttribute("name", name, "name");
 			
-			value = ((ValueHolder)component).getValue();
-			if( value != null ) {
-				rw.write(value.toString());
-				//rw.writeText( value, component, "value");
-			}
 		}
-		
-		
+        
 	}
-
-	/* (non-Javadoc)
-	 * @see netgest.bo.xwc.framework.XUIRenderer#encodeEnd(netgest.bo.xwc.framework.components.XUIComponentBase)
-	 */
+	
 	@Override
 	public void encodeEnd(XUIComponentBase component) throws IOException {
-		XUIResponseWriter rw = getResponseWriter();
-		rw.endElement( component.getRendererType() );
+		super.encodeEnd(component);
 	}
-
 }

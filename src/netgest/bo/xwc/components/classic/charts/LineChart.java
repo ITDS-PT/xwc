@@ -620,8 +620,10 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 					int colorCounter = 0;
 					
 					Color[] mapOfColors = ChartUtils.DEFAULT_COLORS;
-					if (chartConfigurations.getColours() != null)
-						mapOfColors = chartConfigurations.getColours();
+					if (chartConfigurations != null)
+						if (chartConfigurations.getColours() != null)
+							mapOfColors = chartConfigurations.getColours();
+					
 					while (it.hasNext())
 					{
 						jofc2.model.elements.LineChart currChart =  new jofc2.model.elements.LineChart();

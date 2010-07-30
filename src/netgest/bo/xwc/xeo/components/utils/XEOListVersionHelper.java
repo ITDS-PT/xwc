@@ -93,12 +93,19 @@ public class XEOListVersionHelper
 				Node currentRowCell = cells.item(k); //Check if there are children
 				if (currentRowCell.getNodeName().equalsIgnoreCase("cell"))
 				{
+					String colSpan = ((Element) currentRowCell).getAttribute("colSpan");
+					Integer colSpanNumber = 0;
+					if (colSpan != null)
+						colSpanNumber = Integer.valueOf(colSpan);
+					
 					NodeList cellNodes = currentRowCell.getChildNodes();
 					int numCellNodes = cellNodes.getLength();
 					for (int m = 0; m < numCellNodes; m++)
 					{
 						Node currentCellNode = cellNodes.item(m);
-						if (currentCellNode.getNodeName().equalsIgnoreCase("attributelabel"))
+						//Check if we have an attributeLabel and if the name matches one of the attributes
+						//changed, mark it
+						if (currentCellNode.getNodeName().equalsIgnoreCase("attributeLabel"))
 						{
 							Element attributeLabel = (Element) currentCellNode;
 							String attName = attributeLabel.getAttribute("text");
@@ -106,7 +113,25 @@ public class XEOListVersionHelper
 							{
 								added = true;
 								listOfCells[k] = 
-									versionHelper.new CellPositionValue(values.get(attName).getOldVal());
+									versionHelper.new CellPositionValue(values.get(attName).getOldVal(),colSpanNumber);
+							}
+						} //If we don't have an attribute
+						else if (currentCellNode.getNodeName().equalsIgnoreCase("attribute")){
+							Element attribute = (Element)  currentCellNode;
+							NodeList attributeChildren = attribute.getChildNodes();
+							int numChildAttribute = attributeChildren.getLength();
+							for (int l = 0; l < numChildAttribute ; l++){
+								Node currentAttributeChild = attributeChildren.item(l);
+								if (currentAttributeChild.getNodeName().equalsIgnoreCase("attributeLabel")){
+									Element attributeLabel = (Element) currentAttributeChild;
+									String attName = attributeLabel.getAttribute("text");
+									if (values.containsKey(attName))
+									{
+										added = true;
+										listOfCells[k] = 
+											versionHelper.new CellPositionValue(values.get(attName).getOldVal(),colSpanNumber);
+									}
+								}
 							}
 						}
 					}
@@ -122,25 +147,30 @@ public class XEOListVersionHelper
 				for (int n = 0; n < numCells; n++)
 				{
 					Node cellOfRow = doc.createElement("cell");
+					Node attribute = doc.createElement("attribute");
 					if (listOfCells[n] != null)
 					{
 						CellPositionValue cellCurrent = listOfCells[n];
-						Element label = doc.createElement("attributelabel");
+						Element label = doc.createElement("attributeLabel");
 						label.setAttribute("text","");
-						Element value = doc.createElement("attributetext");
+						Element value = doc.createElement("attributeText");
 						value.setTextContent(cellCurrent.getValue());
-						cellOfRow.appendChild(label);
-						cellOfRow.appendChild(value);
+						attribute.appendChild(label);
+						attribute.appendChild(value);
+						
+						if (cellCurrent.getColSpan() > 0)
+							((Element) cellOfRow).setAttribute("colSpan", String.valueOf(cellCurrent.getColSpan()));
 					}
 					else
 					{
-						Node label = doc.createElement("attributelabel");
+						Node label = doc.createElement("attributeLabel");
 						((Element) label).setAttribute("text","");
-						Node value = doc.createElement("attributelabel");
+						Node value = doc.createElement("attributeLabel");
 						((Element) value).setAttribute("text","");
-						cellOfRow.appendChild(label);
-						cellOfRow.appendChild(value);
+						attribute.appendChild(label);
+						attribute.appendChild(value);
 					}
+					cellOfRow.appendChild(attribute);
 					newRow.appendChild(cellOfRow);
 				}
 				
@@ -157,13 +187,13 @@ public class XEOListVersionHelper
 		}
 			
 			//Deal with all the grid panels
-			NodeList gridPanels = doc.getElementsByTagName("gridpanel");
+			NodeList gridPanels = doc.getElementsByTagName("gridPanel");
 			
 			//Iterate through each grid panel
 			for (int k = 0; k < gridPanels.getLength(); k++)
 			{
 				Element currentPanel = (Element)gridPanels.item(k);
-				String bridgeName = currentPanel.getAttribute("bridgename");
+				String bridgeName = currentPanel.getAttribute("bridgeName");
 				
 				//The new panel to add at the top of the form (to see bridge differences)
 				Element newGridPanel = doc.createElement("gridPanelTop");
@@ -488,10 +518,15 @@ public class XEOListVersionHelper
 	        trans.transform(xmlSource, new StreamResult(pw));
 			
 			newContext.close();
+			
 			return pw.toString();
+			
+			
+			
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			if (newContext != null)
 				newContext.close();
 		} 
@@ -552,7 +587,7 @@ public class XEOListVersionHelper
 			//Update the XML tree with a sumary of differences
 			Iterator<String> itDiffAtts = diffAttributes.keySet().iterator();
 			Element differences = doc.createElement("differences");
-			differences.setAttribute("label", "Resumo das diferenÃ§as");
+			differences.setAttribute("label", "Resumo das diferenças");
 			while (itDiffAtts.hasNext())
 			{
 				Element attribute = doc.createElement("attribute");
@@ -570,6 +605,8 @@ public class XEOListVersionHelper
 			
 			String xmlSourceContent = ngtXMLUtils.getXML(doc);
 			
+			System.out.println(xmlSourceContent);
+			
 			//Apply the XSLT
 			final String XSLT = "showDifferences.xsl";
 			InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream( XSLT );
@@ -586,7 +623,9 @@ public class XEOListVersionHelper
 	        trans.transform(xmlSource, new StreamResult(pw));
 	        
 	        //Output the result to the response
-	        return pw.toString();
+	        String result = pw.toString();
+	        //System.out.println(result);
+	        return result;
         } 
 		catch (Exception e) 
 		{
@@ -607,14 +646,19 @@ public class XEOListVersionHelper
 	public class CellPositionValue
 	{
 		private String value;
-		
-		public CellPositionValue(String value)
+		private int colspan;
+		public CellPositionValue(String value, int colSpan)
 		{
 			this.value = value;
+			this.colspan = colSpan;
 		}
 
 		public String getValue() {
 			return value;
+		}
+		
+		public int getColSpan(){
+			return this.colspan;
 		}
 	}
 	

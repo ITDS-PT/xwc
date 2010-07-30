@@ -1,8 +1,5 @@
 package netgest.bo.xwc.xeo.components;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.faces.component.UIComponent;
@@ -20,12 +17,12 @@ import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Panel;
 import netgest.bo.xwc.components.classic.ToolBar;
-import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
@@ -421,17 +418,18 @@ public class FormEdit extends Form {
         
         /**
          * 
-         * Temporary function that retrieves the content of a system file
+         * Retrieves the content of a viewer as XML
          * 
-         * @return
+         * @return A {@link XMLDocument} with a viewer converted to XML
          */
-        private XMLDocument getViewerContentAsXML()
+        private XMLDocument getViewerContentAsXML(XUIViewRoot root)
         {
         	XUIRequestContext r = XUIRequestContext.getCurrentContext();
         	XMLDocument doc;
+        	
     		try 
     		{
-            	String s =  r.getSessionContext().renderViewToBuffer("XEOXML", r.getViewRoot().getViewState() ).toString();
+    			String s =  r.getSessionContext().renderViewToBuffer("XEOXML", root.getViewState() ).toString();
     			doc = ngtXMLUtils.loadXML(s);
     			return doc;
     		} 
@@ -492,19 +490,19 @@ public class FormEdit extends Form {
         				(HttpServletResponse)getRequestContext().getResponse(), 
         				(ServletContext)getRequestContext().getServletContext());
 	        	long 			bouiVersion = Long.valueOf(request.getParameter("version"));
-	        	String 			result = XEOListVersionHelper.renderDifferencesWithPreviousVersion(frmComponent,bouiVersion,getViewerContentAsXML(),newContext);
+	        	String 			result = XEOListVersionHelper.renderDifferencesWithPreviousVersion(frmComponent,bouiVersion,getViewerContentAsXML(getContext().getViewRoot().getParentView()),newContext);
 	        	
 	        	response.getWriter().write(result);
 				getRequestContext().responseComplete();
 			}
 			else
-			{
+			{	//FIXME: Colocar um parametro para isto
 				/*
 				 * Renders the difference between the current object and the object
 				 * saved in the database
 				 * 
 				 * */
-				String result = XEOListVersionHelper.renderDifferencesWithFlashBack(frmComponent, getViewerContentAsXML());
+				String result = XEOListVersionHelper.renderDifferencesWithFlashBack(frmComponent, getViewerContentAsXML(getRequestContext().getViewRoot()));
 				response.getWriter().write(result);
 				getRequestContext().responseComplete();
 			}

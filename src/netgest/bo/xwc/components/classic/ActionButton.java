@@ -12,11 +12,9 @@ import javax.faces.el.MethodBinding;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
@@ -30,6 +28,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * He cannot have children
  * 
  * @author jcarreira
+ * @author PedroRio
  *
  */
 
@@ -40,6 +39,11 @@ public class ActionButton extends XUICommand
     private XUIViewStateProperty<String>    label 	= new XUIViewStateProperty<String>( "label", this, "#Button#" );
     private XUIStateProperty<String>     	action 	= new XUIStateProperty<String>( "action", this );
 
+    /**
+     * Image to put inside the button
+     */
+    private XUIViewStateProperty<String>	image = new XUIViewStateProperty<String>( "image", this, null );
+    
     private XUIStateProperty<String> 		target 	= new XUIStateProperty<String>( "target", this );
 
     private XUIViewStateBindProperty<Boolean> 	disabled = new XUIViewStateBindProperty<Boolean>( "disabled", this, "false",Boolean.class );
@@ -186,6 +190,30 @@ public class ActionButton extends XUICommand
         this.visible.setExpressionText( visible );
     }
     
+    
+    /**
+     * 
+     * Defines the path to an image to show inside the button
+     * 
+     * @param imagePath The path to the image
+     */
+    public void setImage(String imagePath){
+    	image.setValue(imagePath);
+    }
+    
+    /**
+     * 
+     * Retrieves the path to an image to display inside the button (along side with text) 
+     * 
+     * @return The path to the image
+     * 
+     */
+    public String getImage(){
+    	return image.getValue();
+    }
+    
+    
+    
     /**
      * Return if the component is visible
      * 
@@ -225,7 +253,8 @@ public class ActionButton extends XUICommand
             ExtConfig oConfig = renderExtComponent( oActionButton );
             oConfig.addJSString( "renderTo", oActionButton.getClientId() );
             oConfig.renderExtConfig();
-            w.getScriptContext().add( XUIScriptContext.POSITION_FOOTER, oActionButton.getClientId(), oConfig.renderExtConfig().toString() );
+            String val = oConfig.renderExtConfig().toString();
+            w.getScriptContext().add( XUIScriptContext.POSITION_FOOTER, oActionButton.getClientId(),val);
             
         }
         
@@ -250,13 +279,21 @@ public class ActionButton extends XUICommand
             oConfig.addJSString( "id", oActionButton.getClientId() + "_b" );
             oConfig.add( "minWidth", oActionButton.getWidth() );
             
+            if (oActionButton.getImage() != null){
+            	oConfig.addJSString("icon", oActionButton.getImage() );
+            	oConfig.addJSString( "cls","x-btn-text-icon");
+            }
+            
+            
+            
             if( oActionButton.isDisabled() )
             	oConfig.add( "disabled", true );
 
             if( !oActionButton.isVisible() )
             	oConfig.add( "hidden", true );
             
-            oConfig.addJSString( "text", oActionButton.getLabel() );
+            if (!oActionButton.getLabel().equalsIgnoreCase("#Button#"))
+            	oConfig.addJSString( "text", oActionButton.getLabel() );
             if( oActionButton.getActionExpression() != null ) {
                 oConfig.add( "handler", 
                              "function(){" + 

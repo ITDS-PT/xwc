@@ -637,7 +637,8 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 				Iterator<String> it = setMine.getSeriesKeys().iterator();
 				
 				Color[] mapOfColors = ChartUtils.DEFAULT_COLORS;
-				if (chartConfigurations.getColours() != null)
+				if (chartConfigurations != null)
+					if (chartConfigurations.getColours() != null)
 					mapOfColors = chartConfigurations.getColours();
 				
 				int colorCounter = 0;

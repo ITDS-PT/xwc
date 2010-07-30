@@ -22,7 +22,6 @@ import javax.servlet.jsp.jstl.core.Config;
 
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
-import netgest.bo.system.LoggerLevels.LoggerLevel;
 import netgest.bo.xwc.framework.PackageIAcessor;
 import netgest.bo.xwc.framework.XUIRequestContext;
 

@@ -79,5 +79,16 @@ public class XEOViewersMessages {
 	public static final XUILocalizedMessage OPL_COLUMN_LBL_TYPE_PERM = 
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "OPL_COLUMN_LBL_TYPE_PERM" );
 	
+	public static final XUILocalizedMessage VIEW_DIFFS_WINDOW_TITLE =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "VIEW_DIFFS_WINDOW_TITLE" );
 	
-}
+	public static final XUILocalizedMessage FORM_CLOSE_MESSAGE_YES =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORM_CLOSE_MESSAGE_YES" );
+	
+	public static final XUILocalizedMessage FORM_CLOSE_MESSAGE_NO =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORM_CLOSE_MESSAGE_NO" );
+	
+	public static final XUILocalizedMessage FORM_CLOSE_MESSAGE_DIFFS =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORM_CLOSE_MESSAGE_DIFFS" );
+	
+}		

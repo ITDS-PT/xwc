@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -51,6 +52,7 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
         int                     oDataFieldType;
         Object                  oDataFieldValue;
         String					sDisplayValue;
+        String					sCustomRenderDisplay = "";
 		
 		Iterator<DataRecordConnector> oDataIterator = grid.getDataSource().iterator();
 		Map<String,GridColumnRenderer> columnRenderers = null;
@@ -63,6 +65,7 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 			w.startElement("gridheadercolumn", null);
 				String label = GridPanel.getColumnLabel( grid.getDataSource(), curr );
 				w.writeAttribute("datafield", curr.getDataField(), null);
+				w.writeAttribute("width", curr.getWidth(), null);
 			columnsUsed.add(label);
 				w.write(label);
 			w.endElement("gridheadercolumn");
@@ -80,6 +83,8 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
             { 
             	
             	oDataField = oDataRecord.getAttribute( columns[i].getDataField() );
+            	oDataFieldValue = null;
+            	boolean hasCustomRender = false;
             	
             	w.startElement("gridcolumn", null);
                 
@@ -91,12 +96,30 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 	                	{}
 	                	else 
 	                	{
-		                    oDataFieldValue = oDataField.getValue();
+	                		Column current = columns[i];
+	                		if (current instanceof ColumnAttribute)
+	                		{
+	                			ColumnAttribute currentCol = (ColumnAttribute) current;
+	                			GridColumnRenderer colRenderer = currentCol.getRenderer();
+	                			if (colRenderer != null){
+	                				sCustomRenderDisplay = colRenderer.render(grid, oDataRecord, oDataField);
+	                				hasCustomRender = true;
+	                			}
+	                		}
+	                		
+	                		if (oDataFieldValue == null)
+	                			oDataFieldValue = oDataField.getValue();
+	                		
 		                    if( oDataFieldValue != null )
 		                    {
 		                    	w.writeAttribute("visible", oDataField.getDisabled(), null);
 		                    	
-		                    	sDisplayValue = oDataField.getDisplayValue(); 
+		                    	
+	                    		if (hasCustomRender)
+	                    			sDisplayValue = sCustomRenderDisplay;
+	                    		else
+	                    			sDisplayValue = oDataField.getDisplayValue();
+	                    		
 		                    	if( sDisplayValue != null ) 
 		                    	{
 		                            w.writeAttribute("displayValue", sDisplayValue, null);
@@ -104,7 +127,7 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 		                        }
 		                    	else 
 		                    	{
-			                        oDataFieldType = oDataField.getDataType();
+		                    		oDataFieldType = oDataField.getDataType();
 			                        switch( oDataFieldType ) 
 			                        {
 			                            case DataFieldTypes.VALUE_BLOB:
@@ -131,9 +154,11 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 			                        }
 			                   }
 		                    }
+		                    w.writeAttribute("width",current.getWidth(),null);
 	                	}
 	                }
                 }
+                
                 w.endElement("gridcolumn");
             }
             w.endElement("gridrow");
@@ -150,3 +175,4 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 	
 	
 }
+

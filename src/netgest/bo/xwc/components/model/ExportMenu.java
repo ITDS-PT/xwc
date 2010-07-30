@@ -34,6 +34,12 @@ public class ExportMenu extends Menu
 	private XUIBindProperty<String> styleSheet = 
 		new XUIBindProperty<String>("styleSheet", this, String.class);
 	
+	/**
+	 * Set of parameters to pass to the XSLT
+	 */
+	private XUIBindProperty<String> parameters =
+		new XUIBindProperty<String>("parameters", this, String.class);
+	
 	public ExportMenu()
 	{
 		super();
@@ -47,6 +53,16 @@ public class ExportMenu extends Menu
 	public String getStyleSheet()
 	{
 		return this.styleSheet.getEvaluatedValue();
+	}
+	
+	public void setParameters(String parametersExpr)
+	{
+		this.parameters.setExpressionText(parametersExpr);
+	}
+	
+	public String getParameters()
+	{
+		return this.parameters.getEvaluatedValue();
 	}
 	
 }

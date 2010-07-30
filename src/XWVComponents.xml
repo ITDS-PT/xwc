@@ -210,17 +210,17 @@
             <xwc:render for='tabs'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='tab'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='section'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='rows'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='rows'>netgest.bo.xwc.components.classic.renderers.XMLRowsRenderer</xwc:render>
             <xwc:render for='row'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='cell'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='actionButton'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
 
-            <xwc:render for='attribute'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
+            <xwc:render for='attribute'>netgest.bo.xwc.components.classic.renderers.XMLAttributeRenderer</xwc:render>
             <xwc:render for='attributeText'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='attributeTextArea'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='attributeLabel'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributeHtmlEditor'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeHtmlEditor'>netgest.bo.xwc.components.classic.renderers.XMLHtmlEditRenderer</xwc:render>
             <xwc:render for='attributeDate'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='attributeTime'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='attributeDateTime'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
@@ -252,8 +252,8 @@
 
 
 			<!--- HTML Graphics -->
-            <xwc:render for='attributeImage'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-			<!--- HTML Graphics -->
+            	<xwc:render for='attributeImage'>netgest.bo.xwc.components.classic.renderers.XMLAttributeImageRenderer</xwc:render>
+            <!--- HTML Graphics -->
 
 			<!--- HTML Components -->
 			<xwc:render for='buttonHtml'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
@@ -273,10 +273,16 @@
 
 			<xwc:render for='attributeObjectLookup'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
 			
+			<!-- Chart Components -->
+			<xwc:render for='pieChart'>netgest.bo.xwc.components.classic.renderers.XMLChartRenderer</xwc:render>
+			<xwc:render for='lineChart'>netgest.bo.xwc.components.classic.renderers.XMLChartRenderer</xwc:render>
+			<xwc:render for='barChart'>netgest.bo.xwc.components.classic.renderers.XMLChartRenderer</xwc:render>
+			
+			
         </xwc:renderKit>
         <xwc:renderKit name="XEOXML" componentNamespace="xeo" >
       		<xwc:render for='splitedLookup'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-      		<xwc:render for='formEdit'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+      		<xwc:render for='formEdit'>netgest.bo.xwc.components.classic.renderers.XMLFormEditRenderer</xwc:render>
       		<xwc:render for='bridge'>netgest.bo.xwc.components.classic.renderers.XMLGridPanelRenderer</xwc:render>
         </xwc:renderKit>
     </xwc:renderKits>

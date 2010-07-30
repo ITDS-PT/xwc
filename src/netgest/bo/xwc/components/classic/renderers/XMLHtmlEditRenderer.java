@@ -1,6 +1,8 @@
 package netgest.bo.xwc.components.classic.renderers;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -19,7 +21,10 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
-public class XMLBasicRenderer extends XUIRenderer {
+import org.w3c.dom.Document;
+import org.w3c.tidy.Tidy;
+
+public class XMLHtmlEditRenderer extends XUIRenderer{
 
 	/* (non-Javadoc)
 	 * @see netgest.bo.xwc.framework.XUIRenderer#encodeBegin(netgest.bo.xwc.framework.components.XUIComponentBase)
@@ -76,8 +81,13 @@ public class XMLBasicRenderer extends XUIRenderer {
 			
 			value = ((ValueHolder)component).getValue();
 			if( value != null ) {
-				rw.write(value.toString());
-				//rw.writeText( value, component, "value");
+				Tidy tidy = new Tidy();
+				StringWriter w = new StringWriter();
+				String valueString = value.toString();
+				StringReader reader = new StringReader(valueString);
+				tidy.setPrintBodyOnly(true);
+				tidy.parseDOM(reader,w);
+				rw.write(w.getBuffer().toString());
 			}
 		}
 		
@@ -92,5 +102,5 @@ public class XMLBasicRenderer extends XUIRenderer {
 		XUIResponseWriter rw = getResponseWriter();
 		rw.endElement( component.getRendererType() );
 	}
-
+	
 }

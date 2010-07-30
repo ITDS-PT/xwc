@@ -55,9 +55,20 @@ public class XMLViewRootRenderer extends XUIRenderer {
             if( t != null ) {
             	headerW.writeAttribute( "style", getTheme().getHtmlStyle(), "style" );
             }
-
+            
             headerW.writeText('\n');
             headerW.startElement("head", component );
+            	headerW.startElement("base", component);
+	            	HttpServletRequest req = (HttpServletRequest) getRequestContext()
+					.getRequest();
+	            	String link = (req.isSecure() ? "https" : "http")
+					+ "://"
+					+ req.getServerName()
+					+ (req.getServerPort() == 80 ? "" : ":"
+							+ req.getServerPort())
+					+ getRequestContext().getResourceUrl("");
+					headerW.writeAttribute("href", link, "href");
+            	headerW.endElement("base");
             
             // Write Body
             w.startElement("body", component );

@@ -55,6 +55,9 @@ public class XEOEditPropertiesBean extends XEOEditBean {
 				{
 					w.startElement(HTMLTag.TR, null);
 						w.startElement(HTMLTag.TD, null);
+							w.startElement(HTMLTag.IMG, null);
+								w.writeAttribute(HTMLAttr.SRC, dependency.getSrcForIcon16(), null);
+							w.endElement(HTMLTag.IMG);
 							w.write(dependency.getName());
 						w.endElement(HTMLTag.TD);
 						w.startElement(HTMLTag.TD, null);
@@ -111,6 +114,9 @@ public class XEOEditPropertiesBean extends XEOEditBean {
 				{
 					w.startElement(HTMLTag.TR, null);
 						w.startElement(HTMLTag.TD, null);
+							w.startElement(HTMLTag.IMG, null);
+								w.writeAttribute(HTMLAttr.SRC, dependent.getSrcForIcon16(), null);
+							w.endElement(HTMLTag.IMG);
 							w.write(dependent.getName());
 						w.endElement(HTMLTag.TD);
 						w.startElement(HTMLTag.TD, null);

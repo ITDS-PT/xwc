@@ -114,7 +114,7 @@
         	{
         		text-decoration: underline;
         		color: blue;
-        		cursor:pointer;
+        		cursor : pointer;
         	}	
         		
         	  div.body

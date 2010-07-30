@@ -109,42 +109,6 @@ public class XEOSecurityOPLBean extends XEOEditBean
 	@SuppressWarnings("unused")
 	private boolean disabledAddBtn;
 	
-	/**
-	 * 
-	 * Iterates through an array of keys an checks if the keys
-	 * 
-	 * @param keys THe array of security keys
-	 * @param currentObject The current object from which to check the values
-	 * 
-	 *
-	 */
-	/*private void addKeysToMap(String[] keys, boObject currentObject)
-	{
-		for (String key: keys)
-		{
-			try
-			{//FIXME: Devia "parent"
-				if (!key.contains("asd")) //If somehow we have parent keys, we have to get the parent and apply the name
-				{
-					BigDecimal currentObjectBOUI = (BigDecimal) currentObject.getAttribute(key).getValueObject();
-					if (currentObjectBOUI != null)
-						mapOfSystemSecurities.add(currentObjectBOUI.longValue());
-				}
-				else
-				{
-					System.out.println("*****  PARENT ALERT *********");
-				}
-				
-			}
-			catch (boRuntimeException e)
-			{
-				System.out.println(key + " |||||");
-				e.printStackTrace() ;
-			}
-			
-		}
-	}*/
-	
 	public void setCurrentType(String type)
 	{
 		try 

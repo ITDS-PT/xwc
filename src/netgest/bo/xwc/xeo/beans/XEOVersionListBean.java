@@ -49,6 +49,7 @@ public class XEOVersionListBean extends XEOEditBean
 	 * open a new window to compare with a specific version
 	 * 
 	 * @return An HTML table with the list of versions or a string
+	 * 
 	 */
 	public String getListOfVersions()
 	{

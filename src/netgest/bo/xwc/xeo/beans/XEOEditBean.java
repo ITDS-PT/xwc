@@ -1,23 +1,19 @@
 package netgest.bo.xwc.xeo.beans;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.el.ExpressionFactory;
-import javax.el.MethodExpression;
 import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -70,12 +66,15 @@ import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.FormEdit;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
+import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
 
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -226,7 +225,7 @@ public class XEOEditBean extends XEOBaseBean
 	 * 
 	 * @param filePath Stream to the file
 	 */ 
-	    private String readFileAsString(InputStream filePath) throws java.io.IOException
+	 /*   private String readFileAsString(InputStream filePath) throws java.io.IOException
 	    {
 	        StringBuffer fileData = new StringBuffer(1000);
 	        BufferedReader reader = new BufferedReader(new InputStreamReader(filePath));
@@ -240,7 +239,7 @@ public class XEOEditBean extends XEOBaseBean
 	        }
 	        reader.close();
 	        return fileData.toString();
-	    }
+	    }*/
     
     /**
      * 
@@ -300,18 +299,20 @@ public class XEOEditBean extends XEOBaseBean
      * @param systemXSLT The name of the system XSLT
      * @param projectXSLT The name of the project XSLT
      * @param xmlSourceContent The XML content to render 
+     * @param parameters The XSLT parameters
      * 
      * @return The rendered content
      * 
      * @throws boRuntimeException If the transformation fails for some reason
      */
-    private byte[] renderXSLT(String systemXSLT, String projectXSLT, String xmlSourceContent) throws boRuntimeException
+    private byte[] renderXSLT(String systemXSLT, String projectXSLT, 
+    		String xmlSourceContent, HashMap<String,String> parameters) throws boRuntimeException
     {
     	
     	//Retrieve the system default templates 
     	InputStream systemTransformer = Thread.currentThread().getContextClassLoader().getResourceAsStream( systemXSLT ); 
-    	ngtXMLUtils.loadXML( systemTransformer );
-    	systemTransformer = Thread.currentThread().getContextClassLoader().getResourceAsStream( systemXSLT ); 
+    	//ngtXMLUtils.loadXML( systemTransformer );
+    	//systemTransformer = Thread.currentThread().getContextClassLoader().getResourceAsStream( systemXSLT ); 
     	
     	
     	//Retrieve the project-specific templates
@@ -321,8 +322,6 @@ public class XEOEditBean extends XEOBaseBean
     	
     	//Merge the Two transforms 
     	InputStream finalTransformer = getMergedXSLT(systemTransformer, projectTransformer);
-    	
-    	//FIXME: Add a condition if "finalTransformer" is null to throw exception
     	
     	// JAXP reads data using the Source interface
         Source xmlSource = new StreamSource(new StringReader(xmlSourceContent));
@@ -334,6 +333,14 @@ public class XEOEditBean extends XEOBaseBean
             TransformerFactory transFact =
 	                TransformerFactory.newInstance();
 	        Transformer trans = transFact.newTransformer(xsltSource);
+	        if (parameters != null){
+	        	Iterator<String> it = parameters.keySet().iterator();
+	        	while (it.hasNext()) {
+					String paramName = (String) it.next();
+					String paramValue = parameters.get(paramName);
+					trans.setParameter(paramName, paramValue);
+				}
+	        }
 	        trans.transform(xmlSource, new StreamResult(out) );
         }
         catch (Exception e) 
@@ -362,11 +369,43 @@ public class XEOEditBean extends XEOBaseBean
 			s = sessionContext.renderViewToBuffer("XEOXML", requestContext.getViewRoot().getViewState()  ).toString();
 			doc = ngtXMLUtils.loadXML( s );
 			return ngtXMLUtils.getXML(doc);
+			//return result;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 
 		return null;
+    }
+    
+    /**
+     * 
+     * Converts a JSON String to a map of XSLT parameters
+     * 
+     * @param jsonValue The JSON String
+     * 
+     * @return Map with the parameters or null if the JSON string is incorrect
+     */
+    @SuppressWarnings("unchecked")
+	private HashMap<String,String> convertJSONToParameters(String jsonValue){
+    	
+    	try {
+			JSONObject obj = new JSONObject(jsonValue);
+			HashMap<String, String> params = new HashMap<String, String>();
+			
+			Iterator itKeys = obj.keys();
+			while (itKeys.hasNext()){
+				String key = (String) itKeys.next();
+				String value = obj.getString(key);
+				params.put(key, value);
+			}
+			
+			return params;
+			
+		} catch (JSONException e) 
+		{
+			e.printStackTrace();
+			return null;
+		}
+    	
     }
     
     /**
@@ -381,6 +420,7 @@ public class XEOEditBean extends XEOBaseBean
     	final String		PROJECT_HTML_TEMPLATES = "projectHtmlTemplates.xsl";
     	
     	String customXSLT = null;
+    	HashMap<String,String> parameters = null;
     	
     	//If we have a custom XSLT via an exportMenu component, retrieve the value
     	XUIComponentBase c =  getRequestContext().getEvent().getComponent();
@@ -389,6 +429,8 @@ public class XEOEditBean extends XEOBaseBean
 	        if( c instanceof ExportMenu ) 
 	        {
 	        	customXSLT = ((ExportMenu)c).getStyleSheet();
+	        	String jsonParams = ((ExportMenu)c).getParameters();
+	        	parameters = convertJSONToParameters(jsonParams);
 	        }
     	}
     	
@@ -396,9 +438,9 @@ public class XEOEditBean extends XEOBaseBean
     	
     	byte[] result = null;
     	if (customXSLT != null)
-    		result = this.renderXSLT(customXSLT, null, xmlContent);
+    		result = this.renderXSLT(customXSLT, null, xmlContent, parameters);
     	else
-    		result = this.renderXSLT(HTML_TEMPLATES, PROJECT_HTML_TEMPLATES, xmlContent);
+    		result = this.renderXSLT(HTML_TEMPLATES, PROJECT_HTML_TEMPLATES, xmlContent,parameters);
     	try 
     	{
     		HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
@@ -424,8 +466,31 @@ public class XEOEditBean extends XEOBaseBean
     	final String		PROJECT_PDF_TEMPLATES = "projectPdfTemplates.xsl";
     	
     	String xmlContent = this.getViewerContentAsXML();
-        
-    	byte[] result = this.renderXSLT(PDF_TEMPLATES, PROJECT_PDF_TEMPLATES, xmlContent);
+    	
+    	
+    	String customXSLT = null;
+    	HashMap<String,String> parameters = null;
+    	
+    	//If we have a custom XSLT via an exportMenu component, retrieve the value
+    	XUIComponentBase c =  getRequestContext().getEvent().getComponent();
+    	if (c != null)
+    	{
+	        if( c instanceof ExportMenu ) 
+	        {
+	        	customXSLT = ((ExportMenu)c).getStyleSheet();
+	        	String jsonParams = ((ExportMenu)c).getParameters();
+	        	if (jsonParams != null)
+	        		parameters = convertJSONToParameters(jsonParams);
+	        }
+    	}
+    	
+    	byte[] result; 
+    	
+    	if (customXSLT != null)
+    		result = this.renderXSLT(customXSLT, null, xmlContent, parameters);
+    	else
+    		result = this.renderXSLT(PDF_TEMPLATES, PROJECT_PDF_TEMPLATES, xmlContent,parameters);
+    	
     	FopFactory fopFactory = FopFactory.newInstance();
 
     	// Step 2: Set up output stream.
@@ -482,7 +547,28 @@ public class XEOEditBean extends XEOBaseBean
     	
     	String xmlContent = this.getViewerContentAsXML();
         
-    	byte[] result = this.renderXSLT(EXCEL_TEMPLATES, PROJECT_EXCEL_TEMPLATES, xmlContent);
+    	
+    	String customXSLT = null;
+    	HashMap<String,String> parameters = null;
+    	
+    	//If we have a custom XSLT via an exportMenu component, retrieve the value
+    	XUIComponentBase c =  getRequestContext().getEvent().getComponent();
+    	if (c != null)
+    	{
+	        if( c instanceof ExportMenu ) 
+	        {
+	        	customXSLT = ((ExportMenu)c).getStyleSheet();
+	        	String jsonParams = ((ExportMenu)c).getParameters();
+	        	parameters = convertJSONToParameters(jsonParams);
+	        }
+    	}
+    	
+    	byte[] result; 
+    	
+    	if (customXSLT != null)
+    		result = this.renderXSLT(customXSLT, null, xmlContent, parameters);
+    	else
+    		result = this.renderXSLT(EXCEL_TEMPLATES, PROJECT_EXCEL_TEMPLATES, xmlContent,parameters);
     	
     	boObject currentEditObject = getXEOObject();
     	
@@ -1648,23 +1734,6 @@ public class XEOEditBean extends XEOBaseBean
 			
 			String openDiffScript = "openDiffWindow()" ;
 			
-			XUIForm formComponent = (XUIForm)viewRoot.findComponent( XUIForm.class);
-			
-			XUICommand oShowDiffCommand;
-			if (formComponent.findComponent(formComponent.getId() + "_showDiff") != null){
-				oShowDiffCommand = (XUICommand) formComponent.findComponent(formComponent.getId() + "_showDiff");
-			}
-			else{
-				oShowDiffCommand = new XUICommand();
-				oShowDiffCommand.setId(formComponent.getId() +"_showDiff" );
-				oShowDiffCommand.setActionExpression( createMethodBinding( "#{viewBean.showProperties}" ) );
-				formComponent.getChildren().add(oShowDiffCommand);
-			}
-			
-			openDiffScript = 
-				XVWScripts.getAjaxCommandScript( oShowDiffCommand , XVWScripts.WAIT_STATUS_MESSAGE )+";";
-			
-			
 			Window xWnd = (Window)viewRoot.findComponent(Window.class);
 			if( xWnd != null ) {
 				if( xWnd.getOnClose() != null ) {
@@ -1690,13 +1759,14 @@ public class XEOEditBean extends XEOBaseBean
 			messageBoxConfig.addJSString( "title" , BeansMessages.CHANGES_NOT_SAVED_TITLE.toString() );
 			messageBoxConfig.addJSString( "msg" , BeansMessages.CHANGES_NOT_SAVED_MESSAGE.toString() );
 			if (getIsChanged() && showDiffButton)
-				messageBoxConfig.add( "buttons" , " {yes:'Ok', cancel:'Show differences', no:'Cancel'}  "); //FIXME: Internacionalizar as mensagens
+				messageBoxConfig.add( "buttons" , " {yes:'"+XEOViewersMessages.FORM_CLOSE_MESSAGE_YES.toString()+"', " +
+						"cancel:'"+XEOViewersMessages.FORM_CLOSE_MESSAGE_DIFFS.toString()+"', " +
+						"no:'"+XEOViewersMessages.FORM_CLOSE_MESSAGE_NO.toString()+"'}  "); 
 			else
 				messageBoxConfig.add( "buttons" , " Ext.MessageBox.YESNO  ");
 			messageBoxConfig.add( "fn",  "function(a1) { if( a1=='yes' ) { "+closeScript+" } if (a1=='cancel') { "+ openDiffScript +" } }" );
 			messageBoxConfig.add( "icon", "Ext.MessageBox.WARNING" );
 			
-			//FIXME: isto fica feio aqui
 			String url = getRequestContext().getAjaxURL();
 			if (url.indexOf('?') == -1)
 				{ url += '?'; }
@@ -1704,16 +1774,16 @@ public class XEOEditBean extends XEOBaseBean
 				{ url += '&'; }
 			
 			url += "javax.faces.ViewState=" + getRequestContext().getViewRoot().getViewState();
-			String cliendID = ((FormEdit)viewRoot.findComponent(FormEdit.class)).getClientId();
+			String cliendID = ((XUIForm)viewRoot.findComponent(XUIForm.class)).getClientId();
 			url += "&xvw.servlet="+ cliendID;
 			
 			String openWindowScript = "function openDiffWindow() {" +
 					"var winDiff = new Ext.Window({ " +
-                	" title:' Show Differences '" +
+                	" title:' "+XEOViewersMessages.VIEW_DIFFS_WINDOW_TITLE.toString()+" '" +
                 	",width       : 500" +
                 	",autoScroll : true" +
                 	",height      : 500" +
-                	",autoLoad       : '"+ url +"'" +
+                	",html : '<iframe src=\""+url+"\" width=\"100%\" height=\"470\" frameborder=\"0\">'" +
                 	"});" +
             		"winDiff.show();}";
 			
@@ -1747,16 +1817,6 @@ public class XEOEditBean extends XEOBaseBean
 		}
 		oRequestContext.renderResponse();
 	}
-	
-	//FIXME: Será preciso isto?
-	//////////////////////////////////////////////////////////////
-	private static final Class<?>[] DUMMY_CLASS_ARRAY = new Class[0];
-	private MethodExpression createMethodBinding( String sMethodExpression ) {
-    	FacesContext context = FacesContext.getCurrentInstance();
-        ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
-        return oExFactory.createMethodExpression( context.getELContext(), sMethodExpression, null, DUMMY_CLASS_ARRAY );
-    }
-	////////////////////////////////////////////////////////////////
 	
 	public Object validateLookupValue( AttributeHandler att, String[] atts, Object[] values ) throws boRuntimeException 
 	{
