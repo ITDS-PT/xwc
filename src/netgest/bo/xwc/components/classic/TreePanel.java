@@ -24,6 +24,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 /**
@@ -39,6 +40,14 @@ public class TreePanel extends XUIComponentBase {
 	
 	private XUIBindProperty<Boolean> reload = 
 		new XUIBindProperty<Boolean>( "reload", this,  false, Boolean.class );
+	
+	/**
+	 * The default tab to open when displaying the tree
+	 */
+	private XUIViewBindProperty<String> defaultTab =
+		new XUIViewBindProperty<String>( "defaultTab", this,  String.class );
+	
+	
 	
 	private boolean localReload = false;
 	
@@ -113,11 +122,61 @@ public class TreePanel extends XUIComponentBase {
 	public boolean wasStateChanged() {
 		return super.wasStateChanged() || localReload;
 	}
+	
+	/**
+	 * 
+	 * Sets the id of the menu for the default tab
+	 * 
+	 * @param defaultTabVal The id of the menu that opens the default tab
+	 */
+	public void setDefaultTab(String defaultTabVal){
+		this.defaultTab.setValue(defaultTabVal);
+	}
+	
+	/**
+	 * 
+	 * Retrieves the id of the menu which will be used to open the default tab
+	 * 
+	 * @return A string with the identifier of the menu
+	 */
+	public String getDefaultTab()
+	{
+		return (String) this.defaultTab.getEvaluatedValue();
+	}
 
 	@Override
 	public void preRender() {
 		super.preRender();
 		localReload = getReload();
+
+		//If we have a default tab, open
+		if (getDefaultTab() != null){
+		
+			XUIForm form = (XUIForm) this.findParentComponent(XUIForm.class);
+			String formIdenfier = form.getClientId();
+			
+			Menu targetDefaultMenu = (Menu) this.findComponent(getDefaultTab());
+			
+			if (targetDefaultMenu.getTarget().equalsIgnoreCase("tab")){
+				
+				String sFrameName =  "Frame_" + getDefaultTab();
+				
+				if (targetDefaultMenu != null)
+				{
+					String script = "" +
+					"function openDefaultTab() {" +
+						"XVW.openCommandTab('"+sFrameName+"','"+formIdenfier+"','"+getDefaultTab()+"','');" +
+					"};"+
+					"window.setTimeout( openDefaultTab, 1000 ); ";
+	
+				getRequestContext().getScriptContext().add(
+					XUIScriptContext.POSITION_FOOTER, "defaultTab", script);
+				}
+				
+			}
+		}
+		
+		
 		if ( localReload ) {
 			XUIRequestContext oRequestContext;
 			oRequestContext = XUIRequestContext.getCurrentContext();
