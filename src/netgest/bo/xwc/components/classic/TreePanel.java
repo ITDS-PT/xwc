@@ -157,6 +157,11 @@ public class TreePanel extends XUIComponentBase {
 			
 			Menu targetDefaultMenu = (Menu) this.findComponent(getDefaultTab());
 			
+			if (targetDefaultMenu == null)
+				throw new RuntimeException(
+						"The TreePanel component has property 'defaultTab' with value '" + getDefaultTab() +
+						"' but there's no child menu with id = '" + getDefaultTab() + "'");
+			
 			if (targetDefaultMenu.getTarget().equalsIgnoreCase("tab")){
 				
 				String sFrameName =  "Frame_" + getDefaultTab();
