@@ -64,9 +64,15 @@
 					<xvw:menu icon='ext-xeo/admin/viewers.gif' text='Viewers'
 						value="{viewerName:'netgest/bo/xwc/components/security/ComponentSecurityViewer.xvw'}"
 						target='Tab' serverAction="#{viewBean.openViewer}" />
+
+				</xvw:menu>
+
+				<xvw:menu text='XEO Models' profile='admin' expanded='true'>
 					<xvw:menu icon='ext-xeo/admin/objects.gif' text='Objects'
 						value="{viewerName:''}" target='Tab' serverAction="#{viewBean.openViewer}" />
-
+					<xvw:menu icon='resources/Ebo_Package/ico16.gif' text='Packages'
+						value="{viewerName:'Ebo_Package_list.xvw', boql:'select Ebo_Package where deployed=\'1\''}"
+						target='Tab' serverAction="#{viewBean.listObject}" />
 				</xvw:menu>
 
 				<xvw:menu text='Administration' profile='admin' expanded='true'>
@@ -92,13 +98,16 @@
 					<xvw:menu icon='ext-xeo/admin/logs.gif' text='Logs'
 						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/logs.xvw'}"
 						target='Tab' serverAction="#{viewBean.openViewer}" />
+					<xvw:menu text='Database Reports'
+						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/dbReports.xvw'}"
+						target='Tab' serverAction="#{viewBean.openViewer}" />
 				</xvw:menu>
 
 				<xvw:menu text='Development' profile='admin' expanded='true'>
 					<xvw:menu icon='ext-xeo/admin/xeoQL.gif' text='XEOql'
 						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/boQL.xvw'}"
 						target='Tab' serverAction="#{viewBean.openViewer}" />
-					<xvw:menu text='Model Builder'
+					<xvw:menu icon='ext-xeo/admin/builder.gif' text='Model Builder'
 						value="{viewerName:'netgest/bo/xwc/components/viewers/Builder.xvw', boql:select Ebo_Perf}"
 						target='Tab' serverAction="#{viewBean.openViewer}" />
 					<xvw:menu icon='ext-xeo/admin/convert-viewers.gif' text='Convert old XEO Viewers to XWC'
@@ -113,11 +122,10 @@
 				if( c ) {
 				var n = c.getNodeById('formMain:home')
 				if( n ) {
-				XVW.openCommandTab('home','formMain','home','');
+				XVW.openCommandTab('Frame_home','formMain','home','');
 				}
 				}
 				}
-				openMyWork();
 				window.setTimeout( openMyWork, 1000 );
                </script>
 		</xvw:form>
