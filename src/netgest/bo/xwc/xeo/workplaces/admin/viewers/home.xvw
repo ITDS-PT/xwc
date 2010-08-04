@@ -15,10 +15,13 @@
 											serverAction="#{viewBean.refreshJvmMemoryGraphs}"></xvw:menu>
 									</xvw:toolBar>
 									<xvw:barChart dataSet="#{viewBean.jvmMemory}"
-										label="" width="1000" height="150" type="IMG" orientation="horizontal"
+										label="" width="500" height="150" type="IMG" orientation="horizontal"
 										configOptions="#{viewBean.jvmIBarchartConf}">
 									</xvw:barChart>
 								</xvw:panel>
+							</xvw:cell>
+							<xvw:cell>
+				
 							</xvw:cell>
 						</xvw:row>
 						<xvw:row>

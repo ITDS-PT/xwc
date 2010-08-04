@@ -40,7 +40,7 @@ public class HomeBean extends XEOBaseBean {
 		
 		this.sessions = new SessionsDataListConnector();
 		this.threads = new ThreadsDataListConnector();
-		this.lastCreatedObjects = new ObjectsDataListConnector("SYS_DTCREATE desc");
+		this.lastCreatedObjects = new ObjectsDataListConnector("BOUI desc");
 		this.lastSavedObjects = new ObjectsDataListConnector("SYS_DTSAVE desc");
 		this.jvmIBarchartConf = new JVMIBarCharConf();
 	}

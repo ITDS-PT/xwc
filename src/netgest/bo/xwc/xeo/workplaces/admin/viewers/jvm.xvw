@@ -3,12 +3,23 @@
 	<xvw:viewer beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.JVMBean"
 		beanId="viewBean">
 		<xvw:form id="form">
+			<style>
+				body{
+				FONT-SIZE: 11px;
+				FONT-FAMILY: Verdana, Arial;
+				}
+				h1{
+				FONT-SIZE:13px;
+				color:#0009FF;
+				}
+				h2{
+				font-weight: bold;
+				}
+			</style>
 			<xvw:title valueExpression='JVM Settings'></xvw:title>
 			<xvw:tabs renderTabBar='false'>
-				<xvw:tab id="logTab">
-	
-					<xvw:outputHtml valueExpression='#{viewBean.something}'></xvw:outputHtml>
-
+				<xvw:tab>
+					<xvw:outputHtml valueExpression='#{viewBean.settings}'></xvw:outputHtml>
 				</xvw:tab>
 			</xvw:tabs>
 		</xvw:form>
