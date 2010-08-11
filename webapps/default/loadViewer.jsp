@@ -14,8 +14,7 @@ if (xeodev!=null && (xeodev.equalsIgnoreCase("true") ||
 	{
 		boApplication boApp 	= boApplication.getApplicationFromStaticContext("XEO");
 		boSession     boSession = boApp.boLogin( "SYSUSER", boLoginBean.getSystemKey() );
-		request.getSession().setAttribute("boSession", boSession );
-		System.out.println("AAA");		
+		request.getSession().setAttribute("boSession", boSession );	
 	} 
 	String viewerName=request.getParameter("viewer");
 	response.sendRedirect("netgest/bo/xwc/components/viewers/DummyRenderViewer.xvw?" +
