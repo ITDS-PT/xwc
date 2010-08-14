@@ -24,17 +24,22 @@ public class XEOComponentStateLogic {
 	}
 	
 	public static final boolean isMethodHidden( boObject xeoObject, String methodName ) {
-		try {
-			if (
-				netgest.bo.security.securityRights.canWrite( xeoObject.getEboContext() ,xeoObject.getName() )
-				&&
-				!xeoObject.methodIsHidden( methodName )
-			) {
-				return false;
+		if( methodName != null ) {
+			try {
+				if (
+					netgest.bo.security.securityRights.canWrite( xeoObject.getEboContext() ,xeoObject.getName() )
+					&&
+					!xeoObject.methodIsHidden( methodName )
+				) {
+					return false;
+				}
+				return true;
+			} catch (boRuntimeException e) {
+				throw new RuntimeException( e );
 			}
-			return true;
-		} catch (boRuntimeException e) {
-			throw new RuntimeException( e );
+		}
+		else {
+			return false;
 		}
 	}
 	

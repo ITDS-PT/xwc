@@ -66,25 +66,25 @@ public class EditToolBar extends ToolBar {
 		new XUIViewBindProperty<Boolean>( "renderObjectMethodBtns", this, true, Boolean.class );
 	
 	private XUIViewBindProperty<Boolean>  renderPropertiesBtn    = 
-		new XUIViewBindProperty<Boolean>( "renderPropertiesBtn", this, true, Boolean.class );
+		new XUIViewBindProperty<Boolean>( "renderPropertiesBtn", this, false, Boolean.class );
 
 	private XUIViewStateBindProperty<Boolean>  renderDependentsBtn    = 
-		new XUIViewStateBindProperty<Boolean>( "renderDependentsBtn", this, "true", Boolean.class );
+		new XUIViewStateBindProperty<Boolean>( "renderDependentsBtn", this, "false", Boolean.class );
 	
 	private XUIViewStateBindProperty<Boolean>  renderDependenciesBtn    = 
-		new XUIViewStateBindProperty<Boolean>( "renderDependenciesBtn", this, "true", Boolean.class );
+		new XUIViewStateBindProperty<Boolean>( "renderDependenciesBtn", this, "false", Boolean.class );
 	
 	private XUIViewStateBindProperty<Boolean>  renderListVersionBtn    = 
-		new XUIViewStateBindProperty<Boolean>( "renderListVersionBtn", this, "true", Boolean.class );
+		new XUIViewStateBindProperty<Boolean>( "renderListVersionBtn", this, "false", Boolean.class );
 
 	private XUIViewStateBindProperty<Boolean>  renderHTMLBtn    = 
-		new XUIViewStateBindProperty<Boolean>( "renderHTMLBtn", this, "true", Boolean.class );
+		new XUIViewStateBindProperty<Boolean>( "renderHTMLBtn", this, "false", Boolean.class );
 	
 	private XUIViewStateBindProperty<Boolean>  renderPdfBtn    = 
-		new XUIViewStateBindProperty<Boolean>( "renderPdfBtn", this, "true", Boolean.class );
+		new XUIViewStateBindProperty<Boolean>( "renderPdfBtn", this, "false", Boolean.class );
 	
 	private XUIViewStateBindProperty<Boolean>  renderExcelBtn    = 
-		new XUIViewStateBindProperty<Boolean>( "renderExcelBtn", this, "true", Boolean.class );
+		new XUIViewStateBindProperty<Boolean>( "renderExcelBtn", this, "false", Boolean.class );
 
 	private XUIBindProperty<Boolean> orphanMode = 
 		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class, "#{viewBean.editInOrphanMode}" );
