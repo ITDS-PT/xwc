@@ -774,13 +774,17 @@ XVW.MenuCounter = {
 			xh.open( 'GET',x.url, true );
 			xh.onreadystatechange = function() {
 				if( xh.readyState==4 ) {
-					eval( 'var r = ' + xh.responseText);
-					var c = Ext.getCmp( x.containerId );
-					if(c) {
-						var n = c.getNodeById( x.nodeId );
-						if(n) n.setText( r.counterHtml );
-		    		}
-					x.lastUpdate = (new Date())-0;
+					try {
+						eval( 'var r = ' + xh.responseText );
+						var c = Ext.getCmp( x.containerId );
+						if(c) {
+							var n = c.getNodeById( x.nodeId );
+							if(n) n.setText( r.counterHtml );
+			    		}
+						x.lastUpdate = (new Date())-0;
+					}
+					catch( e ) {
+					}
 				}
 			}
 			xh.send();
