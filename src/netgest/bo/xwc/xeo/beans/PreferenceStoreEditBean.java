@@ -3,7 +3,6 @@ package netgest.bo.xwc.xeo.beans;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -11,49 +10,26 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
-import javax.faces.event.ActionEvent;
-
-import sun.management.jmxremote.ConnectorBootstrap.PropertyNames;
-
-import netgest.bo.preferences.Preference;
-import netgest.bo.runtime.boObject;
-import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.classic.Attribute;
 import netgest.bo.xwc.components.classic.Cell;
-import netgest.bo.xwc.components.classic.GridColumnRenderer;
-import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Row;
 import netgest.bo.xwc.components.classic.Rows;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
-import netgest.bo.xwc.components.connectors.DataFieldConnector;
-import netgest.bo.xwc.components.connectors.DataRecordConnector;
-import netgest.bo.xwc.components.connectors.XEOObjectConnector;
-import netgest.bo.xwc.components.localization.ViewersMessages;
 import netgest.bo.xwc.components.model.Menu;
-import netgest.bo.xwc.components.security.ComponentSecurityPermissionsBean;
-import netgest.bo.xwc.components.security.SecurableComponent;
-import netgest.bo.xwc.components.security.SecurityPermissions;
-import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
-import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIComponentPlugIn;
 import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
-import netgest.bo.xwc.framework.components.XUICommand;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIComponentDefinition;
 import netgest.bo.xwc.framework.def.XUIComponentStore;
-import netgest.bo.xwc.xeo.localization.BeansMessages;
 
 public class PreferenceStoreEditBean extends XEOBaseBean {
 		
