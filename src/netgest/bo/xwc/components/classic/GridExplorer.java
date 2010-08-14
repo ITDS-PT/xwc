@@ -7,8 +7,6 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import com.sun.xml.internal.ws.api.pipe.NextAction;
-
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.grid.GridPanelExtJsRenderer;
