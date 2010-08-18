@@ -29,7 +29,6 @@ public class ModelMethod extends ViewerMethod {
 		return this.targetObject.getEvaluatedValue();
 	}
 	
-/*
 	public void setTargetMethod( String expressionString ) {
 		this.targetMethod.setExpressionText( expressionString );
 	}
@@ -37,7 +36,6 @@ public class ModelMethod extends ViewerMethod {
 	public String getTargetMethod() {
 		return this.targetMethod.getEvaluatedValue();
 	}
-*/
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
