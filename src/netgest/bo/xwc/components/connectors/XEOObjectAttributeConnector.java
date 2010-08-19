@@ -15,7 +15,9 @@ import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.faces.context.FacesContext;
 
+import netgest.bo.boConfig;
 import netgest.bo.def.boDefAttribute;
+import netgest.bo.def.boDefDocument;
 import netgest.bo.def.boDefXeoCode;
 import netgest.bo.lovmanager.LovManager;
 import netgest.bo.lovmanager.lovObject;
@@ -32,6 +34,8 @@ import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
 import netgest.io.FSiFile;
+import netgest.io.iFileConnector;
+import netgest.io.iFileException;
 
 public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData implements DataFieldConnector {
 
@@ -288,7 +292,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
             	if( boDefAttribute.ATTRIBUTE_BINARYDATA.equals( oAttHandler.getDefAttribute().getAtributeDeclaredType() 
             			 ) && (value instanceof File) )
             	{
-            		oAttHandler.setValueiFile( new FSiFile( null, (File)value, null ) );
+    				oAttHandler.setValueiFile( new FSiFile( null, (File)value, null ) );
             	}
             	else {
             		oAttHandler.setValueObject( value );

@@ -18,6 +18,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import netgest.bo.boConfig;
+import netgest.bo.def.boDefDocument;
 import netgest.bo.impl.document.Ebo_DocumentImpl;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.HTMLAttr;
@@ -30,6 +32,7 @@ import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.xeodm.XEODMBuilder;
+import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -41,6 +44,9 @@ import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
 import netgest.bo.xwc.xeo.beans.FileBrowseBean;
 import netgest.io.FSiFile;
 import netgest.io.iFile;
+import netgest.io.iFileConnector;
+import netgest.io.iFileException;
+import netgest.io.iFilePermissionDenied;
 /**
  * This atribute works with AttributeBinnaryData from XEO Model
  * It allow download and upload of files
@@ -50,7 +56,17 @@ import netgest.io.iFile;
 public class AttributeFile extends AttributeBase {
 
     private XUICommand oLookupCommand;
+    private XUIBindProperty<Boolean> suportsMetadata = 
+    	new XUIBindProperty<Boolean>( "suportsMetadata", this, Boolean.class );
 
+    public void setSuportsMetadata( String sIsLov ) {
+        this.suportsMetadata.setExpressionText( sIsLov );
+    }
+    
+    public boolean suportsMetadata() {
+        return this.suportsMetadata.getEvaluatedValue();
+    }
+    
     @Override
 	public void preRender() {
     	
@@ -318,8 +334,8 @@ public class AttributeFile extends AttributeBase {
 			        		if( enumFiles.hasMoreElements() ) {
 			        			String fname = enumFiles.nextElement();
 			        			File file = mRequest.getFile( fname );
-			        			try {
-									oXeoConnector.getAttributeHandler().setValueiFile( new FSiFile( null, file, null ) );
+			        			try {			        				
+			        				oXeoConnector.getAttributeHandler().setValueiFile( new FSiFile( null, file, null ) );
 								} catch (boRuntimeException e) {
 									throw new RuntimeException(e);
 								}
@@ -339,7 +355,7 @@ public class AttributeFile extends AttributeBase {
 		        			fout.close();
 		        			is.close();
 		        			try {
-			        			oXeoConnector.getAttributeHandler().setValueiFile( new FSiFile( null,tempFile, null  ) );
+		        				oXeoConnector.getAttributeHandler().setValueiFile( new FSiFile( null,tempFile, null  ) );
 							} catch (boRuntimeException e) {
 								throw new RuntimeException(e);
 							}
@@ -350,7 +366,13 @@ public class AttributeFile extends AttributeBase {
 	        	else {
 	        		try {
 						iFile file = oXeoConnector.getAttributeHandler().getValueiFile();
-						if( file != null ) {
+						try {
+							if(file!=null && file.isDirectory() && file.listFiles()!=null && file.listFiles().length>0) {
+								file = file.listFiles()[0];
+							}
+						} catch (iFilePermissionDenied e1) {
+						}
+						if( file != null ) {							
 							String sName = file.getName();
 							
 							ServletContext oCtx = (ServletContext)getFacesContext().getExternalContext().getContext();
