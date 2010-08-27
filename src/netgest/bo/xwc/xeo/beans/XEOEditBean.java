@@ -1806,14 +1806,24 @@ public class XEOEditBean extends XEOBaseBean
 			);
 		}
 		else {
+			XUIViewRoot lastViewRoot;
+			
+			lastViewRoot = viewRoot;
+			
 			Window xWnd = (Window)viewRoot.findComponent(Window.class);
 			if( xWnd != null ) {
 				if( xWnd.getOnClose() != null ) {
 					xWnd.getOnClose().invoke( oRequestContext.getELContext(), null);
 	            }
 			}
-    		closeView();
-    		oRequestContext.getViewRoot().setRendered( false );
+			
+			// Checks if the action on close of the window
+			// Stays in the same viewer.
+			if( lastViewRoot == oRequestContext.getViewRoot() ) {
+				closeView();
+				oRequestContext.getViewRoot().setRendered( false );
+			}
+			
 		}
 		oRequestContext.renderResponse();
 	}
