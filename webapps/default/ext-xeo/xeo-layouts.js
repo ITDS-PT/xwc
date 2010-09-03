@@ -37,56 +37,57 @@ XEOLayout.ViewPort = function()
             }, 
             items:null
         });
+    	
+    	var layoutItems = [];
+    	if( Ext.get("formMain:tree") ) {
+	    	layoutItems = [{
+	                            region:'north',
+	                            split:false,
+	                            border:false,
+	                            frame:false,
+	                            height: 25,
+	                            minSize: 25,
+	                            maxSize: 200,
+	                            collapsible: false,
+	                            hideBorders: true,
+	                            margins:'3 3 3 3',
+	                            items: [ { html:' <table id="header" width="100%" ><tr><td ><div class="api-title" style="font-family:tahoma,arial,sans-serif;color:white;">'+ ExtXeo.Messages.WELCOME + ' ' + xeoUserDisplayName + '</div></td><td align="right"></td><td width="30px" align="right">'
+	                            	+'<img HEIGHT="15px" src="ext-xeo/images/xeo_30.gif"/>  </td></tr></table>'} ]
+	                        }
+	                ,{
+	                    region:'west',
+	                    id:'west-panel',
+	                    title:(window.treeName?treeName: + ExtXeo.Messages.TREE_TITLE ),
+	                    split:true, 
+	                    width: 200,
+	                    minSize: 175,
+	                    maxSize: 400,
+	                    collapsible: true,
+	                    margins:'0 0 3 3',
+	                    animated:true,
+	            	    layout: 'fit',
+	                    layoutConfig:{
+	                        animate:true
+	                    },
+	                    items: [ layoutTree ]
+	                }
+	                    ,            
+	                    // Aplication Area
+	                    this.tabPanel
+	                 ];
+    	}
+    	else {
+	    	layoutItems = [           
+		        this.tabPanel
+		     ];
+    	}
     
         XEOLayout.ViewPort.superclass.constructor.call( this,
             {
                 layout:'border',
                 frame:false,
                 border:false,
-                items:[{
-                            region:'north',
-                            split:false,
-                            border:false,
-                            frame:false,
-                            height: 25,
-                            minSize: 25,
-                            maxSize: 200,
-                            collapsible: false,
-                            hideBorders: true,
-                            margins:'3 3 3 3',
-                            items: [ { html:' <table id="header" width="100%" ><tr><td ><div class="api-title" style="font-family:tahoma,arial,sans-serif;color:white;">'+ ExtXeo.Messages.WELCOME + ' ' + xeoUserDisplayName + '</div></td><td align="right"></td><td width="30px" align="right">'
-                            	+'<img HEIGHT="15px" src="ext-xeo/images/xeo_30.gif"/>  </td></tr></table>'} ]
-                        }
-                ,{
-                    region:'west',
-                    id:'west-panel',
-                    title:(window.treeName?treeName: + ExtXeo.Messages.TREE_TITLE ),
-                    split:true, 
-                    width: 200,
-                    minSize: 175,
-                    maxSize: 400,
-                    collapsible: true,
-                    margins:'0 0 3 3',
-                    animated:true,
-            	    layout: 'fit',
-                    layoutConfig:{
-                        animate:true
-                    },
-                    items: [ layoutTree ]
-                             	/*
-                    items: [{
-                        title:'Navigation',
-                        collapsible: false,
-                        border:false,
-                        iconCls:'nav',
-                        
-                    }
-                    ]*/
-                }
-                    ,            
-                    // Aplication Area
-                    this.tabPanel
-                 ]
+                items: layoutItems
             }
         );
     }
