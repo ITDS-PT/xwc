@@ -26,6 +26,7 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
@@ -556,7 +557,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
         oGridConfig.add( "store", oGrid.getId() + "_store" );
         
-        
         DataListConnector dataList = oGrid.getDataSource();
         
         ExtConfigArray oColsConfig = oGridConfig.addChildArray( "columns" );
@@ -671,7 +671,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         		rowClickCode += XVWScripts.getCommandScript( 
                 		oGrid.getRowClickTarget(),
                 		oRowClickComp, 
-                		XVWScripts.WAIT_STATUS_MESSAGE 
+                		oGrid.getServerActionWaitMode().ordinal()
                 	);
         }
         
@@ -710,7 +710,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                     		oGrid.getRowDblClickTarget(),
                     		targetName,
                     		oRowDblClickComp, 
-                    		XVWScripts.WAIT_STATUS_MESSAGE 
+                    		oGrid.getServerActionWaitMode().ordinal()
                     	) 
                     +"}"
             );

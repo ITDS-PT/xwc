@@ -21,6 +21,7 @@ import javax.faces.event.ActionListener;
 import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
@@ -70,7 +71,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 	public XUIViewStateBindProperty<String> rowSelectionMode = new XUIViewStateBindProperty<String>(
 			"rowSelectionMode", this, String.class);
-
+    
+	public XUIBindProperty<String> 	serverActionWaitMode = 
+    	new XUIBindProperty<String>( "serverActionWaitMode", this ,String.class );
+    
 	private XUIStateBindProperty<String> objectAttribute = new XUIStateBindProperty<String>(
 			"objectAttribute", this, String.class);
 
@@ -227,6 +231,18 @@ public class GridPanel extends ViewerInputSecurityBase {
 		super.initComponent();
 		loadUserPreferences();
 	}
+
+    public void setServerActionWaitMode( String waitModeName ) {
+    	this.serverActionWaitMode.setExpressionText( waitModeName );
+    }
+    
+    public XVWServerActionWaitMode getServerActionWaitMode() {
+    	String value = this.serverActionWaitMode.getEvaluatedValue();
+    	if( value != null ) {
+    		return XVWServerActionWaitMode.valueOf( value );
+    	}
+    	return XVWServerActionWaitMode.NONE;
+    }	
 	
 	/**
 	 * Process a preRender Actions
