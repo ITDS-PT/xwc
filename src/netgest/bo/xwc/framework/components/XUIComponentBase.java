@@ -125,6 +125,9 @@ public abstract class XUIComponentBase extends UIComponentBase
                 XUIBaseProperty<?> oStateProperty;
                 oStateProperty = oStatePropertiesIterator.next().getValue();
                 if( oStateProperty.wasChanged() ) {
+//                	System.out.println( 
+//                			this.getClass().getName() + " - " + oStateProperty.getName()  
+//                	);
                     return true;
                 }
             }

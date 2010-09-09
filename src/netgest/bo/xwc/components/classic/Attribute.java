@@ -8,6 +8,9 @@ import static netgest.bo.xwc.components.HTMLTag.TD;
 import static netgest.bo.xwc.components.HTMLTag.TR;
 
 import java.io.IOException;
+
+import javax.faces.component.UIComponent;
+
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
@@ -91,7 +94,7 @@ public class Attribute extends AttributeBase
         }
 
         if( sComponentType != null ) {
-	        if( oLabel == null ) {
+	        if( oLabel == null && "1".equals( getRenderLabel() ) ) {
 	
 	            this.oLabel = new AttributeLabel();
 	            this.oLabel.setId( getId() +  "_l" );
@@ -313,8 +316,16 @@ public class Attribute extends AttributeBase
     @Override
     public void restoreState(Object oState) {
         if( this.getChildCount() > 0 ) {
-            this.oLabel = (AttributeLabel)getChild( 0 );
-            this.oInput = (AttributeBase)getChild( 1 );
+        	
+        	UIComponent comp = getChild( 0 );
+        	
+        	if( comp instanceof AttributeLabel ) {
+        		this.oLabel = (AttributeLabel)comp;
+        		this.oInput = (AttributeBase)getChild( 1 );
+        	}
+        	else {
+        		this.oInput = (AttributeBase)getChild( 0 );
+        	}
         }
         super.restoreState(oState);
     }
@@ -383,12 +394,6 @@ public class Attribute extends AttributeBase
             String labelPos 	= "left";
             int	   labelWidth   = 100;
             
-            if( !"1".equals( oAttr.getRenderLabel() ) )
-            {
-            	System.out.print(false);
-            }
-            	
-            
             Rows r = (Rows)oAttr.findParentComponent( Rows.class );
 
             if( r!=null ) {
@@ -405,15 +410,15 @@ public class Attribute extends AttributeBase
             if( !"Top".equalsIgnoreCase( labelPos ) ) 
             {
 	            w.startElement("COLGROUP", oComp);
-	            w.startElement(COL, oComp );
-	            w.writeAttribute( HTMLAttr.WIDTH, labelWidth + "px", null );
-	            w.endElement("COL");
-
 	            if( "1".equals( oAttr.getRenderLabel() ) )
 	            {
 		            w.startElement(COL, oComp );
+		            w.writeAttribute( HTMLAttr.WIDTH, labelWidth + "px", null );
 		            w.endElement("COL");
 	            }
+
+	            w.startElement(COL, oComp );
+	            w.endElement("COL");
 	            w.endElement("COLGROUP");
             } else {
 	            w.startElement("COLGROUP", oComp);

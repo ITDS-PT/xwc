@@ -1,6 +1,8 @@
 package netgest.bo.xwc.xeo.components;
 
 import netgest.bo.xwc.components.classic.GridPanel;
+import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
 
 
 public class LookupList extends List {
@@ -27,6 +29,7 @@ public class LookupList extends List {
 	@Override
 	public void createToolBar(int pos) {
 		LookupListToolBar toolBar = new LookupListToolBar();
+		toolBar.setVisible( ((XUIBindProperty)getStateProperty("renderToolBar")).getExpressionString() );
 		getChildren().add(pos, toolBar );
 	}
 
