@@ -47,9 +47,10 @@
 						value="{viewerName:'Ebo_Group_list.xvw', boql:select Ebo_Group}"
 						target='Tab' serverAction="#{viewBean.listObject}" />
 					<xvw:menu icon='ext-xeo/admin/functions.gif' text='Functions'
-						value="{viewerName:'', boql:}" target='Tab' serverAction="#{viewBean.listObject}" />
+						value="{viewerName:'workQueue_list.xvw', boql:select workQueue}" target='Tab' serverAction="#{viewBean.listObject}" />
 					<xvw:menu icon='ext-xeo/admin/roles.gif' text='Roles'
-						value="{viewerName:'', boql:}" target='Tab' serverAction="#{viewBean.listObject}" />
+						value="{viewerName:'Ebo_Role_list.xvw', boql:select Ebo_Role}" 
+						target='Tab' serverAction="#{viewBean.listObject}" />
 					<xvw:menu icon='ext-xeo/admin/profiles.gif' text='Profiles'
 						value="{viewerName:'uiProfile_list.xvw', boql:select uiProfile}"
 						target='Tab' serverAction="#{viewBean.listObject}" />
@@ -66,10 +67,11 @@
 						target='Tab' serverAction="#{viewBean.openViewer}" />
 
 				</xvw:menu>
-
+				
 				<xvw:menu text='XEO Models' profile='admin' expanded='true'>
 					<xvw:menu icon='ext-xeo/admin/objects.gif' text='Objects'
-						value="{viewerName:''}" target='Tab' serverAction="#{viewBean.openViewer}" />
+						value="{viewerName:'Ebo_ClsReg_list.xvw', boql:'select Ebo_ClsReg where deployed=\'1\''}"
+						target='Tab' serverAction="#{viewBean.listObject}" />
 					<xvw:menu icon='resources/Ebo_Package/ico16.gif' text='Packages'
 						value="{viewerName:'Ebo_Package_list.xvw', boql:'select Ebo_Package where deployed=\'1\''}"
 						target='Tab' serverAction="#{viewBean.listObject}" />
