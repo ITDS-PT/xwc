@@ -23,7 +23,7 @@ public class MaintenanceLogBean extends XEOBaseBean {
 	public String getLog() {		
 		XUIComponentBase f = getViewRoot().findComponent(XUIForm.class);
 		XUIRequestContext.getCurrentContext().getScriptContext().add(
-				XUIScriptContext.POSITION_HEADER,
+				XUIScriptContext.POSITION_FOOTER,
 				f.getClientId() + "_scrollDown",
 				"window.setTimeout(function(){try{ document.getElementById('"+f.getClientId()+":logTab').scrollTop" 
 				+"=document.getElementById('"+f.getClientId()+":logTab').scrollHeight;}catch(e){}},100);"
