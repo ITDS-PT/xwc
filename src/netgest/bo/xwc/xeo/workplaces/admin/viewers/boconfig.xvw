@@ -4,8 +4,11 @@
 		beanId="viewBean">
 		<xvw:form id="form">
 			<xvw:title valueExpression='boConfig'></xvw:title>
-			<xvw:tabs renderTabBar='false'>
-				<xvw:tab>
+			<xvw:tabs>
+				<xvw:tab label='Overview'>
+					 <xvw:outputHtml  valueExpression='#{viewBean.render}'></xvw:outputHtml>
+				</xvw:tab>
+				<xvw:tab label='XML Source'>
 					<xvw:outputHtml  valueExpression='#{viewBean.xmlString}'></xvw:outputHtml>
 				</xvw:tab>
 			</xvw:tabs>

@@ -3,6 +3,44 @@
 	<xvw:viewer beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.JVMBean"
 		beanId="viewBean">
 		<xvw:form id="form">
+		<script type="text/javascript">
+                Ext.onReady(function(){
+                var javaPanel = new Ext.Panel({
+                title: 'Java Information',
+                collapsible:true,
+                contentEl: 'javaDiv',
+                renderTo: 'javaPanel',
+                autoWidth : true
+                });
+                });
+                Ext.onReady(function(){
+                var osPanel = new Ext.Panel({
+                title: 'Operating System (OS) Information',
+                collapsible:true,
+                contentEl: 'osDiv',
+                renderTo: 'osPanel',
+                autoWidth : true
+                });
+                });		
+                Ext.onReady(function(){
+                var fsPanel = new Ext.Panel({
+                title: 'FileSystem and Memory Information',
+                collapsible:true,
+                contentEl: 'fsmemDiv',
+                renderTo: 'fsmemPanel',
+                autoWidth : true
+                });
+                });
+                Ext.onReady(function(){
+                var runtimePanel = new Ext.Panel({
+                title: 'Runtime Information',
+                collapsible:true,
+                contentEl: 'runtimeDiv',
+                renderTo: 'runtimePanel',
+                autoWidth : true
+                });
+                });
+            </script>
 			<style>
 				body{
 				FONT-SIZE: 11px;
@@ -15,6 +53,44 @@
 				h2{
 				font-weight: bold;
 				}
+				
+				div.mainText{
+					FONT-SIZE: 12px;
+					FONT-FAMILY: Verdana, Arial;
+				}
+				
+				table.relations 
+			  {
+			  margin: 1em 1em 1em 2em;
+			  border-collapse: collapse;
+			  width:90%;
+			  }
+			
+			
+			table.relations td {
+			    border-left: 1px solid #C1DAD7;
+				border-right: 1px solid #C1DAD7;
+				border-bottom: 1px solid #C1DAD7;
+				background: #fff;
+				padding: 6px 6px 6px 12px;
+				color: dark-blue;	
+			}
+			
+			table.relations th 
+			{
+				font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica,
+				sans-serif;
+				color: #003399;
+				border-right: 1px solid #C1DAD7;
+				border-left: 1px solid #C1DAD7;
+				border-bottom: 1px solid #C1DAD7;
+				border-top: 1px solid #C1DAD7;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+				text-align: left;
+				padding: 6px 6px 6px 12px;
+				background: #B0C4DE;
+			}
 			</style>
 			<xvw:title valueExpression='JVM Settings'></xvw:title>
 			<xvw:tabs renderTabBar='false'>
