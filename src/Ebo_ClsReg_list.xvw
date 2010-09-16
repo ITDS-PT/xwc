@@ -16,6 +16,7 @@
 					<xvw:columnAttribute width="150" label="Nome" dataField="name"/>
 					<xvw:columnAttribute width="200" label="Label" dataField="label"/>
 					<xvw:columnAttribute width="300" label="Descrição" dataField="description"/>
+					<xvw:columnAttribute width="150" label="Package" dataField="xeopackage"/>
 				</xvw:columns>
 			</xvw:gridPanel>
 		</xvw:form>
