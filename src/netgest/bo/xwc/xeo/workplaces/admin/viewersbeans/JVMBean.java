@@ -449,9 +449,6 @@ public class JVMBean extends XEOBaseBean  {
 			out.append("</ul>");
 			out.append("<br>");
 
-			out.append("<h2>Library Path :</h2><br>" + runtimemxBean.getLibraryPath()+"<br>");
-			out.append("<br>");
-			
 			//*************************************************
 			
 			out.append("<div id='propsgrid'>");
