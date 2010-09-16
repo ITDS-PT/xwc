@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer beanClass='netgest.bo.xwc.xeo.beans.XEOBaseLookupList' beanId='viewBean'>
+		<xeo:formLookupList>
+			<xeo:lookupList>
+				<xvw:columns>
+					
+					<xvw:columnAttribute width="100" dataField="id"/>
+					<xvw:columnAttribute width="100" dataField="email"/>
+					<xvw:columnAttribute width="100" dataField="name"/>
+					<xvw:columnAttribute width="100" dataField="notifica"/>
+					<xvw:columnAttribute width="100" dataField="templateEmail"/>
+
+				</xvw:columns>
+			</xeo:lookupList>
+		</xeo:formLookupList>
+	</xvw:viewer>
+</xvw:root>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer
+		beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.DbReports"
+		beanId="viewBean">
+		<xvw:form id="form">
+			<xvw:errorMessages></xvw:errorMessages>
+			<xvw:title valueExpression='DataBase Reports'></xvw:title>
+			<xvw:toolBar>
+				<xvw:menu text="Create Report" visible="#{not viewBean.hasPackageReport}"
+					serverAction="#{viewBean.createPackageReport}"></xvw:menu>
+				<xvw:menu text="New Report" visible="#{viewBean.hasPackageReport}"
+					serverAction="#{viewBean.newPackageReport}"></xvw:menu>
+			</xvw:toolBar>
+			<xvw:menu text="Create Report" visible="#{not viewBean.hasObjectReport}"
+				serverAction="#{viewBean.createObjectReport}">
+			</xvw:menu>
+			<xvw:menu text="New Report" visible="#{viewBean.hasObjectReport}"
+				serverAction="#{viewBean.newObjectReport}">
+			</xvw:menu>
+			<xvw:tabs>
+				<xvw:tab label="Package Report">
+					<xvw:gridPanel id="packageList" rowSelectionMode="SELECTION_ROW"
+						renderComponent="#{not viewBean.hasPackageReport}" DataSource="#{viewBean.packages}">
+						<xvw:columns>
+							<xvw:columnAttribute width="40" dataField="name" />
+						</xvw:columns>
+					</xvw:gridPanel>
+					<xvw:outputHtml renderComponent="#{viewBean.hasPackageReport}"
+						valueExpression='#{viewBean.packageReport}'></xvw:outputHtml>
+				</xvw:tab>
+				<xvw:tab label="Object Report">
+					<xvw:gridPanel id="objectList" rowSelectionMode="SELECTION_ROW"
+						renderComponent="#{not viewBean.hasObjectReport}" DataSource="#{viewBean.objects}">
+						<xvw:columns>
+							<xvw:columnAttribute width="40" dataField="name" />
+						</xvw:columns>
+					</xvw:gridPanel>
+					<xvw:outputHtml renderComponent="#{viewBean.hasObjectReport}"
+						valueExpression='#{viewBean.objectReport}'></xvw:outputHtml>
+				</xvw:tab>
+			</xvw:tabs>
+		</xvw:form>
+	</xvw:viewer>
+</xvw:root>
