@@ -21,7 +21,9 @@
 								</xvw:panel>
 							</xvw:cell>
 							<xvw:cell>
-				
+							  <xvw:section label="System Information">
+								<xvw:ajaxText text='#{viewBean.sysInfo}'/>
+							</xvw:section>
 							</xvw:cell>
 						</xvw:row>
 						<xvw:row>
