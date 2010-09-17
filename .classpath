@@ -54,6 +54,8 @@
 	<classpathentry kind="lib" path="base_lib/modules_lib/servlet_2_4.jar"/>
 	<classpathentry kind="lib" path="base_lib/modules_lib/log4j-1.2.8.jar"/>
 	<classpathentry kind="lib" path="project_lib/jhighlight-1.0.jar"/>
+	<classpathentry kind="lib" path="project_lib/html2xhtml-jtidy-r938.jar"/>
+	<classpathentry kind="lib" path="project_lib/sigar.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xeo_v3_core"/>
 	<classpathentry kind="lib" path="project_lib/iText-2.1.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
