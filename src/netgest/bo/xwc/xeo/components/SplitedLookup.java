@@ -19,6 +19,8 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.components.annotations.Required;
+import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.Attribute;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.AttributeLabel;
@@ -35,20 +37,63 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
+/**
+ * 
+ * An input field that allow to Lookup a given XEO Object as well as finding
+ * a XEO Object through one of its attributes (that XEO Object is defined as
+ * an AttributeObject or AttributeObjectCollection off the XEO Object
+ * in the targetObject property.
+ * 
+ * Usage example
+ * 
+ * <xeo:splitedLookup 
+		targetLookupAttribute="username"  <-- Make the search by this attribute
+		objectAttribute="security"  <-- Store the boObject found in this attribute of the current object (required)
+		></xeo:splitedLookup>
+ * 
+ * @author João Carreira
+ *
+ */
 public class SplitedLookup extends Attribute {
 	
+	/**
+	 * The target XEO Object (boObject) where to keep the lookup object (in an attribute
+	 * declared in the <code>objectAttribute</code> property
+	 * 
+	 */
 	private XUIBindProperty<boObject> targetObject 	=
 		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
 		
+	/**
+	 * Situation:
+	 *  1) The {@link boObject} returned by {@link SplitedLookup#getTargetObject()} is of XEO Model 'A'.
+	 *  2) <code>XEO Model A</code> has an attributeObject/attributeObject (named 'P') to <code>XEO Model B</code>.
+	 *  3) <code>XEO Model B</code> has an attribute 'X' of any type (usually Text/Number)
+	 *  
+	 *  The value of this property is 'X', so that one can search instances of <code>XEO Model B</code>
+	 *  by the given X attribute and assign that object to the 'P' attributeObject
+	 * 
+	 */
+	@Required
 	private XUIBaseProperty<String> targetLookupAttribute 	=
 			new XUIBaseProperty<String>("targetLookupAttribute", this);
 	
+	/**
+	 * The width of the lookup box
+	 */
 	private XUIViewProperty<String>  lookupWidth		=
 			new XUIViewProperty<String>("lookupWidth", this, "60%" );
 		
+	/**
+	 * The width of the box to write the search value
+	 */
 	private XUIViewProperty<String>  keyInputWidth		=
 		new XUIViewProperty<String>("keyInputWidth", this, "30%" );
 
+	/**
+	 * The input type for the search field
+	 */
+	@Values({"attributeText","attributeNumber"})
 	private XUIViewProperty<String>  keyInputType		=
 		new XUIViewProperty<String>("keyInputType", this, "attributeText" );
 	
