@@ -22,7 +22,7 @@
 							</xvw:cell>
 							<xvw:cell>
 							  <xvw:section label="System Information">
-								<xvw:ajaxText text='#{viewBean.sysInfo}'/>
+								<xvw:ajaxText text='#{viewBean.sysInfo}' updateTime="2500"/>
 							</xvw:section>
 							</xvw:cell>
 						</xvw:row>
