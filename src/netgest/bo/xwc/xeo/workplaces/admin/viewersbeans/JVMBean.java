@@ -10,9 +10,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.json.JSONArray;
-
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
+
+import org.json.JSONArray;
 
 public class JVMBean extends XEOBaseBean  {
 
@@ -243,9 +243,9 @@ public class JVMBean extends XEOBaseBean  {
 		for (File root : roots) {
 			JSONArray curr = new JSONArray();
 			curr.put(root.getAbsolutePath());
-			curr.put(root.getTotalSpace()/1024/1024);
-			curr.put(root.getFreeSpace()/1024/1024);
-			curr.put(root.getUsableSpace()/1024/1024);
+			curr.put(netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(root.getTotalSpace()));
+			curr.put(netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(root.getFreeSpace()));
+			curr.put(netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(root.getUsableSpace()));
 			arr.put(curr);
 		}
 		return arr.toString();
@@ -263,17 +263,17 @@ public class JVMBean extends XEOBaseBean  {
 
 		JSONArray heap = new JSONArray();
 		heap.put("Heap Memory");
-		heap.put(memoryMXBean.getHeapMemoryUsage().getMax()/1024/1024);
-		heap.put(memoryMXBean.getHeapMemoryUsage().getUsed()/1024/1024);
-		heap.put(memoryMXBean.getHeapMemoryUsage().getInit()/1024/1024);
-		heap.put(memoryMXBean.getHeapMemoryUsage().getCommitted()/1024/1024);
+		heap.put(netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(memoryMXBean.getHeapMemoryUsage().getMax()));
+		heap.put(netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(memoryMXBean.getHeapMemoryUsage().getUsed()));
+		heap.put(netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(memoryMXBean.getHeapMemoryUsage().getInit()));
+		heap.put(netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(memoryMXBean.getHeapMemoryUsage().getCommitted()));
 		
 		JSONArray nonHeap = new JSONArray();
 		nonHeap.put("Non-Heap Memory");
-		nonHeap.put(memoryMXBean.getNonHeapMemoryUsage().getMax()/1024/1024);
-		nonHeap.put(memoryMXBean.getNonHeapMemoryUsage().getUsed()/1024/1024);
-		nonHeap.put(memoryMXBean.getNonHeapMemoryUsage().getInit()/1024/1024);
-		nonHeap.put(memoryMXBean.getNonHeapMemoryUsage().getCommitted()/1024/1024);
+		nonHeap.put(netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(memoryMXBean.getNonHeapMemoryUsage().getMax()));
+		nonHeap.put(netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(memoryMXBean.getNonHeapMemoryUsage().getUsed()));
+		nonHeap.put(netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(memoryMXBean.getNonHeapMemoryUsage().getInit()));
+		nonHeap.put(netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(memoryMXBean.getNonHeapMemoryUsage().getCommitted()));
 		
 		arrFinal.put(heap);
 		arrFinal.put(nonHeap);
@@ -433,7 +433,8 @@ public class JVMBean extends XEOBaseBean  {
 			//Div for the FileSystem GridPanel
 			//*************************************************
 			out.append("Start Time : " + dateFormat.format(new Date(runtimemxBean.getStartTime()))+"<br>");
-			out.append("Up Time : " +formatUptime(runtimemxBean.getUptime())+"<br>");
+			out.append("Up Time : " + 
+					netgest.bo.xwc.xeo.workplaces.admin.Utils.formatTimeMiliSeconds(runtimemxBean.getUptime())+"<br>");
 
 			out.append("<br>");
 
@@ -472,35 +473,7 @@ public class JVMBean extends XEOBaseBean  {
 		
 		return out.toString();
 	}
-	// mileSec				
-	private static String formatUptime(long uptime) {
-		String retval = "";
 
-		// covert to seconds
-		uptime = uptime / 1000;
-
-
-		int days = (int)uptime / (60*60*24);
-		int minutes, hours;
-
-		if (days != 0) {
-			retval += days + " " + ((days > 1) ? "days" : "day") + ", ";
-		}
-
-		minutes = (int)uptime / 60;
-		hours = minutes / 60;
-		hours %= 24;
-		minutes %= 60;
-
-		if (hours != 0) {
-			retval += hours + ":" + minutes;
-		}
-		else {
-			retval += minutes + " minutes";
-		}
-
-		return retval;
-	}
 
 
 }
