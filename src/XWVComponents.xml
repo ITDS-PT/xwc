@@ -5,8 +5,9 @@
         <xwc:renderKit name='XEOHTML' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
         <xwc:renderKit name='XEOXML' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
         <xwc:renderKit name='XEOV2' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
-		
+
 		<xwc:renderKit name='XEOV2' componentNamespace='xvw' >
+		    <xwc:render for='ajaxText'>netgest.bo.xwc.components.classic.AjaxText$XEOHTMLRenderer</xwc:render>
             <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.ErrorMessages$XEOHTMLRenderer</xwc:render>
             <xwc:render for="form">netgest.bo.xwc.components.classic.Form$XEOHTMLRenderer</xwc:render>
             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.ToolBar$XEOHTMLRenderer</xwc:render>
@@ -78,6 +79,7 @@
 		</xwc:renderKit>
 
 		<xwc:renderKit name='XEOHTML' componentNamespace='xvw' >
+		 	<xwc:render for='ajaxText'>netgest.bo.xwc.components.classic.AjaxText$XEOHTMLRenderer</xwc:render>
             <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.ErrorMessages$XEOHTMLRenderer</xwc:render>
             <xwc:render for="form">netgest.bo.xwc.components.classic.Form$XEOHTMLRenderer</xwc:render>
             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.ToolBar$XEOHTMLRenderer</xwc:render>
@@ -166,7 +168,6 @@
       		<!-- <xwc:render for="bridge">netgest.bo.xwc.xeo.components.Bridge$XEOHTMLRenderer</xwc:render> -->
         </xwc:renderKit>
 
-        
         <!-- *********** JSF RENDERKITS ********************** -->
         <xwc:renderKit name="XEOHTML" componentNamespace="h">
            <xwc:render for='javax.faces.Text'       family='javax.faces.Output'         component='outputText'>com.sun.faces.renderkit.html_basic.OutputMessageRenderer</xwc:render>
@@ -200,6 +201,7 @@
         </xwc:renderKit>
         
 		<xwc:renderKit name='XEOXML' componentNamespace='xvw' >
+		    <xwc:render for='ajaxText'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for="form">netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
@@ -288,6 +290,12 @@
     </xwc:renderKits>
     
     <xwc:components namespace='xvw' > 
+   
+        <xwc:component name='ajaxText'>
+            <xwc:className>netgest.bo.xwc.components.classic.AjaxText</xwc:className>
+            <xwc:description>Ajax Text</xwc:description>
+        </xwc:component>
+    
 		<xwc:component name='attributeObjectLookup'>
             <xwc:className>netgest.bo.xwc.xeo.components.AttributeObjectLookup</xwc:className>
             <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
@@ -730,7 +738,6 @@
         
     </xwc:components>
     
-    
     <!-- ********************** XEO Components *************************** -->
     <xwc:components namespace='xeo'>
 		<!--  XEO Components -->
@@ -838,4 +845,5 @@
             <xwc:description></xwc:description>
         </xwc:component>
     </xwc:components>
+    
 </xwc:config>
