@@ -21,11 +21,21 @@ public class AjaxText extends XUIComponentBase {
 	private XUIBindProperty<String> text = 
 		new XUIBindProperty<String>("text", this, "", String.class );
 	
+	private XUIBindProperty<String> updateTime = 
+		new XUIBindProperty<String>("updateTime", this, "", String.class );
+	
 	public void setText( String textExpr ) {
 		this.text.setExpressionText( textExpr );
 	}
 	public String getText() {
 		return this.text.getEvaluatedValue();
+	}
+	
+	public void setUpdateTime( String updateTimeExpr ) {
+		this.updateTime.setExpressionText( updateTimeExpr );
+	}
+	public String getUpdateTime() {
+		return this.updateTime.getEvaluatedValue();
 	}
 	
 	public boolean wasStateChanged() {
@@ -67,8 +77,9 @@ public class AjaxText extends XUIComponentBase {
 		public void encodeBegin(XUIComponentBase component) throws IOException {
 			XUIResponseWriter w = getResponseWriter();
 			AjaxText oComp = (AjaxText)component;
+			String sanitizedCompId = "_"+oComp.getClientId().replace(":", "");
 			
-			w.write("<div id='ajaxText"+oComp.getClientId()+"'>");
+			w.write("<div id='ajaxText"+sanitizedCompId+"'>");
 			w.write(oComp.getText().toString());
 			w.write("</div>");
 			
@@ -85,15 +96,16 @@ public class AjaxText extends XUIComponentBase {
 	        		XUIRequestContext.getCurrentContext().getViewRoot().getViewState();
 			url  += "&xvw.servlet=" + component.getClientId();
 			
+			
 			ScriptBuilder s = new ScriptBuilder();
-			s.l( "function updateTime() {" );
+			s.l( "function updateTime"+sanitizedCompId+"() {" );
 			s.l( "var r=XVW.createXMLHttpRequest();" );
 			s.l( "r.onreadystatechange=function(){ if(r.readyState==4) ");
-			s.l(		"document.getElementById('ajaxText"+oComp.getClientId()+"').innerHTML=r.responseText;}");
+			s.l(		"document.getElementById('ajaxText"+sanitizedCompId+"').innerHTML=r.responseText;}");
 			s.l( "r.open('POST','"+url+"','true');" );
 			s.l( "r.send();" );
 			s.l( "} " );
-			s.l( "window.setInterval( 'updateTime();', 2000 )" );
+			s.l( "window.setInterval( 'updateTime"+sanitizedCompId+"();', "+oComp.getUpdateTime().toString()+" )" );
 			
 			w.getScriptContext()	
 			.add( 
