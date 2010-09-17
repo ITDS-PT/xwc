@@ -7,19 +7,13 @@
 			<xvw:errorMessages></xvw:errorMessages>
 			<xvw:title valueExpression='DataBase Reports'></xvw:title>
 			<xvw:toolBar>
-				<xvw:menu text="Create Report" visible="#{not viewBean.hasPackageReport}"
-					serverAction="#{viewBean.createPackageReport}"></xvw:menu>
-				<xvw:menu text="New Report" visible="#{viewBean.hasPackageReport}"
-					serverAction="#{viewBean.newPackageReport}"></xvw:menu>
+				<xvw:menu text="Create Report" visible="#{not viewBean.hasReport}"
+					serverAction="#{viewBean.createReport}"></xvw:menu>
+				<xvw:menu text="New Report" visible="#{viewBean.hasReport}"
+					serverAction="#{viewBean.newReport}"></xvw:menu>
 			</xvw:toolBar>
-			<xvw:menu text="Create Report" visible="#{not viewBean.hasObjectReport}"
-				serverAction="#{viewBean.createObjectReport}">
-			</xvw:menu>
-			<xvw:menu text="New Report" visible="#{viewBean.hasObjectReport}"
-				serverAction="#{viewBean.newObjectReport}">
-			</xvw:menu>
 			<xvw:tabs>
-				<xvw:tab label="Package Report">
+				<xvw:tab id="package" label="Package Report">
 					<xvw:gridPanel id="packageList" rowSelectionMode="SELECTION_ROW"
 						renderComponent="#{not viewBean.hasPackageReport}" DataSource="#{viewBean.packages}">
 						<xvw:columns>
@@ -29,11 +23,12 @@
 					<xvw:outputHtml renderComponent="#{viewBean.hasPackageReport}"
 						valueExpression='#{viewBean.packageReport}'></xvw:outputHtml>
 				</xvw:tab>
-				<xvw:tab label="Object Report">
+				<xvw:tab id="object" label="Object Report">
 					<xvw:gridPanel id="objectList" rowSelectionMode="SELECTION_ROW"
 						renderComponent="#{not viewBean.hasObjectReport}" DataSource="#{viewBean.objects}">
 						<xvw:columns>
 							<xvw:columnAttribute width="40" dataField="name" />
+							<xvw:columnAttribute width="40" dataField="xeopackage.name" />
 						</xvw:columns>
 					</xvw:gridPanel>
 					<xvw:outputHtml renderComponent="#{viewBean.hasObjectReport}"
