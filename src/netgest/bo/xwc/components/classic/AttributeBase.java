@@ -6,21 +6,21 @@ import java.util.Map;
 import javax.el.ELException;
 import javax.el.ValueExpression;
 import javax.faces.FacesException;
-import javax.faces.event.FacesEvent;
+import javax.faces.el.MethodBinding;
 
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMethodBindProperty;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 /**
- * This component is not usable in the viewers, is the base of all attribute Type Components
+ * This component is not usable in the viewers,
+ * is the base of all attribute Type Components
  * 
- * @author jcarreira
+ * @author João Carreira
  *
  */
 public class AttributeBase extends ViewerInputSecurityBase {
@@ -28,89 +28,182 @@ public class AttributeBase extends ViewerInputSecurityBase {
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     private boolean hasDependents = false;
+    /**
+     * Bean property where to keep the value of the attribute
+     */
     private XUIBaseProperty<String> beanProperty         		= new XUIBaseProperty<String>( "beanProperty", this, "viewBean.currentData" );
+    /**
+     * Name of the attribute of a XEO Model to bind this attribute
+     */
     private XUIBaseProperty<String> objectAttribute         	= new XUIBaseProperty<String>( "objectAttribute", this );
     
+    /**
+     * A connector to keep/retrieve the value of the attribute
+     */
     private XUIBindProperty<DataFieldConnector> dataFieldConnector = new XUIBindProperty<DataFieldConnector>( "dataFieldConnector", this, DataFieldConnector.class );
 
+    /**
+     * Whether or not the attribute should be rendered as a list of values
+     */
     private XUIBindProperty<Boolean> isLov = 
     	new XUIBindProperty<Boolean>( "isLov", this, Boolean.class );
     
+    /**
+     * Whether or not the values (as lov) of the attribute
+     * can be changed by the user
+     */
     private XUIViewBindProperty<Boolean> isLovEditable   = 
     	new XUIViewBindProperty<Boolean>( "isLovEditable", this, Boolean.class );
 
+    /**
+     * A method to perform validation on the value of this attribute
+     */
     private XUIMethodBindProperty validation	= 
     	new XUIMethodBindProperty( "validation", this );
     
+    /**
+     * Triggers a form submit whenever the value of this attribute
+     * is changed
+     */
     private XUIViewBindProperty<Boolean> onChangeSubmit = 
     	new XUIViewBindProperty<Boolean>( "onChangeSubmit", this, Boolean.class );
     
+    /**
+     * Dependencies of the component (the names of other attributes)
+     */
     private XUIViewBindProperty<String[]> dependences = 
     	new XUIViewBindProperty<String[]>( "dependences", this, String[].class );
     	
+    /**
+     * The data type of this attribute (can be String, Number, Boolean)
+     */
     private XUIBindProperty<Byte> 	dataType = 
     	new XUIBindProperty<Byte>( "dataType", this, Byte.class );
     
+    /**
+     * The type of input used by this component (
+     * can be attributeText,attributeNumber, etc...)
+     */
     private XUIBindProperty<Byte> 	inputRenderType	= 
     	new XUIBindProperty<Byte>( "inputRenderType", this, Byte.class );
 
+    /**
+     * The width of the component
+     */
     private XUIViewStateBindProperty<String> width = 
     	new XUIViewStateBindProperty<String>( "width", this, String.class );
 
+    /**
+     * The height of the component
+     */
     private XUIViewStateBindProperty<String> height = 
     	new XUIViewStateBindProperty<String>( "height", this, "100",String.class );
 
+    /**
+     * The maximum length of the component
+     */
     private XUIViewBindProperty<Integer> maxLength = 
     	new XUIViewBindProperty<Integer>( "maxLength", this, Integer.class );
 
+    /**
+     * The maximum value of the component
+     */
     private XUIBindProperty<Integer> maxValue = 
     	new XUIBindProperty<Integer>( "maxValue", this, Double.class );
 
+    /**
+     * The minimum value of the component
+     */
     private XUIBindProperty<Integer> minValue = 
     	new XUIBindProperty<Integer>( "minValue", this, Double.class );
     
+    /**
+     * The decimal precision for the value of the component
+     */
     private XUIViewBindProperty<Integer> decimalPrecision  = 
     	new XUIViewBindProperty<Integer>( "decimalPrecision", this, Integer.class );
 
+    /**
+     * The minimal decimal precison for the value of the component
+     */
     private XUIViewBindProperty<Integer> minDecimalPrecision  = 
     	new XUIViewBindProperty<Integer>( "minDecimalPrecision", this, Integer.class );
 
+    /**
+     * If the value (only works with numeric values) of the component
+     * should be groups (ex: 1000000 becomes 1.000.000)
+     */
     private XUIViewBindProperty<Boolean> groupNumber  = 
     	new XUIViewBindProperty<Boolean>( "groupNumber", this, Boolean.class );
 
+    /**
+     * The rendered value of the component
+     */
     protected XUIBaseProperty<Object> renderedValue     = 
     	new XUIBaseProperty<Object>( "renderedValue", this, Object.class );
 
+    /**
+     * Whether or not the component is disabled
+     */
     private XUIViewStateBindProperty<Boolean> disabled       	= 
     	new XUIViewStateBindProperty<Boolean>( "disabled", this, Boolean.class );
     
+    /**
+     * Whether or not the component is read-only (value cannot be changed)
+     */
     private XUIViewStateBindProperty<Boolean> readOnly       		= 
     	new XUIViewStateBindProperty<Boolean>( "readOnly", this, Boolean.class );
     
+    /**
+     * Whether or not the component is visible
+     */
     private XUIViewStateBindProperty<Boolean> visible        	= 
     	new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
     
+    /**
+     * Whether or not the value of the component is required by the XEO Model
+     */
     private XUIViewStateBindProperty<Boolean> modelRequired  	= 
     	new XUIViewStateBindProperty<Boolean>( "modelRequired", this, Boolean.class );
     
     private XUIViewStateBindProperty<Boolean> recommended     	= 
     	new XUIViewStateBindProperty<Boolean>( "recommended", this, Boolean.class );
     
+    /**
+     * The label of this attribute
+     */
     private XUIViewStateBindProperty<String> label          	= 
     	new XUIViewStateBindProperty<String>( "label", this, String.class );
 
+    /**
+     * Whether or not a link should created when displaying the value of the attribute
+     * attributes whose value is a reference to another object can have a link that opens
+     * a viewer with the respective object
+     */
     private XUIViewStateBindProperty<Boolean> enableCardIdLink  = 
     	new XUIViewStateBindProperty<Boolean>( "enableCardIdLink", this, "false",Boolean.class );
 
+    /**
+     * The value to display in the attribute
+     */
     private XUIViewStateBindProperty<String> displayValue = 
     	new XUIViewStateBindProperty<String>( "displayValue", this, String.class );
     
+    /**
+     * Name of the lookup viewer to use with this attribute
+     */
     private XUIBindProperty<String> lookupViewer = 
     	new XUIBindProperty<String>( "lookupViewer", this, String.class );
     
+    /**
+     * The list of values for attribute (if it is a lov)
+     */
     private XUIBindProperty<Map<Object,String>> lovMap = 
     	new XUIBindProperty<Map<Object,String>>( "lovMap", this, Map.class );
 
+    /**
+     * The text to show when the attribute's value is invalid
+     */
     private XUIViewStateBindProperty<String> invalidText = 
     	new XUIViewStateBindProperty<String>("invalidText", this, String.class ); 
     
@@ -585,7 +678,9 @@ public class AttributeBase extends ViewerInputSecurityBase {
     }
     
     /**
-     * Get the current dependencies of the component
+     * Get the current dependencies of the component 
+     *
+     * 
      * @return String[] with objectAttribute values form which this component depends 
      */
     public String[] getDependences() {
@@ -696,7 +791,9 @@ public class AttributeBase extends ViewerInputSecurityBase {
     }
 
     /**
-     * Set the height of the component, only works with multiline components like textArea and HtmlEditor
+     * Set the height of the component, only works with multi-line components
+     *  like textArea and HtmlEditor
+     *  
      * @param sWidth Integer or a {@link ValueExpression} 
      */
     public void setHeight( String sHeight ) {

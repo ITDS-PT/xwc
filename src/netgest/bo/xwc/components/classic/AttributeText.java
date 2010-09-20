@@ -9,7 +9,8 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 /**
  * This component outputs text from a {@link DataFieldConnector}
- * @author jcarreira
+ * 
+ * @author Joâo Carreira
  *
  */
 public class AttributeText extends AttributeBase {

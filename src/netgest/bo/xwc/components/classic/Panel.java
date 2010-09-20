@@ -11,19 +11,39 @@ import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
-import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
+/**
+ * 
+ * The {@link Panel} component renders an HTML panel to allow 
+ * 
+ * @author João Carreira
+ *
+ */
 public class Panel extends ViewerSecurityBase {
     
+    /**
+     * The height of the panel
+     */
     private XUIViewStateProperty<String> height = new XUIViewStateProperty<String>( "height", this );
+    /**
+     * The width of the panel
+     */
     private XUIViewStateProperty<String> width = new XUIViewStateProperty<String>( "width", this );
+	/**
+	 * The title of the panel
+	 */
 	private XUIViewStateBindProperty<String> title = new XUIViewStateBindProperty<String>( "title", this, String.class );
+	/**
+	 * The layout of the panel (not in used at the moment)o
+	 */
 	private XUIViewProperty<String> layout = new XUIViewProperty<String>( "layout", this, "" );
+	/**
+	 * Whether the panel is visible or not
+	 */
 	private XUIViewStateBindProperty<Boolean> visible = new XUIViewStateBindProperty<Boolean>( "visible", this, "true", Boolean.class );
 	
 	/**

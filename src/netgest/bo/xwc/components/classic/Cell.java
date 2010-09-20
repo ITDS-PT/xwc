@@ -2,19 +2,19 @@ package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
 
-import javax.faces.component.UIComponent;
-
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 /**
- * Cell of a row
+ * The Cell component creates a column within a row of a table. 
+ * The component does not have properties by itself 
+ * but allows to define a structure for a table.
  * 
- * He can have children of any type
+ * Can have children of any type
  * 
- * @author jcarreira
+ * @author João Carreira
  *
  */
 public class Cell extends XUIComponentBase

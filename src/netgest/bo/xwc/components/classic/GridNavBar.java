@@ -2,9 +2,7 @@ package netgest.bo.xwc.components.classic;
 
 import javax.el.ValueExpression;
 
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 /**
  * Set the GridPanel navigation bar options
@@ -16,7 +14,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * 			
  * 		</xvw:gridNavBar>
  * </svw:gridPanel>
- * <!-- The code hiddens the button export to PDF -->
+ * <!-- The code hides the button export to PDF -->
  * </code>
  * 
  * @author jcarreira
@@ -24,15 +22,24 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class GridNavBar extends ToolBar {
 
+    /**
+     * Whether or not the full text search box is rendered
+     */
     XUIViewStateBindProperty<Boolean> showFullTextSearch = 
     	new XUIViewStateBindProperty<Boolean>( "showFullTextSearch", this, "true", Boolean.class );
+    /**
+     * Whether or not the 'Export to Excel' button is rendered
+     */
     XUIViewStateBindProperty<Boolean> showExportToExcel = 
     	new XUIViewStateBindProperty<Boolean>( "showExportToExcel", this, "true", Boolean.class );
+    /**
+     * Whether or not the 'Export to PDF' button is rendered
+     */
     XUIViewStateBindProperty<Boolean> showExportToPDF = 
     	new XUIViewStateBindProperty<Boolean>( "showExportToPDF", this, "true", Boolean.class );
 
     /**
-     * Set if the user can perform a fulltextsearch in the Grid
+     * Set if the user can perform a full text search in the Grid
      * @param showFullTextSearch true/false or a {@link ValueExpression}
      */
     public void setShowFullTextSearch( String showFullTextSearch) {

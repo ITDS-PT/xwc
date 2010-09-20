@@ -21,6 +21,8 @@ import javax.faces.event.ActionListener;
 import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.xwc.components.annotations.Required;
+import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
@@ -52,6 +54,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * 
+ * A GridPanel is a XVW component that's used to display (in a tabular form) 
+ * a list of items (provided by a data source). 
+ * 
+ * It provides built-in mechanisms to sort, group the data, etc. 
+ * 
+ * The items in a GridPanel are paginated by default (50 items per page)
+ * Items in the table can be selected and clicked which can in turn trigger specific
+ * actions (such as opening a new window when double clicking a given row in the table)
+ * 
+ * @author PedroRio
+ *
+ */
 public class GridPanel extends ViewerInputSecurityBase {
 
 	private String childViewers;
@@ -60,6 +76,11 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public static final String SELECTION_MULTI_ROW = "MULTI_ROW";
 	public static final String SELECTION_CELL = "CELL";
 
+	/**
+	 * The list of items for the GridPanel (must be an implementation
+	 * of the {@link DataListConnector} interface
+	 */
+	@Required
 	private XUIBindProperty<DataListConnector> dataSource = new XUIBindProperty<DataListConnector>(
 			"dataSource", this, DataListConnector.class);
 
@@ -69,36 +90,85 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIMethodBindProperty advancedFilterViewer = new XUIMethodBindProperty(
 			"advancedFilter", this, "#{viewBean.adavancedFilter}");
 
+	/**
+	 * Determines how a user can select the rows in the grid panel. 
+	 * Default (ROW) allows the user to select a single row; 
+	 * (MULTI_ROW) allows the user to select multiple row and 
+	 * CELL disables row selection. 
+	 * 
+	 * Users select multiple lines with the <i>Ctrl</i> button
+	 */
+	@Values({"ROW","MULTIROW","CELL"})
 	public XUIViewStateBindProperty<String> rowSelectionMode = new XUIViewStateBindProperty<String>(
 			"rowSelectionMode", this, String.class);
     
+	/**
+	 * The message to show when the component is waiting for a server action
+	 * 
+	 */
+	@Values({"NONE","DIALOG","STATUS_MESSAGE"})
 	public XUIBindProperty<String> 	serverActionWaitMode = 
     	new XUIBindProperty<String>( "serverActionWaitMode", this ,String.class );
     
+	/**
+	 * Binds the data of the GridPanel to an attribute of an object
+	 * The attribute must be of type AttributeObjectCollection
+	 */
 	private XUIStateBindProperty<String> objectAttribute = new XUIStateBindProperty<String>(
 			"objectAttribute", this, String.class);
 
+	/**
+	 * The name of the column used to uniquely identity each row, 
+	 * by default its the BOUI of a {@link boObject}
+	 */
 	private XUIStateProperty<String> rowUniqueIdentifier = new XUIStateProperty<String>(
 			"rowUniqueIdentifier", this, "BOUI");
 
+	/**
+	 * The column that will auto expand to fill available space
+	 */
 	private XUIViewStateProperty<String> autoExpandColumn = new XUIViewStateProperty<String>(
 			"autoExpandColumn", this);
 
+	/**
+	 * Forces the columns to fit the current available
+	 *  space in the viewer where the GridPanel is defined	
+	 */
 	private XUIViewProperty<Boolean> forceColumnsFitWidth = new XUIViewProperty<Boolean>(
 			"forceColumnsFitWidth", this, true);
 
+	/**
+	 * The number of items that are listed per page 
+	 * (next items are shown in a different page)
+	 */
 	private XUIViewStateProperty<String> pageSize = new XUIViewStateProperty<String>(
 			"pageSize", this, "50");
 
+	/**
+	 * The target for the action invoked when a row is double clicked
+	 */
+	@Values({"blank","window","tab","download","self","top"})
 	private XUIViewProperty<String> rowDblClickTarget = new XUIViewProperty<String>(
 			"rowDblClickTarget", this, "tab");
 
+	/**
+	 * The target for the action invoked when a row is clicked
+	 */
+	@Values({"blank","window","tab","download","self","top"})
 	private XUIViewProperty<String> rowClickTarget = new XUIViewProperty<String>(
 			"rowClickTarget", this, "");
 
+	/**
+	 * The currently selected row in the GridPanel
+	 */
 	private XUIBaseProperty<String> sActiveRow = new XUIBaseProperty<String>(
 			"sActiveRow", this, null );;
 
+	/**
+	 * A JSON Object with the current filters for the columns, not to be set directly
+	 * 
+	 * 
+	 */
 	private XUIBaseProperty<String> currentFilters = new XUIBaseProperty<String>(
 			"currentFilters", this);
 
@@ -113,56 +183,119 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIBaseProperty<String> region = new XUIBaseProperty<String>(
 			"region", this);
 
+	/**
+	 * Defines the title of the GridPanel
+	 */
 	private XUIViewBindProperty<String> title = new XUIViewBindProperty<String>(
 			"title", this, String.class );
 
+	/**
+	 * Allows to manually define the height of the GridPanel
+	 */
 	private XUIViewProperty<String> height = new XUIViewProperty<String>(
 			"height", this, "250");
 
+	/**
+	 * Allows the GridPanel to resize to the space required to show all the data.
+	 */
 	private XUIViewProperty<Boolean> autoHeight = new XUIViewProperty<Boolean>(
 			"autoHeight", this, false);
 
+	/**
+	 * The minimum height of the panel
+	 */
 	private XUIViewProperty<Integer> minHeight = new XUIViewProperty<Integer>(
 			"minHeight", this, 60);
 
+	/**
+	 * Groups the results by a given column (must be the name of a given colum
+	 * in the GridPanel, see the {@link ColumnAttribute} component
+	 */
 	private XUIViewStateBindProperty<String> groupBy = new XUIViewStateBindProperty<String>(
 			"groupBy", this, String.class);
 
+	/**
+	 * Applies a CSS class to each row of the panel
+	 */
 	private XUIBindProperty<GridRowRenderClass> rowClass = new XUIBindProperty<GridRowRenderClass>(
 			"rowClass", this, GridRowRenderClass.class);
 
+	/**
+	 * Whether or not the results in this GridPanel 
+	 * can be grouped (only single column groups can be made at this point)
+	 */
 	private XUIViewBindProperty<Boolean> enableGroupBy = new XUIViewBindProperty<Boolean>(
 			"enableGroupBy", this, false, Boolean.class);
 
+	/**
+	 * Whether or not columns can be sorted
+	 */
 	private XUIViewBindProperty<Boolean> enableColumnSort = new XUIViewBindProperty<Boolean>(
 			"enableColumnSort", this, true, Boolean.class);
 
+	/**
+	 * FIXME: Does not work
+	 */
 	private XUIViewBindProperty<Boolean> enableColumnFilter = new XUIViewBindProperty<Boolean>(
 			"enableColumnFilter", this, true, Boolean.class);
 
+	/**
+	 * Whether or not the user can hide Columns in the GridPanel
+	 */
 	private XUIViewBindProperty<Boolean> enableColumnHide = new XUIViewBindProperty<Boolean>(
 			"enableColumnHide", this, true, Boolean.class);
 
+	/**
+	 * 
+	 * Whether or not the user can re-order columns in the GridPanel
+	 * 
+	 */
 	private XUIViewBindProperty<Boolean> enableColumnMove = new XUIViewBindProperty<Boolean>(
 			"enableColumnMove", this, true, Boolean.class);
 
+	/**
+	 * Whether or not the columns may be resized by the user
+	 * 	
+	 */
 	private XUIViewBindProperty<Boolean> enableColumnResize = new XUIViewBindProperty<Boolean>(
 			"enableColumnResize", this, true, Boolean.class);
 
+	/**
+	 * Defines whether or not the header menu appears in the GridPanel. 
+	 * The Header Menu is situated on the top part of the GridPanel and it displays the title
+	 * of the panel.
+	 */
 	private XUIViewBindProperty<Boolean> enableHeaderMenu = new XUIViewBindProperty<Boolean>(
 			"enableHeaderMenu", this, true, Boolean.class);
 
+	/**
+	 * The current sort parameters, is used with a string in the form
+	 * 'NAME_OF_COLUM|ORDER'. To order by the 'name' column in ascending order
+	 * the value would be 'name|ASC' in descending order would be 'name|DESC'
+	 * 
+	 */
 	private XUIViewProperty<String> currentSortTerms = new XUIViewProperty<String>(
 			"currentSortTerms", this, null);
 
+	/**
+	 * Defines the method that's invoked 
+	 * when a row of the GridPanel is doubled clicked.
+	 */
 	private XUIMethodBindProperty	onRowDoubleClick 	= new XUIMethodBindProperty("onRowDoubleClick", this );
 	
+	/**
+	 * Defines the method that's invoked
+	 * and acts when a row of the GridPanel is clicked.
+	 */
 	private XUIMethodBindProperty	onRowClick 			= new XUIMethodBindProperty("onRowClick", this );
 
+	/**
+	 * Allows the definition of an action when a row is selected
+	 */
 	private XUIMethodBindProperty	onSelectionChange	= new XUIMethodBindProperty("onSelectionChange", this );
 	
 	private XUIBindProperty<Boolean> autoReloadData = new XUIBindProperty<Boolean>(
-			"autoReloadData", this, true,Boolean.class );
+			"autoReloadData", this, true, Boolean.class );
 	
 	private boolean forcedReloadData = false;
 	

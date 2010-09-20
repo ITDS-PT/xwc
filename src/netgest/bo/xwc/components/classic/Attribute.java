@@ -12,13 +12,12 @@ import java.io.IOException;
 import javax.faces.component.UIComponent;
 
 import netgest.bo.xwc.components.HTMLAttr;
+import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
-import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -35,7 +34,7 @@ import netgest.bo.xwc.framework.components.XUIMethodBindingValueChangeListener;
  * 		<xvw:attribute objectAttribute='att1' inputType='attributePassword'/>
  * 		<!-- In this case the attribute is forced to render as a password -->
  * 
- * 		<!-- To overwrite propreties from the {@link DataFieldConnector} the
+ * 		<!-- To overwrite properties from the {@link DataFieldConnector} the
  * 			objectAttribute property must be first attribute in the xml
  * 	 	-->
  * 		<-- Wrong Way -->
@@ -57,7 +56,14 @@ public class Attribute extends AttributeBase
     private AttributeLabel      oLabel = null;
     private AttributeBase       oInput = null;
 
+    /**
+     * Whether or not the label of this attribute should be rendered
+     */
     private XUIViewStateProperty<String> renderLabel = new XUIViewStateProperty<String>( "renderLabel", this, "1" );
+    /**
+     * The input type for the field
+     */
+    @Values({"attributeText","attributeBoolean","attributeNumber","attributeDate","attributeTime","attributeDateTime","attributeHtmlEditor","attributeLov"})
     private XUIViewStateBindProperty<String> inputType   = new XUIViewStateBindProperty<String>( "inputType", this,"", String.class );
 
 

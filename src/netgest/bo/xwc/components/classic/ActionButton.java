@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.el.ValueExpression;
 import javax.faces.el.MethodBinding;
 
+import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
@@ -23,32 +24,57 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 /**
- * This components represents a XUICommand in the form of a button
  * 
- * He cannot have children
- * 
- * @author jcarreira
- * @author PedroRio
+ * This components represents a XUICommand in the form of an HTML button
+ *  
+ * @author João Carreira
+ * @author Pedro Rio
  *
  */
-
 public class ActionButton extends XUICommand
 {
     
+    /**
+     * The width of the button (does not affect the button, currently)
+     */
     private XUIViewStateProperty<Integer>   width 	= new XUIViewStateProperty<Integer>( "width", this, 75 );
+    /**
+     * The label of the button
+     */
     private XUIViewStateProperty<String>    label 	= new XUIViewStateProperty<String>( "label", this, "#Button#" );
+    /**
+     * The action to be invoked server-side
+     */
     private XUIStateProperty<String>     	action 	= new XUIStateProperty<String>( "action", this );
 
     /**
-     * Image to put inside the button
+     * An icon to place with the button
      */
     private XUIViewStateProperty<String>	image = new XUIViewStateProperty<String>( "image", this, null );
     
+    /**
+     * The target where the action will be executed
+     */
+    @Values({ "blank","window","self","top","download","tab" })
     private XUIStateProperty<String> 		target 	= new XUIStateProperty<String>( "target", this );
 
+    /**
+     * Whether or not the button is disabled (can't be clicked)
+     */
     private XUIViewStateBindProperty<Boolean> 	disabled = new XUIViewStateBindProperty<Boolean>( "disabled", this, "false",Boolean.class );
+    /**
+     * Whether or not the button is visible
+     */
     private XUIViewStateBindProperty<Boolean> 	visible  = new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
     
+    /**
+     * Defines the "waiting" message type while the request is processing
+     * 
+     * 1 Corresponds to {@link XVWScripts#WAIT_DIALOG}
+     * 2 Corresponds to {@link XVWScripts#WAIT_STATUS_MESSAGE}
+     * 
+     */
+    @Values({ "1","2" })
     private XUIViewProperty<Integer>		waitMode = new XUIViewProperty<Integer>( "waitMode" , this, XVWScripts.WAIT_DIALOG );		
     
     

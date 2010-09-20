@@ -20,15 +20,37 @@ import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 
+/**
+ * 
+ * The {@link ToolBar} component menu tool bar inside a viewer. 
+ * The purpose of this component is to organize buttons (that invoke actions)
+ * in groups have have them placed in the same area.
+ * 
+ * To place entries (buttons) in the Toolbar, {@link Menu} components should be used
+ * Example:
+ * 
+ * <xvw:toolBar>
+ *  <xvw:menu text='Button1'/>
+ *  <xvw:menu text='Button2'/>
+ *</xvw:toolBar>	
+ * 
+ * @author João Carreira
+ *
+ */
 public class ToolBar extends ViewerSecurityBase {
 
 	
+    /**
+     * Whether or not the tool bar is disabled (buttons can't be clicked)	
+     */
     private XUIViewStateBindProperty<Boolean> disabled = new XUIViewStateBindProperty<Boolean>( "disabled", this, "false" ,Boolean.class );
+    /**
+     * Whether or not the tool bar is visible	
+     */
     private XUIViewStateBindProperty<Boolean> visible  = new XUIViewStateBindProperty<Boolean>( "visible", this, "true" ,Boolean.class );
 	
     public void setDisabled(String disabled) {

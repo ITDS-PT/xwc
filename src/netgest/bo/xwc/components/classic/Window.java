@@ -20,24 +20,48 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 
+/**
+ * 
+ * A {@link Window} is a component that's used to open a view in a separate window.
+ * 
+ * @author João Carreira
+ *
+ */
 public class Window extends XUIComponentBase {
     
     
+    /**
+     * The width of the window
+     */
     public XUIViewProperty<Integer> width = new XUIViewProperty<Integer>( "width", this, 500 );
+    /**
+     * The height of the the window
+     */
     public XUIViewProperty<Integer> height = new XUIViewProperty<Integer>( "height", this, 300 );
     
     public String animateTarget = null;
     
+    /**
+     * The display name of the Window
+     */
     public XUIViewStateProperty<String> title = new XUIViewStateProperty<String>( "title", this, "" );
+    /**
+     * The action that is executed when the window closes
+     */
     public XUIMethodBindProperty onclose = new XUIMethodBindProperty( "onclose", this );
+    /**
+     * The action that is executed before the window closes	
+     */
     public XUIMethodBindProperty onbeforeclose = new XUIMethodBindProperty( "onbeforeclose", this, "#{viewBean.canCloseTab}" );
+    /**
+     * Whether or not the ExtJS renderer should be used
+     */
     public XUIBaseProperty<Boolean> useExtJsRenderer = 
     	new XUIBaseProperty<Boolean>( "useExtJsRenderer", this, Boolean.TRUE );
 

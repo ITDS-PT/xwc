@@ -19,19 +19,49 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.xeo.components.FormEdit;
 
 /**
- * This component render's alert boxes and messages in client brwoser, and controls the save state of of viewer.~
+ * This component render's alert boxes and messages in client browser, 
+ * and controls the save state of of viewer.~
  * 
- * He also invokes some special bean properties to handle the alert box, data was not saved!
+ * Also invokes some special bean properties to handle the alert box, data was not saved!
+ * 
+ * Declaration in the Viewer as Follows (Note, the {@link FormEdit} component already includes the
+ * {@link ErrorMessages} component by default:
+ * 
+ * <code>
+ * 	<xvw:errorMessages/>
+ * </code>
+ * 
+ * In a Bean Method:
+ * <code>XUIRequestContext.getCurrentContext().addMessage(STRING_CLIENT_ID,
+ *
+ *               new XUIMessage(INT_MESSAGE_TYPE, INT_MESSAGE_SEVERITY, 
+ *
+ *     STRING_MESSAGE_TITLE, STRING_MESSAGE_BODY));
+ *     </code>
+ *
+ *  INT_MESSAGE_TYPE = 
+ *  	{@link XUIMessage#TYPE_ALERT} or
+ *   	{@link XUIMessage#TYPE_MESSAGE} or 
+ *   	{@link XUIMessage#TYPE_POPUP_MESSAGE}
+ *   
+ *  INT_MESSAGE_SEVERITY = 
+ *  	{@link XUIMessage#SEVERITY_CRITICAL} or  
+ * 		{@link XUIMessage#SEVERITY_ERROR} 
+ * 		{@link XUIMessage#SEVERITY_INFO} 
+ * 		{@link XUIMessage#SEVERITY_WARNING} 
  * 
  * @author jcarreira
  *
  */
 public class ErrorMessages extends XUIComponentBase {
     
-    // Property to save if last request where messages writen in the request before this.
-    // This is to trigger a render of the component to clear messages. Needed for Ajax.
+    /**
+     * Property to save if last request where messages writen in the request before this.
+     * This is to trigger a render of the component to clear messages. Needed for Ajax.
+     */
     private XUIStateProperty<Boolean> lastRequestWasChanged = 
     	new XUIStateProperty<Boolean>( "lastRequestWasChanged", this, false );
     

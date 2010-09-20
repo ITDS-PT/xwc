@@ -6,15 +6,30 @@ import javax.faces.context.ResponseWriter;
 
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
+import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
-import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
-import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
+/**
+ * 
+ * The {@link Section} component is used to create sections 
+ * (HTML fieldset) inside a viewer.
+ * 
+ * 
+ * @author João Carreira
+ *
+ */
 public class Section extends ViewerSecurityBase {
 	
+    /**
+     * The label to display in the section
+     */
     public XUIViewStateBindProperty<String> label = new XUIViewStateBindProperty<String>( "label", this, String.class );
+    
+    /**
+     * Whether or not the section is visible
+     */
     public XUIViewStateBindProperty<Boolean> visible = new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
 
     public void setLabel(String label)

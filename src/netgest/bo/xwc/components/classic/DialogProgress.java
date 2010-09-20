@@ -20,6 +20,7 @@ import netgest.bo.xwc.framework.properties.XUIProperty;
 
 /**
  * A dialog progress component
+ * 
  * @author jcarreira
  *
  */

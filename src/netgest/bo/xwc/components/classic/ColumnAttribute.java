@@ -1,50 +1,138 @@
 package netgest.bo.xwc.components.classic;
 
 import java.io.CharArrayWriter;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import javax.el.ValueExpression;
 
-import org.json.JSONObject;
-
+import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.xeo.components.Bridge;
+import netgest.bo.xwc.xeo.components.List;
+import netgest.bo.xwc.xeo.components.LookupList;
+
+import org.json.JSONObject;
+
 /**
  * This component represents a Column in a Grid panel
- * It must reside inside of a Columns element in the viewer
+ * It must reside inside of a Columns element in the viewer and allows to customize
+ * how columns are rendered
  * 
  * @author jcarreira
  *
  */
 public class ColumnAttribute extends XUIComponentBase implements Column {
 	
-    private XUIBaseProperty<String>         	dataField   	= new XUIBaseProperty<String>( "dataField", this );
-    private XUIBaseProperty<String>         	sqlExpression  	= new XUIBaseProperty<String>( "sqlExpression", this );
-    
-    private XUIViewStateBindProperty<String>    	label       = new XUIViewStateBindProperty<String>( "label", this, String.class );
-    private XUIViewProperty<String>    			width       = new XUIViewProperty<String>( "width", this );
-	private XUIViewProperty<Boolean>    		searchable  = new XUIViewProperty<Boolean>( "searchable", this, true );
-    private XUIViewProperty<Boolean>    		sortable    = new XUIViewProperty<Boolean>( "sortable", this, true );
-    private XUIViewProperty<Boolean>    		groupable	= new XUIViewProperty<Boolean>( "groupable", this, true );
-	private XUIViewProperty<Boolean>    		hideable 	= new XUIViewProperty<Boolean>( "hideable", this, true );
-    private XUIViewProperty<Boolean>    		hidden  	= new XUIViewProperty<Boolean>( "hidden", this, false );
-	private XUIViewProperty<Boolean>    		resizable   = new XUIViewProperty<Boolean>( "resizable", this, true );
+    /**
+     * Name of the column of the DataListConnector / boObjectList from the parent {@link GridPanel}, 
+     * {@link List} ,{@link Bridge} or  {@link LookupList} component. 
+     * Can also be used as alias to SQL columns
+     */
+	@Required
+    private XUIBaseProperty<String>         	dataField   	= 
+    	new XUIBaseProperty<String>( "dataField", this );
+    /**
+     * SQL query to execute to retrieve the values of this column
+     */
+    private XUIBaseProperty<String>         	sqlExpression  	= 
+    	new XUIBaseProperty<String>( "sqlExpression", this );
+    /**
+     * The label to show in the table header column
+     */
+    private XUIViewStateBindProperty<String>    	label       = 
+    	new XUIViewStateBindProperty<String>( "label", this, String.class );
+    /**
+     * The width of this column (in pixels)
+     */
+    private XUIViewProperty<String>    			width       = 
+    	new XUIViewProperty<String>( "width", this );
+	/**
+	 * If the results of the grid panel can be searched by this column
+	 * 
+	 */
+	private XUIViewProperty<Boolean>    		searchable  = 
+		new XUIViewProperty<Boolean>( "searchable", this, true );
+    /**
+     * If the rows of the panel can be sorted by this column (only has effect if the
+     * {@link GridPanel#getEnableColumnSort()} method returns <code>True</code> )
+     */
+    private XUIViewProperty<Boolean>    		sortable    = 
+    	new XUIViewProperty<Boolean>( "sortable", this, true );
+    /**
+     * If the results can be grouped by this column (only has effect if the
+     * {@link GridPanel#getEnableGroupBy()} method returns <code>True</code> )
+     */
+    private XUIViewProperty<Boolean>    		groupable	= 
+    	new XUIViewProperty<Boolean>( "groupable", this, true );
+	/**
+	 * If this column can be hidden (by the user)
+	 */
+	private XUIViewProperty<Boolean>    		hideable 	= 
+		new XUIViewProperty<Boolean>( "hideable", this, true );
+    /**
+     * If the column is hidden or not by default
+     */
+    private XUIViewProperty<Boolean>    		hidden  	= 
+    	new XUIViewProperty<Boolean>( "hidden", this, false );
+	/**
+	 * If the column size (width) can be changed by the user (only has effect if the
+     * {@link GridPanel#getEnableColumnResize()} method returns <code>True</code> )
+	 */
+	private XUIViewProperty<Boolean>    		resizable   = 
+		new XUIViewProperty<Boolean>( "resizable", this, true );
 	
-	private XUIViewProperty<Boolean>    		contentHtml   	= new XUIViewProperty<Boolean>( "contentHtml", this, false );
-	private XUIBaseProperty<String>    			renderTemplate 	= new XUIBaseProperty<String>( "renderTemplate", this, null );
+	/**
+	 * Marks the content of the column as HTML, this is used when 
+	 * exporting the column values to another format (excel, pdf) 
+	 * and it marks that the content is HTML (or not) and 
+	 * will be converted to final format knowing this.
+	 */
+	private XUIViewProperty<Boolean>    		contentHtml   	= 
+		new XUIViewProperty<Boolean>( "contentHtml", this, false );
+	/**
+	 * Render template, or JSON object with several render 
+	 * templates according to the value for this column.
+	 * 
+	 * To render the value of the column in the template use "%s" (see example) 
+	 * 
+	 * Example (Single Render Template - Renders the column value in red and bold)
+	 * 
+	 * renderTemplate="&lt;div style=\'color:red;font-weight:bold\'>%s&lt;/div>"
+	 * 
+	 * Example (Multiple Render Templates, according to value)
+	 * 
+	 * renderTemplate="
+     *       {
+     *          'SYSUSER': '&lt;div style=\'color:red;font-weight:bold\'>%s&lt;/div>',
+     *          '':'Null',
+     *          'default': 'Other'
+     *       }
+     *    "
+	 * 
+	 */
+	private XUIBaseProperty<String>    			renderTemplate 	= 
+		new XUIBaseProperty<String>( "renderTemplate", this, null );
 
-    private XUIViewBindProperty<String>             lookupViewer= new XUIViewBindProperty<String>( "lookupViewer", this, String.class );
+    /**
+     * Force the lookup viewer name when searching by this column.
+     */
+    private XUIViewBindProperty<String>             lookupViewer=
+    	new XUIViewBindProperty<String>( "lookupViewer", this, String.class );
 
-    private XUIBindProperty<GridColumnRenderer> renderer    = new XUIBindProperty<GridColumnRenderer>( "renderer", this, GridColumnRenderer.class );
+    /**
+     * An implementation of the {@link GridColumnRenderer} 
+     * interface which allows the column attribute to rendered in a custom way
+     */
+    private XUIBindProperty<GridColumnRenderer> renderer    = 
+    	new XUIBindProperty<GridColumnRenderer>( "renderer", this, GridColumnRenderer.class );
 
     
     public void setSqlExpression( String sqlexpressionEl ) {
@@ -183,6 +271,7 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 
 	/**
 	 * Force the lookup viewer name when searching by this column
+	 * 
 	 * @param lookupViewerExpr Name of the viewer to open when choosing values for this column
 	 */
     public void setLookupViewer( String lookupViewerExpr ) {

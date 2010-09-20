@@ -5,13 +5,26 @@ import java.io.IOException;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIStateProperty;
-import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIOutput;
 
+/**
+ * 
+ * The {@link Title} component enables 
+ * the user to set the title of the viewer
+ * 
+ * @author João Carreira
+ *
+ */
 public class Title extends XUIOutput {
 
+    /**
+     * Evaluates the name that the title of the viewer is going to have
+     */
     private XUIStateProperty<String> valueExpression = new XUIStateProperty<String>( "valueExpression", this );
+    /**
+     * Stores the rendered value of the title
+     */
     private XUIStateProperty<Object> renderedValue  = new XUIStateProperty<Object>( "renderedValue", this );
 
     @Override

@@ -12,6 +12,7 @@ import javax.faces.component.UIComponent;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.localization.ComponentMessages;
@@ -25,9 +26,9 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIInput;
 
 /**
- * <p>Component to generating different styles of message boxes.</p>
+ * <p>Component to generate different styles of message boxes.</p>
  * 
- * 
+ 
  * <p>Example of usages</p>
  * 
  * <p>Declaration in a viewer using predefined buttons</p><pre>
@@ -44,7 +45,7 @@ import netgest.bo.xwc.framework.components.XUIInput;
  * <p>Declaration in a viewer using custom buttons</p><pre>
  *         	
  *         &lt;xvw:messageBox 
- *       			id='myMessageBox' 
+ *       			id='myMessageBoxId' 
  *       			messageBoxType='WARNING'
  *       			title='Message Box Title' 
  *       			defaultConfirmButton='btn1'
@@ -64,7 +65,7 @@ import netgest.bo.xwc.framework.components.XUIInput;
  * 		...
  * 		...
  * 		public void someMehtod() {
- * 			Dialogs.showDialog( getViewRoot(), "myMessageBox" );	
+ * 			Dialogs.showDialog( getViewRoot(), "formId:myMessageBoxId" );	
  * 		}
  * </pre>
  *  
@@ -132,11 +133,17 @@ public class MessageBox extends XUIInput {
 	/** The YESNOCANCEL. */
 	private final List<Menu> YESNOCANCEL = new ArrayList<Menu>(3);
 	
-	/** The title. */
+	
+	/**
+	 * The title of the message box
+	 */
 	private XUIBindProperty<String> title 
 		= new XUIBindProperty<String>("title", this, "Title!", String.class );
 
-	/** The message. */
+	
+	/**
+	 * The content of the message box
+	 */
 	private XUIBindProperty<String> message 
 		= new XUIBindProperty<String>("message", this, "Message!", String.class );
 
@@ -144,31 +151,69 @@ public class MessageBox extends XUIInput {
 //	private XUIBaseProperty<Boolean> promptMultiLine 
 //		= new XUIBaseProperty<Boolean>("promptMultiLine", this, false );
 	
-	/** The min width. */
+	
+	/**
+	 * The minimum width of the {@link MessageBox}
+	 */
 	private XUIBaseProperty<Integer> minWidth 
 		= new XUIBaseProperty<Integer>("minWidth", this, 100 );
 	
-	/** The max width. */
+	/**
+	 * The maximum width of the {@link MessageBox}
+	 */
 	private XUIBaseProperty<Integer> maxWidth 
 		= new XUIBaseProperty<Integer>("maxWidth", this, 600 );
 
-	/** The buttons. */
+	
+	/**
+	 * The set of buttons to display in the {@link MessageBox}, must be one from
+	 * {@link MessageBox.MessageBoxButtons}
+	 */
+	@Values({"YES","OK","OKCANCEL","YESNO","YESNOCANCEL"})
 	private XUIBaseProperty<String> buttons 
 		= new XUIBaseProperty<String>("buttons", this, MessageBoxButtons.OK.name() );
 
-	/** The actions. */
+	
+	/**
+	 * 
+	 * The set of actions binded to the buttons. If the component has two buttons, it must provide
+	 * two actions (meaning, the number of actions must match the number of components)
+	 * 
+	 * To fill this property a JSON Array must be specified, featuring the same number
+	 * of positions as the number of buttons for the components
+	 * 
+	 * Eg. If the button used is OKCANCEL a two position array should be provided, the first
+	 * position with the action for the OK button and the other with the action for the "CANCEL"
+	 * button, as seen bellow
+	 * 
+	 * actions="['#{viewBean.myOkAction}','#{viewBean.myCancelAction}']"
+	 * 
+	 */
 	private XUIBaseProperty<String> actions 
 		= new XUIBaseProperty<String>("actions", this );
 
-	/** The message box type. */
+	
+	/**
+	 * The icon to be shown in the MessageBox, the types of icon 
+	 * are declared in the {@link MessageBox.MessageBoxType} enumeration
+	 */
+	@Values({"ERROR","INFO","QUESTION","WARNING"})
 	private XUIBaseProperty<MessageBoxType> messageBoxType 
 		= new XUIBaseProperty<MessageBoxType>("messageBoxType", this, MessageBoxType.INFO );
 	
-	/** The default confirm button. */
+	
+	/**
+	 * The identifier of the button that'll be invoked when the user presses
+	 * the ENTER key
+	 */
 	private XUIBaseProperty<String>	defaultConfirmButton 
 		= new XUIBaseProperty<String>( "defaultConfirmButton", this );
 	
-	/** The default cancel button. */
+	
+	/**
+	 * The identifier of the button that'll be invoked when the user presses the
+	 * ESC key
+	 */
 	private XUIBaseProperty<String>	defaultCancelButton 
 		= new XUIBaseProperty<String>( "defaultCancelButton", this );
 	

@@ -149,9 +149,6 @@ public class XUIApplicationContext {
         		XUIRendererDefinition oRenderDef = current.get(name);
         		sRenderClassName = oRenderDef.getClassName();
         		
-        		if ( name.contains("javax.faces.Input"))
-        			System.out.println("toDebug");
-        		
         		try
                 {
                     Class      oRenderClass     = null;

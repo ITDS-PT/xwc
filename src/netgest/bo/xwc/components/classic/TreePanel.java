@@ -27,14 +27,31 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
+
 /**
- * The Class TreePanel.
+ * 
+ * The {@link TreePanel} component enables the creation
+ * of tree-like structures to organizes menus (such as seen
+ * in a 'Main' viewer
+ * 
+ * @author João Carreira
+ * 
+ *
  */
 public class TreePanel extends XUIComponentBase {
 
+	/**
+	 * To create a tree panel with dynamic content.
+	 *	This property should return a {@link Menu} instance holding
+	 * the structure of the represent
+	 */
 	private XUIBindProperty<Menu> root = 
 		new XUIBindProperty<Menu>( "root", this,  Menu.class );
 	
+	/**
+	 * If the "root" property was defined, this property allows hiding the root
+	 * menu (adding only it's children) or the adding the complete {@link Menu}
+	 */
 	private XUIViewBindProperty<Boolean> hideRoot = 
 		new XUIViewBindProperty<Boolean>( "hideRoot", this,  Boolean.class );
 	
@@ -43,6 +60,7 @@ public class TreePanel extends XUIComponentBase {
 	
 	/**
 	 * The default tab to open when displaying the tree
+	 * Id of the Menu which will be invoked for the default tab
 	 */
 	private XUIViewBindProperty<String> defaultTab =
 		new XUIViewBindProperty<String>( "defaultTab", this,  String.class );
@@ -83,7 +101,7 @@ public class TreePanel extends XUIComponentBase {
 	
 	/**
 	 * If the property root was specified when true hide the root Menu.
-	 * EL Expression to a boolean propertu or a literal true or false
+	 * EL Expression to a boolean property or a literal true or false
 	 * 
 	 * @param elExpr the new hide root EL Expression
 	 */

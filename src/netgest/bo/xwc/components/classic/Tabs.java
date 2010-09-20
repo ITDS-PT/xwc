@@ -9,24 +9,49 @@ import javax.faces.context.ResponseWriter;
 
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
+/**
+ * 
+ * The {@link Tabs} component is a container for {@link Tab} elements which 
+ * render a "Tab" element inside a web viewer. Tabs can be used to 
+ * group information, to create divisions in a form and can 
+ * be used in creative ways, such as using a set of tabs inside a form
+ *	as a wizard, or tutorial.
+ * 
+ * @author João Carreira
+ *
+ */
 public class Tabs extends XUIComponentBase
 {
+    /**
+     * Sets the active tab inside the container
+     */
     public XUIViewStateProperty<String> activeTab = new XUIViewStateProperty<String>( "activeTab", this );
+    /**
+     * Sets the type of layout of the container, 
+     * can be adjusted to window, to parent and to the form
+     */
+    @Values({"fit-parent", "fit-window","form"})
     public XUIViewProperty<String> layout = new XUIViewProperty<String>( "layout", this, Layouts.LAYOUT_FIT_PARENT );
+    /**
+     * Height of the tabs component
+     */
     public XUIViewProperty<String> height = new XUIViewProperty<String>( "height", this, "150px" );
     
+    /**
+     * Determines where the tab bar (where tab labels are rendered)
+     *  is visible or not
+     */
     public XUIBindProperty<Boolean> renderTabBar = new XUIBindProperty<Boolean>( "renderTabBar", this, true, Boolean.class );
     
     

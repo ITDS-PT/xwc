@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
 
+import javax.el.ValueExpression;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -15,25 +16,63 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
-
+/**
+ * 
+ * The {@link AjaxText} component renders text in a viewer
+ * that's constantly updated (using Ajax)
+ * 
+ * @author Filipe Caló
+ *
+ */
 public class AjaxText extends XUIComponentBase {
 
+	/**
+	 * The text to render in the viewer (and update)
+	 */
 	private XUIBindProperty<String> text = 
 		new XUIBindProperty<String>("text", this, "", String.class );
 	
+	/**
+	 * The time between each update request (in mili-seconds)
+	 */
 	private XUIBindProperty<String> updateTime = 
 		new XUIBindProperty<String>("updateTime", this, "", String.class );
 	
+	/**
+	 * 
+	 * Sets the text to display
+	 * 
+	 * @param textExpr A literal text or a {@link ValueExpression}
+	 */
 	public void setText( String textExpr ) {
 		this.text.setExpressionText( textExpr );
 	}
+	
+	/**
+	 * 
+	 * Retrieves the text to display
+	 * 
+	 * @return The text to display
+	 */
 	public String getText() {
 		return this.text.getEvaluatedValue();
 	}
 	
+	/**
+	 * 
+	 * Sets the time between updates (in mili-seconds)
+	 * 
+	 * @param updateTimeExpr A literal value in mili-seconds or a {@link ValueExpression}
+	 */
 	public void setUpdateTime( String updateTimeExpr ) {
 		this.updateTime.setExpressionText( updateTimeExpr );
 	}
+	/**
+	 * 
+	 * Retrieves the update time
+	 * 
+	 * @return The time between each update (in miliseconds)
+	 */
 	public String getUpdateTime() {
 		return this.updateTime.getEvaluatedValue();
 	}

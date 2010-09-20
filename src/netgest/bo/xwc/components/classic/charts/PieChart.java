@@ -99,7 +99,7 @@ public class PieChart extends XUIComponentBase implements netgest.bo.xwc.compone
 	
 	
 	/**
-	 * Optional configurations for the 
+	 * Optional configurations for the Chart
 	 */
 	private XUIBindProperty<IPieChartConfiguration> configOptions = 
 		new XUIBindProperty<IPieChartConfiguration>("configOptions", this, IPieChartConfiguration.class);

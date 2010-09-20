@@ -1,7 +1,6 @@
 package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -9,16 +8,13 @@ import javax.faces.render.Renderer;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
-import netgest.bo.xwc.components.classic.extjs.ExtJsBaseRenderer;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewProperty;
-import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.properties.XUIComponent;
 
 public class AdvancedPanel extends XUIComponentBase {
 	

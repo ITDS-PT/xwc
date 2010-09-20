@@ -14,14 +14,23 @@ import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
 
+/**
+ * 
+ * The {@link HTMLFileBrowse} component renders a file upload dialog
+ * 
+ * @author João Carreira
+ *
+ */
 public class HTMLFileBrowse extends XUIInput {
 	
+	/**
+	 * The label to display in the Dialog
+	 */
 	XUIViewStateBindProperty<String> label = new XUIViewStateBindProperty<String>("label", this, String.class );
 	
 	private File	submitedFile = null;

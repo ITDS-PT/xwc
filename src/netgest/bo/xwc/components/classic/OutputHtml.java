@@ -9,15 +9,31 @@ import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
+/**
+ * 
+ * The {@link OutputHtml} components allow to directly output an HTML string
+ * from a Bean property to the Viewer
+ * 
+ * @author João Carreira
+ *
+ */
 public class OutputHtml extends ViewerOutputSecurityBase {
 
+    /**
+     * The HTML content to show
+     */
     private XUIStateProperty<String> valueExpression = new XUIStateProperty<String>( "valueExpression", this );
+    /**
+     * The value that was rendered in the viewer
+     */
     private XUIStateProperty<Object> renderedValue  = new XUIStateProperty<Object>( "renderedValue", this );
+    /**
+     * If the content of the component is visible or not
+     */
     private XUIViewStateBindProperty<Boolean> visible  = new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
 
     @Override

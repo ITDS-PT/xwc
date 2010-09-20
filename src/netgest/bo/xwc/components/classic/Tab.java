@@ -8,15 +8,26 @@ import javax.faces.event.ActionEvent;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
-import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
+/**
+ * 
+ * A {@link Tab} is a component that's used to create tabs inside a viewer.
+ * 
+ * @author João Carreira
+ *
+ */
 public class Tab extends ViewerCommandSecurityBase
 {
+    /**
+     * The display name of the tab
+     */
     protected XUIViewStateProperty<String> 		label 	= new XUIViewStateProperty<String>( "label", this );
+    /**
+     * Whether or not this tab is visible
+     */
     protected XUIViewStateBindProperty<Boolean> visible = new XUIViewStateBindProperty<Boolean>( "visible", this, "true", Boolean.class ); 	
     
     public void setLabel(String label)

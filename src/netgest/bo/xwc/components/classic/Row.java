@@ -12,6 +12,15 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
+/**
+ * 
+ * The xvw:row element creates a row (hence the name) inside a table (xvw:rows), 
+ * this component does not have any properties and 
+ * serves only to create a row that can be filled using xvw:cell components.
+ * 
+ * @author João Carreira
+ *
+ */
 public class Row extends XUIComponentBase
 {
 
