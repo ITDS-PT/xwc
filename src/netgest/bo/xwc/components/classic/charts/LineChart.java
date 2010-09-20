@@ -608,6 +608,26 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 					String attValues = component.getSqlAttValues();
 					EboContext context = boApplication.currentContext().getEboContext();
 					setMine = new SeriesDataSetSQL(context, sqlExpression, attColumn, attSeries, attValues);
+					
+					jofc2.model.elements.LineChart currChart =  new jofc2.model.elements.LineChart();
+					
+					Iterator<String> it = setMine.getSeriesKeys().iterator();
+					String currRow = (String) it.next();
+					currChart.setText(currRow);
+					Iterator<String> itRows = setMine.getColumnKeys().iterator();
+					while (itRows.hasNext())
+					{
+						String currColumn = (String) itRows.next();
+						if (!labelsUsed.contains(currColumn))
+						{
+							labelsUsed.add(currColumn);
+							xAx.addLabels(currColumn);
+						}
+						Number val = setMine.getValue(currRow,currColumn );
+						currChart.addDots(new Dot(val));
+					}
+					
+					elements.add(currChart);
 				}
 				else
 				{

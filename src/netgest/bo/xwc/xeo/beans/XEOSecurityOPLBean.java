@@ -762,11 +762,16 @@ public class XEOSecurityOPLBean extends XEOEditBean
 			public String render(GridPanel grid, DataRecordConnector record,
 					DataFieldConnector field) {
 				//Get the value of the current object
-				Long val = Long.valueOf(field.getValue().toString());
-				if (val == 0)
-					return BeansMessages.OPL_DESIGN_TIME_PERMISSION.toString();
-				else
-					return BeansMessages.OPL_RUNTIME_PERMISSION.toString();
+				Object value = null;
+				value = field.getValue();
+				if (value != null){
+					Long val = Long.valueOf(field.getValue().toString());
+					if (val == 0)
+						return BeansMessages.OPL_DESIGN_TIME_PERMISSION.toString();
+					else
+						return BeansMessages.OPL_RUNTIME_PERMISSION.toString();
+				}
+				return "";
 				
 			}
 		};

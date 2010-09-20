@@ -680,7 +680,8 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 						colorCounter++;
 						
 						//Set the tooltip per Chart (equal for every one)
-						if (chartConfigurations.getTooltipString() != null)
+						
+						if (chartConfigurations != null && chartConfigurations.getTooltipString() != null)
 						{
 							String expression = chartConfigurations.getTooltipString();
 							expression = expression.replace("$val", "#val#");
