@@ -11,11 +11,30 @@ import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
+/**
+ * 
+ * This components represents a XUICommand in the form of an HTML button
+ * 
+ * @author João Carreira
+ *
+ */
 public class ButtonHtml extends XUICommand {
 	
+	/**
+	 * HTML "style" property, to have CSS properties declared directly in the element
+	 */
 	private XUIBaseProperty<String>  style 		= new XUIBaseProperty<String>("style",this);
+	/**
+	 * The name of a CSS class to apply to the button
+	 */
 	private XUIBaseProperty<String>  className 	= new XUIBaseProperty<String>("className",this);
+    /**
+     * The action to execute server-side
+     */
     private XUIStateProperty<String> action 	= new XUIStateProperty<String>( "action", this );
+    /**
+     * The label of the button
+     */
     private XUIStateProperty<String> label 		= new XUIStateProperty<String>( "label", this, "#Button#" );
 
     public void setAction( String sExpr ) {
@@ -55,7 +74,6 @@ public class ButtonHtml extends XUICommand {
 
 		@Override
 		public void encodeEnd(XUIComponentBase component) throws IOException {
-			// TODO Auto-generated method stub
 			ButtonHtml inputComp = (ButtonHtml)component;
 			
 			XUIResponseWriter w = getResponseWriter();

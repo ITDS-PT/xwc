@@ -27,41 +27,76 @@ import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
 
+/**
+ * 
+ * 
+ * A Form component to edit a single XEO Object
+ * 
+ * @author João Carreira
+ *
+ */
 public class FormEdit extends Form {
 
+	/**
+	 * The target XEO object {@link boObject} that's associated to the edit form
+	 *  
+	 */
 	private XUIViewBindProperty<boObject> targetObject = 
 		new XUIViewBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
 	
+	/**
+	 * Whether or not the default {@link EditToolBar} is rendered
+	 */
 	private XUIViewBindProperty<Boolean> renderToolBar = 
 		new XUIViewBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
 
-	/** The render viewer title. */
+	
+	/**
+	 * Whether or not the title of the viewer should be rendered
+	 */
 	private XUIViewBindProperty<Boolean>  renderViewerTitle = 
 		new XUIViewBindProperty<Boolean>("renderViewerTitle", this, true, Boolean.class);
 
-	/** The render viewer messages. */
+	/**
+	 * Whether or not viewer messages (XUIMessage) are rendered in the form
+	 */
 	private XUIViewBindProperty<Boolean>  renderViewerMessages = 
 		new XUIViewBindProperty<Boolean>("renderViewerMessages", this, true, Boolean.class);
 
-	/** The render window. */
+	
 	private XUIBindProperty<Boolean>  renderWindow = 
 		new XUIBindProperty<Boolean>("renderWindow", this, true, Boolean.class);
 	
-	/** The window height. */
+
+	
+	/**
+	 *The height of the window in which the form should be rendered 
+	 *(if it's to be rendered in a separate window and not in a tab) 
+	 */
 	private XUIViewBindProperty<Integer> windowHeight = 
 		new XUIViewBindProperty<Integer>("windowHeight", this, 400, Integer.class);
 
-	/** The window width. */
+	/**
+	 * 
+	 *	The width of the window in which the form should be rendered 
+	 *	(if it's to be rendered in a separate window and not in a tab)
+	 */
 	private XUIViewBindProperty<Integer> windowWidth = 
 		new XUIViewBindProperty<Integer>("windowWidth", this, 600, Integer.class);
 	
 	/**
-	 * If the show differences button should appear in the dialog 
-	 * that appears if the  close tab button is pressed and the object was changed
+	 * Whether or not the "Show Differences" button should be shown when a user 
+	 * tries to close a tab with an unsaved object, that button allows the user
+	 *  to see the differences between the saved object and the current state 
+	 *  of the object in the form
 	 */
 	private XUIBindProperty<Boolean> showDifferences = 
 		new XUIBindProperty<Boolean>("showDifferences", this, false, Boolean.class);
 
+	/**
+	 * Whether or not the object associated to
+	 *  this form should be edited in orphan mode.
+	 */
 	private XUIBindProperty<Boolean> orphanMode = 
 		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class, "#{viewBean.editInOrphanMode}" );
 

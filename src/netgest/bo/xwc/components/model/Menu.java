@@ -5,11 +5,11 @@ import java.util.List;
 
 import javax.el.ValueExpression;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
+import netgest.bo.xwc.components.annotations.Values;
+import netgest.bo.xwc.components.classic.ToolBar;
+import netgest.bo.xwc.components.classic.TreePanel;
 import netgest.bo.xwc.components.classic.ViewerCommandSecurityBase;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.security.SecurableComponent;
@@ -21,29 +21,117 @@ import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.xeo.beans.ViewerConfig;
+import netgest.bo.xwc.xeo.components.BridgeToolBar;
+import netgest.bo.xwc.xeo.components.EditToolBar;
+import netgest.bo.xwc.xeo.components.ListToolBar;
+import netgest.bo.xwc.xeo.components.LookupListToolBar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+/**
+ * 
+ * The {@link Menu} component is a multi-purpose component to create entries (buttons)
+ * in a {@link ToolBar} or {@link TreePanel} that invoke server-side actions.
+ * 
+ * Menus can be grouped inside menus to create hierarchies/groups
+ * 
+ * 
+ * Menus can also be used in components like the {@link EditToolBar}, {@link ListToolBar},
+ * {@link BridgeToolBar} or {@link LookupListToolBar}
+ * 
+ * Eg: Single Menu (In ToolBar)
+ * 
+ * <xvw:toolBar>
+ *        <xvw:menu text="Export" toolTip="Export the form to HTML">
+ *        </xvw:menu>
+ *	</xvw:toolBar>
+ *  Eg: Nested Menu
+ *  
+ *  <xvw:menu text='XEO Models' expanded='true'>
+ *    <xvw:menu
+ *       icon='resources/Ebo_Package/ico16.gif'
+ *       text='Packages' 
+ *       value="{viewerName:'Ebo_Package_list.xvw', boql:'select Ebo_Package where deployed=\'1\''}" 
+ *       target='Tab' 
+ *       serverAction="#{viewBean.listObject}" 
+ *     />
+ * </xvw:menu>
+ * 
+ * @author João Carreira
+ *
+ */
 public class Menu extends ViewerCommandSecurityBase {
     
 	
+    /**
+     * The text to be shown as label of the menu
+     */
     public XUIViewStateProperty<String> text 	= new XUIViewStateProperty<String>( "text", this );
+    /**
+     * The text to be presented as a tool tip (when mouse is over the menu)
+     */
     public XUIViewStateProperty<String> toolTip = new XUIViewStateProperty<String>( "toolTip", this );
+    /**
+     * CSS class to apply to the icon(requires that the icon property is used)
+     */
     public XUIViewStateProperty<String> iconCls = new XUIViewStateProperty<String>( "iconCls", this );
+    /**
+     * Icon to display next to the label (path to the icon)
+     */
     public XUIViewStateProperty<String> icon 	= new XUIViewStateProperty<String>( "icon", this );
+    /**
+     * Which action to execute in the server
+     */
     public XUIStateProperty<String> serverAction = new XUIStateProperty<String>( "serverAction", this );
+    
     public XUIBindProperty<String> 	serverActionWaitMode = 
     	new XUIBindProperty<String>( "serverActionWaitMode", this ,String.class );
     
+    /**
+     * Target in which the action will be executed
+     * (default value is 'self')
+     */
+    @Values({"blank","window","tab","download","self","top"})
     public XUIStateProperty<String> target = new XUIStateProperty<String>( "target", this );
 
+    /**
+     * Whether or not the menu is disabled
+     */
     private XUIViewStateBindProperty<Boolean> disabled = new XUIViewStateBindProperty<Boolean>( "disabled", this, "false",Boolean.class );
+    /**
+     * Whether or not the menu is visible
+     */
     private XUIViewStateBindProperty<Boolean> visible  = new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
+    /**
+     * Whether or not the menu is expanded
+     * Only works in nested menus
+     */
     private XUIViewStateBindProperty<Boolean> expanded = new XUIViewStateBindProperty<Boolean>( "expanded", this, "false",Boolean.class );
+    /**
+     * Group where the logged user must be to see this menu
+     */
     private XUIBaseProperty<String> 	  group 	= new XUIBaseProperty<String>( "group", this, null );
 
+    /**
+     * List of comma-separated role names required to see/use this menu
+     */
     private XUIStateBindProperty<String> roles = new XUIStateBindProperty<String>( "roles", this, String.class );
+    /**
+     * List of comma-separated workqueue names required to see/use this menu
+     */
     private XUIStateBindProperty<String> workQueues = new XUIStateBindProperty<String>( "workQueues", this, String.class );
+    /**
+     * List of comma-separated group names required to see/use this menu
+     */
     private XUIStateBindProperty<String> groups = new XUIStateBindProperty<String>( "groups", this, String.class );
+    /**
+     * List of comma-separated profile names required to see/use this menu
+     */
     private XUIStateBindProperty<String> profiles = new XUIStateBindProperty<String>( "profiles", this, String.class );
+    /**
+     * Name of the profile required to see/use this menu
+     */
     private XUIStateBindProperty<String> profile = new XUIStateBindProperty<String>( "profile", this, String.class );
     
     public Menu() {

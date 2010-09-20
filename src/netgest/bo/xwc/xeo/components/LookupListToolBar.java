@@ -2,13 +2,26 @@ package netgest.bo.xwc.xeo.components;
 import java.util.Arrays;
 import java.util.List;
 
+import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
+/**
+ * 
+ * The default {@link ToolBar} for a {@link LookupList}
+ * Renders two buttons: A "Confirm" selection button and a "Cancel Button"
+ * 
+ * @author João Carreira
+ *
+ */
 public class LookupListToolBar extends ListToolBar {
 	
+	/**
+	 * Reference to the list of objects being shown in 
+	 * the parent {@link LookupList} component
+	 */
 	XUIBindProperty<XEOObjectListConnector> 	targetList = 
 		new XUIBindProperty<XEOObjectListConnector>("targetList", this ,XEOObjectListConnector.class, "#{viewBean.dataList}" );
 		

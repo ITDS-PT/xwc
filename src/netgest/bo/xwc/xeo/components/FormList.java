@@ -3,6 +3,13 @@ package netgest.bo.xwc.xeo.components;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.framework.XUIBindProperty;
 
+/**
+ * 
+ * A Form component to display a list of XEO Objets
+ * 
+ * @author João Carreira
+ *
+ */
 public class FormList extends Form {
 	
 	@Override
@@ -10,6 +17,9 @@ public class FormList extends Form {
 		return "form";
 	}
 
+	/**
+	 * If the title of the viewer should be rendered
+	 */
 	private XUIBindProperty<Boolean> renderViewerTitle = 
 		new XUIBindProperty<Boolean>("renderViewerTitle", this, true, Boolean.class);
 

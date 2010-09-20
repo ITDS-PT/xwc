@@ -17,6 +17,15 @@ import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
 
+/**
+ * 
+ * Default {@link ToolBar} for a {@link FormEdit} component.
+ * Includes buttons with common operations such as save, remove, create new,
+ * export to PDF/HTML/Excel, show versions, edit security policies
+ * 
+ * @author João Carreira
+ *
+ */
 public class EditToolBar extends ToolBar {
 	
 	public static final List<String> staticMethods = Arrays.asList(
@@ -35,57 +44,118 @@ public class EditToolBar extends ToolBar {
 			new String[] {"cofirmar","cancelar","valid", "update", "destroy", "cloneObject" }
 		);
 
+	/**
+	 * Whether or not the "Confirm" button is rendered
+	 * Only works if the parent {@link FormEdit} is working 
+	 * with a orphan object
+	 * 
+	 */
 	private XUIViewBindProperty<Boolean>  renderConfirmBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderConfirmBtn", this, true, Boolean.class );
 
+	/**
+	 * Whether or not the "Cancel button" is rendered
+	 * Only works if the parent {@link FormEdit} is working 
+	 * with a orphan object
+	 */
 	private XUIViewBindProperty<Boolean>  renderCancelBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderCancelBtn", this, true, Boolean.class );
 	
+	/**
+	 * The target {@link boObject} for the buttons in the toolbar
+	 * inherited from the parent {@link FormEdit}
+	 */
 	private XUIViewBindProperty<boObject> 	targetObject = 
 		new XUIViewBindProperty<boObject>("targetObject", this ,boObject.class, "#{viewBean.XEOObject}" );
 
+	/**
+	 * Whether or not he "save" button is rendered
+	 */
 	private XUIViewBindProperty<Boolean>  renderUpdateBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderUpdateBtn", this, true, Boolean.class );
 
+	/**
+	 * Whether or not the "save and close" button is rendered
+	 */
 	private XUIViewBindProperty<Boolean>  renderUpdateAndCloseBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderUpdateAndCloseBtn", this, true, Boolean.class );
 	
+	/**
+	 * Whether or nor the "save and create new" button is rendered
+	 */
 	private XUIViewStateBindProperty<Boolean>  renderUpdateAndCreateNewBtn    = 
 		new XUIViewStateBindProperty<Boolean>( "renderUpdateAndCreateNewBtn", this, "true", Boolean.class );
 
+	/**
+	 * Whether or not the "delete" button is rendered
+	 */
 	private XUIViewBindProperty<Boolean>  renderDestroyBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderDestroyBtn", this, true, Boolean.class );
 	
+	/**
+	 * Whether or not the "validate" button is rendered
+	 */
 	private XUIViewBindProperty<Boolean>  renderValidateBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderValidateBtn", this, true, Boolean.class );
 	
+	/**
+	 * Whether or not the "duplicate" button is rendered
+	 */
 	private XUIViewBindProperty<Boolean>  renderCloneBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderCloneBtn", this, false, Boolean.class );
 
+	/**
+	 * Whether or not to render buttons with 
+	 * all the Methods in the targetObject
+	 */
 	private XUIViewBindProperty<Boolean>  renderObjectMethodBtns    = 
 		new XUIViewBindProperty<Boolean>( "renderObjectMethodBtns", this, true, Boolean.class );
 	
+	/**
+	 * Whether or not the "View Object Properties" menu, under the "Information" is rendered
+	 */
 	private XUIViewBindProperty<Boolean>  renderPropertiesBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderPropertiesBtn", this, false, Boolean.class );
 
+	/**
+	 * Whether or not the "View Dependents" menu, under the "Information" menu is rendered
+	 */
 	private XUIViewStateBindProperty<Boolean>  renderDependentsBtn    = 
 		new XUIViewStateBindProperty<Boolean>( "renderDependentsBtn", this, "false", Boolean.class );
 	
+	/**
+	 * Whether or not the "View Dependencies" menu, under the "Information" menu is rendered
+	 */
 	private XUIViewStateBindProperty<Boolean>  renderDependenciesBtn    = 
 		new XUIViewStateBindProperty<Boolean>( "renderDependenciesBtn", this, "false", Boolean.class );
 	
+	/**
+	 * Whether or not the "List Versions" menu, under the "Information" menu is rendered
+	 */
 	private XUIViewStateBindProperty<Boolean>  renderListVersionBtn    = 
 		new XUIViewStateBindProperty<Boolean>( "renderListVersionBtn", this, "false", Boolean.class );
 
+	/**
+	 * Whether or not the "Export Form as HTML" is rendered inside an "Export" Menu
+	 */
 	private XUIViewStateBindProperty<Boolean>  renderHTMLBtn    = 
 		new XUIViewStateBindProperty<Boolean>( "renderHTMLBtn", this, "false", Boolean.class );
 	
+	/**
+	 * Whether or not the "Export Form as PDF" is rendered inside an "Export" Menu"
+	 */
 	private XUIViewStateBindProperty<Boolean>  renderPdfBtn    = 
 		new XUIViewStateBindProperty<Boolean>( "renderPdfBtn", this, "false", Boolean.class );
 	
+	/**
+	 * Whether or the "Export Form as Excel" is rendered inside an "Export" Menu
+	 */
 	private XUIViewStateBindProperty<Boolean>  renderExcelBtn    = 
 		new XUIViewStateBindProperty<Boolean>( "renderExcelBtn", this, "false", Boolean.class );
 
+	/**
+	 * Whether or not the {@link EditToolBar} is in orphan mode
+	 */
 	private XUIBindProperty<Boolean> orphanMode = 
 		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class, "#{viewBean.editInOrphanMode}" );
 		
@@ -304,7 +374,8 @@ public class EditToolBar extends ToolBar {
 		if (	getRenderDependenciesBtn()  
 			|| 	getRenderDependentsBtn() 
 			|| 	getRenderPropertiesBtn()
-			|| 	getRenderListVersionBtn()	)
+			|| 	getRenderListVersionBtn()
+			||  getTargetObject().getBoDefinition().implementsSecurityRowObjects())
 		{
 			getChildren().add(pos++,createInformationMenu());
 		}
@@ -498,25 +569,31 @@ public class EditToolBar extends ToolBar {
 		informationGroup.setToolTip(XEOComponentMessages.EDITTB_INFORMATION_TTIP.toString());
 		
 		//Only show if all are enabled
-		if (getRenderDependenciesBtn() && getRenderDependentsBtn() && getRenderPropertiesBtn() )
+		if (getRenderDependenciesBtn() || getRenderDependentsBtn() || getRenderPropertiesBtn() )
 		{
-			Menu propertiesMenu = new Menu();
-			propertiesMenu.setText(XEOViewersMessages.LBL_PROPERTIES.toString());
-			propertiesMenu.setServerAction("#{viewBean.showProperties}");
-			propertiesMenu.setTarget("window");
-			informationGroup.getChildren().add(propertiesMenu);
+			if (getRenderPropertiesBtn()){
+				Menu propertiesMenu = new Menu();
+				propertiesMenu.setText(XEOViewersMessages.LBL_PROPERTIES.toString());
+				propertiesMenu.setServerAction("#{viewBean.showProperties}");
+				propertiesMenu.setTarget("window");
+				informationGroup.getChildren().add(propertiesMenu);
+			}
 			
-			Menu dependents = new Menu();
-			dependents.setText(XEOViewersMessages.LBL_DEPENDENTS.toString());
-			dependents.setServerAction("#{viewBean.showDependents}");
-			dependents.setTarget("window");
-			informationGroup.getChildren().add(dependents);
+			if (getRenderDependentsBtn()){
+				Menu dependents = new Menu();
+				dependents.setText(XEOViewersMessages.LBL_DEPENDENTS.toString());
+				dependents.setServerAction("#{viewBean.showDependents}");
+				dependents.setTarget("window");
+				informationGroup.getChildren().add(dependents);
+			}
 			
-			Menu dependenciesMenu = new Menu();
-			dependenciesMenu.setText(XEOViewersMessages.LBL_DEPENDENCIES.toString());
-			dependenciesMenu.setServerAction("#{viewBean.showDependencies}");
-			dependenciesMenu.setTarget("window");
-			informationGroup.getChildren().add(dependenciesMenu);
+			if (getRenderDependenciesBtn()){
+				Menu dependenciesMenu = new Menu();
+				dependenciesMenu.setText(XEOViewersMessages.LBL_DEPENDENCIES.toString());
+				dependenciesMenu.setServerAction("#{viewBean.showDependencies}");
+				dependenciesMenu.setTarget("window");
+				informationGroup.getChildren().add(dependenciesMenu);
+			}
 		}
 		
 		if (getRenderListVersionBtn() && getTargetObject().getVersioning())

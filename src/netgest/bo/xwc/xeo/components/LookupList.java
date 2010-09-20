@@ -2,9 +2,16 @@ package netgest.bo.xwc.xeo.components;
 
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 
 
+/**
+ * 
+ * A component to display a list of XEO Objects so that
+ * one (or more) can be selected
+ * 
+ * @author João Carreira
+ *
+ */
 public class LookupList extends List {
 	
 	@Override

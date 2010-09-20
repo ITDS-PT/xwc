@@ -5,9 +5,17 @@ import java.lang.reflect.Method;
 import javax.faces.event.ActionEvent;
 
 import netgest.bo.runtime.boObject;
+import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 
+/**
+ * 
+ * A {@link Menu} component to invoke a Method defined in a given XEO Model
+ * 
+ * @author João Carreira
+ *
+ */
 public class ModelMethod extends ViewerMethod {
 	
 	@Override
@@ -15,9 +23,16 @@ public class ModelMethod extends ViewerMethod {
 		return "xvw:menu";
 	}
 	
+	/**
+	 * The {@link boObject} from which the method will be executed
+	 */
 	XUIBindProperty<boObject> 	targetObject = 
-		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.xEOObject}" );
+		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
 		
+	/**
+	 * The name of the method from the {@link boObject} to execute
+	 */
+	@Required	
 	XUIBindProperty<String> 	targetMethod = 
 		new XUIBindProperty<String>("targetMethod", this, String.class );
 	

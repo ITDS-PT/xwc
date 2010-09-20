@@ -7,21 +7,36 @@ import javax.faces.component.UIComponent;
 
 import netgest.bo.def.boDefHandler;
 import netgest.bo.def.v2.boDefInterfaceImpl;
+import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
+/**
+ * 
+ * Default {@link ToolBar} for a {@link netgest.bo.xwc.xeo.components.List} component
+ * includes the button to create a new instance object
+ * 
+ * @author João Carreira
+ *
+ */
 public class ListToolBar extends ToolBarMenuPositions {
 
+	/**
+	 * The list of objects {@link boObject} that is shown in the 
+	 * parent {@link netgest.bo.xwc.xeo.components.List} component 
+	 */
 	private XUIBindProperty<XEOObjectListConnector> targetList = 
 		new XUIBindProperty<XEOObjectListConnector>("targetList", this, XEOObjectListConnector.class, "#{viewBean.dataList}" );
 
+	/**
+	 * Whether or not the "Create New" button (to add to the list) is rendered
+	 */
 	private XUIViewStateBindProperty<Boolean>  renderCreateNewBtn    = 
 		new XUIViewStateBindProperty<Boolean>( "renderCreateNewBtn", this, "true", Boolean.class );
 	

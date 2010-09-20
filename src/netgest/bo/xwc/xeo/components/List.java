@@ -7,14 +7,31 @@ import netgest.bo.xwc.components.model.Columns;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 
+/**
+ * 
+ * Creates a list of XEO Objects to display in a form
+ * 
+ * @author João Carreira
+ *
+ */
 public class List extends GridPanel {
 	
+	/**
+	 * The list of XEO Objects to display
+	 */
 	private XUIBindProperty<XEOObjectListConnector> targetList = 
 		new XUIBindProperty<XEOObjectListConnector>("targetList", this, XEOObjectListConnector.class, "#{viewBean.dataList}" );
 	
+	/**
+	 * Whether or not the default {@link ListToolBar} should be rendered
+	 */
 	private XUIViewBindProperty<Boolean> renderToolBar = 
 		new XUIViewBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
 	
+	/**
+	 * Whether or not the column with the icon relative to each object type 
+	 * (XEOModel) should be rendered in the list
+	 */
 	private XUIViewBindProperty<Boolean> renderIconColumn = 
 		new XUIViewBindProperty<Boolean>("renderIconColumn", this, true, Boolean.class);
 	

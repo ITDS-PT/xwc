@@ -4,17 +4,38 @@ import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 
+/**
+ * 
+ *  A Form to display a list of XEO Objects so that one (or more)
+ *  objects can be selected
+ * 
+ * 
+ * @author João Carreira
+ *
+ */
 public class FormLookupList extends Form {
 
+	/**
+	 * If the title of the viewer should be rendered
+	 */
 	private XUIBindProperty<Boolean> renderViewerTitle = 
 		new XUIBindProperty<Boolean>("renderViewerTitle", this, true, Boolean.class);
 
+	/**
+	 * Whether the window to place the form should be rendered or not
+	 */
 	private XUIBindProperty<Boolean> renderWindow = 
 		new XUIBindProperty<Boolean>("renderWindow", this, true, Boolean.class);
 	
+	/**
+	 * The height of the window where the form is rendered
+	 */
 	private XUIViewBindProperty<Integer> windowHeight = 
 		new XUIViewBindProperty<Integer>("windowHeight", this, 400, Integer.class);
 
+	/**
+	 * The width of the window where the form is rendered
+	 */
 	private XUIViewBindProperty<Integer> windowWidth = 
 		new XUIViewBindProperty<Integer>("windowWidth", this, 600, Integer.class);
 

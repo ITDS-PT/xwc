@@ -1,19 +1,41 @@
 package netgest.bo.xwc.xeo.components;
 
 import netgest.bo.runtime.boObject;
+import netgest.bo.runtime.bridgeHandler;
+import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 
+/**
+ * 
+ * A component to render a bridge (see {@link bridgeHandler} between
+ * XEO Objects 
+ * 
+ * @author João Carreira
+ *
+ */
 public class Bridge extends GridPanel {
 
+	/**
+	 * The target XEO Object {@link boObject} from which 
+	 * the bridge should be selected
+	 */
 	private XUIBindProperty<boObject> 	targetObject 			= 
 		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
 		
+	/**
+	 * The name of the bridge to select from the 
+	 * <code>targetObject</code> property
+	 */
+	@Required
 	private XUIBindProperty<String>  bridgeName 	= 
 		new XUIBindProperty<String>( "bridgeName", this, String.class );
 
+	/**
+	 * Whether or not the default {@link BridgeToolBar} should be rendered
+	 */
 	private XUIViewBindProperty<Boolean> renderToolBar = 
 		new XUIViewBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
 	

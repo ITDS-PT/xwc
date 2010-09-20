@@ -14,26 +14,50 @@ import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
-import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
+/**
+ * 
+ * A default {@link ToolBar} for the {@link Bridge} component, includes
+ * buttons to add an existing {@link boObject} instance to the bridge, remove an object from the bridge
+ * and create a new object to add to the bridge
+ * 
+ * @author João Carreira
+ *
+ */
 public class BridgeToolBar extends ToolBarMenuPositions {
 	
+	/**
+	 * Allows to change the object that will be used to retrieve the bridge from
+	 */
 	private XUIBindProperty<boObject> 	targetObject 	= 
 		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
 
+	/**
+	 * The name of the bridge to where the toolbar is connected.
+	 * By default it searches a parent {@link Bridge} component and uses the bridgeName
+	 * from that parent
+	 */
 	private XUIBindProperty<String>  bridgeName    = 
 		new XUIBindProperty<String>( "bridgeName", this, String.class );
 	
+	/**
+	 * Whether or nor the default "Add" button should be rendered or not
+	 */
 	private XUIViewBindProperty<Boolean>  renderAddBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderAddBtn", this, true, Boolean.class );
 
+	/**
+	 * Whether or nor the default "Remove" button should be rendered or not
+	 */
 	private XUIViewBindProperty<Boolean>  renderRemoveBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderRemoveBtn", this, true, Boolean.class );
 	
+	/**
+	 * Whether or nor the default "Create New" button should be rendered or not
+	 */
 	private XUIViewBindProperty<Boolean>  renderCreateNewBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderCreateNewBtn", this, true, Boolean.class );
 
@@ -85,6 +109,14 @@ public class BridgeToolBar extends ToolBarMenuPositions {
     }
 
     public String getBridgeName() {
+    	if (this.bridgeName.getEvaluatedValue() == null)
+    	{
+    		Bridge bridge = (Bridge) this.getParent();
+    		if (bridge != null){
+    			if (bridge.getBridgeName() != null)
+    				return bridge.getBridgeName();
+    		}
+    	}
     	return this.bridgeName.getEvaluatedValue();
     }
 	

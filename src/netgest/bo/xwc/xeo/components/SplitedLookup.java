@@ -39,12 +39,12 @@ import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
 /**
  * 
- * An input field that allow to Lookup a given XEO Object as well as finding
+ * An input field that allows to Lookup a given XEO Object as well as finding
  * a XEO Object through one of its attributes (that XEO Object is defined as
  * an AttributeObject or AttributeObjectCollection off the XEO Object
  * in the targetObject property.
  * 
- * Usage example
+ * 
  * 
  * <xeo:splitedLookup 
 		targetLookupAttribute="username"  <-- Make the search by this attribute
@@ -67,7 +67,7 @@ public class SplitedLookup extends Attribute {
 	/**
 	 * Situation:
 	 *  1) The {@link boObject} returned by {@link SplitedLookup#getTargetObject()} is of XEO Model 'A'.
-	 *  2) <code>XEO Model A</code> has an attributeObject/attributeObject (named 'P') to <code>XEO Model B</code>.
+	 *  2) <code>XEO Model A</code> has an attributeObject/attributeObjectCollection (named 'P') to <code>XEO Model B</code>.
 	 *  3) <code>XEO Model B</code> has an attribute 'X' of any type (usually Text/Number)
 	 *  
 	 *  The value of this property is 'X', so that one can search instances of <code>XEO Model B</code>
