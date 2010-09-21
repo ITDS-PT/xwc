@@ -78,6 +78,36 @@ public class ChartUtils
 	
 	
 	/**
+	 * 
+	 * Retrieves the URL Servlet
+	 * 
+	 * @param reqContext The context request
+	 * 
+	 * @return The Servlet Request
+	 */
+	public static String getServletURL(XUIRequestContext reqContext)
+	{
+		String url = reqContext.getAjaxURL();
+		if (url.indexOf('?') == -1)
+			{ url += '?'; }
+		else
+			{ url += '&'; }
+		
+		HttpServletRequest req = (HttpServletRequest)reqContext.getFacesContext().getExternalContext().getRequest();
+		String link = 
+        	(req.isSecure()?"https":"http") + "://" + 
+        	req.getServerName() +
+        	(req.getServerPort()==80?"":":"+req.getServerPort());
+		
+		url += "javax.faces.ViewState=" + reqContext.getViewRoot().getViewState();
+		url += "&xvw.servlet=";
+		url = link + url;
+		
+		return url;
+	}
+	
+	
+	/**
 	 * Retrieves the URL to use when one needs to access
 	 * the Component as a servlet, returns a relative URL
 	 *
@@ -176,5 +206,32 @@ public class ChartUtils
 		int b = rand.nextInt(110) + base;
 		return new Color(r,g,b);
 		
+	}
+	
+	/**
+	 * 
+	 * Creates the necessary reload javascript function for the 
+	 * charts
+	 * 
+	 * @param clientId The identifier of the chart
+	 * @param url The url with the servlet (without the client id, see {@link ChartUtils#getServletURL(XUIRequestContext)}
+	 * @param width The width of the chart
+	 * @param height The height of the Chart
+	 * @param context The Request Context
+	 * 
+	 * @return A string with the javascript function
+	 */
+	public static String getReloadChartJSFunction(String clientId, String url, int width, int height, XUIRequestContext context){
+		StringBuilder reloadChart = new StringBuilder();
+		reloadChart.append("function reloadChart(clientId){");
+		reloadChart.append("var url = escape(\""+ChartUtils.getServletURL(context)+clientId+"\");");
+		reloadChart.append("swfobject.embedSWF(\"open-flash-chart.swf\", " +
+				" clientId , " +
+				"\""+width+"\", " +
+				"\""+height+"\", " +
+				"\"9.0.0\",\"expressInstall.swf\", " +
+				"{\"data-file\": url });");
+		reloadChart.append("}");
+		return reloadChart.toString();
 	}
 }
