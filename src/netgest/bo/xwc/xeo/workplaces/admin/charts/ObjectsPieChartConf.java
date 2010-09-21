@@ -29,7 +29,7 @@ public class ObjectsPieChartConf implements IPieChartConfiguration {
 
 	@Override
 	public boolean showChartTitle() {
-		return false;
+		return true;
 	}
 
 	@Override

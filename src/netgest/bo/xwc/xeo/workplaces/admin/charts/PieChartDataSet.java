@@ -13,18 +13,20 @@ import netgest.bo.xwc.components.classic.charts.datasets.impl.PieDataSetImpl;
 
 public class PieChartDataSet extends PieDataSetImpl {
 
+	private int timeExpire; // minutes
 	private Date creationDate;
 	private SimpleDateFormat format;
 	private IPieChartConfiguration iPieChartConfiguration;
 	
-	public PieChartDataSet() {
+	public PieChartDataSet(int timeExpire) {
 		super();
-		this.format = new SimpleDateFormat("HH:mm:ss");
+		this.timeExpire = timeExpire; 
+		this.format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		this.creationDate = new Date();
 	}
 
-	public PieChartDataSet(String sql, String attCategory, String attValues, Integer limit) throws SQLException {
-		this();
+	public PieChartDataSet(String sql, String attCategory, String attValues, Integer limit, String label, int timeExpire) throws SQLException {
+		this(timeExpire);
 		
 		EboContext ctx = boApplication.currentContext().getEboContext();
 		java.sql.Connection con = ctx.getConnectionData();
@@ -54,10 +56,16 @@ public class PieChartDataSet extends PieDataSetImpl {
 	}
 	
 	public boolean isExpired() {
-		return (System.currentTimeMillis() > this.creationDate.getTime()+5*60*1000) ? true : false;
+		return (System.currentTimeMillis() > this.creationDate.getTime()+timeExpire*60*1000) ? true : false;
 	}
 	
 	public String getCreationDateString() {
 		return format.format(this.creationDate);
 	}
+
+	public String getLastUpdated() {
+		return "Last updated "+getCreationDateString();
+	}
+
+	
 }

@@ -21,9 +21,10 @@
 								</xvw:panel>
 							</xvw:cell>
 							<xvw:cell>
-							  <xvw:section label="System Information">
-								<xvw:ajaxText text='#{viewBean.sysInfo}' updateTime="2500"/>
-							</xvw:section>
+								<xvw:section label="System Information">
+									<xvw:ajaxText text='#{viewBean.sysInfo}'
+										updateTime="2500" />
+								</xvw:section>
 							</xvw:cell>
 						</xvw:row>
 						<xvw:row>
@@ -55,7 +56,7 @@
 						<xvw:row>
 							<xvw:cell>
 								<xvw:section label='Objects by package'>
-									<xvw:pieChart label="objects"
+									<xvw:pieChart label="#{viewBean.packageObjectsLastUpdated}"
 										configOptions="#{viewBean.packageObjectsPieChartConf}" width="0"
 										height="0" type="FLASH" dataSet="#{viewBean.packageObjects}">
 									</xvw:pieChart>
@@ -63,9 +64,15 @@
 							</xvw:cell>
 							<xvw:cell>
 								<xvw:section label='Instances by object'>
-									<xvw:pieChart label="objects"
-										configOptions="#{viewBean.objectInstancesPieChartConf}" width="0"
-										height="0" type="FLASH" dataSet="#{viewBean.objectInstances}">
+									<xvw:attributeLabel
+										renderComponent="#{viewBean.objectInstancesPieChartExpired}"
+										text='Attention! Depending on your database this can be a very heavy operation.'></xvw:attributeLabel>
+									<xvw:actionButton label='Refresh'
+										renderComponent="#{viewBean.objectInstancesPieChartExpired}"
+										image='ext-xeo/admin/refresh.gif' serverAction='#{viewBean.refreshObjectInstances}' />
+									<xvw:pieChart id="objectInstances" renderComponent="#{viewBean.objectInstancesPieChartRendered}"
+										label="#{viewBean.objectInstancesLastUpdated}" configOptions="#{viewBean.objectInstancesPieChartConf}"
+										width="0" height="0" type="FLASH" dataSet="#{viewBean.objectInstances}">
 									</xvw:pieChart>
 								</xvw:section>
 							</xvw:cell>
