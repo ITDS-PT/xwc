@@ -166,6 +166,8 @@ public class PieChart extends XUIComponentBase implements netgest.bo.xwc.compone
 	@Override
 	public void initComponent() {
 		super.initComponent();
+		//super.setId("chart");
+		
 	}
 	
 	/**
@@ -748,7 +750,7 @@ public class PieChart extends XUIComponentBase implements netgest.bo.xwc.compone
 			if (oComp.getType().equalsIgnoreCase(TYPE_CHART_FLASH))
 			{
 				StringBuilder b = new StringBuilder();
-				
+				String clientId = oComp.getClientId();
 				w.getScriptContext().addInclude(
 	            		XUIScriptContext.POSITION_HEADER, 
 	            		"openflash", 
@@ -769,6 +771,13 @@ public class PieChart extends XUIComponentBase implements netgest.bo.xwc.compone
 						XUIScriptContext.POSITION_HEADER, 
 						component.getClientId(),
 						b);
+				
+				String reloadChart = ChartUtils.getReloadChartJSFunction(clientId, url, width, height,getRequestContext());
+				
+				w.getScriptContext().add( 
+						XUIScriptContext.POSITION_HEADER, 
+						"reloadChart",
+						reloadChart);
 				
 				w.startElement(HTMLTag.DIV, oComp);
 					w.writeAttribute(HTMLAttr.ID, component.getClientId(), null);
