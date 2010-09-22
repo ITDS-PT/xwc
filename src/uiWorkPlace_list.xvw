@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xvw:root 
+	xmlns:xvw="http://www.netgest.net/xeo/xvw"
+	xmlns:xeo="http://www.netgest.net/xeo/xeo"	
+>
+	<xvw:viewer beanClass="netgest.bo.xwc.xeo.beans.XEOBaseList" beanId="viewBean">
+		<xeo:formList>
+			<xeo:list>
+				<xvw:columns>
+					
+					<xvw:columnAttribute width="100" dataField="largura"/>
+					<xvw:columnAttribute width="100" dataField="defaultViewer"/>
+					<xvw:columnAttribute width="100" dataField="listbar"/>
+
+				</xvw:columns>
+			</xeo:list>
+		</xeo:formList>
+	</xvw:viewer>
+</xvw:root>
