@@ -55,7 +55,7 @@
 						value="{viewerName:'uiProfile_list.xvw', boql:select uiProfile}"
 						target='Tab' serverAction="#{viewBean.listObject}" />
 					<xvw:menu icon='resources/uiWorkPlace/ico16.gif' text='WorkPlaces'
-						value="{viewerName:'uiProfile_list.xvw', boql:select uiWorkPlace}"
+						value="{viewerName:'uiWorkPlace_list.xvw', boql:select uiWorkPlace}"
 						target='Tab' serverAction="#{viewBean.listObject}" />						
 
 				</xvw:menu>
