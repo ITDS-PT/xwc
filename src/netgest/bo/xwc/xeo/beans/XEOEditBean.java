@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,6 +40,7 @@ import netgest.bo.security.securityRights;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.utils.XEOQLModifier;
+import netgest.bo.xwc.components.annotations.Visible;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
@@ -203,13 +205,14 @@ public class XEOEditBean extends XEOBaseBean
     /**
      * @throws boRuntimeException
      */
+    @Visible
     public void save() throws boRuntimeException {
     	processValidate();
     	if( this.isValid() ) {
     		processUpdate();
     	}
     }
-    
+    @Visible
     public void saveAndClose() throws boRuntimeException {
     	this.save();
     	if( this.isValid() ) {
@@ -219,27 +222,7 @@ public class XEOEditBean extends XEOBaseBean
     
 
     
-    /** 
-	 * 
-	 * Reads the contents of a file to a string
-	 * 
-	 * @param filePath Stream to the file
-	 */ 
-	 /*   private String readFileAsString(InputStream filePath) throws java.io.IOException
-	    {
-	        StringBuffer fileData = new StringBuffer(1000);
-	        BufferedReader reader = new BufferedReader(new InputStreamReader(filePath));
-	        char[] buf = new char[1024];
-	        int numRead=0;
-	        while((numRead=reader.read(buf)) != -1)
-	        {
-	            String readData = String.valueOf(buf, 0, numRead);
-	            fileData.append(readData);
-	            buf = new char[1024];
-	        }
-	        reader.close();
-	        return fileData.toString();
-	    }*/
+    
     
     /**
      * 
@@ -414,6 +397,7 @@ public class XEOEditBean extends XEOBaseBean
      * 
      * @throws boRuntimeException
      */
+    @Visible
     public void exportHTML() throws boRuntimeException
     {
     	final String		HTML_TEMPLATES = "html_templates.xsl";
@@ -460,6 +444,7 @@ public class XEOEditBean extends XEOBaseBean
      * 
      * @throws boRuntimeException
      */
+    @Visible
     public void exportPDF() throws boRuntimeException
     {
     	final String		PDF_TEMPLATES = "pdf_templates.xsl";
@@ -503,7 +488,8 @@ public class XEOEditBean extends XEOBaseBean
     		
     	  HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
     	  response.setContentType("application/pdf");
-    	  response.setHeader("Content-disposition","attachment; filename=" + currentEditObject.getTextCARDID() + ".pdf"); 
+    	  String fileName = currentEditObject.getTextCARDID().toString().replace(" ","_");
+    	  response.setHeader("Content-disposition","attachment; filename=" + fileName + ".pdf"); 
       	  OutputStream out = response.getOutputStream();
     		
     	  // Step 3: Construct fop with desired output format
@@ -540,6 +526,7 @@ public class XEOEditBean extends XEOBaseBean
      * 
      * @throws boRuntimeException
      */
+    @Visible
     public void exportExcel() throws boRuntimeException
     {
     	final String		EXCEL_TEMPLATES = "excel_templates.xsl";
@@ -587,7 +574,7 @@ public class XEOEditBean extends XEOBaseBean
   	  	getRequestContext().responseComplete();
     }
     
-    
+    @Visible
     public void saveAndCreateNew() throws boRuntimeException 
     {
     	this.save();
@@ -606,21 +593,21 @@ public class XEOEditBean extends XEOBaseBean
     public void saveAsTemplate() {
     	
     }
-    
+    @Visible
     public void processUpdate() throws boRuntimeException {
 		update();
     	if( getEditInOrphanMode() ) {
     		updateParentComponents();
     	}
     }
-    
+    @Visible
     public void remove() throws boRuntimeException {
     	processDestroy();
     	if( isValid() ) {
     		closeView();
     	}
     }
-    
+    @Visible
     public void closeView() {
     	XUIRequestContext oRequestContext;
 		oRequestContext = XUIRequestContext.getCurrentContext();
@@ -630,11 +617,11 @@ public class XEOEditBean extends XEOBaseBean
 		oRequestContext.renderResponse();
     }
     
-    
+    @Visible
     public void processDestroy()  throws boRuntimeException {
     	destroy();
     }
-    
+    @Visible
     public void destroy()  throws boRuntimeException {
     	try {
     		getXEOObject().destroy(); 
@@ -669,7 +656,7 @@ public class XEOEditBean extends XEOBaseBean
     		}
     	}
     }
-    
+    @Visible
     public void update() throws boRuntimeException {
     	XUIRequestContext oRequestContext;
     	
@@ -948,6 +935,7 @@ public class XEOEditBean extends XEOBaseBean
 
     /**
      */
+    @Visible
     public void lookupBridge() throws boRuntimeException {
 
         // Cria view
@@ -1049,6 +1037,7 @@ public class XEOEditBean extends XEOBaseBean
         oRequestContext.renderResponse();
     }
     
+    @Visible
     public void editBridge() {
         XUIRequestContext   oRequestContext;
         XUIViewRoot			oViewRoot;
@@ -1199,7 +1188,7 @@ public class XEOEditBean extends XEOBaseBean
 	        oRequestContext.getFacesContext().renderResponse();
         }
     }
-    
+    @Visible
     public void addNewToBridge() {
         XUIRequestContext   oRequestContext;
         XUIViewRoot			oViewRoot;
@@ -1415,6 +1404,7 @@ public class XEOEditBean extends XEOBaseBean
     /**
      * @throws boRuntimeException
      */
+    @Visible
     public void removeFromBridge() throws boRuntimeException {
         
         XUIRequestContext   oRequestContext;
@@ -1462,6 +1452,7 @@ public class XEOEditBean extends XEOBaseBean
         return oCurrentObjectKey;
     }
     
+    @Visible
     public void processValidate() {
     	// Reset valid state
     	setValid( true );
@@ -1475,6 +1466,7 @@ public class XEOEditBean extends XEOBaseBean
     	}
     }
     
+    @Visible
     public void duplicate() throws boRuntimeException {
     	boObject clonedObject;
 
@@ -1497,7 +1489,7 @@ public class XEOEditBean extends XEOBaseBean
     	);
     	
     }
-    
+    @Visible
     public void validate() {
     	validate( false );
     }
@@ -1573,6 +1565,7 @@ public class XEOEditBean extends XEOBaseBean
 	
 	
 	@SuppressWarnings("unchecked")
+	@Visible
 	public void showObjectErrors() {
         XUIRequestContext   oRequestContext;
         oRequestContext = XUIRequestContext.getCurrentContext();
@@ -1723,6 +1716,7 @@ public class XEOEditBean extends XEOBaseBean
 	 * If the form was changed, when the user tries to close the tab a message box
 	 * appear informing the user that he has unsaved changes, if the form was not changed
 	 */
+	@Visible
 	public void canCloseTab() 
 	{
 		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
@@ -1780,10 +1774,10 @@ public class XEOEditBean extends XEOBaseBean
 			String openWindowScript = "function openDiffWindow() {" +
 					"var winDiff = new Ext.Window({ " +
                 	" title:' "+XEOViewersMessages.VIEW_DIFFS_WINDOW_TITLE.toString()+" '" +
-                	",width       : 500" +
+                	",width       : 800" +
                 	",autoScroll : true" +
-                	",height      : 500" +
-                	",html : '<iframe src=\""+url+"\" width=\"100%\" height=\"470\" frameborder=\"0\">'" +
+                	",height      : 550" +
+                	",html : '<iframe src=\""+url+"\" width=\"100%\" height=\"520\" frameborder=\"0\">'" +
                 	"});" +
             		"winDiff.show();}";
 			
@@ -1912,6 +1906,7 @@ public class XEOEditBean extends XEOBaseBean
     /**
      * Opens the viewer with the properties of the current object
      */
+    @Visible
     public void showProperties() {
     	
         XUIRequestContext   oRequestContext;
@@ -1932,7 +1927,7 @@ public class XEOEditBean extends XEOBaseBean
     	
     }
     
-    
+    @Visible
     public void showOPL()
     {
     	 XUIRequestContext   oRequestContext;
@@ -1956,6 +1951,7 @@ public class XEOEditBean extends XEOBaseBean
     /**
      * Opens the viewer with the dependencies of the current object
      */
+    @Visible
     public void showDependencies() {
     	
         XUIRequestContext   oRequestContext;
@@ -1979,6 +1975,7 @@ public class XEOEditBean extends XEOBaseBean
     /**
      * Opens the viewer with the dependents of the current object
      */
+    @Visible
     public void showDependents() {
     	
         XUIRequestContext   oRequestContext;
@@ -2002,6 +1999,7 @@ public class XEOEditBean extends XEOBaseBean
     /**
      * Opens the viewers with the list of versions for the current object
      */
+    @Visible
     public void listVersions()
     {
     	XUIRequestContext   oRequestContext;
@@ -2057,7 +2055,7 @@ public class XEOEditBean extends XEOBaseBean
      * 
      */
     
-    
+    @Visible
     public void confirm() throws boRuntimeException {
         
         XUIRequestContext oRequestContext;
@@ -2089,12 +2087,12 @@ public class XEOEditBean extends XEOBaseBean
 
     }
 
-    
+    @Visible
     public void processCancel() throws boRuntimeException
     {
     	cancel();
     }
-
+    @Visible
     public void cancel() throws boRuntimeException
     {
         XUIRequestContext oRequestContext;

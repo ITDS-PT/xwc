@@ -32,7 +32,7 @@ import oracle.xml.parser.v2.XMLDocument;
  * 
  * A Form component to edit a single XEO Object
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class FormEdit extends Form {

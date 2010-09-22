@@ -10,6 +10,7 @@ import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.system.boApplication;
+import netgest.bo.xwc.components.annotations.Visible;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
 import netgest.bo.xwc.components.classic.Window;
@@ -45,6 +46,7 @@ public class XEOBaseList extends XEOBaseBean {
         return new XEOObjectListConnector( this.currentObjectList );
     }
     
+    @Visible
     public void rowDoubleClick(  ) throws Exception {
         ActionEvent oEvent;
         GridPanel oGridPanel;
@@ -107,6 +109,7 @@ public class XEOBaseList extends XEOBaseBean {
         }
     }
     
+    @Visible
     public void addNew() throws Exception {
         XUIRequestContext    oRequestContext;
         
@@ -169,6 +172,7 @@ public class XEOBaseList extends XEOBaseBean {
     	return new XEOGridRowClassRenderer();
     }
     
+    @Visible
 	public void canCloseTab() {
 		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
 		XUIViewRoot viewRoot = oRequestContext.getViewRoot();

@@ -23,7 +23,7 @@ import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
  * Includes buttons with common operations such as save, remove, create new,
  * export to PDF/HTML/Excel, show versions, edit security policies
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class EditToolBar extends ToolBar {
@@ -117,6 +117,13 @@ public class EditToolBar extends ToolBar {
 	private XUIViewBindProperty<Boolean>  renderPropertiesBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderPropertiesBtn", this, false, Boolean.class );
 
+	
+	/**
+	 * Whether or not the entire "Information" menu is rendered
+	 */
+	private XUIViewBindProperty<Boolean> renderInformationMenu = 
+		new XUIViewBindProperty<Boolean>( "renderInformationMenu", this, false, Boolean.class );
+	
 	/**
 	 * Whether or not the "View Dependents" menu, under the "Information" menu is rendered
 	 */
@@ -135,6 +142,13 @@ public class EditToolBar extends ToolBar {
 	private XUIViewStateBindProperty<Boolean>  renderListVersionBtn    = 
 		new XUIViewStateBindProperty<Boolean>( "renderListVersionBtn", this, "false", Boolean.class );
 
+	
+	/**
+	 * Whether or not the entire export Menu is rendered
+	 */
+	private XUIViewStateBindProperty<Boolean>  renderExportMenu    = 
+		new XUIViewStateBindProperty<Boolean>( "renderExportMenu", this, "false", Boolean.class );
+	
 	/**
 	 * Whether or not the "Export Form as HTML" is rendered inside an "Export" Menu
 	 */
@@ -310,6 +324,23 @@ public class EditToolBar extends ToolBar {
 		this.renderListVersionBtn.setExpressionText(expression);
 	}
 	
+	public boolean getRenderInformationMenu(){
+		return this.renderInformationMenu.getEvaluatedValue();
+	}
+	
+	public void setRenderInformationMenu(String renderInfoExpr)
+	{
+		this.renderInformationMenu.setExpressionText(renderInfoExpr);
+	}
+	
+	public boolean getRenderExportMenu(){
+		return this.renderExportMenu.getEvaluatedValue();
+	}
+	
+	public void setRenderExportMenu(String expMenuExpr){
+		this.renderExportMenu.setExpressionText(expMenuExpr);
+	}
+	
 	@Override
 	public void initComponent() {
 		if( getOrphanMode() )
@@ -361,6 +392,29 @@ public class EditToolBar extends ToolBar {
 				ComponentMessages.EDIT_TOOLBAR_BTN_DUPLICATE_TOOLTIP.toString(), 
 				"ext-xeo/images/menus/applications.gif", "duplicate", "tab" );
 
+		//Add the information Menus
+		if (	getRenderDependenciesBtn()  
+			|| 	getRenderDependentsBtn() 
+			|| 	getRenderPropertiesBtn()
+			|| 	getRenderListVersionBtn()
+			||  getTargetObject().getBoDefinition().implementsSecurityRowObjects()
+			||  getRenderInformationMenu())
+			
+		{
+			getChildren().add(pos++,createInformationMenu());
+		}
+		
+		//Add the Export Menus
+		if (	getRenderExcelBtn() 
+			||	getRenderPdfBtn()
+			|| 	getRenderHTMLBtn()
+			|| getRenderExportMenu()
+		)
+		{	
+			getChildren().add( pos++, Menu.getMenuSpacer() );	
+			getChildren().add( pos++,createExportMenu());
+		}
+		
 		boDefMethod[] methods = xeoObject.getToolbarMethods();
 		for( boDefMethod m : methods ) {
 			if( !staticMethods.contains( m.getName() ) ) {
@@ -370,25 +424,7 @@ public class EditToolBar extends ToolBar {
 			}
 		}
 		
-		//Add the information Menus
-		if (	getRenderDependenciesBtn()  
-			|| 	getRenderDependentsBtn() 
-			|| 	getRenderPropertiesBtn()
-			|| 	getRenderListVersionBtn()
-			||  getTargetObject().getBoDefinition().implementsSecurityRowObjects())
-		{
-			getChildren().add(pos++,createInformationMenu());
-		}
 		
-		//Add the Export Menus
-		if (	getRenderExcelBtn() 
-			||	getRenderPdfBtn()
-			|| 	getRenderHTMLBtn()
-		)
-		{	
-			getChildren().add( pos++, Menu.getMenuSpacer() );	
-			getChildren().add( pos++,createExportMenu());
-		}
 	}
 	
 	
@@ -569,9 +605,10 @@ public class EditToolBar extends ToolBar {
 		informationGroup.setToolTip(XEOComponentMessages.EDITTB_INFORMATION_TTIP.toString());
 		
 		//Only show if all are enabled
-		if (getRenderDependenciesBtn() || getRenderDependentsBtn() || getRenderPropertiesBtn() )
+		if (getRenderDependenciesBtn() || getRenderDependentsBtn() || getRenderPropertiesBtn() ||
+				getRenderInformationMenu())
 		{
-			if (getRenderPropertiesBtn()){
+			if (getRenderPropertiesBtn() || getRenderInformationMenu()){
 				Menu propertiesMenu = new Menu();
 				propertiesMenu.setText(XEOViewersMessages.LBL_PROPERTIES.toString());
 				propertiesMenu.setServerAction("#{viewBean.showProperties}");
@@ -579,7 +616,7 @@ public class EditToolBar extends ToolBar {
 				informationGroup.getChildren().add(propertiesMenu);
 			}
 			
-			if (getRenderDependentsBtn()){
+			if (getRenderDependentsBtn() || getRenderInformationMenu()){
 				Menu dependents = new Menu();
 				dependents.setText(XEOViewersMessages.LBL_DEPENDENTS.toString());
 				dependents.setServerAction("#{viewBean.showDependents}");
@@ -587,7 +624,7 @@ public class EditToolBar extends ToolBar {
 				informationGroup.getChildren().add(dependents);
 			}
 			
-			if (getRenderDependenciesBtn()){
+			if (getRenderDependenciesBtn() || getRenderInformationMenu()){
 				Menu dependenciesMenu = new Menu();
 				dependenciesMenu.setText(XEOViewersMessages.LBL_DEPENDENCIES.toString());
 				dependenciesMenu.setServerAction("#{viewBean.showDependencies}");
@@ -629,7 +666,7 @@ public class EditToolBar extends ToolBar {
 		exportGroup.setIcon("ext-xeo/images/menus/export-group.gif");
 		exportGroup.setToolTip(XEOComponentMessages.EDITTB_EXPORT_TTIP.toString());
 		
-		if (getRenderExcelBtn())
+		if (getRenderExcelBtn()  || getRenderExportMenu())
 		{
 			Menu exportExcelMenu = new Menu();
 			exportExcelMenu.setText(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_EXCEL_TOOLTIP.toString());
@@ -640,7 +677,7 @@ public class EditToolBar extends ToolBar {
 			exportGroup.getChildren().add(exportExcelMenu);
 		}
 		
-		if (getRenderHTMLBtn())
+		if (getRenderHTMLBtn() || getRenderExportMenu())
 		{
 			Menu exportHTMLMenu = new Menu();
 			exportHTMLMenu.setText(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_HTML.toString());
@@ -652,7 +689,7 @@ public class EditToolBar extends ToolBar {
 			exportGroup.getChildren().add(exportHTMLMenu);
 		}
 		
-		if (getRenderPdfBtn())
+		if (getRenderPdfBtn() || getRenderExportMenu())
 		{
 			Menu exportPDFMenu = new Menu();
 			exportPDFMenu.setText(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_PDF_TOOLTIP.toString());

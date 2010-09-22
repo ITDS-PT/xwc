@@ -13,7 +13,7 @@ import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
  * The default {@link ToolBar} for a {@link LookupList}
  * Renders two buttons: A "Confirm" selection button and a "Cancel Button"
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class LookupListToolBar extends ListToolBar {

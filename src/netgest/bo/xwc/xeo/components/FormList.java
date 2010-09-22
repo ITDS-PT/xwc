@@ -5,9 +5,9 @@ import netgest.bo.xwc.framework.XUIBindProperty;
 
 /**
  * 
- * A Form component to display a list of XEO Objets
+ * A Form component to display a list of XEO Objects
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class FormList extends Form {

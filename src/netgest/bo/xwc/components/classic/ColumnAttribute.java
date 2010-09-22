@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 
 import javax.el.ValueExpression;
 
-import netgest.bo.xwc.components.annotations.Required;
+import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.security.SecurityPermissions;
@@ -26,7 +26,7 @@ import org.json.JSONObject;
  * It must reside inside of a Columns element in the viewer and allows to customize
  * how columns are rendered
  * 
- * @author jcarreira
+ * @author jcarreira 
  *
  */
 public class ColumnAttribute extends XUIComponentBase implements Column {
@@ -36,7 +36,7 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
      * {@link List} ,{@link Bridge} or  {@link LookupList} component. 
      * Can also be used as alias to SQL columns
      */
-	@Required
+	@RequiredAlways
     private XUIBaseProperty<String>         	dataField   	= 
     	new XUIBaseProperty<String>( "dataField", this );
     /**

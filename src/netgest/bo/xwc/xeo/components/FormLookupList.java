@@ -10,7 +10,7 @@ import netgest.bo.xwc.framework.XUIViewBindProperty;
  *  objects can be selected
  * 
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class FormLookupList extends Form {

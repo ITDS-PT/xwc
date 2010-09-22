@@ -82,6 +82,9 @@ public class XEOViewersMessages {
 	public static final XUILocalizedMessage VIEW_DIFFS_WINDOW_TITLE =
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "VIEW_DIFFS_WINDOW_TITLE" );
 	
+	public static final XUILocalizedMessage VIEW_DIFFS_SUMMARY_LIST =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "VIEW_DIFFS_SUMMARY_LIST" );
+	
 	public static final XUILocalizedMessage FORM_CLOSE_MESSAGE_YES =
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORM_CLOSE_MESSAGE_YES" );
 	

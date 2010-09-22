@@ -51,7 +51,7 @@ import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 		objectAttribute="security"  <-- Store the boObject found in this attribute of the current object (required)
 		></xeo:splitedLookup>
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class SplitedLookup extends Attribute {

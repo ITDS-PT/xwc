@@ -23,7 +23,7 @@ import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
  * 
  * The {@link HTMLFileBrowse} component renders a file upload dialog
  * 
- * @author João Carreira
+ * @author jarreira
  *
  */
 public class HTMLFileBrowse extends XUIInput {

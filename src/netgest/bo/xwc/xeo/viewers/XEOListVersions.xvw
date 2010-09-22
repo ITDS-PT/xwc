@@ -10,7 +10,6 @@
   	>
         <xeo:formEdit id='listVersionForm' renderToolBar="false">
         	<script>
-        		<![CDATA[
         		
         		/*
         		
@@ -30,7 +29,6 @@
         			for (i = 0; i < field.length; i++)
 						if (field[i].checked)
 							counter++;
-							
 					if (counter == 1)
 					{
 						buttonActual.disabled = false;
@@ -106,7 +104,7 @@
                 	winWithDifferences.show();
 				}
         		
-        		]]>
+        		
         	</script>
         	<style>
         	
@@ -159,7 +157,9 @@
         	<xvw:window width='600' height='300'>
 	            <xvw:section label='@{LBL_PROPERTIES}'>
 					<xvw:outputHtml valueExpression='#{viewBean.listOfVersions}'/>
+					 
 				</xvw:section>
+				
 			</xvw:window>
         </xeo:formEdit>
     </xvw:viewer>

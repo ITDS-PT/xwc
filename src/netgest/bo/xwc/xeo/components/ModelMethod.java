@@ -6,6 +6,7 @@ import javax.faces.event.ActionEvent;
 
 import netgest.bo.runtime.boObject;
 import netgest.bo.xwc.components.annotations.Required;
+import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 
@@ -13,7 +14,7 @@ import netgest.bo.xwc.framework.XUIBindProperty;
  * 
  * A {@link Menu} component to invoke a Method defined in a given XEO Model
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class ModelMethod extends ViewerMethod {
@@ -32,7 +33,7 @@ public class ModelMethod extends ViewerMethod {
 	/**
 	 * The name of the method from the {@link boObject} to execute
 	 */
-	@Required	
+	@RequiredAlways	
 	XUIBindProperty<String> 	targetMethod = 
 		new XUIBindProperty<String>("targetMethod", this, String.class );
 	

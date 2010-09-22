@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.xwc.components.annotations.Visible;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
@@ -90,7 +91,7 @@ public class XEOBaseLookupList extends XEOBaseList {
     public boolean isFilterLookup() {
     	return this.bFilterLookup;
     }
-    
+    @Visible
     public void confirm() {
         XUIRequestContext oRequestContext;
         oRequestContext = XUIRequestContext.getCurrentContext();
@@ -112,11 +113,11 @@ public class XEOBaseLookupList extends XEOBaseList {
         	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/components/viewers/Dummy.xvw" ) );
 
     }
-    
+    @Visible
     public void processUpdate() {
     	update();
     }
-
+    @Visible
     public void update() {
 
     	XUIRequestContext oRequestContext;
@@ -143,7 +144,7 @@ public class XEOBaseLookupList extends XEOBaseList {
             }
         }
     }
-    
+    @Visible
     public void processCancel() throws boRuntimeException
     {
     	cancel();
@@ -202,7 +203,7 @@ public class XEOBaseLookupList extends XEOBaseList {
 		}
 		return ""; 
     }
-
+    @Visible
 	public void canCloseTab() {
 		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
 		XUIViewRoot viewRoot = oRequestContext.getViewRoot();
@@ -212,6 +213,7 @@ public class XEOBaseLookupList extends XEOBaseList {
 	}
 	
 	@Override
+	@Visible
 	public void addNew() throws Exception {
 		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
 		XUIViewRoot viewRoot;

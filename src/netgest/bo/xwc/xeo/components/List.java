@@ -11,7 +11,7 @@ import netgest.bo.xwc.framework.XUIViewBindProperty;
  * 
  * Creates a list of XEO Objects to display in a form
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class List extends GridPanel {

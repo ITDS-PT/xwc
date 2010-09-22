@@ -21,6 +21,7 @@ import javax.faces.event.ActionListener;
 import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.xwc.components.annotations.ObjectAttribute;
 import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
@@ -65,7 +66,7 @@ import org.json.JSONObject;
  * Items in the table can be selected and clicked which can in turn trigger specific
  * actions (such as opening a new window when double clicking a given row in the table)
  * 
- * @author PedroRio
+ * @author jcarreira
  *
  */
 public class GridPanel extends ViewerInputSecurityBase {
@@ -114,6 +115,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * Binds the data of the GridPanel to an attribute of an object
 	 * The attribute must be of type AttributeObjectCollection
 	 */
+	@ObjectAttribute
 	private XUIStateBindProperty<String> objectAttribute = new XUIStateBindProperty<String>(
 			"objectAttribute", this, String.class);
 

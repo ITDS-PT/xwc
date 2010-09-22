@@ -8,6 +8,7 @@ import netgest.bo.runtime.boBridgeRow;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.bridgeHandler;
+import netgest.bo.security.securityOPL;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -313,27 +314,18 @@ public class XEOSecurityOPLBean extends XEOEditBean
 	 * 
 	 * @return True if the current user has full control permission on this object
 	 */
-	@SuppressWarnings("unused")
 	public boolean getCanAddBtn()
 	{	
-		long boui = getXEOObject().getEboContext().getBoSession().getPerformerBoui();
-		bridgeHandler keysBridgeHandler = getXEOObject().getBridge(KEYS_BRIDGE); 
-		
-		if (keysBridgeHandler.haveBoui(boui))
-		{
-			try 
-			{
-				boObject performer = keysBridgeHandler.getObject(boui);
-				Long securityCode = keysBridgeHandler.getAttribute(KEYS_ATT_SECURITY_CODE).getValueLong();
-				if (securityCode > 7)
-					return true;
-			} 
-			catch (boRuntimeException e)
-			{
-				e.printStackTrace();
-				return false;
-			}
+		try {
+			if (securityOPL.hasFullControl(getXEOObject()))
+				return true;
+		} catch (boRuntimeException e) {
+			//e.printStackTrace();
 		}
+		long bouiPerformer= getXEOObject().getEboContext().getBoSession().getPerformerBoui();
+		if (getEboContext().getSysUser().getBoui() == bouiPerformer)
+			return true;
+		
 		return false;
 	}
 	
@@ -390,7 +382,7 @@ public class XEOSecurityOPLBean extends XEOEditBean
 	                "Bean",
 	                new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, 
 	                    "BAD", 
-	                    "Cannot save, required fields" 
+	                    "Cannot save required fields" 
 	                )
 	            );
 			oRequestContext.renderResponse();
@@ -507,8 +499,8 @@ public class XEOSecurityOPLBean extends XEOEditBean
 			/*oRequestContext.addMessage(
 	                "Bean",
 	                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
-	                    "Operação não permitida", 
-	                    "Não tem permissões para editar este objecto" 
+	                    "Operation not allowed", 
+	                    "You don't permissions to edit this topic" 
 	                )
 	            );
 	    	oRequestContext.renderResponse();*/

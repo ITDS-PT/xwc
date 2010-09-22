@@ -6,6 +6,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import netgest.bo.xwc.components.annotations.Visible;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -48,6 +49,7 @@ public class XEOMainBean extends XEOBaseBean {
 		}
 	}
 	
+	@Visible
 	public void editObject() throws Exception {
         XUIRequestContext   oRequestContext;
         XUISessionContext   oSessionContext;
@@ -79,6 +81,7 @@ public class XEOMainBean extends XEOBaseBean {
         oViewRoot.processInitComponents();
     }
 
+	@Visible
     public void createObject() throws Exception {
 
         XUIRequestContext   oRequestContext;
@@ -139,6 +142,7 @@ public class XEOMainBean extends XEOBaseBean {
         
     }
 
+    @Visible
     public void listObject( ) throws Exception {
         
         XUIRequestContext   oRequestContext;
@@ -178,6 +182,7 @@ public class XEOMainBean extends XEOBaseBean {
         
     }
     
+    @Visible
     public void openViewer()  throws Exception {
         XUIRequestContext   oRequestContext;
         XUISessionContext   oSessionContext;
@@ -200,6 +205,7 @@ public class XEOMainBean extends XEOBaseBean {
     	
     }
     
+    @Visible
     public void openLink() throws IOException {
         XUIRequestContext   oRequestContext;
         oRequestContext = XUIRequestContext.getCurrentContext();
@@ -208,6 +214,7 @@ public class XEOMainBean extends XEOBaseBean {
     	oRequestContext.responseComplete();
     }
     
+    @Visible
     public void logout() {
         try {
 			XUIRequestContext oRequestContext;
@@ -228,6 +235,7 @@ public class XEOMainBean extends XEOBaseBean {
 		}
     }
     
+    @Visible
     public void openXEO21Viewer() {
     	///__explorer.jsp?objectName=Ebo_Perf&form=explorer&label=Utilizadores&imagem=resources%2FEbo_Perf%2Fico16.gif&myIDX=0
         XUIRequestContext   oRequestContext;

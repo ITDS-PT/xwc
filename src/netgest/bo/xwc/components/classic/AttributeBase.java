@@ -124,7 +124,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
     	new XUIViewBindProperty<Integer>( "decimalPrecision", this, Integer.class );
 
     /**
-     * The minimal decimal precison for the value of the component
+     * The minimal decimal precision for the value of the component
      */
     private XUIViewBindProperty<Integer> minDecimalPrecision  = 
     	new XUIViewBindProperty<Integer>( "minDecimalPrecision", this, Integer.class );

@@ -37,7 +37,7 @@ import org.json.JSONObject;
  * A {@link Menu} component that renders an "Outlook style" counter
  * along side the label of the {@link MenuCounter}
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class MenuCounter extends Menu {

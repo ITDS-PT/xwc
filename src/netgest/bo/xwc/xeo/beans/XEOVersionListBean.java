@@ -177,7 +177,7 @@ public class XEOVersionListBean extends XEOEditBean
 	    			return BeansMessages.VERSIONING_NOT_ACTIVE.toString();
 	    	}
 	    	
-	    	w.endDocument();
+			w.endDocument();
 			return writer.toString();
 		
 		 } 

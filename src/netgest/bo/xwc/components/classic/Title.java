@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
 
+import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIStateProperty;
@@ -21,6 +22,7 @@ public class Title extends XUIOutput {
     /**
      * Evaluates the name that the title of the viewer is going to have
      */
+	@RequiredAlways
     private XUIStateProperty<String> valueExpression = new XUIStateProperty<String>( "valueExpression", this );
     /**
      * Stores the rendered value of the title

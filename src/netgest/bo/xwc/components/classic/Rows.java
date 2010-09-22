@@ -25,7 +25,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * elements can be placed inside. 
  * The purpose is to have those form components aligned in any way desired
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class Rows extends XUIComponentBase

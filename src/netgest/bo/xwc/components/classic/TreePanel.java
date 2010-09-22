@@ -34,7 +34,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
  * of tree-like structures to organizes menus (such as seen
  * in a 'Main' viewer
  * 
- * @author João Carreira
+ * @author jcarreira
  * 
  *
  */

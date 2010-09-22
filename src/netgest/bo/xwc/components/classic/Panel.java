@@ -20,7 +20,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * 
  * The {@link Panel} component renders an HTML panel to allow 
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class Panel extends ViewerSecurityBase {

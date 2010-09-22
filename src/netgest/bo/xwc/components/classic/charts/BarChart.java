@@ -877,6 +877,14 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 						component.getClientId(),
 						b);
 				
+				String clientId = oComp.getClientId(); 
+				String reloadChart = ChartUtils.getReloadChartJSFunction(clientId, url, width, height,getRequestContext());
+				
+				w.getScriptContext().add( 
+						XUIScriptContext.POSITION_HEADER, 
+						"reloadChart",
+						reloadChart);
+				
 				w.startElement(HTMLTag.DIV, oComp);
 					w.writeAttribute(HTMLAttr.ID, component.getClientId(), null);
 				w.endElement(HTMLTag.DIV);

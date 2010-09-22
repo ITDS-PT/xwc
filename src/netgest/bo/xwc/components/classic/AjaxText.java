@@ -6,6 +6,7 @@ import javax.el.ValueExpression;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -21,7 +22,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * The {@link AjaxText} component renders text in a viewer
  * that's constantly updated (using Ajax)
  * 
- * @author Filipe Caló
+ * @author Filipe Calo
  *
  */
 public class AjaxText extends XUIComponentBase {
@@ -29,12 +30,14 @@ public class AjaxText extends XUIComponentBase {
 	/**
 	 * The text to render in the viewer (and update)
 	 */
+	@Required
 	private XUIBindProperty<String> text = 
 		new XUIBindProperty<String>("text", this, "", String.class );
 	
 	/**
 	 * The time between each update request (in mili-seconds)
 	 */
+	@Required
 	private XUIBindProperty<String> updateTime = 
 		new XUIBindProperty<String>("updateTime", this, "", String.class );
 	
@@ -116,6 +119,10 @@ public class AjaxText extends XUIComponentBase {
 		public void encodeBegin(XUIComponentBase component) throws IOException {
 			XUIResponseWriter w = getResponseWriter();
 			AjaxText oComp = (AjaxText)component;
+			
+			if (oComp.getText() == null || oComp.getUpdateTime() == null)
+				throw new RuntimeException("Property 'text' and 'updateTime' cannot be null");
+			
 			String sanitizedCompId = "_"+oComp.getClientId().replace(":", "");
 			
 			w.write("<div id='ajaxText"+sanitizedCompId+"'>");

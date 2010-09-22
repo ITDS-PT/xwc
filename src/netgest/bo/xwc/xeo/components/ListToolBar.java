@@ -22,7 +22,7 @@ import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
  * Default {@link ToolBar} for a {@link netgest.bo.xwc.xeo.components.List} component
  * includes the button to create a new instance object
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class ListToolBar extends ToolBarMenuPositions {

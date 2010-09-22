@@ -6,7 +6,6 @@ import javax.faces.context.ResponseWriter;
 
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
-import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -17,7 +16,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * (HTML fieldset) inside a viewer.
  * 
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class Section extends ViewerSecurityBase {

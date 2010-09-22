@@ -24,7 +24,7 @@ import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
  * buttons to add an existing {@link boObject} instance to the bridge, remove an object from the bridge
  * and create a new object to add to the bridge
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class BridgeToolBar extends ToolBarMenuPositions {

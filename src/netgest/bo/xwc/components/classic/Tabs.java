@@ -28,7 +28,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * be used in creative ways, such as using a set of tabs inside a form
  *	as a wizard, or tutorial.
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class Tabs extends XUIComponentBase

@@ -16,7 +16,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * 
  * A {@link Tab} is a component that's used to create tabs inside a viewer.
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class Tab extends ViewerCommandSecurityBase

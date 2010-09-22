@@ -6,6 +6,7 @@ import javax.el.ValueExpression;
 
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -18,7 +19,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * The {@link OutputHtml} components allow to directly output an HTML string
  * from a Bean property to the Viewer
  * 
- * @author João Carreira
+ * @author jcarreira
  *
  */
 public class OutputHtml extends ViewerOutputSecurityBase {
@@ -26,6 +27,7 @@ public class OutputHtml extends ViewerOutputSecurityBase {
     /**
      * The HTML content to show
      */
+	@Required
     private XUIStateProperty<String> valueExpression = new XUIStateProperty<String>( "valueExpression", this );
     /**
      * The value that was rendered in the viewer

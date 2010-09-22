@@ -28,6 +28,7 @@ import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.xeo.components.FormEdit;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
+import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
 
@@ -587,7 +588,8 @@ public class XEOListVersionHelper
 			//Update the XML tree with a sumary of differences
 			Iterator<String> itDiffAtts = diffAttributes.keySet().iterator();
 			Element differences = doc.createElement("differences");
-			differences.setAttribute("label", "Resumo das diferenças");
+			String val = "Difference Summary";
+			differences.setAttribute("label", val);
 			while (itDiffAtts.hasNext())
 			{
 				Element attribute = doc.createElement("attribute");
@@ -604,8 +606,6 @@ public class XEOListVersionHelper
 			updateXMLTreeWithAttributeDifferences(doc, diffAttributes, diffBridges,differences);
 			
 			String xmlSourceContent = ngtXMLUtils.getXML(doc);
-			
-			System.out.println(xmlSourceContent);
 			
 			//Apply the XSLT
 			final String XSLT = "showDifferences.xsl";
