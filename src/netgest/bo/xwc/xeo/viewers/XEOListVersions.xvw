@@ -10,7 +10,7 @@
   	>
         <xeo:formEdit id='listVersionForm' renderToolBar="false">
         	<script>
-        		
+        		<![CDATA[
         		/*
         		
         		Checks the number of options selected and activates the buttons accordingly
@@ -104,7 +104,7 @@
                 	winWithDifferences.show();
 				}
         		
-        		
+        		]]>
         	</script>
         	<style>
         	
