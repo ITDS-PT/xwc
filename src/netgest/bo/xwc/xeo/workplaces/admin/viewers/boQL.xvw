@@ -45,6 +45,11 @@
 									height='50' maxLength='5000' valueExpression='#{viewBean.boQl}' />
 							</xvw:cell>
 						</xvw:row>
+						<xvw:row>
+							<xvw:cell>
+								<xvw:outputHtml valueExpression="#{viewBean.elapsedTime}"/>
+							</xvw:cell>
+						</xvw:row>
 					</xvw:rows>
 				</xvw:section>
 				</xvw:cell>

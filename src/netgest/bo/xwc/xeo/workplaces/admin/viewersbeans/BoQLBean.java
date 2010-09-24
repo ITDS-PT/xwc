@@ -2,6 +2,7 @@ package netgest.bo.xwc.xeo.workplaces.admin.viewersbeans;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,6 +36,7 @@ public class BoQLBean extends XEOBaseBean {
 	private String boQl;
 	private String sqlResult;
 	private String parserError;
+	private String elapsedTime;
 	private QLParser qlParser;
 
 	//TODO  keep in session or user preferences
@@ -110,6 +112,10 @@ public class BoQLBean extends XEOBaseBean {
 	public void setBoQl(String boQl) {
 		this.boQl = boQl;
 	}
+	
+	public String getElapsedTime() {
+		return elapsedTime;
+	}
 
 	public String getSqlResult() {
 		return this.sqlResult;
@@ -126,16 +132,29 @@ public class BoQLBean extends XEOBaseBean {
 	public void runQuery() {
 		if (this.boQl!=null) {
 			try{
+				this.elapsedTime = null;
 				this.parserError = null;
 				this.qlParser = new QLParser();
 				this.sqlResult = this.qlParser.toSql(this.boQl,getEboContext(), this.enableSecurity);
 
 				if (this.qlParser.Sucess()) {
+					Calendar start = Calendar.getInstance();
+
 					boObjectList result =  boObjectList.list(getEboContext(),this.boQl);
 
 					// forces error
 					result.next();
-
+					
+				    Calendar end = Calendar.getInstance();
+					long time = end.getTimeInMillis() - start.getTimeInMillis();
+					int minutes, seconds;
+					minutes = (int)time/1000/60 ;
+					seconds = (int)time/1000;
+					seconds %=60;
+				    
+				    this.elapsedTime = "Time elapsed "
+				    	+ (minutes==0? (seconds + " seconds") : minutes +":"+seconds+" minutes");
+			
 					LinkedHashMap<String,String> lastQueriesReversed = new LinkedHashMap<String, String>();
 					lastQueriesReversed.put( this.boQl , this.boQl  );
 					for (Entry<String, String> entry : this.lastQueries.entrySet()) {

@@ -25,7 +25,7 @@ public class Utils {
             retval += hours + ":" + minutes;
         }
         else {
-            retval += minutes + " min";
+            retval += minutes + " minutes";
         }
 
         return retval;
