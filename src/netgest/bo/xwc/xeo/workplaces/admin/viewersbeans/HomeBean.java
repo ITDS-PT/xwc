@@ -220,19 +220,21 @@ public class HomeBean extends XEOBaseBean {
 	}
 
 	public void refreshObjectInstances() throws SQLException {
-		final int limit = 10;
+		if (this.getObjectInstancesPieChartExpired()) {
+			final int limit = 10;
 
-		String sql = "SELECT CLSID as name,count(CLSID) as total" 
-			+ " FROM OEEBO_REGISTRY"
-			+ " WHERE CLSID <> 'Ebo_TextIndex'"
-			+ " GROUP BY CLSID" 
-			+ " ORDER BY total DESC";
+			String sql = "SELECT CLSID as name,count(CLSID) as total" 
+				+ " FROM OEEBO_REGISTRY"
+				+ " WHERE CLSID <> 'Ebo_TextIndex'"
+				+ " GROUP BY CLSID" 
+				+ " ORDER BY total DESC";
 
-		objectInstances = new PieChartDataSet(sql,"name","total",limit,"Instances by object",objectInstancesExpirationTime);
-		objectInstances.setiPieChartConfiguration(new ObjectsPieChartConf("Instances"));
-		getRequestContext().getScriptContext().add(XUIScriptContext.POSITION_FOOTER
-				, "refreshObjectInstances"
-				, "reloadChart('form:objectInstances');");
+			objectInstances = new PieChartDataSet(sql,"name","total",limit,"Instances by object",objectInstancesExpirationTime);
+			objectInstances.setiPieChartConfiguration(new ObjectsPieChartConf("Instances"));
+			getRequestContext().getScriptContext().add(XUIScriptContext.POSITION_FOOTER
+					, "refreshObjectInstances"
+					, "reloadChart('form:objectInstances');");
+		}
 	}
 
 	private void refreshPackageObjects() throws SQLException {
