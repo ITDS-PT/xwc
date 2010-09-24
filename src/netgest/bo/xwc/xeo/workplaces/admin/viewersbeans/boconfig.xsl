@@ -15,7 +15,7 @@
         	<xsl:attribute name="id">
                     <xsl:value-of select="concat('generalPanel',$id)"></xsl:value-of>
             </xsl:attribute>
-            <table>
+            <table class='relations'>
                <tr>
                    <td>Bodef Directory</td>
                    <td><input type="text" disabled="disabled">
@@ -150,10 +150,10 @@
            <xsl:attribute name="id">
                     <xsl:value-of select="concat('deploymentPanel',$id)"></xsl:value-of>
             </xsl:attribute>
-                <table>
+                <table class='relations'>
                     <tr>
                         <td>Class Directory</td>
-                        <td><input type="text" disabled="disabled">
+                        <td><input type="text" disabled="disabled" size='100%'>
                             <xsl:attribute name="value">
                                 <xsl:value-of select="./class_dir/text()"/>
                             </xsl:attribute>
@@ -353,7 +353,7 @@
         <form name="mail">
             <fieldset>
                 <legend>Mail Configurations</legend>
-                <table>
+                <table class='relations'>
                     <tr>
                         <td>SMTP Host</td>
                         <td><input type="text" disabled="disabled">
@@ -406,19 +406,40 @@
     <xsl:template match="wordTemplate">
         <fieldset>
             <legend>Word Template</legend>
-        Microsoft Word Template Directory : <xsl:value-of select="./path"/>
+        		Microsoft Word Template Directory : <xsl:value-of select="./path"/>
         </fieldset>    
     </xsl:template>
     
     <xsl:template match="win32Client">
         <fieldset>
             <legend>Win 32 Client</legend>
-        Win32 Client Jar
-        <ul>
-            <li>Name of Jar <xsl:value-of select="./name/text()"/></li>
-            <li>Path to Jar <xsl:value-of select="./path/text()"/></li>
-            <li>Version of Win32 Client <xsl:value-of select="./version/text()"/></li>
-        </ul>
+		        Win32 Client Jar
+		        <table class="relations">
+		        <tr>
+		            <td>Name of Jar</td>
+		            <td><input type="text" disabled="disabled">
+		            <xsl:attribute name="value">
+                                <xsl:value-of select="./name/text()"/>
+                    </xsl:attribute>
+                   </input></td>
+		        </tr>
+		        <tr>
+		            <td>Path to Jar</td>
+		            <td><input type="text" disabled="disabled">
+		            <xsl:attribute name="value">
+                                <xsl:value-of select="./path/text()"/>
+                    </xsl:attribute> </input></td>
+	            </tr>
+	            <tr>
+		            <td>Version of Win32 Client </td>
+		            <td><input type="text" disabled="disabled">
+		            	<xsl:attribute name="value">
+                                <xsl:value-of select="./version/text()"/>
+                    </xsl:attribute>
+		            </input></td>
+		            
+		        </tr>
+		        </table>
         </fieldset>    
     </xsl:template>
     

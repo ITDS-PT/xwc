@@ -14,10 +14,11 @@
              			renderExcelBtn='false' renderPdfBtn='false' 
              			renderToolBar='false'
              			rowDblClickTarget='self' onRowDoubleClick='#{viewBean.openDblClick}'
+             			rowSelectionMode="ROW"
              			>
 	             		  <xeo:bridgeToolBar 
 	             				renderAddBtn='false'
-	             				renderRemoveBtn='#{viewBean.canRemoveBtn}'
+	             				renderRemoveBtn='false'
 	             				renderCreateNewBtn='false'
 	             				bridgeName='KEYS'>
 	             				<xvw:menu 
@@ -28,6 +29,11 @@
 	             					target='self'
 	             					>
 	             				</xvw:menu>
+	             				<xvw:menu text="Remove Permission"
+	             					icon="ext-xeo/images/menus/delete_permission.jpg"
+	             					disabled="#{viewBean.disabledAddBtn}"
+	             					serverAction="#{viewBean.removePermission}"
+	             					target='self'></xvw:menu>
 	             		</xeo:bridgeToolBar> 
 						<xvw:columns>
 							<xvw:columnAttribute width="120" 

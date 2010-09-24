@@ -328,6 +328,7 @@ public class XEOEditBean extends XEOBaseBean
         }
         catch (Exception e) 
         {
+        	log.severe("XEOEditBean - XSLT Transformation Error", e);
         	throw new boRuntimeException("XEOEditBean - XSLT Transformation Error", e.getMessage(), e);
         }
         
@@ -354,7 +355,8 @@ public class XEOEditBean extends XEOBaseBean
 			return ngtXMLUtils.getXML(doc);
 			//return result;
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.severe("Could not retrieve the Viewer", e);
+			//e.printStackTrace();
 		} 
 		return null;
     }

@@ -24,6 +24,31 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
     private long lBoObjectBoui;
     private int	 rowIndex; 
     
+    /**
+     * 
+     * List of Constants when using an Object Connector
+     * 
+     * 
+     * @author Pedro Pereira
+     *
+     */
+    public static enum SystemConstants{
+    	SYS_OBJECT_LABEL,
+    	SYS_OBJECT_ICON_16,
+    	SYS_ICON_COMPOSED_STATE,
+    	SYS_CARDID,
+    	SYS_ROWNUM
+    };
+    
+    public static boolean isSystemConstant(String name){
+    	for (SystemConstants p: SystemConstants.values())
+    	{
+    		if (name.equalsIgnoreCase(p.name()))
+    			return true;
+    	}
+    	return false;
+    }
+    
     public XEOObjectConnector( long lBoObjectBoui, int rowIndex ) 
     {
     	this.rowIndex = rowIndex;
@@ -73,6 +98,9 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 			
 			if( name.equals("SYS_CARDID") ) 
 				return new GenericFieldConnector( ConnectorsMessages.OBJECT_LABEL.toString(), getXEOObject().getCARDID().toString(), DataFieldTypes.VALUE_CHAR );
+			
+			if (name.equals("SYS_ROWNUM"))
+				return new GenericFieldConnector( ConnectorsMessages.OBJECT_LABEL.toString(), String.valueOf(getRowIndex()), DataFieldTypes.VALUE_CHAR );
 			
 		} catch (boRuntimeException e) {
 			throw new RuntimeException( e );

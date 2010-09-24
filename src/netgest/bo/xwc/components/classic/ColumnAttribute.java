@@ -7,6 +7,7 @@ import javax.el.ValueExpression;
 
 import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
+import netgest.bo.xwc.components.connectors.XEOObjectConnector;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBaseProperty;
@@ -336,6 +337,8 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
      * Return the isSearchable property
      */
 	public boolean isSearchable() {
+		if (XEOObjectConnector.isSystemConstant(getDataField()))
+			return false;
 		return searchable.getValue();
 	}
 
@@ -343,6 +346,8 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
      * Return the isSortable property
      */
 	public boolean isSortable() {
+		if (XEOObjectConnector.isSystemConstant(getDataField()))
+			return false;
 		return sortable.getValue();
 	}
 
@@ -350,6 +355,8 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
      * Return the isGroupable property
      */
 	public boolean isGroupable() {
+		if (XEOObjectConnector.isSystemConstant(getDataField()))
+			return false;
 		return groupable.getValue();
 	}
 

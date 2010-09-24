@@ -1,5 +1,6 @@
 package netgest.bo.xwc.xeo.beans;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 import netgest.bo.def.v2.boDefInterfaceImpl;
@@ -226,7 +227,8 @@ public class XEOSecurityOPLBean extends XEOEditBean
 		{
 			try 
 			{
-				boObject current = boObject.getBoManager().loadObject(getEboContext(), this.targetObject.longValue());
+				boObject current = boObject.getBoManager().loadObject(getEboContext(), 
+						this.targetObject.longValue());
 				return current.getTextCARDID().toString();
 			} 
 			catch (boRuntimeException e) 
@@ -344,12 +346,6 @@ public class XEOSecurityOPLBean extends XEOEditBean
 		return "<img src=\""+path+"\" width='16' height='16' alt='"+type+"' title='"+type+"' />";
 	}
 	
-	/*public void init()
-	{
-		mapOfSystemSecurities = new HashSet<Long>();
-		this.createMapOfSystemSecurities();
-	}*/
-	
 	/**
 	 * 
 	 * Converts a String value (0 or 1) into a boolean value
@@ -432,8 +428,8 @@ public class XEOSecurityOPLBean extends XEOEditBean
 		}
 		catch (Exception e)
 		{
-			//FIXME: Show error message :P
 			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		//Close the view and show the message
 		oRequestContext = XUIRequestContext.getCurrentContext();
@@ -442,15 +438,88 @@ public class XEOSecurityOPLBean extends XEOEditBean
     		createView("netgest/bo/xwc/components/viewers/Dummy.xvw");
     	
     	oRequestContext.addMessage(
-                "Bean",
+                "sucessMessage",
                 new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, 
                     BeansMessages.TITLE_SUCCESS.toString(), 
                     BeansMessages.BEAN_SAVE_SUCESS.toString() 
                 )
             );
-    	
+    	getViewRoot().getParentView().syncClientView();
     	oRequestContext.setViewRoot( viewRoot );
 		oRequestContext.renderResponse();
+	}
+	
+	/**
+	 * Removes the selected permission from the given instance object
+	 */
+	public void removePermission(){
+		
+		try {
+			XUIRequestContext oRequestContext = getRequestContext();
+			GridPanel permissionList = (GridPanel) getViewRoot().findComponent(GridPanel.class);
+			DataRecordConnector selectedLine = permissionList.getActiveRow();
+			
+			if (selectedLine == null || permissionList.getSelectedRows().length == 0)
+			{
+				oRequestContext.addMessage(
+		                "noRowsSelected",
+		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
+		                    "Error", 
+		                    "Please select one row from the panel" 
+		                )
+		            );
+		    	oRequestContext.renderResponse();
+		    	return;
+			}
+			
+			DataRecordConnector[] rows = permissionList.getSelectedRows();
+			
+			DataFieldConnector currBoui = selectedLine.getAttribute("BOUI");
+			Long val = new Long(currBoui.getValue().toString());
+			
+			boObject currentObjectOfPermissions = getXEOObject();
+			
+			bridgeHandler oBridgeHandler = currentObjectOfPermissions.getBridge(KEYS_BRIDGE);
+			boBridgeRow selectedRow = oBridgeHandler.getRow(val);
+			boolean showRemoved = false;
+			if (selectedRow.getAttribute(KEYS_ATT_SECURITY_TYPE) != null){
+				if (selectedRow.getAttribute(KEYS_ATT_SECURITY_TYPE).getValueLong() == 1)
+				{
+					oBridgeHandler.remove();
+					showRemoved = true;
+					currentObjectOfPermissions.setChanged(true);
+					currentObjectOfPermissions.update();
+					getViewRoot().syncClientView();
+				}
+			}
+			
+			if (showRemoved){
+				oRequestContext.addMessage(
+		                "removedSucess",
+		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
+		                    "Sucess", 
+		                    "The selected permission was removed" 
+		                )
+		            );
+		    	oRequestContext.renderResponse();
+			}
+			else
+			{
+				oRequestContext.addMessage(
+		                "removeError",
+		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
+		                    "Operation not allowed", 
+		                    "System Permissions cannot be removed" 
+		                )
+		            );
+		    	oRequestContext.renderResponse();
+			}
+			
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (boRuntimeException e) {
+			throw new RuntimeException("Could not remove permissions from current object", e);
+		}
 	}
 	
 	/**
@@ -494,16 +563,14 @@ public class XEOSecurityOPLBean extends XEOEditBean
 		
 		if (!getCanAddBtn())
 		{
-			//FIXME: Should I add the message to show the error
-			//or simply let it be
-			/*oRequestContext.addMessage(
-	                "Bean",
+			oRequestContext.addMessage(
+	                "notAllowedOperation",
 	                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
 	                    "Operation not allowed", 
 	                    "You don't permissions to edit this topic" 
 	                )
 	            );
-	    	oRequestContext.renderResponse();*/
+	    	oRequestContext.renderResponse();
 		}
 		else
 		{
@@ -518,6 +585,35 @@ public class XEOSecurityOPLBean extends XEOEditBean
 	        
 	        try 
 	        {
+	        	
+		        BigDecimal boui = ((BigDecimal) oRow.getAttribute("BOUI").getValue());
+		        bridgeHandler bridgeKeysHandler = getXEOObject().getBridge(KEYS_BRIDGE);
+		        boBridgeRow bridgeRowToAnalyze = bridgeKeysHandler.getRow(boui.longValue());
+		        boolean showMessageNoPermission = false;
+		        Object securityTypeOfSelectedObject = bridgeRowToAnalyze.getAttribute(KEYS_ATT_SECURITY_TYPE).getValueObject();
+		        if (securityTypeOfSelectedObject != null)
+		        {
+		        	BigDecimal securityTypeValue = (BigDecimal) securityTypeOfSelectedObject;
+		        	if (securityTypeValue.longValue() == 0)
+		        		showMessageNoPermission = true;
+		        }
+		        else
+		        	showMessageNoPermission = true;
+		        
+		        if (showMessageNoPermission)
+		        {
+		        	oRequestContext.addMessage(
+			                "Bean",
+			                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
+			                    "Operation not allowed", 
+			                    "Cannot edit System OPL" 
+			                )
+			            );
+			    	oRequestContext.renderResponse();
+			    	return;
+		        }
+	        
+	        
 	        	boObject oCurrTarget = boObject.getBoManager().loadObject(getEboContext(), 
 	        			Long.valueOf(String.valueOf(oRow.getAttribute("BOUI").getValue())));
 				oSecurityBean.setCurrentTarget(oCurrTarget);
@@ -541,9 +637,10 @@ public class XEOSecurityOPLBean extends XEOEditBean
 				
 			} 
 	        catch (Exception e) 
-			{e.printStackTrace(); 
+			{
+	        	e.printStackTrace(); 
 	        	oSecurityBean.setCurrentTarget(null);
-			}
+	        }
 	        
 	        oRequestContext.setViewRoot( oViewRoot );
 	        oRequestContext.renderResponse();
@@ -763,7 +860,8 @@ public class XEOSecurityOPLBean extends XEOEditBean
 					else
 						return BeansMessages.OPL_RUNTIME_PERMISSION.toString();
 				}
-				return "";
+				else
+					return BeansMessages.OPL_DESIGN_TIME_PERMISSION.toString();
 				
 			}
 		};

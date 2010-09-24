@@ -54,7 +54,8 @@ public class XEOVersionListBean extends XEOEditBean
 	public String getListOfVersions()
 	{
 		boObject currentObject = getXEOObject();
-    	boObjectList list = boObjectList.list(getEboContext(), "select Ebo_Versioning where CHANGEDOBJECT = " + currentObject.getBoui() );
+    	boObjectList list = boObjectList.list(getEboContext(), "select Ebo_Versioning where CHANGEDOBJECT = "
+    			+ currentObject.getBoui() + " ORDER BY version ASC");
     	
     	StringWriter writer = new StringWriter();
 		XUIResponseWriter w = new XUIResponseWriter(writer, "text/html", "UTF-8");

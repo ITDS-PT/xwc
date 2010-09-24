@@ -26,14 +26,19 @@
         		{
         			var counter = 0;
         			var buttonActual = document.getElementById('compareCurrent');
-        			for (i = 0; i < field.length; i++)
+        			for (i = 0; i < field.length; i++){
 						if (field[i].checked)
 							counter++;
-					if (counter == 1)
-					{
-						buttonActual.disabled = false;
 					}
 					
+					if (counter == 1)
+						buttonActual.disabled = false;
+					else
+					{
+						if (field.checked)
+							buttonActual.disabled = false;
+						
+					}
 				}
 				
 				/*

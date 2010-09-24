@@ -87,7 +87,7 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
             	boolean hasCustomRender = false;
             	
             	w.startElement("gridcolumn", null);
-                
+            	
                 if( oDataField != null ) 
                 {	
                 	if (!columns[i].isHidden()) //Tinha isto antes columnsUsed.contains(oDataField.getLabel())
@@ -97,6 +97,7 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 	                	else 
 	                	{
 	                		Column current = columns[i];
+	                		w.writeAttribute("width",current.getWidth(),null);
 	                		if (current instanceof ColumnAttribute)
 	                		{
 	                			ColumnAttribute currentCol = (ColumnAttribute) current;
@@ -154,7 +155,8 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 			                        }
 			                   }
 		                    }
-		                    w.writeAttribute("width",current.getWidth(),null);
+		                    
+		                    
 	                	}
 	                }
                 }

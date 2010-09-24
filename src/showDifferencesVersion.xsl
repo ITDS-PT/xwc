@@ -377,12 +377,13 @@
                 </style>
             <!--</head> -->
             <body bgcolor="white">
-                
+                <div style="background-color:white">
                 <xsl:apply-templates select="html/differences" mode="diff" />
                 <xsl:apply-templates select="html/body/div/*"/>
                 <hr></hr>
                 <xsl:apply-templates select="html/body/div/formEdit/formEditObject">
                 </xsl:apply-templates>
+                </div>
             </body>
         <!--</html>-->
     </xsl:template>
