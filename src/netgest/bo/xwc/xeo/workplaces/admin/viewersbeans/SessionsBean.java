@@ -12,10 +12,6 @@ public class SessionsBean extends XEOBaseBean  {
 	public SessionsBean() {
 		super();
 		this.sessions = new SessionsDataListConnector();
-		
-		
-		netgest.bo.system.boPoolManager pool = 
-			getEboContext().getBoSession().getApplication().getMemoryArchive().getPoolManager();
 	}
 
 	public DataListConnector getSessions()  {
