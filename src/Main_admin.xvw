@@ -106,6 +106,9 @@
 					<xvw:menu text='Database Reports'
 						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/dbReports.xvw'}"
 						target='Tab' serverAction="#{viewBean.openViewer}" />
+					<xvw:menu text='Index queue'
+						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/IndexQueue.xvw'}"
+						target='Tab' serverAction="#{viewBean.openViewer}" />
 				</xvw:menu>
 
 				<xvw:menu text='Development' profile='admin' expanded='true'>
