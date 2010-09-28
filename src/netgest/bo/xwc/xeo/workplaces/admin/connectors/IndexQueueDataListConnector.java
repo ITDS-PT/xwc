@@ -14,11 +14,10 @@ public class IndexQueueDataListConnector extends GenericDataListConnector {
 		super();
 		
 		this.createColumn("BOUI", "boui");
+		this.createColumn("object", "Object");
 		this.createColumn("STATE", "State");
 		this.createColumn("MESSAGE", "Message");
-		this.createColumn("ENQUEUETIME", "Queue Time"); //TODO???
-		this.createColumn("SYS_DTCREATE", "Creation Date");
-		this.createColumn("SYS_DTSAVE", "Last Update");
+		this.createColumn("ENQUEUETIME", "Queue Time");
 	}
 
 	@Override
@@ -26,9 +25,15 @@ public class IndexQueueDataListConnector extends GenericDataListConnector {
 		super.refresh();
 		
 		try {
-			String sql = "select BOUI,STATE,MESSAGE,ENQUEUETIME,SYS_DTCREATE,SYS_DTSAVE" +
-					" from EBO_TEXTINDEX_QUEUE" +
-					" order by SYS_DTSAVE desc";
+			String sql = "select EBO_TEXTINDEX_QUEUE.BOUI as BOUI"
+			+",OEEBO_REGISTRY.CLSID as object"
+			+",EBO_TEXTINDEX_QUEUE.STATE as STATE"
+			+",EBO_TEXTINDEX_QUEUE.MESSAGE as MESSAGE"
+			+",EBO_TEXTINDEX_QUEUE.ENQUEUETIME as ENQUEUETIME"
+			+" from EBO_TEXTINDEX_QUEUE,OEEBO_REGISTRY"
+			+" where EBO_TEXTINDEX_QUEUE.STATE <> 1"
+			+" and EBO_TEXTINDEX_QUEUE.BOUI = OEEBO_REGISTRY.BOUI"
+			+" order by ENQUEUETIME desc";
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			
@@ -37,20 +42,21 @@ public class IndexQueueDataListConnector extends GenericDataListConnector {
 			Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
+				String state =  rs.getString("STATE");
+				
+				if ("0".equals(state))
+					state = "To be processed";
+				else if ("9".equals(state))
+					state = "Index error";
 				
 				this.createRow();
 				
 				this.createRowAttribute("BOUI", rs.getString("BOUI"));
-				this.createRowAttribute("STATE", rs.getString("STATE"));
+				this.createRowAttribute("object", rs.getString("object"));
+				this.createRowAttribute("STATE", state);
 				this.createRowAttribute("MESSAGE", rs.getString("MESSAGE"));
 				try {
 					this.createRowAttribute("ENQUEUETIME", dateFormat.format(rs.getTimestamp("ENQUEUETIME")));
-				} catch (NullPointerException e) {}
-				try {
-					this.createRowAttribute("SYS_DTCREATE", dateFormat.format(rs.getTimestamp("SYS_DTCREATE")));
-				} catch (NullPointerException e) {}
-				try {
-					this.createRowAttribute("SYS_DTSAVE", dateFormat.format(rs.getTimestamp("SYS_DTSAVE")));
 				} catch (NullPointerException e) {}
 			}
 		} catch (Exception e) {

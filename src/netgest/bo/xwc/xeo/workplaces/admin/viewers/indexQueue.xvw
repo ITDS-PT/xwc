@@ -8,11 +8,10 @@
 				DataSource="#{viewBean.queue}">
 				<xvw:columns>
 					<xvw:columnAttribute width="12" dataField="BOUI" />
-					<xvw:columnAttribute width="10" dataField="STATE" />
+					<xvw:columnAttribute width="20" dataField="object" />
+					<xvw:columnAttribute width="14" dataField="STATE" />
 					<xvw:columnAttribute width="80" dataField="MESSAGE" />
 					<xvw:columnAttribute width="20" dataField="ENQUEUETIME" />
-					<xvw:columnAttribute width="20" dataField="SYS_DTCREATE" />
-					<xvw:columnAttribute width="20" dataField="SYS_DTSAVE" />
 				</xvw:columns>
 			</xvw:gridPanel>
 		</xvw:form>

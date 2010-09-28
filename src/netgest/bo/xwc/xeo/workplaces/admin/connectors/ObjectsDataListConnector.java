@@ -25,7 +25,7 @@ public class ObjectsDataListConnector extends GenericDataListConnector {
 		super.refresh();
 		
 		try {
-			String sql = "select name,SYS_DTCREATE,SYS_DTSAVE" +
+			String sql = "select CLSID as name,SYS_DTCREATE,SYS_DTSAVE" +
 					" from oebo_registry" +
 					" where clsid <> 'Ebo_TextIndex'" +
 					" and clsid <> 'Ebo_Login'" +
