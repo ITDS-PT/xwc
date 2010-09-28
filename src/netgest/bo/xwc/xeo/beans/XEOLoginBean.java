@@ -102,7 +102,12 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 		if( getBoSession() != null ) {
             String[] iProfiles;
             
-			iProfiles = IProfileUtils.getIProfiles( getBoSession() );
+            //SYSUSER should have access to all profiles configured on XEO Instance
+            if (getBoSession().getUser().getUserName().equals("SYSUSER"))
+            	iProfiles = IProfileUtils.getAllIProfiles( getBoSession() );
+            else
+            	iProfiles = IProfileUtils.getIProfiles( getBoSession() );
+            
 			if( iProfiles != null ) {
 	            for( String profileString : iProfiles ) {
 	            	String[] currProfile = profileString.split(";");
