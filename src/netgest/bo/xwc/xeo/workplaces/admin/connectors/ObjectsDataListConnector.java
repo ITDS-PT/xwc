@@ -3,6 +3,7 @@ package netgest.bo.xwc.xeo.workplaces.admin.connectors;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
@@ -10,14 +11,18 @@ import netgest.bo.system.boApplication;
 
 public class ObjectsDataListConnector extends GenericDataListConnector {
 
+	private Date creationDate;
+	private SimpleDateFormat format;
 	private String orderBy;
 
 	public ObjectsDataListConnector(String orderBy) {
 		super();
 		this.orderBy = orderBy;
+		this.format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		this.createColumn("name", "Object Name");
 		this.createColumn("SYS_DTCREATE", "Creation Date");
 		this.createColumn("SYS_DTSAVE", "Last Update");
+		this.creationDate = new Date();
 	}
 
 	@Override
@@ -68,7 +73,10 @@ public class ObjectsDataListConnector extends GenericDataListConnector {
 				throw new RuntimeException(e.getMessage());
 			}
 		}
-
+	}
+	
+	public String getCreationDateString() {
+		return format.format(this.creationDate);
 	}
 
 }
