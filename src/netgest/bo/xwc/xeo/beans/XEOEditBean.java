@@ -1921,9 +1921,6 @@ public class XEOEditBean extends XEOBaseBean
         oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/XEOEditProperties.xvw");
         ((XEOEditBean)oViewRoot.getBean("viewBean")).setCurrentObjectKey( Long.toString( getXEOObject().getBoui() ) );
         
-        Tab props = (Tab) oViewRoot.findComponent("formProps:tbProperties");
-        ((Tabs) props.getParent()).setActiveTab(props);
-        
         oRequestContext.setViewRoot( oViewRoot );
         oRequestContext.renderResponse();
     	
@@ -1963,7 +1960,7 @@ public class XEOEditBean extends XEOBaseBean
         oRequestContext = XUIRequestContext.getCurrentContext();
         oSessionContext = oRequestContext.getSessionContext();
         
-        oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/XEOEditProperties.xvw");
+        oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/XEODependences.xvw");
         ((XEOEditBean)oViewRoot.getBean("viewBean")).setCurrentObjectKey( Long.toString( getXEOObject().getBoui() ) );
         
         Tab dependencies = (Tab) oViewRoot.findComponent("formProps:tbDependencies");
@@ -1987,7 +1984,7 @@ public class XEOEditBean extends XEOBaseBean
         oRequestContext = XUIRequestContext.getCurrentContext();
         oSessionContext = oRequestContext.getSessionContext();
         
-        oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/XEOEditProperties.xvw");
+        oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/XEODependences.xvw");
         ((XEOEditBean)oViewRoot.getBean("viewBean")).setCurrentObjectKey( Long.toString( getXEOObject().getBoui() ) );
         
         Tab dependents = (Tab) oViewRoot.findComponent("formProps:tbDependents");

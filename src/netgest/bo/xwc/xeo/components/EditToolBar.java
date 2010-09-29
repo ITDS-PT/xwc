@@ -33,11 +33,11 @@ public class EditToolBar extends ToolBar {
 		);
 
 	public static final List<String> MapObjectMethods = Arrays.asList(
-			new String[] {"update", "update","valid","cloneObject", "destroy" }
+			new String[] {"update", "update","saveAndCreateNew","valid","cloneObject", "destroy" }
 	);
 	
 	public static final List<String> MapViewerMethods = Arrays.asList(
-			new String[] {"save","saveAndClose","processValidate","duplicate", "remove" }
+			new String[] {"save","saveAndClose","saveAndCreateNew","processValidate","duplicate", "remove" }
 	);
 
 	public static final List<String> staticNonOrphanMethods = Arrays.asList(
@@ -84,7 +84,7 @@ public class EditToolBar extends ToolBar {
 	 * Whether or nor the "save and create new" button is rendered
 	 */
 	private XUIViewStateBindProperty<Boolean>  renderUpdateAndCreateNewBtn    = 
-		new XUIViewStateBindProperty<Boolean>( "renderUpdateAndCreateNewBtn", this, "true", Boolean.class );
+		new XUIViewStateBindProperty<Boolean>( "renderUpdateAndCreateNewBtn", this, "false", Boolean.class );
 
 	/**
 	 * Whether or not the "delete" button is rendered
@@ -112,10 +112,10 @@ public class EditToolBar extends ToolBar {
 		new XUIViewBindProperty<Boolean>( "renderObjectMethodBtns", this, true, Boolean.class );
 	
 	/**
-	 * Whether or not the "View Object Properties" menu, under the "Information" is rendered
+	 * Whether or not the "Object Properties" menu is rendered
 	 */
 	private XUIViewBindProperty<Boolean>  renderPropertiesBtn    = 
-		new XUIViewBindProperty<Boolean>( "renderPropertiesBtn", this, false, Boolean.class );
+		new XUIViewBindProperty<Boolean>( "renderPropertiesBtn", this, true, Boolean.class );
 
 	
 	/**
@@ -387,20 +387,26 @@ public class EditToolBar extends ToolBar {
 		createViewerBeanMethod( pos++,null, ComponentMessages.EDIT_TOOLBAR_BTN_VALIDATE_TOOLTIP.toString(),
 				"ext-xeo/images/menus/confirmar.gif", "processValidate", null );
 
-		getChildren().add( pos++,Menu.getMenuSpacer( renderValidateBtn.getExpressionString() ) );
+		getChildren().add( pos++,Menu.getMenuSpacer( renderCloneBtn.getExpressionString() ) );
 		createViewerBeanMethod( pos++,ComponentMessages.EDIT_TOOLBAR_BTN_DUPLICATE.toString(), 
 				ComponentMessages.EDIT_TOOLBAR_BTN_DUPLICATE_TOOLTIP.toString(), 
 				"ext-xeo/images/menus/applications.gif", "duplicate", "tab" );
 
+		
+		if (getRenderPropertiesBtn()){
+			getChildren().add( pos++,Menu.getMenuSpacer( renderPropertiesBtn.getExpressionString() ) );
+			getChildren().add(pos++,createPropertiesMenu());
+		}
+		
 		//Add the information Menus
 		if (	getRenderDependenciesBtn()  
 			|| 	getRenderDependentsBtn() 
-			|| 	getRenderPropertiesBtn()
 			|| 	getRenderListVersionBtn()
 			||  getTargetObject().getBoDefinition().implementsSecurityRowObjects()
 			||  getRenderInformationMenu())
 			
 		{
+			getChildren().add( pos++,Menu.getMenuSpacer( ) );
 			getChildren().add(pos++,createInformationMenu());
 		}
 		
@@ -590,11 +596,30 @@ public class EditToolBar extends ToolBar {
 		
 		return xeoMethod;
 	}
+	
+	
+	/**
+	 * 
+	 * Creates the properties Menu
+	 * 
+	 * @return
+	 */
+	private Menu createPropertiesMenu(){
+		
+		Menu propertiesMenu = new Menu();
+		propertiesMenu.setText("");
+		propertiesMenu.setIcon("extjs/resources/images/default/tree/leaf.gif;");
+		propertiesMenu.setToolTip(XEOViewersMessages.LBL_PROPERTIES.toString());
+		propertiesMenu.setServerAction("#{viewBean.showProperties}");
+		propertiesMenu.setTarget("self");
+		return propertiesMenu;
+		
+	}
 
 	/**
 	 * 
 	 * Creates a menu with the information options
-	 * (dependents, dependencies, properties and versioning)
+	 * (dependents, dependencies and versioning)
 	 * 
 	 * @return A menu with the information options
 	 */
@@ -605,16 +630,16 @@ public class EditToolBar extends ToolBar {
 		informationGroup.setToolTip(XEOComponentMessages.EDITTB_INFORMATION_TTIP.toString());
 		
 		//Only show if all are enabled
-		if (getRenderDependenciesBtn() || getRenderDependentsBtn() || getRenderPropertiesBtn() ||
-				getRenderInformationMenu())
+		if (getRenderDependenciesBtn() || getRenderDependentsBtn()  ||
+				getRenderInformationMenu()) //|| getRenderPropertiesBtn()
 		{
-			if (getRenderPropertiesBtn() || getRenderInformationMenu()){
+			/*if (getRenderPropertiesBtn() || getRenderInformationMenu()){
 				Menu propertiesMenu = new Menu();
 				propertiesMenu.setText(XEOViewersMessages.LBL_PROPERTIES.toString());
 				propertiesMenu.setServerAction("#{viewBean.showProperties}");
 				propertiesMenu.setTarget("window");
 				informationGroup.getChildren().add(propertiesMenu);
-			}
+			}*/
 			
 			if (getRenderDependentsBtn() || getRenderInformationMenu()){
 				Menu dependents = new Menu();
@@ -711,8 +736,8 @@ public class EditToolBar extends ToolBar {
 		if( "saveAndClose".equals(  vm.getTargetMethod() ) )
 			return getRenderUpdateAndCloseBtn();
 		
-		if( "saveAndClose".equals(  vm.getTargetMethod() ) )
-			return getRenderUpdateAndCloseBtn();
+		if( "saveAndCreateNew".equals(  vm.getTargetMethod() ) )
+			return getRenderUpdateAndCreateNewBtn();
 		
 		if( "remove".equals( vm.getTargetMethod() ) )
 			return getRenderDestroyBtn();

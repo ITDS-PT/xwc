@@ -46,9 +46,9 @@
         	<xvw:window width='500' height='250'>
 	            <xvw:title valueExpression='@{LBL_PROPERTIES}'></xvw:title>
 	            <xvw:errorMessages></xvw:errorMessages>
-	            <xvw:tabs>
+	            <xvw:tabs renderTabBar="false">
 	            	<xvw:tab label="@{LBL_PROPERTIES}" id="tbProperties">
-	            		<xvw:section label='@{LBL_PROPERTIES}'>
+	            		<xvw:section>
 						<xvw:rows columns='2' columnWidths='35%,65%' >
 							<xvw:row>
 								<xvw:cell>
@@ -111,29 +111,6 @@
 			 			</xvw:rows>
 						</xvw:section>
 					</xvw:tab>
-	            	 <xvw:tab label="@{LBL_DEPENDENTS}" id="tbDependents">
-	            		<xvw:section label='@{LBL_DEPENDENTS}'>
-	            		<xvw:rows>
-							<xvw:row>
-								<xvw:cell>
-									<xvw:outputHtml valueExpression='#{viewBean.dependents}' />
-								</xvw:cell>
-							</xvw:row>
-						</xvw:rows>
-						</xvw:section>	
-	            	</xvw:tab>
-	            	<xvw:tab label="@{LBL_DEPENDENCIES}" id="tbDependencies">
-	            		<xvw:section label='@{LBL_DEPENDENCIES}'>
-	            		<xvw:rows>
-							<xvw:row>
-								<xvw:cell>
-									<xvw:outputHtml valueExpression='#{viewBean.dependencies}' />
-								</xvw:cell>
-							</xvw:row>
-						</xvw:rows>
-						</xvw:section>
-	            	</xvw:tab>
-	            	 
 	            </xvw:tabs>
 	            
 			</xvw:window>
