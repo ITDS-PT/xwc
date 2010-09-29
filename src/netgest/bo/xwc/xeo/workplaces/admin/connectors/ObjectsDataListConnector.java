@@ -11,7 +11,7 @@ import netgest.bo.system.boApplication;
 
 public class ObjectsDataListConnector extends GenericDataListConnector {
 
-	private Date creationDate;
+	private Date updateDate;
 	private SimpleDateFormat format;
 	private String orderBy;
 
@@ -22,7 +22,6 @@ public class ObjectsDataListConnector extends GenericDataListConnector {
 		this.createColumn("name", "Object Name");
 		this.createColumn("SYS_DTCREATE", "Creation Date");
 		this.createColumn("SYS_DTSAVE", "Last Update");
-		this.creationDate = new Date();
 	}
 
 	@Override
@@ -73,10 +72,11 @@ public class ObjectsDataListConnector extends GenericDataListConnector {
 				throw new RuntimeException(e.getMessage());
 			}
 		}
+		this.updateDate = new Date();
 	}
 	
 	public String getCreationDateString() {
-		return format.format(this.creationDate);
+		return format.format(this.updateDate);
 	}
 
 }
