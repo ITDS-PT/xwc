@@ -219,7 +219,7 @@ public class HomeBean extends XEOBaseBean {
 		return objectInstances;
 	}
 
-	public void refreshObjectInstances() throws SQLException {
+	public void refreshObjectInstances() {
 		if (this.getObjectInstancesPieChartExpired()) {
 			final int limit = 10;
 
@@ -237,7 +237,7 @@ public class HomeBean extends XEOBaseBean {
 		}
 	}
 
-	private void refreshPackageObjects() throws SQLException {
+	private void refreshPackageObjects() {
 		final int limit = 10;
 
 		String sql = "SELECT OEBO_PACKAGE.name as name ,count(OEBO_CLSREG.xeopackage$) as total"  
