@@ -22,6 +22,7 @@ public class ObjectsDataListConnector extends GenericDataListConnector {
 		this.createColumn("name", "Object Name");
 		this.createColumn("SYS_DTCREATE", "Creation Date");
 		this.createColumn("SYS_DTSAVE", "Last Update");
+		this.updateDate = new Date();
 	}
 
 	@Override
