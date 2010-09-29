@@ -24,6 +24,9 @@ public class IndexQueueDataListConnector extends GenericDataListConnector {
 	public void refresh() {
 		super.refresh();
 		
+		java.sql.Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
 		try {
 			String sql = "select EBO_TEXTINDEX_QUEUE.BOUI as BOUI"
 			+",OEEBO_REGISTRY.CLSID as object"
@@ -38,9 +41,10 @@ public class IndexQueueDataListConnector extends GenericDataListConnector {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			
 			EboContext ctx = boApplication.currentContext().getEboContext();
-			java.sql.Connection con = ctx.getConnectionData();
-			Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
-			ResultSet rs = stmt.executeQuery(sql);
+			con = ctx.getConnectionData();
+			stmt = con.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			stmt.setMaxRows(2000); //TODO paging
+			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				String state =  rs.getString("STATE");
 				
@@ -60,8 +64,23 @@ public class IndexQueueDataListConnector extends GenericDataListConnector {
 				} catch (NullPointerException e) {}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());
+		} finally {
+			try {
+				if (rs!=null) rs.close();
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage());
+			}
+			try {
+				if (stmt!=null) stmt.close();
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage());
+			}
+			try {
+				if (con!=null) con.close();
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage());
+			}
 		}
 		
 	}
