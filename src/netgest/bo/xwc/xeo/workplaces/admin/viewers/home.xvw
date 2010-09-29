@@ -79,7 +79,15 @@
 						</xvw:row>
 						<xvw:row>
 							<xvw:cell>
-								<xvw:gridPanel layout='' title='Last saved objects'
+					           <xvw:section label='Last saved objects'
+								renderComponent="#{not viewBean.lastSavedObjectsEnabled}">
+									<xvw:attributeLabel
+										text='Attention! Depending on your database this can be a heavy operation.'></xvw:attributeLabel>
+									<xvw:actionButton label='Refresh'
+										image='ext-xeo/admin/refresh.gif' serverAction='#{viewBean.enableLastSavedObjects}' />
+								</xvw:section>
+								<xvw:gridPanel layout='' title="#{viewBean.lastSavedObjectsLastUpdated}"
+								    renderComponent="#{viewBean.lastSavedObjectsEnabled}"
 									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.lastSavedObjects}">
 									<xvw:columns>
 										<xvw:columnAttribute width="30" dataField="name" />
@@ -91,7 +99,15 @@
 								</xvw:gridPanel>
 							</xvw:cell>
 							<xvw:cell>
-								<xvw:gridPanel layout='' title='Last created objects'
+								<xvw:section label='Last created objects'
+								renderComponent="#{not viewBean.lastCreatedObjectsEnabled}">
+									<xvw:attributeLabel
+										text='Attention! Depending on your database this can be a heavy operation.'></xvw:attributeLabel>
+									<xvw:actionButton label='Refresh'
+										image='ext-xeo/admin/refresh.gif' serverAction='#{viewBean.enableLastCreatedObjects}' />
+								</xvw:section>
+								<xvw:gridPanel layout='' title="#{viewBean.lastCreatedObjectsLastUpdated}"
+									renderComponent="#{viewBean.lastCreatedObjectsEnabled}"
 									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.lastCreatedObjects}">
 									<xvw:columns>
 										<xvw:columnAttribute width="30" dataField="name" />
