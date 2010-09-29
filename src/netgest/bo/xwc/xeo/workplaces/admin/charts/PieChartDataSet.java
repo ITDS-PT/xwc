@@ -1,7 +1,6 @@
 package netgest.bo.xwc.xeo.workplaces.admin.charts;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,26 +24,50 @@ public class PieChartDataSet extends PieDataSetImpl {
 		this.creationDate = new Date();
 	}
 
-	public PieChartDataSet(String sql, String attCategory, String attValues, Integer limit, String label, int timeExpire) throws SQLException {
+	public PieChartDataSet(String sql, String attCategory, String attValues, Integer limit, String label, int timeExpire) {
 		this(timeExpire);
 		
-		EboContext ctx = boApplication.currentContext().getEboContext();
-		java.sql.Connection con = ctx.getConnectionData();
-		Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
-		ResultSet rs = stmt.executeQuery(sql);
-		int count = 0;
-		double othersTotal = 0;
-		while (rs.next()) {
-			count++;
+		java.sql.Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			EboContext ctx = boApplication.currentContext().getEboContext();
+			con = ctx.getConnectionData();
+			stmt = con.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			rs = stmt.executeQuery(sql);
+			int count = 0;
+			double othersTotal = 0;
+			while (rs.next()) {
+				count++;
 
+				if (limit != null && count>limit)
+					othersTotal += rs.getDouble(attValues);
+				else
+					this.addCategory(rs.getString(attCategory), rs.getDouble(attValues));
+
+			}
 			if (limit != null && count>limit)
-				othersTotal += rs.getDouble(attValues);
-			else
-				this.addCategory(rs.getString(attCategory), rs.getDouble(attValues));
-
+				this.addCategory("Others", othersTotal);
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		} finally {
+			try {
+				if (rs!=null) rs.close();
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage());
+			}
+			try {
+				if (stmt!=null) stmt.close();
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage());
+			}
+			try {
+				if (con!=null) con.close();
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage());
+			}
 		}
-		if (limit != null && count>limit)
-			this.addCategory("Others", othersTotal);
 	}
 	
 	public void setiPieChartConfiguration(IPieChartConfiguration iPieChartConfiguration) {
