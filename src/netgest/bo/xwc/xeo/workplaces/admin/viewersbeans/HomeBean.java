@@ -37,8 +37,8 @@ public class HomeBean extends XEOBaseBean {
 	private IBarChartConfiguration jvmIBarchartConf;
 	private DataListConnector sessions;
 	private ThreadsDataListConnector threads;
-	private DataListConnector lastSavedObjects;
-	private DataListConnector lastCreatedObjects;
+	private static ObjectsDataListConnector lastSavedObjects;
+	private static ObjectsDataListConnector lastCreatedObjects;
 
 	public HomeBean() throws Exception {
 		super();
@@ -50,9 +50,32 @@ public class HomeBean extends XEOBaseBean {
 		this.sigar = new Sigar();
 		this.sessions = new SessionsDataListConnector();
 		this.threads = new ThreadsDataListConnector();
-		this.lastCreatedObjects = new ObjectsDataListConnector("BOUI desc");
-		this.lastSavedObjects = new ObjectsDataListConnector("SYS_DTSAVE desc");
+		
 		this.jvmIBarchartConf = new JVMIBarCharConf();
+	}
+	
+	public String getLastSavedObjectsLastUpdated() {
+		return "Last saved objects (last updated " + lastSavedObjects.getCreationDateString() + ")";
+	}
+	
+	public Boolean getLastSavedObjectsEnabled() {
+		return (lastSavedObjects == null) ? false : true; 
+	}
+	
+	public void enableLastSavedObjects() {
+		lastSavedObjects = new ObjectsDataListConnector("SYS_DTSAVE desc");
+	}
+	
+	public String getLastCreatedObjectsLastUpdated() {
+		return "Last created objects (last updated " + lastCreatedObjects.getCreationDateString() + ")";
+	}
+	
+	public Boolean getLastCreatedObjectsEnabled() {
+		return (lastCreatedObjects == null) ? false : true; 
+	}
+	
+	public void enableLastCreatedObjects() {
+		lastCreatedObjects = new ObjectsDataListConnector("BOUI desc");
 	}
 
 	public String getSysInfo() throws IOException, SigarException {	
@@ -250,11 +273,11 @@ public class HomeBean extends XEOBaseBean {
 	}
 
 	public DataListConnector getLastSavedObjects() {
-		return this.lastSavedObjects;
+		return lastSavedObjects;
 	}
 
 	public DataListConnector getLastCreatedObjects() {
-		return this.lastCreatedObjects;
+		return lastCreatedObjects;
 	}
 
 	public DataListConnector getSessions() {		
