@@ -37,8 +37,8 @@ public class HomeBean extends XEOBaseBean {
 	private IBarChartConfiguration jvmIBarchartConf;
 	private DataListConnector sessions;
 	private ThreadsDataListConnector threads;
-	private static ObjectsDataListConnector lastSavedObjects;
-	private static ObjectsDataListConnector lastCreatedObjects;
+	private ObjectsDataListConnector lastSavedObjects;
+	private ObjectsDataListConnector lastCreatedObjects;
 
 	public HomeBean() throws Exception {
 		super();
