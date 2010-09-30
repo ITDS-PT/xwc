@@ -54,20 +54,12 @@ public class HomeBean extends XEOBaseBean {
 		this.jvmIBarchartConf = new JVMIBarCharConf();
 	}
 	
-	public String getLastSavedObjectsLastUpdated() {
-		return "Last saved objects (last updated " + lastSavedObjects.getCreationDateString() + ")";
-	}
-	
 	public Boolean getLastSavedObjectsEnabled() {
 		return (lastSavedObjects == null) ? false : true; 
 	}
 	
 	public void enableLastSavedObjects() {
 		lastSavedObjects = new ObjectsDataListConnector("SYS_DTSAVE desc");
-	}
-	
-	public String getLastCreatedObjectsLastUpdated() {
-		return "Last created objects (last updated " + lastCreatedObjects.getCreationDateString() + ")";
 	}
 	
 	public Boolean getLastCreatedObjectsEnabled() {

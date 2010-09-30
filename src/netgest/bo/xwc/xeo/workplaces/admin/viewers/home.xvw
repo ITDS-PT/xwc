@@ -86,7 +86,7 @@
 									<xvw:actionButton label='Refresh'
 										image='ext-xeo/admin/refresh.gif' serverAction='#{viewBean.enableLastSavedObjects}' />
 								</xvw:section>
-								<xvw:gridPanel layout='' title="#{viewBean.lastSavedObjectsLastUpdated}"
+								<xvw:gridPanel layout='' title="Last saved objects"
 								    renderComponent="#{viewBean.lastSavedObjectsEnabled}"
 									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.lastSavedObjects}">
 									<xvw:columns>
@@ -106,7 +106,7 @@
 									<xvw:actionButton label='Refresh'
 										image='ext-xeo/admin/refresh.gif' serverAction='#{viewBean.enableLastCreatedObjects}' />
 								</xvw:section>
-								<xvw:gridPanel layout='' title="#{viewBean.lastCreatedObjectsLastUpdated}"
+								<xvw:gridPanel layout='' title="Last created objects"
 									renderComponent="#{viewBean.lastCreatedObjectsEnabled}"
 									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.lastCreatedObjects}">
 									<xvw:columns>
