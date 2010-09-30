@@ -69,17 +69,17 @@ public class IndexQueueDataListConnector extends GenericDataListConnector {
 			try {
 				if (rs!=null) rs.close();
 			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage());
+				e.printStackTrace();
 			}
 			try {
 				if (stmt!=null) stmt.close();
 			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage());
+				e.printStackTrace();
 			}
 			try {
 				if (con!=null) con.close();
 			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 		
