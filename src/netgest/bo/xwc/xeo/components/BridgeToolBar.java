@@ -268,30 +268,58 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 			rootMenu.setText( XEOComponentMessages.BRIDGETB_ADD.toString("") );
 			rootMenu.setToolTip( XEOComponentMessages.BRIDGETB_ADD.toString( subClasseDef.getLabel() ) );
 			rootMenu.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
-			rootMenu.setId( getId() + "_add_" + subClasseDef.getName() );
 			rootMenu.setValue( subClasseDef.getName() );
-			rootMenu.setTargetMethod( "lookupBridge" );
-	
+			
+			if (subClasseDef.getBoCanBeOrphan())
+			{
+				rootMenu.setId( getId() + "_add_" + subClasseDef.getName() );
+				rootMenu.setTargetMethod( "lookupBridge" );
+			}
+			else
+			{			
+				rootMenu.setId( getId() + "_new_" + subClasseDef.getName() );
+				rootMenu.setTargetMethod("addNewToBridge");
+			}
+			
 			if( subClassesDef.size() > 1 ) {
+				
 				
 				ViewerMethod viewerMethod = new ViewerMethod();
 				viewerMethod.setText( subClasseDef.getLabel() );
 				viewerMethod.setToolTip(XEOComponentMessages.BRIDGETB_ADD.toString( subClasseDef.getLabel() ));
 				viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
-				viewerMethod.setId( getId() + "_add1_" + subClasseDef.getName() );
 				viewerMethod.setValue( subClasseDef.getName() );
-				viewerMethod.setTargetMethod( "lookupBridge" );
+				if (subClasseDef.getBoCanBeOrphan())
+				{
+					viewerMethod.setId( getId() + "_add1_" + subClasseDef.getName() );
+					viewerMethod.setTargetMethod( "lookupBridge" );
+				}
+				else
+				{
+					viewerMethod.setId( getId() + "_new1_" + subClasseDef.getName() );
+					viewerMethod.setTargetMethod("addNewToBridge");					
+				}
 
 				rootMenu.getChildren().add( viewerMethod );
 
 				for( int i=1; i < subClassesDef.size(); i++ ) {
 					subClasseDef = subClassesDef.get( i );
+					
 					viewerMethod = new ViewerMethod();
-					viewerMethod.setId( getId() + "_add_" + subClasseDef.getName() );
 					viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 					viewerMethod.setText( subClasseDef.getLabel() );
-					viewerMethod.setTargetMethod( "lookupBridge" );
 					viewerMethod.setValue( subClasseDef.getName() );
+					viewerMethod.setToolTip(XEOComponentMessages.BRIDGETB_ADD.toString( subClasseDef.getLabel() ));
+					if (subClasseDef.getBoCanBeOrphan())
+					{
+						viewerMethod.setId( getId() + "_add_" + subClasseDef.getName() );
+						viewerMethod.setTargetMethod( "lookupBridge" );
+					}
+					else
+					{
+						viewerMethod.setId( getId() + "_new_" + subClasseDef.getName() );
+						viewerMethod.setTargetMethod( "addNewToBridge" );
+					}
 					rootMenu.getChildren().add( viewerMethod );
 				}
 			}
