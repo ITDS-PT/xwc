@@ -67,7 +67,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 
     public Object getValue() {
         try {
-        	if( (getSecurityPermissions()&SecurityPermissions.READ) == SecurityPermissions.READ ) {
+        	if( "BOUI".equals( this.oAttHandler.getName() ) || (getSecurityPermissions()&SecurityPermissions.READ) == SecurityPermissions.READ ) {
 	            Object oRetValue = oAttHandler.getValueObject();
 	            return oRetValue;
         	}
