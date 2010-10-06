@@ -18,6 +18,7 @@ import jofc2.model.Text;
 import jofc2.model.axis.XAxis;
 import jofc2.model.elements.BarChart.Bar;
 import netgest.bo.runtime.EboContext;
+import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
@@ -53,6 +54,11 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.components.classic.charts.Chart{
 
+	
+	/**
+	 * The Logger
+	 */
+	private static Logger logger = Logger.getLogger("netgest.bo.xcw.components.classic.charts.BarChart");
 	/**
 	 * The default height for a pie chart
 	 */
@@ -435,16 +441,18 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 			
 			//Retrieve the data
 			DefaultCategoryDataset data = new DefaultCategoryDataset();
-			
+			Statement stmt = null;
+			ResultSet srs = null;
 			if (getSql() != null)
 			{
+				java.sql.Connection conn = null;
 				try
 				{
 					EboContext ctx = boApplication.currentContext().getEboContext();
-					java.sql.Connection conn = ctx.getConnectionData();
-					Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+					conn = ctx.getConnectionData();
+					stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
                             ResultSet.CONCUR_READ_ONLY);
-					ResultSet srs = stmt.executeQuery(getSql());
+					srs = stmt.executeQuery(getSql());
 					while (srs.next()) 
 					{
 					        String column = srs.getString(getSqlAttColumn());
@@ -455,7 +463,26 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 				}
 				catch (Exception e)
 				{
+					logger.severe(e.getMessage(), e);
 					e.printStackTrace();
+				}
+				finally {
+						try {
+							if (srs!=null) srs.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						try {
+							if (stmt!=null) stmt.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						try {
+							if (conn!=null) conn.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					
 				}
 			}
 			else

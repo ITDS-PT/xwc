@@ -2,6 +2,7 @@ package netgest.bo.xwc.xeo.components;
 
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
+import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Columns;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -45,11 +46,22 @@ public class List extends GridPanel {
 	}
 	
 	public XEOObjectListConnector getTargetList() {
-		return targetList.getEvaluatedValue();
+		try{
+			return targetList.getEvaluatedValue();
+		}
+		catch (Exception e)
+		{
+			DataListConnector connector = this.getDataSource();
+			if (connector instanceof XEOObjectListConnector)
+				return ((XEOObjectListConnector) connector);
+		}
+		
+		throw new RuntimeException("There isn't a valid list of XEO objects for the List component, targetList is" +
+				"not an instance of XEOObjectListConnector");
 	}
 
-	public void setTargetList(boolean renderEditToolbar) {
-		this.targetList.setValue( renderEditToolbar );
+	public void setTargetList(String targetListExpr) {
+		this.targetList.setExpressionText(targetListExpr);
 	}
 	
 	public boolean getRenderToolBar() {

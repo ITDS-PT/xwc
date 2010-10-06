@@ -798,7 +798,7 @@
 
         <xwc:component name='viewerMethod'>
             <xwc:className>netgest.bo.xwc.xeo.components.ViewerMethod</xwc:className>
-            <xwc:description>Represents a Methos of a Viewer of on XEO Model</xwc:description>
+            <xwc:description>Represents a Method of a Viewer of on XEO Model</xwc:description>
         </xwc:component>
 
         <xwc:component name='viewerTitle'>

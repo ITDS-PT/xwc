@@ -21,6 +21,7 @@ import jofc2.model.Text;
 import jofc2.model.axis.XAxis;
 import jofc2.model.elements.LineChart.Dot;
 import netgest.bo.runtime.EboContext;
+import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
@@ -58,6 +59,11 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class LineChart extends XUIComponentBase implements netgest.bo.xwc.components.classic.charts.Chart {
 
+	
+	/**
+	 * The Logger
+	 */
+	private static Logger logger = Logger.getLogger("netgest.bo.xcw.components.classic.charts.LineChart");
 	
 	/**
 	 * The default stroke size for the lines in the line chart
@@ -410,13 +416,16 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 			
 			if (getSql() != null)
 			{
+				java.sql.Connection conn = null;
+				Statement stmt= null;
+				ResultSet srs = null;
 				try
 				{
 					EboContext ctx = boApplication.currentContext().getEboContext();
-					java.sql.Connection conn = ctx.getConnectionData();
-					Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+					conn = ctx.getConnectionData();
+					stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
                             ResultSet.CONCUR_READ_ONLY);
-					ResultSet srs = stmt.executeQuery(getSql());
+					srs = stmt.executeQuery(getSql());
 					HashSet<String> seriesMaps = new HashSet<String>();
 					
 					while (srs.next()) 
@@ -433,7 +442,26 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 				}
 				catch (Exception e)
 				{
+					logger.severe(e.getMessage(), e);
 					e.printStackTrace();
+				}
+				finally {
+						try {
+							if (srs!=null) srs.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						try {
+							if (stmt!=null) stmt.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						try {
+							if (conn!=null) conn.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					
 				}
 			}
 			else

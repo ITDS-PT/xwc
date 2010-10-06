@@ -17,6 +17,7 @@ import jofc2.model.Chart;
 import jofc2.model.Text;
 import netgest.bo.ql.V2.QLParser;
 import netgest.bo.runtime.EboContext;
+import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
@@ -70,6 +71,11 @@ import org.jfree.data.general.DefaultPieDataset;
 public class PieChart extends XUIComponentBase implements netgest.bo.xwc.components.classic.charts.Chart 
 {
 
+	/**
+	 * The Logger
+	 */
+	private static Logger logger = Logger.getLogger("netgest.bo.xcw.components.classic.charts.PieChart");
+	
 	/**
 	 * The default height for a pie chart
 	 */
@@ -659,16 +665,20 @@ public class PieChart extends XUIComponentBase implements netgest.bo.xwc.compone
 				
 				//Fill the data from the SQL query or the DataSet
 				List<String> categoriesList = new Vector<String>();
+				
 				if (component.getSql() != null)
 				{ //Fill the values from a SQL Query
+					java.sql.Connection conn = null;
+					Statement stmt= null;
+					ResultSet srs = null;
 					try
 					{
 						
 						EboContext ctx = boApplication.currentContext().getEboContext();
-						java.sql.Connection conn = ctx.getConnectionData();
-						Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+						conn = ctx.getConnectionData();
+						stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
 	                            ResultSet.CONCUR_READ_ONLY);
-						ResultSet srs = stmt.executeQuery(component.getSql());
+						srs = stmt.executeQuery(component.getSql());
 						int count = 0;
 						while (srs.next()) 
 						{
@@ -685,7 +695,26 @@ public class PieChart extends XUIComponentBase implements netgest.bo.xwc.compone
 					}
 					catch (Exception e)
 					{
+						logger.severe(e.getMessage(), e);
 						e.printStackTrace();
+					}
+					finally {
+							try {
+								if (srs!=null) srs.close();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							try {
+								if (stmt!=null) stmt.close();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							try {
+								if (conn!=null) conn.close();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						
 					}
 					
 				}
