@@ -658,6 +658,17 @@ public class XEOEditBean extends XEOBaseBean
         		        showObjectErrors();
     			    
     			}
+    			else if ("BO-3054".equals( boEx.getErrorCode() ) )
+    			{
+        		        XUIRequestContext.getCurrentContext().addMessage(
+            		                "Bean",
+            		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
+            		                    BeansMessages.TITLE_ERROR.toString(), 
+            		                BeansMessages.UPDATE_FAILED_KEY_VIOLATED.toString()
+            		                )            		            );        		        
+        		        showObjectErrors();
+    			    
+    			}
     			else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
     				setValid(false);
     				showObjectErrors();

@@ -73,6 +73,9 @@ public interface BeansMessages {
 	public static final XUILocalizedMessage REMOVE_FAILED_REFERENCED_BY_OBJECTS = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "REMOVE_FAILED_REFERENCED_BY_OBJECTS" );
 	
+	public static final XUILocalizedMessage UPDATE_FAILED_KEY_VIOLATED = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "UPDATE_FAILED_KEY_VIOLATED" );
+	
 	// Messages for the Properties View
 	public static final XUILocalizedMessage OBJECT_TYPE = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "OBJECT_TYPE" );
