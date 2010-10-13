@@ -70,6 +70,9 @@ public interface BeansMessages {
 	public static final XUILocalizedMessage VALID_ERRORS_TITLE = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "VALID_ERRORS_TITLE" );
 	
+	public static final XUILocalizedMessage REMOVE_FAILED_REFERENCED_BY_OBJECTS = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "REMOVE_FAILED_REFERENCED_BY_OBJECTS" );
+	
 	// Messages for the Properties View
 	public static final XUILocalizedMessage OBJECT_TYPE = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "OBJECT_TYPE" );

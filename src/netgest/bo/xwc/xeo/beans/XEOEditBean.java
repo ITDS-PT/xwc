@@ -638,14 +638,27 @@ public class XEOEditBean extends XEOBaseBean
     		if( e instanceof boRuntimeException ) {
     			boRuntimeException boEx = (boRuntimeException)e;
     			if ( "BO-3022".equals( boEx.getErrorCode() ) ) {
-    		        XUIRequestContext.getCurrentContext().addMessage(
-    		                "Bean",
-    		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
-    		                    BeansMessages.TITLE_ERROR.toString(), 
-    		                    BeansMessages.DATA_CHANGED_BY_OTHER_USER.toString() 
-    		                )
-    		            );
-    			} else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
+        		        XUIRequestContext.getCurrentContext().addMessage(
+        		                "Bean",
+        		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
+        		                    BeansMessages.TITLE_ERROR.toString(), 
+        		                    BeansMessages.DATA_CHANGED_BY_OTHER_USER.toString() 
+        		                )
+        		            );
+        		        showObjectErrors();
+    			}
+    			else if ("BO-3023".equals( boEx.getErrorCode() ) )
+    			{
+        		        XUIRequestContext.getCurrentContext().addMessage(
+            		                "Bean",
+            		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
+            		                    BeansMessages.TITLE_ERROR.toString(), 
+            		                BeansMessages.REMOVE_FAILED_REFERENCED_BY_OBJECTS.toString()
+            		                )            		            );        		        
+        		        showObjectErrors();
+    			    
+    			}
+    			else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
     				setValid(false);
     				showObjectErrors();
     			}
