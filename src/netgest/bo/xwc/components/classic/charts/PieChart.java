@@ -505,6 +505,7 @@ public class PieChart extends XUIComponentBase implements netgest.bo.xwc.compone
 				//Mete o border a false
 				plot.setOutlineVisible(false);
 				
+				
 				//Label expression 
 				PieSectionLabelGenerator generator = new StandardPieSectionLabelGenerator(" {0} has {1} ({2})");
 				plot.setLabelGenerator(generator);
@@ -780,24 +781,26 @@ public class PieChart extends XUIComponentBase implements netgest.bo.xwc.compone
 			{
 				StringBuilder b = new StringBuilder();
 				String clientId = oComp.getClientId();
-				w.getScriptContext().addInclude(
-	            		XUIScriptContext.POSITION_HEADER, 
-	            		"openflash", 
-	            		"js/swfobject.js" 
-	            );
-				
+					w.getScriptContext().addInclude(
+		            		XUIScriptContext.POSITION_FOOTER, 
+		            		"openflash", 
+		            		"js/swfobject.js" 
+		            );
 				String url = ChartUtils.getCompleteServletURL(getRequestContext(), component.getClientId());
 				url = URLEncoder.encode(url,"UTF-8");
 				
+				b.append("  var flashvars = {};"+ 
+						"  var params = { wmode: \"transparent\" };"+ 
+                "var attributes = {}; ");
 				b.append("swfobject.embedSWF(\"open-flash-chart.swf\", " +
 						"\""+component.getClientId()+"\", " +
 						"\""+width+"\", " +
 						"\""+height+"\", " +
 						"\"9.0.0\",\"expressInstall.swf\", " +
-						"{\"data-file\": \""+url+"\"});");
+						"{\"data-file\": \""+url+"\"},flashvars,params,attributes);");
 				
 				w.getScriptContext().add( 
-						XUIScriptContext.POSITION_HEADER, 
+						XUIScriptContext.POSITION_FOOTER, 
 						component.getClientId(),
 						b);
 				
@@ -810,7 +813,9 @@ public class PieChart extends XUIComponentBase implements netgest.bo.xwc.compone
 				
 				w.startElement(HTMLTag.DIV, oComp);
 					w.writeAttribute(HTMLAttr.ID, component.getClientId(), null);
-				w.endElement(HTMLTag.DIV);
+				
+				
+				
 			}
 			else if (oComp.getType().equalsIgnoreCase(TYPE_CHART_IMG))//JFreeChart based graph
 			{

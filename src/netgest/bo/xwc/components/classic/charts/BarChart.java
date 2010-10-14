@@ -820,52 +820,10 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 					//c.setYAxis(yAy);
 					//c.computeYAxisRange(10);*/
 				}	
-				System.out.println(c.toDebugString());
+				//System.out.println(c.toDebugString());
 				
-				
-				String val = "{" +
-   "\"bg_colour\": \"ffffff\"," +
-   "\"elements\": [{ "+
-   "   \"colour\": \"00ff00\"," +
-   "   \"text\": \"Aug 07\"," +
-   "   \"tip\": \"#val#\"," +
-   "   \"type\": \"hbar\"," +
-   "   \"values\": [" +
-   "      { "+
-   "         \"left\": 0," +
-   "         \"right\": 2400" +
-   "      }, "+
-   "      { "+
-   "         \"left\": 0," +
-   "         \"right\": 900" +
-   "      }," +
-   "      {" +
-   "         \"left\": 0," +
-   "         \"right\": 1200" +
-   "      }," +
-   "      {" +
-   "         \"left\": 0," +
-   "         \"right\": 3000" +
-   "      }," +
-   "      {" +
-   "         \"left\": 0," +
-   "         \"right\": 500" +
-   "      }," +
-   "      {" +
-   "         \"left\": 0," +
-   "         \"right\": 2100" +
-   "      }" +
-   "   ]" +
-   "}]," +
-   "\"is_decimal_separator_comma\": 0," +
-   "\"is_fixed_num_decimals_forced\": 0," +
-   "\"is_thousand_separator_disabled\": 0," +
-   "\"num_decimals\": 2," +
-   "\"y_axis\": {}" +
-   "}";
 				
 				out.write(c.toString().getBytes());
-				out.write(val.getBytes());
 				out.close();
 			}
 			
@@ -883,7 +841,7 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 				StringBuilder b = new StringBuilder();
 				
 				w.getScriptContext().addInclude(
-	            		XUIScriptContext.POSITION_HEADER, 
+	            		XUIScriptContext.POSITION_FOOTER, 
 	            		"openflash", 
 	            		"js/swfobject.js" 
 	            );
@@ -895,12 +853,18 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 				int width = oComp.getWidth();
 				int height = oComp.getHeight();
 				
-				b.append("swfobject.embedSWF(\"open-flash-chart.swf\", \""+component.getClientId()+"\"," +
-						" \""+width+"\", \""+height+"\", \"9.0.0\",\"expressInstall.swf\", " +
-						"{\"data-file\": \""+url+"\"});");
+				b.append("  var flashvars = {};"+ 
+						"  var params = { wmode: \"transparent\" };"+ 
+                "var attributes = {}; ");
+				b.append("swfobject.embedSWF(\"open-flash-chart.swf\", " +
+						"\""+component.getClientId()+"\", " +
+						"\""+width+"\", " +
+						"\""+height+"\", " +
+						"\"9.0.0\",\"expressInstall.swf\", " +
+						"{\"data-file\": \""+url+"\"},flashvars,params,attributes);");
 				
 				w.getScriptContext().add( 
-						XUIScriptContext.POSITION_HEADER, 
+						XUIScriptContext.POSITION_FOOTER, 
 						component.getClientId(),
 						b);
 				
@@ -908,7 +872,7 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 				String reloadChart = ChartUtils.getReloadChartJSFunction(clientId, url, width, height,getRequestContext());
 				
 				w.getScriptContext().add( 
-						XUIScriptContext.POSITION_HEADER, 
+						XUIScriptContext.POSITION_FOOTER, 
 						"reloadChart",
 						reloadChart);
 				

@@ -162,11 +162,18 @@ public class EditToolBar extends ToolBar {
 		new XUIViewStateBindProperty<Boolean>( "renderPdfBtn", this, "false", Boolean.class );
 	
 	/**
-	 * Whether or the "Export Form as Excel" is rendered inside an "Export" Menu
+	 * Whether or not the "Export Form as Excel" is rendered inside an "Export" Menu
 	 */
 	private XUIViewStateBindProperty<Boolean>  renderExcelBtn    = 
 		new XUIViewStateBindProperty<Boolean>( "renderExcelBtn", this, "false", Boolean.class );
 
+	
+	/**
+	 * Whether or not the "OPL Permissions" button is rendered inside an "Information Menu"
+	 */
+	private XUIViewStateBindProperty<Boolean>  renderOplBtn    = 
+		new XUIViewStateBindProperty<Boolean>( "renderOplBtn", this, "false", Boolean.class );
+	
 	/**
 	 * Whether or not the {@link EditToolBar} is in orphan mode
 	 */
@@ -341,6 +348,14 @@ public class EditToolBar extends ToolBar {
 		this.renderExportMenu.setExpressionText(expMenuExpr);
 	}
 	
+	public boolean getRenderOplBtn() {
+		return renderOplBtn.getEvaluatedValue();
+	}
+
+	public void setRenderOplBtn( String expression ) {
+		this.renderOplBtn.setExpressionText( expression );
+	}
+	
 	@Override
 	public void initComponent() {
 		if( getOrphanMode() )
@@ -402,7 +417,7 @@ public class EditToolBar extends ToolBar {
 		if (	getRenderDependenciesBtn()  
 			|| 	getRenderDependentsBtn() 
 			|| 	getRenderListVersionBtn()
-			||  getTargetObject().getBoDefinition().implementsSecurityRowObjects()
+			||  (getTargetObject().getBoDefinition().implementsSecurityRowObjects() && getRenderOplBtn())
 			||  getRenderInformationMenu())
 			
 		{
@@ -421,15 +436,16 @@ public class EditToolBar extends ToolBar {
 			getChildren().add( pos++,createExportMenu());
 		}
 		
-		boDefMethod[] methods = xeoObject.getToolbarMethods();
-		for( boDefMethod m : methods ) {
-			if( !staticMethods.contains( m.getName() ) ) {
-				getChildren().add( pos++,Menu.getMenuSpacer( renderObjectMethodBtns.getExpressionString() ) );
-				ModelMethod m1 = createMenuMethod( pos++, m.getLabel(), m.getLabel(), m.getName() );
-				m1.setVisible( renderObjectMethodBtns.getExpressionString() );
+		//if (getRenderObjectMethodBtns()){
+			boDefMethod[] methods = xeoObject.getToolbarMethods();
+			for( boDefMethod m : methods ) {
+				if( !staticMethods.contains( m.getName() ) ) {
+					getChildren().add( pos++,Menu.getMenuSpacer( renderObjectMethodBtns.getExpressionString() ) );
+					ModelMethod m1 = createMenuMethod( pos++, m.getLabel(), m.getLabel(), m.getName() );
+					m1.setVisible( renderObjectMethodBtns.getExpressionString() );
+				}
 			}
-		}
-		
+		//}
 		
 	}
 	
@@ -607,12 +623,14 @@ public class EditToolBar extends ToolBar {
 	private Menu createPropertiesMenu(){
 		
 		Menu propertiesMenu = new Menu();
+		propertiesMenu.setId(getId() + "_" + "properties");
 		propertiesMenu.setText("");
-		propertiesMenu.setIcon("extjs/resources/images/default/tree/leaf.gif;");
+		propertiesMenu.setIcon("extjs/resources/images/default/tree/leaf.gif");
 		propertiesMenu.setToolTip(XEOViewersMessages.LBL_PROPERTIES.toString());
 		propertiesMenu.setServerAction("#{viewBean.showProperties}");
 		propertiesMenu.setTarget("self");
 		return propertiesMenu;
+
 		
 	}
 
@@ -631,16 +649,8 @@ public class EditToolBar extends ToolBar {
 		
 		//Only show if all are enabled
 		if (getRenderDependenciesBtn() || getRenderDependentsBtn()  ||
-				getRenderInformationMenu()) //|| getRenderPropertiesBtn()
+				getRenderInformationMenu())
 		{
-			/*if (getRenderPropertiesBtn() || getRenderInformationMenu()){
-				Menu propertiesMenu = new Menu();
-				propertiesMenu.setText(XEOViewersMessages.LBL_PROPERTIES.toString());
-				propertiesMenu.setServerAction("#{viewBean.showProperties}");
-				propertiesMenu.setTarget("window");
-				informationGroup.getChildren().add(propertiesMenu);
-			}*/
-			
 			if (getRenderDependentsBtn() || getRenderInformationMenu()){
 				Menu dependents = new Menu();
 				dependents.setText(XEOViewersMessages.LBL_DEPENDENTS.toString());
@@ -667,7 +677,7 @@ public class EditToolBar extends ToolBar {
 			informationGroup.getChildren().add(versioningMenu);
 		}
 		
-		if (getTargetObject().getBoDefinition().implementsSecurityRowObjects())
+		if (getTargetObject().getBoDefinition().implementsSecurityRowObjects() && getRenderOplBtn())
 		{
 			Menu oplMenu = new Menu();
 			oplMenu.setText(XEOComponentMessages.EDITTB_OPL.toString());
@@ -760,8 +770,8 @@ public class EditToolBar extends ToolBar {
 		if( "exportExcel".equals( vm.getTargetMethod() ) )
 			return getRenderExcelBtn();
 		
-		boDefMethod[] methods = getTargetObject().getToolbarMethods();
-		if( Arrays.asList( methods ).indexOf( vm.getTargetMethod() ) > -1 )
+		String[] names = getTargetObject().getToolbarMethodsNames();
+		if( Arrays.asList( names ).indexOf( vm.getTargetMethod() ) > -1 )
 			return getRenderObjectMethodBtns();
 			
 		return true;

@@ -25,7 +25,7 @@ public class ChartUtils
 	 * A set of of dark colors to use in the charts
 	 */
 	public static final Color[] DEFAULT_COLORS = {Color.BLACK, Color.BLUE, 
-		Color.CYAN, Color.DARK_GRAY, Color.GRAY, Color.MAGENTA, Color.red, Color.orange, Color.green
+		Color.red, Color.orange, Color.green, Color.GRAY, Color.MAGENTA,  Color.CYAN 
 	};
 	
 	/**

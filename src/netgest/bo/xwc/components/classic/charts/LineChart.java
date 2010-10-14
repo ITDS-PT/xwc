@@ -636,26 +636,45 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 					String attValues = component.getSqlAttValues();
 					EboContext context = boApplication.currentContext().getEboContext();
 					setMine = new SeriesDataSetSQL(context, sqlExpression, attColumn, attSeries, attValues);
-					
-					jofc2.model.elements.LineChart currChart =  new jofc2.model.elements.LineChart();
-					
 					Iterator<String> it = setMine.getSeriesKeys().iterator();
-					String currRow = (String) it.next();
-					currChart.setText(currRow);
-					Iterator<String> itRows = setMine.getColumnKeys().iterator();
-					while (itRows.hasNext())
-					{
-						String currColumn = (String) itRows.next();
-						if (!labelsUsed.contains(currColumn))
-						{
-							labelsUsed.add(currColumn);
-							xAx.addLabels(currColumn);
-						}
-						Number val = setMine.getValue(currRow,currColumn );
-						currChart.addDots(new Dot(val));
-					}
+					int colorCounter = 0;
 					
-					elements.add(currChart);
+					Color[] mapOfColors = ChartUtils.DEFAULT_COLORS;
+					if (chartConfigurations != null)
+						if (chartConfigurations.getColours() != null)
+						mapOfColors = chartConfigurations.getColours();
+					
+					while (it.hasNext()){
+						jofc2.model.elements.LineChart currChart =  new jofc2.model.elements.LineChart();
+						
+						Color currentColor = null;
+						if (colorCounter <= mapOfColors.length - 1)
+							currentColor = mapOfColors[colorCounter];
+						else
+							currentColor = ChartUtils.getRandomDarkColor();
+						colorCounter++;
+						
+						String rgb = ChartUtils.ColorToRGB(currentColor);
+						
+						currChart.setColour(rgb);
+						
+						String currRow = (String) it.next();
+						currChart.setText(currRow);
+						Iterator<String> itRows = setMine.getColumnKeys().iterator();
+						while (itRows.hasNext())
+						{
+							String currColumn = (String) itRows.next();
+							if (!labelsUsed.contains(currColumn))
+							{
+								labelsUsed.add(currColumn);
+								xAx.addLabels(currColumn);
+							}
+							Number val = setMine.getValue(currRow,currColumn );
+							currChart.addDots(new Dot(val));
+						}
+						
+						elements.add(currChart);
+					}
 				}
 				else
 				{
@@ -765,7 +784,7 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 				StringBuilder b = new StringBuilder();
 				
 				w.getScriptContext().addInclude(
-	            		XUIScriptContext.POSITION_HEADER, 
+	            		XUIScriptContext.POSITION_FOOTER, 
 	            		"openflash", 
 	            		"js/swfobject.js" 
 	            );
@@ -776,12 +795,19 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 				int width = oComp.getWidth();
 				int height = oComp.getHeight();
 				
-				b.append("swfobject.embedSWF(\"open-flash-chart.swf\", \""+component.getClientId()+"\", " +
-						"\""+width+"\", \""+height+"\", \"9.0.0\",\"expressInstall.swf\", " +
-						"{\"data-file\": \""+url+"\"});");
+				//Params is required because flash objects are above html elements
+				b.append("  var flashvars = {};"+ 
+						"  var params = { wmode: \"transparent\" };"+ 
+                "var attributes = {}; ");
+				b.append("swfobject.embedSWF(\"open-flash-chart.swf\", " +
+						"\""+component.getClientId()+"\", " +
+						"\""+width+"\", " +
+						"\""+height+"\", " +
+						"\"9.0.0\",\"expressInstall.swf\", " +
+						"{\"data-file\": \""+url+"\"},flashvars,params,attributes);");
 				
 				w.getScriptContext().add( 
-						XUIScriptContext.POSITION_HEADER, 
+						XUIScriptContext.POSITION_FOOTER, 
 						component.getClientId(),
 						b);
 				
@@ -789,7 +815,7 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 				String reloadChart = ChartUtils.getReloadChartJSFunction(clientId, url, width, height,getRequestContext());
 				
 				w.getScriptContext().add( 
-						XUIScriptContext.POSITION_HEADER, 
+						XUIScriptContext.POSITION_FOOTER, 
 						"reloadChart",
 						reloadChart);
 				

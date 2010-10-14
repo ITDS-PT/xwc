@@ -5,6 +5,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import netgest.bo.runtime.EboContext;
@@ -31,14 +32,25 @@ public class SeriesDataSetSQL implements SeriesDataSet {
 	private HashMap<ColumnSeriesPair, Number> dataValues;
 	
 	/**
-	 * The list of existing columns
+	 * To keep the name of columns already used
 	 */
-	private HashSet<String> listColumns;
+	private HashSet<String> setColumns;
+	
+	/**
+	 * The list of columns
+	 */
+	private LinkedList<String> listColumns;
+	
+	/**
+	 * To keep the name of series already used
+	 */
+	private HashSet<String> setSeries;
+	
 	
 	/**
 	 * The list of existing series
 	 */
-	private HashSet<String> listSeries;
+	private LinkedList<String> listSeries;
 	
 	/**
 	 * The name of the SQL result set attribute from 
@@ -74,8 +86,10 @@ public class SeriesDataSetSQL implements SeriesDataSet {
 		this.attributeSeries = attSeries;
 		this.attributeValues = attValues;
 		this.dataValues = new HashMap<ColumnSeriesPair, Number>();
-		this.listColumns = new HashSet<String>();
-		this.listSeries = new HashSet<String>();
+		this.listColumns = new LinkedList<String>();
+		this.setColumns = new HashSet<String>();
+		this.listSeries = new LinkedList<String>();
+		this.setSeries = new HashSet<String>();
 		buildDataSet();
 	}
 	
@@ -92,8 +106,14 @@ public class SeriesDataSetSQL implements SeriesDataSet {
 		        String series = data.getString(attributeSeries);
 		        float value = data.getFloat(attributeValues);
 		        ColumnSeriesPair p = new ColumnSeriesPair(column, series);
-		        this.listColumns.add(column);
-		        this.listSeries.add(series);
+		        if (!setColumns.contains(column)){
+		        	this.setColumns.add(column);
+		        	this.listColumns.add(column);
+		        }
+		        if (!setSeries.contains(series)){
+		        	this.setSeries.add(series);
+		        	this.listSeries.add(series);
+		        }
 		        this.dataValues.put(p, value);
 		    }
 		}
@@ -128,13 +148,15 @@ public class SeriesDataSetSQL implements SeriesDataSet {
 			this.attributeSeries = attSeries;
 			this.attributeValues = attValues;
 			this.dataValues = new HashMap<ColumnSeriesPair, Number>();
-			this.listColumns = new HashSet<String>();
-			this.listSeries = new HashSet<String>();
+			this.listColumns = new LinkedList<String>();
+			this.setColumns = new HashSet<String>();
+			this.listSeries = new LinkedList<String>();
+			this.setSeries = new HashSet<String>();
 			buildDataSet();
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			throw new RuntimeException("Could not build the SQL Series DataSet for expression: " + sqlExpression,e);
 		}
 		
 	}
