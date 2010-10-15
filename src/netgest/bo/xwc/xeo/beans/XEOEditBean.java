@@ -645,7 +645,7 @@ public class XEOEditBean extends XEOBaseBean
         		                    BeansMessages.DATA_CHANGED_BY_OTHER_USER.toString() 
         		                )
         		            );
-        		        showObjectErrors();
+        		        setValid(false);
     			}
     			else if ("BO-3023".equals( boEx.getErrorCode() ) )
     			{
@@ -655,7 +655,7 @@ public class XEOEditBean extends XEOBaseBean
             		                    BeansMessages.TITLE_ERROR.toString(), 
             		                BeansMessages.REMOVE_FAILED_REFERENCED_BY_OBJECTS.toString()
             		                )            		            );        		        
-        		        showObjectErrors();
+        		        setValid(false);
     			    
     			}
     			else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
@@ -713,7 +713,7 @@ public class XEOEditBean extends XEOBaseBean
 	    		                    BeansMessages.DATA_CHANGED_BY_OTHER_USER.toString() 
 	    		                )
 	    		            );
-	    		        showObjectErrors();
+	    		        setValid(false);
 	    			}
 	    			else if ("BO-3054".equals( boEx.getErrorCode() ) )
 	    			{
@@ -722,8 +722,8 @@ public class XEOEditBean extends XEOBaseBean
 	            		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
 	            		                    BeansMessages.TITLE_ERROR.toString(), 
 	            		                BeansMessages.UPDATE_FAILED_KEY_VIOLATED.toString()
-	            		                )            		            );        		        
-	        		        showObjectErrors();
+	            		                )            		            );        
+	        		        setValid(false);	        		        
 	    			    
 	    			}
 	    			else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
@@ -733,8 +733,8 @@ public class XEOEditBean extends XEOBaseBean
 	    							XUIMessage.SEVERITY_ERROR,
 	    							BeansMessages.ERROR_SAVING_RELATED_OBJECT.toString(),
 	    							boEx.getMessage()
-	    						)
-	    					);
+	    						)	    					
+	    					);	    					
 	    				}
 	    				else {
 	        				showObjectErrors();
