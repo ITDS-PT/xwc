@@ -28,6 +28,7 @@ import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSetSQL;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
+import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -165,6 +166,13 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 	@Override
 	public void initComponent() {
 		super.initComponent();
+		if (this.getType().equalsIgnoreCase(TYPE_CHART_FLASH)) {
+			XUIRequestContext
+					.getCurrentContext()
+					.getScriptContext()
+					.addInclude(XUIScriptContext.POSITION_HEADER, "openFlash",
+							"js/swfobject.js");
+		}
 	}
 
 	/**
@@ -839,12 +847,6 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 			if (oComp.getType().equalsIgnoreCase(TYPE_CHART_FLASH))
 			{
 				StringBuilder b = new StringBuilder();
-				
-				w.getScriptContext().addInclude(
-	            		XUIScriptContext.POSITION_FOOTER, 
-	            		"openflash", 
-	            		"js/swfobject.js" 
-	            );
 				
 				String url = ChartUtils.getCompleteServletURL(getRequestContext(), component.getClientId());
 				//URL Encode is required for the Flash Component

@@ -58,6 +58,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 	
 	/**
 	 * Whether or nor the default "Create New" button should be rendered or not
+	 * (only works in orphan-mode) 
 	 */
 	private XUIViewBindProperty<Boolean>  renderCreateNewBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderCreateNewBtn", this, true, Boolean.class );
