@@ -9,6 +9,7 @@ import javax.faces.component.UIComponent;
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.boObject;
+import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
@@ -171,7 +172,17 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 				separatorRendered = false;
 				ViewerMethod viewerMethod = (ViewerMethod)comp;
 				if( "addNewToBridge".equals( viewerMethod.getTargetMethod() ) ) {
-					separatorRendered = getRenderCreateNewBtn() && XEOComponentStateLogic.isBridgeNewVisible( targetBridge ); 
+					try
+					{
+						if (!targetBridge.getSelectedBoDef().getBoCanBeOrphan())
+							separatorRendered = getRenderAddBtn() && XEOComponentStateLogic.isBridgeNewVisible( targetBridge );
+						else						
+							separatorRendered = getRenderCreateNewBtn() && XEOComponentStateLogic.isBridgeNewVisible( targetBridge );
+					}
+					catch (boRuntimeException e)
+					{
+						separatorRendered = getRenderCreateNewBtn() && XEOComponentStateLogic.isBridgeNewVisible( targetBridge );
+					}
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ));
 					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeNewEnabled(targetBridge) );
 				}				
