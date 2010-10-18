@@ -129,7 +129,7 @@ public class BuilderDevelopmentBean {
 				requestContext.getScriptContext().add( 
 						XUIScriptContext.POSITION_FOOTER, 
 						"gotologin",
-						"if (window.parent) window.parent.location='Login.xvw'; else window.location='Login.xvw';"
+						"if (window.parent) window.parent.location='LogoutXVW.jsp'; else window.location='LogoutXVW.jsp';"
 					);
 			}
 			catch( Exception e ) {
