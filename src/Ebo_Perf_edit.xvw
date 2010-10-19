@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xvw:root 
 	xmlns:xvw="http://www.netgest.net/xeo/xvw"
-	xmlns:xeo="http://www.netgest.net/xeo/xeo"
->
-    <xvw:viewer 
-    	beanClass='netgest.bo.xwc.components.beans.XEOBaseBean' 
-    	beanId='viewBean'
-    	>
-        <xvw:formEdit>
+	xmlns:xeo="http://www.netgest.net/xeo/xeo">
+    <xvw:viewer beanClass='netgest.bo.xwc.xeo.beans.XEOEditBean' beanId='viewBean'>
+        <xeo:formEdit>
             <xvw:panel layout='none'>
                 <xvw:tabs>
                     <xvw:tab label='Geral'>
@@ -78,6 +74,6 @@
                     </xvw:tab>
             	</xvw:tabs>
             </xvw:panel> 
-		</xvw:formEdit>
+		</xeo:formEdit>
     </xvw:viewer>
 </xvw:root>
