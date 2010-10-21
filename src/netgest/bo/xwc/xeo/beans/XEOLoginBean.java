@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
+import netgest.bo.runtime.boObjectList;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boLoginException;
 import netgest.bo.system.boSession;
@@ -137,16 +138,23 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 					loginCtx = boApplication.currentContext().getEboContext();
 				}
 				try {
-					boObject workPlace;
+					boObject workPlace=null;
 					long boui = oXeoSession.getPerformerIProfileBoui();
 					if( boui == 0 ) {
-						workPlace = boObject.getBoManager().loadObject(loginCtx,"uiWorkPlace" ,"name='default'");
+						boObjectList proflist=boObjectList.list(loginCtx, "select uiWorkPlace where name='default'");
+						if (proflist.next())
+							workPlace=proflist.getObject();
+						//workPlace = boObject.getBoManager().loadObject(loginCtx,"uiWorkPlace" ,"name='default'");
 					}
 					else {
-						workPlace = boObject.getBoManager().loadObject(loginCtx,
-								"SELECT uiWorkPlace WHERE profile=?", 
-								new Object[] { boui }
-							);
+						boObjectList proflist=boObjectList.list(loginCtx, "SELECT uiWorkPlace WHERE profile=?",new Object[] { boui });
+						if (proflist.next())
+							workPlace=proflist.getObject();
+						
+//						workPlace = boObject.getBoManager().loadObject(loginCtx,
+//								"SELECT uiWorkPlace WHERE profile=?", 
+//								new Object[] { boui }
+//							);
 					}
 					if( workPlace != null && workPlace.exists() ) { 
 						mainViewer = workPlace.getAttribute("defaultViewer").getValueString();
