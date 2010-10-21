@@ -89,7 +89,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 			"filterLookup", this, "#{viewBean.lookupFilterObject}");
 
 	private XUIMethodBindProperty advancedFilterViewer = new XUIMethodBindProperty(
-			"advancedFilter", this, "#{viewBean.adavancedFilter}");
+			"advancedFilter", this, "#{viewBean.advancedFilter}");
 
 	/**
 	 * Determines how a user can select the rows in the grid panel. 
