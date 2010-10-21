@@ -177,12 +177,15 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		q.setWherePart( wherePart );
 		
 		if( orderBy != null && orderBy.length() > 0 ) {
-        	for( SqlField field : sqlFieldsList ) {
-				if( this.groupAttribute.equals( field.getSqlAlias() ) ) {
-					q.setOrderByPart( "[" + field.getSqlAlias() + "]" );
-					isSqlField = true;
-				}
-        	}
+			if (sqlFieldsList!=null)
+			{
+	        	for( SqlField field : sqlFieldsList ) {
+					if( this.groupAttribute.equals( field.getSqlAlias() ) ) {
+						q.setOrderByPart( "[" + field.getSqlAlias() + "]" );
+						isSqlField = true;
+					}
+	        	}
+			}
         	if( !isSqlField ) {
 				q.setOrderByPart( orderBy );
         	}
