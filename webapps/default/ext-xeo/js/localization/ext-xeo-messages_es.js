@@ -24,12 +24,54 @@ if(ExtXeo.PagingToolbar){
 	  });
 	}
 
-if(ExtXeo.grid.GroupingView){
-	  Ext.apply(ExtXeo.grid.GroupingView , {
+if(ExtXeo.grid.GroupingView) {
+	  Ext.apply(ExtXeo.grid.GroupingView.prototype , {
 	    emptyGroupText : '(Ninguno)',
 	    groupByText    : 'Grupo por este campo',
 	    showGroupsText : 'Mostrar en grupos',
 	    loadingMsg	   : 'Una carga...'  	  
 	 });
+}	
+
+if( Ext.grid.GridFilters) {
+		  Ext.apply(Ext.grid.GridFilters.prototype , {
+			 filtersText: 'Filtros'	  
+	 });
+}	  
+
+if( Ext.grid.filter.ObjectFilter) {
+	  Ext.apply(Ext.grid.filter.ObjectFilter.prototype , {
+		  yesText: 'Seleccione los valores',
+		  noText: 'No'
+	 });
 }
 
+if( Ext.grid.filter.DateFilter) {
+	  Ext.apply(Ext.grid.filter.DateFilter.prototype , {
+		  beforeText: 'Antes de',
+		  afterText: 'Después de',
+		  onText: 'En'
+	 });
+}
+
+if( Ext.grid.filter.BooleanFilter) {
+	  Ext.apply(Ext.grid.filter.BooleanFilter.prototype , {
+		  yesText: 'Sí'	,
+		  noText: 'No'
+	 });
+}
+
+if( Ext.grid.filter.ListFilter) {
+	  Ext.apply(Ext.grid.filter.ListFilter.prototype , {
+		  loadingText: 'Lectura de los datos...'
+	 });
+}
+
+
+if( ExtXeo.form.NumberField) {
+	  Ext.apply(ExtXeo.form.NumberField.prototype , {
+		    minText : "El valor mínimo para este campo es {0}",
+		    maxText : "El valor máximo para este campo es {0}",
+		    nanText : "{0} no es un número válido"
+	 });
+}

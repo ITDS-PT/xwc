@@ -24,8 +24,8 @@ if(ExtXeo.PagingToolbar){
 	  });
 	}
 
-if(ExtXeo.grid.GroupingView){
-	  Ext.apply(ExtXeo.grid.GroupingView , {
+if(ExtXeo.grid.GroupingView) {
+	  Ext.apply(ExtXeo.grid.GroupingView.prototype , {
 	    emptyGroupText : '(Nenhum)',
 	    groupByText    : 'Agrupar por este campo',
 	    showGroupsText : 'Mostrar nos Grupos',
@@ -33,3 +33,44 @@ if(ExtXeo.grid.GroupingView){
 	 });
 }
 
+if( Ext.grid.GridFilters) {
+	  Ext.apply(Ext.grid.GridFilters.prototype , {
+		 filtersText: 'Filtros'	  
+});
+}	  
+
+if( Ext.grid.filter.ObjectFilter) {
+	  Ext.apply(Ext.grid.filter.ObjectFilter.prototype , {
+		  yesText: 'Seleccionar valores',
+		  noText: 'Não'
+	 });
+}
+
+if( Ext.grid.filter.DateFilter) {
+	  Ext.apply(Ext.grid.filter.DateFilter.prototype , {
+		  beforeText: 'Antes de',
+		  afterText: 'Depois de',
+		  onText: 'Em'
+	 });
+}
+
+if( Ext.grid.filter.BooleanFilter) {
+	  Ext.apply(Ext.grid.filter.BooleanFilter.prototype , {
+		  yesText: 'Sim'	,
+		  noText: 'Não'
+	 });
+}
+
+if( Ext.grid.filter.ListFilter) {
+	  Ext.apply(Ext.grid.filter.ListFilter.prototype , {
+		  loadingText: 'Lendo Dados...'
+	 });
+}
+
+if( ExtXeo.form.NumberField) {
+	  Ext.apply(ExtXeo.form.NumberField.prototype , {
+		    minText : "O valor minimo para este campo é {0}",
+		    maxText : "O valor máximo para este campo é {0}",
+		    nanText : "{0} não é um número válido"
+	 });
+}
