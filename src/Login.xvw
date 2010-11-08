@@ -1,76 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
-    <xvw:viewer 
-    	beanClass = 'netgest.bo.xwc.xeo.beans.XEOLoginBean' 
-    	beanId = 'viewBean'
-		localizationClasses = 'netgest.bo.xwc.components.localization.ViewersMessages'
-    >  
-        <xvw:form id='login' default_Command='#{viewBean.login}'>
-	        	<xvw:requestAction requestParameter='action'>
-	        		<!-- Define the action associated with the parameter -->
-	        		<xvw:requestActionValue value='logout' 	serverAction='#{viewBean.logout}' />
-	        	</xvw:requestAction>
-				<xvw:toolBar>
-                	<xvw:menu />
-				</xvw:toolBar>
-    			<table style='width:100%' >
-    				<tr>
-    					<td width='33%'>
-    					</td>
-    					<td width='33%'>
-			    			<div style='height:180px'>
-			    			</div>
-				    		<div style='width:454px;height:197px;background-image:url(ext-xeo/images/login_fundo.jpg)' >
-			    			<xvw:panel title='Login'>
-			    			<div style='height:0px'>
-			    			</div>
-				    		<div style='height:100px;width:280px;margin-left:155px' >
-					        	<xvw:panel>
-					        		<xvw:errorMessages></xvw:errorMessages>
-					        	</xvw:panel>
-					        	<xvw:panel>
-					        		<xvw:rows labelPosition=''>
-					        			<xvw:row>
-					        				<xvw:cell>
-					        					<div style='color:red'><b>
-					        						<xvw:outputHtml valueExpression='#{viewBean.statusMessage}'></xvw:outputHtml>
-					        					&nbsp;</b></div>
-					        					<br/>
-					        				</xvw:cell>
-					        			</xvw:row>
-					        			<xvw:row>
-					        				<xvw:cell>
-					        					<xvw:attribute disabled='#{viewBean.isLoggedIn}' valueExpression='#{viewBean.userName}' id='userName' inputType='attributeText' label='@{LOGIN_USER}' maxLength='20'></xvw:attribute>
-					        				</xvw:cell>
-					        			</xvw:row>
-					        			<xvw:row>
-					        				<xvw:cell>
-					        					<xvw:attribute disabled='#{viewBean.isLoggedIn}' valueExpression='#{viewBean.password}' id='password' inputType='attributePassword' label='@{LOGIN_PASSWORD}' maxLength='20'></xvw:attribute>
-					        				</xvw:cell>
-					        			</xvw:row>
-					        			<xvw:row>
-					        				<xvw:cell>
-					        					<xvw:attribute lovMap='#{viewBean.profileLovMap}' visible='#{viewBean.showProfilesLov}' valueExpression='#{viewBean.profile}' id='profile' inputType='attributeLov' label='@{LOGIN_PROFILE}' maxLength='20'></xvw:attribute>
-					        				</xvw:cell>
-					        			</xvw:row>
-					        			<xvw:row>
-					        				<xvw:cell>
-					        					<xvw:actionButton label='@{BTN_CONFIRM}' action='#{viewBean.login}' width='80' ></xvw:actionButton>
-					        				</xvw:cell>
-					        				<xvw:cell>
-					        					<xvw:actionButton id='logoutBtn' disabled='#{viewBean.disableLogout}' label='@{LOGIN_LOGOUT}' width='80' action='#{viewBean.logout}'></xvw:actionButton>
-					        				</xvw:cell>
-					        			</xvw:row>
-					        		</xvw:rows>
-					        	</xvw:panel>
-				    		</div>
-				    		</xvw:panel>
-				    		</div>
-    					</td>
-    					<td width='33%'>
-    					</td>
-    				</tr>
-    			</table>
-        </xvw:form>
-    </xvw:viewer> 
+	<xvw:viewer beanClass='netgest.bo.xwc.xeo.beans.XEOLoginBean'
+		beanId='viewBean' localizationClasses='netgest.bo.xwc.components.localization.ViewersMessages'>
+		<xvw:form id='login' default_Command='#{viewBean.login}'>
+			<xvw:requestAction requestParameter='action'>
+				<!-- Define the action associated with the parameter -->
+				<xvw:requestActionValue value='logout'
+					serverAction='#{viewBean.logout}' />
+			</xvw:requestAction>
+			<!-- <xvw:toolBar>
+				<xvw:menu />
+			</xvw:toolBar> -->
+			<table style='width:100%'>
+				<tr>
+					<td width='33%'>
+					</td>
+					<td width='33%'>
+						<div style='height:180px'>
+						</div>
+						<div
+							style='width:454px;height:197px;background-image:url(ext-xeo/images/login_fundo.jpg)'>
+							<xvw:panel title='Login'>
+								<div style='height:0px'>
+								</div>
+								<div style='height:100px;width:280px;margin-left:155px'>
+									<xvw:panel>
+										<xvw:errorMessages></xvw:errorMessages>
+									</xvw:panel>
+									<xvw:panel>
+										<xvw:rows labelPosition=''>
+											<xvw:row>
+												<xvw:cell>
+													<div style='color:red'>
+														<b>
+															<xvw:outputHtml valueExpression='#{viewBean.statusMessage}'></xvw:outputHtml>
+					        					&nbsp;
+														</b>
+													</div>
+													<br />
+												</xvw:cell>
+											</xvw:row>
+											<xvw:row>
+												
+													<xvw:cell>
+														<xvw:attribute disabled='#{viewBean.isLoggedIn}'
+															valueExpression='#{viewBean.userName}' id='userName'
+															inputType='attributeText' label='@{LOGIN_USER}'
+															maxLength='20'></xvw:attribute>
+													</xvw:cell>
+											</xvw:row>
+											<xvw:row>
+												<xvw:cell>
+													<xvw:attribute disabled='#{viewBean.isLoggedIn}'
+														valueExpression='#{viewBean.password}' id='password'
+														inputType='attributePassword' label='@{LOGIN_PASSWORD}'
+														maxLength='20'></xvw:attribute>
+												</xvw:cell>
+											</xvw:row>
+											<xvw:row>
+												<xvw:cell>
+													<xvw:attribute lovMap='#{viewBean.profileLovMap}'
+														visible='#{viewBean.showProfilesLov}' valueExpression='#{viewBean.profile}'
+														id='profile' inputType='attributeLov' label='@{LOGIN_PROFILE}'
+														maxLength='20'></xvw:attribute>
+												</xvw:cell>
+											</xvw:row>
+											<xvw:row>
+												<xvw:cell>
+													<xvw:actionButton id='confirmBtn' label='@{BTN_CONFIRM}'
+														action='#{viewBean.login}' width='80'></xvw:actionButton>
+												</xvw:cell>
+												<xvw:cell>
+													<xvw:actionButton id='logoutBtn'
+														disabled='#{viewBean.disableLogout}' label='@{LOGIN_LOGOUT}'
+														width='80' action='#{viewBean.logout}'></xvw:actionButton>
+												</xvw:cell>
+											</xvw:row>
+										</xvw:rows>
+									</xvw:panel>
+								</div>
+							</xvw:panel>
+						</div>
+					</td>
+					<td width='33%'>
+					</td>
+				</tr>
+			</table>
+			<script>
+				document.getElementById("login").onkeypress= function (e){
+				var keycode;
+
+				if (window.event)
+				keycode = window.event.keyCode;
+				else if
+				(e)
+				keycode = e.which;
+				else
+				return true;
+
+				if (keycode == 13)
+				{
+				XVW.AjaxCommand( 'login','confirmBtn','confirmBtn','1');
+				return
+				false;
+				}
+				else {
+				return true;
+				}
+				}
+            </script>
+		</xvw:form>
+	</xvw:viewer>
 </xvw:root> 
