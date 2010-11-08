@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1119,14 +1118,16 @@ public class XEOEditBean extends XEOBaseBean
 							oCommand.setValue( oSelectedRow
 									.getAttribute("BOUI")
 									.getValue().toString());
-									
+							
+							String frameId = "rowDblClick_"+oSelectedRow
+							.getAttribute("BOUI")
+							.getValue().toString();
+							
 							oRequestContext.getScriptContext().add(
 									XUIScriptContext.POSITION_FOOTER,
 									"editBrigde_openTab",
-									XVWScripts.getOpenCommandTab(oCommand,
-											""
-									));
-									
+									XVWScripts.getOpenCommandTab(frameId,oCommand, "" , null ));
+							
 							oRequestContext.renderResponse();
 						} else {
 							boObject sObjectToOpen;
