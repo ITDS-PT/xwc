@@ -282,6 +282,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 	/**
 	 * Defines the method that's invoked 
 	 * when a row of the GridPanel is doubled clicked.
+	 * 
+	 * If the property is used with value <code>""</code> (empty value) the
+	 * row double click event is disabled
+	 * 
 	 */
 	private XUIMethodBindProperty	onRowDoubleClick 	= new XUIMethodBindProperty("onRowDoubleClick", this );
 	
