@@ -107,7 +107,7 @@
 						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/dbReports.xvw'}"
 						target='Tab' serverAction="#{viewBean.openViewer}" />
 					<xvw:menu text='Index queue'
-						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/IndexQueue.xvw'}"
+						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/indexQueue.xvw'}"
 						target='Tab' serverAction="#{viewBean.openViewer}" />
 				</xvw:menu>
 
