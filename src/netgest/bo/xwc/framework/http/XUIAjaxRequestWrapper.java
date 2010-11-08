@@ -122,7 +122,7 @@ public class XUIAjaxRequestWrapper extends HttpServletRequestWrapper {
                 sParValuesTemp = oRequestParmatersMap.get( sParName );
                 
                 sParValues = new String[ sParValuesTemp.length + 1 ];
-                System.arraycopy( sParValues, 0, sParValues, 0, sParValuesTemp.length );
+                System.arraycopy( sParValuesTemp, 0, sParValues, 0, sParValuesTemp.length );
                 sParValues[ sParValuesTemp.length ] = sParValue;
                 
                 oRequestParmatersMap.put( sParName, sParValues );
