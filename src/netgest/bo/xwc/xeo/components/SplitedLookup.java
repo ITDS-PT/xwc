@@ -9,6 +9,7 @@ import static netgest.bo.xwc.components.HTMLTag.TR;
 
 import java.io.IOException;
 
+import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ValueChangeEvent;
@@ -184,6 +185,16 @@ public class SplitedLookup extends Attribute {
 		String inputTypeName = getKeyInputType();
 		AttributeBase input = (AttributeBase)getRequestContext().getApplicationContext().getViewerBuilder()
         					.createComponent( getRequestContext(), inputTypeName );
+		
+		if( getValueExpression("disabled") != null )
+			input.setDisabled( getValueExpression("disabled").getExpressionString() );
+
+        if( getValueExpression("readOnly") != null )
+        	input.setReadOnly( getValueExpression("readOnly").getExpressionString() );
+        
+        if( getValueExpression("visible") != null )
+        	input.setVisible( getValueExpression("visible").getExpressionString() );
+		
         input.setId( getId() + "_fld" );
 
         if( getStateProperty("maxLength").isDefaultValue() )
@@ -192,6 +203,7 @@ public class SplitedLookup extends Attribute {
         	input.setMaxLength( remAtt.getLen() );
         	
         input.setOnChangeSubmit( "true" );
+        
         
         input.addValueChangeListener( new ChangeListener() );
         
