@@ -65,6 +65,12 @@ public class FileBrowseBean extends netgest.bo.xwc.xeo.beans.XEOBaseBean {
                 "window.parent.setTimeout(\"XVW.lookupWindow.close()\",0)" +
                 "});\n"
         );
+        
+        String id = oParentInput.getClientId();
+        oRequestContext.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, "_updateFile", 
+        		"Ext.onReady( function() { " +
+        		"window.parent.document.getElementById('" + id +"_ci').value='"+oFileComp.getSubmitedFile().getName()+"';"+
+        		"});\n");
 		
 		oRequestContext.setViewRoot(  
 			oRequestContext.getSessionContext().createView( "netgest/bo/xwc/components/viewers/Dummy.xvw" )
