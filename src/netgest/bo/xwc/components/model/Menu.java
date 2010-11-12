@@ -58,7 +58,7 @@ import org.json.JSONObject;
  *     />
  * </xvw:menu>
  * 
- * @author João Carreira
+ * @author Joï¿½o Carreira
  *
  */
 public class Menu extends ViewerCommandSecurityBase {
@@ -274,7 +274,7 @@ public class Menu extends ViewerCommandSecurityBase {
     }
 
     public boolean isVisible() {
-        return this.visible.getEvaluatedValue();
+    	return this.visible.getEvaluatedValue();
     }
     
     public void setExpanded( String sExpressionText ) {
@@ -387,6 +387,14 @@ public class Menu extends ViewerCommandSecurityBase {
 
 	public boolean isContainer() {
 		return true;
+	}
+	
+	@Override
+	public String toString(){
+		if (this.getValue() != null)
+			return this.getText() + ":"+ this.getValue().toString();
+		else
+			return this.getText();
 	}
 	
 }
