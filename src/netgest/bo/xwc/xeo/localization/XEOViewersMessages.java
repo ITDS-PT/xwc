@@ -94,4 +94,10 @@ public class XEOViewersMessages {
 	public static final XUILocalizedMessage FORM_CLOSE_MESSAGE_DIFFS =
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORM_CLOSE_MESSAGE_DIFFS" );
 	
+	public static final XUILocalizedMessage FORMEDIT_REMOVE_CONFIRM_TITLE =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORMEDIT_REMOVE_CONFIRM_TITLE" );
+	
+	public static final XUILocalizedMessage FORMEDIT_REMOVE_CONFIRM_MESSAGE =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORMEDIT_REMOVE_CONFIRM_MESSAGE" );
+	
 }		
