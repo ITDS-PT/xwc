@@ -15,6 +15,7 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.classic.Form;
+import netgest.bo.xwc.components.classic.MessageBox;
 import netgest.bo.xwc.components.classic.Panel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -24,6 +25,7 @@ import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
+import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
 
@@ -372,6 +374,18 @@ public class FormEdit extends Form {
 			viewerMessages = new ViewerMessages();
 			viewerMessages.setId( getId() + "_viewerMsgs" );
 			getChildren().add( pos, viewerMessages );
+		}
+		
+		MessageBox box = (MessageBox) findComponent( getId() + "_removeAlertBox" );
+		if (box == null){
+			box = new MessageBox();
+			box.setButtons(MessageBox.MessageBoxButtons.YESNO);
+			box.setMessageBoxType(MessageBox.MessageBoxType.QUESTION);
+			box.setTitle(XEOViewersMessages.FORMEDIT_REMOVE_CONFIRM_TITLE.toString());
+			box.setMessage(XEOViewersMessages.FORMEDIT_REMOVE_CONFIRM_MESSAGE.toString());
+			box.setId(getId() + "_removeAlertBox");
+			box.setActions("['#{viewBean.remove}','#{viewBean.dummy}']");
+			getChildren().add( pos++, box );
 		}
 	}
 

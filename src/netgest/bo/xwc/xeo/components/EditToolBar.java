@@ -396,7 +396,7 @@ public class EditToolBar extends ToolBar {
 
 		getChildren().add( pos++, Menu.getMenuSpacer( renderUpdateAndCloseBtn.getExpressionString() ) );
 		createViewerBeanMethod( pos++, null, ComponentMessages.EDIT_TOOLBAR_BTN_REMOVE_TOOLTIP.toString(),
-				"ext-xeo/images/menus/remover.gif", "remove", null );
+				"ext-xeo/images/menus/remover.gif", "removeConfirm", null );
 		
 		getChildren().add( pos++,Menu.getMenuSpacer( renderDestroyBtn.getExpressionString() ) );
 		createViewerBeanMethod( pos++,null, ComponentMessages.EDIT_TOOLBAR_BTN_VALIDATE_TOOLTIP.toString(),

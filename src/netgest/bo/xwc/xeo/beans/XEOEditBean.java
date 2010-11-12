@@ -43,6 +43,7 @@ import netgest.bo.xwc.components.annotations.Visible;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
+import netgest.bo.xwc.components.classic.MessageBox;
 import netgest.bo.xwc.components.classic.Tab;
 import netgest.bo.xwc.components.classic.Tabs;
 import netgest.bo.xwc.components.classic.Window;
@@ -608,6 +609,20 @@ public class XEOEditBean extends XEOBaseBean
     		closeView();
     	}
     }
+    
+    @Visible
+    public void removeConfirm() throws boRuntimeException{
+    	XUIForm f = (XUIForm) getViewRoot().findComponent(XUIForm.class);
+    	MessageBox alertBox = (MessageBox) f.findComponent(f.getId()+"_removeAlertBox");
+    	alertBox.show();
+    }
+    
+    @Visible
+    public void dummy(){
+    	//Do nothing, just exist to bind
+    }
+    
+    
     @Visible
     public void closeView() {
     	XUIRequestContext oRequestContext;
@@ -2055,8 +2070,10 @@ public class XEOEditBean extends XEOBaseBean
     }
     
     public XEOEditBean getParentBean() {
-    	if( this.parentBean == null )
-    		return (XEOEditBean)getParentView().getBean( getParentBeanId() );
+    	if( this.parentBean == null ){
+    		XEOEditBean b = (XEOEditBean)getParentView().getBean( getParentBeanId() ); 
+    		return b;
+    	}
     	else
     		return this.parentBean;
     }
