@@ -148,7 +148,7 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
     	
     	if( oComp.isRenderedOnClient() ) {
 
-    		if( renderValue && oComp.getStateProperty("displayValue").wasChanged() ) {
+    		if( renderValue && oComp.getStateProperty("displayValue") != null ) {
     			String sDisplayValue =  oComp.getDisplayValue();
         		s.w("c.setRawValue('").writeValue( sDisplayValue ).w("')").endStatement();
     		}
