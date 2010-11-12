@@ -21,6 +21,7 @@ import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 
@@ -116,8 +117,11 @@ public class XEOBaseList extends XEOBaseBean {
         oRequestContext = XUIRequestContext.getCurrentContext();
         
         if( oRequestContext.isAjaxRequest() ) {
-        	oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER , "addNew", 
-        			XVWScripts.getOpenCommandTab( oRequestContext.getEvent().getComponent() , "")
+        	
+        	XUIComponentBase oCommand = oRequestContext.getEvent().getComponent();
+        	String frameId = "addNew_"+System.currentTimeMillis();
+			oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER , "addNew",
+        			XVWScripts.getOpenCommandTab( frameId, oCommand , "", null)
         	);
         }
         else {
