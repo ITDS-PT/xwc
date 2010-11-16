@@ -8,9 +8,9 @@
 			<xeo:list>
 				<xvw:columns>
 					
-					<xvw:columnAttribute width="100" dataField="largura"/>
+					<xvw:columnAttribute width="100" dataField="name"/>
 					<xvw:columnAttribute width="100" dataField="defaultViewer"/>
-					<xvw:columnAttribute width="100" dataField="listbar"/>
+					<xvw:columnAttribute width="100" dataField="profile"/>
 
 				</xvw:columns>
 			</xeo:list>

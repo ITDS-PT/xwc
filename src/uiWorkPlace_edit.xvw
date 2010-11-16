@@ -7,36 +7,10 @@
 		<xeo:formEdit>
 			<xvw:panel>
 				<xvw:section label='Geral'>
-					<xvw:rows>
-						
-						<xvw:row>
-						  <xvw:cell>
-						     <xvw:attribute objectAttribute="largura"/>
-						   </xvw:cell>
-						</xvw:row>
-						<xvw:row>
-						  <xvw:cell>
-						     <xvw:attribute objectAttribute="defaultViewer"/>
-						   </xvw:cell>
-						</xvw:row>
-						<xvw:row>
-						  <xvw:cell>
-						     <xvw:attribute objectAttribute="listbar"/>
-						   </xvw:cell>
-						</xvw:row>
+					<xvw:rows>						
 						<xvw:row>
 						  <xvw:cell>
 						     <xvw:attribute objectAttribute="name"/>
-						   </xvw:cell>
-						</xvw:row>
-						<xvw:row>
-						  <xvw:cell>
-						     <xvw:attribute objectAttribute="user"/>
-						   </xvw:cell>
-						</xvw:row>
-						<xvw:row>
-						  <xvw:cell>
-						     <xvw:attribute objectAttribute="profile"/>
 						   </xvw:cell>
 						</xvw:row>
 						<xvw:row>
@@ -46,23 +20,21 @@
 						</xvw:row>
 						<xvw:row>
 						  <xvw:cell>
-						     <xvw:attribute objectAttribute="img"/>
+						     <xvw:attribute objectAttribute="profile"/>
 						   </xvw:cell>
 						</xvw:row>
-
+						<xvw:row>
+						  <xvw:cell>
+						     <xvw:attribute objectAttribute="defaultViewer"/>
+						   </xvw:cell>						   
+						</xvw:row>
+						<xvw:row>
+						  <xvw:cell>
+						     <xvw:attribute objectAttribute="user"/>
+						   </xvw:cell>
+						</xvw:row>												
 					</xvw:rows>
-				</xvw:section>				
-				<xvw:tabs>
-					
-					<xvw:tab label="Perfis">
-					  <xeo:bridge bridgeName='profiles' >
-					     <xvw:columns>
-					     <xvw:columnAttribute width="150" label="Perfis" dataField="SYS_CARDID"/>
-					     </xvw:columns>
-					   </xeo:bridge>
-					</xvw:tab>
-
-				</xvw:tabs>
+				</xvw:section>							
 			</xvw:panel>
 		</xeo:formEdit>
 	</xvw:viewer>
