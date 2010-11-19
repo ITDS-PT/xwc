@@ -37,7 +37,7 @@ public class EditToolBar extends ToolBar {
 	);
 	
 	public static final List<String> MapViewerMethods = Arrays.asList(
-			new String[] {"save","saveAndClose","saveAndCreateNew","processValidate","duplicate", "remove" }
+			new String[] {"save","saveAndClose","saveAndCreateNew","processValidate","duplicate", "removeConfirm" }
 	);
 
 	public static final List<String> staticNonOrphanMethods = Arrays.asList(
@@ -749,7 +749,7 @@ public class EditToolBar extends ToolBar {
 		if( "saveAndCreateNew".equals(  vm.getTargetMethod() ) )
 			return getRenderUpdateAndCreateNewBtn();
 		
-		if( "remove".equals( vm.getTargetMethod() ) )
+		if( "removeConfirm".equals( vm.getTargetMethod() ) )
 			return getRenderDestroyBtn();
 		
 		if( "processValidate".equals( vm.getTargetMethod() ) )
