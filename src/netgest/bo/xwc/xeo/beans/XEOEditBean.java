@@ -123,7 +123,7 @@ public class XEOEditBean extends XEOBaseBean
 	            
 				if( !this.bTransactionStarted ) {
 					oBoObect.poolSetStateFull();
-					oBoObect.transactionBegins();
+					oBoObect.transactionBeginsForceSavePoint();
 					bTransactionStarted = true;
 					Window wnd = (Window)XUIRequestContext.getCurrentContext().getViewRoot().findComponent( Window.class );
 					if( wnd != null && wnd.getOnClose() == null ) {
@@ -748,7 +748,8 @@ public class XEOEditBean extends XEOBaseBean
 	    							BeansMessages.ERROR_SAVING_RELATED_OBJECT.toString(),
 	    							boEx.getMessage()
 	    						)	    					
-	    					);	    					
+	    					);
+	    					showObjectErrors(boEx.getSrcObject());
 	    				}
 	    				else {
 	        				showObjectErrors();
@@ -1611,10 +1612,13 @@ public class XEOEditBean extends XEOBaseBean
 	@SuppressWarnings("unchecked")
 	@Visible
 	public void showObjectErrors() {
+	    showObjectErrors(getXEOObject());
+	}
+	
+	private void showObjectErrors(boObject oXEOObject) {
         XUIRequestContext   oRequestContext;
         oRequestContext = XUIRequestContext.getCurrentContext();
-
-        boObject oXEOObject = getXEOObject();
+        
 		
 		StringBuilder sErros = new StringBuilder();
 		
