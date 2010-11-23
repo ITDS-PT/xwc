@@ -1,6 +1,7 @@
 package netgest.bo.xwc.xeo.components;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import javax.faces.event.ActionEvent;
 
@@ -9,6 +10,8 @@ import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIMessage;
+import netgest.bo.xwc.xeo.localization.BeansMessages;
 
 /**
  * 
@@ -58,7 +61,24 @@ public class ModelMethod extends ViewerMethod {
 		boObject xeoObject = targetObject.getEvaluatedValue();
 		try {
 			Method m = xeoObject.getClass().getMethod( this.targetMethod.getEvaluatedValue(), (Class[])null );
-			m.invoke( xeoObject, (Object[])null );
+			m.invoke( xeoObject, (Object[])null );			
+			
+			
+			if( xeoObject.getObjectErrors() != null ) {
+		    	StringBuffer sErros = new StringBuffer();
+		        ArrayList oErrors = xeoObject.getObjectErrors();
+				if( oErrors != null && oErrors.size() > 0 ) {
+				    for( Object error : oErrors ) {
+					sErros.append( (String)error ).append("<br>");
+						}
+				}
+				this.getRequestContext().addMessage( "viewBean_erros", new XUIMessage(
+					XUIMessage.TYPE_ALERT, 
+					XUIMessage.SEVERITY_ERROR,
+					BeansMessages.TITLE_ERRORS.toString(),
+					sErros.toString()));
+				xeoObject.clearObjectErrors();
+			}		
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
