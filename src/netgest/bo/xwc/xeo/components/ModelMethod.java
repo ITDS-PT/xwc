@@ -69,8 +69,8 @@ public class ModelMethod extends ViewerMethod {
 		        ArrayList oErrors = xeoObject.getObjectErrors();
 				if( oErrors != null && oErrors.size() > 0 ) {
 				    for( Object error : oErrors ) {
-					sErros.append( (String)error ).append("<br>");
-						}
+				    	sErros.append( (String)error ).append("<br>");
+					}
 				}
 				this.getRequestContext().addMessage( "viewBean_erros", new XUIMessage(
 					XUIMessage.TYPE_ALERT, 
