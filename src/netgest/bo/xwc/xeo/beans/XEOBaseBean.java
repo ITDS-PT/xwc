@@ -25,6 +25,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUIViewBean;
 import netgest.bo.xwc.framework.components.XUICommand;
+import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 import org.json.JSONArray;
@@ -336,6 +337,72 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 				
 			} catch (boRuntimeException e) {
 				throw new RuntimeException( e );
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * Opens an edit viewer for the XVW.openEditViewer javascript function
+	 * 
+	 *  
+	 */
+	public void openEditViewer(){
+	
+		XUISessionContext oSessionContext = getRequestContext().getSessionContext();
+		XUIForm f = (XUIForm)getViewRoot().findComponent(XUIForm.class);
+		Map<String,String> params = getRequestContext().getRequestParameterMap();
+		
+		//Retrieve the viewername, boui and object name from the request input (hidden) fields
+		String viewName = params.get(f.getClientId() + "_viewerName");
+		String boui = params.get(f.getClientId() + "_boui");
+		String objectName = params.get(f.getClientId() + "_objectName");
+		
+		if (viewName != null){
+			
+			//Create the viewer
+			XUIViewRoot oViewRoot = oSessionContext.createChildView(viewName);
+			
+			XEOEditBean oEditBean = (XEOEditBean) oViewRoot.getBean("viewBean");
+			
+			//If a BOUI is present, open the edit for that instance, otherwise create a new one
+			if (boui != null && boui.length() > 0 )
+				oEditBean.setCurrentObjectKey(boui);
+			else
+				oEditBean.createNew(objectName);
+			
+			//Send the response
+			getRequestContext().setViewRoot(oViewRoot);
+			getRequestContext().renderResponse();
+		}	
+	}
+	
+	/**
+	 * Opens a list viewer for the XVW.openListViewer javascript function
+	 */
+	public void openListViewer(){
+		XUISessionContext oSessionContext = getRequestContext().getSessionContext();
+		XUIForm f = (XUIForm)getViewRoot().findComponent(XUIForm.class);
+		Map<String,String> params = getRequestContext().getRequestParameterMap();
+		
+		//Retrieve the viewername, boui and object name from the request input (hidden) fields
+		String viewName = params.get(f.getClientId() + "_viewerListName");
+		String boql = params.get(f.getClientId() + "_boql");
+		
+		if (viewName != null){
+			
+			//Create the viewer
+			XUIViewRoot oViewRoot = oSessionContext.createChildView(viewName);
+			
+			XEOBaseList oListBean = (XEOBaseList) oViewRoot.getBean("viewBean");
+			if (boql != null && boql.length() > 0 )
+			{
+				oListBean.executeBoql(boql);
+				
+				//Send the response
+				getRequestContext().setViewRoot(oViewRoot);
+				getRequestContext().renderResponse();
 			}
 		}
 	}

@@ -20,8 +20,8 @@ import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
+import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 
@@ -51,8 +51,8 @@ public class Form extends XUIForm
 	}
 	
 	public byte getSecurityPermissions() {
-		// Quando não existe bean associada ao viewer ignora seguranças.
-		// Não existe outra maneira já que o propriedade é sempre resolvida através da class
+		// Quando nï¿½o existe bean associada ao viewer ignora seguranï¿½as.
+		// Nï¿½o existe outra maneira jï¿½ que o propriedade ï¿½ sempre resolvida atravï¿½s da class
 		// ScopedAttributeELResolver 
 		
 		if( getRequestContext().getViewRoot().getBean("viewBean") != null ) {
@@ -85,6 +85,24 @@ public class Form extends XUIForm
         oComponentDependeces = new HashMap<String, Boolean>();
         buildComponentDependences( this );
 
+    }
+    
+    
+    @Override
+    public void initComponent(){
+    	super.initComponent();
+    	if (findComponent(getClientId() + "_openEditViewer") == null){
+    		XUICommand c = new XUICommand();
+    		c.setId(getClientId() + "_openEditViewer");
+    		c.setActionExpression(createMethodBinding("#{viewBean.openEditViewer}"));
+    		getChildren().add(c);
+    	}
+    	if (findComponent(getClientId() + "_openListViewer") == null){
+    		XUICommand c = new XUICommand();
+    		c.setId(getClientId() + "_openListViewer");
+    		c.setActionExpression(createMethodBinding("#{viewBean.openListViewer}"));
+    		getChildren().add(c);
+    	}
     }
     
     public void buildComponentDependences( UIComponent oComponent ) {
@@ -358,7 +376,7 @@ public class Form extends XUIForm
 //					XUIResponseWriter w = getResponseWriter();
 //					w.startElement( HTMLTag.H1, component);
 //					w.writeAttribute( HTMLAttr.STYLE , "color:red", null);
-//					w.writeText( "Não têm permissões para realizar a operação!", null );
+//					w.writeText( "Nï¿½o tï¿½m permissï¿½es para realizar a operaï¿½ï¿½o!", null );
 //					w.endElement( HTMLTag.H1);
 //				}
 			}

@@ -186,6 +186,151 @@ XVW.openTab = function( sFrameName, sTitle ) {
 }
 
 
+/**
+ * 
+ * Opens a given edit viewer in a new tab
+ * 
+ * @param sViewerName The name of the viewer
+ * @param sBOUI The BOUI of the instance to open
+ * @param sObjectName The name of the Object to create (if no BOUI is provided)
+ * @param sFormId The identifier of the current form
+ * 
+ * 
+ */
+XVW.openEditViewer = function(sViewerName,sBOUI, sObjectName, sFormId){
+	
+	if (sViewerName != null && sViewerName != "")
+	{
+		//Find the form element to append the fields
+		oForm = document.getElementById(sFormId);
+		var viewerName = null;
+		var boui = null;
+		var objectName = null;
+		
+		viewerName = document.getElementById(sFormId + "_viewerName");
+		boui = document.getElementById(sFormId + "_boui");
+		objectName = document.getElementById(sFormId + "_objectName");
+		
+		//Check if the hidden input for the viewerName exists (create if it does not
+		//exist and update value if it does)
+		if (viewerName != null){
+			viewerName.value = sViewerName;
+		}
+		else{
+			var input = document.createElement("input");
+			input.setAttribute("type", "hidden");
+			input.setAttribute("name", sFormId + "_viewerName");
+			input.setAttribute("id",sFormId + "_viewerName");
+			input.setAttribute("value", sViewerName);
+			oForm.appendChild(input);
+		}
+		//Check if the hidden input for the boui exists (create if it does not exist and
+		//update value if it does)
+		if (boui != null){
+			boui.value = sBOUI;
+		}
+		else{
+			var input = document.createElement("input");
+			input.setAttribute("type", "hidden");
+			input.setAttribute("name", sFormId + "_boui");
+			input.setAttribute("id",sFormId + "_boui");
+			input.setAttribute("value", sBOUI);
+			oForm.appendChild(input);
+		}
+		
+		if (objectName != null){
+			objectName.value = sObjectName;
+		}
+		else{
+			var input = document.createElement("input");
+			input.setAttribute("type", "hidden");
+			input.setAttribute("name", sFormId + "_objectName");
+			input.setAttribute("id",sFormId + "_objectName");
+			input.setAttribute("value", sObjectName);
+			oForm.appendChild(input);
+		}
+		
+		
+		if (sBOUI == null || sBOUI == ""){
+			var d=new Date();
+			sBOUI = d.getTime();
+		}
+		
+		//Recreate the form component identifier
+		var sCmdId = sFormId + "_openEditViewer";
+		
+		//Send the command, which will open the XEOBaseBean.openEditViewer()
+		XVW.openCommandTab( sBOUI, sFormId, sCmdId, null, "" );
+	
+	
+}
+}
+
+
+
+
+/**
+ * 
+ * Opens a given edit viewer in a new tab
+ * 
+ * @param sViewerName The name of the viewer to open
+ * @param sBOQL The BOQL expression to execute
+ * @param sFormId The identifier of the current form
+ * 
+ * 
+ */
+XVW.openListViewer = function( sViewerName, sBOQL, sFormId){
+	
+	if (sViewerName != null && sViewerName != "")
+	{
+		//Find the form element to append the fields
+		oForm = document.getElementById(sFormId);
+		var viewerName = null;
+		var boql = null;
+		
+		
+		viewerName = document.getElementById(sFormId + "_viewerListName");
+		boql = document.getElementById(sFormId + "_boql");
+		
+		//Check if the hidden input for the viewerName exists (create if it does not
+		//exist and update value if it does)
+		if (viewerName != null){
+			viewerName.value = sViewerName;
+		}
+		else{
+			var input = document.createElement("input");
+			input.setAttribute("type", "hidden");
+			input.setAttribute("name", sFormId + "_viewerListName");
+			input.setAttribute("id",sFormId + "_viewerListName");
+			input.setAttribute("value", sViewerName);
+			oForm.appendChild(input);
+		}
+		//Check if the hidden input for the boui exists (create if it does not exist and
+		//update value if it does)
+		if (boql != null){
+			boql.value = sBOQL;
+		}
+		else{
+			var input = document.createElement("input");
+			input.setAttribute("type", "hidden");
+			input.setAttribute("name", sFormId + "_boql");
+			input.setAttribute("id",sFormId + "_boql");
+			input.setAttribute("value", sBOUI);
+			oForm.appendChild(input);
+		}
+		
+		var id = new Date().getTime();
+		
+		//Recreate the form component identifier
+		var sCmdId = sFormId + "_openEditViewer";
+		
+		//Send the command, which will open the XEOBaseBean.openEditViewer()
+		XVW.openCommandTab( id, sFormId, sCmdId, null, "" );	
+	
+}
+}
+
+
 XVW.OpenCommandWindow = function( sFrameName, sFormId, sActionId, sActionValue, sWidth, sHeight, sTitle ){
 	
 	sFrameName += (new Date() - 1)
