@@ -167,6 +167,7 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 					e.printStackTrace();
 				}
 				finally {
+					if (loginCtx!=null) loginCtx.close();
 				}
 			
 		}
