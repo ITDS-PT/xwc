@@ -153,7 +153,14 @@ public class XEOObjectAttributeMetaData implements DataFieldMetaData {
             return DataFieldTypes.RENDER_DEFAULT;
 
         if ( boDefAttribute.ATTRIBUTE_LONGTEXT.equals( sValueType ) )
-            return DataFieldTypes.RENDER_TEXTAREA;
+        {
+        	
+        	if ("HTML".equalsIgnoreCase(defAtt.getEditorType())
+        			|| "HTMLADVANCED".equalsIgnoreCase(defAtt.getEditorType()))
+        		return DataFieldTypes.RENDER_HTMLEDITOR;
+        	else
+        		return DataFieldTypes.RENDER_TEXTAREA;
+        }
 
         if ( boDefAttribute.ATTRIBUTE_DATETIME.equals( sValueType ) )
             return DataFieldTypes.RENDER_DEFAULT;
