@@ -160,6 +160,9 @@ public class Attribute extends AttributeBase
                         case DataFieldTypes.RENDER_IFILE_LINK:
                             sRet = "attributeFile";
                             break;
+                        case DataFieldTypes.RENDER_HTMLEDITOR:
+                        	sRet = "attributeHtmlEditor";
+                            break;
                     }
                     break;
                 case DataFieldTypes.VALUE_NUMBER:
@@ -461,7 +464,7 @@ public class Attribute extends AttributeBase
                 if( inpComp != null ) {
                 	inpComp.encodeAll();
                 } else {
-                	w.writeText( "« Invalid [" + oAttr.getObjectAttribute() + "] »", null );
+                	w.writeText( "ï¿½ Invalid [" + oAttr.getObjectAttribute() + "] ï¿½", null );
                 }
                 w.endElement( TD );
             }
