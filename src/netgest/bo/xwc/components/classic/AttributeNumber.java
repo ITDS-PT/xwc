@@ -58,7 +58,7 @@ public class AttributeNumber extends AttributeBase {
                         );
                     } else { 
                     	clearInvalid();
-                    	setValue( oSubmitedBigDecimal );
+                    	setValue( oSubmitedBigDecimal.toPlainString() );
                     }
                 }
                 catch( NumberFormatException ex ) {
