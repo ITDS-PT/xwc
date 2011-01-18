@@ -16,7 +16,7 @@ public class ThreadsDataListConnector extends GenericDataListConnector {
 
 		if ("userThreads".equalsIgnoreCase(this.getType()))
 			this.type = ThreadType.USER_THREADS;
-		else if ("ejbTimers".equalsIgnoreCase(this.getType()))
+		else 
 			this.type = ThreadType.EJB_TIMERS;
 
 		this.createColumn("NAME", "Name");
