@@ -493,6 +493,7 @@ public class MessageBox extends XUIInput {
 		YESNO.add( NO );
 
 		YESNOCANCEL.add( YES );
+		YESNOCANCEL.add( NO );
 		YESNOCANCEL.add( CANCEL );
 		
 		JSONArray jarr = null;
@@ -517,7 +518,7 @@ public class MessageBox extends XUIInput {
 						if( jarr != null && jarr.length() > 0 ) {
 							String serverAction = (String)jarr.get( 0 );
 							if( serverAction != null && serverAction.trim().length() > 0 ) {
-								OK.setServerAction( serverAction );
+								YES.setServerAction( serverAction );
 							}
 						}
 						break;
@@ -575,7 +576,7 @@ public class MessageBox extends XUIInput {
 							if( jarr.length() > 2 ) { 
 								String serverAction = (String)jarr.get( 2 );
 								if( serverAction != null && serverAction.trim().length() > 0 ) {
-									NO.setServerAction( serverAction );
+									CANCEL.setServerAction( serverAction );
 								}
 							}
 						}
