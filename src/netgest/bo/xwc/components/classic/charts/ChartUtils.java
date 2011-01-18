@@ -6,8 +6,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Random;
 
-import javax.servlet.http.HttpServletRequest;
-
+import netgest.bo.xwc.components.util.ComponentRenderUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
 
 /**
@@ -45,91 +44,6 @@ public class ChartUtils
 	}
 	
 	
-	/**
-	 * Retrieves the URL to use when one needs to access
-	 * the Component as a servlet, returns the complete URL
-	 * with hostname and port
-	 * 
-	 * @param reqContext The request context
-	 * @param clientID The identifier of the client
-	 * 
-	 * @return The URL to access the component as servlet
-	 */
-	public static String getCompleteServletURL(XUIRequestContext reqContext, String clientID)
-	{
-		String url = reqContext.getAjaxURL();
-		if (url.indexOf('?') == -1)
-			{ url += '?'; }
-		else
-			{ url += '&'; }
-		
-		HttpServletRequest req = (HttpServletRequest)reqContext.getFacesContext().getExternalContext().getRequest();
-		String link = 
-        	(req.isSecure()?"https":"http") + "://" + 
-        	req.getServerName() +
-        	(req.getServerPort()==80?"":":"+req.getServerPort());
-		
-		url += "javax.faces.ViewState=" + reqContext.getViewRoot().getViewState();
-		url += "&xvw.servlet="+clientID;
-		url = link + url;
-		
-		return url;
-	}
-	
-	
-	/**
-	 * 
-	 * Retrieves the URL Servlet
-	 * 
-	 * @param reqContext The context request
-	 * 
-	 * @return The Servlet Request
-	 */
-	public static String getServletURL(XUIRequestContext reqContext)
-	{
-		String url = reqContext.getAjaxURL();
-		if (url.indexOf('?') == -1)
-			{ url += '?'; }
-		else
-			{ url += '&'; }
-		
-		HttpServletRequest req = (HttpServletRequest)reqContext.getFacesContext().getExternalContext().getRequest();
-		String link = 
-        	(req.isSecure()?"https":"http") + "://" + 
-        	req.getServerName() +
-        	(req.getServerPort()==80?"":":"+req.getServerPort());
-		
-		url += "javax.faces.ViewState=" + reqContext.getViewRoot().getViewState();
-		url += "&xvw.servlet=";
-		url = link + url;
-		
-		return url;
-	}
-	
-	
-	/**
-	 * Retrieves the URL to use when one needs to access
-	 * the Component as a servlet, returns a relative URL
-	 *
-	 * 
-	 * @param reqContext The request context
-	 * @param clientID The identifier of the client
-	 * 
-	 * @return The URL to access the component as servlet
-	 */
-	public static String getServletURL(XUIRequestContext reqContext, String clientID)
-	{
-		String url = reqContext.getAjaxURL();
-		if (url.indexOf('?') == -1)
-			{ url += '?'; }
-		else
-			{ url += '&'; }
-		
-		url += "javax.faces.ViewState=" + reqContext.getViewRoot().getViewState();
-		url += "&xvw.servlet="+clientID;
-		
-		return url;
-	}
 	
 	/**
 	 * Creates a temporary file on the file system from a InputStream
@@ -224,7 +138,7 @@ public class ChartUtils
 	public static String getReloadChartJSFunction(String clientId, String url, int width, int height, XUIRequestContext context){
 		StringBuilder reloadChart = new StringBuilder();
 		reloadChart.append("function reloadChart(clientId){");
-		reloadChart.append("var url = escape(\""+ChartUtils.getServletURL(context)+clientId+"\");");
+		reloadChart.append("var url = escape(\""+ComponentRenderUtils.getServletURL(context)+clientId+"\");");
 		reloadChart.append("swfobject.embedSWF(\"open-flash-chart.swf\", " +
 				" clientId , " +
 				"\""+width+"\", " +

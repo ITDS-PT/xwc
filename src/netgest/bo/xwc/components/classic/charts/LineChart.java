@@ -28,6 +28,7 @@ import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.charts.configurations.ILineChartConfiguration;
 import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSet;
 import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSetSQL;
+import netgest.bo.xwc.components.util.ComponentRenderUtils;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
@@ -791,7 +792,7 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 			{
 				StringBuilder b = new StringBuilder();
 				
-				String url = ChartUtils.getCompleteServletURL(getRequestContext(), component.getClientId());
+				String url = ComponentRenderUtils.getCompleteServletURL(getRequestContext(), component.getClientId());
 				url = URLEncoder.encode(url,"UTF-8");
 				
 				int width = oComp.getWidth();
@@ -827,12 +828,16 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 			}
 			else if (oComp.getType().equalsIgnoreCase(TYPE_CHART_IMG))//JFreeChart based graph
 			{
-				String url = ChartUtils.getServletURL(getRequestContext(), component.getClientId());
-				w.startElement(HTMLTag.IMG, oComp);
-					w.writeAttribute(HTMLAttr.SRC, url, null);
-					w.writeAttribute(HTMLAttr.WIDTH, oComp.getWidth(), null);
-					w.writeAttribute(HTMLAttr.HEIGHT, oComp.getHeight(), null);
-				w.endElement(HTMLTag.IMG);
+				String url = ComponentRenderUtils.getServletURL(getRequestContext(), component.getClientId());
+				url += "&ts="+System.currentTimeMillis();
+				w.startElement(HTMLTag.DIV, oComp);
+					w.writeAttribute(HTMLAttr.ID, component.getClientId(), null);
+					w.startElement(HTMLTag.IMG, oComp);
+						w.writeAttribute(HTMLAttr.SRC, url, null);
+						w.writeAttribute(HTMLAttr.WIDTH, oComp.getWidth(), null);
+						w.writeAttribute(HTMLAttr.HEIGHT, oComp.getHeight(), null);
+					w.endElement(HTMLTag.IMG);
+				w.endElement(HTMLTag.DIV);
 			}
 						
 				

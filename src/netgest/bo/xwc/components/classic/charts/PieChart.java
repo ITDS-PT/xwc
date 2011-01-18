@@ -23,6 +23,7 @@ import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.charts.configurations.IPieChartConfiguration;
 import netgest.bo.xwc.components.classic.charts.datasets.PieDataSet;
+import netgest.bo.xwc.components.util.ComponentRenderUtils;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
@@ -755,7 +756,7 @@ public class PieChart extends XUIComponentBase implements
 				StringBuilder b = new StringBuilder();
 				String clientId = oComp.getClientId();
 
-				String url = ChartUtils.getCompleteServletURL(
+				String url = ComponentRenderUtils.getCompleteServletURL(
 						getRequestContext(), component.getClientId());
 				url = URLEncoder.encode(url, "UTF-8");
 
@@ -780,18 +781,23 @@ public class PieChart extends XUIComponentBase implements
 
 				w.startElement(HTMLTag.DIV, oComp);
 				w.writeAttribute(HTMLAttr.ID, component.getClientId(), null);
-
+				w.endElement(HTMLTag.DIV);
+				
 			} else if (oComp.getType().equalsIgnoreCase(TYPE_CHART_IMG))// JFreeChart
 																		// based
 																		// graph
 			{
-				String url = ChartUtils.getServletURL(getRequestContext(),
+				String url = ComponentRenderUtils.getServletURL(getRequestContext(),
 						component.getClientId());
-				w.startElement(HTMLTag.IMG, oComp);
-				w.writeAttribute(HTMLAttr.SRC, url, null);
-				w.writeAttribute(HTMLAttr.WIDTH, width, null);
-				w.writeAttribute(HTMLAttr.HEIGHT, height, null);
-				w.endElement(HTMLTag.IMG);
+				url += "&ts="+System.currentTimeMillis();
+				w.startElement(HTMLTag.DIV, oComp);
+				w.writeAttribute(HTMLAttr.ID, component.getClientId(), null);
+					w.startElement(HTMLTag.IMG, oComp);
+					w.writeAttribute(HTMLAttr.SRC, url, null);
+					w.writeAttribute(HTMLAttr.WIDTH, width, null);
+					w.writeAttribute(HTMLAttr.HEIGHT, height, null);
+					w.endElement(HTMLTag.IMG);
+				w.endElement(HTMLTag.DIV);	
 			}
 
 		}
