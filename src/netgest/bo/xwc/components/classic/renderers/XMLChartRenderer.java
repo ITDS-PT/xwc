@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import netgest.bo.xwc.components.classic.charts.Chart;
-import netgest.bo.xwc.components.classic.charts.ChartUtils;
+import netgest.bo.xwc.components.util.ComponentRenderUtils;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
@@ -17,7 +17,7 @@ public class XMLChartRenderer extends XMLBasicRenderer {
 		
 		super.encodeBegin( component );
 		Chart 	chartComponent	= (Chart)component;
-		String servlet = ChartUtils.getCompleteServletURL(getRequestContext(), component.getClientId());
+		String servlet = ComponentRenderUtils.getCompleteServletURL(getRequestContext(), component.getClientId());
 		
 		String tmpFolder = netgest.bo.impl.document.Ebo_DocumentImpl.getTempDir();
 		if(tmpFolder.endsWith("\\") || tmpFolder.endsWith("/"))
