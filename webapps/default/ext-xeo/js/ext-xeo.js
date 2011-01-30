@@ -315,14 +315,14 @@ XVW.openListViewer = function( sViewerName, sBOQL, sFormId){
 			input.setAttribute("type", "hidden");
 			input.setAttribute("name", sFormId + "_boql");
 			input.setAttribute("id",sFormId + "_boql");
-			input.setAttribute("value", sBOUI);
+			input.setAttribute("value", sBOQL);
 			oForm.appendChild(input);
 		}
 		
 		var id = new Date().getTime();
 		
 		//Recreate the form component identifier
-		var sCmdId = sFormId + "_openEditViewer";
+		var sCmdId = sFormId + "_openListViewer";
 		
 		//Send the command, which will open the XEOBaseBean.openEditViewer()
 		XVW.openCommandTab( id, sFormId, sCmdId, null, "" );	
