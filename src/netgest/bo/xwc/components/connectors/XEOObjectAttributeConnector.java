@@ -15,9 +15,7 @@ import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.faces.context.FacesContext;
 
-import netgest.bo.boConfig;
 import netgest.bo.def.boDefAttribute;
-import netgest.bo.def.boDefDocument;
 import netgest.bo.def.boDefXeoCode;
 import netgest.bo.lovmanager.LovManager;
 import netgest.bo.lovmanager.lovObject;
@@ -26,16 +24,18 @@ import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
 import netgest.io.FSiFile;
-import netgest.io.iFileConnector;
-import netgest.io.iFileException;
+import netgest.io.iFile;
 
 public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData implements DataFieldConnector {
 
@@ -56,6 +56,8 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
     private static final Logger log = Logger.getLogger( XUIComponentParser.class.getName() );
  
     private AttributeHandler    oAttHandler;
+    
+    private XEOObjectConnector con;
         
     public XEOObjectAttributeConnector(XEOObjectConnector oXEODataRecordConnector, AttributeHandler oAttHandler ) 
     {
@@ -63,13 +65,24 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
         assert oAttHandler != null : new NullPointerException();
         assert oXEODataRecordConnector != null : new NullPointerException();
         this.oAttHandler = oAttHandler;
+        this.con = oXEODataRecordConnector;
     }
 
     public Object getValue() {
         try {
         	if( "BOUI".equals( this.oAttHandler.getName() ) || (getSecurityPermissions()&SecurityPermissions.READ) == SecurityPermissions.READ ) {
-	            Object oRetValue = oAttHandler.getValueObject();
-	            return oRetValue;
+        		
+        		String val = this.oAttHandler.getDefAttribute().getAtributeDeclaredType();
+        		if (boDefAttribute.ATTRIBUTE_OBJECTCOLLECTION.equals(this.oAttHandler.getDefAttribute().getAtributeDeclaredType())){
+        			bridgeHandler bH = this.oAttHandler.getParent().getBridge(oAttHandler.getDefAttribute().getName());
+        			StringBuffer sb = getBridgeDisplayOutput(bH);
+        			return sb.toString();
+        		}
+        		else{
+        			Object oRetValue = oAttHandler.getValueObject();
+    	            return oRetValue;
+        		}
+	            
         	}
         	return null;
         } catch (boRuntimeException e) {
@@ -77,6 +90,29 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
         }
     }
 
+    /**
+     * 
+     * Creates a string with a list of all objects in a given bridge 
+     * 
+     * @param bh The bridge to retrieve all elements from
+     * @return A string with all elements of the bridge (1 per line)
+     */
+    private StringBuffer getBridgeDisplayOutput(final bridgeHandler bh) {
+
+    	StringBuffer sb = new StringBuffer("");
+        if (bh != null) {
+              bh.beforeFirst();
+              while (bh.next()) {
+                    try {
+                         sb.append(bh.getObject().getCARDIDwLink()).append("<br>");
+                    } catch (boRuntimeException e) {
+                    	e.printStackTrace();
+                    }
+              }
+        }
+        return sb;
+  }
+    
     public String getDisplayValue() {
 
     	if( (getSecurityPermissions()&SecurityPermissions.READ) != SecurityPermissions.READ ) {
@@ -86,10 +122,19 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
     	String sRetValue = null;
     	try {
 			if ( oAttHandler.getDefAttribute().getAtributeType() == boDefAttribute.TYPE_OBJECTATTRIBUTE ) {
-				boObject obj = oAttHandler.getObject();
-				if( obj != null ) {
-					sRetValue = obj.getCARDIDwNoIMG().toString();
+				
+				if (boDefAttribute.ATTRIBUTE_OBJECTCOLLECTION.equals(this.oAttHandler.getDefAttribute().getAtributeDeclaredType())){
+					bridgeHandler bH = this.oAttHandler.getParent().getBridge(oAttHandler.getDefAttribute().getName());
+					sRetValue = getBridgeDisplayOutput(bH).toString();
 				}
+				else{
+					boObject obj = oAttHandler.getObject();
+					if( obj != null ) {
+						//FIXME: Isto não pode ficar assim
+						sRetValue = obj.getTextCARDID().toString();
+					}
+				}
+				
 			} else if ( getDataType() == DataFieldTypes.VALUE_BOOLEAN ) {
 				sRetValue = oAttHandler.getValueString();
 				if ( "0".equals( sRetValue ) ) {
@@ -151,6 +196,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 					sRetValue = null;
 				}
 			}
+			
 			else {
 				Object oValue = oAttHandler.getValueObject();
 				if( oValue != null )
@@ -294,6 +340,9 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
             	{
     				oAttHandler.setValueiFile( new FSiFile( null, (File)value, null ) );
             	}
+            	else if (value instanceof iFile) //TODO: Coloquei isto aqui, para ajudar na parte dos
+            		//iFile
+            		oAttHandler.setValueiFile( (iFile) value );
             	else {
             		oAttHandler.setValueObject( value );
             	}
