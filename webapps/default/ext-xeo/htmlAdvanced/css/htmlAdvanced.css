@@ -1,0 +1,79 @@
+.xeo-youtube{
+	background:url("../imgs/youtube.png") !important; background-position: center center; background-repeat: no-repeat; cursor: pointer; height: 16px; padding: 0; white-space: nowrap; width: 16px;
+}
+.xeo-gmaps{
+	background:url("../imgs/map.jpg") !important; background-position: center center; background-repeat: no-repeat; cursor: pointer; height: 16px; padding: 0; white-space: nowrap; width: 16px;
+}
+.xeo-flash{
+	background:url("../imgs/flash.png") !important; background-position: center center; background-repeat: no-repeat; cursor: pointer; height: 16px; padding: 0; white-space: nowrap; width: 16px;
+}
+.xeo-image{
+	background:url("../imgs/xeocm_img.gif") !important; background-position: center center; background-repeat: no-repeat; cursor: pointer; height: 16px; padding: 0; white-space: nowrap; width: 16px;
+}
+.xeo-contents{
+	background:url("../imgs/xeocm_lnk.gif") !important; background-position: center center; background-repeat: no-repeat; cursor: pointer; height: 16px; padding: 0; white-space: nowrap; width: 16px;
+}
+.x-edit-wordpaste {background: url(../imgs/edit-word-text.png) 0 0 no-repeat !important;}
+.x-edit-table {background: url(../imgs/edit-table.png) 0 0 no-repeat !important;}
+.x-edit-hr {background: url(../imgs/edit-rule.png) 0 0 no-repeat !important;}
+.x-edit-indent {background: url(../imgs/edit-indent.png) 0 0 no-repeat !important;}
+.x-edit-char {background: url(../imgs/edit-char.png) 0 0 no-repeat !important;}
+.x-edit-outdent {background: url(../imgs/edit-outdent.png) 0 0 no-repeat !important;}
+.x-edit-subscript {background: url(../imgs/edit-subscript.png) 0 0 no-repeat !important;}
+.x-edit-superscript {background: url(../imgs/edit-superscript.png) 0 0 no-repeat !important;}
+.x-edit-removeFormat {background: url(../imgs/edit-removeFormat.png) 0 0 no-repeat !important;}
+.x-edit-image {background: url(../imgs/edit-image.png) 0 0 no-repeat !important;}
+.x-edit-anchor {background: url(../imgs/edit-anchor.png) 0 0 no-repeat !important;}
+.x-edit-link {background: url(../imgs/edit-link.png) 0 0 no-repeat !important;}
+
+.char-item {
+	float: left; 
+	border: 1px solid #99BBE8; 
+	margin: 3px; 
+	text-align: center; 
+	vertical-align: middle; 
+	width: 20px; 
+	height: 20px; 
+	font-size: 14px;
+	color: #15428B;
+	cursor: pointer;
+}
+
+.char-item.x-view-selected {
+	background-color: #777;
+}
+
+.char-over {
+	border: 1px solid #15428B;
+	background-color:#d0def0;
+}
+
+/*
+These styles are used for the smileys
+*/
+.x-edit-smiley {background: url(../imgs/smile.png) 0 0 no-repeat !important; background-position: center center; background-repeat: no-repeat; cursor: pointer; height: 16px; padding: 0; white-space: nowrap; width: 16px;}
+.smiley-item {
+	float: left; 
+	border: 1px solid #99BBE8; 
+	margin: 3px; 
+	text-align: center; 
+	vertical-align: middle; 
+	width: 20px; 
+	height: 20px; 
+	font-size: 14px;
+	color: #15428B;
+	cursor: pointer;
+}
+
+.smiley-item.x-view-selected {
+	background-color: #777;
+}
+
+.smiley-over {
+	border: 1px solid #15428B;
+	background-color:#d0def0;
+}
+
+.x-toolbar .x-toolbar-add-row {
+  padding-top: 1px;
+}
