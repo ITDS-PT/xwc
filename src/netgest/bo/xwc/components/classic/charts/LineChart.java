@@ -108,13 +108,13 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 	 * The width of the chart (rendered on the client)
 	 */
 	private XUIBindProperty<Integer> width = 
-		new XUIBindProperty<Integer>("width", this, Integer.class);
+		new XUIBindProperty<Integer>("width", this, Integer.class, "500");
 	
 	/**
 	 * The height of the chart (rendered on the client)
 	 */
 	private XUIBindProperty<Integer> height = 
-		new XUIBindProperty<Integer>("height", this, Integer.class);
+		new XUIBindProperty<Integer>("height", this, Integer.class, "300");
 	
 	/**
 	 * A label for the chart

@@ -101,7 +101,7 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 	 * The orientation of the bar char (horizontal / vertical
 	 */
 	private XUIBindProperty<String> orientation =
-		new XUIBindProperty<String>("orientation", this, String.class);
+		new XUIBindProperty<String>("orientation", this, String.class, "vertical");
 	
 	/**
 	 * Optional configurations for the 
@@ -113,13 +113,13 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 	 * The width of the chart (rendered on the client)
 	 */
 	private XUIBindProperty<Integer> width = 
-		new XUIBindProperty<Integer>("width", this, Integer.class);
+		new XUIBindProperty<Integer>("width", this, Integer.class, "500");
 	
 	/**
 	 * The height of the chart (rendered on the client)
 	 */
 	private XUIBindProperty<Integer> height = 
-		new XUIBindProperty<Integer>("height", this, Integer.class);
+		new XUIBindProperty<Integer>("height", this, Integer.class,"300");
 	
 	/**
 	 * A label for the chart

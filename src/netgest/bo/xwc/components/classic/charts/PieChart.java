@@ -107,7 +107,7 @@ public class PieChart extends XUIComponentBase implements
 	 * The width of the chart (rendered on the client)
 	 */
 	private XUIBindProperty<Integer> width = new XUIBindProperty<Integer>(
-			"width", this, Integer.class);
+			"width", this, Integer.class, "500");
 
 	/**
 	 * The maximum number of results to show from a given query
@@ -125,7 +125,7 @@ public class PieChart extends XUIComponentBase implements
 	 * The height of the chart (rendered on the client)
 	 */
 	private XUIBindProperty<Integer> height = new XUIBindProperty<Integer>(
-			"height", this, Integer.class);
+			"height", this, Integer.class, "300");
 
 	/**
 	 * A label for the chart
