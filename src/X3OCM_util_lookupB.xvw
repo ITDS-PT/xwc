@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer beanId="viewBean"
+		beanClass="netgest.bo.xwc.components.classic.attributeHtmlEditor.X3OCM_util_lookup_Bean"
+		localizationClasses='netgest.bo.xwc.xeo.localization.X3OCM_Mensagens'>
+		<xvw:form id="X3OCM_util_lookup">
+			<xvw:window width="540" height="590">
+				<xvw:title valueExpression="#{viewBean.title}" />
+				<xvw:panel>
+					 <xvw:toolBar>
+						<xvw:menu text="@{V_X3OCM_util_lookup_confirm}"
+							serverAction="#{viewBean.confirm}" icon="ext-xeo/images/menus/confirmar.gif" />
+						<!--
+							xvw:menu text="@{V_X3OCM_util_lookup_addNew}" hidden="true"
+							serverAction="#{viewBean.addNew}" target="window" /
+						-->
+					</xvw:toolBar>
+				</xvw:panel>
+				<xvw:rows>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:rows columns="2" columnWidths="100%,75px">
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute label="@{V_X3OCM_util_lookup_selectedObject}"
+											valueExpression="#{viewBean.selectedObject}" inputType="attributeLov"
+											lovMap="#{viewBean.lookupObjects}" />
+									</xvw:cell>
+									<xvw:cell>
+										<xvw:actionButton label="@{V_X3OCM_util_lookup_selectObject}"
+											serverAction="#{viewBean.selectObject}" />
+									</xvw:cell>
+								</xvw:row>
+							</xvw:rows>
+						</xvw:cell>
+					</xvw:row>
+					<xvw:row>
+						<xvw:cell>
+							<xvw:gridPanel rowSelectionMode="#{viewBean.rowSelectionMode}"
+								dataSource="#{viewBean.dataList}" onRowDoubleClick="">
+								<xvw:columns>
+									<xvw:columnAttribute width="50" label="ID"
+										dataField="BOUI" hidden="true" />
+									<xvw:columnAttribute width="150"
+										label="@{V_X3OCM_util_lookup_gridPanelColumn_SYS_CARDID}"
+										dataField="SYS_CARDID" />
+									<xvw:columnAttribute width="150"
+										label="@{V_X3OCM_util_lookup_gridPanelColumn_CREATOR}"
+										dataField="CREATOR" />
+									<xvw:columnAttribute width="150"
+										label="@{V_X3OCM_util_lookup_gridPanelColumn_SYS_DTSAVE}"
+										dataField="SYS_DTSAVE" />
+								</xvw:columns>
+							</xvw:gridPanel>
+						</xvw:cell>
+					</xvw:row>
+				</xvw:rows>
+			</xvw:window>
+		</xvw:form>
+	</xvw:viewer>
+</xvw:root>

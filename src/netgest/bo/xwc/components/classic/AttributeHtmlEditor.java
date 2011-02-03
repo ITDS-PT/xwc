@@ -57,9 +57,6 @@ public class AttributeHtmlEditor extends AttributeBase {
 						"xeo-htmleditoradvancedjs",
 						ExtJsTheme
 								.composeUrl(".xeodeploy/ext-xeo/htmlAdvanced/js/htmlAdvanced.js"));
-		//Had to add this, as it was alwasy being ovewriten by the 
-		//propagate method in the Attribute component
-		super.setHeight("auto");
 	}
 
 	public AttributeHtmlEditor() {
@@ -153,6 +150,8 @@ public class AttributeHtmlEditor extends AttributeBase {
 			if (oHtmlComp.isVisible())
 				oHtmlCfg.add("visible", false);
 
+			
+			
 			handleAdvancedEditorPlugins(oHtmlComp, oHtmlCfg, sOut);
 
 			sOut.append("Ext.onReady( function() {");
@@ -224,12 +223,14 @@ public class AttributeHtmlEditor extends AttributeBase {
 						b.append("new Ext.ux.form.HtmlEditor.YOUTUBE(),");
 						b.append("new Ext.ux.form.HtmlEditor.GMAPS(),");
 						b.append("new Ext.ux.form.HtmlEditor.FLASH()");
-						if (imageObj.length() > 0 && contentObjs.length() > 0 )
+						if (imageObj.length() > 0)
 						{
-							b.append(",new Ext.ux.form.HtmlEditor.XEO_IMAGE(),");
-							b.append("new Ext.ux.form.HtmlEditor.XEO_CONTENTS()");
+							b.append(",new Ext.ux.form.HtmlEditor.XEO_IMAGE()");
 						}
-						
+						if (contentObjs.length() > 0 )
+						{
+							b.append(",new Ext.ux.form.HtmlEditor.XEO_CONTENTS()");
+						}
 						iHtmlCfg
 								.add(
 										"plugins",
