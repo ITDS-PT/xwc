@@ -122,9 +122,11 @@ public class XEOEditBean extends XEOBaseBean
 	            	oBoObect.markAsRead(); 
 	            
 				if( !this.bTransactionStarted ) {
-					oBoObect.poolSetStateFull();
-					oBoObect.transactionBeginsForceSavePoint();
-					bTransactionStarted = true;
+			    	if( !getEditInOrphanMode() ) {
+			    		oBoObect.poolSetStateFull();
+			    		oBoObect.transactionBegins();
+			    		bTransactionStarted = true;
+			    	}
 					Window wnd = (Window)XUIRequestContext.getCurrentContext().getViewRoot().findComponent( Window.class );
 					if( wnd != null && wnd.getOnClose() == null ) {
 						wnd.setOnClose( "#{viewBean.cancel}" );
@@ -165,7 +167,10 @@ public class XEOEditBean extends XEOBaseBean
     
     public boolean getEditInOrphanMode() {
     	if( this.editInOrphanMode == null ) {
-    		this.editInOrphanMode = getXEOObject().getBoDefinition().getBoCanBeOrphan();
+    		if( this.oBoObect == null  ) {
+    			getXEOObject();
+    		}
+    		this.editInOrphanMode = this.oBoObect.getBoDefinition().getBoCanBeOrphan();
     		if(!this.editInOrphanMode) {
     			if( getParentBean() == null ) {
     				this.editInOrphanMode = true;
