@@ -58,14 +58,16 @@ public class GridPanelExcelRenderer {
 			String sLabel;
 			w.startElement( HTMLTag.TR, null );
 			for( int i=0;i < oGridColumns.length; i++ ) {
-    			w.startElement( HTMLTag.TH, null );
-    			sLabel = GridPanel.getColumnLabel( oDataSource, oGridColumns[i] );
-    			if( sLabel != null )
-    				w.writeText( HTMLEntityDecoder.htmlEntityToChar( sLabel ), null );
-    			else
-    				w.writeText( "", null );
-    				
-    			w.endElement( HTMLTag.TH );
+				if( !oGridColumns[i].isHidden() ) {
+	    			w.startElement( HTMLTag.TH, null );
+	    			sLabel = GridPanel.getColumnLabel( oDataSource, oGridColumns[i] );
+	    			if( sLabel != null )
+	    				w.writeText( HTMLEntityDecoder.htmlEntityToChar( sLabel ), null );
+	    			else
+	    				w.writeText( "", null );
+	    				
+	    			w.endElement( HTMLTag.TH );
+				}
 			}
 			w.endElement( HTMLTag.TR );
 
@@ -89,28 +91,30 @@ public class GridPanelExcelRenderer {
 				DataRecordConnector oRecordConnector = it.next();
 				row++;
     			for( int i=0;i < oGridColumns.length; i++ ) {
-    				DataFieldConnector oAtt;
-    				oAtt = oRecordConnector.getAttribute( oGridColumns[i].getDataField() );
-        			w.startElement( HTMLTag.TD, null );
-        			GridColumnRenderer colRender = columnRenderer.get( oGridColumns[i].getDataField() ); 
-        			if( colRender != null ) {
-        				sValue = colRender.render( oGrid, oRecordConnector, oAtt );
-        			}
-        			else if( oAtt != null ) {
-            			sValue = oAtt.getDisplayValue();
-        			}
-        			else {
-        				sValue = null;
-        			}
-        		
-        			if( sValue != null ) {
-        				if( oGridColumns[i].isContentHtml() ) {
-        					sValue = sValue.replaceAll( "<[a-zA-Z\\/][^>]*>", "");
-        					sValue = HTMLEntityDecoder.htmlEntityToChar( sValue );
-        				}
-    					w.writeText( sValue, null );
-        			}
-        			w.endElement( HTMLTag.TD );
+    				if( !oGridColumns[i].isHidden() ) {
+	    				DataFieldConnector oAtt;
+	    				oAtt = oRecordConnector.getAttribute( oGridColumns[i].getDataField() );
+	        			w.startElement( HTMLTag.TD, null );
+	        			GridColumnRenderer colRender = columnRenderer.get( oGridColumns[i].getDataField() ); 
+	        			if( colRender != null ) {
+	        				sValue = colRender.render( oGrid, oRecordConnector, oAtt );
+	        			}
+	        			else if( oAtt != null ) {
+	            			sValue = oAtt.getDisplayValue();
+	        			}
+	        			else {
+	        				sValue = null;
+	        			}
+	        		
+	        			if( sValue != null ) {
+	        				if( oGridColumns[i].isContentHtml() ) {
+	        					sValue = sValue.replaceAll( "<[a-zA-Z\\/][^>]*>", "");
+	        					sValue = HTMLEntityDecoder.htmlEntityToChar( sValue );
+	        				}
+	    					w.writeText( sValue, null );
+	        			}
+	        			w.endElement( HTMLTag.TD );
+    				}
     			}
     			w.endElement( HTMLTag.TR );
 			}
