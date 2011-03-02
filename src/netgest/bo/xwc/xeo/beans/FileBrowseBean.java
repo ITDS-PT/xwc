@@ -67,11 +67,13 @@ public class FileBrowseBean extends netgest.bo.xwc.xeo.beans.XEOBaseBean {
         );
         
         String id = oParentInput.getClientId();
-        oRequestContext.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, "_updateFile", 
-        		"Ext.onReady( function() { " +
-        		"window.parent.document.getElementById('" + id +"_ci').value='"+oFileComp.getSubmitedFile().getName()+"';"+
-        		"});\n");
-		
+        //If the file was indeed selected, add its name to the component in the previous viewer
+        if (oFileComp.getSubmitedFile() != null){
+        	oRequestContext.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, "_updateFile", 
+	        		"Ext.onReady( function() { " +
+	        		"window.parent.document.getElementById('" + id +"_ci').value='"+oFileComp.getSubmitedFile().getName()+"';"+
+	        		"});\n");
+        }
 		oRequestContext.setViewRoot(  
 			oRequestContext.getSessionContext().createView( "netgest/bo/xwc/components/viewers/Dummy.xvw" )
 		);

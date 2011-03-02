@@ -18,8 +18,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import netgest.bo.boConfig;
-import netgest.bo.def.boDefDocument;
 import netgest.bo.impl.document.Ebo_DocumentImpl;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.HTMLAttr;
@@ -44,8 +42,6 @@ import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
 import netgest.bo.xwc.xeo.beans.FileBrowseBean;
 import netgest.io.FSiFile;
 import netgest.io.iFile;
-import netgest.io.iFileConnector;
-import netgest.io.iFileException;
 import netgest.io.iFilePermissionDenied;
 /**
  * This atribute works with AttributeBinnaryData from XEO Model
@@ -219,7 +215,7 @@ public class AttributeFile extends AttributeBase {
             
 	            if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
 		            oInpConfig.add("onTrigger1Click", "function(){ if(!this.disabled){ " +
-		            		"Ext.ComponentMgr.get('" + getExtComponentId(oAttr) + "_c').setValue('');\n" + 
+		            		"Ext.ComponentMgr.get('" + getExtComponentId(oAttr) + "').setValue('');\n" + 
 		            		"document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';\n" + 
 		            		XVWScripts.getAjaxCommandScript(oAttr,  XVWScripts.WAIT_STATUS_MESSAGE ) + 
 		            		"}}"
@@ -309,8 +305,7 @@ public class AttributeFile extends AttributeBase {
 
         }
         
-        @SuppressWarnings("unchecked")
-		public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
+        public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
         	HttpServletResponse resp = (HttpServletResponse)response;
         	
         	AttributeFile oFile = (AttributeFile)comp;
