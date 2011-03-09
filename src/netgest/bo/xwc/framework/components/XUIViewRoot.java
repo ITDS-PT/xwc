@@ -121,6 +121,12 @@ public class XUIViewRoot extends UIViewRoot {
 		}
 		setTransient(true);
 	}
+	
+	@Override
+	public void setRenderKitId(String renderKitId) {
+		super.setRenderKitId(renderKitId);
+		_renderKit = null;
+	};
 
 	@Override
 	public String getRenderKitId() {
