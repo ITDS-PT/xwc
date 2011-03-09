@@ -21,7 +21,6 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
-import org.w3c.dom.Document;
 import org.w3c.tidy.Tidy;
 
 public class XMLHtmlEditRenderer extends XUIRenderer{
