@@ -120,7 +120,17 @@ public class AttributeHtmlEditor extends AttributeBase {
 					Layouts.registerComponent(w, oComp,
 							Layouts.LAYOUT_FIT_PARENT);
 				}
-
+			}
+			else {
+				getRequestContext().getScriptContext()
+					.add( 
+						XUIScriptContext.POSITION_FOOTER , 
+						oComp.getClientId() + "_upd11111",
+						"var c=Ext.getCmp('"+oComp.getClientId() + "_editor');\n" +
+						"if(c) c.setValue('" + 
+						JavaScriptUtils.safeJavaScriptWrite( oHtmlComp.getDisplayValue(), '\'') + 
+						"');\n"
+					);
 			}
 		}
 
