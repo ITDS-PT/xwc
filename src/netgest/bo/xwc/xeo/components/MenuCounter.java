@@ -151,7 +151,7 @@ public class MenuCounter extends Menu {
 	public static void updateClientCounter( String componentId ) {
 		XUIRequestContext.getCurrentContext()
 			.getScriptContext()
-				.add( XUIScriptContext.POSITION_FOOTER , componentId + "updCtnr", "XVW.MenuCounter.updateCounter('formMain:testeCntr')" );
+				.add( XUIScriptContext.POSITION_FOOTER , componentId + "updCtnr", "XVW.MenuCounter.updateCounter('"+componentId+"')" );
 	}
 
 	public static void updateClientCounters() {
