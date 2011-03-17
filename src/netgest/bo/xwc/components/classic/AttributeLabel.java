@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.el.ValueExpression;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsBaseRenderer;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
@@ -76,7 +77,7 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 		
 		boolean ret = super.wasStateChanged();
 		if( ret ) {
-			System.out.println( "Label waschanged:" + ret );
+			System.out.println( MessageLocalizer.getMessage("LABEL_WAS_CHANGED") + ret );
 			ret = super.wasStateChanged();
 		}
 		

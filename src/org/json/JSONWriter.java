@@ -3,6 +3,8 @@ package org.json;
 import java.io.IOException;
 import java.io.Writer;
 
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+
 /*
 Copyright (c) 2006 JSON.org
 
@@ -126,7 +128,7 @@ public class JSONWriter {
             this.comma = true;
             return this;
         }
-        throw new JSONException("Value out of sequence.");
+        throw new JSONException(ExceptionMessage.VALUE_OUT_OF_SEQUENCE.toString());
     }
 
     /**
@@ -145,7 +147,7 @@ public class JSONWriter {
             this.comma = false;
             return this;
         }
-        throw new JSONException("Misplaced array.");
+        throw new JSONException(ExceptionMessage.MISPLACED_ARRAY.toString());
     }
 
     /**
@@ -157,8 +159,8 @@ public class JSONWriter {
      */
     private JSONWriter end(char m, char c) throws JSONException {
         if (this.mode != m) {
-            throw new JSONException(m == 'o' ? "Misplaced endObject." :
-                "Misplaced endArray.");
+            throw new JSONException(m == 'o' ? ExceptionMessage.MISPLACED_ENDOBJECT.toString() :
+                ExceptionMessage.MISPLACED_ENDARRAY.toString());
         }
         this.pop(m);
         try {
@@ -216,7 +218,7 @@ public class JSONWriter {
                 throw new JSONException(e);
             }
         }
-        throw new JSONException("Misplaced key.");
+        throw new JSONException(ExceptionMessage.MISPLACED_KEY.toString());
     }
 
 
@@ -239,7 +241,7 @@ public class JSONWriter {
             this.comma = false;
             return this;
         }
-        throw new JSONException("Misplaced object.");
+        throw new JSONException(ExceptionMessage.MISPLACED_OBJECT.toString());
 
     }
 
@@ -251,7 +253,7 @@ public class JSONWriter {
      */
     private void pop(char c) throws JSONException {
         if (this.top <= 0 || this.stack[this.top - 1] != c) {
-            throw new JSONException("Nesting error.");
+            throw new JSONException(ExceptionMessage.NESTING_ERROR.toString());
         }
         this.top -= 1;
         this.mode = this.top == 0 ? 'd' : this.stack[this.top - 1];
@@ -264,7 +266,7 @@ public class JSONWriter {
      */
     private void push(char c) throws JSONException {
         if (this.top >= maxdepth) {
-            throw new JSONException("Nesting too deep.");
+            throw new JSONException(ExceptionMessage.NESTING_TOO_DEEP.toString());
         }
         this.stack[this.top] = c;
         this.mode = c;

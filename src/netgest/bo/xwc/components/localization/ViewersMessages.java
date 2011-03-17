@@ -142,5 +142,7 @@ public interface ViewersMessages {
 	
 	public static final XUILocalizedMessage BUILDER_DEV_OPENLOG = 
 		new XUILocalizedMessage( ViewersMessages.class.getName(), "BUILDER_DEV_OPENLOG" );		
+	public static final XUILocalizedMessage BUILD_PROGRESS = 
+		new XUILocalizedMessage( ViewersMessages.class.getName(), "BUILD_PROGRESS" );	
 }
 

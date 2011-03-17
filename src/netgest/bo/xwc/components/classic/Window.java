@@ -8,6 +8,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.render.Renderer;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
@@ -233,8 +234,8 @@ public class Window extends XUIComponentBase {
             
             XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
             
-            assert oExtConfig != null : "Config cannot be null";
-            assert oComp != null : "Component cannot be null";
+            assert oExtConfig != null : MessageLocalizer.getMessage("CONFIG_CANNOT_BE_NULL");
+            assert oComp != null : MessageLocalizer.getMessage("COMPONENT_CANNOT_BE_NULL");
             
             Window oWnd = (Window)oComp;
             

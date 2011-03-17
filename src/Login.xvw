@@ -6,7 +6,9 @@
 			<xvw:requestAction requestParameter='action'>
 				<!-- Define the action associated with the parameter -->
 				<xvw:requestActionValue value='logout'
-					serverAction='#{viewBean.logout}' />
+					serverAction='#{viewBean.logout}' />			
+				<xvw:requestActionValue value='change_profile'
+					serverAction='#{viewBean.change_profile}'  />
 			</xvw:requestAction>
 			<!-- <xvw:toolBar>
 				<xvw:menu />

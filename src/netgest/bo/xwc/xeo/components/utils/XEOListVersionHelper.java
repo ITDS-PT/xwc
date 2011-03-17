@@ -14,6 +14,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boFlashBackHandler;
 import netgest.bo.runtime.boObject;
@@ -394,7 +395,7 @@ public class XEOListVersionHelper
 		}
 		catch (Exception e)
 		{
-			log.severe("Error while listing the logs of object: " + bouiOfObjectLogs ,e);
+			log.severe(MessageLocalizer.getMessage("ERROR_WHILE_LISTING_THE_LOGS_OF_OBJECT")+": " + bouiOfObjectLogs ,e);
 			return BeansMessages.MSG_ERROR_IN_LOGS.toString() + ": " +e.getLocalizedMessage();
 		} 
 	}

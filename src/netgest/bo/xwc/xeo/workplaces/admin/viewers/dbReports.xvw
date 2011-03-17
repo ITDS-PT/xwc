@@ -2,18 +2,19 @@
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
 	<xvw:viewer
 		beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.DbReports"
-		beanId="viewBean">
+		beanId="viewBean"
+		localizationClasses="netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages">
 		<xvw:form id="form">
 			<xvw:errorMessages></xvw:errorMessages>
-			<xvw:title valueExpression='DataBase Reports'></xvw:title>
+			<xvw:title valueExpression='@{DATABASE_REPORTS}'></xvw:title>
 			<xvw:toolBar>
-				<xvw:menu text="Create Report" visible="#{not viewBean.hasReport}"
+				<xvw:menu text="@{CREATE_REPORT}" visible="#{not viewBean.hasReport}"
 					serverAction="#{viewBean.createReport}"></xvw:menu>
-				<xvw:menu text="New Report" visible="#{viewBean.hasReport}"
+				<xvw:menu text="@{NEW_REPORT}" visible="#{viewBean.hasReport}"
 					serverAction="#{viewBean.newReport}"></xvw:menu>
 			</xvw:toolBar>
 			<xvw:tabs>
-				<xvw:tab id="package" label="Package Report">
+				<xvw:tab id="package" label="@{PACKAGE_REPORT}">
 					<xvw:gridPanel id="packageList" rowSelectionMode="SELECTION_ROW"
 						renderComponent="#{not viewBean.hasPackageReport}" DataSource="#{viewBean.packages}">
 						<xvw:columns>
@@ -23,7 +24,7 @@
 					<xvw:outputHtml renderComponent="#{viewBean.hasPackageReport}"
 						valueExpression='#{viewBean.packageReport}'></xvw:outputHtml>
 				</xvw:tab>
-				<xvw:tab id="object" label="Object Report">
+				<xvw:tab id="object" label="@{OBJECT_REPORT}">
 					<xvw:gridPanel id="objectList" rowSelectionMode="SELECTION_ROW"
 						renderComponent="#{not viewBean.hasObjectReport}" DataSource="#{viewBean.objects}">
 						<xvw:columns>

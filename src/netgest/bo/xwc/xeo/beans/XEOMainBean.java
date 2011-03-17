@@ -142,6 +142,37 @@ public class XEOMainBean extends XEOBaseBean {
         
     }
 
+    public void showUserProperties(){
+		 
+		Long boui =getEboContext().getBoSession().getPerformerBoui();
+		showProperties(boui);
+	}
+	
+    
+    
+    @Visible
+    public void showProperties(Long obj) {
+    	
+        XUIRequestContext   oRequestContext;
+        XUISessionContext   oSessionContext;
+        XUIViewRoot         oViewRoot;
+
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        oSessionContext = oRequestContext.getSessionContext();
+     
+        oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/components/viewers/UserProperties.xvw");
+        ((XEOEditBean)oViewRoot.getBean("viewBean")).setCurrentObjectKey( obj );
+        
+        oRequestContext.setViewRoot( oViewRoot );
+        oRequestContext.renderResponse();
+    	
+    }
+    
+    
+    
+    //////////////
+    
+    
     @Visible
     public void listObject( ) throws Exception {
         
@@ -239,11 +270,11 @@ public class XEOMainBean extends XEOBaseBean {
     public void openXEO21Viewer() {
     	///__explorer.jsp?objectName=Ebo_Perf&form=explorer&label=Utilizadores&imagem=resources%2FEbo_Perf%2Fico16.gif&myIDX=0
         XUIRequestContext   oRequestContext;
-        XUISessionContext   oSessionContext;
-        XUIViewRoot         oViewRoot;
+        //XUISessionContext   oSessionContext;
+       // XUIViewRoot         oViewRoot;
 
         oRequestContext = XUIRequestContext.getCurrentContext();
-        oSessionContext = oRequestContext.getSessionContext();
+        //oSessionContext = oRequestContext.getSessionContext();
         try  {
 	        JSONObject o = new JSONObject( 
 	                (String)((XUICommand)oRequestContext.getEvent().getSource()).getValue() 

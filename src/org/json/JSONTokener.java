@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+
 /*
 Copyright (c) 2002 JSON.org
 
@@ -74,7 +76,7 @@ public class JSONTokener {
      */
     public void back() throws JSONException {
         if (useLastChar || index <= 0) {
-            throw new JSONException("Stepping back two steps is not supported");
+            throw new JSONException(ExceptionMessage.STEPPING_BACK_TWO_STEPS_IS_NOT_SUPPORTED.toString());
         }
         index -= 1;
         useLastChar = true;
@@ -157,7 +159,7 @@ public class JSONTokener {
     public char next(char c) throws JSONException {
         char n = next();
         if (n != c) {
-            throw syntaxError("Expected '" + c + "' and instead saw '" +
+            throw syntaxError(ExceptionMessage.EXPECTED.toString()+" '" + c + "' "+ExceptionMessage.AND_INSTEAD_SAW.toString()+" '" +
                     n + "'");
         }
         return n;
@@ -198,7 +200,7 @@ public class JSONTokener {
          this.index += pos;
 
          if (pos < n) {
-             throw syntaxError("Substring bounds error");
+             throw syntaxError(ExceptionMessage.SUBSTRING_BOUNDS_ERROR.toString());
          }
 
          this.lastChar = buffer[n - 1];
@@ -226,7 +228,7 @@ public class JSONTokener {
                     for (;;) {
                         c = next();
                         if (c == 0) {
-                            throw syntaxError("Unclosed comment");
+                            throw syntaxError(ExceptionMessage.UNCLOSED_COMMENT.toString());
                         }
                         if (c == '*') {
                             if (next() == '/') {
@@ -271,7 +273,7 @@ public class JSONTokener {
             case 0:
             case '\n':
             case '\r':
-                throw syntaxError("Unterminated string");
+                throw syntaxError(ExceptionMessage.UNTERMINATED_STRING.toString());
             case '\\':
                 c = next();
                 switch (c) {
@@ -401,7 +403,7 @@ public class JSONTokener {
 
         s = sb.toString().trim();
         if (s.equals("")) {
-            throw syntaxError("Missing value");
+            throw syntaxError(ExceptionMessage.MISSING_VALUE.toString());
         }
         if (s.equalsIgnoreCase("true")) {
             return Boolean.TRUE;

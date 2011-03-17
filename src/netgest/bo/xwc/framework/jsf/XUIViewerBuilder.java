@@ -17,6 +17,7 @@ import javax.faces.el.ValueBinding;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIMethodExpressionPhaseListener;
@@ -412,7 +413,7 @@ public class XUIViewerBuilder
     
     public UIComponent createComponent( XUIRequestContext oContext, String name )
     {
-        assert name != null :"Name cannot be null";
+        assert name != null :MessageLocalizer.getMessage("NAME_CANNOT_BE_NULL");
         try
         {
             XUIComponentDefinition componentDef = oContext.getApplicationContext().getComponentStore().findComponent( name );

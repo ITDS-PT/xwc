@@ -5,8 +5,10 @@ import java.util.List;
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefBridge;
 import netgest.bo.def.boDefHandler;
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.runtime.boObjectList.SqlField;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class XEOBridgeListConnector implements DataListConnector {
     
@@ -38,7 +40,7 @@ public class XEOBridgeListConnector implements DataListConnector {
     
     public XEOBridgeListConnector( bridgeHandler oBridge ) {
         
-        assert oBridge != null : "Cannot create a object with bridge null";
+        assert oBridge != null : MessageLocalizer.getMessage("CANNOT_CREATE_OBJECT_WITH_BRIDGE_NULL");
             
         this.oBridge = oBridge;    
     }
@@ -72,7 +74,7 @@ public class XEOBridgeListConnector implements DataListConnector {
 	}
 
 	public void setSortTerms(SortTerms sortTerms) {
-    	throw new IllegalArgumentException( "Bridges doesn't support order terms" );
+    	throw new IllegalArgumentException( ExceptionMessage.BRIDGES_DOESNT_SUPPORT_ORDER_TERMS.toString());
 	}
     
     public DataListIterator iterator() {

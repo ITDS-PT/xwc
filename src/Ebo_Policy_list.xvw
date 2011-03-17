@@ -3,7 +3,8 @@
 	xmlns:xvw="http://www.netgest.net/xeo/xvw"
 	xmlns:xeo="http://www.netgest.net/xeo/xeo"	
 >
-	<xvw:viewer beanClass="netgest.bo.xwc.xeo.beans.XEOBaseList" beanId="viewBean">
+	<xvw:viewer beanClass="netgest.bo.xwc.xeo.beans.XEOBaseList" beanId="viewBean"
+	localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
 		<xeo:formList>
 			<xeo:list>
 				<xvw:columns>

@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLElement;
 
@@ -29,7 +30,7 @@ public class XUIAjaxRequestWrapper extends HttpServletRequestWrapper {
         try {
             loadRequest();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load AJAX request!", e );
+            throw new RuntimeException(ExceptionMessage.FAILED_TO_LOAD_AJAX_REQUEST.toString(), e );
         }
     }
 

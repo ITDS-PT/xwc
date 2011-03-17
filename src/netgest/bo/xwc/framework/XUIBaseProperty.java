@@ -3,6 +3,7 @@ package netgest.bo.xwc.framework;
 import javax.el.ValueExpression;
 
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class XUIBaseProperty<V> {
     private V       		 oPropertyValue;
@@ -33,8 +34,8 @@ public class XUIBaseProperty<V> {
     }
 
     private final void validate() {
-        if( sPropertyName == null ) throw new IllegalArgumentException("Property name cannot be null");
-        if( oComponent == null ) throw new IllegalArgumentException("Component cannot be null");
+        if( sPropertyName == null ) throw new IllegalArgumentException(ExceptionMessage.PROPERTY_NAME_CANNOT_BE_NULL.toString());
+        if( oComponent == null ) throw new IllegalArgumentException(ExceptionMessage.COMPONENT_CANNOT_BE_NULL.toString());
     }
 
     public V getValue() {

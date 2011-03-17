@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.NSResolver;
 import oracle.xml.parser.v2.XMLDocument;
@@ -304,7 +305,7 @@ public class XUIViewerDefinitonParser
 		    				sb.append( localizationClass );
 	    	    		}
 	        		}
-	    			throw new RuntimeException( "Cannot find resource [" + message + "] on localization classes [" + sb.toString() + "]" );
+	    			throw new RuntimeException( ExceptionMessage.CANNOT_FIND_RESOURCE.toString()+" [" + message + "] "+ExceptionMessage.ON_LOCATION_CLASSES.toString()+" [" + sb.toString() + "]" );
 	    		}
     		}
     	}

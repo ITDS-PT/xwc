@@ -11,6 +11,7 @@ import javax.faces.render.RenderKit;
 import javax.faces.render.RenderKitFactory;
 import javax.faces.render.Renderer;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.Logger;
 import netgest.bo.xwc.components.classic.renderers.XMLViewRootRenderer;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
@@ -46,7 +47,7 @@ public class XUIApplicationContext {
         
         // Register components into JSF
         if( log.isFinerEnabled() )
-        	log.finer("Registering XUI Components Render Kit's definition...");
+        	log.finer(MessageLocalizer.getMessage("REGISTERING_XUI_COMPONENTS_RENDER_KITS_DEFENITION"));
         
         registerRenderKits();
         registerComponentRenders();
@@ -69,12 +70,12 @@ public class XUIApplicationContext {
     {
         if( log.isFinerEnabled() )
         {
-            log.finer("Parsing file " + sViewerName );
+            log.finer(MessageLocalizer.getMessage("PARSING_FILE")+" " + sViewerName );
         }
         XUIViewerDefinition oViewerDef =  oViewerParser.parse( sViewerName );
         if( log.isFinerEnabled() )
         {
-            log.finer("End file " + sViewerName + ".xml");
+            log.finer(MessageLocalizer.getMessage("END_FILE")+" " + sViewerName + ".xml");
         }
         return oViewerDef;
 
@@ -84,12 +85,12 @@ public class XUIApplicationContext {
     {
         if( log.isFinerEnabled() )
         {
-            log.finer("Parsing file from InputStream" );
+            log.finer(MessageLocalizer.getMessage("PARSING_FILE_FROM_INPUTSTREAM") );
         }
         XUIViewerDefinition oViewerDef =  oViewerParser.parse( inputStream );
         if( log.isFinerEnabled() )
         {
-            log.finer("End file parsing from InputStream");
+            log.finer(MessageLocalizer.getMessage("END_PARSING_FILE_FROM_INPUTSTREAM"));
         }
         return oViewerDef;
     }
@@ -119,7 +120,7 @@ public class XUIApplicationContext {
             }
             catch (Exception e)
             {
-                log.warn("Error loading class "+ sRenderKitClassName +" for RenderKit " + sRenderKits[i] + ":" + e.getClass().getName() + "-" + e.getMessage() );
+                log.warn(MessageLocalizer.getMessage("ERROR_LOADING_CLASS")+" "+ sRenderKitClassName +" "+MessageLocalizer.getMessage("FOR_RENDERKIT")+" " + sRenderKits[i] + ":" + e.getClass().getName() + "-" + e.getMessage() );
             }
 		}
     }
@@ -167,7 +168,7 @@ public class XUIApplicationContext {
                 catch (Exception e)
                 {
                 	e.printStackTrace();
-                    log.warn("Error loading class "+ sRenderClassName +" for component " + oRenderDef.getRendererType() + ":" + e.getClass().getName() + "-" + e.getMessage() );
+                    log.warn(MessageLocalizer.getMessage("ERROR_LOADING_CLASS")+" "+ sRenderClassName +" "+MessageLocalizer.getMessage("FOR_COMPONENT")+" " + oRenderDef.getRendererType() + ":" + e.getClass().getName() + "-" + e.getMessage() );
                 }
         		
         	}
@@ -284,7 +285,7 @@ public class XUIApplicationContext {
 
 	                if ( log.isFinerEnabled() )
 	                {
-	                    log.finer("Loading class "+ sRenderClassName +" for component " + oAllComponents[i] );
+	                    log.finer(MessageLocalizer.getMessage("LOADING_CLASS")+" "+ sRenderClassName +" "+MessageLocalizer.getMessage("FOR_COMPONENT")+" " + oAllComponents[i] );
 	                }
 
 	                try
@@ -307,12 +308,12 @@ public class XUIApplicationContext {
 	                }
 	                catch (Exception e)
 	                {
-	                    log.warn("Error loading class "+ sRenderClassName +" for component " + oAllComponents[i] + ":" + e.getClass().getName() + "-" + e.getMessage() );
+	                    log.warn(MessageLocalizer.getMessage("ERROR_LOADING_CLASS")+" "+ sRenderClassName +" "+MessageLocalizer.getMessage("FOR_COMPONENT")+" " + oAllComponents[i] + ":" + e.getClass().getName() + "-" + e.getMessage() );
 	                }
 
                 }
                 else {
-                    log.warn("Cannot register " + sCompRenderKitTypes[j] + " for component " + oAllComponents[i] + " render kit [" + sCompRenderKitTypes[j] + "] doesn't exist. "  );
+                    log.warn(MessageLocalizer.getMessage("CANNOT_REGISTER")+" " + sCompRenderKitTypes[j] + " "+MessageLocalizer.getMessage("FOR_COMPONENT")+" " + oAllComponents[i] + " render kit [" + sCompRenderKitTypes[j] + "] "+MessageLocalizer.getMessage("DOESNT_EXIST")+". "  );
                 }
             }
         }

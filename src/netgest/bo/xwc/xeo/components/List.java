@@ -7,6 +7,7 @@ import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Columns;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 /**
  * 
@@ -56,8 +57,7 @@ public class List extends GridPanel {
 				return ((XEOObjectListConnector) connector);
 		}
 		
-		throw new RuntimeException("There isn't a valid list of XEO objects for the List component, targetList is" +
-				"not an instance of XEOObjectListConnector");
+		throw new RuntimeException(ExceptionMessage.THERE_ISNT_A_VALID_LIST__.toString()+" "+ExceptionMessage.NOT_AN_INSTANCE_OF_XEOOBJECTLISTCONNECTOR.toString());
 	}
 
 	public void setTargetList(String targetListExpr) {

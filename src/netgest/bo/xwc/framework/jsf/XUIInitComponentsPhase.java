@@ -5,6 +5,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
+import netgest.bo.localizations.LoggerMessageLocalizer;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.system.LoggerLevels.LoggerLevel;
@@ -24,7 +25,7 @@ public class XUIInitComponentsPhase extends Phase {
     public void execute(FacesContext facesContext) throws FacesException {
 
         if ( LOGGER.isFinerEnabled() ) {
-            LOGGER.finer("Entering ProcessInitComponentsPhase");
+            LOGGER.finer(LoggerMessageLocalizer.getMessage("ENTERING_PROCESSINITCOMPONENTSPHASE"));
         }
         UIComponent component = facesContext.getViewRoot();
         assert (null != component);
@@ -44,7 +45,7 @@ public class XUIInitComponentsPhase extends Phase {
             throw new FacesException(exceptionMessage, re);
         }
         if (LOGGER.isFinerEnabled()) {
-            LOGGER.finer("Exiting ProcessInitComponentsPhase");
+            LOGGER.finer(LoggerMessageLocalizer.getMessage("EXITING_PROCESSINITCOMPONENTSPHASE"));
         }
 
     }

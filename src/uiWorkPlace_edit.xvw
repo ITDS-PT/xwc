@@ -3,10 +3,11 @@
 	xmlns:xvw="http://www.netgest.net/xeo/xvw"
 	xmlns:xeo="http://www.netgest.net/xeo/xeo"
 >
-	<xvw:viewer beanClass="netgest.bo.xwc.xeo.beans.XEOEditBean" beanId="viewBean">
+	<xvw:viewer beanClass="netgest.bo.xwc.xeo.beans.XEOEditBean" beanId="viewBean"
+	localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
 		<xeo:formEdit>
 			<xvw:panel>
-				<xvw:section label='Geral'>
+				<xvw:section label='@{GENERAL}'>
 					<xvw:rows>						
 						<xvw:row>
 						  <xvw:cell>

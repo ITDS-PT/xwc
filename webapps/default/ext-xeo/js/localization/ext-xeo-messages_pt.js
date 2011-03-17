@@ -7,7 +7,8 @@ ExtXeo.Messages = {
 		TREE_TITLE		: 'Op&ccedil;&otilde;es',
 		XEODM_ACTIVE	: "XEODM Activo",
 		XEODM_INACTIVE	: "XEODM Inactivo",
-		LOGOUT_BTN		: 'Terminar Sess&atilde;o'
+		LOGOUT_BTN		: 'Terminar Sess&atilde;o',
+		USER_PROPS		: "Utilizador"	
 };
 
 if(ExtXeo.PagingToolbar){
@@ -42,7 +43,7 @@ if( Ext.grid.GridFilters) {
 if( Ext.grid.filter.ObjectFilter) {
 	  Ext.apply(Ext.grid.filter.ObjectFilter.prototype , {
 		  yesText: 'Seleccionar valores',
-		  noText: 'Não'
+		  noText: 'Nï¿½o'
 	 });
 }
 
@@ -57,7 +58,7 @@ if( Ext.grid.filter.DateFilter) {
 if( Ext.grid.filter.BooleanFilter) {
 	  Ext.apply(Ext.grid.filter.BooleanFilter.prototype , {
 		  yesText: 'Sim'	,
-		  noText: 'Não'
+		  noText: 'Nï¿½o'
 	 });
 }
 
@@ -69,8 +70,8 @@ if( Ext.grid.filter.ListFilter) {
 
 if( ExtXeo.form.NumberField) {
 	  Ext.apply(ExtXeo.form.NumberField.prototype , {
-		    minText : "O valor minimo para este campo é {0}",
-		    maxText : "O valor máximo para este campo é {0}",
-		    nanText : "{0} não é um número válido"
+		    minText : "O valor minimo para este campo ï¿½ {0}",
+		    maxText : "O valor mï¿½ximo para este campo ï¿½ {0}",
+		    nanText : "{0} nï¿½o ï¿½ um nï¿½mero vï¿½lido"
 	 });
 }

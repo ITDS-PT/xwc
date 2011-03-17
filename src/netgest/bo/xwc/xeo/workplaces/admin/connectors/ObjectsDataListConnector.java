@@ -7,6 +7,7 @@ import java.util.Date;
 
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
 
 
 public class ObjectsDataListConnector extends GenericDataListConnector {
@@ -19,9 +20,9 @@ public class ObjectsDataListConnector extends GenericDataListConnector {
 		super();
 		this.orderBy = orderBy;
 		this.format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		this.createColumn("name", "Object Name");
-		this.createColumn("SYS_DTCREATE", "Creation Date");
-		this.createColumn("SYS_DTSAVE", "Last Update");
+		this.createColumn("name", MainAdminBeanMessages.OBJECT_NAME.toString());
+		this.createColumn("SYS_DTCREATE", MainAdminBeanMessages.CREATION_DATE.toString());
+		this.createColumn("SYS_DTSAVE", MainAdminBeanMessages.LASTUPDATED.toString());
 		this.updateDate = new Date();
 	}
 

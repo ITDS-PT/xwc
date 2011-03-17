@@ -99,5 +99,16 @@ public class XEOViewersMessages {
 	
 	public static final XUILocalizedMessage FORMEDIT_REMOVE_CONFIRM_MESSAGE =
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORMEDIT_REMOVE_CONFIRM_MESSAGE" );
+	///////////////////
+	public static final XUILocalizedMessage FORM_NEW =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORM_NEW" );
+	public static final XUILocalizedMessage FORM_NAME =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORM_NAME" );
+	public static final XUILocalizedMessage FORM_DESCRIPTION =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORM_DESCRIPTION" );
+	public static final XUILocalizedMessage FORM_CODE =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORM_CODE" );
 	
+		public static final XUILocalizedMessage REMOVE_PERMISSION =
+			new XUILocalizedMessage( XEOViewersMessages.class.getName(), "REMOVE_PERMISSION" );
 }		

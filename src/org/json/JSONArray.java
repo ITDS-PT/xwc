@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+
 /**
  * A JSONArray is an ordered sequence of values. Its external text form is a
  * string wrapped in square brackets with commas separating the values. The
@@ -117,7 +119,7 @@ public class JSONArray {
         } else if (c == '(') {
             q = ')';
         } else {
-            throw x.syntaxError("A JSONArray text must start with '['");
+            throw x.syntaxError(ExceptionMessage.A_JSON_ARRAY_MUST_START_WITH.toString()+" '['");
         }
         if (x.nextClean() == ']') {
             return;
@@ -143,11 +145,11 @@ public class JSONArray {
             case ']':
             case ')':
                 if (q != c) {
-                    throw x.syntaxError("Expected a '" + new Character(q) + "'");
+                    throw x.syntaxError(ExceptionMessage.EXPECTED_A.toString()+" '" + new Character(q) + "'");
                 }
                 return;
             default:
-                throw x.syntaxError("Expected a ',' or ']'");
+                throw x.syntaxError(ExceptionMessage.EXPECTED_A.toString()+" ',' "+ExceptionMessage.OR.toString()+" ']'");
             }
         }
     }
@@ -204,7 +206,7 @@ public class JSONArray {
                 this.put(Array.get(array, i));
             }
         } else {
-            throw new JSONException("JSONArray initial value should be a string or collection or array.");
+            throw new JSONException(ExceptionMessage.JSONARRAY_INITIAL_VALUE_SHOULD__.toString());
         }
     }
 
@@ -222,7 +224,7 @@ public class JSONArray {
                 this.put(new JSONObject(Array.get(array, i),includeSuperClass));
             }
         } else {
-            throw new JSONException("JSONArray initial value should be a string or collection or array.");
+            throw new JSONException(ExceptionMessage.JSONARRAY_INITIAL_VALUE_SHOULD__.toString());
         }
     }
 
@@ -238,7 +240,7 @@ public class JSONArray {
     public Object get(int index) throws JSONException {
         Object o = opt(index);
         if (o == null) {
-            throw new JSONException("JSONArray[" + index + "] not found.");
+            throw new JSONException("JSONArray[" + index + "] "+ExceptionMessage.NOT_FOUND.toString());
         }
         return o;
     }
@@ -264,7 +266,7 @@ public class JSONArray {
                 ((String)o).equalsIgnoreCase("true"))) {
             return true;
         }
-        throw new JSONException("JSONArray[" + index + "] is not a Boolean.");
+        throw new JSONException("JSONArray[" + index + "] "+ExceptionMessage.IS_NOT_A_BOOLEAN.toString());
     }
 
 
@@ -284,7 +286,7 @@ public class JSONArray {
                 Double.valueOf((String)o).doubleValue();
         } catch (Exception e) {
             throw new JSONException("JSONArray[" + index +
-                "] is not a number.");
+                "] "+ExceptionMessage.IS_NOT_A_NUMBER.toString());
         }
     }
 
@@ -318,7 +320,7 @@ public class JSONArray {
             return (JSONArray)o;
         }
         throw new JSONException("JSONArray[" + index +
-                "] is not a JSONArray.");
+                "] "+ExceptionMessage.IS_NOT_A_JSONARRAY.toString());
     }
 
 
@@ -335,7 +337,7 @@ public class JSONArray {
             return (JSONObject)o;
         }
         throw new JSONException("JSONArray[" + index +
-            "] is not a JSONObject.");
+            "] "+ExceptionMessage.IS_NOT_A_JSONOBJECT.toString());
     }
 
 
@@ -788,7 +790,7 @@ public class JSONArray {
     public JSONArray put(int index, Object value) throws JSONException {
         JSONObject.testValidity(value);
         if (index < 0) {
-            throw new JSONException("JSONArray[" + index + "] not found.");
+            throw new JSONException("JSONArray[" + index + "] "+ExceptionMessage.NOT_FOUND.toString());
         }
         if (index < length()) {
             this.myArrayList.set(index, value);

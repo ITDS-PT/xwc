@@ -1,6 +1,7 @@
 package netgest.bo.xwc.components.connectors;
 
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class XEOObjectListIterator implements DataListIterator {
     
@@ -44,7 +45,7 @@ public class XEOObjectListIterator implements DataListIterator {
         {
 			return new XEOObjectListRowConnector( oCurrentObjectBoui, oBoObjectList, currentRow );
         }
-        throw new RuntimeException("There's no object at current iterator position");
+        throw new RuntimeException(ExceptionMessage.THERES_NO_OBJECT_AT_CURRENT_ITERATOR_POSITION.toString());
     }
 
     public void remove() {

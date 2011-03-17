@@ -7,6 +7,7 @@ import javax.faces.FacesException;
 import javax.faces.lifecycle.Lifecycle;
 import javax.faces.lifecycle.LifecycleFactory;
 
+import netgest.bo.localizations.LoggerMessageLocalizer;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 
@@ -33,7 +34,7 @@ public class XUILifeCycleFactoryImpl extends LifecycleFactory {
         lifecycleMap.put(LifecycleFactory.DEFAULT_LIFECYCLE,
                          new XUILifecycleImpl());
         if (LOGGER.isFinerEnabled()) {
-            LOGGER.finer("Created Default Lifecycle");
+            LOGGER.finer(LoggerMessageLocalizer.getMessage("CREATED_DEFAULT_LIFECYCLE"));
         }
     }
 
@@ -82,7 +83,7 @@ public class XUILifeCycleFactoryImpl extends LifecycleFactory {
                     MessageUtils.CANT_CREATE_LIFECYCLE_ERROR_MESSAGE_ID,
                     params);
             if (LOGGER.isLoggable( LoggerLevels.WARNING )) {
-                LOGGER.warn("LifecycleId " + lifecycleId + " does not exist");
+                LOGGER.warn("LifecycleId " + lifecycleId + " "+LoggerMessageLocalizer.getMessage("DOES_NOT_EXIST"));
             }
             throw new IllegalArgumentException(message);
         }

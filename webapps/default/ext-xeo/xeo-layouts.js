@@ -149,7 +149,7 @@ function xeodmToggleHandler( btn, state ) {
 	}
 }
 
-var XApp = null;
+/*var XApp = null;
 XEOLayoutInit = function() 
 {
 	if( window.xeodmstate ) {
@@ -188,20 +188,38 @@ XEOLayoutInit = function()
 		        	   	handler: function() { document.location.href='LogoutXVW.jsp' },
 		           		menu: [{
 			        	   	xtype:'button',
-			        	   	icon:'ext-xeo/images/menus/logout.gif' ,
+			        	 	icon:'ext-xeo/images/menus/logout.gif' ,			 
 			        	   	cls: "x-btn-text-icon",		        	
 			        	   	text: ExtXeo.Messages.LOGOUT_BTN,
 			        	   	handler: function() { document.location.href='LogoutXVW.jsp' }
-		        	   	}]
-		           }/*,
-		           {
-			        	text: ( xeodmstate? ExtXeo.Messages.XEODM_ACTIVE : ExtXeo.Messages.XEODM_INACTIVE ),
-			        	toggleHandler: xeodmToggleHandler,	
-			        	enableToggle: true,
-			        	pressed: xeodmstate
-			       }*/
+		        	   	},
+		        	   	
+		        	   	{//change user properties Button
+			        	   	xtype:'button',
+			        	   	icon:'ext-xeo/admin/users.gif' ,
+			        	   	cls: "x-btn-text-icon",		        	
+			        	   	text: ExtXeo.Messages.USER_PROPS,
+			        	   	handler: function(){XVW.AjaxCommand('formMain','showUserPropsCmd','showUserPropsCmd',2);}
+		        	   	},{
+			        	   	xtype:'button',
+			        	 	icon:'ext-xeo/admin/users.gif' ,			 
+			        	   	cls: "x-btn-text-icon",		        	
+			        	   	text: "Admin",
+			        	   	handler: function() { document.location.href='Login.xvw?action=change_profile&boui=11341' }
+		        	   	},
+		        	   	
+		        	   	{//change user properties Button
+			        	   	xtype:'button',
+			        	   	icon:'ext-xeo/admin/users.gif' ,
+			        	   	cls: "x-btn-text-icon",		        	
+			        	   	text: "Default",
+			        	   	handler: function(){ document.location.href='Login.xvw?action=change_profile&boui=11349' }
+		        	   	}
+		  
+		        	   	]
+		        	   	
+		        }
 	           ]
-	    //'/xwc/testes/ext/examples/tree/tree.json'
 	});
 
 	
@@ -211,4 +229,4 @@ XEOLayoutInit = function()
     window.setInterval("XVW.keepAlive( document.getElementsByTagName('form')[0] );" ,7*60000);
 }
 
-Ext.onReady( XEOLayoutInit );
+Ext.onReady( XEOLayoutInit );*/

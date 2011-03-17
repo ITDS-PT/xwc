@@ -5,17 +5,18 @@ import java.util.Calendar;
 
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boSession;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
 
 
 public class SessionsDataListConnector extends GenericDataListConnector {
 	
 	public SessionsDataListConnector() {
 		super();
-		this.createColumn("USER", "User Name");
-		this.createColumn("CLIENT_NAME", "Client Name");
-		this.createColumn("CREATED_TIME", "Created Time");
-		this.createColumn("LAST_ACTIVITY", "Last Activity");
-		this.createColumn("ACTIVE", "Active");
+		this.createColumn("USER", MainAdminBeanMessages.USER_NAME.toString());
+		this.createColumn("CLIENT_NAME",MainAdminBeanMessages.CLIENT_NAME.toString());
+		this.createColumn("CREATED_TIME",MainAdminBeanMessages.CREATED_TIME.toString());
+		this.createColumn("LAST_ACTIVITY",MainAdminBeanMessages.LAST_ACTIVITY.toString());
+		this.createColumn("ACTIVE",MainAdminBeanMessages.ACTIVE.toString());
 	}
 
 	@Override

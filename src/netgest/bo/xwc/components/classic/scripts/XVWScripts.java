@@ -1,5 +1,6 @@
 package netgest.bo.xwc.components.classic.scripts;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
@@ -80,9 +81,9 @@ public class XVWScripts {
     }
      
     public static final String getAjaxCommandScript( XUIComponentBase oComponent, int iWaitMode ) {
-    	assert oComponent != null : "The component is null!";
+    	assert oComponent != null : MessageLocalizer.getMessage("THE_COMPONENT_IS_NULL");
     	String containerId = oComponent.findParentComponent(XUIForm.class).getClientId();
-    	assert containerId != null : "Cannot find a naming container for the component"; 
+    	assert containerId != null : MessageLocalizer.getMessage("CANNOT_FIND_A_NAMING_CONTAINER_FOR_THE_COMPONENT"); 
 
     	
     	String compId = oComponent.getClientId();

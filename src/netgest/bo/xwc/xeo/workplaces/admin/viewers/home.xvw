@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
 	<xvw:viewer beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.HomeBean"
-		beanId="viewBean">
+		beanId="viewBean"
+		localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
 		<xvw:form id="form">
 			<xvw:title valueExpression='Home'></xvw:title>
 			<xvw:tabs renderTabBar='false'>
@@ -11,7 +12,7 @@
 							<xvw:cell>
 								<xvw:panel>
 									<xvw:toolBar>
-										<xvw:menu text="JVM Memory" icon='ext-xeo/admin/refresh.gif'
+										<xvw:menu text="@{JVM_MEMORY}" icon='ext-xeo/admin/refresh.gif'
 											serverAction="#{viewBean.refreshJvmMemoryGraphs}"></xvw:menu>
 									</xvw:toolBar>
 									<xvw:barChart dataSet="#{viewBean.jvmMemory}"
@@ -21,7 +22,7 @@
 								</xvw:panel>
 							</xvw:cell>
 							<xvw:cell>
-								<xvw:section label="System Information">
+								<xvw:section label="@{SYSTEM_INFORMATION}">
 									<xvw:ajaxText text='#{viewBean.sysInfo}'
 										updateTime="2500" />
 								</xvw:section>
@@ -38,7 +39,7 @@
 								</xvw:gridPanel>
 							</xvw:cell>
 							<xvw:cell>
-								<xvw:gridPanel layout='' title='Sessions'
+								<xvw:gridPanel layout='' title='@{SESSIONS}'
 									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.sessions}">
 									<xvw:columns>
 										<xvw:columnAttribute width="40" dataField="USER" />
@@ -55,7 +56,7 @@
 						</xvw:row>
 						<xvw:row>
 							<xvw:cell>
-								<xvw:section label='Objects by package'>
+								<xvw:section label='@{OBJECTS_BY_PACKAGE}'>
 									<xvw:pieChart label="#{viewBean.packageObjectsLastUpdated}"
 										configOptions="#{viewBean.packageObjectsPieChartConf}" width="0"
 										height="0" type="FLASH" dataSet="#{viewBean.packageObjects}">
@@ -63,11 +64,11 @@
 								</xvw:section>
 							</xvw:cell>
 							<xvw:cell>
-								<xvw:section label='Instances by object'>
+								<xvw:section label='@{INSTANCE_BY_OBJECT}'>
 									<xvw:attributeLabel
 										renderComponent="#{viewBean.objectInstancesPieChartExpired}"
-										text='Attention! Depending on your database this can be a very heavy operation.'></xvw:attributeLabel>
-									<xvw:actionButton label='Refresh'
+										text='@{ATTENTION}'></xvw:attributeLabel>
+									<xvw:actionButton label='@{REFRESH}'
 										renderComponent="#{viewBean.objectInstancesPieChartExpired}"
 										image='ext-xeo/admin/refresh.gif' serverAction='#{viewBean.refreshObjectInstances}' />
 									<xvw:pieChart id="objectInstances" renderComponent="#{viewBean.objectInstancesPieChartRendered}"
@@ -79,14 +80,14 @@
 						</xvw:row>
 						<xvw:row>
 							<xvw:cell>
-					           <xvw:section label='Last saved objects'
+					           <xvw:section label='@{LAST_SAVED_OBJECTS}'
 								renderComponent="#{not viewBean.lastSavedObjectsEnabled}">
 									<xvw:attributeLabel
-										text='Attention! Depending on your database this can be a heavy operation.'></xvw:attributeLabel>
-									<xvw:actionButton label='Refresh'
+										text='@{ATTENTION}'></xvw:attributeLabel>
+									<xvw:actionButton label='@{REFRESH}'
 										image='ext-xeo/admin/refresh.gif' serverAction='#{viewBean.enableLastSavedObjects}' />
 								</xvw:section>
-								<xvw:gridPanel layout='' title="Last saved objects"
+								<xvw:gridPanel layout='' title="@{LAST_SAVED_OBJECTS}"
 								    renderComponent="#{viewBean.lastSavedObjectsEnabled}"
 									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.lastSavedObjects}">
 									<xvw:columns>
@@ -99,14 +100,14 @@
 								</xvw:gridPanel>
 							</xvw:cell>
 							<xvw:cell>
-								<xvw:section label='Last created objects'
+								<xvw:section label='@{LAST_CREATED_OBJECTS}'
 								renderComponent="#{not viewBean.lastCreatedObjectsEnabled}">
 									<xvw:attributeLabel
-										text='Attention! Depending on your database this can be a heavy operation.'></xvw:attributeLabel>
-									<xvw:actionButton label='Refresh'
+										text='@{ATTENTION}'></xvw:attributeLabel>
+									<xvw:actionButton label='@{REFRESH}'
 										image='ext-xeo/admin/refresh.gif' serverAction='#{viewBean.enableLastCreatedObjects}' />
 								</xvw:section>
-								<xvw:gridPanel layout='' title="Last created objects"
+								<xvw:gridPanel layout='' title="@{LAST_CREATED_OBJECTS}"
 									renderComponent="#{viewBean.lastCreatedObjectsEnabled}"
 									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.lastCreatedObjects}">
 									<xvw:columns>

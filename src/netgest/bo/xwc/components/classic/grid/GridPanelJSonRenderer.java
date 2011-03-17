@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -74,7 +75,7 @@ public class GridPanelJSonRenderer {
         	}
         }
         else {
-            w.print( "Grid data source is invalid!" );
+            w.print(MessageLocalizer.getMessage("GRID_PANEL_SOURCE_IS_INVALID"));
         }
         
     }

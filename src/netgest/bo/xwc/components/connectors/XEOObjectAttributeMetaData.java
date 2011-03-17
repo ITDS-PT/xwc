@@ -11,6 +11,7 @@ import java.util.Map;
 import netgest.bo.system.Logger;
 
 import netgest.bo.def.boDefAttribute;
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.lovmanager.LovManager;
 import netgest.bo.lovmanager.lovObject;
 import netgest.bo.runtime.EboContext;
@@ -277,7 +278,7 @@ public class XEOObjectAttributeMetaData implements DataFieldMetaData {
 	                    }
 	                }
 	                catch (boRuntimeException e) {
-	                    log.severe( "Erro loading lov [" + sLovName + "]" + e.getClass().getName() + "-" + e.getMessage() );
+	                    log.severe( MessageLocalizer.getMessage("ERROR_LOADING_LOV")+" [" + sLovName + "]" + e.getClass().getName() + "-" + e.getMessage() );
 	                }
             	}
             }

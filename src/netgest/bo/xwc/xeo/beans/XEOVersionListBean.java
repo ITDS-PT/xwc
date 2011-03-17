@@ -12,6 +12,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.localization.XUILocalizationUtils;
 import netgest.bo.xwc.xeo.components.FormEdit;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
 
 /**
  * 
@@ -38,7 +39,7 @@ public class XEOVersionListBean extends XEOEditBean
 	 */
 	public String getTitleMessage()
 	{
-		return "List of Versions";
+		return MainAdminBeanMessages.LIST_OF_VERSIONS.toString(); 
 	}
 	
 	

@@ -29,7 +29,7 @@
 	             					target='self'
 	             					>
 	             				</xvw:menu>
-	             				<xvw:menu text="Remove Permission"
+	             				<xvw:menu text="@{REMOVE_PERMISSION}"
 	             					icon="ext-xeo/images/menus/delete_permission.jpg"
 	             					disabled="#{viewBean.disabledAddBtn}"
 	             					serverAction="#{viewBean.removePermission}"

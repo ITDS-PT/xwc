@@ -6,19 +6,28 @@ import java.text.SimpleDateFormat;
 
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
+import netgest.bo.system.boApplicationConfig;
+import netgest.bo.system.boSession;
+import netgest.bo.system.boSessionUser;
+import netgest.bo.system.boSessions;
+import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
 
 
 public class IndexQueueDataListConnector extends GenericDataListConnector {
 	
 	public IndexQueueDataListConnector() {
 		super();
-		
-		this.createColumn("BOUI", "boui");
-		this.createColumn("object", "Object");
-		this.createColumn("STATE", "State");
-		this.createColumn("MESSAGE", "Message");
-		this.createColumn("ENQUEUETIME", "Queue Time");
-	}
+		/////////////////	
+				this.createColumn("BOUI", "boui");
+				this.createColumn("object", MainAdminBeanMessages.OBJECT_COLUMN.toString());
+				this.createColumn("STATE", MainAdminBeanMessages.STATE_COLUMN.toString());
+				this.createColumn("MESSAGE", MainAdminBeanMessages.MESSAGE_COLUMN.toString());
+				this.createColumn("ENQUEUETIME", MainAdminBeanMessages.QUEUETIME_COLUMN.toString());
+			
+
+			
+			}
 
 	@Override
 	public void refresh() {

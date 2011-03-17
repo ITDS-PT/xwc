@@ -4,6 +4,7 @@ import netgest.bo.xwc.components.classic.MessageBox;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class Dialogs {
 
@@ -76,7 +77,7 @@ public class Dialogs {
 			mb.show();
 		}
 		else {
-			throw new RuntimeException("Dialog not found in the viewer!");
+			throw new RuntimeException(ExceptionMessage.DIALOG_NOT_FOUND_IN_THE_VIEWER.toString());
 		}
 	}
 	

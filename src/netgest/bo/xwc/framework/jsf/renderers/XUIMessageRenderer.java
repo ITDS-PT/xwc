@@ -11,6 +11,8 @@ import javax.faces.component.UIOutput;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
+import netgest.bo.localizations.LoggerMessageLocalizer;
+
 import com.sun.faces.renderkit.RenderKitUtils;
 import com.sun.faces.renderkit.html_basic.MessageRenderer;
 import com.sun.faces.renderkit.html_basic.OutputMessageRenderer;
@@ -61,7 +63,7 @@ public class XUIMessageRenderer extends MessageRenderer {
 		// by TLD in JSP case, but need to cover non-JSP case.
 		if (clientId == null) {
 			if (logger.isLoggable(Level.WARNING)) {
-				logger.warning("'for' attribute cannot be null");
+				logger.warning("'for' "+LoggerMessageLocalizer.getMessage("ATTRIBUTE_CANNOT_BE_NULL"));
 			}
 			return;
 		}

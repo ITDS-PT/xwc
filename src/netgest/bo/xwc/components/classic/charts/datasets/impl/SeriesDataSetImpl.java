@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSet;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class SeriesDataSetImpl implements SeriesDataSet {
 	private LinkedHashMap<String, String> series = new LinkedHashMap<String, String>();
@@ -68,10 +69,10 @@ public class SeriesDataSetImpl implements SeriesDataSet {
 	public void addValue(String seriesKey, String columnKey, Number value) throws Exception {
 		
 		if (this.colSeries.get(columnKey) == null)
-			throw new Exception("No such column  "+columnKey);
+			throw new Exception(ExceptionMessage.NO_SUCH_COLUMN.toString()+" "+columnKey);
 		
 		if (this.series.get(seriesKey) == null)
-			throw new Exception("No such series  "+seriesKey);
+			throw new Exception(ExceptionMessage.NO_SUCH_SERIES.toString()+" "+seriesKey);
 		
 		this.colSeries.get(columnKey).put(seriesKey, value);
 	}

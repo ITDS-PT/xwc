@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import netgest.bo.def.boDefHandler;
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.utils.ngtXMLHandler;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
@@ -41,7 +42,7 @@ public class V2toV3ViewerConvert {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.createLogMessage("ERROR CONVERTING PACKAGE : "+packageName);
+			this.createLogMessage(MessageLocalizer.getMessage("ERROR_CONVERTING_PACKAGE")+" : "+packageName);
 		}
 	}
 	
@@ -79,17 +80,17 @@ public class V2toV3ViewerConvert {
 				boFolder.delete();
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.createLogMessage("ERROR CONVERTING BO MODEL : "+boModelFile.getName());
+			this.createLogMessage(MessageLocalizer.getMessage("ERROR_CONVERTING_BO_MODEL")+" : "+boModelFile.getName());
 		}
 	}
 
 	public void createNewViewerFile(XMLDocument newViewerXML, String destPath, String newViewerFileName) throws Exception {
 		try{
 			ngtXMLUtils.saveXML(newViewerXML,destPath+File.separator+newViewerFileName);
-			this.createLogMessage("CREATED VIEWER : "+newViewerFileName); 
+			this.createLogMessage(MessageLocalizer.getMessage("CREATE_VIEWER")+" : "+newViewerFileName); 
 		}catch (Exception e) {
 			e.printStackTrace();
-			this.createLogMessage("ERROR CREATING VIEWER : "+newViewerFileName); 
+			this.createLogMessage(MessageLocalizer.getMessage("ERROR_CREATING_VIEWER")+" : "+newViewerFileName); 
 		}
 	}
 	
@@ -132,7 +133,7 @@ public class V2toV3ViewerConvert {
 			this.createV3ViewerEditNode(parentNode,v2EditForm,objCollectionAttributes,v2ListFormForBridges);
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.createLogMessage("ERROR CREATING V3 EDIT VIEWER"); 
+			this.createLogMessage(MessageLocalizer.getMessage("ERROR_CREATING_V3_EDIT_VIEWER")); 
 		}
 	}
 
@@ -314,7 +315,7 @@ public class V2toV3ViewerConvert {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.createLogMessage("ERROR CREATING V3 LOOKUP VIEWER"); 
+			this.createLogMessage(MessageLocalizer.getMessage("ERROR_CREATING_V3_LOOKUP_VIEWER")); 
 		}
 		return viewerDef;
 	}
@@ -358,7 +359,7 @@ public class V2toV3ViewerConvert {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.createLogMessage("ERROR CREATING V3 LIST VIEWER"); 
+			this.createLogMessage(MessageLocalizer.getMessage("ERROR_CREATING_V3_LIST_VIEWER")); 
 		}
 		return viewerDef;
 	}
@@ -380,7 +381,7 @@ public class V2toV3ViewerConvert {
 			createV3ViewerXMLNode(viewerDef.getRootComponent(),viewerNode);
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.createLogMessage("ERROR CREATING XML FOR V3 VIEWER"); 
+			this.createLogMessage(MessageLocalizer.getMessage("ERROR_CREATING_XML_FOR_V3_VIEWER")); 
 		}
 		return xmlDoc;
 	}
@@ -536,7 +537,7 @@ public class V2toV3ViewerConvert {
 				nodeTreePanel.addChild(newBarMenu);
 			}
 		} catch (Exception e) {
-			this.createLogMessage("ERROR CONVERTING TREE");
+			this.createLogMessage(MessageLocalizer.getMessage("ERROR_CONVERTING_TREE"));
 			e.printStackTrace();
 		}
 		return viewerDef;
@@ -587,7 +588,7 @@ public class V2toV3ViewerConvert {
 				}
 			}
 		} catch (Exception e) {
-			this.createLogMessage("ERROR CONVERTING TREE NODE: "+newMenuItem.getProperty("text"));
+			this.createLogMessage(MessageLocalizer.getMessage("ERROR_CONVERTING_TREE_NODE")+": "+newMenuItem.getProperty("text"));
 			e.printStackTrace();
 		}
 		return newMenuItem;
@@ -607,7 +608,7 @@ public class V2toV3ViewerConvert {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.createLogMessage("ERROR CONVERTING TREE FILE : "+currFile.getName());
+			this.createLogMessage(MessageLocalizer.getMessage("ERROR_CONVERTING_TREE_FILE")+" : "+currFile.getName());
 		}
 	}
 	

@@ -3,10 +3,11 @@
 	xmlns:xvw="http://www.netgest.net/xeo/xvw"
 	xmlns:xeo="http://www.netgest.net/xeo/xeo"
 >
-	<xvw:viewer beanClass="netgest.bo.xwc.xeo.beans.XEOBaseOrphanEdit" beanId="viewBean">
+	<xvw:viewer beanClass="netgest.bo.xwc.xeo.beans.XEOBaseOrphanEdit" beanId="viewBean"
+	localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
 		<xeo:formEdit>
 			<xvw:panel>
-				<xvw:section label='Geral'>
+				<xvw:section label='@{GENERAL}'>
 					<xvw:rows>
 						
 						<xvw:row>
@@ -34,31 +35,31 @@
 				</xvw:section>				
 				<xvw:tabs>
 					
-					<xvw:tab label="Membro de">
+					<xvw:tab label="@{MEMBER_OF}">
 					  <xeo:bridge bridgeName='groups' >
 					     <xvw:columns>
-					     <xvw:columnAttribute width="150" label="Membro de" dataField="SYS_CARDID"/>
+					     <xvw:columnAttribute width="150" label="@{MEMBER_OF}" dataField="SYS_CARDID"/>
 					     </xvw:columns>
 					   </xeo:bridge>
 					</xvw:tab>
-					<xvw:tab label="Divisão">
+					<xvw:tab label="@{DIVISION}Divisão">
 					  <xeo:bridge bridgeName='compartments' >
 					     <xvw:columns>
-					     <xvw:columnAttribute width="150" label="Divisão" dataField="SYS_CARDID"/>
+					     <xvw:columnAttribute width="150" label="@{DIVISION}" dataField="SYS_CARDID"/>
 					     </xvw:columns>
 					   </xeo:bridge>
 					</xvw:tab>
-					<xvw:tab label="Função">
+					<xvw:tab label="@{FUNCTION}">
 					  <xeo:bridge bridgeName='roles' >
 					     <xvw:columns>
-					     <xvw:columnAttribute width="150" label="Função" dataField="SYS_CARDID"/>
+					     <xvw:columnAttribute width="150" label="@{FUNCTION}" dataField="SYS_CARDID"/>
 					     </xvw:columns>
 					   </xeo:bridge>
 					</xvw:tab>
-					<xvw:tab label="Aplicação">
+					<xvw:tab label="@{APPLICATION}">
 					  <xeo:bridge bridgeName='packages' >
 					     <xvw:columns>
-					     <xvw:columnAttribute width="150" label="Aplicação" dataField="SYS_CARDID"/>
+					     <xvw:columnAttribute width="150" label="@{APPLICATION}" dataField="SYS_CARDID"/>
 					     </xvw:columns>
 					   </xeo:bridge>
 					</xvw:tab>

@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import netgest.bo.transaction.XTransactionManager;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.jsf.XUIViewHandler;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class XUISessionContext {
 
@@ -71,7 +73,7 @@ public class XUISessionContext {
         FacesContext facesContext;
         facesContext = FacesContext.getCurrentInstance();
         
-        assert facesContext.getViewRoot() != null : "Can't create a child view of null";
+        assert facesContext.getViewRoot() != null : MessageLocalizer.getMessage("CANT_CREATE_A_CHILD_VIEW_OF_NULL");
         XUIViewRoot viewRoot;
         
         viewRoot = (XUIViewRoot)((XUIViewHandler)(Util.getViewHandler(facesContext))).createView( 
@@ -84,7 +86,7 @@ public class XUISessionContext {
         FacesContext facesContext;
         facesContext = FacesContext.getCurrentInstance();
         
-        assert facesContext.getViewRoot() != null : "Can't create a child view of null";
+        assert facesContext.getViewRoot() != null : MessageLocalizer.getMessage("CANT_CREATE_A_CHILD_VIEW_OF_NULL");
         XUIViewRoot viewRoot;
         
         XUIViewHandler viewHandler;
@@ -179,7 +181,7 @@ public class XUISessionContext {
             return oExternalSession.get( sName );
         }
         else {
-            log.warn( "Cant find HttpSession to get attribute ["+ sName +"]" );
+            log.warn( MessageLocalizer.getMessage("CANT_FIND_HTTPSESSION_TO_GET_ATTRIBUTE")+" ["+ sName +"]" );
         }
         return null;
     }
@@ -190,7 +192,7 @@ public class XUISessionContext {
             return oExternalSession.remove( sName );
         }
         else {
-            log.warn( "Cant find HttpSession to get attribute ["+ sName +"]" );
+            log.warn( MessageLocalizer.getMessage("CANT_FIND_HTTPSESSION_TO_GET_ATTRIBUTE")+" ["+ sName +"]" );
         }
         return null;
     }
@@ -201,7 +203,7 @@ public class XUISessionContext {
             oExternalSession.put( sName, oValue );
         }
         else {
-            throw new IllegalStateException("Cannot find user HttpSession, maybe session was expired");
+            throw new IllegalStateException(ExceptionMessage.CANNOT_FIND_USER_HTTPSESSION__.toString());
         }
     }
     

@@ -18,6 +18,7 @@ import netgest.bo.xwc.xeo.workplaces.admin.charts.PieChartDataSet;
 import netgest.bo.xwc.xeo.workplaces.admin.connectors.ObjectsDataListConnector;
 import netgest.bo.xwc.xeo.workplaces.admin.connectors.SessionsDataListConnector;
 import netgest.bo.xwc.xeo.workplaces.admin.connectors.ThreadsDataListConnector;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
 
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Mem;
@@ -80,23 +81,23 @@ public class HomeBean extends XEOBaseBean {
 		// begin system cell 
 		sysInfo.append("<th>");
 
-		sysInfo.append("Up Time: " + netgest.bo.xwc.xeo.workplaces.admin.Utils.formatTimeSeconds(uptime));
+		sysInfo.append(MainAdminBeanMessages.UP_TIME.toString()+": " + netgest.bo.xwc.xeo.workplaces.admin.Utils.formatTimeSeconds(uptime));
 
-		sysInfo.append("<br>CPU Usage : " + CpuPerc.format(this.sigar.getCpuPerc().getCombined()));
+		sysInfo.append("<br>"+MainAdminBeanMessages.CPU_USAGE.toString()+" : " + CpuPerc.format(this.sigar.getCpuPerc().getCombined()));
 
 		Mem mem   = this.sigar.getMem();
 		Swap swap = this.sigar.getSwap();
 
 		sysInfo.append("<table>");
 		sysInfo.append("<tr>");
-		sysInfo.append("<th>Memory (MB)</th>");
-		sysInfo.append("<th>Total</th>");
-		sysInfo.append("<th>Used</th>");
-		sysInfo.append("<th>Free</th>");
+		sysInfo.append("<th>"+MainAdminBeanMessages.MEMORY.toString()+" (MB)</th>");
+		sysInfo.append("<th>"+MainAdminBeanMessages.TOTAL.toString()+"</th>");
+		sysInfo.append("<th>"+MainAdminBeanMessages.USED.toString()+"</th>");
+		sysInfo.append("<th>"+MainAdminBeanMessages.FREE.toString()+"</th>");
 		sysInfo.append("</tr>"); 
 
 		sysInfo.append("<tr>");
-		sysInfo.append("<td>Real</td>");
+		sysInfo.append("<td>"+MainAdminBeanMessages.REAL.toString()+"</td>");
 		sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getTotal())+"</td>");
 		sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getUsed())+"</td>");
 		sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getFree())+"</td>");
@@ -115,7 +116,7 @@ public class HomeBean extends XEOBaseBean {
 				(mem.getFree() != mem.getActualFree()))
 		{
 			sysInfo.append("<tr>");
-			sysInfo.append("<td>Actual</td>");
+			sysInfo.append("<td>"+MainAdminBeanMessages.ACTUAL.toString()+"</td>");
 			sysInfo.append("<td></td>");
 			sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getActualUsed())+"</td>");
 			sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getActualFree())+"</td>");
@@ -130,23 +131,23 @@ public class HomeBean extends XEOBaseBean {
 
 		// begin process cell 
 		sysInfo.append("<th>");
-		sysInfo.append("<br><b>JVM Process</b>");
+		sysInfo.append("<br><b>"+MainAdminBeanMessages.JVM_PROCESS.toString()+"</b>");
 
 		String pid = String.valueOf(sigar.getPid());
 		sysInfo.append("<br>pid: " + pid);
 		try {
-			sysInfo.append("<br>CPU Usage: " + CpuPerc.format(sigar.getProcCpu(pid).getPercent()));
+			sysInfo.append("<br>"+MainAdminBeanMessages.CPU_USAGE.toString()+": " + CpuPerc.format(sigar.getProcCpu(pid).getPercent()));
 		} catch (SigarException e) {}
 
 		try {
-			sysInfo.append("<br>Memory: " 
+			sysInfo.append("<br>"+MainAdminBeanMessages.MEMORY.toString()+": " 
 					+ netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(sigar.getProcMem(pid).getResident())
 					+ " MB");
 		} catch (SigarException e) {}
 
 
 		try {
-			sysInfo.append("<br>Total CPU Time: " 
+			sysInfo.append("<br>"+MainAdminBeanMessages.TOTAL_CPU_TIME.toString()+": " 
 					+ netgest.bo.xwc.xeo.workplaces.admin.Utils.formatTimeMiliSeconds(sigar.getProcCpu(pid).getTotal()));
 		} catch (SigarException e) {}
 

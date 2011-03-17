@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by António (Itds) -->
-<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
-	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseList" beanId="viewBean">
-		<xvw:form id="form1">
-			<xvw:title valueExpression="#{viewBean.title}"/>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseList" beanId="viewBean"
+	localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
+		<xeo:formList>
+		<!-- 	<xvw:title valueExpression="#{viewBean.title}"/>-->
 			<xvw:toolBar>
-				<xvw:menu target="Tab" text="Novo" serverAction="#{viewBean.addNew}"/>
-			</xvw:toolBar>
+				<xvw:menu target="Tab" text="@{FORM_NEW}" serverAction="#{viewBean.addNew}"/>
+			</xvw:toolBar> 
 			<xvw:panel>
 				<xvw:errorMessages/>
 			</xvw:panel>
 			<xvw:gridPanel rowSelectionMode="" dataSource="#{viewBean.dataList}" onRowDoubleClick="#{viewBean.rowDoubleClick}" id="actiividadesEconomicas" autoExpandColumn="designacao">
 				<xvw:columns>
-                	<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
+                <!-- 	<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/> -->
 					<xvw:columnAttribute width="400" dataField="description"/>
 					<xvw:columnAttribute width="200" dataField="id"/>
 				</xvw:columns>
 			</xvw:gridPanel>
-		</xvw:form>
+		</xeo:formList>
 	</xvw:viewer>
 </xvw:root>

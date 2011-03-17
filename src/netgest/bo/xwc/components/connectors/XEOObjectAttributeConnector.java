@@ -17,6 +17,7 @@ import javax.faces.context.FacesContext;
 
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefXeoCode;
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.lovmanager.LovManager;
 import netgest.bo.lovmanager.lovObject;
 import netgest.bo.runtime.AttributeHandler;
@@ -34,6 +35,7 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 import netgest.io.FSiFile;
 import netgest.io.iFile;
 
@@ -329,7 +331,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
             		oAttHandler.setValueString( (String)value );
             	} catch ( Exception e ) {
             		log.log( LoggerLevels.WARNING , 
-            				"Error binding value to attribute:[" + oAttHandler.getName() + "] value [" + value + "] " );
+            				MessageLocalizer.getMessage("ERROR_BINDING_VALUE_TO_ATTRIBUTE")+":[" + oAttHandler.getName() + "] "+MessageLocalizer.getMessage("VALUE")+" [" + value + "] " );
             		e.printStackTrace();
             	}
             }
@@ -436,7 +438,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 	            			);
             		}
             		catch ( Exception e ) {
-                		log.severe("Error getting SQL to Object rendered as Lov", e );
+                		log.severe(MessageLocalizer.getMessage("ERROR_GETTING_SQL_TO_OBJECT_RENDERED_AS_LOV"), e );
                 		sql = "select " + oAttHandler.getDefAttribute().getReferencedObjectDef().getName();
             		}
             		
@@ -498,7 +500,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 	                    }
 	                }
 	                catch (boRuntimeException e) {
-	                    log.severe( "Erro loading lov [" + sLovName + "]" + e.getClass().getName() + "-" + e.getMessage() );
+	                    log.severe( MessageLocalizer.getMessage("ERROR_LOADING_LOV")+" [" + sLovName + "]" + e.getClass().getName() + "-" + e.getMessage() );
 	                }
             	}
             }
@@ -520,7 +522,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
             return new XEOBridgeListConnector( oAttHandler.getParent().getBridge( oAttHandler.getName() ) );
         }
         //
-        throw new RuntimeException("This attribute is not a bridge");
+        throw new RuntimeException(ExceptionMessage.THIS_ATTRIBUTE_IS_NOT_A_BRIDGE.toString());
     }
 
     public AttributeHandler getAttributeHandler() {

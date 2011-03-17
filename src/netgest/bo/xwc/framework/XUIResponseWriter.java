@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.faces.context.ExternalContext;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.framework.jsf.XUIWriterAttributeConst;
 import netgest.bo.xwc.framework.jsf.XUIWriterElementConst;
 
@@ -1057,8 +1058,8 @@ public class XUIResponseWriter extends ResponseWriter {
     }
     
     protected void setHeaderAndFooterWriters( Writer headerWriter, Writer footerWriter )  {
-        assert headerWriter != null : "Header writer cannot be null";
-        assert footerWriter != null : "Footer writer cannot be null";
+        assert headerWriter != null : MessageLocalizer.getMessage("HEADER_WRITER_CANNOT_BE_NULL");
+        assert footerWriter != null : MessageLocalizer.getMessage("FOOTER_WRITER_CANNOT_BE_NULL");
 
         this.headerWriter = headerWriter;
         this.footerWriter = footerWriter;

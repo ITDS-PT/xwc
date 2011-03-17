@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
-	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseLookupList" beanId="viewBean">
-		<xeo:formLookupList id="form2">
+	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseLookupList" beanId="viewBean"
+	localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
+		<xeo:formLookupList>
 			<xvw:rows>
 				<xvw:row>
 					<xvw:cell>
-						<xvw:attribute label="Tipo de Objecto" onChangeSubmit='true' valueExpression='#{viewBean.selectedObject}' lovMap='#{viewBean.lookupObjects}' inputType='attributeLov'></xvw:attribute>  
+						<xvw:attribute label="@{TYPE_OF_OBJECT}" onChangeSubmit='true' valueExpression='#{viewBean.selectedObject}' lovMap='#{viewBean.lookupObjects}' inputType='attributeLov'></xvw:attribute>  
 					</xvw:cell>
 				</xvw:row>
 			</xvw:rows>

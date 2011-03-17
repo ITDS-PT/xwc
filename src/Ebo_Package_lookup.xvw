@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by António (Itds) -->
-<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
 	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseLookupList" beanId="viewBean">
-		<xvw:form id="form2">
+		<xeo:formLookupList id="form2">
 			<xvw:window id="lookupWindow" width="550" height="400">
-				<xvw:title value="Lista de Regras"/>
-				<xvw:gridPanel rowSelectionMode="#{viewBean.rowSelectionMode}" id="lookupPanel" dataSource="#{viewBean.dataList}" onRowDoubleClick="#{viewBean.rowDoubleClick}">
+			<!-- 	<xvw:title value="Lista de Regras"/>
+				<xvw:gridPanel rowSelectionMode="#{viewBean.rowSelectionMode}" id="lookupPanel" dataSource="#{viewBean.dataList}" onRowDoubleClick="#{viewBean.rowDoubleClick}"> -->
 					<xvw:columns>
                 		<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
 						<xvw:columnAttribute width="150" dataField="name"/>
 						<xvw:columnAttribute width="150" dataField="description"/>
 					</xvw:columns>
 					<xvw:actionButton label="Confirmar" serverAction="#{viewBean.confirm}"/>
-				</xvw:gridPanel>
+				<!--</xvw:gridPanel> -->
 			</xvw:window>
-		</xvw:form>
+		</xeo:formLookupList>
 	</xvw:viewer>
 </xvw:root>

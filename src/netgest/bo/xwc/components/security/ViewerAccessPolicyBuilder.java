@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.faces.component.UIComponent;
 
+import netgest.bo.localizations.LoggerMessageLocalizer;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boBridgeIterator;
 import netgest.bo.runtime.boObject;
@@ -23,6 +24,7 @@ import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 import netgest.bo.system.Logger;
 
@@ -106,7 +108,7 @@ public class ViewerAccessPolicyBuilder {
 			context.releaseObjects();
 		}
 		
-		logger.finer("Done");
+		logger.finer(LoggerMessageLocalizer.getMessage("DONE"));
 	}
 
 	/**
@@ -318,7 +320,7 @@ public class ViewerAccessPolicyBuilder {
 	 */
 	public Map<String, String> getIdsByComponent() {
 		if ( idByComponent!=null ) return idByComponent;
-		throw new RuntimeException( "Id by Component not initialized!" );
+		throw new RuntimeException( ExceptionMessage.ID_BY_COMPONENT_NOT_INITIALIZED.toString() );
 	}
 	
 	/**

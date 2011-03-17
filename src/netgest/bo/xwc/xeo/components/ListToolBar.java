@@ -122,6 +122,7 @@ public class ListToolBar extends ToolBarMenuPositions {
 					if( subClassesDef.size() > 1 ) {
 						ViewerMethod viewerMethod = new ViewerMethod();
 						viewerMethod.setText( XEOComponentMessages.BRIDGETB_NEW.toString(subClasseDef.getLabel()) );
+						
 						viewerMethod.setToolTip("Novo(a) " + subClasseDef.getLabel() );
 						viewerMethod.setId( getId() + "_new1_" + subClasseDef.getName() );
 						viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );

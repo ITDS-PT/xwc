@@ -20,6 +20,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.jstl.core.Config;
 
+import netgest.bo.localizations.LoggerMessageLocalizer;
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.xwc.framework.PackageIAcessor;
@@ -55,7 +57,7 @@ public class XUIViewHandlerImpl extends ViewHandler {
 
     public XUIViewHandlerImpl() {
         if (logger.isFinerEnabled()) {
-            logger.finer("Created ViewHandler instance ");
+            logger.finer(LoggerMessageLocalizer.getMessage("CREATED_VIEWEHANDLER_INSTANCE"));
         }
     }
     
@@ -105,7 +107,7 @@ public class XUIViewHandlerImpl extends ViewHandler {
         }
 
         if (logger.isFinerEnabled()) {
-            logger.finer("Completed building view for : \n" +
+            logger.finer(LoggerMessageLocalizer.getMessage("COMPLETED_BUILDING_VIEW_FOR")+" : \n" +
                     viewToRender.getViewId());
             
         }
@@ -216,7 +218,7 @@ public class XUIViewHandlerImpl extends ViewHandler {
         }
 
         if (logger.isFinerEnabled()) {
-            logger.finer("About to render view " + viewToRender.getViewId());
+            logger.finer(LoggerMessageLocalizer.getMessage("ABOUT_TO_RENDER_VIEW")+" " + viewToRender.getViewId());
         }
 
         viewToRender.encodeAll(context);
@@ -252,7 +254,7 @@ public class XUIViewHandlerImpl extends ViewHandler {
             try {
                 context.responseComplete();
                 if (logger.isFinerEnabled()) {
-                    logger.finer("Response Complete for" + viewId);
+                    logger.finer(LoggerMessageLocalizer.getMessage("RESPONSE_COMPLETE_FOR") + viewId);
                 }
                 extContext.redirect(extContext.getRequestContextPath());
             } catch (IOException ioe) {
@@ -322,7 +324,7 @@ public class XUIViewHandlerImpl extends ViewHandler {
         }
 
         if (logger.isFinerEnabled()) {
-            logger.finer("Created new view for " + viewId);
+            logger.finer(LoggerMessageLocalizer.getMessage("CREATED_NEW_VIEW_FOR")+" " + viewId);
         }
         // PENDING(): not sure if we should set the RenderKitId here.
         // The UIViewRoot ctor sets the renderKitId to the default
@@ -334,12 +336,12 @@ public class XUIViewHandlerImpl extends ViewHandler {
                 context.getApplication().getViewHandler().calculateLocale(
                     context);
             if (logger.isFinerEnabled()) {
-                logger.finer("Locale for this view as determined by calculateLocale "
+                logger.finer(LoggerMessageLocalizer.getMessage("LOCALE_FOR_THIS_VIEW_AS_DETERMINATED_BY_CALCULATELOCALE")
                             + locale.toString());
             }
         } else {
             if (logger.isFinerEnabled()) {
-                logger.finer("Using locale from previous view "
+                logger.finer(LoggerMessageLocalizer.getMessage("USING_LOCALE_FROM_PREVIOUS_VIEW")+" "
                             + locale.toString());
             }
         }
@@ -350,12 +352,12 @@ public class XUIViewHandlerImpl extends ViewHandler {
                     context);
            if (logger.isFinerEnabled()) {
                logger.finer(
-               "RenderKitId for this view as determined by calculateRenderKitId "
+               MessageLocalizer.getMessage("RENDERKITID_FOR_THIS_VIEW_AS_DETERMINATED_BY_CALCULTERENDERKIT")+" "
                + renderKitId);
             }
         } else {
             if (logger.isFinerEnabled()) {
-                logger.finer("Using renderKitId from previous view "
+                logger.finer(LoggerMessageLocalizer.getMessage("USING_RENDERKITID_FROM_PREVIOUS_VIEW")+" "
                             + renderKitId);
             }
         }
@@ -402,7 +404,7 @@ public class XUIViewHandlerImpl extends ViewHandler {
         String requestURI = viewToExecute.getViewId();
 
         if (logger.isFinerEnabled()) {
-            logger.finer("About to execute view " + requestURI);
+            logger.finer( LoggerMessageLocalizer.getMessage("ABOUT_TO_EXECUTE_VIEW")+" " + requestURI);
         }
 
         // update the JSTL locale attribute in request scope so that JSTL
@@ -415,7 +417,7 @@ public class XUIViewHandlerImpl extends ViewHandler {
                        Config.FMT_LOCALE, context.getViewRoot().getLocale());
         }
         if (logger.isFinerEnabled()) {
-            logger.finer("Before dispacthMessage to viewId " + requestURI);
+            logger.finer(LoggerMessageLocalizer.getMessage("BEFORE_DISPATCHMESSAGE_TO_VIEWID")+" " + requestURI);
         }
 
         // save the original response
@@ -429,7 +431,7 @@ public class XUIViewHandlerImpl extends ViewHandler {
         extContext.dispatch(requestURI);
 
         if (logger.isFinerEnabled()) {
-            logger.finer("After dispacthMessage to viewId " + requestURI);
+            logger.finer(LoggerMessageLocalizer.getMessage("AFTER_DISPATCHMESSAGE_TO_VIEWID")+" " + requestURI);
         }
 
         // replace the original response
@@ -575,7 +577,7 @@ public class XUIViewHandlerImpl extends ViewHandler {
         }
 
         if (logger.isFinerEnabled()) {
-            logger.finer("Begin writing marker for viewId " +
+            logger.finer(LoggerMessageLocalizer.getMessage("BEGIN_WRITING_MARKER_FOR_VIEWID")+" " +
                         context.getViewRoot().getViewId());
         }
 
@@ -585,7 +587,7 @@ public class XUIViewHandlerImpl extends ViewHandler {
         }
         context.getResponseWriter().write(RIConstants.SAVESTATE_FIELD_MARKER);
         if (logger.isFinerEnabled()) {
-            logger.finer("End writing marker for viewId " +
+            logger.finer(LoggerMessageLocalizer.getMessage("END_WRITING_MARKER_FOR_VIEWID")+" " +
                         context.getViewRoot().getViewId());
         }
 
@@ -766,7 +768,7 @@ public class XUIViewHandlerImpl extends ViewHandler {
             }
             convertedViewId = buffer.toString();
             if (logger.isFinerEnabled()) {
-                logger.finer( "viewId after appending the context suffix " +
+                logger.finer(LoggerMessageLocalizer.getMessage("VIEWID_AFTER_APPENDING_THE_CONTEXT_SUFFIX")+ " " +
                              convertedViewId);
             }
 

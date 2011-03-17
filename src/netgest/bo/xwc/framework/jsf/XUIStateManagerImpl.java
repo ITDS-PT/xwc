@@ -64,6 +64,8 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.render.ResponseStateManager;
 
+import netgest.bo.localizations.LoggerMessageLocalizer;
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
@@ -150,7 +152,7 @@ public class XUIStateManagerImpl extends StateManager {
 
             if (null != id) {
                 if (LOGGER.isFinerEnabled()) {
-                    LOGGER.finer("Begin restoring view in session for viewId "
+                    LOGGER.finer(LoggerMessageLocalizer.getMessage("BEGIN_RESTORING_VIEW_IN_SESSION_FOR_VIEWID")+" "
                                 + viewId);
                 }
                 String idString = (String) id;
@@ -170,8 +172,8 @@ public class XUIStateManagerImpl extends StateManager {
                 // stop evaluating if the session is not available
                 if (sessionObj == null) {
                     if (LOGGER.isFinerEnabled()) {
-                        LOGGER.finer(
-                              "Can't Restore Server View State, session expired for viewId: "
+                        LOGGER.finer(MessageLocalizer.getMessage("CANT_RESTORE_SERVER_VIEW_STATE_SESSION_EXPIRED_FOR_VIEWID")+
+                              ": "
                               + viewId);
                     }
                     return null;
@@ -199,8 +201,8 @@ public class XUIStateManagerImpl extends StateManager {
                 }
                 if (stateArray == null) {
                     if (LOGGER.isFinerEnabled()) {
-                        LOGGER.finer(
-                              "Session Available, but View State does not exist for viewId: "
+                        LOGGER.finer(MessageLocalizer.getMessage("SESSION_AVAILABLE_BUT_STATE_DOES_NOT_EXIST_FOR_VIEWID")+
+                              ": "
                               + viewId);
                     }
                     return null;
@@ -216,7 +218,7 @@ public class XUIStateManagerImpl extends StateManager {
                 viewRoot.processRestoreState(context, handleRestoreState(stateArray[1])); 
 
                 if (LOGGER.isFinerEnabled()) {
-                    LOGGER.finer("End restoring view in session for viewId "
+                    LOGGER.finer(LoggerMessageLocalizer.getMessage("END_RESTORING_VIEW_IN_SESSION_FOR_VIEWID")+" "
                                 + viewId);
                 }
             }
@@ -282,7 +284,7 @@ public class XUIStateManagerImpl extends StateManager {
 
 
         if (LOGGER.isFinerEnabled()) {
-            LOGGER.finer("Begin creating serialized view for "
+            LOGGER.finer(LoggerMessageLocalizer.getMessage("BEGIN_CREATING_SERIALIZED_VIEW_FOR")+" "
                         + viewRoot.getViewId());
         }
         List<TreeNode> treeList = new ArrayList<TreeNode>(32);
@@ -292,7 +294,7 @@ public class XUIStateManagerImpl extends StateManager {
         Object[] tree = treeList.toArray();      
         
         if (LOGGER.isFinerEnabled()) {
-            LOGGER.finer("End creating serialized view " + viewRoot.getViewId());
+            LOGGER.finer(LoggerMessageLocalizer.getMessage("END_CREATING_SERIALIZED_VIEW")+" " + viewRoot.getViewId());
         }
         if (!isSavingStateInClient(context)) {
             //

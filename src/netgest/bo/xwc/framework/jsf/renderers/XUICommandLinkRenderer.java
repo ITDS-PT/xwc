@@ -11,6 +11,7 @@ import javax.faces.component.UIForm;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.framework.components.XUIForm;
 
 import com.sun.faces.RIConstants;
@@ -58,7 +59,7 @@ public class XUICommandLinkRenderer extends CommandLinkRenderer {
 		if (formClientId == null) {
 			if (logger.isLoggable(Level.WARNING)) {
 				logger.log(Level.WARNING,
-						"Component {0} must be enclosed inside a form",
+						MessageLocalizer.getMessage("COMPONENT")+" {0} "+MessageLocalizer.getMessage("MUST_BE_ENCLOSED_INSIDE_A_FORM"),
 						component.getId());
 			}
 		}

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
 	<xvw:viewer beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.LogsBean"
-		beanId="viewBean">
+		beanId="viewBean"
+		localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
 		<xvw:form id="form">
 			<style>
 				#log {
@@ -10,29 +11,29 @@
 				color:red;
 				}			
 		</style>
-			<xvw:title valueExpression='Logs'></xvw:title>
+			<xvw:title valueExpression='@{LOGS}'></xvw:title>
 			<xvw:tabs renderTabBar='false'>
 				<xvw:tab id="logTab">
 					<xvw:rows>
 						<xvw:row>
 							<xvw:cell>
-								<xvw:attribute label='boConfig defined logs'
+								<xvw:attribute label='@{BOCONFIG_DEFINED_LOGS}'
 									inputType='attributeText' isLov='true' lovMap='#{viewBean.logsLov}'
 									valueExpression='#{viewBean.selectedLog}' />
 							</xvw:cell>
 							<xvw:cell>
-								<xvw:actionButton label='Download Log'
+								<xvw:actionButton label='@{DOWNLOAD_LOG}'
 									serverAction='#{viewBean.downLoadLog}' target="DOWNLOAD"/>
 							</xvw:cell>
 						</xvw:row>
 						<xvw:row>
 							<xvw:cell>
-								<xvw:attribute label='Number of lines to show'
+								<xvw:attribute label='@{NUMBER_OF_LINES_TO_SHOW}'
 									inputType='attributeNumber' valueExpression='#{viewBean.numLines}'
 									maxLength='9999' maxValue='9999' />
 							</xvw:cell>
 							<xvw:cell>
-								<xvw:actionButton label='Show Log'
+								<xvw:actionButton label='@{SHOW_LOG}'
 									serverAction='#{viewBean.showLog}' />
 							</xvw:cell>
 						</xvw:row>

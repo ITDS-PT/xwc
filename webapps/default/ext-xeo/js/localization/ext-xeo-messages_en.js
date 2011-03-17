@@ -8,7 +8,8 @@ ExtXeo.Messages = {
 	TREE_TITLE		: 'Options',
 	XEODM_ACTIVE	: "XEODM Enabled",
 	XEODM_INACTIVE	: "XEODM Disabled",
-	LOGOUT_BTN		: 'Logout'
+	LOGOUT_BTN		: 'Logout',
+	USER_PROPS			: 'User settings'
 };
 
 if(ExtXeo.PagingToolbar){

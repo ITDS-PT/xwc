@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import netgest.bo.localizations.LoggerMessageLocalizer;
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
@@ -16,6 +17,7 @@ import netgest.bo.system.LoggerLevels.LoggerLevel;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class XEOObjectConnector implements DataRecordConnector, Map<String,Object> {
 
@@ -177,10 +179,10 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 
     public boolean containsKey(Object key) {
         if( key == null )
-            throw new NullPointerException( "key cannot be null" );
+            throw new NullPointerException(ExceptionMessage.KEY_CANNOT_BE_NULL.toString());
 
         if( !(key instanceof String) )
-            throw new IllegalArgumentException("key must be a string");
+            throw new IllegalArgumentException(ExceptionMessage.KEY_MUST_BE_A_STRING.toString());
 
         return getAttribute( (String)key ) != null;
     }
@@ -191,16 +193,16 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 
     public Object get(Object key) {
         if( key == null )
-            throw new NullPointerException( "key cannot be null" );
+            throw new NullPointerException(ExceptionMessage.KEY_CANNOT_BE_NULL.toString() );
 
         if( !(key instanceof String) )
-            throw new IllegalArgumentException("key must be a string");
+            throw new IllegalArgumentException(ExceptionMessage.KEY_MUST_BE_A_STRING.toString());
         
         return getAttribute( (String)key );
     }
 
     public Object put(String key, Object value) {
-        throw new RuntimeException("XEODataRecord is readOnly" );
+        throw new RuntimeException(ExceptionMessage.XEODATARECORD_IS_READONLY.toString());
     }
 
     public Object remove(Object key) {
@@ -209,21 +211,21 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 
     @SuppressWarnings("unchecked")
 	public void putAll(Map t) {
-        log.log( LoggerLevels.WARNING, "Mehtod not implemented!" );
+        log.log( LoggerLevels.WARNING, LoggerMessageLocalizer.getMessage("METHOD_NOT_IMPLEMENTED"));
     }
 
     public void clear() {
-        log.log( LoggerLevels.WARNING, "Mehtod not implemented!" );
+        log.log( LoggerLevels.WARNING, LoggerMessageLocalizer.getMessage("METHOD_NOT_IMPLEMENTED") );
     }
 
     @SuppressWarnings("unchecked")
 	public Set<String> keySet() {
-        log.log( LoggerLevels.WARNING, "Mehtod not implemented!" );
+        log.log( LoggerLevels.WARNING, LoggerMessageLocalizer.getMessage("METHOD_NOT_IMPLEMENTED") );
         return Collections.EMPTY_SET;
     }
 
     public Collection<Object> values() {
-        log.log( LoggerLevels.WARNING, "Mehtod not implemented!" );
+        log.log( LoggerLevels.WARNING, LoggerMessageLocalizer.getMessage("METHOD_NOT_IMPLEMENTED") );
         return null;
     }
 

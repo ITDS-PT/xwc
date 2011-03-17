@@ -17,6 +17,7 @@ import netgest.bo.transaction.XTransactionManager;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.jsf.XUIViewHandlerImpl;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 
 public class XUIRequestContext {
@@ -186,7 +187,7 @@ public class XUIRequestContext {
     }
 
     private void throwCloseException() {
-        throw new RuntimeException( "XUIContext is closed" );
+        throw new RuntimeException( ExceptionMessage.XUICONTEXT_IS_CLOSED.toString() );
     }
 
     public XUIViewRoot getViewRoot() {

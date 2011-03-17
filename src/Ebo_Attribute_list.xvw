@@ -4,19 +4,20 @@
 		xmlns:xvw="http://www.netgest.net/xeo/xvw"
 		xmlns:xeo="http://www.netgest.net/xeo/xeo"
 	>
-	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseList" beanId="viewBean">
-		<xvw:form>
-			<xvw:title valueExpression="#{viewBean.title}"/>
+	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseList" beanId="viewBean"
+	localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
+		<xeo:formList>
+		<!-- 	<xvw:title valueExpression="#{viewBean.title}"/>-->
 			<xvw:toolBar>
-				<xvw:menu text="Criar Novo" icon='ext-xeo/images/menus/adicionar-bridge.gif' serverAction="#{viewBean.addNew}"></xvw:menu>
-			</xvw:toolBar>
+				<xvw:menu text="@{FORM_CREATE_NEW}" icon='ext-xeo/images/menus/adicionar-bridge.gif' serverAction="#{viewBean.addNew}"></xvw:menu>
+			</xvw:toolBar> 
 			<xvw:gridPanel rowSelectionMode="" dataSource="#{viewBean.dataList}" onRowDoubleClick="#{viewBean.rowDoubleClick}" id="name" autoExpandColumn="name">
 				<xvw:columns>
                 	<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
-					<xvw:columnAttribute width="150" label="Nome" dataField="name"/>
-					<xvw:columnAttribute width="150" label="Descrição" dataField="description"/>
+					<xvw:columnAttribute width="150" label="@{FORM_NAME}" dataField="name"/>
+					<xvw:columnAttribute width="150" label="@{FORM_DESCRIPTION}" dataField="description"/>
 				</xvw:columns>
 			</xvw:gridPanel>
-		</xvw:form>
+		</xeo:formList>
 	</xvw:viewer>
 </xvw:root>

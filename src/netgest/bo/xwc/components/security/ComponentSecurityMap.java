@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+
 /**
  * Map implementation that returns the security permission based on the componentId
  */
@@ -31,47 +33,47 @@ public class ComponentSecurityMap implements Map<String, Byte> {
 	}
 
 	public void clear() {
-		throw new RuntimeException( "not implemented" );
+		throw new RuntimeException( ExceptionMessage.NOT_IMPLEMENTED.toString() );
 	}
 
 	public boolean containsKey(Object key) {
-		throw new RuntimeException( "not implemented" );
+		throw new RuntimeException( ExceptionMessage.NOT_IMPLEMENTED.toString()  );
 	}
 
 	public boolean containsValue(Object value) {
-		throw new RuntimeException( "not implemented" );
+		throw new RuntimeException( ExceptionMessage.NOT_IMPLEMENTED.toString() );
 	}
 
 	public Set<java.util.Map.Entry<String, Byte>> entrySet() {
-		throw new RuntimeException( "not implemented" );
+		throw new RuntimeException( ExceptionMessage.NOT_IMPLEMENTED.toString()  );
 	}
 
 	public boolean isEmpty() {
-		throw new RuntimeException( "not implemented" );
+		throw new RuntimeException( ExceptionMessage.NOT_IMPLEMENTED.toString()  );
 	}
 
 	public Set<String> keySet() {
-		throw new RuntimeException( "not implemented" );
+		throw new RuntimeException( ExceptionMessage.NOT_IMPLEMENTED.toString() );
 	}
 
 	public Byte put(String key, Byte value) {
-		throw new RuntimeException( "not implemented" );
+		throw new RuntimeException( ExceptionMessage.NOT_IMPLEMENTED.toString()  );
 	}
 
 	public void putAll(Map<? extends String, ? extends Byte> t) {
-		throw new RuntimeException( "not implemented" );
+		throw new RuntimeException( ExceptionMessage.NOT_IMPLEMENTED.toString()  );
 	}
 	
 	public Byte remove(Object key) {
-		throw new RuntimeException( "not implemented" );
+		throw new RuntimeException( ExceptionMessage.NOT_IMPLEMENTED.toString()  );
 	}
 
 	public int size() {
-		throw new RuntimeException( "not implemented" );
+		throw new RuntimeException( ExceptionMessage.NOT_IMPLEMENTED.toString() );
 	}
 
 	public Collection<Byte> values() {
-		throw new RuntimeException( "not implemented" );
+		throw new RuntimeException( ExceptionMessage.NOT_IMPLEMENTED.toString()  );
 	}
 	
 }

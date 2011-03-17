@@ -9,7 +9,9 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +29,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
@@ -39,6 +42,7 @@ import netgest.bo.security.securityRights;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.utils.XEOQLModifier;
+import netgest.bo.utils.XeoApplicationLanguage;
 import netgest.bo.xwc.components.annotations.Visible;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -69,6 +73,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.FormEdit;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
 
@@ -108,16 +113,28 @@ public class XEOEditBean extends XEOBaseBean
     private Boolean					editInOrphanMode = null;
     private boolean 				bTransactionStarted = false;
     
+    
+    public Map<Object, String> languagesLovMap = new LinkedHashMap<Object, String>();
+    public String language;
     /**
      * @return	The current XEO Object associated to this bean
      */
+  
+    
+    
+    
+    
     public boObject getXEOObject() {
-        try {
+      //setLanguagesLovMap();
+      //setLanguage();
+       
+    	try {
 
         	if( getCurrentObjectKey() != null ) {
 	            oBoObect = boObject.getBoManager().loadObject
 	                ( boApplication.currentContext().getEboContext() , Long.parseLong(String.valueOf( getCurrentObjectKey() )));
 	            
+	         
 	            if( !oBoObect.userReadThis() )
 	            	oBoObect.markAsRead(); 
 	            
@@ -139,6 +156,30 @@ public class XEOEditBean extends XEOBaseBean
             throw new RuntimeException(e);
         }
     }
+
+    ///////////////////
+    /**
+     * 
+     */
+    public Map<Object, String> getLanguagesLovMap() {
+    	Map<Object, String> olanguagesMap = new LinkedHashMap<Object, String>();
+    	HashSet<XeoApplicationLanguage> hs=boApplication.getDefaultApplication().getAllApplicationLanguages();
+    	Iterator<XeoApplicationLanguage> it =hs.iterator();
+    	XeoApplicationLanguage apl;
+    	while(it.hasNext()){
+    		apl=(XeoApplicationLanguage) it.next();
+    		olanguagesMap.put(apl.code, apl.description);
+    	}
+    	
+    	return olanguagesMap;
+    }
+    
+    
+    public void setLanguagesLovMap()
+    {
+    	languagesLovMap = getLanguagesLovMap();
+    }
+    
 
     /**
      * @return the current DataRecordConnector associated with the XEO Object
@@ -333,8 +374,8 @@ public class XEOEditBean extends XEOBaseBean
         }
         catch (Exception e) 
         {
-        	log.severe("XEOEditBean - XSLT Transformation Error", e);
-        	throw new boRuntimeException("XEOEditBean - XSLT Transformation Error", e.getMessage(), e);
+        	log.severe("XEOEditBean - "+MessageLocalizer.getMessage("XSLT_TRANSFORMATION_ERROR"), e);
+        	throw new boRuntimeException("XEOEditBean - "+ExceptionMessage.XSLT_TRANSFORMATION_ERROR.toString(), e.getMessage(), e);
         }
         
         return out.toByteArray();
@@ -360,7 +401,7 @@ public class XEOEditBean extends XEOBaseBean
 			return ngtXMLUtils.getXML(doc);
 			//return result;
 		} catch (IOException e) {
-			log.severe("Could not retrieve the Viewer", e);
+			log.severe(MessageLocalizer.getMessage("COULD_NOT_RETRIEVE_THE_VIEWER"), e);
 			//e.printStackTrace();
 		} 
 		return null;
@@ -1976,7 +2017,7 @@ public class XEOEditBean extends XEOBaseBean
         oRequestContext.renderResponse();
     	
     }
-    
+     
     @Visible
     public void showOPL()
     {

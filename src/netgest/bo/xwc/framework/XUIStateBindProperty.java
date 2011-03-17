@@ -3,6 +3,7 @@ package netgest.bo.xwc.framework;
 import javax.el.ValueExpression;
 
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class XUIStateBindProperty<V> extends XUIStateProperty<ValueExpression> {
     
@@ -82,7 +83,7 @@ public class XUIStateBindProperty<V> extends XUIStateProperty<ValueExpression> {
                 else if( oValExpr.getExpectedType() == Byte.class ) {
                     oRetValue = Byte.valueOf( sLiteralText );
                 } else {
-                	throw new RuntimeException( "Cannot conver expression text ["+sLiteralText+"] in " + oValExpr.getExpectedType().getName() );
+                	throw new RuntimeException(ExceptionMessage.CANNOT_CONVERT_EXPRESSION_TEXT.toString()+" ["+sLiteralText+"]"+ExceptionMessage.IN.toString()+" " + oValExpr.getExpectedType().getName() );
                 }
             }
             else {

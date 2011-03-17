@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.system.boApplication;
@@ -272,7 +273,7 @@ public class XUIComponentParser
                     if (sRenderFamily.length() == 0)
                     	sRenderFamily = sRenderFor;
                     
-                    assert sRenderFor != null:"for attribute must be defined in element";
+                    assert sRenderFor != null:MessageLocalizer.getMessage("FOR_ATTRIBUTE_MUST_BE_DEFINED_IN_ELEMENT");
                     oComponent = oComponents.getComponent( sComponentNamespace +":" + sRenderFor );
                     
                     if (oComponent == null)
@@ -287,7 +288,7 @@ public class XUIComponentParser
                     }
                     else{
                         if ( log.isLoggable( LoggerLevels.FINER ) ){
-                            log.warn("Component id ["+sRenderFor+"] not found parsing renderKit" );
+                            log.warn(MessageLocalizer.getMessage("COMPONENT_ID")+" ["+sRenderFor+"] "+MessageLocalizer.getMessage("NOT_FOUND_PARSING_RENDERKIT") );
                         }
                     }
                 }

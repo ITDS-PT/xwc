@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 import netgest.bo.def.v2.boDefInterfaceImpl;
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.runtime.boBridgeIterator;
 import netgest.bo.runtime.boBridgeRow;
 import netgest.bo.runtime.boObject;
@@ -22,6 +23,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 /**
  * 
@@ -377,8 +379,8 @@ public class XEOSecurityOPLBean extends XEOEditBean
 			oRequestContext.addMessage(
 	                "Bean",
 	                new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, 
-	                    "BAD", 
-	                    "Cannot save required fields" 
+	                    MessageLocalizer.getMessage("BAD"), 
+	                    MessageLocalizer.getMessage("CANNOT_SAVE_REQUIRED_FIELDS") 
 	                )
 	            );
 			oRequestContext.renderResponse();
@@ -464,8 +466,8 @@ public class XEOSecurityOPLBean extends XEOEditBean
 				oRequestContext.addMessage(
 		                "noRowsSelected",
 		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
-		                    "Error", 
-		                    "Please select one row from the panel" 
+		                    MessageLocalizer.getMessage("ERROR"), 
+		                    MessageLocalizer.getMessage("PLEASE_SELECT_ONE_ROW_FROM_THE_PANEL") 
 		                )
 		            );
 		    	oRequestContext.renderResponse();
@@ -497,8 +499,8 @@ public class XEOSecurityOPLBean extends XEOEditBean
 				oRequestContext.addMessage(
 		                "removedSucess",
 		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
-		                    "Sucess", 
-		                    "The selected permission was removed" 
+		                    MessageLocalizer.getMessage("SUCCESS"), 
+		                    MessageLocalizer.getMessage("THE_SELECTED_PERMISSION_WAS_REMOVED")
 		                )
 		            );
 		    	oRequestContext.renderResponse();
@@ -508,8 +510,8 @@ public class XEOSecurityOPLBean extends XEOEditBean
 				oRequestContext.addMessage(
 		                "removeError",
 		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
-		                    "Operation not allowed", 
-		                    "System Permissions cannot be removed" 
+		                    MessageLocalizer.getMessage("OPERATION_NOT_ALLOWED"), 
+		                    MessageLocalizer.getMessage("SYSTEM_PERMISSIONS_CANNOT_BE_REMOVED") 
 		                )
 		            );
 		    	oRequestContext.renderResponse();
@@ -518,7 +520,7 @@ public class XEOSecurityOPLBean extends XEOEditBean
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (boRuntimeException e) {
-			throw new RuntimeException("Could not remove permissions from current object", e);
+			throw new RuntimeException(ExceptionMessage.COULD_NOT_REMOVE_PERMISSIONS_FROM_CURRENT_OBJECT.toString(), e);
 		}
 	}
 	
@@ -566,8 +568,8 @@ public class XEOSecurityOPLBean extends XEOEditBean
 			oRequestContext.addMessage(
 	                "notAllowedOperation",
 	                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
-	                    "Operation not allowed", 
-	                    "You don't permissions to edit this topic" 
+	                    MessageLocalizer.getMessage("OPERATION_NOT_ALLOWED"), 
+	                    MessageLocalizer.getMessage("YOU_DONT_HAVE_PERMISSIONS_TO_EDIT_THIS_TOPIC") 
 	                )
 	            );
 	    	oRequestContext.renderResponse();
@@ -605,8 +607,8 @@ public class XEOSecurityOPLBean extends XEOEditBean
 		        	oRequestContext.addMessage(
 			                "Bean",
 			                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
-			                    "Operation not allowed", 
-			                    "Cannot edit System OPL" 
+			                    MessageLocalizer.getMessage("OPERATION_NOT_ALLOWED"), 
+			                    MessageLocalizer.getMessage("CANNOT_EDIT_SYSTEM_OPL") 
 			                )
 			            );
 			    	oRequestContext.renderResponse();

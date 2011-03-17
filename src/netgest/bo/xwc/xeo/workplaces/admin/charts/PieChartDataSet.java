@@ -9,6 +9,7 @@ import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.classic.charts.configurations.IPieChartConfiguration;
 import netgest.bo.xwc.components.classic.charts.datasets.impl.PieDataSetImpl;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
 
 public class PieChartDataSet extends PieDataSetImpl {
 
@@ -87,7 +88,7 @@ public class PieChartDataSet extends PieDataSetImpl {
 	}
 
 	public String getLastUpdated() {
-		return "Last updated "+getCreationDateString();
+		return MainAdminBeanMessages.LASTUPDATED.toString()+getCreationDateString();
 	}
 
 	

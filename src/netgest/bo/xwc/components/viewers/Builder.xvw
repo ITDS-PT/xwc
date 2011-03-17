@@ -54,7 +54,7 @@
 					</xvw:cell>
 				</xvw:row>
 			</xvw:rows>
-			<xvw:section label='Build Progress'>
+			<xvw:section label='@{BUILD_PROGRESS}'>
 				<xvw:rows columnWidths='150px,99%'>
 					<xvw:row>
 						<xvw:cell>

@@ -4,6 +4,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
+import netgest.bo.localizations.MessageLocalizer;
+
 
 public class XUIComponentStore
 {
@@ -144,7 +146,7 @@ public class XUIComponentStore
      */
     public XUIComponentDefinition findComponent( String name )
     {
-        assert name != null : "Name cannot be null";
+        assert name != null : MessageLocalizer.getMessage("NAME_CANNOT_BE_NULL");
         
         return (XUIComponentDefinition)components.get( name );        
     }

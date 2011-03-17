@@ -3,12 +3,13 @@
 	xmlns:xvw="http://www.netgest.net/xeo/xvw"
 	xmlns:xeo="http://www.netgest.net/xeo/xeo"	
 >
-	<xvw:viewer beanClass="netgest.bo.xwc.components.viewers.beans.MigrateXEOViewersToXWCBean" beanId="viewBean">
+	<xvw:viewer beanClass="netgest.bo.xwc.components.viewers.beans.MigrateXEOViewersToXWCBean" beanId="viewBean"
+	localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
 		<xeo:formList>
 			<xeo:list renderToolBar="false" rowSelectionMode="MULTI_ROW"> 
 			<xeo:listToolBar renderCreateNew="false">
 				<xvw:menu
-		                        text='Migrate Viewers' 
+		                        text='@{MIGRATE_VIEWERS}' 
 		                        value="{viewerName:'netgest/bo/xwc/components/viewers/MigrateXEOViewersToXWCLog.xvw'}" 
 		                        target='self'
 		                        serverAction="#{viewBean.migrateAndOpenLog}" 

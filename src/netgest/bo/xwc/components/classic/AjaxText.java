@@ -16,6 +16,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 /**
  * 
@@ -121,7 +122,7 @@ public class AjaxText extends XUIComponentBase {
 			AjaxText oComp = (AjaxText)component;
 			
 			if (oComp.getText() == null || oComp.getUpdateTime() == null)
-				throw new RuntimeException("Property 'text' and 'updateTime' cannot be null");
+				throw new RuntimeException(ExceptionMessage.PROPERTY_TEXT_AND_UPDATETIME_CANNOT_BE_NULL.toString());
 			
 			String sanitizedCompId = "_"+oComp.getClientId().replace(":", "");
 			

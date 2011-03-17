@@ -8,6 +8,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseListener;
 import javax.faces.lifecycle.Lifecycle;
 
+import netgest.bo.localizations.LoggerMessageLocalizer;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.system.LoggerLevels.LoggerLevel;
@@ -74,7 +75,7 @@ public class XUILifecycleImpl extends Lifecycle {
         }
 
         if (LOGGER.isFinerEnabled()) {
-            LOGGER.finer("execute(" + context + ")");
+            LOGGER.finer(LoggerMessageLocalizer.getMessage("EXECUTE")+"(" + context + ")");
         }
         
         int i = 1;
@@ -145,7 +146,7 @@ public class XUILifecycleImpl extends Lifecycle {
         }
 
         if (LOGGER.isFinerEnabled()) {
-            LOGGER.finer("render(" + context + ")");
+            LOGGER.finer(LoggerMessageLocalizer.getMessage("RENDER")+"(" + context + ")");
         }
 
         if (!context.getResponseComplete()) {

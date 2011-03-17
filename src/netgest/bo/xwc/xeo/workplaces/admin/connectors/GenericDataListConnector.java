@@ -17,6 +17,7 @@ import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.FilterTerms;
 import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.framework.XUIComponentPlugIn;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class GenericDataListConnector implements DataListConnector {
 
@@ -139,7 +140,7 @@ public class GenericDataListConnector implements DataListConnector {
 
 	@Override
 	public void setSortTerms(SortTerms sortTerms) {
-		throw new IllegalArgumentException( "Not supported order terms" );
+		throw new IllegalArgumentException(ExceptionMessage.NOT_SUPPORTED_ORDER_TERMS.toString());
 	}
 
 	@Override

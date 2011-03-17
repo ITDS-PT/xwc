@@ -8,6 +8,7 @@ import java.util.Collections;
 import netgest.bo.builder.boBuildRepository;
 import netgest.bo.builder.boBuilder;
 import netgest.bo.def.boDefHandler;
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.report.BDHTMLBuilder;
 import netgest.bo.report.TableComparator;
 import netgest.bo.report.XMLObject;
@@ -186,7 +187,7 @@ public class DbReports extends XEOBaseBean {
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			return "Não foi possível gerar o Relatório. Erro: " +
+			return MessageLocalizer.getMessage("COULD_NOT_GENERATE_THE_REPORT_ERROR")+": " +
 			e.getLocalizedMessage() + ".";
 		}
 

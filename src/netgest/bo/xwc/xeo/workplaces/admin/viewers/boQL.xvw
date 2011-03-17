@@ -2,26 +2,27 @@
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
 	<xvw:viewer beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.BoQLBean"
 		beanId="viewBean"
+		localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'
 		afterUpdateModelPhase='#{viewBean.beforeRender}'
 	>
 		<xvw:form id="form">
 			<xvw:title valueExpression='boQL'></xvw:title>
 			<xvw:errorMessages></xvw:errorMessages>
 				<xvw:toolBar renderComponent="#{viewBean.enableQueryForm}">
-					<xvw:menu icon='ext-xeo/images/menus/confirmar.gif' text='Run Query' serverAction='#{viewBean.runQuery}'/>
+					<xvw:menu icon='ext-xeo/images/menus/confirmar.gif' text='@{RUN_QUERY}' serverAction='#{viewBean.runQuery}'/>
 				</xvw:toolBar>
 				<xvw:rows>
 				<xvw:row renderComponent="#{viewBean.enableQueryForm}">
 					<xvw:cell>
-					<xvw:section label='Query to Execute'>
+					<xvw:section label='@{QUERY_TO_EXECUTE}'>
 					<xvw:rows>
 						<xvw:row>
 							<xvw:cell>
-								<xvw:attribute label='Security' inputType='attributeBoolean'
+								<xvw:attribute label='@{SECURITY}' inputType='attributeBoolean'
 									valueExpression='#{viewBean.enableSecurity}' />
 							</xvw:cell>
 							<xvw:cell>
-								<xvw:attribute label='SQL Result' inputType='attributeBoolean'
+								<xvw:attribute label='@{SQL_RESULT}' inputType='attributeBoolean'
 									valueExpression='#{viewBean.enableSqlResult}' />
 							</xvw:cell>
 						</xvw:row>
@@ -29,7 +30,7 @@
 							<xvw:cell>
 								<xvw:attribute 
 									id='lastQueriesCmb'
-									label='Last Queries' 
+									label='@{LAST_QUERIES}' 
 									inputType='attributeText'
 									isLov='true'
 									maxLength='5000' 
@@ -83,7 +84,7 @@
 					<xvw:rows>
 						<xvw:row>
 							<xvw:cell>
-								<xvw:gridPanel title='Result' forceColumnsFitWidth="false" renderComponent="#{viewBean.querySuccess}" DataSource="#{viewBean.result}">
+								<xvw:gridPanel title='@{RESULT}' forceColumnsFitWidth="false" renderComponent="#{viewBean.querySuccess}" DataSource="#{viewBean.result}">
 								<xvw:columns plugIn="#{viewBean.attributesColPlugIn}" />
 								</xvw:gridPanel>
 							</xvw:cell>

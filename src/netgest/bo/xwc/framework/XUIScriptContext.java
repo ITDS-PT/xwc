@@ -8,7 +8,9 @@ import java.util.Iterator;
 import java.util.Vector;
 
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.framework.jsf.XUIStaticField;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,8 +32,8 @@ public class XUIScriptContext {
 
     public void add( RenderPosition oPosition, String sId, CharSequence sCode ) {
         int iIdIdx;
-        if( oPosition == null ) throw new IllegalArgumentException( "oPosition cannot be null" );
-        if( sId == null ) throw new IllegalArgumentException( "sId cannot be null" );
+        if( oPosition == null ) throw new IllegalArgumentException(ExceptionMessage.OPOSITION_CANNOT_BE_NULL.toString());
+        if( sId == null ) throw new IllegalArgumentException(ExceptionMessage.SID_CANNOT_BE_NULL.toString());
         
         // Muda a flag para notificar que existem  inline para ser feito o render
         bInlineWritePending = bInlineWritePending || oPosition == POSITION_INLINE;
@@ -47,8 +49,8 @@ public class XUIScriptContext {
 
     public void addInclude( RenderPosition oPosition, String sId, String sURL ) {
         int iIdIdx;
-        assert oPosition != null: "oPosition cannot be null";
-        assert sId != null: "sId cannot be null";
+        assert oPosition != null: MessageLocalizer.getMessage("OPOSITION_CANNOT_BE_NULL");
+        assert sId != null: MessageLocalizer.getMessage("SID_CANNOT_BE_NULL");
 
         // Muda a flag para notificar que existem  inline para ser feito o render
         bInlineWritePending = bInlineWritePending || oPosition.getValue() == POSITION_INLINE.getValue();
@@ -62,9 +64,9 @@ public class XUIScriptContext {
     }
 
     public void addIncludeBefore( String sBeforeId, RenderPosition oPosition, String sId, String sURL ) {
-        if( sBeforeId != null ) throw new IllegalArgumentException( "sBeforeId cannot be null");
-        if( oPosition != null ) throw new IllegalArgumentException("oPosition cannot be null");
-        if( sId != null ) throw new IllegalArgumentException("sId cannot be null");
+        if( sBeforeId != null ) throw new IllegalArgumentException( ExceptionMessage.SBEFOREID_CANNOT_BE_NULL.toString());
+        if( oPosition != null ) throw new IllegalArgumentException(ExceptionMessage.OPOSITION_CANNOT_BE_NULL.toString());
+        if( sId != null ) throw new IllegalArgumentException(ExceptionMessage.SID_CANNOT_BE_NULL.toString());
 
         // Muda a flag para notificar que existem  inline para ser feito o render
         bInlineWritePending = bInlineWritePending || oPosition.getValue() == POSITION_INLINE.getValue();
@@ -80,9 +82,9 @@ public class XUIScriptContext {
     }
     
     public void addIncludeAfter( String sAfterId, RenderPosition oPosition, String sId, String sURL ) {
-        if( sAfterId == null ) throw new IllegalArgumentException( "sAfterId cannot be null");
-        if( oPosition == null ) throw new IllegalArgumentException( "oPosition cannot be null");
-        if( sId == null ) throw new IllegalArgumentException( "sId cannot be null");
+        if( sAfterId == null ) throw new IllegalArgumentException(ExceptionMessage.SAFTERID_CANNOT_BE_NULL.toString());
+        if( oPosition == null ) throw new IllegalArgumentException( ExceptionMessage.OPOSITION_CANNOT_BE_NULL.toString());
+        if( sId == null ) throw new IllegalArgumentException(ExceptionMessage.SID_CANNOT_BE_NULL.toString());
 
         // Muda a flag para notificar que existem  inline para ser feito o render
         bInlineWritePending = bInlineWritePending || oPosition.getValue() == POSITION_INLINE.getValue();
@@ -129,7 +131,7 @@ public class XUIScriptContext {
     }
 
     public int getIndexById( String sId ) {
-        if( sId == null ) throw new IllegalArgumentException( "sId cannot be null");
+        if( sId == null ) throw new IllegalArgumentException(ExceptionMessage.SID_CANNOT_BE_NULL.toString());
         
         Fragment oCurrentFragment;
         int iPos;
@@ -245,7 +247,7 @@ public class XUIScriptContext {
     protected void renderFragment( XUIResponseWriter w, Fragment oFragment ) throws IOException {
         // <script type="text/javascript" src="/en/us/shared/core/2/js/js.ashx?s=Csp;shared"></script>
         
-        assert w!=null:new IllegalArgumentException( "Response Writer cannot be null" );
+        assert w!=null:new IllegalArgumentException( MessageLocalizer.getMessage("RESPONSE_WRITER_CANNOT_BE_NULL") );
 
         XUIRequestContext oRequestContext;
         oRequestContext = XUIRequestContext.getCurrentContext();
@@ -263,7 +265,7 @@ public class XUIScriptContext {
                 w.write( String.valueOf( oFragment.getContent() ) );
             }
             else {
-                throw new IllegalStateException("Script Render Type is invalid");
+                throw new IllegalStateException(ExceptionMessage.SCRIPT_RENDER_TYPE_IS_INVALID.toString());
             }
             oFragment.markRenderered();
         }

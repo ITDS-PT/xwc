@@ -2,6 +2,9 @@ package netgest.bo.xwc.components.classic.theme;
 
 import java.io.File;
 
+import netgest.bo.system.boApplication;
+import netgest.bo.system.boSession;
+import netgest.bo.system.boSessionUser;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
@@ -26,11 +29,28 @@ public class ExtJsTheme implements XUITheme {
     }
 
     public void addScripts(XUIScriptContext scriptContext) {
-    	
+    	 String lang = null;
     	// Current language...
     	// Choosing user language...
-        String lang = XUIMessagesLocalization.getThreadCurrentLocale().getLanguage();
-    	
+    	 
+    	 
+    	 if(boApplication.currentContext().getEboContext()!=null){
+    		 boSessionUser user= boApplication.currentContext().getEboContext().getBoSession().getUser();
+    		 try {
+    			 lang = user.getLanguage().toLowerCase();// XUIMessagesLocalization.getThreadCurrentLocale().getLanguage();
+
+    			 if (lang.length()>3){
+    				 lang= (String) lang.subSequence(0,2);
+    			 }
+
+    		 } catch (Exception e) {
+    			 lang =XUIMessagesLocalization.getThreadCurrentLocale().getLanguage();
+    		 }
+    	 }
+    	 else
+    		 lang = boApplication.getDefaultApplication().getApplicationLanguage();
+    	lang = lang.toLowerCase();
+    
         // Extjs
     	scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-base", composeUrl( getResourceBaseUri() + "adapter/ext/ext-base.js" ) );
     	scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all", composeUrl( getResourceBaseUri() + "ext-all-debug.js" ) );

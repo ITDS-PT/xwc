@@ -10,6 +10,7 @@ import java.util.List;
 
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 /**
  * 
@@ -156,7 +157,7 @@ public class SeriesDataSetSQL implements SeriesDataSet {
 		}
 		catch (Exception e)
 		{
-			throw new RuntimeException("Could not build the SQL Series DataSet for expression: " + sqlExpression,e);
+			throw new RuntimeException(ExceptionMessage.COULD_NOT_BUILD_THE_SQL_SERIES_DATASET_FOR_EXPRESSION.toString()+": " + sqlExpression,e);
 		}
 		
 	}

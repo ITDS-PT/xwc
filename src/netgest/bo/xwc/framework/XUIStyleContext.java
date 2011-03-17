@@ -3,6 +3,7 @@ package netgest.bo.xwc.framework;
 import java.io.IOException;
 
 import netgest.bo.xwc.framework.XUIScriptContext.Fragment;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class XUIStyleContext extends XUIScriptContext {
 
@@ -34,7 +35,7 @@ public class XUIStyleContext extends XUIScriptContext {
                 w.endElement( "style" );
             }
             else {
-                throw new IllegalStateException("Style Render Type is invalid");
+                throw new IllegalStateException(ExceptionMessage.STYLE_RENDER_TYPE_IS_INVALID.toString());
             }
             oFragment.markRenderered();
         }

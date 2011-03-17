@@ -20,6 +20,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 import javax.servlet.http.HttpServletRequest;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.xwc.components.annotations.ObjectAttribute;
 import netgest.bo.xwc.components.annotations.Required;
@@ -50,6 +51,7 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIInput;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -891,7 +893,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 			throw new RuntimeException(ComponentMessages.GRID_DATASOURCE_ERROR
 					.toString(dataSource.getExpressionString()), e);
 		}
-		throw new RuntimeException("There are no dataSource defined. The GridPanel property dataSource is null or returned null!");
+		throw new RuntimeException(ExceptionMessage.THERE_ARE_NO_DATASOURCE_DEFINED__.toString()+"!");
 	}
 	
 	/**
@@ -1645,7 +1647,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 								}
 							} else {
 								System.err
-										.println("Local Filter: Unsupported String filter");
+										.println(MessageLocalizer.getMessage("LOCAL_FILTER_UNSUPORTED_STRING_FILTER"));
 							}
 						} else if (val instanceof java.util.Date) {
 							Date dVal = (Date) val;
@@ -1665,7 +1667,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 								}
 							} else {
 								System.err
-										.println("Local Filter: Unsupported Date filter");
+										.println(MessageLocalizer.getMessage("LOCAL_FILTER_UNSUPORTED_DATE_FILTER"));
 							}
 						} else if (val instanceof Boolean) {
 							// Only supports OPERATOR_EQUAL
@@ -1694,7 +1696,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 								}
 							} else {
 								System.err
-										.println("Local Filter: Unsupported BigDecimal filter");
+										.println(MessageLocalizer.getMessage("LOCAL_FILTER_UNSUPORTED_BIGDECIMAL_FILTER"));
 							}
 						} else if (val instanceof Object[]) {
 							BigDecimal nColumnValue = (BigDecimal) dataRecordConnector

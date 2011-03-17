@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by António (Itds) -->
-<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
-	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseBean" beanId="viewBean">
-		<xvw:form id="formEboAttribute">
-			<xvw:title valueExpression="#{viewBean.title}"/>
-            <xvw:errorMessages></xvw:errorMessages>
-			<xvw:toolBar id="MainToolbar">
-				<xvw:menu id="save" text="Guardar" icon="ext-xeo/images/menus/gravar.gif" serverAction="#{viewBean.save}"/>
-				<xvw:menu id="saveandclose" text="Guardar e Fechar" icon="ext-xeo/images/menus/gravar_e_sair.gif" serverAction="#{viewBean.saveAndClose}"/>
-				<xvw:menu id="remove" text="Remover" icon="ext-xeo/images/menus/cancel.gif" serverAction="#{viewBean.remove}"/>
-			</xvw:toolBar>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw"
+xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseBean" beanId="viewBean" localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
+		<xeo:formEdit >
 			<xvw:panel>
 				<xvw:rows>
 					<xvw:row>
@@ -30,13 +24,13 @@
 					</xvw:row>
 				</xvw:rows>
 				<xvw:tabs>
-					<xvw:tab label="Seguranças">
+					<xvw:tab label="@{SECURITY}">
 						<xvw:rows>
 							<xvw:row>
 								<xvw:gridPanel rowSelectionMode="MULTI_ROW" objectAttribute="security" id="security">
 									<xvw:toolBar>
-										<xvw:menu text="Adicionar" icon="ext-xeo/images/menus/adicionar-bridge.gif" value="formEboAttribute:security" serverAction="#{viewBean.lookupBridge}"/>
-										<xvw:menu text="Remover" icon="ext-xeo/images/menus/remover-bridge.gif" value="formEboAttribute:security" serverAction="#{viewBean.removeFromBridge}"/>
+										<xvw:menu text="@{ADD}" icon="ext-xeo/images/menus/adicionar-bridge.gif" value="formEboAttribute:security" serverAction="#{viewBean.lookupBridge}"/>
+										<xvw:menu text="@{REMOVE}" icon="ext-xeo/images/menus/remover-bridge.gif" value="formEboAttribute:security" serverAction="#{viewBean.removeFromBridge}"/>
 									</xvw:toolBar>
 									<xvw:columns>
 										<xvw:columnAttribute width="150" dataField="name"/>
@@ -47,6 +41,6 @@
 					</xvw:tab>
 				</xvw:tabs>
 			</xvw:panel>
-		</xvw:form>
+		</xeo:formEdit>
 	</xvw:viewer>
 </xvw:root>

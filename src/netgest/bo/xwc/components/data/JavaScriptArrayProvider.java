@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
@@ -33,8 +34,8 @@ public class JavaScriptArrayProvider {
     
     public JavaScriptArrayProvider( Iterator<DataRecordConnector> oDataIterator, String[] dataFields, int start, int limit ) {
 
-        assert oDataIterator != null : "Data connector cannot be null";
-        assert dataFields != null : "Data fields must be specified";
+        assert oDataIterator != null : MessageLocalizer.getMessage("DATA_CONNECTOR_CANNOT_BE_NULL");
+        assert dataFields != null : MessageLocalizer.getMessage("DATA_FIELDS_MUST_BE_SPECIFIED");
         
         this.iStart = start;
         this.iLimit = limit;

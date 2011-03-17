@@ -150,7 +150,7 @@ public class XEOBaseLookupList extends XEOBaseList {
     	cancel();
     }
 
-    public void cancel() throws boRuntimeException
+    public void cancel()
     {
     	//TODO:
     }

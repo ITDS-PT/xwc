@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import netgest.bo.runtime.robots.ejbtimers.xeoEJBTimer;
 import netgest.bo.system.boAgentsControllerEjbTimer;
 import netgest.bo.system.boApplication;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
 
 
 public class ThreadsDataListConnector extends GenericDataListConnector {
@@ -19,19 +20,19 @@ public class ThreadsDataListConnector extends GenericDataListConnector {
 		else 
 			this.type = ThreadType.EJB_TIMERS;
 
-		this.createColumn("NAME", "Name");
+		this.createColumn("NAME", MainAdminBeanMessages.NAME.toString());
 
 		switch (this.type) {
 		case USER_THREADS:
-			this.createColumn("CLASS_EJB_NAME", "Class Name");
+			this.createColumn("CLASS_EJB_NAME", MainAdminBeanMessages.CLASS_NAME.toString());
 			break;
 		case EJB_TIMERS:
-			this.createColumn("CLASS_EJB_NAME", "EJB Name");
+			this.createColumn("CLASS_EJB_NAME", MainAdminBeanMessages.EJB_NAME.toString());
 			break;
 		}
 
-		this.createColumn("INTERVAL", "Interval");
-		this.createColumn("ACTIVE", "Active");
+		this.createColumn("INTERVAL", MainAdminBeanMessages.INTERVAL.toString());
+		this.createColumn("ACTIVE", MainAdminBeanMessages.ACTIVE.toString());
 
 	}
 

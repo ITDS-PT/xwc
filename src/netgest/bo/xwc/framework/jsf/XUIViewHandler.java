@@ -33,6 +33,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import netgest.bo.def.boDefHandler;
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.boApplication;
 import netgest.bo.transaction.XTransaction;
 import netgest.bo.xwc.components.classic.Layouts;
@@ -93,7 +94,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
     public XUIViewHandler() {
         if (log.isDebugEnabled()) {
-            log.debug("Created ViewHandler instance ");
+            log.debug(MessageLocalizer.getMessage("CREATE_VIEWHANDLER_INSTANCE"));
         }
     }
 
@@ -340,7 +341,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         
         if (log.isDebugEnabled()) 
         {
-            log.debug("Created new view for " + viewId);
+            log.debug(MessageLocalizer.getMessage("CREATE_NEW_VIEW_FOR")+" " + viewId);
         }
         
         // PENDING(): not sure if we should set the RenderKitId here.
@@ -354,7 +355,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                 context.getApplication().getViewHandler().calculateLocale(
                     context);
             if (log.isDebugEnabled()) {
-                log.debug("Locale for this view as determined by calculateLocale "
+                log.debug(MessageLocalizer.getMessage("LOCALE_FOR_THIS_VIEW_AS_DETERMINED_BY_CALCULATELOCALE")+" "
                           + locale.toString());
             }
         } 
@@ -363,7 +364,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             if (log.isDebugEnabled()) 
             {
                 log.debug(
-                    "Using locale from previous view " + locale.toString());
+                    MessageLocalizer.getMessage("USING_LOCALE_FROM_PREVIOUS_VIEW")+" " + locale.toString());
             }
         }
 
@@ -373,7 +374,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                 context.getApplication().getViewHandler().calculateRenderKitId(
                     context);
             if (log.isDebugEnabled()) {
-                log.debug("RenderKitId for this view as determined by calculateRenderKitId "
+                log.debug(MessageLocalizer.getMessage("RENDERKITID_FOR_THIS_VIEW_AS_DETERMINATED_BY_CALCULTERENDERKIT")+" "
                           + renderKitId);
             }
         } 
@@ -381,8 +382,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         {
             if (log.isDebugEnabled()) 
             {
-                log.debug(
-                    "Using renderKitId from previous view " + renderKitId);
+                log.debug(MessageLocalizer.getMessage("USING_RENDERKITID_FROM_PREVIOUS_VIEW")+
+                    " " + renderKitId);
             }
         }
 
@@ -406,7 +407,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         try {
             // Initialize View Bean.
             if( log.isDebugEnabled() ) {
-                log.debug("Initializing beans for view " + viewId );    
+                log.debug(MessageLocalizer.getMessage("INITIALIZING_BEANS_FOR_VIEW")+" " + viewId );    
             }
             
             if( sBeanClassName != null && sBeanClassName.length() > 0 ) {
@@ -430,15 +431,15 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         if (log.isDebugEnabled()) 
         {
             log.debug(
-                "Start building component view " + viewId );
+                MessageLocalizer.getMessage("START_BUILDING_COMPONENT_VIEW")+" " + viewId );
         }
         
         oViewerBuilder.buildView( oContext, oViewerDef, result );
 
         if (log.isDebugEnabled()) 
         {
-            log.debug(
-                  "End building component view " + viewId );
+            log.debug(MessageLocalizer.getMessage("END_BUILDING_COMPONENT_VIEW")+
+                  " " + viewId );
         }
 
         // Initialize security
@@ -676,7 +677,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                 ((XUIRendererServlet)renderer).service( request, response, oComp );
             } else {
                 // TODO: i18n
-                log.warn("Can't get Renderer for type " + rendererType + " Component Servlet request aborted! ");
+                log.warn(MessageLocalizer.getMessage("CANT_GET_RENDERER_FOR_TYPE")+" " + rendererType + " "+MessageLocalizer.getMessage("COMPONENT_SERVLET_REQUEST_ABORTED"));
             }
         }
         context.responseComplete();
@@ -923,7 +924,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 					e.printStackTrace();
 				}                
 				
-				System.out.println( "Tempo XSL:" + (System.currentTimeMillis()-init) );
+				System.out.println( MessageLocalizer.getMessage("XSL_TIME") + (System.currentTimeMillis()-init) );
 				
             }
             

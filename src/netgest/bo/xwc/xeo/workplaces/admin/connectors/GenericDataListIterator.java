@@ -5,6 +5,7 @@ import java.util.Map;
 
 import netgest.bo.xwc.components.connectors.DataListIterator;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class GenericDataListIterator implements DataListIterator {
 	Iterator<Map<String, Object>> iterator;
@@ -16,7 +17,7 @@ public class GenericDataListIterator implements DataListIterator {
 	@Override
 	public boolean skip(int nRows) {
 		// TODO Auto-generated method stub
-		throw new RuntimeException("Not implemented");
+		throw new RuntimeException(ExceptionMessage.NOT_IMPLEMENTED.toString());
 	}
 
 	@Override
@@ -36,7 +37,7 @@ public class GenericDataListIterator implements DataListIterator {
 	@Override
 	public void remove() {
 		// TODO Auto-generated method stub
-		throw new RuntimeException("Not implemented");
+		throw new RuntimeException(ExceptionMessage.NOT_IMPLEMENTED.toString());
 	}
 
 }

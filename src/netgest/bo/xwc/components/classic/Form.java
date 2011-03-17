@@ -10,6 +10,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
+import netgest.bo.localizations.LoggerMessageLocalizer;
+import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.xwc.components.HTMLAttr;
@@ -187,7 +189,7 @@ public class Form extends XUIForm
             if (requestParameterMap.containsKey(clientId)) {
                 if (logger.isFinestEnabled()) {
                     logger.log(LoggerLevels.FINEST,
-                               "UIForm with client ID %s, submitted",
+                               LoggerMessageLocalizer.getMessage("UIFORM_WITH_CLIENT_ID_SUBMITED"),
                                clientId);
                 }
                 ((XUIForm) component).setSubmitted(true);
@@ -334,8 +336,8 @@ public class Form extends XUIForm
             // false.
             if (!component.isRendered()) {
                 if (logger.isFinestEnabled()) {
-                    logger.log(LoggerLevels.FINEST,
-                               "End encoding component {0} since rendered attribute is set to false",
+                    logger.log(LoggerLevels.FINEST,MessageLocalizer.getMessage("END_ENCODING_COMPONENT")+
+                               "{0}"+MessageLocalizer.getMessage("SINCE_REDERED_ATTRIBUTE_IS_SET_TO_FALSE"),
                                component.getId());
                 }
                 return false;
@@ -348,8 +350,8 @@ public class Form extends XUIForm
 
             if (com.sun.faces.util.Util.componentIsDisabledOrReadonly(component)) {
                 if (logger.isFinestEnabled()) {
-                    logger.log(LoggerLevels.FINEST,
-                               "No decoding necessary since the component {0} is disabled or read-only",
+                    logger.log(LoggerLevels.FINEST,MessageLocalizer.getMessage("NO_DECODING_NECESSARY_SINCE_THE_COMPONENT")+
+                               " {0} "+MessageLocalizer.getMessage("IS_DISABLED_OR_READ_ONLY"),
                                component.getId());
                 }
                 return false;

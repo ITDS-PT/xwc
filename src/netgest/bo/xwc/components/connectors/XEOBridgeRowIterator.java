@@ -1,6 +1,7 @@
 package netgest.bo.xwc.components.connectors;
 
 import netgest.bo.runtime.boBridgeIterator;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class XEOBridgeRowIterator implements DataListIterator {
     
@@ -30,6 +31,6 @@ public class XEOBridgeRowIterator implements DataListIterator {
     }
 
     public void remove() {
-        throw new RuntimeException("Not implemented remove on netgest.bo.xwc.components.connectors.XEOBridgeRowIterator");
+        throw new RuntimeException(ExceptionMessage.NOT_IMPLEMENTED_REMOVE_ON.toString()+" netgest.bo.xwc.components.connectors.XEOBridgeRowIterator");
     }
 }
