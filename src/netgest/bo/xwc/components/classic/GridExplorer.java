@@ -21,14 +21,34 @@ import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
+//import netgest.bo.xwc.xeo.beans.XEOBeanEventObject;
+//import netgest.bo.xwc.xeo.beans.XEOEditBeanEventListener;
+//import netgest.bo.xwc.xeo.beans.XEOEditBeanEventType;
 
 public class GridExplorer extends GridPanel {
 	
 	public enum PreviewPanelPosition {
 		LEFT,
 		RIGHT,
-		BOTTOM
+		BOTTOM,
+		OFF
 	}
+	
+	public enum PreviewPanelMode {
+		PREVIEW,
+		EDIT
+	}
+	
+//	public final static XEOEditBeanEventListener XEOEDITBEAN = new XEOEditBeanEventListener() {
+//		@Override
+//		public void actionPerformed(XEOBeanEventObject event) {
+//			if( event.getEventType() == XEOEditBeanEventType.BEFORE_CLOSE ) {
+//				event.cancelEvent();
+//				System.out.println( "Close View!!!" );
+//			}
+//		}
+//	}; 
+	
 	
 	private XUIViewProperty<PreviewPanelPosition> previewPanelPosition = 
 		new XUIViewProperty<PreviewPanelPosition>("previewPanelPosition", this, PreviewPanelPosition.BOTTOM );
@@ -39,12 +59,28 @@ public class GridExplorer extends GridPanel {
 	private XUIViewProperty<Integer> previewPanelHeight = 
 		new XUIViewProperty<Integer>("previewPanelHeight", this, 250 );
 
+	private XUIViewProperty<PreviewPanelMode> previewPanelMode = 
+		new XUIViewProperty<PreviewPanelMode>("previewPanelMode", this, PreviewPanelMode.PREVIEW );
+
 	private XUIViewProperty<Integer> previewPanelWidth = 
 		new XUIViewProperty<Integer>("previewPanelWidth", this, 350 );
+	
 	
 	private XUIBaseProperty<String> previewCommand = 
 		new XUIBaseProperty<String>("previewCommand", this, "#{viewBean.previewObject}");
 	
+	public void setPreviewPanelMode( String previewPanelMode ) {
+		this.previewPanelMode.setValue( PreviewPanelMode.valueOf( previewPanelMode ) );
+	}
+
+	public void setPreviewPanelMode( PreviewPanelMode previewPanelMode ) {
+		this.previewPanelMode.setValue(  previewPanelMode );
+	}
+	
+	public PreviewPanelMode getPreviewPanelMode() {
+		return this.previewPanelMode.getValue();
+	}
+
 	public void setPreviewPanelHeight( int height ) {
 		this.previewPanelHeight.setValue( height );
 	}
@@ -92,6 +128,9 @@ public class GridExplorer extends GridPanel {
 	
 	@Override
 	public void initComponent() {
+		
+		super.setRowSelectionMode( GridPanel.SELECTION_ROW );
+		
 		super.initComponent();
 		
 		if ( super.getStateProperty("enableGroupBy").isDefaultValue() ) {
@@ -106,6 +145,12 @@ public class GridExplorer extends GridPanel {
 		
 		createToolBar();
 		
+		//loadUserPreferences();
+	}
+		
+	@Override
+	public void preRender() {
+		super.preRender();
 	}
 	
 	private ToolBar getToolBar() {
@@ -122,7 +167,24 @@ public class GridExplorer extends GridPanel {
 		pvw.setText("Painel de Leitura");
 		pvw.setId( getId() + "_pvw" );
 		
-		PreviewPanelPosition p = getPreviewPanelPosition();
+		PreviewPanelPosition 	p = getPreviewPanelPosition();
+		PreviewPanelMode 		m = getPreviewPanelMode();
+		
+		PreviewModeMenu pvwE = new PreviewModeMenu();
+		pvwE.setText( "Mode Edição" );
+		pvwE.setValue( PreviewPanelMode.EDIT == m );
+		pvwE.setGroup( "mode" );
+		pvwE.setMode( PreviewPanelMode.EDIT.name() );
+		pvwE.setId( getId() + "_mpvwE" );
+		pvw.getChildren().add( pvwE );
+
+		PreviewModeMenu pvwP = new PreviewModeMenu();
+		pvwP.setText( "Pré-Visualização" );
+		pvwP.setValue( PreviewPanelMode.PREVIEW == m );
+		pvwP.setGroup( "mode" );
+		pvwP.setMode( PreviewPanelMode.PREVIEW.name() );
+		pvwP.setId( getId() + "_mpvwP" );
+		pvw.getChildren().add( pvwP );
 		
 		PreviewPositionMenu pvwl = new PreviewPositionMenu();
 		pvwl.setText( "Esquerda" );
@@ -130,7 +192,6 @@ public class GridExplorer extends GridPanel {
 		pvwl.setGroup( "preview" );
 		pvwl.setPosition( "LEFT" );
 		pvwl.setId( getId() + "_mpvwl" );
-		
 		pvw.getChildren().add( pvwl );
 		
 		PreviewPositionMenu pvwr = new PreviewPositionMenu();
@@ -149,6 +210,15 @@ public class GridExplorer extends GridPanel {
 		pvwb.setId( getId() + "_mpvwb" );
 		pvw.getChildren().add( pvwb );
 		
+		
+		PreviewPositionMenu pvwOff = new PreviewPositionMenu();
+		pvwOff.setText( "Desligado" );
+		pvwOff.setValue( PreviewPanelPosition.OFF == p );
+		pvwOff.setGroup( "preview" );
+		pvwOff.setPosition( "OFF" );
+		pvwOff.setId( getId() + "_mpvwoff" );
+		pvw.getChildren().add( pvwOff );
+		 
 		t.getChildren().add( pvw );
 		
 		Menu search = new Menu();
@@ -158,6 +228,67 @@ public class GridExplorer extends GridPanel {
 		
 		getChildren().add( t );
 	}
+	
+	public static class PreviewModeMenu extends Menu {
+		
+		private XUIBaseProperty<String> mode = new XUIBaseProperty<String>("mode", this );
+		
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			GridExplorer gexp = (GridExplorer)findParentComponent( GridExplorer.class );
+			
+			String mode = getMode();
+			if( mode == null ) {
+				// Toggle the position
+				boolean nextSetTrue = false;
+				for( UIComponent c : getChildren() ) {
+					PreviewModeMenu pm = (PreviewModeMenu)c;
+					
+					if( (Boolean)pm.getValue() ) {
+						nextSetTrue = true;
+						pm.setValue( false );
+					}
+					else {
+						if( nextSetTrue ) {
+							pm.setValue( true );
+							gexp.setPreviewPanelPosition( pm.getMode() );
+							nextSetTrue = false;
+						}
+					}
+				}
+				if( nextSetTrue ) {
+					((Menu)getChild(0)).setValue( true );
+					gexp.setPreviewPanelPosition( ((PreviewModeMenu)getChild(0)).getMode() );
+				}				
+			}
+			else {
+				gexp.setPreviewPanelMode( mode );
+				// Update the menu flag
+				Menu m = (Menu)getParent();
+				for( UIComponent c : m.getChildren() ) {
+					if( c instanceof PreviewModeMenu ) {
+						PreviewModeMenu pm = (PreviewModeMenu)c;
+						if( pm != this ) {
+							pm.setValue( false );
+						}
+						else {
+							pm.setValue( true );
+						}
+					}
+				}
+				
+			}
+		}
+		
+		public void setMode( String position ) {
+			this.mode.setValue( position );
+		}
+		
+		public String getMode() {
+			return this.mode.getValue();
+		}
+	}
+	
 	
 	public static class PreviewPositionMenu extends Menu {
 		
@@ -174,23 +305,25 @@ public class GridExplorer extends GridPanel {
 				
 				boolean nextSetTrue = false;
 				for( UIComponent c : getChildren() ) {
-					PreviewPositionMenu pm = (PreviewPositionMenu)c;
-					
-					if( (Boolean)pm.getValue() ) {
-						nextSetTrue = true;
-						pm.setValue( false );
-					}
-					else {
-						if( nextSetTrue ) {
-							pm.setValue( true );
-							gexp.setPreviewPanelPosition( pm.getPosition() );
-							nextSetTrue = false;
+					if( c instanceof PreviewPositionMenu ) {
+						PreviewPositionMenu pm = (PreviewPositionMenu)c;
+						
+						if( (Boolean)pm.getValue() ) {
+							nextSetTrue = true;
+							pm.setValue( false );
+						}
+						else {
+							if( nextSetTrue ) {
+								pm.setValue( true );
+								gexp.setPreviewPanelPosition( pm.getPosition() );
+								nextSetTrue = false;
+							}
 						}
 					}
 				}
 				if( nextSetTrue ) {
-					((Menu)getChild(0)).setValue( true );
-					gexp.setPreviewPanelPosition( ((PreviewPositionMenu)getChild(0)).getPosition() );
+					((Menu)getChild(2)).setValue( true );
+					gexp.setPreviewPanelPosition( ((PreviewPositionMenu)getChild(2)).getPosition() );
 				}				
 			}
 			else {
@@ -198,12 +331,14 @@ public class GridExplorer extends GridPanel {
 				// Update the menu flag
 				Menu m = (Menu)getParent();
 				for( UIComponent c : m.getChildren() ) {
-					PreviewPositionMenu pm = (PreviewPositionMenu)c;
-					if( pm != this ) {
-						pm.setValue( false );
-					}
-					else {
-						pm.setValue( true );
+					if( c instanceof PreviewPositionMenu ) {
+						PreviewPositionMenu pm = (PreviewPositionMenu)c;
+						if( pm != this ) {
+							pm.setValue( false );
+						}
+						else {
+							pm.setValue( true );
+						}
 					}
 				}
 			}
@@ -243,6 +378,7 @@ public class GridExplorer extends GridPanel {
 		
 		@Override
 		public void encodeBegin(XUIComponentBase component) throws IOException {
+			//component.forceRenderOnClient();
 		}
 		
 		@Override
@@ -259,16 +395,18 @@ public class GridExplorer extends GridPanel {
 		public void encodeEnd(XUIComponentBase component) throws IOException {
 
 			GridExplorer exp = ((GridExplorer)component);
-			
-			exp.setRegion("center");
-			exp.setLayout("");
-			
 			if( exp.isRenderedOnClient() ) {
 				getResponseWriter().getScriptContext().add(
 						XUIScriptContext.POSITION_HEADER, 
 						"destroy" + exp.getId(), 
 						"Ext.getCmp('" + exp.getId() + "_vp').destroy();" );
 			}
+			
+			exp.getToolBar().forceRenderOnClient(); 
+			
+			
+			exp.setRegion("center");
+			exp.setLayout("");
 			
 			ExtConfig config = new ExtConfig("Ext.Viewport");
 			config.add( "layout" , "'border'");
@@ -277,43 +415,88 @@ public class GridExplorer extends GridPanel {
 			ExtConfigArray items = config.addChildArray("items");
 			items.add( gridRenderer.extEncodeAll(component) );
 			
-			ExtConfig previewPanel = new ExtConfig();
-			previewPanel.addJSString( "id" , exp.getClientId() + "_panel" );
-			previewPanel.add( "split" , true );
-			previewPanel.add( "height" , exp.getPreviewPanelHeight() );
-			previewPanel.add( "width" , exp.getPreviewPanelWidth() );
-			
-			previewPanel.add( "hidden" , false );
-			previewPanel.addJSString( "region" , decodePositionToRegion( exp.getPreviewPanelPosition() ) );
-			previewPanel.addJSString( "title" , "Preview" );
-			previewPanel.addJSString( "bodyStyle" , "overflow:auto;" );
-			previewPanel.addJSString( "html" , "<div id=\"" + exp.getClientId() + "_pvwdiv"  +  "\"/>" );
-			
-			// Default listeners
-			ExtConfig listeners = new ExtConfig();
-			listeners.add( "bodyresize" , "function(){ExtXeo.layoutMan.doLayout();}");
-			previewPanel.add( "listeners" , listeners );
-			
-			items.add( previewPanel );
-			
-			
-			
+			PreviewPanelMode previewMode = exp.getPreviewPanelMode();
+			if( exp.getEnablePreviewPanel() && exp.getPreviewPanelPosition() != PreviewPanelPosition.OFF ) {  
+				ExtConfig previewPanel = new ExtConfig();
+				previewPanel.addJSString( "id" , exp.getClientId() + "_panel" );
+				previewPanel.add( "split" , true );
+				previewPanel.add( "height" , exp.getPreviewPanelHeight() );
+				previewPanel.add( "width" , exp.getPreviewPanelWidth() );
+				
+				previewPanel.add( "hidden" , false );
+				previewPanel.addJSString( "region" , decodePositionToRegion( exp.getPreviewPanelPosition() ) );
+				previewPanel.addJSString( "title" , "Preview" );
+				previewPanel.addJSString( "bodyStyle" , "overflow:auto;" );
+				
+				if( previewMode == PreviewPanelMode.EDIT ) {
+					previewPanel.addJSString( "html" , "<div id=\"" + exp.getClientId() + "_pvwdiv"  +  "\"/>" );
+				}
+				else {
+					String sFrameName = exp.getClientId() + "_pvwfrm" ;
+					previewPanel.add( "html" , 
+							"\"<iframe name='"+sFrameName+"' id='"+sFrameName+"' src='about:blank' scrolling='yes' frameBorder='0' width='100%' height='100%'></iframe>\"" 
+						);
+				}
+				
+				// Default listeners
+				ExtConfig listeners = new ExtConfig();
+				listeners.add( "bodyresize" , "function(){ExtXeo.layoutMan.doLayout();}");
+				previewPanel.add( "listeners" , listeners );
+				items.add( previewPanel );
+			}
 			
 			getResponseWriter().getScriptContext()
 				.add(XUIScriptContext.POSITION_FOOTER, "viewPort" + component.getClientId() , 
 						config.renderExtConfig()
 					);
 			
+			
+			String openCommandJs;
+			String destryCompsJs;
+			
+			if( previewMode == PreviewPanelMode.EDIT ) {
+				openCommandJs = "XVW.openViewOnElement(" +
+				"'" + component.findParentComponent(XUIForm.class).getClientId() + "', '" + exp.getPreviewCommandComponent().getClientId() + "', '', '" + exp.getClientId() + "_pvwdiv'" +
+				");";
+				destryCompsJs = 
+					"var e = document.getElementById('" + exp.getClientId() + "_pvwdiv');\n" +
+					"ExtXeo.destroyComponents( e, true );";
+				
+			}
+			else {
+				openCommandJs = "XVW.OpenCommandFrame(" +
+				"'" + exp.getClientId() + "_pvwfrm" + "','" + component.findParentComponent(XUIForm.class).getClientId() + "', '" + exp.getPreviewCommandComponent().getClientId() + "', ''" +
+				");";
+				destryCompsJs = "";
+			}
+			
+			
+			/*
 			getResponseWriter().getScriptContext()
-			.add(XUIScriptContext.POSITION_FOOTER, "previewRowClick" + component.getClientId() , 
+			.add(XUIScriptContext.POSITION_FOOTER, "previewBeforeRowSelect" + component.getClientId() , 
 					"var c = Ext.getCmp('" + component.getClientId() + "');" +
-					"c.on('rowclick',function(){ " + 
-						"ExtXeo.destroyComponents(document.getElementById('" + exp.getClientId() + "_pvwdiv'));" +
-						"XVW.openViewOnElement(" +
-						"'" + component.findParentComponent(XUIForm.class).getClientId() + "', '" + exp.getPreviewCommandComponent().getClientId() + "', '', '" + exp.getClientId() + "_pvwdiv');" + 
-					" });"
+					"c.getSelectionModel().on('beforerowselect',function( csmdl ){ " + 
+						"if( csmdl.hasSelection() ) {" +
+						"	return true;\n" +
+						"}" +
+						"return true;" +
+					"\n });"
+				); 
+
+			getResponseWriter().getScriptContext()
+			.add(XUIScriptContext.POSITION_FOOTER, "previewRowSelect" + component.getClientId() , 
+					"var c = Ext.getCmp('" + component.getClientId() + "');" +
+					"c.getSelectionModel().on('rowselect',function( csmdl ){ " + 
+						"if( csmdl.hasSelection() ) {" +
+						"	" +
+						"	ExtXeo.destroyComponents(document.getElementById('" + exp.getClientId() + "_pvwdiv'));\n" +
+						"}" +
+						"window.setTimeout(function(){" + openCommandJs + "},100);" +
+					"\n });"
 				);
 			
+			
+			*/
 			
 			// Overwrite the main functions
 			if( !exp.isRenderedOnClient() ) {
@@ -331,8 +514,7 @@ public class GridExplorer extends GridPanel {
 						"};" +
 						"XVW.closeViewExplorer = XVW.closeView;\n" +
 						"XVW.closeView = function( sViewId ) {\n" +
-						"	var e = document.getElementById('" + exp.getClientId() + "_pvwdiv');\n" +
-							"ExtXeo.destroyComponents( e );\n" +
+							destryCompsJs + "\n" +
 							"Ext.getCmp('"+ exp.getClientId() + "_panel').setTitle( '' );\n" +
 							"if( XVW.explorerIsClosingTab ) {\n" +
 							"	XVW.closeViewExplorer('" + XUIRequestContext.getCurrentContext().getViewRoot().getViewId() +  "');\n" +
@@ -340,13 +522,6 @@ public class GridExplorer extends GridPanel {
 						"}\n"
 				);
 			}
-			
-			
-//			getResponseWriter().getScriptContext()
-//			.add(XUIScriptContext.POSITION_FOOTER, "previewDoLayout" + component.getClientId() , 
-//					"window.setTimeout(\"alert(1);Ext.getCmp('" + component.getClientId() + "').doLayout( true, true );\",100);"
-//				);
-			
 		}
 
 		@Override
