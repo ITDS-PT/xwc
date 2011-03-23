@@ -17,7 +17,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class AttributeNumber extends AttributeBase {
 
-    @Override
+	@Override
     public void validate( FacesContext context ) {
         Object      oSubmitedValue = getSubmittedValue();
         String      sSubmitedValue = null;
@@ -58,7 +58,7 @@ public class AttributeNumber extends AttributeBase {
                         );
                     } else { 
                     	clearInvalid();
-                    	setValue( oSubmitedBigDecimal.toPlainString() );
+                    	setValue( oSubmitedBigDecimal );
                     }
                 }
                 catch( NumberFormatException ex ) {
