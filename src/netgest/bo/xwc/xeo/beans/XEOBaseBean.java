@@ -330,7 +330,7 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 				XUIViewRoot newViewRoot = oSessionContext.createView( sViewerName );
 				((XEOEditBean)newViewRoot.getBean("viewBean")).setCurrentObjectKey( Long.toString( boui ) );
 				
-				if( gridExplorer.getPreviewPanelMode() == GridExplorer.PreviewPanelMode.PREVIEW ) {
+				/*if( gridExplorer.getPreviewPanelMode() == GridExplorer.PreviewPanelMode.PREVIEW ) {
 					newViewRoot.setRenderKitId("XEOXML");
 					// After the request discard the view!
 					newViewRoot.setTransient( true );
@@ -339,7 +339,7 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 					((XEOEditBean)newViewRoot.getBean("viewBean")).addEventListener(
 								GridExplorer.XEOEDITBEAN
 							);
-				}
+				}*/
 				oRequestContext.setViewRoot( newViewRoot );
 			} catch (boRuntimeException e) {
 				throw new RuntimeException( e );
