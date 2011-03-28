@@ -9,9 +9,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +40,6 @@ import netgest.bo.security.securityRights;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.utils.XEOQLModifier;
-import netgest.bo.utils.XeoApplicationLanguage;
 import netgest.bo.xwc.components.annotations.Visible;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -114,21 +111,15 @@ public class XEOEditBean extends XEOBaseBean
     private boolean 				bTransactionStarted = false;
     
     
-    public Map<Object, String> languagesLovMap = new LinkedHashMap<Object, String>();
-    public String language;
     /**
      * @return	The current XEO Object associated to this bean
      */
-  
     
     
     
     
     public boObject getXEOObject() {
-      //setLanguagesLovMap();
-      //setLanguage();
-       
-    	try {
+      try {
 
         	if( getCurrentObjectKey() != null ) {
 	            oBoObect = boObject.getBoManager().loadObject
@@ -157,30 +148,7 @@ public class XEOEditBean extends XEOBaseBean
         }
     }
 
-    ///////////////////
-    /**
-     * 
-     */
-    public Map<Object, String> getLanguagesLovMap() {
-    	Map<Object, String> olanguagesMap = new LinkedHashMap<Object, String>();
-    	HashSet<XeoApplicationLanguage> hs=boApplication.getDefaultApplication().getAllApplicationLanguages();
-    	Iterator<XeoApplicationLanguage> it =hs.iterator();
-    	XeoApplicationLanguage apl;
-    	while(it.hasNext()){
-    		apl=(XeoApplicationLanguage) it.next();
-    		olanguagesMap.put(apl.code, apl.description);
-    	}
-    	
-    	return olanguagesMap;
-    }
-    
-    
-    public void setLanguagesLovMap()
-    {
-    	languagesLovMap = getLanguagesLovMap();
-    }
-    
-
+   
     /**
      * @return the current DataRecordConnector associated with the XEO Object
      */
