@@ -3,7 +3,7 @@
 	xmlns:xvw="http://www.netgest.net/xeo/xvw"
 	xmlns:xeo="http://www.netgest.net/xeo/xeo"
 >
-	<xvw:viewer beanClass="netgest.bo.xwc.xeo.beans.XEOEditBean" beanId="viewBean"
+	<xvw:viewer beanClass="netgest.bo.xwc.components.viewers.beans.EboLovBean" beanId="viewBean"
 localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
 		<xeo:formEdit renderToolBar="false">
 		<xeo:editToolBar renderObjectMethodBtns="false">
@@ -17,7 +17,7 @@ localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminV
 						<xvw:cell>
 							
 							<xvw:attribute lovMap='#{viewBean.languagesLovMap}'
-									valueExpression='#{viewBean.language}'
+									value='lang'
 									id='lang' inputType='attributeLov' label='@{LANGUAGE}'
 									maxLength='20'></xvw:attribute>
 						</xvw:cell>

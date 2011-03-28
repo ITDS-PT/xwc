@@ -109,9 +109,12 @@
 					<xvw:menu text='@{INDEX_QUEUE}'
 						value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/indexQueue.xvw'}"
 						target='Tab' serverAction="#{viewBean.openViewer}" />
-					<xvw:menu  text='@{LOVS}'
+				<!--
+				
+				Para incluir a partir da release 3.1.010
+				 	<xvw:menu  text='@{LOVS}'
 						value="{viewerName:'viewers/Ebo_LOV/list.xvw',boql:select Ebo_Lov}"
-						target='Tab' serverAction="#{viewBean.listObject}" />
+						target='Tab' serverAction="#{viewBean.listObject}" /> -->
 				<xvw:menu  text='@{APPLICATION_LANGUAGES}'
 						value="{viewerName:'XeoApplicationLanguage_list.xvw',boql:select XeoApplicationLanguage}"
 						target='Tab' serverAction="#{viewBean.listObject}" icon='ext-xeo/admin/languages.gif'/>

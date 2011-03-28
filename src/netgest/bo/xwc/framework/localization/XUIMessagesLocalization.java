@@ -5,190 +5,165 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boSessionUser;
 
-
 public class XUIMessagesLocalization {
 
-	public static void main( String[] args ) {
-		// Test
-		Locale l1 = Locale.getDefault();
-		// Default languange
-		System.out.println( getMessage("netgest.bo.xwc.localization.messages1", "hwrld" ) );
-		System.out.println( getMessage("netgest.bo.xwc.localization.messages1", "hello","Pedro" ) );
-		
-		// English
-		setThreadCurrentLocale( Locale.US );
-		System.out.println( getMessage("netgest.bo.xwc.localization.messages1", "hwrld" ) );
-		System.out.println( getMessage("netgest.bo.xwc.localization.messages1", "hello","Pedro" ) );
-		
-		// Japanese... may dont find it!!!
-		setThreadCurrentLocale( l1 );
-		System.out.println( getMessage("netgest.bo.xwc.localization.messages1", "hwrld" ) );
-		System.out.println( getMessage("netgest.bo.xwc.localization.messages1", "hell1o","Pedro","World" ) );
-		
-	}
-	
-	////////////////////////////
-	public static String getApplicationLanguage(){
-		boApplication bo=boApplication.currentContext().getApplication();
-		String ret =bo.getApplicationLanguage();
+	public static String getApplicationLanguage() {
+		boApplication bo = boApplication.currentContext().getApplication();
+		String ret = bo.getApplicationLanguage();
 		return ret;
 	}
-	public static String getUserLanguage(){
+
+	public static String getUserLanguage() {
 		String ret;
-		ret=getApplicationLanguage();
-		try{
-		if(boApplication.currentContext().getEboContext().getSysUser()!=null){
-		boSessionUser boUser=boApplication.currentContext().getEboContext().getSysUser();				
-		if (boUser.getLanguage()!=null&&boUser.getLanguage()!=""){
-		 ret =boUser.getLanguage();
-		 
-		}
-		}
-		return ret;}
-		finally
-		{
-			return ret;
-		}
-		
-		}
-		
-		
-	
-	
-	
-	
-	public static String getMessage(String lang, Locale local, String bundle, String key, Object ...args){
-		Locale language;
-		if (lang != null && lang!="")
-		{
-			if (lang.charAt(2)=='_')
+		ret = getApplicationLanguage();
+		try {
+			if (boApplication.currentContext() != null) 
 			{
-				
-					String s1=lang.substring(0, 2);
-					String s2=lang.substring(3, 5);
-					language=new Locale(s1,s2);
+				EboContext ctx = boApplication.currentContext().getEboContext();
+				if (ctx != null)
+				{
+					boSessionUser boUser = ctx.getSysUser();
+					if (boUser != null){
+						if (boUser.getLanguage() != null && boUser.getLanguage() != "") {
+							ret = boUser.getLanguage();
+						}
+					}
+				}
 			}
-			else{
-				language=new Locale(lang);
-			}
-		  return getMessage(language,bundle,key,args);
+			return ret;
+		} catch (Exception e )
+		{
+			e.printStackTrace();
 		}
-		return getMessage(local,bundle,key,args);
+		return ret;
 	}
-	//////////////////////////////////
+
+	public static String getMessage(String lang, Locale local, String bundle,
+			String key, Object... args) {
+		Locale language;
+		if (lang != null && lang != "") {
+			if (lang.charAt(2) == '_') {
+
+				String s1 = lang.substring(0, 2);
+				String s2 = lang.substring(3, 5);
+				language = new Locale(s1, s2);
+			} else {
+				language = new Locale(lang);
+			}
+			return getMessage(language, bundle, key, args);
+		}
+		return getMessage(local, bundle, key, args);
+	}
+
+	// ////////////////////////////////
 	static ThreadLocal<Locale> threadLocal = new ThreadLocal<Locale>() {
 		protected Locale initialValue() {
 			return Locale.getDefault();
 		};
 	};
-	
-	private static final Hashtable<Locale,Hashtable<String, ResourceBundle>> resourceBundles = new Hashtable<Locale,Hashtable<String, ResourceBundle>>();
-	
-	public static String getMessage( Locale locale, String bundle, String key ) {
-		return getMessage( locale, bundle, key ,(Object[])null);
+
+	private static final Hashtable<Locale, Hashtable<String, ResourceBundle>> resourceBundles = new Hashtable<Locale, Hashtable<String, ResourceBundle>>();
+
+	public static String getMessage(Locale locale, String bundle, String key) {
+		return getMessage(locale, bundle, key, (Object[]) null);
 	}
 
-	public static String getMessage( Locale locale, String bundle, String key, Object ...args ) {		
-		/////////
-		String lang=locale.getLanguage();
-		if(!lang.equalsIgnoreCase(getUserLanguage()))
-		{
-		locale=new Locale(getUserLanguage());	
+	public static String getMessage(Locale locale, String bundle, String key,
+			Object... args) {
+		// ///////
+		String lang = locale.getLanguage();
+		if (!lang.equalsIgnoreCase(getUserLanguage())) {
+			locale = new Locale(getUserLanguage());
 		}
 
-		lang=locale.getLanguage();
-		if (lang.length()>2)
-			if(lang.charAt(2)=='_')
-		{
-			
-				String string1=lang.substring(0, 2);
-				String string2=lang.substring(3, 5);
-				locale = new Locale(string1,string2);
-		}
+		lang = locale.getLanguage();
+		if (lang.length() > 2)
+			if (lang.charAt(2) == '_') {
 
-		
-		//////////
+				String string1 = lang.substring(0, 2);
+				String string2 = lang.substring(3, 5);
+				locale = new Locale(string1, string2);
+			}
+
+		// ////////
 		String localizedMessage = null;
-		
+
 		Hashtable<String, ResourceBundle> localeBundles;
 		ResourceBundle resourceBundle;
-		
+
 		try {
-		
+
 			resourceBundle = null;
-			localeBundles = resourceBundles.get( locale );
-			
-			if( localeBundles != null ) {
-				resourceBundle = localeBundles.get( bundle );
+			localeBundles = resourceBundles.get(locale);
+
+			if (localeBundles != null) {
+				resourceBundle = localeBundles.get(bundle);
 			}
-			
-			if( resourceBundle == null ) {
-				resourceBundle = ResourceBundle.getBundle( bundle, locale );
-				if ( resourceBundle != null ) {
-					if( localeBundles == null ) {				
+
+			if (resourceBundle == null) {
+				resourceBundle = ResourceBundle.getBundle(bundle, locale);
+				if (resourceBundle != null) {
+					if (localeBundles == null) {
 						localeBundles = new Hashtable<String, ResourceBundle>();
-						resourceBundles.put( locale, localeBundles );
+						resourceBundles.put(locale, localeBundles);
 					}
-					localeBundles.put( bundle, resourceBundle );
+					localeBundles.put(bundle, resourceBundle);
 				}
 			}
-			
-			if( resourceBundle != null ) {
-				localizedMessage = resourceBundle.getString( key );
-				if( args != null && args.length > 0 ) {
+
+			if (resourceBundle != null) {
+				localizedMessage = resourceBundle.getString(key);
+				if (args != null && args.length > 0) {
 					Formatter formatter = new Formatter();
-					formatter.format( localizedMessage , args );
+					formatter.format(localizedMessage, args);
 					localizedMessage = formatter.toString();
 				}
 			}
-			
-		
+
+		} catch (java.util.MissingResourceException e) {
 		}
-		catch( java.util.MissingResourceException e ) {
-		}
-		if ( localizedMessage == null ) 
-		{
-			localizedMessage = bundle + "_" + locale.getLanguage() + "[" + key + "]";
-			
-			if( args != null && args.length > 0 ) {
+		if (localizedMessage == null) {
+			localizedMessage = bundle + "_" + locale.getLanguage() + "[" + key
+					+ "]";
+
+			if (args != null && args.length > 0) {
 				boolean first = true;
-				localizedMessage +=" (";
-				for( Object arg : args ) {
-					if( !first )
+				localizedMessage += " (";
+				for (Object arg : args) {
+					if (!first)
 						localizedMessage += ", ";
 					first = false;
 					localizedMessage += arg;
 				}
-				localizedMessage +=")";
+				localizedMessage += ")";
 			}
 		}
 		return localizedMessage;
 	}
 
-	public static String getMessage( String bundle, String id ) {
-		
-		return getMessage(getThreadCurrentLocale(), bundle, id, (Object[])null );
+	public static String getMessage(String bundle, String id) {
+
+		return getMessage(getThreadCurrentLocale(), bundle, id, (Object[]) null);
 	}
 
-	public static String getMessage( String bundle, String id, Object ...args ) {
+	public static String getMessage(String bundle, String id, Object... args) {
 		return getMessage(getThreadCurrentLocale(), bundle, id, args);
 	}
-	
-	public static void setThreadCurrentLocale( Locale local ) {
-		
-		threadLocal.set( local );
-		
+
+	public static void setThreadCurrentLocale(Locale local) {
+
+		threadLocal.set(local);
+
 	}
-	
+
 	public static Locale getThreadCurrentLocale() {
-		
+
 		return threadLocal.get();
-		
+
 	}
 
 }
-
-
