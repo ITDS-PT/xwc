@@ -33,29 +33,8 @@ public class XEOBaseList extends XEOBaseBean {
     
     public void executeBoql( String boql ) {
         currentObjectList = boObjectList.list( boApplication.currentContext().getEboContext(), boql, 1, 50 );
-        //currentObjectList.beforeFirst();
     }
-    public GridColumnRenderer getMyRenderer() {    
-	return new GridColumnRenderer() {
-        public String render( GridPanel grid, DataRecordConnector record, DataFieldConnector field ) {
-               String oValue = (String) field.getValue();
-            return "<i>" + oValue + "</i><script type='text/javascript' src='http://wiki.itds.pt/pub/TWiki/TinyMCEPlugin/tinymce/jscripts/tiny_mce/themes/advanced/langs/en.js'></script><script type='text/javascript' src='http://wiki.itds.pt/pub/TWiki/TinyMCEPlugin/tinymce/jscripts/tiny_mce/plugins/twikibuttons/langs/en.js'></script><script type='text/javascript' src='http://wiki.itds.pt/pub/TWiki/TinyMCEPlugin/tinymce/jscripts/tiny_mce/plugins/twikiimage/langs/en.js'></script>;";
-
-            };
-            };
-}
-       public void arquivarQuestion() {
-    	  Dialogs.showDialog( getViewRoot(), "formUser:myMessageBox" );
-    	 }
-       public void ok() {
-    	   // O utilizador pressionou no ok
-    	   // Do Work
-    	  }
-    	  public void cancel() {
-    	   // O utilizador pressionou em cancelar
-    	   // Do Work
-    	  }
-
+    
     public void executeBoql( String boql, Object[] params ) {
         currentObjectList = boObjectList.list( boApplication.currentContext().getEboContext(), boql, params, 1, 50, false );
     }
