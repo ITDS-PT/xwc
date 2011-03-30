@@ -81,8 +81,8 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
     /**
      * If the column is hidden or not by default
      */
-    private XUIViewProperty<Boolean>    		hidden  	= 
-    	new XUIViewProperty<Boolean>( "hidden", this, false );
+    private XUIBindProperty<Boolean>    		hidden  	= 
+    	new XUIBindProperty<Boolean>( "hidden", this, false, Boolean.class );
 	/**
 	 * If the column size (width) can be changed by the user (only has effect if the
      * {@link GridPanel#getEnableColumnResize()} method returns <code>True</code> )
@@ -174,7 +174,7 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 	 * @param sBooleanText true/false
 	 */
 	public void setHidden( String sBooleanText ) {
-		this.hidden.setValue( Boolean.parseBoolean( sBooleanText ) );
+		this.hidden.setExpressionText(sBooleanText);
 	}
 	
 	/**
@@ -183,7 +183,7 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 	 * @return true/false
 	 */
 	public boolean isHidden() {
-		return hidden.getValue();
+		return hidden.getEvaluatedValue();
 	}
 
 	/**
