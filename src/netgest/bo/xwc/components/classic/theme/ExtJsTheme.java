@@ -30,26 +30,22 @@ public class ExtJsTheme implements XUITheme {
 
     public void addScripts(XUIScriptContext scriptContext) {
     	 String lang = null;
-    	// Current language...
-    	// Choosing user language...
-    	 
+    	 lang = boApplication.getDefaultApplication().getApplicationLanguage();
     	 
     	 if(boApplication.currentContext().getEboContext()!=null){
     		 boSessionUser user= boApplication.currentContext().getEboContext().getBoSession().getUser();
     		 try {
-    			 lang = user.getLanguage().toLowerCase();// XUIMessagesLocalization.getThreadCurrentLocale().getLanguage();
-
-    			 if (lang.length()>3){
-    				 lang= (String) lang.subSequence(0,2);
+    			 if (user.getLanguage() != null){
+	    			 lang = user.getLanguage().toLowerCase();
+	    			 if (lang.length()>3){
+	    				 lang= (String) lang.subSequence(0,2);
+	    			 }
     			 }
-
     		 } catch (Exception e) {
-    			 lang =XUIMessagesLocalization.getThreadCurrentLocale().getLanguage();
+    			 lang = XUIMessagesLocalization.getThreadCurrentLocale().getLanguage();
     		 }
     	 }
-    	 else
-    		 lang = boApplication.getDefaultApplication().getApplicationLanguage();
-    	lang = lang.toLowerCase();
+    	 lang = lang.toLowerCase();
     
         // Extjs
     	scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-base", composeUrl( getResourceBaseUri() + "adapter/ext/ext-base.js" ) );
