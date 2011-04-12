@@ -4,14 +4,11 @@ import java.io.IOException;
 
 import javax.el.ValueExpression;
 
-import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsBaseRenderer;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
-import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -77,7 +74,6 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 		
 		boolean ret = super.wasStateChanged();
 		if( ret ) {
-			System.out.println( MessageLocalizer.getMessage("LABEL_WAS_CHANGED") + ret );
 			ret = super.wasStateChanged();
 		}
 		
