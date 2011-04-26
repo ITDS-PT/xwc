@@ -83,7 +83,7 @@ public class XEOObjectListConnector implements DataListConnector {
 					throw new RuntimeException( e );
 				}
     		}
-    		String dir   = st.getDirection()==SortTerms.SORT_DESC?"DESC":"";
+    		String dir   = st.getDirection()==SortTerms.SORT_DESC?"DESC":"ASC";
     		sb.append( field ).append( ' ' ).append( dir );
     	}
     	
