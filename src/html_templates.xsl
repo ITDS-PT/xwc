@@ -261,7 +261,7 @@
     </xsl:template>
     
     <xsl:template match="outputHtml">
-            <xsl:apply-templates select="./*|text()"/>
+            <xsl:value-of select="@renderedValue" disable-output-escaping="yes"/>
     </xsl:template>
     
     <xsl:template match="attributeLabel" priority="-1">
@@ -521,7 +521,8 @@
              <xsl:apply-templates select="*"/>
     </xsl:template>
     
-    <xsl:template match="text()" priority="-10" />
+    <xsl:template match="text()" priority="-5" >
+    </xsl:template>
     
     
     <!-- ELEMENTS TO IGNORE -->
