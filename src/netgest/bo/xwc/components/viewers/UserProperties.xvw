@@ -11,7 +11,7 @@ xmlns:xeo="http://www.netgest.net/xeo/xeo">
 				<xvw:tabs renderTabBar="false">
 						<xvw:tab>
 								<xvw:attribute objectAttribute="username" disabled="true" />			
-								<xvw:attribute objectAttribute="password" inputType="attributePassword" disabled="true"/>
+								<xvw:attribute objectAttribute="password" inputType="attributePassword"/>
 								<xvw:attribute objectAttribute="user_language" />									
 								<xvw:attribute lovMap='#{viewBean.profilesLovMap}'
 									 valueExpression='#{viewBean.profile}'
