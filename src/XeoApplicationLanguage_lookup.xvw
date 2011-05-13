@@ -2,12 +2,12 @@
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
 	<xvw:viewer beanClass='netgest.bo.xwc.xeo.beans.XEOBaseLookupList' beanId='viewBean'>
 		<xeo:formLookupList>
-			<xeo:lookupList>
+			<xeo:lookupList onRowDoubleClick="" renderToolBar="false">
+			<xeo:lookupListToolBar renderCreateNewBtn="false">
+			</xeo:lookupListToolBar>	
 				<xvw:columns>
-					
 					<xvw:columnAttribute width="100" dataField="code"/>
 					<xvw:columnAttribute width="100" dataField="description"/>
-
 				</xvw:columns>
 			</xeo:lookupList>
 		</xeo:formLookupList>
