@@ -4,7 +4,7 @@ import java.util.List;
 
 import netgest.bo.data.DataSet;
 import netgest.bo.def.boDefHandler;
-import netgest.bo.ql.V2.QLParser;
+import netgest.bo.ql.QLParser;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;

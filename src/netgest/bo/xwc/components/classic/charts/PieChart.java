@@ -15,7 +15,7 @@ import javax.servlet.ServletResponse;
 
 import jofc2.model.Chart;
 import jofc2.model.Text;
-import netgest.bo.ql.V2.QLParser;
+import netgest.bo.ql.QLParser;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
