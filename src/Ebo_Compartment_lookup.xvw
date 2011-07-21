@@ -4,11 +4,7 @@
         <xeo:formLookupList>
             <xeo:lookupList>
                 <xvw:columns>
-                    <xvw:columnAttribute dataField="id" width="100"/>
-                    <xvw:columnAttribute dataField="email" width="100"/>
                     <xvw:columnAttribute dataField="name" width="100"/>
-                    <xvw:columnAttribute dataField="templateEmail" width="100"/>
-                    <xvw:columnAttribute dataField="notifica" width="100"/>
                 </xvw:columns>
             </xeo:lookupList>
         </xeo:formLookupList>

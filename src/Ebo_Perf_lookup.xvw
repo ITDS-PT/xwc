@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
-	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseLookupList" beanId="viewBean"
-	localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
-		<xeo:formLookupList>
-			<xvw:rows>
+<xvw:root xmlns:xeo="http://www.netgest.net/xeo/xeo" xmlns:xvw="http://www.netgest.net/xeo/xvw">
+    <xvw:viewer beanClass="netgest.bo.xwc.xeo.beans.XEOBaseLookupList" beanId="viewBean"
+localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
+        <xeo:formLookupList>
+           <xvw:rows>
 				<xvw:row>
 					<xvw:cell>
 						<xvw:attribute label="@{TYPE_OF_OBJECT}" onChangeSubmit='true' valueExpression='#{viewBean.selectedObject}' lovMap='#{viewBean.lookupObjects}' inputType='attributeLov'></xvw:attribute>  
@@ -19,6 +19,6 @@
 				</xvw:columns> 
 			</xeo:lookupList>
 			</xvw:panel>
-		</xeo:formLookupList>
-	</xvw:viewer>
+        </xeo:formLookupList>
+    </xvw:viewer>
 </xvw:root>

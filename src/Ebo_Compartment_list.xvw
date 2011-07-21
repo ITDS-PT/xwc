@@ -4,8 +4,7 @@
         <xeo:formList>
             <xeo:list>
                 <xvw:columns>
-                    <xvw:columnAttribute width="400" dataField="description"/>
-					<xvw:columnAttribute width="200" dataField="id"/>
+                    <xvw:columnAttribute dataField="name" width="100"/>
                 </xvw:columns>
             </xeo:list>
         </xeo:formList>
