@@ -12,8 +12,8 @@ import netgest.bo.data.DriverUtils;
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
-import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.boObjectList.SqlField;
+import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
@@ -302,6 +302,10 @@ public class XEOObjectListConnector implements DataListConnector {
 			*/
 			if( oAtt != null ) {
 				return new XEOObjectAttributeMetaData( oAtt );
+			} else if ( attributeName.contains("." )) {
+				//Here the name of attribute was already processed (to transform "__" into "."). I change
+				//it back so that the method can process it right
+				return new XEOObjectAttributeMetaData(XEOObjectConnector.getAttributeDefinitionFromName(attributeName.replaceAll("\\.", "__"), this.oObjectList.getBoDef()));
 			}
 			
 			/*

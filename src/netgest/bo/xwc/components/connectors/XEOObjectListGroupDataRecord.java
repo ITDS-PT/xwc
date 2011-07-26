@@ -1,6 +1,7 @@
 package netgest.bo.xwc.components.connectors;
 
 import netgest.bo.data.DataSet;
+import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.security.SecurityPermissions;
@@ -21,7 +22,14 @@ public class XEOObjectListGroupDataRecord implements DataRecordConnector {
 			
 			if( objDef.getAttributeRef( name ) != null ) {
 				return new XEOObjectListGroupAttribute( objDef.getAttributeRef( name ), this.row, this.parent, true );
-			} else {
+			} else if ( name.contains("__" ) && !name.endsWith("__count") && !name.endsWith("__value")) {
+				//In the column definition for the attribute boql's dot syntax is used, but internal transformations
+				//use "__" instead of dot syntax, as such the comparison is done against the "__" string. 
+				//The "__value" and "__count" expressions are special to the grid's datastore
+				return new XEOObjectListGroupAttribute( 
+						XEOObjectConnector.getAttributeDefinitionFromName(name, objDef), this.row, this.parent, true );
+				}
+			else {
                             if( this.parent.getDataSet() != null ) { 
                                     DataSet dataSet = this.parent.getDataSet();
                                     int col = dataSet.findColumn( name );
@@ -45,6 +53,9 @@ public class XEOObjectListGroupDataRecord implements DataRecordConnector {
 				String nName = name.substring( 0, name.indexOf( "__value" ) );
                                 if( objDef.getAttributeRef( nName ) != null ) {
                                     return new XEOObjectListGroupAttribute( objDef.getAttributeRef( nName ), this.row, this.parent, false );
+                                } else if ( nName.contains("__")) {
+                                	boDefAttribute targetAttributeDefinition = XEOObjectConnector.getAttributeDefinitionFromName(nName, objDef);
+                    				return new XEOObjectListGroupAttribute( targetAttributeDefinition, this.row, this.parent, false );
                                 }
                                 else {
                                     if( this.parent.getDataSet() != null ) {

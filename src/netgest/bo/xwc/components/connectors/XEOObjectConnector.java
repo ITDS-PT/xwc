@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import netgest.bo.def.boDefAttribute;
+import netgest.bo.def.boDefHandler;
 import netgest.bo.localizations.LoggerMessageLocalizer;
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
@@ -359,6 +361,37 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 	public int getRowIndex() {
 		return this.rowIndex;
 	}
-
+	
+	/**
+	 * 
+	 * Retrieve the attribute definition from an attribute name (could have references
+	 * to another object (BOQL dot syntax)
+	 * 
+	 * @param attName The name of the attribute in the form of "att.att.att"
+	 * 
+	 * @return An attribute definition
+	 */
+	public static boDefAttribute getAttributeDefinitionFromName(String attName, boDefHandler parent){
+		
+		if ( attName.contains( "__" )) {
+				//Split by "."
+				String[] relationAttribute = attName.split( "__" );
+				int size = relationAttribute.length;
+				boDefAttribute targetAttributeDefinition = null;
+				for (int i = 0 ; i < size ; i++){
+					String parentAtt = relationAttribute[i];
+					if (i+1 < size){
+						String childAtt = relationAttribute[i+1];
+						boDefAttribute defAttRel = parent.getAttributeRef( parentAtt );
+						boDefHandler defModelRel = defAttRel.getReferencedObjectDef();
+						targetAttributeDefinition = defModelRel.getAttributeRef(childAtt);
+						parent = defModelRel;
+					}
+				}
+				return targetAttributeDefinition;
+		}
+		else
+			return parent.getAttributeRef(attName);
+	}
     
 }

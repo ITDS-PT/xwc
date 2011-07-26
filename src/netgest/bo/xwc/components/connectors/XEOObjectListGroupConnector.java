@@ -101,7 +101,9 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		String nativeQlTag1 = "[";
 		String nativeQlTag2 = "]";
 		
-		String groupExpression = this.groupAttribute;
+		//Grid Panel replaces the dot syntax in data fields with "__"
+		//so we need to transform it again
+		String groupExpression = this.groupAttribute.replaceAll("__", ".");
 		
 		if( boql.startsWith( "{" ) ) {
 			nativeQlTag1 = "";
@@ -282,6 +284,9 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		String nativeQlTag1 = "[";
 		String nativeQlTag2 = "]";
 		
+		//For attributes with replaced dot syntax
+		this.groupAttribute = this.groupAttribute.replaceAll("__",".");
+		
 		String boqlField = this.groupAttribute;
 		String boqlGroupBy = this.groupAttribute;
 		
@@ -318,6 +323,31 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 						break;
 					}
 				}
+			}
+			else{
+				if (this.groupAttribute.contains("__")){
+					
+					boDefAttribute targetAttributeDefinition = XEOObjectConnector.getAttributeDefinitionFromName(this.groupAttribute, def);
+					
+					if (targetAttributeDefinition != null){
+						isObject = true;
+		            	if( !qp.isObjectExtended() ) {
+		            		groupFieldExpression = targetAttributeDefinition.getBoDefHandler().getBoMasterTable() + "." + this.groupAttribute;
+		            		groupByExpression = groupFieldExpression;
+		            	}
+		            	else {
+		            		groupFieldExpression = targetAttributeDefinition.getBoDefHandler().getBoExtendedTable() + "." + this.groupAttribute;
+		            		groupByExpression = groupFieldExpression;
+		            	}
+						
+						if( boql.startsWith( "{" ) ) {
+							nativeQlTag1 = "";
+							nativeQlTag2 = "";
+							groupByExpression = targetAttributeDefinition.getDbName();
+						}
+					}	
+				}
+				
 			}
 		}
 		boolean isDate;

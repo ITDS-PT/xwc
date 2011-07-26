@@ -774,7 +774,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 				String dataField = col.getDataField();
 
 				oExtFiltersChild = oFiltersArray.addChild();
-            	oExtFiltersChild.addJSString( "dataIndex", dataField );
+            	oExtFiltersChild.addJSString( "dataIndex", dataField.replaceAll("\\.", "__") );
             	oExtFiltersChild.add( "active" , colFilter.getBoolean("active"));
             	oExtFiltersChild.add( "searchable", col.isSearchable() );
         		
