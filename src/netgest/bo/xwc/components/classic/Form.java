@@ -93,18 +93,6 @@ public class Form extends XUIForm
     @Override
     public void initComponent(){
     	super.initComponent();
-    	if (findComponent(getClientId() + "_openEditViewer") == null){
-    		XUICommand c = new XUICommand();
-    		c.setId(getClientId() + "_openEditViewer");
-    		c.setActionExpression(createMethodBinding("#{viewBean.openEditViewer}"));
-    		getChildren().add(c);
-    	}
-    	if (findComponent(getClientId() + "_openListViewer") == null){
-    		XUICommand c = new XUICommand();
-    		c.setId(getClientId() + "_openListViewer");
-    		c.setActionExpression(createMethodBinding("#{viewBean.openListViewer}"));
-    		getChildren().add(c);
-    	}
     }
     
     public void buildComponentDependences( UIComponent oComponent ) {
