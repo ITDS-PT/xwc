@@ -10,7 +10,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 /**
  * This component outputs text from a {@link DataFieldConnector}
  * 
- * @author Joâo Carreira
+ * @author Joao Carreira
  *
  */
 public class AttributeText extends AttributeBase {
@@ -46,7 +46,7 @@ public class AttributeText extends AttributeBase {
         public ExtConfig getExtJsFieldListeners(AttributeBase oAtt) {
         	ExtConfig listeners = super.getExtJsFieldListeners(oAtt);
         	listeners.add( "keydown" , 
-        			"function(fld,e) { " +
+        			"function(fld,event) { " +
         			"	var fldVal = new String(fld.getValue());" +
         			"	if( fldVal.length >= fld.maxLength ) {" +
         			"		if(event.keyCode >= 32 && '33,34,35,36,37,38,39,40,45,46'.indexOf(''+event.keyCode) == -1 ) {" +
