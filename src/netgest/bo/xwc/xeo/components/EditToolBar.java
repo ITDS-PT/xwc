@@ -44,6 +44,8 @@ public class EditToolBar extends ToolBar {
 			new String[] {"cofirmar","cancelar","valid", "update", "destroy", "cloneObject" }
 		);
 
+	
+	
 	/**
 	 * Whether or not the "Confirm" button is rendered
 	 * Only works if the parent {@link FormEdit} is working 
@@ -173,6 +175,12 @@ public class EditToolBar extends ToolBar {
 	 */
 	private XUIViewStateBindProperty<Boolean>  renderOplBtn    = 
 		new XUIViewStateBindProperty<Boolean>( "renderOplBtn", this, "false", Boolean.class );
+	
+	/**
+	 * Whether or not the "Add to favorites" button should be displayed
+	 */
+	private XUIViewBindProperty<Boolean>  renderFavoritesBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderFavoritesBtn", this, false, Boolean.class );
 	
 	/**
 	 * Whether or not the {@link EditToolBar} is in orphan mode
@@ -356,6 +364,14 @@ public class EditToolBar extends ToolBar {
 		this.renderOplBtn.setExpressionText( expression );
 	}
 	
+	public boolean getRenderFavoritesBtn(){
+		return this.renderFavoritesBtn.getEvaluatedValue();
+	}
+	
+	public void setRenderFavoritesBtn(String favoritesExpr){
+		this.renderFavoritesBtn.setExpressionText(favoritesExpr);
+	}
+	
 	@Override
 	public void initComponent() {
 		if( getOrphanMode() )
@@ -447,6 +463,12 @@ public class EditToolBar extends ToolBar {
 			}
 		//}
 		
+		if (getRenderFavoritesBtn()){
+			getChildren().add( pos++, Menu.getMenuFill() );
+			createViewerBeanMethod( pos++, null, "Add to Favorites",
+					"ext-xeo/icons/favorite.png", "saveFavorite", null );
+		}
+			
 	}
 	
 	
