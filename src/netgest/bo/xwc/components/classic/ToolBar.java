@@ -2,7 +2,9 @@ package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.component.UIComponent;
 
@@ -13,15 +15,19 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
+import netgest.bo.xwc.components.classic.toolbar.IToolbarGroup;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIRenderer;
+import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.def.XUIComponentStore;
+import netgest.bo.xwc.framework.def.XUIRendererDefinition;
 
 
 /**
@@ -38,7 +44,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  *  <xvw:menu text='Button2'/>
  *</xvw:toolBar>	
  * 
- * @author João Carreira
+ * @author Joao Carreira
  *
  */
 public class ToolBar extends ViewerSecurityBase {
@@ -72,6 +78,39 @@ public class ToolBar extends ViewerSecurityBase {
     
     public ToolBar()
     {
+    }
+    
+    @Override
+    public void initComponent(){
+    	
+    	super.initComponent();
+    	
+    	//This entire cycle basically gets all IToolBarGroups
+    	//and tries to add their children to the current toolbar
+    	//in the respective positions
+    	List<UIComponent> child = getChildren();
+    	List<UIComponent> finalList = new LinkedList<UIComponent>();
+    	
+    	
+		Iterator<UIComponent> it = child.iterator();
+		while (it.hasNext()){
+			boolean addRegularMenu = true;
+			UIComponent curr = it.next();
+			if (curr instanceof IToolbarGroup){
+				IToolbarGroup group = (IToolbarGroup) curr;
+				finalList.addAll(group.getComponentList());
+				addRegularMenu = false;
+			}
+			if (curr instanceof AttributeBase || curr instanceof AttributeLabel)
+				((XUIComponentBase)curr).setRenderComponent(false);
+			
+			if (addRegularMenu)
+				finalList.add(curr);
+		}
+
+		getChildren().clear();
+		getChildren().addAll(finalList);
+		
     }
 
     @Override
@@ -157,16 +196,19 @@ public class ToolBar extends ViewerSecurityBase {
             Iterator<UIComponent> childs =  toolBar.getChildren().iterator();
         	ScriptBuilder sb = new ScriptBuilder();
             while( childs.hasNext() ) {
-                Menu oMenuChild = (Menu)childs.next();
-                if( oMenuChild.isRendered() ) {
-                	if( oMenuChild.wasStateChanged() ) {
-                    	sb.startBlock();
-                    	generateUpdateScript(sb, oMenuChild );
-                    	sb.endBlock();
-                	}
-                	if( oMenuChild.getChildCount() > 0 ) {
-                		updateChildMenuItems(sb, oMenuChild);
-                	}
+            	UIComponent currChild = childs.next();
+            	if (currChild instanceof Menu){
+	                Menu oMenuChild = (Menu)currChild;
+	                if( oMenuChild.isRendered() ) {
+	                	if( oMenuChild.wasStateChanged() ) {
+	                    	sb.startBlock();
+	                    	generateUpdateScript(sb, oMenuChild );
+	                    	sb.endBlock();
+	                	}
+	                	if( oMenuChild.getChildCount() > 0 ) {
+	                		updateChildMenuItems(sb, oMenuChild);
+	                	}
+	                }
                 }
             }
             return sb;
@@ -243,6 +285,7 @@ public class ToolBar extends ViewerSecurityBase {
             oToolBarCfg.add( "disabled" , toolBar.isDisabled() );
             oToolBarCfg.addJSString( "id", "ext-" + component.getClientId() );
             
+            
 
             ExtConfigArray oItemsCfg = oToolBarCfg.addChildArray( "items" );
 
@@ -251,29 +294,73 @@ public class ToolBar extends ViewerSecurityBase {
                 
                 ExtConfig oItemCfg = null;
                 
-                Menu oMenuChild = (Menu)childs.next();
+                UIComponent currentItem = childs.next();
+                if (currentItem instanceof Menu){
+                
+                Menu oMenuChild = (Menu)currentItem;
                 oMenuChild.setRenderedOnClient( true );
                 
                 if( oMenuChild.isRendered() ) {
                 
-	            	String sText = oMenuChild.getText();
-	
-	            	if( "-".equals( sText ) ) {
-            			ExtConfig sep = oItemsCfg.addChild( "ExtXeo.Toolbar.Separator" );
-            			sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
-            			sep.add( "hidden", !toolBar.isVisible() || !oMenuChild.isVisible()  );
-            			
+		            	String sText = oMenuChild.getText();
+		
+		            	if( "-".equals( sText ) ) {
+	            			ExtConfig sep = oItemsCfg.addChild( "ExtXeo.Toolbar.Separator" );
+	            			sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
+	            			sep.add( "hidden", !toolBar.isVisible() || !oMenuChild.isVisible()  );
+	            		}
+		            	else if ("->".equals( sText ) ){
+		            		ExtConfig sep = oItemsCfg.addChild();
+		            		sep.addJSString("xtype", "tbfill");
+		            		sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
+		            	}
+		            	else if (" ".equals( sText ) ){
+		            		ExtConfig sep = oItemsCfg.addChild();
+		            		sep.addJSString("xtype", "tbspacer");
+		            		sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
+		            	}
+		            	else if ( oMenuChild.getEffectivePermission( SecurityPermissions.READ ) ) {
+		                        oItemCfg = oItemsCfg.addChild(  );
+		                    	configExtMenu( this, toolBar , oMenuChild, oItemCfg);
+			                    if( oMenuChild.getChildCount() > 0) {
+			                    	//If our top Menu has an action, make it a split button with default action
+			                    	if (oMenuChild.serverAction != null && oMenuChild.serverAction.getValue() != null) 
+				                    	oItemCfg.addJSString( "xtype", "splitbutton" );
+			                    	if( oItemCfg != null ) {
+			    	                    encodeSubMenuJS( toolBar,oItemCfg.addChild( "menu" ), oMenuChild );
+			                    	}
+			                    }
+		                }
 	                }
-	                else if ( oMenuChild.getEffectivePermission( SecurityPermissions.READ ) ) {
-	                        oItemCfg = oItemsCfg.addChild(  );
-	                    	configExtMenu( this, toolBar , oMenuChild, oItemCfg);
-		                    if( oMenuChild.getChildCount() > 0 ) {
-		                    	oItemCfg.addJSString( "xtype", "splitbutton" );
-		                    	if( oItemCfg != null ) {
-		    	                    encodeSubMenuJS( toolBar,oItemCfg.addChild( "menu" ), oMenuChild );
-		                    	}
-		                    }
-	                }
+                }
+              //We may have other things, like form fields
+                else {
+                	XUIRequestContext req = XUIRequestContext.getCurrentContext();
+                	XUIComponentStore compStore = req.getApplicationContext().getComponentStore();
+                	Map<String,XUIRendererDefinition> def = compStore.getMapOfRenderKit("XEOHTML");
+                	XUIRendererDefinition definition = def.get(currentItem.getFamily()+":"+currentItem.getRendererType());
+                	if (definition != null){ //For this to be null we probably have a component
+                		//without a renderer class, like an instance of IToolBarGroup
+                	String className = definition.getClassName();
+                		try {
+							//Instantiate the class and render the component
+							//to a string (remove the renderTo property, because
+							//it does not apply in this situation and totally screws up rendering)
+	                		Object newInstance = Class.forName(className).newInstance();
+	                		if (newInstance instanceof ExtJsRenderer)
+	                		{
+	                			ExtJsRenderer render = (ExtJsRenderer) newInstance;
+								ExtConfig config = render.getExtJsConfig((XUIComponentBase)currentItem);
+								if (currentItem instanceof AttributeBase)
+									config.add("width", ((AttributeBase)currentItem).getWidth());
+								config.removeConfig("renderTo");
+								config.removeConfig("validator");
+								oItemsCfg.addChild(config);
+							}
+						}  catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
                 }
             }
             return oToolBarCfg;
@@ -313,9 +400,13 @@ public class ToolBar extends ViewerSecurityBase {
             	waitMode = XVWServerActionWaitMode.STATUS_MESSAGE;
             }
             
-            oItemCfg.add( "handler", "function(){" +
-            		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode.ordinal() )+"}" 
-            	);
+            //Only menus with actions can have
+            if (oMenuChild.getChildCount() == 0 || oMenuChild.serverAction.getValue() != null ){
+	            oItemCfg.add( "handler", "function(){" +
+	            		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode.ordinal() )+"}" 
+	            );
+            }
+            
         }
         
         
