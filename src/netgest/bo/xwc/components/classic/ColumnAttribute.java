@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import javax.el.ValueExpression;
 
 import netgest.bo.xwc.components.annotations.RequiredAlways;
+import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector;
 import netgest.bo.xwc.components.model.Column;
@@ -135,6 +136,14 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
     private XUIBindProperty<GridColumnRenderer> renderer    = 
     	new XUIBindProperty<GridColumnRenderer>( "renderer", this, GridColumnRenderer.class );
 
+    /**
+     * The alignment of the column text (left,right,center or justify)
+     * defaults to left
+     */
+    @Values({"left","center","right","justify"})
+    private XUIViewProperty<String> align = 
+    	new XUIViewProperty<String>( "align", this, "" );
+    
     
     public void setSqlExpression( String sqlexpressionEl ) {
     	this.sqlExpression.setValue( sqlexpressionEl );
@@ -420,5 +429,25 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * 
+	 * Retrieves the alignment of the column
+	 * 
+	 * @return A string with "left", "right", "center" or "justify"
+	 */
+	public String getAlign(){
+		return align.getValue();
+	}
+	
+	/**
+	 * 
+	 * Sets the column alignment
+	 * 
+	 * @param align A string "left"/"right"/"center" or "justify"
+	 */
+	public void setAlign(String align){
+		this.align.setValue(align);
 	}
 }
