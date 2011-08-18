@@ -70,5 +70,17 @@ public class ExtConfigArray {
     	return childs.size();
     }
     
-    
+    public String toString(){
+    	Iterator<Object> it = childs.iterator();
+    	StringBuilder b = new StringBuilder();
+    	b.append("[");
+	    	while (it.hasNext()){
+	    		Object val = it.next();
+	    		b.append(val.toString());
+	    		if (it.hasNext())
+	    			b.append(",");
+	    	}
+    	b.append("]");
+    	return b.toString();
+    }
 }
