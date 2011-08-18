@@ -1,10 +1,13 @@
 package netgest.bo.xwc.xeo.beans;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
@@ -13,6 +16,7 @@ import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boBridgeIterator;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boPoolOwner;
 import netgest.bo.xwc.components.classic.GridExplorer;
@@ -43,6 +47,8 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
     private static final byte	  USER_WORKQUEUES = 2;
     private static final byte	  USER_GROUPS = 3;
     private static final byte	  USER_PROFILES = 4;
+    
+    private static Logger logger= Logger.getLogger( XEOBaseBean.class );
 	
 	private XEOViewerResolver viewerResolver = new XEOViewerResolver();
 	
@@ -347,70 +353,28 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 		}
 	}
 	
-	
-	
 	/**
-	 * Opens an edit viewer for the XVW.openEditViewer javascript function
 	 * 
-	 *  
-	 */
-	public void openEditViewer(){
-	
-		XUISessionContext oSessionContext = getRequestContext().getSessionContext();
+	 * Open a URL in tab from the XVW.openURL javascript function
+	 * 
+	 * */
+	public void openURLLink(){
+		
 		XUIForm f = (XUIForm)getViewRoot().findComponent(XUIForm.class);
 		Map<String,String> params = getRequestContext().getRequestParameterMap();
 		
-		//Retrieve the viewername, boui and object name from the request input (hidden) fields
-		String viewName = params.get(f.getClientId() + "_viewerName");
-		String boui = params.get(f.getClientId() + "_boui");
-		String objectName = params.get(f.getClientId() + "_objectName");
+		//Retrieve the URL
+		String url = params.get(f.getClientId() + "_url");
 		
-		if (viewName != null){
-			
-			//Create the viewer
-			XUIViewRoot oViewRoot = oSessionContext.createChildView(viewName);
-			
-			XEOEditBean oEditBean = (XEOEditBean) oViewRoot.getBean("viewBean");
-			
-			//If a BOUI is present, open the edit for that instance, otherwise create a new one
-			if (boui != null && boui.length() > 0 )
-				oEditBean.setCurrentObjectKey(boui);
-			else
-				oEditBean.createNew(objectName);
-			
-			//Send the response
-			getRequestContext().setViewRoot(oViewRoot);
-			getRequestContext().renderResponse();
-		}	
-	}
-	
-	/**
-	 * Opens a list viewer for the XVW.openListViewer javascript function
-	 */
-	public void openListViewer(){
-		XUISessionContext oSessionContext = getRequestContext().getSessionContext();
-		XUIForm f = (XUIForm)getViewRoot().findComponent(XUIForm.class);
-		Map<String,String> params = getRequestContext().getRequestParameterMap();
-		
-		//Retrieve the viewername, boui and object name from the request input (hidden) fields
-		String viewName = params.get(f.getClientId() + "_viewerListName");
-		String boql = params.get(f.getClientId() + "_boql");
-		
-		if (viewName != null){
-			
-			//Create the viewer
-			XUIViewRoot oViewRoot = oSessionContext.createChildView(viewName);
-			
-			XEOBaseList oListBean = (XEOBaseList) oViewRoot.getBean("viewBean");
-			if (boql != null && boql.length() > 0 )
-			{
-				oListBean.executeBoql(boql);
-				
-				//Send the response
-				getRequestContext().setViewRoot(oViewRoot);
-				getRequestContext().renderResponse();
-			}
+		XUIRequestContext   oRequestContext;
+        oRequestContext = XUIRequestContext.getCurrentContext();
+    	try {
+			((HttpServletResponse)oRequestContext.getResponse()).sendRedirect( url );
+		} catch (IOException e) {
+			logger.severe(e);
 		}
+    	oRequestContext.responseComplete();	
+		
 	}
 	
 }
