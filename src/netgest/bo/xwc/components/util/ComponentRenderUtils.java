@@ -49,11 +49,11 @@ public class ComponentRenderUtils {
 	
 	/**
 	 * 
-	 * Retrieves the URL Servlet
+	 * Retrieves the URL Servlet, without the component reference
 	 * 
 	 * @param reqContext The context request
 	 * 
-	 * @return The Servlet Request
+	 * @return The Servlet Request URL for a component
 	 */
 	public static String getServletURL(XUIRequestContext reqContext)
 	{
