@@ -73,7 +73,7 @@ public class XEOMainBean extends XEOBaseBean {
         	throw new  RuntimeException( BeansMessages.VIEWER_WITHOUT_VIEWBEAN.toString() );
         }
         oBaseBean.setCurrentObjectKey( Long.toString( oViewerConfig.getBoui() ) );
-        // Diz a que a view corrente é a criada.
+        // Diz a que a view corrente ï¿½ a criada.
         oRequestContext.setViewRoot( oViewRoot );
         
         // TODO: This action must be automatic on the platform
@@ -105,7 +105,7 @@ public class XEOMainBean extends XEOBaseBean {
         oBaseBean = (XEOEditBean)oViewRoot.getBean( "viewBean" );
         oBaseBean.createNew( sObjectName );
         
-        // Diz a que a view corrente é a criada.
+        // Diz a que a view corrente ï¿½ a criada.
         oRequestContext.setViewRoot( oViewRoot );
         
         // TODO: This action must be automatic on the platform
@@ -132,7 +132,7 @@ public class XEOMainBean extends XEOBaseBean {
         oBaseBean = (XEOEditBean)oViewRoot.getBean( "viewBean" );
         oBaseBean.setCurrentObjectKey( sKey );
         
-        // Diz a que a view corrente é a criada.
+        // Diz a que a view corrente ï¿½ a criada.
         oRequestContext.setViewRoot( oViewRoot );
         
         // TODO: This action must be automatic on the platform
@@ -170,9 +170,6 @@ public class XEOMainBean extends XEOBaseBean {
     
     
     
-    //////////////
-    
-    
     @Visible
     public void listObject( ) throws Exception {
         
@@ -203,7 +200,7 @@ public class XEOMainBean extends XEOBaseBean {
         }
         
         oBaseBean.executeBoql( oViewerConfig.getBoql() );
-        // Diz a que a view corrente é a criada.
+        // Diz a que a view corrente ï¿½ a criada.
         oRequestContext.setViewRoot( oViewRoot );
         
         // TODO: This action must be automatic on the platform
@@ -252,12 +249,12 @@ public class XEOMainBean extends XEOBaseBean {
 			oRequestContext = XUIRequestContext.getCurrentContext();
 			if( !oRequestContext.isAjaxRequest() ) {
 				((HttpServletResponse) oRequestContext.getResponse())
-						.sendRedirect("/logoutXVW.jsp");
+						.sendRedirect("/LogoutXVW.jsp");
 				oRequestContext.responseComplete();
 			}
 			else {
 				oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_HEADER , "logout", 
-						"window.top.location.href='logoutXVW.jsp'"
+						"window.top.location.href='LogoutXVW.jsp'"
 				);
 				
 			}
@@ -295,5 +292,4 @@ public class XEOMainBean extends XEOBaseBean {
         }
     	
     }
-    
 }
