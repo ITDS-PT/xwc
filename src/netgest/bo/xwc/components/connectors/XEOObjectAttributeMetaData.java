@@ -205,7 +205,7 @@ public class XEOObjectAttributeMetaData implements DataFieldMetaData {
         if( sLovName == null || sLovName.length() == 0 ) {
             ArrayList<Object> list = new ArrayList<Object>();
             try {
-            	if( this.defAtt.getAtributeDeclaredType() == boDefAttribute.ATTRIBUTE_OBJECT ) {
+            	if( this.defAtt.getType() == boDefAttribute.ATTRIBUTE_OBJECT ) {
                 	list.add( new Object[] { "", "" } );
 	                boObjectList oObjectList = 
 	                    boObjectList.list( boApplication.currentContext().getEboContext() , 
