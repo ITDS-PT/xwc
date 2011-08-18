@@ -99,7 +99,7 @@ public class XEOViewersMessages {
 	
 	public static final XUILocalizedMessage FORMEDIT_REMOVE_CONFIRM_MESSAGE =
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORMEDIT_REMOVE_CONFIRM_MESSAGE" );
-	///////////////////
+	
 	public static final XUILocalizedMessage FORM_NEW =
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORM_NEW" );
 	public static final XUILocalizedMessage FORM_NAME =
@@ -109,6 +109,20 @@ public class XEOViewersMessages {
 	public static final XUILocalizedMessage FORM_CODE =
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FORM_CODE" );
 	
-		public static final XUILocalizedMessage REMOVE_PERMISSION =
-			new XUILocalizedMessage( XEOViewersMessages.class.getName(), "REMOVE_PERMISSION" );
+	public static final XUILocalizedMessage REMOVE_PERMISSION =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "REMOVE_PERMISSION" );
+	
+	//UserFavorites.xv12w
+	public static final XUILocalizedMessage FAVORITES_REMOVE_MSG_TITLE =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FAVORITES_REMOVE_MSG_TITLE" );
+	
+	public static final XUILocalizedMessage FAVORITES_REMOVE_MSG =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FAVORITES_REMOVE_MSG" );
+	
+	public static final XUILocalizedMessage FAVORITES_LIST_COLUMN_LBL =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "FAVORITES_LIST_COLUMN_LBL" );
+	
+	//GlobalSearch.xvw
+	public static final XUILocalizedMessage GLOBAL_SEARCH_TITLE =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "GLOBAL_SEARCH_TITLE" );
 }		

@@ -152,5 +152,31 @@ public interface BeansMessages {
 	public static final XUILocalizedMessage OPL_ERROR_REQ_FIELDS_MESSAGE = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "OPL_ERROR_REQ_FIELDS_MESSAGE" );
 	
+	//Messages for the FavoritesBean
+	public static final XUILocalizedMessage FAVORITES_BEAN_TITLE = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "FAVORITES_BEAN_TITLE" );
+	
+	public static final XUILocalizedMessage FAVORITES_BEAN_DELETED_MSG = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "FAVORITES_BEAN_DELETED_MSG" );
+	
+	public static final XUILocalizedMessage FAVORITES_BEAN_DELETED_MSG_TITLE = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "FAVORITES_BEAN_DELETED_MSG_TITLE" );
+	
+	public static final XUILocalizedMessage FAVORITES_BEAN_NO_OBJ_MSG = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "FAVORITES_BEAN_NO_OBJ_MSG" );
+	
+	public static final XUILocalizedMessage FAVORITES_BEAN_NO_OBJ_MSG_TITLE = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "FAVORITES_BEAN_NO_OBJ_MSG_TITLE" );
+	
+	//UserHistoryBean
+	public static final XUILocalizedMessage HISTORY_BEAN_TITLE = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "HISTORY_BEAN_TITLE" );
+	
+	public static final XUILocalizedMessage HISTORY_BEAN_NO_RESULTS = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "HISTORY_BEAN_NO_RESULTS" );
+	
+	//Global Search
+	public static final XUILocalizedMessage GLOBAL_SEARCH_BEAN_NO_RESULTS = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "GLOBAL_SEARCH_BEAN_NO_RESULTS" );
 	
 }

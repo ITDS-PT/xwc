@@ -102,4 +102,10 @@ public interface XEOComponentMessages {
 			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "FORM_CODE" );
 		public static final XUILocalizedMessage EDETTB_REMOVE= 
 			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDETTB_REMOVE" );
+		
+		//Theme Changer
+		public static final XUILocalizedMessage THEME_CHANGER_MENU_TEXT= 
+			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "THEME_CHANGER_MENU_TEXT" );
+		
+		
 }

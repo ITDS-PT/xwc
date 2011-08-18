@@ -217,4 +217,9 @@ public class MainAdminViewerMessages {
 		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "SCHEDULE");
 	public static final XUILocalizedMessage CONFIRM = 
 		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "CONFIRM");
+	
+	public static final XUILocalizedMessage FAVORITES = 
+		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "FAVORITES");
+	public static final XUILocalizedMessage HISTORY = 
+		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "HISTORY");
 }
