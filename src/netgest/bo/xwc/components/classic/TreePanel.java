@@ -10,8 +10,11 @@ import javax.servlet.ServletResponse;
 
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
+import netgest.bo.xwc.components.classic.mainRegions.ExtJSRegionRenderer;
+import netgest.bo.xwc.components.classic.mainRegions.UserToolBar;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.model.Menu;
@@ -38,7 +41,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
  * 
  *
  */
-public class TreePanel extends XUIComponentBase {
+public class TreePanel extends XUIComponentBase implements ExtJSRegionRenderer {
 
 	/**
 	 * To create a tree panel with dynamic content.
@@ -65,7 +68,12 @@ public class TreePanel extends XUIComponentBase {
 	private XUIViewBindProperty<String> defaultTab =
 		new XUIViewBindProperty<String>( "defaultTab", this,  String.class );
 	
-	
+	/**
+	 * The placement of the toolbar
+	 */
+	@Values({"top","bottom"})
+	private XUIBindProperty<String> toolBarPlacement = 
+		new XUIBindProperty<String>("toolBarPlacement", this, String.class, "bottom" );
 	
 	private boolean localReload = false;
 	
@@ -149,6 +157,26 @@ public class TreePanel extends XUIComponentBase {
 	 */
 	public void setDefaultTab(String defaultTabVal){
 		this.defaultTab.setValue(defaultTabVal);
+	}
+	
+	/**
+	 * 
+	 * Retrieves the placement of the toolbar in the treepanel
+	 * 
+	 * @return A string with "top" / "bottom"
+	 */
+	public String getToolBarPlacement(){
+		return toolBarPlacement.getEvaluatedValue();
+	}
+	
+	/**
+	 * 
+	 * Sets the placement of the toolbar
+	 * 
+	 * @param placementExpr
+	 */
+	public void setToolBarPlacement(String placementExpr){
+		toolBarPlacement.setExpressionText(placementExpr);
 	}
 	
 	/**
@@ -251,34 +279,7 @@ public class TreePanel extends XUIComponentBase {
 		}
         
         public ExtConfig renderExtJs( TreePanel oTreeComp ) {
-        	ExtConfig oTreeConfig = new ExtConfig("Ext.tree.TreePanel");
-        	
-        	oTreeConfig.addJSString( "id" , oTreeComp.getClientId() );
-			StringBuilder sActionUrl = new StringBuilder( getRequestContext().getAjaxURL() );
-			if( sActionUrl.indexOf("?") == -1 ) {
-				sActionUrl.append("?");
-			}
-			else {
-				sActionUrl.append("&");
-			}
-			sActionUrl.append( "javax.faces.ViewState=").append( XUIRequestContext.getCurrentContext().getViewRoot().getViewState() );
-			sActionUrl.append("&");
-			sActionUrl.append( "xvw.servlet=" ).append( oTreeComp.getClientId() );
-        	oTreeConfig.add( "border" , false );
-        	oTreeConfig.add( "useArrows" , true );
-        	oTreeConfig.add( "autoScroll" , true );
-        	oTreeConfig.add( "animate" , true );
-        	oTreeConfig.add( "enableDD" , false );
-        	oTreeConfig.add( "containerScroll" , true );
-        	oTreeConfig.add( "rootVisible" , false );
-        	oTreeConfig.add( "frame" , false );
-        	oTreeConfig.add( "collapsed" , false );
-        	oTreeConfig.add( "enableDD" , false ); 
-//        	oTreeConfig.addJSString( "layout" , "fit" );
-        	oTreeConfig.addJSString( "dataUrl" , sActionUrl.toString() );
-        	ExtConfig oRootConfig = oTreeConfig.addChild("root");
-        	oRootConfig.addJSString("nodeType", "async");
-        	return oTreeConfig;
+        	return oTreeComp.renderRegion();
         }
         
         public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
@@ -305,57 +306,60 @@ public class TreePanel extends XUIComponentBase {
                 
                 ExtConfig oItemCfg;
                 
-                Menu oMenuChild = (Menu)childs.next();
-                
-                if( oMenuChild.canAcess() ) {
-                    if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
-		                oItemCfg = oItemsCfg.addChild();
-                    	oItemCfg.addJSString( "id", oMenuChild.getClientId() );
-                    	oItemCfg.addJSString( "text", oMenuChild.getText() );
-                    	if( !oMenuChild.isVisible() )
-                    		oItemCfg.add( "hidden", true );
-                    	
-                    	if( oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
-                    		oItemCfg.add( "disabled", true );
-                
-		
-		                oItemCfg.addJSString( "text", oMenuChild.getText() );
-		                
-		                String icon = oMenuChild.getIcon(); 
-		                if( icon != null && icon.length() > 0 ) {
-		                	oItemCfg.addJSString( "icon", composeUrlWithWebContext( icon ) );
-		                }
-		                oItemCfg.add( "expanded", oMenuChild.getExpanded() );
-		                    
-		                if( oMenuChild.getValue() instanceof Boolean ) {
-		                    oItemCfg.add( "checked", oMenuChild.getValue() );
-		                }
-		
-		                if( oMenuChild.getActionExpression() != null ) {
-		                	ExtConfig oItemListeners = oItemCfg.addChild("listeners");
-		                	
-		                	int waitMode = XVWScripts.WAIT_DIALOG;
-		                	waitMode = oMenuChild.getServerActionWaitMode() == XVWServerActionWaitMode.NONE?
-		                			XVWScripts.WAIT_STATUS_MESSAGE:XVWScripts.WAIT_DIALOG;
-		                	
-		                	oItemListeners.add( "'click'", "function(){" +
-		                    		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode )+"}" 
-		                    	);
-		                	
-		                }
-		                
-		                if( oMenuChild.getChildCount() > 0 ) {
-		                	ExtConfigArray childArray = oItemCfg.addChildArray( "children" ); 
-		                    encodeSubMenuJS( childArray, oMenuChild );
-		                    if( childArray.size() == 0 ) {
-		                    	oItemCfg.add( "leaf", true );
-		                    }
-		                }
-		                else {
-		                	oItemCfg.add( "leaf", true );
-		                }
-                    }
-                }
+                UIComponent comp = childs.next();
+                if (comp instanceof Menu){
+	                Menu oMenuChild = (Menu)comp;
+	                
+	                if( oMenuChild.canAcess() ) {
+	                    if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
+			                oItemCfg = oItemsCfg.addChild();
+	                    	oItemCfg.addJSString( "id", oMenuChild.getClientId() );
+	                    	oItemCfg.addJSString( "text", oMenuChild.getText() );
+	                    	if( !oMenuChild.isVisible() )
+	                    		oItemCfg.add( "hidden", true );
+	                    	
+	                    	if( oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
+	                    		oItemCfg.add( "disabled", true );
+	                
+			
+			                oItemCfg.addJSString( "text", oMenuChild.getText() );
+			                
+			                String icon = oMenuChild.getIcon(); 
+			                if( icon != null && icon.length() > 0 ) {
+			                	oItemCfg.addJSString( "icon", composeUrlWithWebContext( icon ) );
+			                }
+			                oItemCfg.add( "expanded", oMenuChild.getExpanded() );
+			                    
+			                if( oMenuChild.getValue() instanceof Boolean ) {
+			                    oItemCfg.add( "checked", oMenuChild.getValue() );
+			                }
+			
+			                if( oMenuChild.getActionExpression() != null ) {
+			                	ExtConfig oItemListeners = oItemCfg.addChild("listeners");
+			                	
+			                	int waitMode = XVWScripts.WAIT_DIALOG;
+			                	waitMode = oMenuChild.getServerActionWaitMode() == XVWServerActionWaitMode.NONE?
+			                			XVWScripts.WAIT_STATUS_MESSAGE:XVWScripts.WAIT_DIALOG;
+			                	
+			                	oItemListeners.add( "'click'", "function(){" +
+			                    		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode )+"}" 
+			                    	);
+			                	
+			                }
+			                
+			                if( oMenuChild.getChildCount() > 0 ) {
+			                	ExtConfigArray childArray = oItemCfg.addChildArray( "children" ); 
+			                    encodeSubMenuJS( childArray, oMenuChild );
+			                    if( childArray.size() == 0 ) {
+			                    	oItemCfg.add( "leaf", true );
+			                    }
+			                }
+			                else {
+			                	oItemCfg.add( "leaf", true );
+			                }
+	                    }
+	                }
+	              }
             }
             return oItemsCfg;
             
@@ -424,5 +428,69 @@ public class TreePanel extends XUIComponentBase {
 			return true;
 			
 		}
+	}
+
+
+	@Override
+	public ExtConfig renderRegion() {
+		ExtConfig oTreeConfig = new ExtConfig("Ext.tree.TreePanel");
+    	
+    	oTreeConfig.addJSString( "id" , getClientId() );
+		StringBuilder sActionUrl = new StringBuilder( getRequestContext().getAjaxURL() );
+		if( sActionUrl.indexOf("?") == -1 ) {
+			sActionUrl.append("?");
+		}
+		else {
+			sActionUrl.append("&");
+		}
+		sActionUrl.append( "javax.faces.ViewState=").append( XUIRequestContext.getCurrentContext().getViewRoot().getViewState() );
+		sActionUrl.append("&");
+		sActionUrl.append( "xvw.servlet=" ).append( getClientId() );
+    	oTreeConfig.add( "border" , false );
+    	oTreeConfig.add( "useArrows" , true );
+    	oTreeConfig.add( "autoScroll" , true );
+    	oTreeConfig.add( "animate" , true );
+    	oTreeConfig.add( "enableDD" , false );
+    	oTreeConfig.add( "containerScroll" , true );
+    	oTreeConfig.add( "rootVisible" , false );
+    	oTreeConfig.add( "frame" , false );
+    	oTreeConfig.add( "collapsed" , false );
+    	oTreeConfig.add( "enableDD" , false );
+    	oTreeConfig.addJSString( "layout" , "fit" );
+    	oTreeConfig.addJSString( "dataUrl" , sActionUrl.toString() );
+    	ExtConfig oRootConfig = oTreeConfig.addChild("root");
+    	oRootConfig.addJSString("nodeType", "async");
+    	
+    	Iterator<UIComponent> it = getChildren().iterator();
+    	while (it.hasNext()){
+    		UIComponent childComp = it.next();
+    		if (childComp instanceof UserToolBar)
+    		{
+    			ExtConfigArray toolbar = null;
+    			if (getToolBarPlacement().equalsIgnoreCase("top"))
+    				toolbar = oTreeConfig.addChildArray("tbar");
+    			else
+    				toolbar = oTreeConfig.addChildArray("bbar");
+    			((UserToolBar)childComp).getExtJsConfig(toolbar);
+    			break;
+    		}
+    		if (childComp instanceof TreePanelToolBar){
+    			ExtConfigArray toolbar = null;
+    			if (getToolBarPlacement().equalsIgnoreCase("top"))
+    				toolbar = oTreeConfig.addChildArray("tbar");
+    			else
+    				toolbar = oTreeConfig.addChildArray("bbar");
+    			
+    			TreePanelToolBar t = (TreePanelToolBar) childComp;
+    			t.getExtJsConfig(toolbar);
+    			
+    		}
+    	}
+    	return oTreeConfig;
+	}
+
+	@Override
+	public ExtConfig getListeners() {
+		return null;
 	}
 }
