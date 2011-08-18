@@ -142,6 +142,10 @@ public class Menu extends ViewerCommandSecurityBase {
     	return new Menu("-");
     }
     
+    public static final Menu getMenuFill(){
+    	return new Menu("->");
+    }
+    
     public static final Menu getMenuSpacer( String visibleExpr ) {
     	Menu m = getMenuSpacer();
     	m.setVisible( visibleExpr );
