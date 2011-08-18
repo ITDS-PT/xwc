@@ -100,5 +100,27 @@ public interface ComponentMessages {
 	
 	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_EXPORT_EXCEL_TOOLTIP = 
 		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_EXPORT_EXCEL_TOOLTIP");
+	
+	public static final XUILocalizedMessage USER_TOOLBAR_FAVORITES_BTN_LBL = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "USER_TOOLBAR_FAVORITES_BTN_LBL");
+	
+	public static final XUILocalizedMessage USER_TOOLBAR_GROUP_BTN_LBL = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "USER_TOOLBAR_GROUP_BTN_LBL");
+	
+	public static final XUILocalizedMessage USER_TOOLBAR_LOGOUT_BTN_LBL = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "USER_TOOLBAR_LOGOUT_BTN_LBL");
+	
+	public static final XUILocalizedMessage USER_TOOLBAR_PROPERTIES_BTN_LBL = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "USER_TOOLBAR_PROPERTIES_BTN_LBL");
+	
+	public static final XUILocalizedMessage USER_TOOLBAR_PROFILES_GRP_BTN_LBL = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "USER_TOOLBAR_PROFILES_GRP_BTN_LBL");
+	
+	public static final XUILocalizedMessage USER_TOOLBAR_HISTORY_BTN_LBL = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "USER_TOOLBAR_HISTORY_BTN_LBL");
+	
+	
+	public static final XUILocalizedMessage GLOBAL_SEARCH_LBL = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "GLOBAL_SEARCH_LBL");
 		
 }
