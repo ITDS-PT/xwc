@@ -126,7 +126,7 @@ XVW.openViewOnElement = function( sFormId, sActionId, sActionValue, renderOnElem
 	XVW.AjaxCommand( sFormId, sActionId, sActionValue, '0', true, document.getElementById( renderOnElementId ) );
 }
 
-XVW.openCommandTab = function( sFrameName, sFormId, sActionId, sActionValue, sTabTitle ) {
+XVW.openCommandTab = function( sFrameName, sFormId, sActionId, sActionValue, sTabTitle, bClosable ) {
     // Create new Tab
 	if( XVW.getXApp() != null ) {
 		var tab = XVW.findTabByFrameName( sFrameName );
@@ -136,7 +136,9 @@ XVW.openCommandTab = function( sFrameName, sFormId, sActionId, sActionValue, sTa
 			return;
 		}
 	    // Submit the form to the new tab
-	    this.openTab( sFrameName, sTabTitle );
+		if (bClosable === undefined)
+			bClosable = true;
+		this.openTab( sFrameName, sTabTitle, bClosable );
 	    if( ExtXeo.frameLess ) {
 		    XVW.AjaxCommand( sFormId, sActionId, sActionValue, null, true, document.getElementById( sFrameName ) );
 	    }
@@ -156,9 +158,11 @@ XVW.openCommandTab = function( sFrameName, sFormId, sActionId, sActionValue, sTa
 
 //var tabdividx = 0;
 
-XVW.openTab = function( sFrameName, sTitle ) {
+XVW.openTab = function( sFrameName, sTitle, bClosable ) {
     var tabs;
     var XApp = XVW.getXApp();
+    if (bClosable === undefined)
+    	bClosable = true;
     if( XApp != null ) {
 	    tabs = XApp.desktop.tabPanel;
 	    var fnPanel = window.XApp?Ext.Panel:window.parent.Ext.Panel;
@@ -167,7 +171,7 @@ XVW.openTab = function( sFrameName, sTitle ) {
 	            title: sTitle?sTitle:'&nbsp;',
 	            border:true,
 	            frame:false,
-	            closable: true,
+	            closable: bClosable,
 	            style: "overflow:visible;",
 	            html: (ExtXeo.frameLess)?
 	            ('<span id="'+sFrameName+'" width="100%" height="'+(Ext.isChrome?'99%':'100%' )+'"></span>'):
@@ -185,149 +189,33 @@ XVW.openTab = function( sFrameName, sTitle ) {
     }
 }
 
-
-/**
- * 
- * Opens a given edit viewer in a new tab
- * 
- * @param sViewerName The name of the viewer
- * @param sBOUI The BOUI of the instance to open
- * @param sObjectName The name of the Object to create (if no BOUI is provided)
- * @param sFormId The identifier of the current form
- * 
- * 
- */
-XVW.openEditViewer = function(sViewerName,sBOUI, sObjectName, sFormId){
-	
-	if (sViewerName != null && sViewerName != "")
-	{
-		//Find the form element to append the fields
-		oForm = document.getElementById(sFormId);
-		var viewerName = null;
-		var boui = null;
-		var objectName = null;
-		
-		viewerName = document.getElementById(sFormId + "_viewerName");
-		boui = document.getElementById(sFormId + "_boui");
-		objectName = document.getElementById(sFormId + "_objectName");
-		
-		//Check if the hidden input for the viewerName exists (create if it does not
-		//exist and update value if it does)
-		if (viewerName != null){
-			viewerName.value = sViewerName;
-		}
-		else{
-			var input = document.createElement("input");
-			input.setAttribute("type", "hidden");
-			input.setAttribute("name", sFormId + "_viewerName");
-			input.setAttribute("id",sFormId + "_viewerName");
-			input.setAttribute("value", sViewerName);
-			oForm.appendChild(input);
-		}
-		//Check if the hidden input for the boui exists (create if it does not exist and
-		//update value if it does)
-		if (boui != null){
-			boui.value = sBOUI;
-		}
-		else{
-			var input = document.createElement("input");
-			input.setAttribute("type", "hidden");
-			input.setAttribute("name", sFormId + "_boui");
-			input.setAttribute("id",sFormId + "_boui");
-			input.setAttribute("value", sBOUI);
-			oForm.appendChild(input);
-		}
-		
-		if (objectName != null){
-			objectName.value = sObjectName;
-		}
-		else{
-			var input = document.createElement("input");
-			input.setAttribute("type", "hidden");
-			input.setAttribute("name", sFormId + "_objectName");
-			input.setAttribute("id",sFormId + "_objectName");
-			input.setAttribute("value", sObjectName);
-			oForm.appendChild(input);
-		}
-		
-		
-		if (sBOUI == null || sBOUI == ""){
-			var d=new Date();
-			sBOUI = d.getTime();
-		}
-		
-		//Recreate the form component identifier
-		var sCmdId = sFormId + "_openEditViewer";
-		
-		//Send the command, which will open the XEOBaseBean.openEditViewer()
-		XVW.openCommandTab( sBOUI, sFormId, sCmdId, null, "" );
-	
-	
-}
-}
-
-
-
-
-/**
- * 
- * Opens a given edit viewer in a new tab
- * 
- * @param sViewerName The name of the viewer to open
- * @param sBOQL The BOQL expression to execute
- * @param sFormId The identifier of the current form
- * 
- * 
- */
-XVW.openListViewer = function( sViewerName, sBOQL, sFormId){
-	
-	if (sViewerName != null && sViewerName != "")
-	{
-		//Find the form element to append the fields
-		oForm = document.getElementById(sFormId);
-		var viewerName = null;
-		var boql = null;
-		
-		
-		viewerName = document.getElementById(sFormId + "_viewerListName");
-		boql = document.getElementById(sFormId + "_boql");
-		
-		//Check if the hidden input for the viewerName exists (create if it does not
-		//exist and update value if it does)
-		if (viewerName != null){
-			viewerName.value = sViewerName;
-		}
-		else{
-			var input = document.createElement("input");
-			input.setAttribute("type", "hidden");
-			input.setAttribute("name", sFormId + "_viewerListName");
-			input.setAttribute("id",sFormId + "_viewerListName");
-			input.setAttribute("value", sViewerName);
-			oForm.appendChild(input);
-		}
-		//Check if the hidden input for the boui exists (create if it does not exist and
-		//update value if it does)
-		if (boql != null){
-			boql.value = sBOQL;
-		}
-		else{
-			var input = document.createElement("input");
-			input.setAttribute("type", "hidden");
-			input.setAttribute("name", sFormId + "_boql");
-			input.setAttribute("id",sFormId + "_boql");
-			input.setAttribute("value", sBOQL);
-			oForm.appendChild(input);
-		}
-		
-		var id = new Date().getTime();
-		
-		//Recreate the form component identifier
-		var sCmdId = sFormId + "_openListViewer";
-		
-		//Send the command, which will open the XEOBaseBean.openEditViewer()
-		XVW.openCommandTab( id, sFormId, sCmdId, null, "" );	
-	
-}
+XVW.openUrlTab = function( sURL, sTitle ) {
+    var tabs;
+    var XApp = XVW.getXApp();
+    if( XApp != null ) {
+	    tabs = XApp.desktop.tabPanel;
+	    var fnPanel = window.XApp?Ext.Panel:window.parent.Ext.Panel;
+	    var formLayout = new fnPanel(  
+	        {  
+	            title: sTitle?sTitle:'&nbsp;',
+	            border:true,
+	            frame:false,
+	            closable: true,
+	            style: "overflow:visible;",
+	            html: (ExtXeo.frameLess)?
+	            ("<span width='100%' height='"+(Ext.isChrome?"99%":"100%" )+"'></span>"):
+	            ("<iframe name='"+sURL+"' src='"+sURL+"' scrolling='yes' frameBorder='0' width='100%' height='"+(Ext.isChrome?"99%":"100%" )+"'></iframe>")
+	        }
+	    );
+	    var tab  = tabs.add( formLayout );
+	    tab.show();
+	    tab.doLayout();
+	    tabs.syncSize();
+	    XApp.desktop.syncSize();
+	    tab = null;
+	    tabs = null;
+	    formLayout = null;
+    }
 }
 
 
