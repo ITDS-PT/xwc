@@ -423,6 +423,8 @@ public class Attribute extends AttributeBase
 	            {
 		            w.startElement(COL, oComp );
 		            w.writeAttribute( HTMLAttr.WIDTH, labelWidth + "px", null );
+		            w.writeAttribute(HTMLAttr.STYLE, "padding-right:3px", null);
+		            w.writeAttribute(HTMLAttr.ALIGN, labelPos, null); 
 		            w.endElement("COL");
 	            }
 
@@ -442,6 +444,8 @@ public class Attribute extends AttributeBase
             if( "1".equals( oAttr.getRenderLabel() ) )
             {
             	w.startElement( TD, oComp );
+            	w.writeAttribute(HTMLAttr.ALIGN, labelPos, null);
+            	w.writeAttribute(HTMLAttr.STYLE, "padding-right:3px", null);
                 if( oAttr.getLabelComponent() != null ) {
                     oAttr.getLabelComponent().encodeAll();    
                 }
@@ -464,7 +468,7 @@ public class Attribute extends AttributeBase
                 if( inpComp != null ) {
                 	inpComp.encodeAll();
                 } else {
-                	w.writeText( "� Invalid [" + oAttr.getObjectAttribute() + "] �", null );
+                	w.writeText( "- Invalid [" + oAttr.getObjectAttribute() + "] -", null );
                 }
                 w.endElement( TD );
             }
