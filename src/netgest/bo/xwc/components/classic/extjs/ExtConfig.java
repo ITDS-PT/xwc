@@ -3,7 +3,6 @@ package netgest.bo.xwc.components.classic.extjs;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import netgest.bo.xwc.components.util.JavaScriptUtils;
@@ -175,4 +174,23 @@ public class ExtConfig {
 		this.bPublic = bPublic;
 	}
     
+	public void removeConfig(String id){
+		this.oConfigOptions.remove(id);
+	}
+	
+	@Override
+	public String toString(){
+		Iterator<Map.Entry<String,Object>> it = oConfigOptions.entrySet().iterator();
+		StringBuilder b = new StringBuilder();
+		b.append("{");
+	    while (it.hasNext()) {
+	        Map.Entry<String,Object> pairs = (Map.Entry<String,Object>)it.next();
+	        b.append("\""+pairs.getKey()+"\"" + " : " + pairs.getValue());
+	        if (it.hasNext())
+	        	b.append(" ,");
+	    }b.append("}");
+	    return b.toString();
+		
+	}
+	
 }
