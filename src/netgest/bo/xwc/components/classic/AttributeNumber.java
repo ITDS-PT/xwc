@@ -111,7 +111,7 @@ public class AttributeNumber extends AttributeBase {
 			
 			listeners = super.getExtJsFieldListeners( oAttr );
 			ScriptBuilder s = new ScriptBuilder();
-			s.l( "function(fld,e) {" )
+			s.l( "function(fld,event) {" )
 			.s( "	var fldVal = new String(fld.getValue())" )
 			.s( "	fldVal = fldVal.replace(/\\./g,'')" )
 			.l( "	if( fldVal.length >= fld.maxLength ) {" )
