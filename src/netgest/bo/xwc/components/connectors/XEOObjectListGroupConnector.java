@@ -101,9 +101,7 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		String nativeQlTag1 = "[";
 		String nativeQlTag2 = "]";
 		
-		//Grid Panel replaces the dot syntax in data fields with "__"
-		//so we need to transform it again
-		String groupExpression = this.groupAttribute.replaceAll("__", ".");
+		String groupExpression = this.groupAttribute;
 		
 		if( boql.startsWith( "{" ) ) {
 			nativeQlTag1 = "";
@@ -284,9 +282,6 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		String nativeQlTag1 = "[";
 		String nativeQlTag2 = "]";
 		
-		//For attributes with replaced dot syntax
-		this.groupAttribute = this.groupAttribute.replaceAll("__",".");
-		
 		String boqlField = this.groupAttribute;
 		String boqlGroupBy = this.groupAttribute;
 		
@@ -325,18 +320,20 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 				}
 			}
 			else{
-				if (this.groupAttribute.contains("__")){
-					
-					boDefAttribute targetAttributeDefinition = XEOObjectConnector.getAttributeDefinitionFromName(this.groupAttribute, def);
+				if (this.groupAttribute.contains(".")){
+					String[] relationAttribute = this.groupAttribute.split("\\.");
+					boDefAttribute defAttRel = def.getAttributeRef( relationAttribute[0] );
+					boDefHandler defModelRel = defAttRel.getReferencedObjectDef();
+					boDefAttribute targetAttributeDefinition = defModelRel.getAttributeRef(relationAttribute[1]);
 					
 					if (targetAttributeDefinition != null){
 						isObject = true;
 		            	if( !qp.isObjectExtended() ) {
-		            		groupFieldExpression = targetAttributeDefinition.getBoDefHandler().getBoMasterTable() + "." + this.groupAttribute;
+		            		groupFieldExpression = defModelRel.getBoMasterTable() + "." + this.groupAttribute;
 		            		groupByExpression = groupFieldExpression;
 		            	}
 		            	else {
-		            		groupFieldExpression = targetAttributeDefinition.getBoDefHandler().getBoExtendedTable() + "." + this.groupAttribute;
+		            		groupFieldExpression = defModelRel.getBoExtendedTable() + "." + this.groupAttribute;
 		            		groupByExpression = groupFieldExpression;
 		            	}
 						
@@ -345,7 +342,7 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 							nativeQlTag2 = "";
 							groupByExpression = targetAttributeDefinition.getDbName();
 						}
-					}	
+					}
 				}
 				
 			}

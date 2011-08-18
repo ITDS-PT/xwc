@@ -302,10 +302,10 @@ public class XEOObjectListConnector implements DataListConnector {
 			*/
 			if( oAtt != null ) {
 				return new XEOObjectAttributeMetaData( oAtt );
-			} else if ( attributeName.contains("." )) {
-				//Here the name of attribute was already processed (to transform "__" into "."). I change
-				//it back so that the method can process it right
-				return new XEOObjectAttributeMetaData(XEOObjectConnector.getAttributeDefinitionFromName(attributeName.replaceAll("\\.", "__"), this.oObjectList.getBoDef()));
+			} else if ( attributeName.contains("__" )) {
+				//In the column definition for the attribute boql's dot syntax is used, but internal transformations
+				//use "__" instead of dot syntax, as such the comparison is done against the "__" string. 
+				return new XEOObjectAttributeMetaData(XEOObjectConnector.getAttributeDefinitionFromName(attributeName, this.oObjectList.getBoDef()));
 			}
 			
 			/*
