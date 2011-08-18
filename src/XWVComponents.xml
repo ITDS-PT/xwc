@@ -126,8 +126,6 @@
 			<xwc:render for='HTMLFileBrowse'>netgest.bo.xwc.components.classic.HTMLFileBrowse$XEOHTMLRenderer</xwc:render>
 			<xwc:render for='title'>netgest.bo.xwc.components.classic.Title$XEOHTMLRenderer</xwc:render>
 			
-<!-- 			<xwc:render for='borderLayout'>netgest.bo.xwc.components.classic.BorderLayout$XEOHTMLRenderer</xwc:render>  -->
-
             <xwc:render for='treePanel'>netgest.bo.xwc.components.classic.TreePanel$XEOHTMLRenderer</xwc:render>
 
 			<!--- Dialogs Components -->
@@ -159,6 +157,15 @@
 			<xwc:render for='attributeWordMacro'>netgest.bo.xwc.components.classic.AttributeWordMacro$XEOHTMLRenderer</xwc:render>
 
 			<xwc:render for='attributeObjectLookup'>netgest.bo.xwc.xeo.components.AttributeObjectLookup$XEOHTMLRenderer</xwc:render>
+			
+			<xwc:render for="topRegion">netgest.bo.xwc.components.classic.mainRegions.TopRegion$XEOHTMLRenderer</xwc:render>
+			<xwc:render for="rightRegion">netgest.bo.xwc.components.classic.mainRegions.RightRegion$XEOHTMLRenderer</xwc:render>
+			<xwc:render for="bottomRegion">netgest.bo.xwc.components.classic.mainRegions.BottomRegion$XEOHTMLRenderer</xwc:render>
+			<xwc:render for="leftRegion">netgest.bo.xwc.components.classic.mainRegions.LeftRegion$XEOHTMLRenderer</xwc:render>
+			<xwc:render for="regionLayout">netgest.bo.xwc.components.classic.mainRegions.RegionLayout$XEOHTMLRenderer</xwc:render>
+			
+			<xwc:render for="collapsiblePanel">netgest.bo.xwc.components.classic.mainRegions.CollapsiblePanel$XEOHTMLRenderer</xwc:render>
+			
 			
         </xwc:renderKit>
         <xwc:renderKit name="XEOHTML" componentNamespace="xeo" >
@@ -241,7 +248,6 @@
 			<xwc:render for='HTMLFileBrowse'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
 			<xwc:render for='title'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
 			
-<!-- 			<xwc:render for='borderLayout'>netgest.bo.xwc.components.classic.BorderLayout$XEOHTMLRenderer</xwc:render>  -->
 
             <xwc:render for='treePanel'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
 
@@ -322,11 +328,6 @@
         </xwc:component>
         <!-- pcampos begin OE -->
 		<!-- FIM HTML Components -->
-    	
-        <xwc:component name='borderLayout'>
-            <xwc:className>netgest.bo.xwc.components.classic.BorderLayout</xwc:className>
-            <xwc:description>BorderLayout</xwc:description>
-        </xwc:component>
     	
         <xwc:component name='treePanel'>
             <xwc:className>netgest.bo.xwc.components.classic.TreePanel</xwc:className>
@@ -585,6 +586,58 @@
             <xwc:description>Message Box component</xwc:description>
         </xwc:component>
 
+
+		<xwc:component name="globalSearch">
+			<xwc:className>netgest.bo.xwc.components.classic.toolbar.GlobalSearch</xwc:className>
+			<xwc:description>Global Search Component</xwc:description>
+		</xwc:component>
+		<xwc:component name="topRegion">
+			<xwc:className>netgest.bo.xwc.components.classic.mainRegions.TopRegion</xwc:className>
+			<xwc:description>North Region component</xwc:description>
+		</xwc:component>
+		<xwc:component name="rightRegion">
+			<xwc:className>netgest.bo.xwc.components.classic.mainRegions.RightRegion</xwc:className>
+			<xwc:description>East Region component</xwc:description>
+		</xwc:component>
+		<xwc:component name="bottomRegion">
+			<xwc:className>netgest.bo.xwc.components.classic.mainRegions.BottomRegion</xwc:className>
+			<xwc:description>South Region component</xwc:description>
+		</xwc:component>
+		<xwc:component name="leftRegion">
+			<xwc:className>netgest.bo.xwc.components.classic.mainRegions.LeftRegion</xwc:className>
+			<xwc:description>East Region component</xwc:description>
+		</xwc:component>
+		
+		<xwc:component name="userToolBar">
+			<xwc:className>netgest.bo.xwc.components.classic.mainRegions.UserToolBar</xwc:className>
+			<xwc:description>ToolBar set of menus for a user</xwc:description>
+		</xwc:component>
+		
+		
+		<xwc:component name="regionLayout">
+			<xwc:className>netgest.bo.xwc.components.classic.mainRegions.RegionLayout</xwc:className>
+			<xwc:description>5 Region Layout</xwc:description>
+		</xwc:component>
+		
+		<xwc:component name="tabPanel">
+			<xwc:className>netgest.bo.xwc.components.classic.mainRegions.TabPanel</xwc:className>
+			<xwc:description>Tab Panel</xwc:description>
+		</xwc:component>
+		
+		<xwc:component name="collapsiblePanel">
+			<xwc:className>netgest.bo.xwc.components.classic.mainRegions.CollapsiblePanel</xwc:className>
+			<xwc:description>Collapsible Panel</xwc:description>
+		</xwc:component>
+		
+		<xwc:component name="treePanelToolBar">
+			<xwc:className>netgest.bo.xwc.components.classic.TreePanelToolBar</xwc:className>
+			<xwc:description>A toolbar for the tree panel</xwc:description>
+		</xwc:component>
+		
+		<xwc:component name="themeChanger">
+			<xwc:className>netgest.bo.xwc.components.classic.toolbar.ThemeChanger</xwc:className>
+			<xwc:description>A theme changer</xwc:description>
+		</xwc:component>
 
     </xwc:components>
     
