@@ -5,6 +5,7 @@ public interface Column {
     public String getLabel();
     public String getDataField();
     public String getWidth();
+    public String getAlign();
     public boolean isSortable();
     public boolean isSearchable();
     public boolean isGroupable();
