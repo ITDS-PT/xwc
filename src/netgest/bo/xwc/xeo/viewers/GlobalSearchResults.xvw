@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer localizationClasses='netgest.bo.xwc.xeo.localization.XEOViewersMessages'
+		beanClass='netgest.bo.xwc.xeo.beans.GlobalSearchBean' beanId='viewBean'>
+		<xvw:form id='search'>
+		
+		<xvw:menu target='tab' id='resultOpen' serverAction='#{viewBean.openSearchResult}' ></xvw:menu>
+		<input type='hidden' id='bouiOpen' name='bouiOpen' value=''></input>
+			<style>
+				.searchWrap {
+			        border: 1px #999999 solid;
+			        margin : 3px;
+			        -moz-border-radius: 5px;
+			        -webkit-border-radius: 5px;
+			        background-color: #ffffff;
+			        padding-bottom: 3px;
+			    }
+			
+			    .x-view-over{
+			    	background-color: #E0E0E0;
+			    }
+			
+			    .result {
+			        font-weight: bold;
+			        margin-left: 5px;
+			        font-size: 14px;
+			        text-decoration: underline;
+			        color: #333333;
+			    }
+			
+			    .title {
+			        margin-left: 5px;
+			        font-weight: bold;
+			    }
+			</style>
+			<script>
+			// ExtJS XTemplate to format elements
+		<![CDATA[
+		var tpl = new Ext.XTemplate(
+		    '<tpl for=".">',
+            '<div class="searchWrap" >',
+                '<div class="result">{text}</div>',
+                '<div><span class="title">Type:</span><img src="resources/{classname}/ico16.gif"/> {classname}  </div>',
+                '<div><span class="title">Date Indexed :</span> {updatedate}</div>',
+                '<div><span class="title">Open:</span> <a href="javascript:void(0)" onclick="document.getElementById(\'bouiOpen\').value=\'{target}\';XVW.openCommandTab(\'Frame_{target}\',\'search\',\'resultOpen\',\'\');">{classname} - {target}</a></div>',
+            '</div>',  																										
+         '</tpl>'	
+		);
+		]]>
+		 </script>
+			<xvw:title valueExpression="@{GLOBAL_SEARCH_TITLE}"></xvw:title>
+			<xvw:tabs renderTabBar="false">
+				<xvw:tab>
+					<div id='searchResults'></div>
+					<xvw:outputHtml valueExpression='#{viewBean.results}'></xvw:outputHtml>
+				</xvw:tab>
+			</xvw:tabs>
+		</xvw:form>
+	</xvw:viewer>
+</xvw:root>

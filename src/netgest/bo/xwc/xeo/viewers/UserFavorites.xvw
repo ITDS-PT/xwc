@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer localizationClasses='netgest.bo.xwc.xeo.localization.XEOViewersMessages'
+		beanClass='netgest.bo.xwc.xeo.beans.FavoritesBean' beanId='viewBean'>
+		<xvw:form id='favorites'>
+			<xvw:messageBox id='removeConfirm' buttons="YESNO" title="@{FAVORITES_REMOVE_MSG_TITLE}" message="@{FAVORITES_REMOVE_MSG}"
+			messageBoxType="INFO" actions="['#{viewBean.removeFavorite}','#{viewBean.dummy}']"
+			>
+			
+			</xvw:messageBox>
+			<xvw:title valueExpression="#{viewBean.title}"></xvw:title>
+			<xvw:tabs renderTabBar="false">
+				<xvw:tab>
+					<xeo:list targetList='#{viewBean.favoritesList}' onRowDoubleClick="#{viewBean.openObject}">
+					<xvw:toolBar>
+						<xvw:menu text='Remove' icon='ext-xeo/images/menus/remover-bridge.gif' serverAction="#{viewBean.removeConfirm}" >
+						</xvw:menu>
+					</xvw:toolBar>
+						<xvw:columns>
+							<xvw:columnAttribute dataField='targetBouiObj' width='200'></xvw:columnAttribute>
+							<xvw:columnAttribute dataField='SYS_DTCREATE' label='@{FAVORITES_LIST_COLUMN_LBL}' renderer='#{viewBean.className}' width='100'></xvw:columnAttribute>
+							<xvw:columnAttribute dataField='SYS_ROWNUM' width='10'></xvw:columnAttribute>
+						</xvw:columns>
+					</xeo:list>
+				</xvw:tab>
+			</xvw:tabs>
+			
+		</xvw:form>
+	</xvw:viewer>
+</xvw:root>
