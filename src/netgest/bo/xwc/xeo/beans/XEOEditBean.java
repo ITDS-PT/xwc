@@ -27,6 +27,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
+import netgest.bo.ejb.boManagerLocal;
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
@@ -390,7 +391,7 @@ public class XEOEditBean extends XEOBaseBean
 			JSONObject obj = new JSONObject(jsonValue);
 			HashMap<String, String> params = new HashMap<String, String>();
 			
-			Iterator itKeys = obj.keys();
+			Iterator<String> itKeys = obj.keys();
 			while (itKeys.hasNext()){
 				String key = (String) itKeys.next();
 				String value = obj.getString(key);
@@ -822,25 +823,22 @@ public class XEOEditBean extends XEOBaseBean
             XEOEditBean   oBaseBean;
             
             oViewRoot = oSessionContext.createChildView( lookupViewerName );
+            oBaseBean = (XEOEditBean)oViewRoot.getBean( "viewBean" );
+            oBaseBean.setParentBean( this );
+            oBaseBean.setParentBeanId( "viewBean" );
+            oBaseBean.setParentComponentId( oAtt.getClientId() );
             
             oWnd = (Window)oViewRoot.findComponent(Window.class); 
             if( oWnd != null ) {
             	oWnd.setAnimateTarget( sCompId );
             }
-            oBaseBean = (XEOEditBean)oViewRoot.getBean( "viewBean" );
             	
             if( oAttHandler.getValueObject() == null ) {
-                oBaseBean.createNew( oAttDef.getReferencedObjectName() );
-                oBaseBean.getXEOObject().addParent( getXEOObject() );
+                oBaseBean.createNew( oAttDef.getReferencedObjectName(), getXEOObject().getBoui() );
             }
             else {
                 oBaseBean.setCurrentObjectKey( Long.valueOf( oAttHandler.getValueLong() ) );
             }
-            
-            oBaseBean.setParentBean( this );
-            oBaseBean.setParentBeanId( "viewBean" );
-            oBaseBean.setParentComponentId( oAtt.getClientId() );
-            
         }
         else
         {
@@ -2171,6 +2169,66 @@ public class XEOEditBean extends XEOBaseBean
         this.bTransactionStarted = false;
         oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/components/viewers/Dummy.xvw" ) );
 
+    }
+    
+    /**
+     * Save the current viewer as favorite of the user
+     * 
+     * Favorites are instances of the
+     * 
+     * 
+     */
+    public void saveFavorite(){
+    	
+    	boObject current = getXEOObject();
+    	
+    	//Retrieve the object that keeps the users favorites (and history?)
+    	try {
+    		
+    		boManagerLocal objectManager = boApplication.getDefaultApplication().getObjectManager();
+    		
+			boObject userPreferences = objectManager.
+				loadObject(getEboContext(), "select Ebo_UserPreferences where owner = CTX_PERFORMER_BOUI");
+			
+			if (!userPreferences.exists()){
+				//Set the value of the owner to the current 
+				userPreferences.getAttribute("owner").setValueLong(getEboContext().getBoSession().getPerformerBoui());
+			}
+			
+			boObjectList list = boObjectList.list(getEboContext(),"select Ebo_UserPreferences.favorites where Ebo_UserPreferences.favorites.targetBouiObj = ? AND Ebo_UserPreferences.owner = CTX_PERFORMER_BOUI",new Object[]{current.getBoui()});
+			if (list.getRecordCount() > 0 ){
+				//Favorite already exists, show duplicate error message
+				getRequestContext().addMessage("duplicateMessage", new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, "Duplicate", "Duplicate Favorite"));
+			}
+			else{
+				//Create the favorite
+				boObject favoriteObject = objectManager.createObject(getEboContext(), "Ebo_FavoriteViewer");
+				
+				favoriteObject.getAttribute("targetBouiObj").setValueLong(current.getBoui());
+				//Add to bridge
+				userPreferences.getBridge("favorites").add(favoriteObject.getBoui());
+				getRequestContext().addMessage("success", new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, "Success", "Favorite saved " + current.getTextCARDID()));
+				userPreferences.update();
+			}
+			
+			
+			
+		} catch (boRuntimeException e) {
+			e.printStackTrace();
+			log.severe(e);
+			getRequestContext().addMessage("errorSaving", 
+					new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, "Error", "Could not save your favorite"));
+			//Show message to display a problem
+		}
+    	
+    	//Check if the entry does not exist
+    		
+    		//Add a new entry in the bridge
+    		//Show a message saying message was added
+    	
+    		//Show message the viewer is already there
+    	
+    	
     }
     
     
