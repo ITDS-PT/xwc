@@ -48,6 +48,9 @@ public class XVWScripts {
     	else if( "tab".equalsIgnoreCase( target ) ) {
     		return getOpenCommandTab( targetName, oComponent, actionValue );
     	}
+    	else if ("noCloseTab".equalsIgnoreCase(target)){
+    		return getOpenCommandTab(targetName, oComponent, actionValue, null, false);
+    	}
     	else if( "download".equalsIgnoreCase( target ) ) {
     		return getCommandDownloadFrame( oComponent, actionValue);
     	}
@@ -215,14 +218,19 @@ public class XVWScripts {
     	return getOpenCommandTab(  null, oComponent, sActionValue, sTabTitle );    
     }
     public static final String getOpenCommandTab(  String targetName, XUIComponentBase oComponent, String sActionValue, String sTabTitle )    {
-        String sFrameName =  targetName!=null?targetName:"Frame_" + oComponent.getId();
+        return getOpenCommandTab(targetName, oComponent, sActionValue, sTabTitle, true);
+    }
+    
+    public static final String getOpenCommandTab(  String targetName, XUIComponentBase oComponent, String sActionValue, String sTabTitle, boolean closeableTab )    {
+    	String sFrameName =  targetName!=null?targetName:"Frame_" + oComponent.getId();
         return 
             "XVW.openCommandTab( " +
             "'" + sFrameName + "'," +
             "'" + oComponent.findParentComponent(XUIForm.class).getClientId() + "'," +
             "'" + oComponent.getId() + "'," +
             "'" + JavaScriptUtils.writeValue( sActionValue ) + "'," +
-            (sTabTitle!=null? "'" + JavaScriptUtils.writeValue( sTabTitle ) + "'" : null ) +
+            (sTabTitle!=null? "'" + JavaScriptUtils.writeValue( sTabTitle ) + "'" : null ) + ","
+            + closeableTab +
             ");";
     }
     
