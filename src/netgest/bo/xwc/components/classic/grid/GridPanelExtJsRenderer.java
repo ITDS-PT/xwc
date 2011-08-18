@@ -591,6 +591,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             oColConfig.add( "hideable" , oGridColumns[ i ].isHideable() );
             oColConfig.add( "hidden" , oGridColumns[ i ].isHidden() );
             oColConfig.add( "groupable", oGridColumns[ i ].isGroupable() );
+            if (!"".equalsIgnoreCase(oGridColumns[ i ].getAlign()))
+            	oColConfig.addJSString( "align" , oGridColumns[ i ].getAlign() );
             
             if( gridIsSortable )
             	oColConfig.add( "sortable", oGridColumns[ i ].isSortable() );
@@ -774,7 +776,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 				String dataField = col.getDataField();
 
 				oExtFiltersChild = oFiltersArray.addChild();
-            	oExtFiltersChild.addJSString( "dataIndex", dataField.replaceAll("\\.", "__") );
+            	oExtFiltersChild.addJSString( "dataIndex", dataField );
             	oExtFiltersChild.add( "active" , colFilter.getBoolean("active"));
             	oExtFiltersChild.add( "searchable", col.isSearchable() );
         		
