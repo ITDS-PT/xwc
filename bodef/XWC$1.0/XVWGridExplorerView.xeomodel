@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xeoModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xeoModel.xsd">
+	<general name="XVWGridExplorerView" type="object" version="1.0" extends="" orphan="true" multiparent="false" extendsJavaClass="">
+		<locale language="pt" country="PT" variant=""/>
+		<implements/>
+		<database/>
+		
+		<versioning active="false"/>
+		<textIndex active="true" appendChilds="false" deep="1">
+			<process/>
+		</textIndex>
+		<description>Views of a Grid Explorer</description>
+		<cardID>[name]</cardID>
+		<label>Vista de Explorador</label>
+	</general>
+	<opl active="false"/>
+	<states/>
+	<methods>
+		<method name="valid">
+			<assinature return="boolean"/>
+			<body language="JAVA">
+				if( !exists() ) {
+					boObjectList list = boObjectList.list( 
+						getEboContext(), 
+						"select XVWGridExplorerView where name=? and CREATOR=?",
+						new Object[] {
+							name.getValueString(),
+							new Long(getEboContext().getSysUser().getBoui())
+						}
+					);
+					if( list.next() ) {
+						addErrorMessage("Já existe uma vista com o mesmo nome!");
+						return false;
+					}
+				} 
+				return true;
+			</body>
+		</method>
+	</methods>
+	<events>
+	</events>
+	<fwdObjects/>
+	<attributes>	
+		<attributeText name="gridExplorerId">
+			<len>255</len>
+		</attributeText>
+		<attributeText name="name">
+			<label>Nome</label>
+			<required language="JAVA">return true;</required>
+			<len>50</len>
+		</attributeText>
+		<attributeLongText name="description">
+			<label>Descrição</label>
+		</attributeLongText>
+		<attributeBoolean name="saveFilters">
+			<label>Filtros actuais</label>
+			<defaultValue language="JAVA">return "1";</defaultValue>
+		</attributeBoolean>
+		<attributeBoolean name="saveView">
+			<label>Definições de Colunas</label>
+			<defaultValue language="JAVA">return "1";</defaultValue>
+		</attributeBoolean>
+		<attributeLongText name="boql">
+		</attributeLongText>
+		<attributeLongText name="gridState">
+		</attributeLongText>
+		<attributeObjectCollection name="share">
+			<type>object.iXEOUser</type>
+			<label>Filtro para</label>
+			<renderAsLov>false</renderAsLov>
+			<tooltip/>
+			<maxOccurs>N</maxOccurs>
+			<minOccurs>0</minOccurs>
+			<objects>
+				<object>iXEOUser</object>
+				<object>workQueue</object>
+				<object>Ebo_Role</object>
+				<object>Ebo_Group</object>
+			</objects>
+			<objectFilter/>
+			<bridge>
+				<attributes/>
+			</bridge>
+		</attributeObjectCollection>
+	</attributes>
+	<viewers>
+		<viewer name="general">
+			<forms>
+			</forms>
+			<categories/>
+		</viewer>
+	</viewers>
+</xeoModel>
