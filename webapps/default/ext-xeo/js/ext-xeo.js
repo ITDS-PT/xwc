@@ -21,13 +21,19 @@ ExtXeo.destroyComponents = function( oDNode, oWnd ){
 	var x = new Date();
 	try {
 		ExtXeo.destroyComponents1( oDNode, oWnd );
-    	oDNode.innerHTML="";
+		if( oDNode )
+			oDNode.innerHTML="";
 	} catch( e ) {};
 }
 
-ExtXeo.destroyComponents1 = function( oDNode, oWnd ){
-    if( !oWnd ) oWnd = window;
+ExtXeo.destroyComponents1 = function( oDNode, oWnd ) {
 
+    if( !oDNode )
+    	return;
+    
+    if( !oWnd ) 
+    	oWnd = window;
+    	
     if( "FORM" == oDNode.tagName ) {
     	XVW.disposeView( oDNode, true ); 
     }
@@ -88,38 +94,38 @@ XVW.beforeApplyHtml = function( oDNode, destroyComponent ) {
 XVW.Wait = function( iWaitMode ) {
     if( iWaitMode == '1' )
     {
-    	if( Ext.isIE ) {
-    		// IE Crashes with loadMask
-            Ext.MessageBox.show({
-                title: ExtXeo.Messages.PROCESSING + '      ',
-                msg: ExtXeo.Messages.SENDING_DATA,
-                width:300,
-                wait:true,
-                waitConfig: {interval:200},
-                icon:'ext-mb-download', //custom class in msg-box.html
-                animEl: 'mb7'
-            });
-    	}
-    	else {
+//    	if( Ext.isIE ) {
+//    		// IE Crashes with loadMask
+//            Ext.MessageBox.show({
+//                title: ExtXeo.Messages.PROCESSING + '      ',
+//                msg: ExtXeo.Messages.SENDING_DATA,
+//                width:300,
+//                wait:true,
+//                waitConfig: {interval:200},
+//                icon:'ext-mb-download', //custom class in msg-box.html
+//                animEl: 'mb7'
+//            });
+//    	}
+//    	else {
 	    	if( !ExtXeo.loadMask ) {
 	    		ExtXeo.loadMask = new Ext.LoadMask(document.body, {msg: ExtXeo.Messages.SENDING_DATA });
 	    	}
 	    	ExtXeo.loadMask.show();
-    	}
+//    	}
     }
 }
 
 
 XVW.NoWait = function() { 
-	if( Ext.isIE ) {
-		if( Ext.MessageBox.getDialog().title == ExtXeo.Messages.PROCESSING + '      ' ) {
-			Ext.MessageBox.hide();
-		}
-	} else {
+//	if( Ext.isIE ) {
+//		if( Ext.MessageBox.getDialog().title == ExtXeo.Messages.PROCESSING + '      ' ) {
+//			Ext.MessageBox.hide();
+//		}
+//	} else {
 		if( ExtXeo.loadMask ) {
 			window.setTimeout( "ExtXeo.loadMask.hide();", 50 );
 		}
-	}
+//	}
 }
 
 XVW.openViewOnElement = function( sFormId, sActionId, sActionValue, renderOnElementId ) {
@@ -175,7 +181,7 @@ XVW.openTab = function( sFrameName, sTitle, bClosable ) {
 	            style: "overflow:visible;",
 	            html: (ExtXeo.frameLess)?
 	            ('<span id="'+sFrameName+'" width="100%" height="'+(Ext.isChrome?'99%':'100%' )+'"></span>'):
-	            ('<iframe name="'+sFrameName+'" src="about:blank" scrolling="no" frameBorder="0" width="100%" height="'+(Ext.isChrome?'99%':'100%' )+'"></iframe>')
+	            ('<iframe name="'+sFrameName+'" id="'+sFrameName+'" src="about:blank" scrolling="no" frameBorder="0" width="100%" height="'+(Ext.isChrome?'99%':'100%' )+'"></iframe>')
 	        }
 	    );
 	    var tab  = tabs.add( formLayout );
@@ -187,6 +193,14 @@ XVW.openTab = function( sFrameName, sTitle, bClosable ) {
 	    tabs = null;
 	    formLayout = null;
     }
+}
+
+XVW.OpenCommandFrame = function( sFrameName, sFormId, sActionId, sActionValue){
+    var oForm = document.getElementById( sFormId );
+    var sOldTarget = oForm.target;
+    oForm.target = sFrameName; 
+	XVW.Command( sFormId, sActionId, sActionValue );
+    oForm.target = sOldTarget;
 }
 
 XVW.openUrlTab = function( sURL, sTitle ) {
@@ -220,7 +234,6 @@ XVW.openUrlTab = function( sURL, sTitle ) {
 
 
 XVW.OpenCommandWindow = function( sFrameName, sFormId, sActionId, sActionValue, sWidth, sHeight, sTitle ){
-	
 	sFrameName += (new Date() - 1)
     var win = new Ext.Window({
         layout:'fit',
@@ -714,7 +727,7 @@ XVW.findTabByFormId = function ( sFormId ) {
 Date.monthNames =
  ["Janeiro",
   "Fevereiro",
-  "Março",
+  "Mar�o",
   "Abril",
   "Maio",
   "Junho",
@@ -728,7 +741,7 @@ Date.monthNames =
 Date.dayNames =
  ["Domingo",
   "Segunda",
-  "Terça",
+  "Ter�a",
   "Quarta",
   "Quinta",
   "Sexta",
@@ -745,16 +758,16 @@ columnsText: "Colunas"
 
 Ext.apply(Ext.DatePicker.prototype, {
   todayText : "Hoje",
-  todayTip : "{0} (barra de espaçõs)",
-  minText : "Data máxima.",
+  todayTip : "{0} (barra de espa��s)",
+  minText : "Data m�xima.",
   maxText : "Data minima.",
   format : "d/m/y",
   disabledDaysText : "",
   disabledDatesText : "",
   monthNames : Date.monthNames,
   dayNames : Date.dayNames,
-  nextText: "Próximo Mês (Ctrl + Seta para a direita)",
-  prevText: "Mês Anterior (Ctrl + Seta para a esquerda)",
+  nextText: "Pr�ximo M�s (Ctrl + Seta para a direita)",
+  prevText: "M�s Anterior (Ctrl + Seta para a esquerda)",
   monthYearText: "Escolha de Ano (Ctrl + Para cima/Para baixo para mudar o ano)",
   startDay: 1 // Week start on Monday
 });
@@ -767,16 +780,16 @@ Ext.MessageBox.buttonText = {
   ok : "OK",
   cancel : "Cancelar",
   yes : "Sim",
-  no : "Não" 
+  no : "N�o" 
 };
 
 Ext.apply(Ext.PagingToolbar.prototype, {
-  beforePageText : "Página",
+  beforePageText : "P�gina",
   afterPageText : "de {0}",
-  firstText : "Primeria Página",
-  prevText : "Página Anterior",
-  nextText : "Página Seguinte",
-  lastText : "Última Página",
+  firstText : "Primeria P�gina",
+  prevText : "P�gina Anterior",
+  nextText : "P�gina Seguinte",
+  lastText : "�ltima P�gina",
   refreshText : "Actualizar"
 });
 
@@ -790,6 +803,7 @@ Ext.apply(Ext.form.ComboBox.prototype, {
 window.history.forward(1);
 
 XVW.MenuCounter = {
+	counterRefreshId : 0,
 	counters : {},
 	registerCounter : function( sUrl, sContId, sNodeId, interval ) {
 		this.counters[sNodeId] = { url: sUrl, containerId: sContId, nodeId: sNodeId, interval: interval, lastUpdate: (new Date())-0 };
@@ -802,6 +816,13 @@ XVW.MenuCounter = {
 			if( !loop && window.parent.XVW.MenuCounter )
 				x = window.parent.XVW.MenuCounter.updateCounter( sNodeId, true )
 		} else {
+			
+			var el = document.getElementById( "extxeo-refresh-counters-img" );
+			XVW.MenuCounter.counterRefreshId++;
+			if( el ) {
+				el.src = 'extjs/images/default/grid/wait.gif';
+			}
+			
 			var x = this.counters[sNodeId];
 			var xh = XVW.createXMLHttpRequest();
 			xh.open( 'GET',x.url, true );
@@ -818,6 +839,13 @@ XVW.MenuCounter = {
 					}
 					catch( e ) {
 					}
+					XVW.MenuCounter.counterRefreshId--;
+					if( XVW.MenuCounter.counterRefreshId == 0 ) {
+						var el = document.getElementById( "extxeo-refresh-counters-img" );
+						if( el ) {
+							el.src = 'extjs/resources/images/default/grid/refresh.gif';
+						}
+					}
 				}
 			}
 			xh.send();
@@ -831,5 +859,232 @@ XVW.MenuCounter = {
 			if( window.parent.XVW.MenuCounter ) {
 				window.parent.XVW.MenuCounter.updateCounters( true );
 			}
+	}
+}
+
+
+
+
+/**
+ * http://www.openjs.com/scripts/events/keyboard_shortcuts/
+ * Version : 2.01.B
+ * By Binny V A
+ * License : BSD
+ */
+shortcut = {
+	'all_shortcuts':{},//All the shortcuts are stored in this array
+	'add': function(shortcut_combination,callback,opt) {
+		//Provide a set of default options
+		var default_options = {
+			'type':'keydown',
+			'propagate':false,
+			'disable_in_input':false,
+			'target':document,
+			'keycode':false
+		}
+		if(!opt) opt = default_options;
+		else {
+			for(var dfo in default_options) {
+				if(typeof opt[dfo] == 'undefined') opt[dfo] = default_options[dfo];
+			}
+		}
+
+		var ele = opt.target;
+		if(typeof opt.target == 'string') ele = document.getElementById(opt.target);
+		var ths = this;
+		shortcut_combination = shortcut_combination.toLowerCase();
+
+		//The function to be called at keypress
+		var func = function(e) {
+			e = e || window.event;
+			
+			if(opt['disable_in_input']) { //Don't enable shortcut keys in Input, Textarea fields
+				var element;
+				if(e.target) element=e.target;
+				else if(e.srcElement) element=e.srcElement;
+				if(element.nodeType==3) element=element.parentNode;
+
+				if(element.tagName == 'INPUT' || element.tagName == 'TEXTAREA') return;
+			}
+	
+			//Find Which key is pressed
+			if (e.keyCode) code = e.keyCode;
+			else if (e.which) code = e.which;
+			var character = String.fromCharCode(code).toLowerCase();
+			
+			if(code == 188) character=","; //If the user presses , when the type is onkeydown
+			if(code == 190) character="."; //If the user presses , when the type is onkeydown
+
+			var keys = shortcut_combination.split("+");
+			//Key Pressed - counts the number of valid keypresses - if it is same as the number of keys, the shortcut function is invoked
+			var kp = 0;
+			
+			//Work around for stupid Shift key bug created by using lowercase - as a result the shift+num combination was broken
+			var shift_nums = {
+				"`":"~",
+				"1":"!",
+				"2":"@",
+				"3":"#",
+				"4":"$",
+				"5":"%",
+				"6":"^",
+				"7":"&",
+				"8":"*",
+				"9":"(",
+				"0":")",
+				"-":"_",
+				"=":"+",
+				";":":",
+				"'":"\"",
+				",":"<",
+				".":">",
+				"/":"?",
+				"\\":"|"
+			}
+			//Special Keys - and their codes
+			var special_keys = {
+				'esc':27,
+				'escape':27,
+				'tab':9,
+				'space':32,
+				'return':13,
+				'enter':13,
+				'backspace':8,
+	
+				'scrolllock':145,
+				'scroll_lock':145,
+				'scroll':145,
+				'capslock':20,
+				'caps_lock':20,
+				'caps':20,
+				'numlock':144,
+				'num_lock':144,
+				'num':144,
+				
+				'pause':19,
+				'break':19,
+				
+				'insert':45,
+				'home':36,
+				'delete':46,
+				'end':35,
+				
+				'pageup':33,
+				'page_up':33,
+				'pu':33,
+	
+				'pagedown':34,
+				'page_down':34,
+				'pd':34,
+	
+				'left':37,
+				'up':38,
+				'right':39,
+				'down':40,
+	
+				'f1':112,
+				'f2':113,
+				'f3':114,
+				'f4':115,
+				'f5':116,
+				'f6':117,
+				'f7':118,
+				'f8':119,
+				'f9':120,
+				'f10':121,
+				'f11':122,
+				'f12':123
+			}
+	
+			var modifiers = { 
+				shift: { wanted:false, pressed:false},
+				ctrl : { wanted:false, pressed:false},
+				alt  : { wanted:false, pressed:false},
+				meta : { wanted:false, pressed:false}	//Meta is Mac specific
+			};
+                        
+			if(e.ctrlKey)	modifiers.ctrl.pressed = true;
+			if(e.shiftKey)	modifiers.shift.pressed = true;
+			if(e.altKey)	modifiers.alt.pressed = true;
+			if(e.metaKey)   modifiers.meta.pressed = true;
+                        
+			for(var i=0; k=keys[i],i<keys.length; i++) {
+				//Modifiers
+				if(k == 'ctrl' || k == 'control') {
+					kp++;
+					modifiers.ctrl.wanted = true;
+
+				} else if(k == 'shift') {
+					kp++;
+					modifiers.shift.wanted = true;
+
+				} else if(k == 'alt') {
+					kp++;
+					modifiers.alt.wanted = true;
+				} else if(k == 'meta') {
+					kp++;
+					modifiers.meta.wanted = true;
+				} else if(k.length > 1) { //If it is a special key
+					if(special_keys[k] == code) kp++;
+					
+				} else if(opt['keycode']) {
+					if(opt['keycode'] == code) kp++;
+
+				} else { //The special keys did not match
+					if(character == k) kp++;
+					else {
+						if(shift_nums[character] && e.shiftKey) { //Stupid Shift key bug created by using lowercase
+							character = shift_nums[character]; 
+							if(character == k) kp++;
+						}
+					}
+				}
+			}
+			
+			if(kp == keys.length && 
+						modifiers.ctrl.pressed == modifiers.ctrl.wanted &&
+						modifiers.shift.pressed == modifiers.shift.wanted &&
+						modifiers.alt.pressed == modifiers.alt.wanted &&
+						modifiers.meta.pressed == modifiers.meta.wanted) {
+				callback(e);
+	
+				if(!opt['propagate']) { //Stop the event
+					//e.cancelBubble is supported by IE - this will kill the bubbling process.
+					e.cancelBubble = true;
+					e.returnValue = false;
+	
+					//e.stopPropagation works in Firefox.
+					if (e.stopPropagation) {
+						e.stopPropagation();
+						e.preventDefault();
+					}
+					return false;
+				}
+			}
+		}
+		this.all_shortcuts[shortcut_combination] = {
+			'callback':func, 
+			'target':ele, 
+			'event': opt['type']
+		};
+		//Attach the function with the event
+		if(ele.addEventListener) ele.addEventListener(opt['type'], func, false);
+		else if(ele.attachEvent) ele.attachEvent('on'+opt['type'], func);
+		else ele['on'+opt['type']] = func;
+	},
+
+	//Remove the shortcut - just specify the shortcut and I will remove the binding
+	'remove':function(shortcut_combination) {
+		shortcut_combination = shortcut_combination.toLowerCase();
+		var binding = this.all_shortcuts[shortcut_combination];
+		delete(this.all_shortcuts[shortcut_combination])
+		if(!binding) return;
+		var type = binding['event'];
+		var ele = binding['target'];
+		var callback = binding['callback'];
+
+		if(ele.detachEvent) ele.detachEvent('on'+type, callback);
+		else if(ele.removeEventListener) ele.removeEventListener(type, callback, false);
+		else ele['on'+type] = false;
 	}
 }

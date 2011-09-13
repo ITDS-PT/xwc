@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="OutCom" default="all" basedir="./">
+	<target name='all' depends='xvw' />
+	<target name='xvw'>
+		<property name="project_source" value="xeo_v3_xwc" />
+		<property name="module_name" value="xeoxwc" />
+
+		<property name="dest_dir" value="C:\xeo\releases\build_012_alpha1\newproj\" />
+
+		<property name="src" value="${basedir}\..\${project_source}\src" />
+		<property name="src_bin" value="${basedir}\..\${project_source}\bin" />
+		<property name="src_web" value="${basedir}\..\${project_source}\webapps\default\" />
+		<property name="src_bodef" value="${basedir}\..\${project_source}\bodef" />
+		<property name="src_projlib" value="${basedir}\..\${project_source}\project_lib" />
+
+		<property name="modules" value="${dest_dir}\base_lib\modules\${module_name}.jar" />
+		<property name="modules_src" value="${dest_dir}\base_lib\modules\${module_name}_src.zip" />
+		<property name="modules_web" value="${dest_dir}\base_lib\modules_web\${module_name}" />
+		<property name="modules_lib" value="${dest_dir}\base_lib\modules_lib" />
+		<property name="modules_bodef" value="${dest_dir}\bodef" />
+
+		<echo>${modules_src}</echo>
+		<jar destfile="${modules_src}" basedir="${src}" />
+		<jar destfile="${modules}">
+			<fileset dir="${src_bin}" excludes='**/XWVProjectComponents.xml' />
+			<fileset dir="${src_web}/" includes="viewers/**/*.xvw" />
+			<!-- fileset dir="${src_web}/viewers/" includes="**/*.xvw"  -->
+		</jar>
+
+		<copy todir="${modules_web}">
+			<fileset dir="${src_web}" excludes='**/.xeodeploy/**' />
+		</copy>
+		<copy todir="${modules_bodef}">
+			<fileset dir="${src_bodef}" excludes='**/.xeodeploy/**' />
+		</copy>
+		<copy todir="${modules_lib}">
+			<fileset dir="${src_projlib}" excludes='**/.xeodeploy/**' />
+		</copy>
+	</target>
+</project>

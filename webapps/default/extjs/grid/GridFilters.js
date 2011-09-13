@@ -6,7 +6,7 @@
  * http://extjs.com/license
  */
 
-Ext.grid.GridFilters = function(config){		
+Ext.grid.GridFilters = function(config){
 	this.filters = new Ext.util.MixedCollection();
 	this.filters.getKey = function(o) {return o ? o.dataIndex : null};
 
@@ -62,29 +62,29 @@ Ext.extend(Ext.grid.GridFilters, Ext.util.Observable, {
     filtersText: 'Filtros',
 
 	init: function(grid){
-    if(grid instanceof Ext.grid.GridPanel){
-      this.grid  = grid;
-      
-      this.store = this.grid.getStore();
-      if(this.local){
-        this.store.on('load', function(store) {
-          store.filterBy(this.getRecordFilter());
-        }, this);
-      } else {
-        this.store.on('beforeload', this.onBeforeLoad, this);
-      }
-      
-      this.grid.filters = this;
-      
-      this.grid.addEvents('filterupdate');
-      
-      grid.on("render", this.onRender, this);
-      //grid.on("beforestaterestore", this.applyState, this);
-      //grid.on("beforestatesave", this.saveState, this);
-      
-    } else if(grid instanceof Ext.PagingToolbar) {
-      this.toolbar = grid;
-    }
+	    if(grid instanceof Ext.grid.GridPanel){
+	      this.grid  = grid;
+	      
+	      this.store = this.grid.getStore();
+	      if(this.local){
+	        this.store.on('load', function(store) {
+	          store.filterBy(this.getRecordFilter());
+	        }, this);
+	      } else {
+	        this.store.on('beforeload', this.onBeforeLoad, this);
+	      }
+	      
+	      this.grid.filters = this;
+	      
+	      this.grid.addEvents('filterupdate');
+	      
+	      grid.on("render", this.onRender, this);
+	      grid.on("beforestaterestore", this.applyState, this);
+	      grid.on("beforestatesave", this.saveState, this);
+	      
+	    } else if(grid instanceof Ext.PagingToolbar) {
+	      this.toolbar = grid;
+	    }
 	},
 		
 	/** private **/

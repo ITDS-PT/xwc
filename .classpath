@@ -30,6 +30,8 @@
 	<classpathentry kind="lib" path="project_lib/jhighlight-1.0.jar"/>
 	<classpathentry kind="lib" path="project_lib/html2xhtml-jtidy-r938.jar"/>
 	<classpathentry kind="lib" path="project_lib/sigar.jar"/>
+	<classpathentry kind="lib" path="project_lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="project_lib/EarnstonePerf.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xeo_v3_core"/>
 	<classpathentry kind="lib" path="project_lib/iText-2.1.7.jar"/>
 	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/xmlparserv2.jar"/>

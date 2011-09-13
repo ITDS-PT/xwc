@@ -27,7 +27,7 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
      * @cfg {String} afterText
      * The text displayed for the "After" menu item
      */
-    afterText: 'Despois de',
+    afterText: 'Depois de',
     /**
      * @cfg {String} onText
      * The text displayed for the "On" menu item
@@ -52,7 +52,7 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
 			'before': new Ext.menu.CheckItem({text: this.beforeText, menu: new Ext.menu.DateMenu(opts)}),
 			'after':  new Ext.menu.CheckItem({text: this.afterText, menu: new Ext.menu.DateMenu(opts)}),
 			'on':     new Ext.menu.CheckItem({text: this.onText, menu: new Ext.menu.DateMenu(opts)})
-    };
+		};
 				
 		this.menu.add(dates.before, dates.after, "-", dates.on);
 		
@@ -99,6 +99,11 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
 	},
 	
 	setValue: function(value) {
+		
+		if (value['lt'] ) value['before'] = value['lt'];
+		if (value['gt'] ) value['after'] = value['gt'];
+		if (value['eq'] ) value['on'] = value['eq'];
+		
 		for(var key in this.dates) {
 			if(value[key]) {
 				this.dates[key].menu.picker.setValue(value[key]);

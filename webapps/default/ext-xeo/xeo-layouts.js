@@ -57,7 +57,10 @@ XEOLayout.ViewPort = function()
 	                ,{
 	                    region:'west',
 	                    id:'west-panel',
-	                    title:(window.treeName?treeName: + ExtXeo.Messages.TREE_TITLE ),
+	                    title:
+	                    		"<img id='extxeo-refresh-counters-img' onclick='XVW.MenuCounter.updateCounters(true);' style='cursor:pointer;position:relative;top:0px;width:16px;height:16px' align='right' src='extjs/resources/images/default/grid/refresh.gif'>" +
+	                    		(window.treeName?treeName: + ExtXeo.Messages.TREE_TITLE ) 
+	                    		,
 	                    split:true, 
 	                    width: 200,
 	                    minSize: 175,

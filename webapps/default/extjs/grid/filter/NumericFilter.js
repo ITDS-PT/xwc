@@ -53,13 +53,13 @@ Ext.grid.filter.NumericFilter = Ext.extend(Ext.grid.filter.Filter, {
 			
 		if(values.eq != undefined && val != values.eq) {
 			return false;
-    }
+		}
 		if(values.lt != undefined && val >= values.lt) {
 			return false;
-    }
+		}
 		if(values.gt != undefined && val <= values.gt) {
 			return false;
-    }
+		}
 		return true;
 	}
 });

@@ -224,6 +224,33 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
     // Now header and footer scripts are evaluated in the same bock.
     var sScriptToEval = "";
     
+    // Destroy html 
+    var oRenderNodeList = oDocElm.getElementsByTagName("render");
+    for( var nl1=0;nl1<oRenderNodeList.length; nl1++ )
+    {
+        var oChildNodes = oRenderNodeList.item(nl1).getElementsByTagName( 'component' );
+        for( var i=0; i < oChildNodes.length; i++ ) {
+            var oCompNode = oChildNodes.item(i);
+            var oCompId = oCompNode.getAttribute("id");
+            var oCompDNode = document.getElementById( oCompId );
+            if( oCompDNode != null ) {
+        		var pNode = oCompDNode.parentNode; 
+        		var sNode = oCompDNode.nextSibling;
+        		XVW.beforeApplyHtml( oCompDNode, oCompNode.getAttribute("destroy")=='true' );
+        		// Check if the placeholder still exists after event
+        		// beforeApplyHtml
+        		if( document.getElementById(oCompDNode.id) == null ) {
+        			var nnode = document.createElement( oCompDNode.tagName );
+        			nnode.id = oCompDNode.id;
+        			if( sNode != null ) {
+        				pNode.insertBefore( nnode, sNode );
+        			} else { 
+        				pNode.appendChild( nnode );
+        			}
+        		}
+            }
+        }
+    }
     
     // Handle header Scripts - Run Header Scripts
     var oHeaderScriptNodeList = oDocElm.getElementsByTagName("headerScripts");
@@ -266,8 +293,6 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
             var oCompId = oCompNode.getAttribute("id");
             var oCompDNode = document.getElementById( oCompId );
             if( oCompDNode != null ) {
-        		var pNode = oCompDNode.parentNode; 
-        		XVW.beforeApplyHtml( oCompDNode, oCompNode.getAttribute("destroy")=='true' );
                 if(oCompNode.textContent /*Mozilla*/) {
             		// If first child is null... there is nothing to render
             		// The component didn't write anything to the output
@@ -276,7 +301,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
                     {
                 		if( oCompNode.textContent.trim().length > 0 ) {
     	            		x.innerHTML = oCompNode.textContent;
-    	                    pNode.replaceChild( x.firstChild.nextSibling, oCompDNode );
+    	            		oCompDNode.parentNode.replaceChild( x.firstChild.nextSibling, oCompDNode );
                 		}
                     }
                     catch( e ) {
@@ -287,20 +312,8 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
                     }
                 }
                 else if( oCompNode.text ) {
-            		// If first child is null... there is nothing to render
-            		// The component didn't write anything to the output
             		if( oCompNode.text != "" ) {
-	                	// if the child node doest exists any more in the document
-	                	// append the to the child tree;
-//	                	if( document.getElementById( oCompId ) == null ) {
-//	                		pNode.appendChild( x.firstChild );
-//	                	} else {
-	                		// If first child is null... there is nothing to render
-	                		// The component didn't write anything to the output
-	                    	//x.innerHTML = oCompNode.text;
-	                    	oCompDNode.outerHTML = oCompNode.text;
-	            			//pNode.replaceChild( x.firstChild, oCompDNode );
-//	                	}
+                    	oCompDNode.outerHTML = oCompNode.text;
             		}
                 }
             }
@@ -470,7 +483,7 @@ XVW.prv.getViewStateInput = function( oElement ) {
 
 
 
-XVW.prv.createCommand = function( sFormId, sActionId ) {
+XVW.prv.createCommand = function( sFormId, sActionId, sActionValue ) {
     var oForm   = document.getElementById( sFormId );
     if( oForm != null )
     {

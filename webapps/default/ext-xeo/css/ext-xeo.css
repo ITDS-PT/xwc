@@ -77,3 +77,26 @@ ul.x-tab-strip {
     cursor: default !important;
 }
 
+.x-grid-group-tb DIV {
+	background: white;
+	background-image:'';
+}
+
+.x-grid-group-hd {
+	border-bottom:1px solid lightgray;
+	font-color:black;
+}
+
+.x-grid3-group-icon{
+	background-repeat: no-repeat;
+	display: none;
+	height: 16px;
+	width: 16px;
+	margin-left:3px;
+	vertical-align: middle;
+}
+
+.grid-group .x-grid3-group-icon {
+	background-image: url(../images/grid/group-by.gif);
+	display: inline;
+}
