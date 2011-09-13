@@ -7,7 +7,7 @@
         <xwc:renderKit name='XEOV2' 	className='netgest.bo.xwc.framework.jsf.XUIRenderKit' />
 
 		<xwc:renderKit name='XEOV2' componentNamespace='xvw' >
-		    <xwc:render for='ajaxText'>netgest.bo.xwc.components.classic.AjaxText$XEOHTMLRenderer</xwc:render>
+	    	<xwc:render for='ajaxText'>netgest.bo.xwc.components.classic.AjaxText$XEOHTMLRenderer</xwc:render>
             <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.ErrorMessages$XEOHTMLRenderer</xwc:render>
             <xwc:render for="form">netgest.bo.xwc.components.classic.Form$XEOHTMLRenderer</xwc:render>
             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.ToolBar$XEOHTMLRenderer</xwc:render>
@@ -42,6 +42,8 @@
             <xwc:render for='mainLayout'>netgest.bo.xwc.components.classic.MainLayout$XEOHTMLRenderer</xwc:render>
             
             <xwc:render for='gridPanel'>netgest.bo.xwc.components.classic.grid.GridPanelRenderer</xwc:render>
+            <xwc:render for='treeShuttle'>netgest.bo.xwc.components.classic.TreeShuttle$XEOHTMLRenderer</xwc:render>
+            
             <xwc:render for='window'>netgest.bo.xwc.components.classic.Window$XEOHTMLRenderer</xwc:render>
 			<xwc:render for='HTMLFileBrowse'>netgest.bo.xwc.components.classic.HTMLFileBrowse$XEOHTMLRenderer</xwc:render>
 
@@ -122,6 +124,7 @@
             <xwc:render for='mainLayout'>netgest.bo.xwc.components.classic.MainLayout$XEOHTMLRenderer</xwc:render>
             
             <xwc:render for='gridPanel'>netgest.bo.xwc.components.classic.grid.GridPanelRenderer</xwc:render>
+            <xwc:render for='treeShuttle'>netgest.bo.xwc.components.classic.TreeShuttle$XEOHTMLRenderer</xwc:render>
             <xwc:render for='window'>netgest.bo.xwc.components.classic.Window$XEOHTMLRenderer</xwc:render>
 			<xwc:render for='HTMLFileBrowse'>netgest.bo.xwc.components.classic.HTMLFileBrowse$XEOHTMLRenderer</xwc:render>
 			<xwc:render for='title'>netgest.bo.xwc.components.classic.Title$XEOHTMLRenderer</xwc:render>
@@ -296,7 +299,7 @@
     </xwc:renderKits>
     
     <xwc:components namespace='xvw' > 
-   
+
         <xwc:component name='ajaxText'>
             <xwc:className>netgest.bo.xwc.components.classic.AjaxText</xwc:className>
             <xwc:description>Ajax Text</xwc:description>
@@ -485,6 +488,12 @@
             <xwc:className>netgest.bo.xwc.components.classic.GridPanel</xwc:className>
             <xwc:description>GridPanel</xwc:description>
         </xwc:component>
+        
+        <xwc:component name='treeShuttle'>
+            <xwc:className>netgest.bo.xwc.components.classic.TreeShuttle</xwc:className>
+            <xwc:description>TreeShuttle</xwc:description>
+        </xwc:component>
+        
         <xwc:component name='gridNavBar'>
             <xwc:className>netgest.bo.xwc.components.classic.GridNavBar</xwc:className>
             <xwc:description>GridNavBar</xwc:description>
