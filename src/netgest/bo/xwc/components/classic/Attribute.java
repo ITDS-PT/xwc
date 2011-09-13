@@ -444,6 +444,7 @@ public class Attribute extends AttributeBase
             if( "1".equals( oAttr.getRenderLabel() ) )
             {
             	w.startElement( TD, oComp );
+            	w.writeAttribute( HTMLAttr.HEIGHT , "20px", null );
             	w.writeAttribute(HTMLAttr.ALIGN, labelPos, null);
             	w.writeAttribute(HTMLAttr.STYLE, "padding-right:3px", null);
                 if( oAttr.getLabelComponent() != null ) {

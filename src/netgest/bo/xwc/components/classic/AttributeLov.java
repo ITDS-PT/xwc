@@ -80,7 +80,7 @@ public class AttributeLov extends AttributeBase {
     		
     		String jsValue = JavaScriptUtils.writeValue( oComp.getValue() );
 
-    		if( jsValue.length() == 0 && map.size() > 0 ) {
+    		if( jsValue.length() == 0 && map != null && map.size() > 0 ) {
     			jsValue = JavaScriptUtils.writeValue( map.keySet().iterator().next() );
     		}
     		if( oComp.isRenderedOnClient() ) {
@@ -100,20 +100,21 @@ public class AttributeLov extends AttributeBase {
     		ScriptBuilder s = new ScriptBuilder();
     		boolean first = true;
     		s.w("[");
-    		for( Entry<Object,String> entry : lovMap.entrySet() ) {
-    			if( !first ) {
-    				s.w(",");
-    			}
-    			String sdValue = entry.getValue();
-    			if( sdValue == null || sdValue.length() == 0 ) {
-    				sdValue = "";
-    			}
-    			
-    			s.w("['").writeValue( entry.getKey() ).w("','").writeValue( sdValue ).w("']");
-    			first = false;
+    		if( lovMap != null ) {
+	    		for( Entry<Object,String> entry : lovMap.entrySet() ) {
+	    			if( !first ) {
+	    				s.w(",");
+	    			}
+	    			String sdValue = entry.getValue();
+	    			if( sdValue == null || sdValue.length() == 0 ) {
+	    				sdValue = "";
+	    			}
+	    			
+	    			s.w("['").writeValue( entry.getKey() ).w("','").writeValue( sdValue ).w("']");
+	    			first = false;
+	    		}
     		}
     		s.w("]");
-    		
     		return s;
     	}
     	

@@ -1,6 +1,7 @@
 package netgest.bo.xwc.components.classic.grid;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import netgest.bo.xwc.components.classic.Tab;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.connectors.DataGroupConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
+import netgest.bo.xwc.components.connectors.GroupableDataList;
 import netgest.bo.xwc.components.data.JavaScriptArrayProvider;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -25,13 +27,13 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.beans.XEOBaseList;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet {
     
-
 	GridPanelExtJsRenderer extRenderer;
 	
     @Override
@@ -87,13 +89,20 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
     
 	public void service(ServletRequest oRequest, ServletResponse oResponse, XUIComponentBase oComp ) throws IOException
     {
-        GridPanel oGrid;
+        
+		long init = System.currentTimeMillis();
+		
+		GridPanel oGrid;
         GridPanelRequestParameters reqParam;
 
         oGrid = (GridPanel)oComp;
         
+        
+        
         reqParam = decodeServiceParmeters( oGrid, (HttpServletRequest)oRequest );
         
+        if( "true".equals( oRequest.getParameter("updateConfig") ) )
+        	return;
         
         String sType = oRequest.getParameter("type");
         if( "pdf".equalsIgnoreCase( sType ) ) {
@@ -104,99 +113,153 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         	GridPanelExcelRenderer excelRenderer = new GridPanelExcelRenderer();
         	excelRenderer.getExcel( oRequest, oResponse, oGrid );
         }
-        else if ( oGrid.getGroupBy() == null ) {
-        	oGrid.setGroupBy( null );
-        	GridPanelJSonRenderer jsonRenderer = new GridPanelJSonRenderer();
-        	jsonRenderer.getJsonData(oRequest, oResponse, reqParam, oGrid);
-
+        else {
+        	DataListConnector dataSource = oGrid.getDataSource();
+	        if ( reqParam.getGroupBy() == null || (dataSource.dataListCapabilities() & DataListConnector.CAP_GROUPING) == 0 ) {
+	        	GridPanelJSonRenderer jsonRenderer = new GridPanelJSonRenderer();
+	        	jsonRenderer.getJsonData(oRequest, oResponse, reqParam, oGrid, dataSource);
+	        }
+	        else if ( reqParam.getGroupBy() != null  ) {
+	        	oResponse.setContentType( "text/plain;charset=utf-8" );
+	        	
+	        	oGrid.applySqlFields(dataSource);
+	        	oGrid.applyFilters( dataSource );
+	        	oGrid.applySort( dataSource );
+	        	oGrid.applyFullTextSearch( dataSource );
+	        	
+	        	
+	            Map<String,GridColumnRenderer> columnRenderer = new HashMap<String,GridColumnRenderer>();
+	            Column[] oAttributeColumns = oGrid.getColumns();
+	            for( Column gridCol : oAttributeColumns ) {
+	                if( gridCol != null && gridCol instanceof ColumnAttribute ) {
+	                    GridColumnRenderer r = ((ColumnAttribute)gridCol).getRenderer();
+	                    if( r != null ) {
+	                    	columnRenderer.put( gridCol.getDataField(), r );
+	                    }
+	                }
+	            }
+	    		String[] groupBy = reqParam.getGroupBy(); 
+	        	
+	        	if( reqParam.getGroupByLevel() >= reqParam.getGroupBy().length ) {
+	
+	        		DataListConnector groupDetails = 
+	            		((GroupableDataList)dataSource).getGroupDetails(
+	            				groupBy,
+	            				reqParam.getParentValues(),
+	            				groupBy[groupBy.length-1],
+	            				reqParam.getPage(), 
+	            				reqParam.getPageSize()
+	            			);
+	
+	        		GridPanelJSonRenderer jsonRenderer = new GridPanelJSonRenderer();
+	                StringBuilder oStrBldr = jsonRenderer.buildDataArray( 
+	                		oGrid, 
+	                		groupDetails, 
+	                		groupDetails.iterator(), 
+	                		0, 
+	                		reqParam.getPageSize() 
+	                	);
+	                oResponse.getWriter().print( oStrBldr );
+	                
+	        	}
+	        	else {
+	        		String grouByLevelField = reqParam.getGroupBy()[ reqParam.getGroupByLevel() ];
+	            	DataGroupConnector groupConnector = ((GroupableDataList)dataSource).getGroups(
+	            		reqParam.getGroupBy(),
+	            		reqParam.getParentValues(),
+	            		reqParam.getGroupBy()[ reqParam.getGroupByLevel() ],
+	            		reqParam.getPage(), 
+	            		reqParam.getPageSize() 
+	            	);
+	                StringBuilder s = new StringBuilder(200);
+	                s.append( '{' );
+	                s.append( oGrid.getId() ); 
+	                s.append( ":" );
+	                JavaScriptArrayProvider oJsArrayProvider = new JavaScriptArrayProvider( 
+	                		groupConnector.iterator(),
+	                		new String[] { grouByLevelField, grouByLevelField + "__value", grouByLevelField + "__count" },
+	                		0,
+	                		50
+	                	);
+	                
+	                
+	                int cnt = groupConnector.getRecordCount();
+	                oJsArrayProvider.getJSONArray( s, oGrid, oGrid.getGroupBy(), null, null, columnRenderer );
+	                s.append(",totalCount:").append( cnt );
+	                s.append('}');
+	            	oResponse.getWriter().print( s );
+	        	}
+	        }
         }
-        else if ( reqParam.getGroupByValue() != null ) {
-        	oResponse.setContentType( "text/plain;charset=utf-8" );
-        	DataListConnector c = oGrid.getDataSource();
-        	
-        	oGrid.applyFilters( c );
-        	oGrid.applySort( c );
-        	oGrid.applyFullTextSearch( c );
-        	
-        	c.setGroupBy( new String[] { oGrid.getGroupBy() } );
-        	DataListConnector groupDetails = 
-        		c.getGroupDetails(1, 
-        				new String[] { oGrid.getGroupBy() }, 
-        				new Object[] { reqParam.getGroupByValue() }, 
-        				reqParam.getPage(), 
-        				reqParam.getPageSize()
-        			);
-
-        	GridPanelJSonRenderer jsonRenderer = new GridPanelJSonRenderer();
-            
-            StringBuilder oStrBldr = jsonRenderer.buildDataArray( 
-            		oGrid, 
-            		groupDetails, 
-            		groupDetails.iterator(), 
-            		0, 
-            		reqParam.getPageSize() 
-            	);
-            oResponse.getWriter().print( oStrBldr );
-        	
-        }
-        else if ( oGrid.getGroupBy() != null ) {
-        	oResponse.setContentType( "text/plain;charset=utf-8" );
-            Map<String,GridColumnRenderer> columnRenderer = new HashMap<String,GridColumnRenderer>();
-            Column[] oAttributeColumns = oGrid.getColumns();
-            for( Column gridCol : oAttributeColumns ) {
-                    if( gridCol != null && gridCol instanceof ColumnAttribute ) {
-                            GridColumnRenderer r = ((ColumnAttribute)gridCol).getRenderer();
-                            if( r != null ) {
-                                    columnRenderer.put( gridCol.getDataField(), r );
-                            }
-                    }
-            }
-        	oGrid.setGroupBy( oGrid.getGroupBy() );
-
-        	DataListConnector c = oGrid.getDataSource();
-        	oGrid.applyFilters( c );
-        	oGrid.applySort( c );
-        	oGrid.applyFullTextSearch( c );
-        	oGrid.applySqlFields(c);
-        	
-        	c.setGroupBy( new String[] { oGrid.getGroupBy() } );
-        	DataGroupConnector groupConnector = c.getGroups( 1, null, null, reqParam.getPage(), reqParam.getPageSize() );
-        	
-        	
-            StringBuilder s = new StringBuilder(200);
-            s.append( '{' );
-            s.append( oGrid.getId() ); 
-            s.append( ":" );
-            JavaScriptArrayProvider oJsArrayProvider = new JavaScriptArrayProvider( 
-            		groupConnector.iterator(),
-            		new String[] { oGrid.getGroupBy(), oGrid.getGroupBy() + "__value", oGrid.getGroupBy() + "__count" },
-            		0,
-            		50
-            	);
-            oJsArrayProvider.getJSONArray( s, oGrid, oGrid.getGroupBy(), null, columnRenderer );
-            s.append(",totalCount:").append( groupConnector.getRecordCount() );
-            s.append('}');
-        	oResponse.getWriter().print( s );
-        }
+        System.out.println( "GridServlet Time:" + (System.currentTimeMillis()-init) );
     }
 	
 	public GridPanelRequestParameters decodeServiceParmeters( GridPanel oGridPanel, HttpServletRequest oRequest ) {
 		
 		// Paramterers at gridLevel
-		
-		String selectedColumns 	= oRequest.getParameter( "visibleColumns" );
-		String selectedRows = oRequest.getParameter( "selectedRows" );
-        String activeRow 	= oRequest.getParameter( "activeRow" );
-        String groupBy 		= oRequest.getParameter( "groupBy" );
-		
-        oGridPanel.setGroupBy( groupBy );
+		/*
+		Enumeration<String> paramEnum = oRequest.getParameterNames();
+		while( paramEnum.hasMoreElements() ) {
+			String pname = paramEnum.nextElement();
+			String[] values = oRequest.getParameterValues( pname );
+			System.out.print( pname + "="  );
+			boolean first = true;
+			for( String v : values ) {
+				if( !first ) {
+					System.out.print(",");
+				}
+				System.out.print( v );
+				first = false;
+			}
+			System.out.println("");
+		}
+		*/
+		String selectedRows 	= oRequest.getParameter( "selectedRows" );
+        String activeRow 		= oRequest.getParameter( "activeRow" );
+        
+        String[] groupBy 		= oRequest.getParameterValues( "groupBy" );
+        
+        // Fix empty group by array
+        if( groupBy != null && groupBy.length == 1 && groupBy[0] != null && groupBy[0].trim().length() == 0 )
+        	groupBy = null;
+        
+        if( groupBy != null ) {
+        	for( int i=0; i < groupBy.length; i++ ) {
+        		groupBy[i] = groupBy[i].replaceAll("__", ".").trim();
+        	}
+        }
+        
+        String 	 groupByLevelS 	= oRequest.getParameter( "groupByLevel" );
+        String[] sParentValues	= oRequest.getParameterValues( "groupByParentValues" );
+        
+        int groupByLevel = -1;
+        
+        if( groupByLevelS != null ) {
+        	groupByLevel = Integer.parseInt( groupByLevelS );
+        }
+        Object[] parentValues = null;
+        
+        if( sParentValues != null ) {
+        	parentValues = Arrays.asList(sParentValues).toArray( new Object[ sParentValues.length ] );
+        }
+        
+        
+        String 	columnsConfig  = oRequest.getParameter( "columnsConfig" );
+        String 	expandedGroups 	= oRequest.getParameter( "expandedGroups" );
+        if( expandedGroups != null ) {
+    		oGridPanel.setCurrentExpandedGroups( expandedGroups );
+        }
+        else {
+        	oGridPanel.setCurrentExpandedGroups( null );
+        }
+        
+        //oGridPanel.setGroupBy( groupBy );
         oGridPanel.setActiveRowByIdentifier( activeRow );
         if( selectedRows != null && selectedRows.length() > 0 ) {
         	oGridPanel.setSelectedRowsByIdentifier( selectedRows.split("\\|"));
         }
         
         // Parameters at requestLevel
-		String groupValue   = oRequest.getParameter( "groupValue" );
         String sStart = oRequest.getParameter("start");
         String sLimit = oRequest.getParameter("limit");
         
@@ -211,8 +274,16 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 		
 		GridPanelRequestParameters reqParam;
 		reqParam = new GridPanelRequestParameters();
-
-		reqParam.setGroupByValue( groupValue );
+		
+		// Group by parameters
+		reqParam.setGroupBy( groupBy );
+		
+		
+		oGridPanel.setGroupBy( StringUtils.join(groupBy, ',') );
+		 
+		reqParam.setGroupByLevel( groupByLevel );
+		reqParam.setParentValues( parentValues );
+		
 		reqParam.setPage( page );
 		reqParam.setPageSize( limit );
 		reqParam.setStart( start );
@@ -221,39 +292,83 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         String sFullText    = oRequest.getParameter("fullText");
         oGridPanel.setCurrentFullTextSearch( sFullText );
         
-        String rSort 		= oRequest.getParameter("sort");
-        if( rSort != null ) {
-        	rSort = rSort.replaceAll("__",".");
-        }
-
-        String sSort	    = rSort + "|" + oRequest.getParameter("dir");
         
         // Sort Terms
-        if( rSort != null ) {
-        	if( sSort.length() > 0 )
-        		oGridPanel.setCurrentSortTerms( sSort );
-        	else 
-        		oGridPanel.setCurrentSortTerms( null );
+        String rSort 		= oRequest.getParameter("sort");
+        if( rSort != null && rSort.length() > 0 ) {
+        	String sortString = "";
+        	try {
+				JSONArray json = new JSONArray( rSort );
+				for( int i=0; i < json.length(); i++ ) {
+					JSONObject j = json.getJSONObject(i);
+					if( j.has("field") ) {
+						if( i > 0 ) 
+							sortString += ",";
+						
+						sortString += j.getString("field").replaceAll("__", ".") + "|" + (j.has("direction")?j.getString("direction"):"");
+					}
+				}
+				oGridPanel.setCurrentSortTerms( sortString );
+			} catch (JSONException e) {
+				// Igonre Sort JSON errors
+			}
+        }
+        else {
+        	oGridPanel.setCurrentSortTerms(null);
         }
         
         // Column State
-        if( selectedColumns != null ) {
+        if( columnsConfig != null ) {
         	try {
-				Map<String,Boolean> map = new HashMap<String, Boolean>();
-				JSONArray jcols = new JSONArray( selectedColumns );
-				for( int i=0; i < jcols.length(); i++ ) {
-					map.put( jcols.getString( i ), Boolean.TRUE );
+        		String sConfig = oGridPanel.getCurrentColumnsConfig();
+        		JSONArray savedColsConfig;
+        		if( sConfig != null && sConfig.length() > 0 ) {
+        			savedColsConfig = new JSONArray( sConfig );
+        		} else {
+        			savedColsConfig = new JSONArray();
+        		}
+        		
+        		JSONArray colsConfig;
+        		if( columnsConfig == null || columnsConfig.length() > 0 ) {
+        			colsConfig = new JSONArray( columnsConfig );
+        		} else {
+        			colsConfig = new JSONArray();
+        		}
+        		
+				for( int i=0; i < colsConfig.length(); i++ ) {
+					JSONObject colConfig = colsConfig.getJSONObject(i);
+					boolean found = false;
+					String colDataField = colConfig.optString( "dataField" );
+					
+					JSONObject savedCfg = null;
+					
+					for(int j=0;j<savedColsConfig.length();j++) {
+						savedCfg = savedColsConfig.getJSONObject(j);
+						if( colDataField.equals( savedCfg.opt( "dataField" ) ) ) {
+							found = true;
+							break;
+						}
+					}
+					if( !found ) {
+						savedCfg = new JSONObject();
+						savedCfg.put("dataField", colDataField );
+						savedColsConfig.put( savedCfg );
+					}
+					if( colConfig.has("width") )
+						savedCfg.put("width", colConfig.opt("width") );
+					if( colConfig.has("hidden") ) {
+						savedCfg.put("hidden", colConfig.opt("hidden") );
+						Column col = oGridPanel.getColumn( colDataField );
+						if( col != null ) {
+							boolean visible = savedCfg.optBoolean("hidden"); 
+							col.setHidden( Boolean.toString( visible ) );
+						}
+					}
+					if( colConfig.has("position") )
+						savedCfg.put("position", colConfig.opt("position") );
 					
 				}
-				Column[] columns = oGridPanel.getColumns();
-				for( Column c : columns ) {
-					if( map.containsKey( c.getDataField() ) ) {
-						((ColumnAttribute)c).setHidden( "false" );
-					}
-					else {
-						((ColumnAttribute)c).setHidden( "true" );
-					}
-				}
+				oGridPanel.setCurrentColumnsConfig( savedColsConfig.toString() );
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -292,13 +407,13 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        		for( String name : names ) {
 	        			JSONObject serverFilter = serverFilters.optJSONObject( name );
 	        			JSONObject clientFilter = jFilters.getJSONObject(name);
-        				if( serverFilter != null && clientFilter.opt("value") != null ) {
+        				if( serverFilter != null ) {
         					serverFilter.put( "active", clientFilter.getBoolean("active") );
         					// Filter's in objects can't be readed from the client
         					// because it clears all other searchs
-        					//if( !"object".equals( clientFilter.getString("type") ) ) {
+        					if( clientFilter.opt("value") != null ) {
         						serverFilter.put( "value", clientFilter.get("value") );
-        					//}
+        					}
         					jFilters.put( name, serverFilter );
 	        			}
 	        		}
@@ -309,7 +424,9 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 				e.printStackTrace();
 			}
         }
-        oGridPanel.saveUserPreferences();
+        if( oGridPanel.getAutoSaveGridState()) {
+        	oGridPanel.saveUserState();
+        }
 		return reqParam;
 	}
 	

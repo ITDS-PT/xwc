@@ -33,7 +33,7 @@ public class XEOViewerResolver {
 				break;
 			case PREVIEW:
 				//ret = className + "_edit.xvw"; 
-				ret = "viewers/" + className + "/lookup.xvw"; 
+				ret = "viewers/" + className + "/edit.xvw"; 
 				break;
 			default:
 				ret = null;

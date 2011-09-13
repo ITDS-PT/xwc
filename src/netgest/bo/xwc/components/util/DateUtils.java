@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 public class DateUtils {
     
     private static final SimpleDateFormat oDateFormater = new SimpleDateFormat( "dd/MM/yyyy" );
-    private static final SimpleDateFormat oDateTimeFormater = new SimpleDateFormat( "dd/MM/yyyy hh:MM:ss" );
+    private static final SimpleDateFormat oDateTimeFormater = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
     
     public static final void formatTimestampToDate( StringBuilder appendTo, Timestamp oTimestamp ) {
         appendTo.append( 

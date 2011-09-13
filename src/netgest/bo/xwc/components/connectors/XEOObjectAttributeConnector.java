@@ -412,7 +412,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
         if( sLovName == null || sLovName.length() == 0 ) {
             ArrayList<Object> list = new ArrayList<Object>();
             try {
-            	if( oAttHandler.isObject() ) {
+            	if( oAttHandler.isObject() && oAttHandler.getDefAttribute().renderAsLov() ) {
                 	
             		list.add( new Object[] { "", "" } );
             		
@@ -451,7 +451,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 	                    boObjectList.list(oAttHandler.getEboContext(), 
 	                                      //"select " + oAttHandler.getDefAttribute().getReferencedObjectDef().getName()
 	                    				  sql
-	                                      ,1,5000
+	                                      ,1,500
 	                                     );
 	                while (oObjectList.next()) {
 	                    list.add( new Object[] { oObjectList.getCurrentBoui(), oObjectList.getObject().getCARDIDwNoIMG().toString() } );

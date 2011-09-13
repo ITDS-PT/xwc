@@ -1,5 +1,6 @@
 package netgest.bo.xwc.components.classic.extjs;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -7,8 +8,13 @@ import java.util.Map.Entry;
 
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 
-public class ExtConfig {
+public class ExtConfig implements Serializable {
     
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2898623823842944142L;
+
 	private boolean bPublic;
 	
     private String sComponentType;
@@ -107,6 +113,7 @@ public class ExtConfig {
 	            oBuilder.append( sEntry.getKey() ).append( " : " );
             }
             oValue = sEntry.getValue();
+            
             if( oValue instanceof ExtConfig ) {
                 ((ExtConfig)oValue).renderExtConfig( oBuilder );
             }

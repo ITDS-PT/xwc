@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +82,7 @@ import org.apache.fop.apps.MimeConstants;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -263,21 +265,48 @@ public class XEOEditBean extends XEOBaseBean
 			root.setAttribute("version", "1.0");
 			doc.setEncoding("utf-8");
 			 
-			NodeList childNodes = systemDoc.getChildNodes().item(0).getChildNodes();
-			for (int k = 0; k < childNodes.getLength(); k++)
-			{
-				Node currentProjectNode = childNodes.item(k);
-				Node clonedNode = doc.importNode(currentProjectNode, true);
-				root.appendChild(clonedNode);
-			}
-			
 			//Get the Children of the First (Root) node
+			Hashtable<String,Boolean> nodesMerged = new Hashtable<String,Boolean>();
 			NodeList childProjectNodes = projectDoc.getChildNodes().item(0).getChildNodes();
 			for (int i = 0; i < childProjectNodes.getLength(); i++)
 			{
 				Node currentSystemNode = childProjectNodes.item(i);
 				Node clonedNode = doc.importNode(currentSystemNode, true);
 				root.appendChild(clonedNode);
+				
+				StringBuilder keyStr = new StringBuilder(clonedNode.getNodeName());
+				NamedNodeMap namedNodeMap = clonedNode.getAttributes();
+				if( namedNodeMap != null ) {
+					for(int k = 0; k < namedNodeMap.getLength(); k++ ) {
+						Node att = namedNodeMap.item( k );
+						keyStr.append( '_' );
+						keyStr.append( att.getNodeName() );
+						keyStr.append( '=' );
+						keyStr.append( att.getNodeValue() );
+					}
+				}
+				nodesMerged.put( keyStr.toString() , Boolean.TRUE );
+			}
+			
+			NodeList childNodes = systemDoc.getChildNodes().item(0).getChildNodes();
+			for (int k = 0; k < childNodes.getLength(); k++)
+			{
+				Node currentProjectNode = childNodes.item(k);
+				StringBuilder keyStr = new StringBuilder(currentProjectNode.getNodeName());
+				NamedNodeMap namedNodeMap =currentProjectNode.getAttributes();
+				if( namedNodeMap != null ) {
+					for(int l = 0; l < namedNodeMap.getLength(); l++ ) {
+						Node att = namedNodeMap.item( l );
+						keyStr.append( '_' );
+						keyStr.append( att.getNodeName() );
+						keyStr.append( '=' );
+						keyStr.append( att.getNodeValue() );
+					}
+				}
+				if( !nodesMerged.containsKey( keyStr.toString()) ) {
+					Node clonedNode = doc.importNode(currentProjectNode, true);
+					root.appendChild(clonedNode);
+				}
 			}
 			
 			doc.appendChild(root);
@@ -1818,7 +1847,7 @@ public class XEOEditBean extends XEOBaseBean
 						"no:'"+XEOViewersMessages.FORM_CLOSE_MESSAGE_NO.toString()+"'}  "); 
 			else
 				messageBoxConfig.add( "buttons" , " Ext.MessageBox.YESNO  ");
-			messageBoxConfig.add( "fn",  "function(a1) { if( a1=='yes' ) { "+closeScript+" } if (a1=='cancel') { "+ openDiffScript +" } }" );
+			messageBoxConfig.add( "fn",  "function(a1) { var el = document.getElementsByTagName('OBJECT');for( var i=0;i<el.length;i++ ) { el[i].style.display='' }; if( a1=='yes' ) { "+closeScript+" } if (a1=='cancel') { "+ openDiffScript +" } }" );
 			messageBoxConfig.add( "icon", "Ext.MessageBox.WARNING" );
 			
 			String url = getRequestContext().getAjaxURL();
@@ -1851,7 +1880,11 @@ public class XEOEditBean extends XEOBaseBean
 			//
 			oRequestContext.getScriptContext().add(  
 					XUIScriptContext.POSITION_HEADER,
-					"canCloseDialog", 
+					"canCloseDialog",
+					// Esconde os elementos do tipo OBJECT para que
+					// não se sobreponham ao zIndex da dialog
+					"var el = document.getElementsByTagName('OBJECT');for( var i=0;i<el.length;i++ ) { el[i].style.display='none' };\n" +
+					"" +
 					"Ext.MessageBox.show("
 					+ 
 					messageBoxConfig.renderExtConfig()

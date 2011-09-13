@@ -152,7 +152,7 @@ public class ExtJsTheme implements XUITheme {
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-base",
 				composeUrl(getResourceBaseUri() + "adapter/ext/ext-base.js"));
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all",
-				composeUrl(getResourceBaseUri() + "ext-all-debug.js"));
+				composeUrl(getResourceBaseUri() + "ext-all.js"));
 
 		// File[] x = new File(
 		// "C:\\projects_eclipse\\xeo\\xeo_v3_xwc\\webapps\\default\\extjs\\pkgs"

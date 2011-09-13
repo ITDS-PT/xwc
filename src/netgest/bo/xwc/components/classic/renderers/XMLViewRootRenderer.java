@@ -142,6 +142,7 @@ public class XMLViewRootRenderer extends XUIRenderer {
             // End Tag HTML
             footerW.writeText('\n');
             footerW.endElement("html");
+            footerW.writeText('\n');
        
         //}
     }

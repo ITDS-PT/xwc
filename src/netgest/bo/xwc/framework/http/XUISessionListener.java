@@ -1,13 +1,23 @@
 package netgest.bo.xwc.framework.http;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import sun.org.mozilla.javascript.internal.Context;
+import sun.org.mozilla.javascript.internal.ContextListener;
+
+import netgest.bo.system.boAgentsControler;
+import netgest.bo.system.boApplication;
 import netgest.bo.xwc.framework.XUISessionContext;
 
-public class XUISessionListener implements HttpSessionListener {
+public class XUISessionListener implements HttpSessionListener, ServletContextListener {
 
+	
+	boApplication xeoApp;
+	
 	public void sessionCreated(HttpSessionEvent arg0) {
 	}
 
@@ -20,4 +30,20 @@ public class XUISessionListener implements HttpSessionListener {
 	        }
 		}
 	}
+
+	
+	@Override
+	public void contextInitialized(ServletContextEvent arg0) {
+		// Initialize XEO
+		xeoApp = boApplication.getApplicationFromStaticContext("XEO");
+	}
+	
+	@Override
+	public void contextDestroyed(ServletContextEvent arg0) {
+		// Showdown XEO
+		if( xeoApp != null ) {
+			xeoApp.shutDown();
+		}
+	}
+	
 }

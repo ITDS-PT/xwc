@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer beanClass="netgest.bo.xwc.components.classic.gridexplorer.XVWGridExplorerViewEditBean"
+		beanId="viewBean">
+		<xeo:formEdit renderToolBar='false'> 
+		<xvw:toolBar>
+			<xvw:menu 
+				icon='ext-xeo/images/menus/confirmar.gif' 
+				text='Confirmar'
+				serverAction='#{viewBean.saveAndClose}' 
+			>
+			</xvw:menu>
+		</xvw:toolBar>
+		<xvw:window width='600'>
+				<xvw:title valueExpression='Gravar explorador'></xvw:title>
+				<xvw:tabs>
+					<xvw:tab label="Geral">
+					<xvw:rows>
+						<xvw:row>
+							<xvw:cell>
+								<xvw:attribute objectAttribute="name" />
+							</xvw:cell>
+						</xvw:row>
+						<xvw:row>
+							<xvw:cell>
+								<xvw:attribute objectAttribute="description" />
+							</xvw:cell>
+						</xvw:row>
+						<!-- 
+						<xvw:row>
+							<xvw:cell>
+								<xvw:attribute objectAttribute="saveFilters" />
+							</xvw:cell>
+							<xvw:cell>
+								<xvw:attribute objectAttribute="saveView" />
+							</xvw:cell>
+						</xvw:row>
+						 -->
+					</xvw:rows>
+					</xvw:tab>
+<!-- 					
+					<xvw:tab label="Consulta">
+						<xvw:rows>
+							<xvw:row>
+								<xvw:cell>
+									<xvw:attribute 
+										objectAttribute="boql" 
+										renderLabel='false'
+										height='200'
+										inputType='attributeTextArea' 
+									/>
+								</xvw:cell>
+							</xvw:row>
+						</xvw:rows>
+					</xvw:tab>
+-->					
+					<xvw:tab label="Partilhar">
+						<xeo:bridge bridgeName='share'>
+							<xvw:columns>
+								<xvw:columnAttribute width="150" label="CardId"
+									dataField="SYS_CARDID" />
+							</xvw:columns>
+						</xeo:bridge>
+					</xvw:tab>
+ 				</xvw:tabs>
+		</xvw:window>
+		</xeo:formEdit>
+	</xvw:viewer>
+</xvw:root>

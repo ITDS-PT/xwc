@@ -84,20 +84,30 @@ public class MenuCounter extends Menu {
         	sActionUrl += "&" + sPar;
         }
 		
+        boolean render = true;
         
         UIComponent comp = getParent();
         while( !(comp instanceof TreePanel || comp instanceof ToolBar ) && comp != null ) {
         	comp = comp.getParent();
+        	if( comp instanceof Menu ) {
+	        	render = ((Menu)comp).canAcess() && ((Menu)comp).getRenderComponent() && ((Menu)comp).isVisible();
+	        	if( !render ) {
+	        		break;
+	        	}
+        	}
         }
-        if( comp != null ) {
-			reqCtx.getScriptContext().add( XUIScriptContext.POSITION_FOOTER , getClientId() +"_r", 
-					"XVW.MenuCounter.registerCounter('" + sActionUrl + "','" + comp.getClientId(getFacesContext()) + "','" + getClientId() +  "'," + getUpdateInterval() + ");" 
+        
+        if( render ) {
+	        if( comp != null ) {
+				reqCtx.getScriptContext().add( XUIScriptContext.POSITION_FOOTER , getClientId() +"_r", 
+						"XVW.MenuCounter.registerCounter('" + sActionUrl + "','" + comp.getClientId(getFacesContext()) + "','" + getClientId() +  "'," + getUpdateInterval() + ");" 
+					);
+				
+				reqCtx.getScriptContext().add( XUIScriptContext.POSITION_FOOTER , "extxeo-updatecounters", 
+					"window.setTimeout( \"XVW.MenuCounter.updateCounters(true);\",500);" 
 				);
-			
-			reqCtx.getScriptContext().add( XUIScriptContext.POSITION_FOOTER , getClientId(), 
-				"window.setTimeout( \"XVW.MenuCounter.updateCounter('" + getClientId() + "')\",500);" 
-			);
-			
+				
+	        }
         }
 	}
 	

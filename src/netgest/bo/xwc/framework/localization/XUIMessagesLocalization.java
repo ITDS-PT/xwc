@@ -1,9 +1,16 @@
 package netgest.bo.xwc.framework.localization;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Formatter;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.ResourceBundle.Control;
 
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
@@ -11,6 +18,8 @@ import netgest.bo.system.boSessionUser;
 
 public class XUIMessagesLocalization {
 
+	private static UTF8Control control = new UTF8Control();
+	
 	public static String getApplicationLanguage() {
 		boApplication bo = boApplication.currentContext().getApplication();
 		String ret = bo.getApplicationLanguage();
@@ -105,7 +114,7 @@ public class XUIMessagesLocalization {
 			}
 
 			if (resourceBundle == null) {
-				resourceBundle = ResourceBundle.getBundle(bundle, locale);
+				resourceBundle = ResourceBundle.getBundle(bundle, locale, control );
 				if (resourceBundle != null) {
 					if (localeBundles == null) {
 						localeBundles = new Hashtable<String, ResourceBundle>();
@@ -165,5 +174,44 @@ public class XUIMessagesLocalization {
 		return threadLocal.get();
 
 	}
+	
+	public static class UTF8Control extends Control {
+    public ResourceBundle newBundle
+        (String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
+            throws IllegalAccessException, InstantiationException, IOException
+    {
+        // The below is a copy of the default implementation.
+        String bundleName = toBundleName(baseName, locale);
+        String resourceName = toResourceName(bundleName, "properties");
+        ResourceBundle bundle = null;
+        InputStream stream = null;
+        
+        
+        if (reload) {
+            URL url = loader.getResource(resourceName);
+            if (url != null) {
+                URLConnection connection = url.openConnection();
+                if (connection != null) {
+                    connection.setUseCaches(false);
+                    stream = connection.getInputStream();
+                }
+            }
+        } else {
+            stream = loader.getResourceAsStream(resourceName);
+        }
+
+        
+        if (stream != null) {
+            try {
+                // Only this line is changed to make it to read properties files as UTF-8.
+                bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
+            } finally {
+                stream.close();
+            }
+        }
+        return bundle;
+    }
+}
+	
 
 }

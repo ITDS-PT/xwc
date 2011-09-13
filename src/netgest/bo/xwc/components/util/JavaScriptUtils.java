@@ -19,9 +19,9 @@ public class JavaScriptUtils {
 	}
 	
 	public static final void safeJavaScriptWrite( StringBuilder appendTo, CharSequence chars, final char charToEscape ) {
-		
+		char c;
         for (int i = 0; i < chars.length(); i++) {
-        	char c = chars.charAt( i );
+        	c = chars.charAt( i );
             switch( c ) {
                 case '\'':
                     if( charToEscape == '\'' )  
@@ -47,6 +47,8 @@ public class JavaScriptUtils {
                     appendTo.append( '\\' );
                     appendTo.append( '\\' );
                     break;
+                case 0:
+                	break;
                 default:
                     appendTo.append( c );
             }

@@ -7,11 +7,13 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.def.boDefInterface;
+import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boBridgeIterator;
 import netgest.bo.runtime.boObject;
@@ -19,9 +21,12 @@ import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boPoolOwner;
+import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.GridExplorer;
 import netgest.bo.xwc.components.classic.GridPanel;
+import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
+import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeMetaData;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.framework.XUIActionEvent;
@@ -31,6 +36,7 @@ import netgest.bo.xwc.framework.XUIViewBean;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.beans.XEOViewerResolver.ViewerType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -101,8 +107,68 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
     }
 
 	public void lookupFilterObject() {
+
+        // Cria view
+        XUIRequestContext   oRequestContext;
+        XUISessionContext   oSessionContext;
+        XUIViewRoot         oViewRoot;
+
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        oSessionContext = oRequestContext.getSessionContext();
+
+    	XUIActionEvent e = oRequestContext.getEvent();
+    	XUICommand cmd = (XUICommand)e.getComponent();
+    	String column = (String)cmd.getValue();
     	
-    	XUIRequestContext oRequestContext;
+    	GridPanel  oGridPanel = (GridPanel)cmd.getParent();
+    	
+        Column     oLookupColumn = oGridPanel.getColumn( column );
+        
+        String     sLookupViewer = oLookupColumn.getLookupViewer();
+        
+        
+        XEOObjectAttributeMetaData oFieldMeta = (XEOObjectAttributeMetaData)oGridPanel.getDataSource().
+			getAttributeMetaData( column );
+        boDefAttribute oAttDef = oFieldMeta.getBoDefAttribute();
+        
+        if( sLookupViewer == null || sLookupViewer.length() == 0 ) {
+	    	String className = oAttDef.getReferencedObjectName(); 
+	    	if( "boObject".equals( oAttDef.getReferencedObjectName() ) ) {
+	    		String[] objects = oAttDef.getObjectsName();
+	    		if( objects != null && objects.length > 0 ) {
+	    			className = objects[0];
+	    		}
+	    	}
+			sLookupViewer = "viewers/" + className + "/lookup.xvw";
+        }
+		
+        oViewRoot = oSessionContext.createChildView( sLookupViewer );
+
+        XEOBaseLookupList   oBaseBean;
+        oBaseBean = (XEOBaseLookupList)oViewRoot.getBean( "viewBean" );
+        
+        oBaseBean.setAttribute( "lookupColumn" , column);
+        
+        Map<String, String> lookupObjs = getLookupObjectsMap( oAttDef );
+        
+        oBaseBean.setParentParentBeanId( "viewBean" );
+        oBaseBean.setParentComponentId( cmd.getClientId() );
+        oBaseBean.setMultiLookup( true );
+        oBaseBean.setFilterLookup( true );
+        oBaseBean.setLookupObjects( lookupObjs );
+        oBaseBean.setParentParentBeanId( "viewBean" );
+        oBaseBean.setParentAttributeName( column );
+    	oBaseBean.executeBoql( "select " + lookupObjs.keySet().iterator().next() );
+
+        // Diz a que a view corrente é a criada.
+        oRequestContext.setViewRoot( oViewRoot );
+        
+        oRequestContext.renderResponse();
+		
+		
+        
+/*
+		XUIRequestContext oRequestContext;
     	XUISessionContext oSessionContext;
     	XUIViewRoot		  oViewRoot;
     	
@@ -156,6 +222,7 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
         oRequestContext.setViewRoot( oViewRoot );
         
         oRequestContext.renderResponse();
+        */
     }
 
 	public String getLookupQuery( String attribute, String selectObject ) {
@@ -331,8 +398,8 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 			try {
 				// Calculate the correct viewer
 				long boui =((BigDecimal)drc.getAttribute("BOUI").getValue()).longValue();
-				String objectName = boObject.getBoManager().getClassNameFromBOUI( getEboContext(), boui );
-				String sViewerName = getViewerResolver().getViewer( objectName , XEOViewerResolver.ViewerType.EDIT );
+				boObject xeoObject = boObject.getBoManager().loadObject( getEboContext(), boui );
+				String sViewerName = getViewerResolver().getViewer( xeoObject, ViewerType.PREVIEW );
 				XUIViewRoot newViewRoot = oSessionContext.createView( sViewerName );
 				((XEOEditBean)newViewRoot.getBean("viewBean")).setCurrentObjectKey( Long.toString( boui ) );
 				
@@ -347,6 +414,16 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 							);
 				}*/
 				oRequestContext.setViewRoot( newViewRoot );
+				
+				((HttpServletRequest)oRequestContext.getRequest())
+					.setAttribute("xsltransform", "true");
+				
+				newViewRoot.setRenderKitId("XEOXML");
+				newViewRoot.setTransient( true );
+				oRequestContext.setViewRoot( newViewRoot );				
+				//oRequestContext.setViewRoot( newViewRoot );
+				// After the request discard the view!
+				
 			} catch (boRuntimeException e) {
 				throw new RuntimeException( e );
 			}

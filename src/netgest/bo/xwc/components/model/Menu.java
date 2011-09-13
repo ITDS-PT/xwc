@@ -94,6 +94,7 @@ public class Menu extends ViewerCommandSecurityBase {
      */
     @Values({"blank","window","tab","download","self","top"})
     public XUIStateProperty<String> target = new XUIStateProperty<String>( "target", this );
+    public XUIStateProperty<String> shortCut = new XUIStateProperty<String>( "shortCut", this );
 
     /**
      * Whether or not the menu is disabled
@@ -174,6 +175,14 @@ public class Menu extends ViewerCommandSecurityBase {
 
     public String getRoles() {
     	return this.roles.getEvaluatedValue();
+    }
+    
+    public void setShortCut( String shortCutExpression ) {
+    	this.shortCut.setValue( shortCutExpression );
+    }
+
+    public String getShortCut() {
+    	return this.shortCut.getValue();
     }
     
     public void setGroups( String sExpression ) {

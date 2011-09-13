@@ -33,7 +33,6 @@ public class LookupList extends List {
 		
 	}
 	
-	@Override
 	public void createToolBar(int pos) {
 		LookupListToolBar toolBar = new LookupListToolBar();
 		toolBar.setVisible( ((XUIBindProperty)getStateProperty("renderToolBar")).getExpressionString() );

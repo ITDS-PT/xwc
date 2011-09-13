@@ -66,9 +66,9 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 				String label = GridPanel.getColumnLabel( grid.getDataSource(), curr );
 				w.writeAttribute("datafield", curr.getDataField(), null);
 				w.writeAttribute("width", curr.getWidth(), null);
-			columnsUsed.add(label);
-				w.write(label);
-			w.endElement("gridheadercolumn");
+				columnsUsed.add(label);
+				w.writeText(label==null?"":label,null);
+				w.endElement("gridheadercolumn");
 		}
 		w.endElement("gridheaderrow");
 		
@@ -85,8 +85,6 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
             	oDataField = oDataRecord.getAttribute( columns[i].getDataField() );
             	oDataFieldValue = null;
             	boolean hasCustomRender = false;
-            	
-            	w.startElement("gridcolumn", null);
             	
                 if( oDataField != null ) 
                 {	
@@ -111,6 +109,8 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 	                		if (oDataFieldValue == null)
 	                			oDataFieldValue = oDataField.getValue();
 	                		
+	                    	w.startElement("gridcolumn", null);
+		                    w.writeAttribute("width",current.getWidth(),null);
 		                    if( oDataFieldValue != null )
 		                    {
 		                    	w.writeAttribute("visible", oDataField.getDisabled(), null);
@@ -124,7 +124,7 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 		                    	if( sDisplayValue != null ) 
 		                    	{
 		                            w.writeAttribute("displayValue", sDisplayValue, null);
-		                            w.write(sDisplayValue);
+		                            w.writeText(sDisplayValue,null);
 		                        }
 		                    	else 
 		                    	{
@@ -136,32 +136,29 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 			                                break;
 			                            case DataFieldTypes.VALUE_BOOLEAN:
 			                            	 w.writeAttribute("displayValue",  oDataFieldValue , null);
-			                            	 w.write(sDisplayValue);
+			                            	 w.writeText(sDisplayValue,null);
 			                                break;
 			                            case DataFieldTypes.VALUE_CHAR:
 			                            case DataFieldTypes.VALUE_CLOB:
 			                            case DataFieldTypes.VALUE_NUMBER:
 			                            	w.writeAttribute("displayValue",((BigDecimal)oDataFieldValue).toString(),null );
-			                            	w.write(sDisplayValue);
+			                            	w.writeText(sDisplayValue,null);
 			                                break;
 			                            case DataFieldTypes.VALUE_DATE:
 			                            	w.writeAttribute("displayValue",  oDateFormater.format((Timestamp)oDataFieldValue) , null);
-			                            	w.write(oDateFormater.format((Timestamp)oDataFieldValue));
+			                            	w.writeText(oDateFormater.format((Timestamp)oDataFieldValue),null);
 			                                break;
 			                            case DataFieldTypes.VALUE_DATETIME:
 			                            	w.writeAttribute("displayValue",  oDateTimeFormater.format((Timestamp)oDataFieldValue) , null);
-			                            	w.write(oDateTimeFormater.format((Timestamp)oDataFieldValue));
+			                            	w.writeText(oDateTimeFormater.format((Timestamp)oDataFieldValue), null);
 			                            	break;
 			                        }
 			                   }
 		                    }
-		                    
-		                    
+		                    w.endElement("gridcolumn");
 	                	}
 	                }
                 }
-                
-                w.endElement("gridcolumn");
             }
             w.endElement("gridrow");
 		}

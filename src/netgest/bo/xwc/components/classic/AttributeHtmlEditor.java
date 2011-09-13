@@ -22,6 +22,7 @@ import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
+import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -37,6 +38,28 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class AttributeHtmlEditor extends AttributeBase {
 
+	public XUIBindProperty<Boolean> enableFont = 
+		new XUIBindProperty<Boolean>("enableFont", this, Boolean.TRUE, Boolean.class );
+
+	public XUIBindProperty<String> fontFamilies = 
+		new XUIBindProperty<String>("fontFamilies", this, String.class );
+	
+	public void setEnableFont( String exprEnableFont ) {
+		this.enableFont.setExpressionText( exprEnableFont );
+	}
+
+	public boolean getEnableFont() {
+		return this.enableFont.getEvaluatedValue();
+	}
+	
+	public void setFontFamilies( String exprEnableFont ) {
+		this.fontFamilies.setExpressionText( exprEnableFont );
+	}
+
+	public String getFontFamilies() {
+		return this.fontFamilies.getEvaluatedValue();
+	}
+	
 	@Override
 	public void initComponent() {
 
@@ -139,28 +162,48 @@ public class AttributeHtmlEditor extends AttributeBase {
 			StringBuilder sOut = new StringBuilder(200);
 
 			AttributeHtmlEditor oHtmlComp = (AttributeHtmlEditor) oComp;
-
-			ExtConfig oHtmlCfg = new ExtConfig("Ext.form.HtmlEditor");
-			oHtmlCfg.addJSString("id", oComp.getClientId() + "_editor");
-			oHtmlCfg.addJSString("name", oComp.getClientId());
-			oHtmlCfg.addJSString("renderTo", oComp.getClientId());
-			oHtmlCfg.addJSString("value", JavaScriptUtils.safeJavaScriptWrite(
-					oHtmlComp.getDisplayValue(), '\''));
-			// oHtmlCfg.add( "width" , oHtmlComp.getWidth() );
-			// oHtmlCfg.add( "height" , "0" );
-			oHtmlCfg.add("frame", false);
-			// oHtmlCfg.addJSString( "layout" , "break" );
-			oHtmlCfg.add("enableColors", true);
-			oHtmlCfg.add("enableAlignments", true);
-			oHtmlCfg.add("enableLinks", false);
-
-			if (oHtmlComp.isDisabled())
-				oHtmlCfg.add("disabled", true);
-
-			if (oHtmlComp.isVisible())
-				oHtmlCfg.add("visible", false);
-
 			
+            ExtConfig oHtmlCfg = new ExtConfig( "Ext.form.HtmlEditor" );
+            oHtmlCfg.addJSString("id", oComp.getClientId() );
+            oHtmlCfg.addJSString("name", oComp.getClientId() );
+            oHtmlCfg.addJSString("renderTo", oComp.getClientId() );
+            String value = JavaScriptUtils.safeJavaScriptWrite(oHtmlComp.getDisplayValue(), '\'');
+            oHtmlCfg.addJSString("value", value );
+//            oHtmlCfg.add( "width" ,  oHtmlComp.getWidth() );
+            
+            if( !"auto".equals( oHtmlComp.getHeight() ) ) {
+            	oHtmlCfg.add( "height" , oHtmlComp.getHeight()  );
+            }
+            oHtmlCfg.add( "frame" ,  false );
+//            oHtmlCfg.addJSString( "layout" ,  "fit" );
+            oHtmlCfg.add( "enableColors" ,  true );
+            oHtmlCfg.add( "enableAlignments" ,  true );
+            oHtmlCfg.add( "enableLinks" ,  false );
+            oHtmlCfg.add( "statefull" ,  true );
+            oHtmlCfg.add("enableFont", oHtmlComp.getEnableFont() );
+            
+            ExtConfig listeners = oHtmlCfg.addChild("listeners");
+
+            // ExtJs Workaround, Prevent lock of the editable content
+            // When chaging tab, the content can't be editable any more. 
+            // Bug in ExtJs must call toggleSourceEdit twice to the function work.
+            listeners.add("render ", "function(editor) {\n" +
+            		"editor.toggleSourceEdit(true);" +
+            		"editor.toggleSourceEdit(true);" +
+            		"editor.toggleSourceEdit(false);" +
+            		"editor.toggleSourceEdit(false);" +
+            		"}\n");
+            
+            String fontFamilies = oHtmlComp.getFontFamilies();
+            if( fontFamilies != null ) {
+                oHtmlCfg.add("fontFamilies", oHtmlComp.getFontFamilies() );
+            }
+            
+            if( oHtmlComp.isDisabled() ) 
+                oHtmlCfg.add( "disabled" ,  true );
+            
+            if( oHtmlComp.isVisible() )
+                oHtmlCfg.add( "visible" ,  false );
 			
 			handleAdvancedEditorPlugins(oHtmlComp, oHtmlCfg, sOut);
 
@@ -258,10 +301,11 @@ public class AttributeHtmlEditor extends AttributeBase {
 		@Override
 		public void decode(XUIComponentBase component) {
 
-			String sHtml = XUIRequestContext.getCurrentContext()
-					.getRequestParameterMap().get(component.getClientId());
-			((AttributeHtmlEditor) component).setSubmittedValue(sHtml);
-
+			String sHtml = XUIRequestContext.getCurrentContext().getRequestParameterMap().get( component.getClientId() );
+			if( sHtml != null ) {
+				sHtml = sHtml.replace('\n',' ');
+				((AttributeHtmlEditor)component).setSubmittedValue( sHtml );
+			}
 		}
 
 		public void service(ServletRequest request, ServletResponse response,

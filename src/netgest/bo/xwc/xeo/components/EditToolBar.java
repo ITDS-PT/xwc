@@ -13,6 +13,7 @@ import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
@@ -28,22 +29,21 @@ import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
  */
 public class EditToolBar extends ToolBar {
 	
+	public static final List<String> MapObjectMethods = Arrays.asList(
+			new String[] {"update", "update", "update","valid","cloneObject", "destroy" }
+	);
+	
+	public static final List<String> MapViewerMethods = Arrays.asList(
+			new String[] {"save","saveAndClose","saveAndCreateNew","processValidate","duplicate", "remove" }
+	);
+
 	public static final List<String> staticMethods = Arrays.asList(
 			new String[] {"update","destroy","cloneObject","valid" }
 		);
 
-	public static final List<String> MapObjectMethods = Arrays.asList(
-			new String[] {"update", "update","saveAndCreateNew","valid","cloneObject", "destroy" }
-	);
-	
-	public static final List<String> MapViewerMethods = Arrays.asList(
-			new String[] {"save","saveAndClose","saveAndCreateNew","processValidate","duplicate", "removeConfirm" }
-	);
-
 	public static final List<String> staticNonOrphanMethods = Arrays.asList(
 			new String[] {"cofirmar","cancelar","valid", "update", "destroy", "cloneObject" }
 		);
-
 	
 	
 	/**
@@ -388,6 +388,9 @@ public class EditToolBar extends ToolBar {
 		else {
 			preNonOrphanRender();
 		}
+
+		arrangeMenuSeparators();
+		
 		super.initComponent();
 	};
 	
@@ -490,35 +493,75 @@ public class EditToolBar extends ToolBar {
 		return xeoMethod;
 	}
 	
-	public void preOrphanRender() {
+	public void preNonOrphanRender() {
 		boObject xeoObject = getTargetObject();
-		for( UIComponent comp : getChildren() ) {
+		boolean isVisible = false;
+		for( int i=0; i < getChildren().size(); i++ ) {
+			UIComponent comp = getChild( i );
 			if( comp instanceof ModelMethod ) {
 				ModelMethod meth = (ModelMethod)comp;
-				
+				isVisible = !XEOComponentStateLogic.isMethodHidden(xeoObject, meth.getTargetMethod());
+				((ModelMethod)comp).setVisible( Boolean.toString( isVisible ) );
+				meth.setDisabled( 
+						Boolean.toString( XEOComponentStateLogic.isMethodDisabled(xeoObject, meth.getTargetMethod()) )
+				);
+			}
+		}
+	}
+
+	public void preOrphanRender() {
+		boObject xeoObject = getTargetObject();
+		boolean isVisible;
+		for( int i=0; i < getChildren().size(); i++ ) {
+			UIComponent comp = getChild( i );
+			if( comp instanceof ModelMethod ) {
+				ModelMethod meth = (ModelMethod)comp;
+				isVisible = isVisibleByDefinition( meth ) &&  !XEOComponentStateLogic.isMethodHidden(xeoObject, meth.getTargetMethod());
 				meth.setVisible(
 					Boolean.toString(
-						isVisibleByDefinition( meth ) &&  !XEOComponentStateLogic.isMethodHidden(xeoObject, meth.getTargetMethod()) 
+							isVisible 
 					)
 				);
 				meth.setDisabled( 
 					Boolean.toString( XEOComponentStateLogic.isMethodDisabled(xeoObject, meth.getTargetMethod()) )
 				);
 			}
-			if( comp instanceof ViewerMethod ) {
+			else if( comp instanceof ViewerMethod ) {
 				ViewerMethod meth = (ViewerMethod)comp;
 				int idx = MapViewerMethods.indexOf( meth.getTargetMethod() );
 				if( idx > -1 ) {
+					isVisible = isVisibleByDefinition( meth ) && !XEOComponentStateLogic.isMethodHidden( xeoObject, MapObjectMethods.get( idx ));
 					meth.setVisible(
-						Boolean.toString(
-								isVisibleByDefinition( meth ) && !XEOComponentStateLogic.isMethodHidden( xeoObject, MapObjectMethods.get( idx ))
-						)
+						Boolean.toString(isVisible)
 					);
 					meth.setDisabled(
 							Boolean.toString(
 									XEOComponentStateLogic.isMethodDisabled(xeoObject, MapObjectMethods.get( idx ))
 							)
 					);
+				}
+			}
+		}
+	}
+	
+	public void arrangeMenuSeparators() {
+		// Arrange separators
+		int lastSepPos = -1;
+		for( int i = 0; i < getChildCount(); i++ ) {
+			UIComponent comp = getChild( i );
+			if( comp instanceof Menu ) {
+				Menu m = (Menu)comp;
+				if( "-".equals(m.getText()) ) {
+					lastSepPos = i;
+					m.setVisible( "false" );
+				}
+				else if ( lastSepPos > -1 ) {
+					if( m.isVisible() ) {
+						((Menu)getChild(lastSepPos)).setVisible( "true" );
+					}
+				}
+				if( i == getChildCount() && "-".equals(m.getText()) ) {
+					m.setVisible("true");
 				}
 			}
 		}
@@ -603,21 +646,6 @@ public class EditToolBar extends ToolBar {
 		getChildren().add( xeoMethod );
 	
 		return xeoMethod;
-	}
-	
-	public void preNonOrphanRender() {
-		boObject xeoObject = getTargetObject();
-		for( UIComponent comp : getChildren() ) {
-			if( comp instanceof ModelMethod ) {
-				ModelMethod meth = (ModelMethod)comp;
-				((ModelMethod)comp).setVisible(
-					Boolean.toString( !XEOComponentStateLogic.isMethodHidden(xeoObject, meth.getTargetMethod()) )
-				);
-				meth.setDisabled( 
-						Boolean.toString( XEOComponentStateLogic.isMethodDisabled(xeoObject, meth.getTargetMethod()) )
-				);
-			}
-		}
 	}
 	
 	private ModelMethod createNonOrphanMenuMethod( String label, String toolTip, String methodName ) {
@@ -741,7 +769,7 @@ public class EditToolBar extends ToolBar {
 			exportHTMLMenu.setIcon("ext-xeo/images/menus/exportar-html.gif");
 			exportHTMLMenu.setToolTip(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_HTML_TOOLTIP.toString());
 			exportHTMLMenu.setServerAction("#{viewBean.exportHTML}");
-			String parameters = "{width:700, height:550, title:''}";
+			String parameters = "{width:800, height:400, title:'Impressão'}";
 			exportHTMLMenu.setTarget("window:" + parameters);
 			exportGroup.getChildren().add(exportHTMLMenu);
 		}
@@ -761,7 +789,6 @@ public class EditToolBar extends ToolBar {
 	}
 	
 	private boolean isVisibleByDefinition( ViewerMethod vm ) {
-		
 		if( "save".equals(  vm.getTargetMethod() ) )
 			return getRenderUpdateBtn();
 		

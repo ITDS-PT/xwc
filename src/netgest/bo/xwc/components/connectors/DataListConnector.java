@@ -47,12 +47,6 @@ public interface DataListConnector {
     
     public DataFieldMetaData getAttributeMetaData( String attributeName );
     
-    public void setGroupBy( String[] attributes );
-    
     public void setSqlFields( List<SqlField> sqlFields );
-    
-    public DataGroupConnector getGroups( int deep, String[] parentGroups, Object[] parentValues, int page, int pageSize );
-
-    public DataListConnector getGroupDetails( int deep, String[] parentGroups, Object[] parentValues, int page, int pageSize );
     
 }

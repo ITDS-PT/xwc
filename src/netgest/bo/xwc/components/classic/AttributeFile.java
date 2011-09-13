@@ -365,6 +365,7 @@ public class AttributeFile extends AttributeBase {
 							if(file!=null && file.isDirectory() && file.listFiles()!=null && file.listFiles().length>0) {
 								file = file.listFiles()[0];
 							}
+						} catch (RuntimeException e1) {
 						} catch (iFilePermissionDenied e1) {
 						}
 						if( file != null ) {							
@@ -383,8 +384,10 @@ public class AttributeFile extends AttributeBase {
 				            Long FileSize = new Long(file.length()); 
 				            int xfsize = FileSize.intValue(); 
 	
-				            response.setContentType(mimetype); 
-				            response.setContentLength(xfsize); 
+				            response.setContentType(mimetype);
+				            if( xfsize > 0 ) {
+				            	response.setContentLength(xfsize);
+				            }
 	
 				            int rb=0; 
 				            InputStream is= null;

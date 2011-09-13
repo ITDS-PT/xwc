@@ -13,7 +13,6 @@ import javax.el.ValueExpression;
 import javax.faces.application.Application;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 

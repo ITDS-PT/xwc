@@ -21,6 +21,7 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
@@ -36,7 +37,6 @@ import netgest.bo.xwc.framework.components.XUIForm;
  */
 public class Window extends XUIComponentBase {
     
-    
     /**
      * The width of the window
      */
@@ -45,6 +45,11 @@ public class Window extends XUIComponentBase {
      * The height of the the window
      */
     public XUIViewProperty<Integer> height = new XUIViewProperty<Integer>( "height", this, 300 );
+
+    public XUIViewBindProperty<Boolean> modal = new XUIViewBindProperty<Boolean>( "modal", this, true, Boolean.class );
+
+    public XUIViewBindProperty<Integer> top = new XUIViewBindProperty<Integer>( "top", this, 0, Integer.class );
+    public XUIViewBindProperty<Integer> left = new XUIViewBindProperty<Integer>( "left", this, 0, Integer.class );
     
     public String animateTarget = null;
     
@@ -60,13 +65,13 @@ public class Window extends XUIComponentBase {
      * The action that is executed before the window closes	
      */
     public XUIMethodBindProperty onbeforeclose = new XUIMethodBindProperty( "onbeforeclose", this, "#{viewBean.canCloseTab}" );
+
     /**
      * Whether or not the ExtJS renderer should be used
      */
     public XUIBaseProperty<Boolean> useExtJsRenderer = 
     	new XUIBaseProperty<Boolean>( "useExtJsRenderer", this, Boolean.TRUE );
 
-    
     public void setUseExtJsRenderer( boolean useExtJsRenderer ) {
     	this.useExtJsRenderer.setValue( useExtJsRenderer );
     }
@@ -98,6 +103,42 @@ public class Window extends XUIComponentBase {
 
     public MethodExpression getOnBeforeClose() {
     	return this.onbeforeclose.getValue();
+    }
+    
+    public void setTop( String exprTop ) {
+    	this.top.setExpressionText( exprTop );
+    }
+
+    public void setTop( int top ) {
+    	this.top.setValue( top );
+    }
+    
+    public int getTop() {
+    	return this.top.getEvaluatedValue();
+    }
+    
+    public void setLeft( String exprTop ) {
+    	this.left.setExpressionText( exprTop );
+    }
+
+    public void setLeft( int top ) {
+    	this.left.setValue( top );
+    }
+    
+    public int getLeft() {
+    	return this.left.getEvaluatedValue();
+    }
+    
+    public void setModal( String exprModal ) {
+    	this.modal.setExpressionText( exprModal );
+    }
+
+    public void setModal( boolean modal ) {
+    	this.modal.setValue( modal );
+    }
+    
+    public boolean getModal() {
+    	return this.modal.getEvaluatedValue();
     }
     
     @Override
@@ -247,8 +288,23 @@ public class Window extends XUIComponentBase {
             oExtConfig.addJSString("contentEl", oRequestContext.getViewRoot().getClientId() );
             oExtConfig.addJSString("title", oWnd.getTitle() );
             oExtConfig.add("allowDomMove",false);
-            oExtConfig.add("modal","(Ext.isIE?false:true)");
             
+            if( oWnd.getModal() )
+            	oExtConfig.add("modal","true");
+            
+            if( oWnd.getTop() != 0 ) {
+                oExtConfig.add("pageY", oWnd.getTop() );
+                if( oWnd.getLeft() == 0 ) {
+                	oExtConfig.add("pageX", "(document.body.clientWidth - " + oWnd.getWidth() +  ") / 2"  );
+                }
+            }
+            if( oWnd.getLeft() != 0 ) {
+                oExtConfig.add("pageX", oWnd.getLeft() );
+                if( oWnd.getTop() == 0 ) {
+                	oExtConfig.add("pageY", "(document.body.clientHeight - " + oWnd.getHeight() +  ") / 2"  );
+                }
+            }
+              
 //            if( oWnd.getAnimateTarget() != null ) {
 //                oExtConfig.addJSString( "animateTarget", oWnd.getAnimateTarget() );
 //            }

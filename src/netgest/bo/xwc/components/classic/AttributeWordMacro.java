@@ -208,14 +208,28 @@ public class AttributeWordMacro extends AttributeBase {
             ExtConfig oInpConfig = new ExtConfig("Ext.form.TwinTriggerField");
             
             oInpConfig.addJSString("renderTo", oComp.getClientId());
-            oInpConfig.addJSString("trigger1Class", "x-form-clear-trigger");
-            oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
             oInpConfig.add("hideTrigger1", false);
             oInpConfig.addJSString("name", oAttr.getClientId() );
             oInpConfig.addJSString("id", oAttr.getClientId() + "_c" );
            
             oInpConfig.addJSString("value", sJsValue );
             oInpConfig.add("readOnly", true );
+            
+        	oInpConfig.addJSString("ctCls", "xeoObjectLink" );
+            
+            if( oAttr.isDisabled() || oAttr.isReadOnly() ) {
+            	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
+	            oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
+            }
+            else {
+                oInpConfig.addJSString("trigger1Class", "x-form-clear-trigger");
+                oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
+            }
+            
+        	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
+            oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
+            
+            
             
             if( !((XEOObjectAttributeConnector)oAttr.getDataFieldConnector()).getAttributeHandler().isObject() ) 
             {

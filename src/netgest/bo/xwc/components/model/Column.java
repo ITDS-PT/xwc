@@ -10,6 +10,7 @@ public interface Column {
     public boolean isSearchable();
     public boolean isGroupable();
     public boolean isHidden();
+    public void setHidden( String hiddenExpr );
     public boolean isHideable();
     public boolean isResizable();
     public byte getSecurityPermissions();

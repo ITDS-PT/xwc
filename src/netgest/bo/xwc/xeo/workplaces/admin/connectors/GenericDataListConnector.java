@@ -66,18 +66,6 @@ public class GenericDataListConnector implements DataListConnector {
 	}
 
 	@Override
-	public DataListConnector getGroupDetails(int deep, String[] parentGroups,
-			Object[] parentValues, int page, int pageSize) {
-		return null;
-	}
-
-	@Override
-	public DataGroupConnector getGroups(int deep, String[] parentGroups,
-			Object[] parentValues, int page, int pageSize) {
-		return null;
-	}
-
-	@Override
 	public int getPage() {
 		return 1;
 	}
@@ -116,10 +104,6 @@ public class GenericDataListConnector implements DataListConnector {
 
 	@Override
 	public void setFilterTerms(FilterTerms sortTerms) {
-	}
-
-	@Override
-	public void setGroupBy(String[] attributes) {
 	}
 
 	@Override

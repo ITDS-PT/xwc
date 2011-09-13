@@ -18,15 +18,20 @@ import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boObjectList.SqlField;
 import netgest.bo.system.boApplication;
 import netgest.bo.utils.XEOQLModifier;
+import netgest.bo.xwc.components.connectors.OrderByTerms.OrderByDir;
+import netgest.bo.xwc.components.connectors.OrderByTerms.OrderByTerm;
 
 public class XEOObjectListGroupConnector implements DataGroupConnector {
 
 	private XEOObjectListConnector 	rootList;
 	private String 					groupAttribute;
+	
 	private Object[]				parentValues;
+	private String[]				parentGroups;
+	
 	private DataSet					dataSet;
 	
-	private String					preparedSql;
+	private String					preparedSql; 
 	private ArrayList<Object>		preparedSqlArgs;
 
 	private int	page;
@@ -44,17 +49,22 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		this.groupAttribute 	= groupAttribute;
 		this.rootList 			= rootList;
 		this.parentValues		= parentValues;
+		this.parentGroups 		= parentGroups;
 		this.page = page;
 		this.pageSize = pageSize;
 	}
 
 	public boolean isDateValue( String objectName ) {
+		return isDateValue(  this.groupAttribute, objectName );
+	}
+	
+	public static boolean isDateValue( String attName, String objectName ) {
 		boolean isDate;
 		
 		isDate = false;
 		boDefHandler def = boDefHandler.getBoDefinition( objectName );
 		if( def != null ) {
-			boDefAttribute defAtt = def.getAttributeRef( this.groupAttribute );
+			boDefAttribute defAtt = def.getAttributeRef( attName );
 			if( defAtt != null ) {  
 				if( 
 						defAtt.getValueType() == boDefAttribute.VALUE_DATE
@@ -71,9 +81,6 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 	@SuppressWarnings("unchecked")
 	public DataListConnector getDetails() {
 		
-		String 		fullText		= boObjectList.arrangeFulltext(getEboContext(), this.rootList.oObjectList.getFullTextSearch());
-		String 		userQuery 		= this.rootList.oObjectList.getUserQuery();
-		Object[] 	userQueryArgs 	= this.rootList.oObjectList.getUserQueryArgs();
 		String 		orderBy			= this.rootList.oObjectList.getOrderBy();
 		String 		boql			= this.rootList.oObjectList.getBOQL();
 		Object[] 	boqlArgs		= this.rootList.oObjectList.getBOQLArgs();
@@ -85,103 +92,72 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		QLParser qp = new QLParser();
 		qp.toSql(  boql, getEboContext() );
 		
-		DriverUtils dutl = getEboContext().getDataBaseDriver().getDriverUtils();
-		
-		boDefHandler  defObj = qp.getObjectDef();
-		
 		XEOQLModifier q = new XEOQLModifier( boql, qlArgsList );
-		
 		
 		List<SqlField> sqlFieldsList = getRootList().getSqlFields();
 		
-		boolean isDate;
-		boolean isNull = false;
-		boolean isSqlField = false; 
+		addParentWhere( boql, qp, q );
+		
+		if( orderBy != null && orderBy.length() > 0 ) {
 			
-		String nativeQlTag1 = "[";
-		String nativeQlTag2 = "]";
-		
-		String groupExpression = this.groupAttribute;
-		
-		if( boql.startsWith( "{" ) ) {
-			nativeQlTag1 = "";
-			nativeQlTag2 = "";
-            if( defObj.getAttributeRef( this.groupAttribute ) != null ) {
-            	groupExpression = defObj.getAttributeRef( this.groupAttribute ).getDbName();
-            } else {
-            	groupExpression = this.groupAttribute;
-            }
-		}
-		
-        if( sqlFieldsList != null ) {
-        	for( SqlField field : sqlFieldsList ) {
-        		 if( this.groupAttribute.equals( field.getSqlAlias() ) ) {
-        			 groupExpression = "[(" + field.getSqlExpression() + ")]";
-        			 isSqlField = true;
-        		 }
-        	}
-        }
-		
-		
-		isDate = isDateValue( defObj.getName() );
-
-		String groupWhere;
-		if( this.parentValues[0] == null || String.valueOf( this.parentValues[0] ).length() == 0 ) {
-			groupWhere = groupExpression + " IS NULL";
-			isNull = true;
-		}
-		else {
-			if( isDate ) {
-				if( this.parentValues[0] instanceof String ) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-					try {
-						Date parsedDate = sdf.parse( (String)this.parentValues[0] );
-						this.parentValues[0] = new java.sql.Timestamp( parsedDate.getTime() );
-					} catch (ParseException e) {
-						e.printStackTrace();
+			StringBuilder newOrderBy = new StringBuilder();
+			
+			OrderByTerms terms = new OrderByTerms( orderBy.trim() );
+			List<String> parentGroups = Arrays.asList( this.parentGroups );
+			for(OrderByTerm term : terms.sortTerms() ) {
+				if( parentGroups.indexOf( term.getName() ) == -1 ) {
+					if( newOrderBy.length() > 0 ) {
+						newOrderBy.append(", ");
+					}
+					SqlField sqlOrderField = findSqlField(sqlFieldsList, term.getName());
+					if( sqlOrderField != null ) {
+						newOrderBy.append( "[\"" + term.getName() + '"' + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"") + "]" );
+					}
+					else {
+						newOrderBy.append( term.getExpression() + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"") );					
 					}
 				}
 			}
 			
-			if( isDate ) {
-				groupWhere = nativeQlTag1 + dutl.fnTruncateDate( groupExpression ) + nativeQlTag2 + "= " + nativeQlTag1 + dutl.fnTruncateDate( "?" ) + nativeQlTag2;
-			} else {
-				groupWhere = groupExpression + "= ?";
+			// If details of the group doesn't have order, apply the same order of the group's
+			if( newOrderBy.length() == 0 ) {
+				for( int i=0; i<this.parentGroups.length; i++ ) {
+					OrderByTerm term = terms.getSortTerm( this.parentGroups[ i ] ); 
+					if( term != null ) {
+						if( newOrderBy.length() > 0 ) {
+							newOrderBy.append(", ");
+						}
+						SqlField sqlOrderField = findSqlField(sqlFieldsList, term.getName());
+						if( sqlOrderField != null ) {
+							newOrderBy.append( "[\"" + term.getName() + '"' + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"") + "]" );
+						}
+						else {
+							newOrderBy.append( term.getExpression() + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"") );					
+						}
+					}
+				}
 			}
-		}
-		String wherePart = q.getWherePart();
-		if( userQuery != null && userQuery.length() > 0 ) {
-			if( wherePart != null && wherePart.length() > 0 ) {
-				wherePart = "(" + wherePart + ") AND (" + userQuery + ") AND ";
-			} else {
-				wherePart = "(" + userQuery + ") AND ";
+			q.setOrderByPart( newOrderBy.toString() );
+			/*
+			boolean isSqlField = true;
+			boolean desc = false;
+			orderBy = orderBy.trim();
+			String orderField = orderBy.trim();
+			String uOrderBy  = orderBy.toUpperCase();
+			if( uOrderBy.endsWith( " ASC" ) ) {
+				orderField = orderBy.substring( 0, orderBy.length() - 4 );
+				desc = false;
+			} else if ( uOrderBy.endsWith( " DESC" ) ) {
+				orderField = orderBy.substring( 0, orderBy.length() - 5 );
+				desc = true;
 			}
-		}
-		else if( wherePart != null && wherePart.length() > 0 ) {
-				wherePart = "(" + wherePart + ") AND ";
-		}
-		if( userQueryArgs != null ) {
-			q.getWherePartParameters().addAll( Arrays.asList( userQueryArgs ) );
-		}
-
-		if( fullText != null && fullText.length() > 0 ) {
-			wherePart += " CONTAINS ? AND ";
-			q.getWherePartParameters().add( fullText );
-		}
-		wherePart += groupWhere;
-		
-		if( !isNull ) {
-			q.getWherePartParameters().add( this.parentValues[0] );
-		}
-		
-		q.setWherePart( wherePart );
-		
-		if( orderBy != null && orderBy.length() > 0 ) {
-			if (sqlFieldsList!=null)
-			{
+			
+			orderField = orderField.replaceAll("\"", "");
+			
+			if( sqlFieldsList != null ) {
 	        	for( SqlField field : sqlFieldsList ) {
-					if( this.groupAttribute.equals( field.getSqlAlias() ) ) {
-						q.setOrderByPart( "[" + field.getSqlAlias() + "]" );
+					if( orderField.equals( field.getSqlAlias() ) ) {
+						q.setOrderByPart( "[\"" + orderField + '"' + (desc?" DESC":"") + "]" );
 						isSqlField = true;
 					}
 	        	}
@@ -190,10 +166,14 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 				q.setOrderByPart( orderBy );
         	}
 			q.getOrderByPartParameters().clear();
+			*/
 		}
-		
+		else {
+			q.setOrderByPart( "" );
+			q.getOrderByPartParameters().clear();
+		}
+
 		ArrayList<Object>	modifiedBoqlParams = new ArrayList<Object>();
-		
 		String newboql 		= q.toBOQL( modifiedBoqlParams );
 		 
 		boObjectList list = boObjectList.list(getEboContext(), newboql, 
@@ -209,6 +189,139 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		
 		return new XEOObjectListConnector( list );
 	}
+	
+	private static final SqlField findSqlField( SqlField[] fields, String fieldAlias ) {
+		
+		return findSqlField( (List<SqlField>)Arrays.asList( fields ), fieldAlias );
+		
+	}
+	private static final SqlField findSqlField( List<SqlField> fields, String fieldAlias ) {
+		if( fields != null ) {
+	    	for( SqlField field : fields ) {
+				if( fieldAlias.equals( field.getSqlAlias() ) ) {
+					return field;
+				}
+	    	}
+		}
+    	return null;
+	}
+	
+	private void addParentWhere( String boql, QLParser qp, XEOQLModifier q ) {
+		
+		
+		DriverUtils dutl = getEboContext().getDataBaseDriver().getDriverUtils();
+		
+		List<SqlField> 	sqlFieldsList 	= getRootList().getSqlFields();
+		String 			fullText		= boObjectList.arrangeFulltext(getEboContext(), this.rootList.oObjectList.getFullTextSearch());
+		String 			userQuery 		= this.rootList.oObjectList.getUserQuery();
+		Object[] 		userQueryArgs 	= this.rootList.oObjectList.getUserQueryArgs();
+		boDefHandler  	defObj 			= qp.getObjectDef();
+		
+		String nativeQlTag1 = "[";
+		String nativeQlTag2 = "]";
+		String groupWhere   = "";
+		
+		if( this.parentValues != null ) {
+			for( int i=0; i < this.parentValues.length; i++ ) {
+				String groupExpression = this.parentGroups[i];
+				if( boql.startsWith( "{" ) ) {
+					nativeQlTag1 = "";
+					nativeQlTag2 = "";
+		            if( defObj.getAttributeRef( this.parentGroups[i] ) != null ) {
+		            	groupExpression = defObj.getAttributeRef( this.parentGroups[i] ).getDbName();
+		            } else {
+		            	groupExpression = this.parentGroups[i];
+		            }
+				}
+				
+		        if( sqlFieldsList != null ) {
+		        	for( SqlField field : sqlFieldsList ) {
+		        		 if( this.parentGroups[i].equals( field.getSqlAlias() ) ) {
+		        			 groupExpression = "[(" + field.getSqlExpression() + ")]";
+		        		 }
+		        	}
+		        }
+				
+				
+				if( i > 0 ) {
+					groupWhere += " AND ";
+				}
+				if( this.parentValues[i] == null || String.valueOf( this.parentValues[i] ).length() == 0 ) {
+					groupWhere += groupExpression + " IS NULL";
+				}
+				else {
+					boolean isDate = isDateValue( this.parentGroups[i],defObj.getName() );
+					if( isDate ) {
+						if( this.parentValues[i] instanceof String ) {
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
+							try {
+								Date parsedDate = sdf.parse( (String)this.parentValues[i] );
+								this.parentValues[i] = new java.sql.Timestamp( parsedDate.getTime() );
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+					if( isDate ) {
+						
+						String mTable = qp.getObjectDef().getBoMasterTable();
+						if( qp.isObjectExtended() ) {
+							mTable = qp.getObjectDef().getBoExtendedTable();
+						}
+						mTable = mTable + "." + this.parentGroups[i];
+						groupWhere += nativeQlTag1 + dutl.fnTruncateDate( mTable ) + nativeQlTag2 + "= " + nativeQlTag1 + dutl.fnTruncateDate( "?" ) + nativeQlTag2;
+					} else {
+						groupWhere += groupExpression + "= ?";
+					}
+				}
+			}
+		}
+		
+		String wherePart = q.getWherePart();
+		if( userQuery != null && userQuery.length() > 0 ) {
+			if( wherePart != null && wherePart.length() > 0 ) {
+				wherePart = "(" + wherePart + ") AND (" + userQuery + ") ";
+			} else {
+				wherePart = "(" + userQuery + ") ";
+			}
+		}
+		else if( wherePart != null && wherePart.length() > 0 ) {
+				wherePart = "(" + wherePart + ") ";
+		}
+		if( userQueryArgs != null ) {
+			q.getWherePartParameters().addAll( Arrays.asList( userQueryArgs ) );
+		}
+		
+		if( groupWhere.length() > 0 ) {
+			if( wherePart.length() > 0 )
+				wherePart += " AND ";
+			wherePart += groupWhere;
+		}
+		
+		if( this.parentValues != null ) {
+			for( Object value : this.parentValues  ) {
+				boolean isNull = false;
+				if( value == null || String.valueOf( value ).length() == 0 ) {
+					isNull = true;
+				}
+				if( !isNull ) {
+					q.getWherePartParameters().add( value );
+				}
+			}
+		}
+		
+		if( fullText != null && fullText.length() > 0 ) {
+			if( wherePart.length() > 0 )
+				wherePart += " AND ";
+
+			wherePart += " CONTAINS ?";
+			q.getWherePartParameters().add( fullText );
+		}
+		
+		q.setWherePart(wherePart);
+		
+	}
+	
 	
 	public DataSet getDataSet() {
 		return this.dataSet;
@@ -231,16 +344,24 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 	}
 
 	public int getRecordCount() {
-		prepareQuery();
-		DataSet countDataSet = DataManager.executeNativeQuery( 
-				getEboContext(), 
-				"DATA", 
-				"select count(*) from (" + this.preparedSql + ") COUNT_SELECT", 
-				1,
-				1,
-				this.preparedSqlArgs 
-			);		
-		return countDataSet.rows(1).getInt( 1 );
+		if( hasMoreResults() ) {
+			prepareQuery();
+			DataSet countDataSet = DataManager.executeNativeQuery( 
+					getEboContext(), 
+					"DATA", 
+					"select count(*) from (" + this.preparedSql + ") count", 
+					1,
+					1,
+					this.preparedSqlArgs 
+				);		
+			return countDataSet.rows(1).getInt( 1 );
+		}
+		else {
+			int i = ((this.getPage()-1) * this.getPageSize());
+			i = i + this.dataSet.getRowCount(); 
+	    	return i;
+	    	
+		}
 	}
 
 	public int getRowCount() {
@@ -254,12 +375,14 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 
 	@SuppressWarnings("unchecked")
 	public void prepareQuery() {
-		String 		userQuery 		= this.rootList.oObjectList.getUserQuery();
-		Object[] 	userQueryArgs 	= this.rootList.oObjectList.getUserQueryArgs();
+		//String 		userQuery 		= this.rootList.oObjectList.getUserQuery();
+		//Object[] 	userQueryArgs 	= this.rootList.oObjectList.getUserQueryArgs();
 		String 		boql			= this.rootList.oObjectList.getBOQL();
 		Object[] 	boqlArgs		= this.rootList.oObjectList.getBOQLArgs();
 		String 		orderBy			= this.rootList.oObjectList.getOrderBy();
-		String 		fulltext		= boObjectList.arrangeFulltext(getEboContext(), this.rootList.oObjectList.getFullTextSearch());
+		//String 		fulltext		= boObjectList.arrangeFulltext(getEboContext(), this.rootList.oObjectList.getFullTextSearch());
+		
+		boolean createSubSelect = false;
 		
 		List<Object> qlArgsList = new ArrayList<Object>(0);
 		if( boqlArgs != null ) {
@@ -285,8 +408,25 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		String boqlField = this.groupAttribute;
 		String boqlGroupBy = this.groupAttribute;
 		
-		String groupByExpression = this.groupAttribute;
-		String groupFieldExpression = this.groupAttribute;
+//		boolean needFieldAlias = false;
+//		String[] relatedAtt = this.groupAttribute.split("__");
+//		if( relatedAtt.length > 1 ) {
+//			needFieldAlias = true;
+//			boqlField = "";
+//			boqlGroupBy = "";
+//			boolean first = true;
+//			for( String att : relatedAtt ) {
+//				if( !first ) { 
+//					boqlField += ".";
+//					boqlGroupBy += ".";
+//				}
+//				boqlField += att;
+//				boqlGroupBy += att;
+//				first = false;
+//			}
+//		}
+		String groupByExpression = boqlField;
+		String groupFieldExpression = boqlField;
 		
 		List<SqlField> sqlFields = this.rootList.getSqlFields();
 		
@@ -308,95 +448,63 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 					nativeQlTag1 = "";
 					nativeQlTag2 = "";
 					groupByExpression = defAtt.getDbName();
+					boqlGroupBy = defAtt.getDbName();
+					boqlField = defAtt.getDbName();
 				}
 			}
 			else if ( sqlFields != null && sqlFields.size() > 0 ) {
 				for( SqlField field : sqlFields ) {
 					if( this.groupAttribute.equals( field.getSqlAlias() ) ) {
-						boqlGroupBy = groupByExpression = "[(" + field.getSqlExpression() + ")]";
+						String fieldSqlExpr = field.getSqlExpression();
+						if( fieldSqlExpr.toUpperCase().indexOf("SELECT ") > -1 ) {
+							createSubSelect = true;
+							boqlGroupBy = groupByExpression = field.getSqlAlias();
+						}
+						else {
+							boqlGroupBy = groupByExpression = "[(" + field.getSqlExpression() + ")]";
+						}
 						boqlField = groupFieldExpression = "[(" + field.getSqlExpression() + ")] " + field.getSqlAlias();
 						break;
 					}
 				}
 			}
-			else{
-				if (this.groupAttribute.contains(".")){
-					String[] relationAttribute = this.groupAttribute.split("\\.");
-					boDefAttribute defAttRel = def.getAttributeRef( relationAttribute[0] );
-					boDefHandler defModelRel = defAttRel.getReferencedObjectDef();
-					boDefAttribute targetAttributeDefinition = defModelRel.getAttributeRef(relationAttribute[1]);
-					
-					if (targetAttributeDefinition != null){
-						isObject = true;
-		            	if( !qp.isObjectExtended() ) {
-		            		groupFieldExpression = defModelRel.getBoMasterTable() + "." + this.groupAttribute;
-		            		groupByExpression = groupFieldExpression;
-		            	}
-		            	else {
-		            		groupFieldExpression = defModelRel.getBoExtendedTable() + "." + this.groupAttribute;
-		            		groupByExpression = groupFieldExpression;
-		            	}
-						
-						if( boql.startsWith( "{" ) ) {
-							nativeQlTag1 = "";
-							nativeQlTag2 = "";
-							groupByExpression = targetAttributeDefinition.getDbName();
-						}
-					}
-				}
-				
-			}
 		}
 		boolean isDate;
 		isDate = isObject && isDateValue( qp.getObjectName() );
 		if ( !isDate ) {
-			fields += boqlField + ", "+nativeQlTag1 +"count(*) as count" + nativeQlTag2;
+			fields += boqlField;
+//			if ( needFieldAlias )
+//				fields += " as " + this.groupAttribute +" ";
 		} else {
-			fields += nativeQlTag1 + dutl.fnTruncateDate( groupFieldExpression ) + " as " + this.groupAttribute + nativeQlTag2 + ", " + nativeQlTag1 + "count(*) as count" + nativeQlTag2;
+			fields += nativeQlTag1 + dutl.fnTruncateDate( groupFieldExpression ) + " as " + this.groupAttribute + nativeQlTag2;
+		}
+		
+		if (!createSubSelect) {
+			fields += ", "+nativeQlTag1 +"count(*) as count" + nativeQlTag2;
 		}
 		
 		q.setFieldsPart( fields );
 		
-		if( !isDate )
-			q.setGroupByPart( boqlGroupBy );
-		else
-			q.setGroupByPart( nativeQlTag1 + dutl.fnTruncateDate( groupByExpression ) + nativeQlTag2 );
-		
-		
-		q.setFieldsPart( fields );
-		
-		String wherePart = q.getWherePart();
-		if( userQuery != null && userQuery.length() > 0 ) {
-			if( wherePart != null && wherePart.length() > 0 ) {
-				wherePart += " AND (" + userQuery + ")";
-			} else {
-				wherePart = userQuery;
-			}
-			if( userQueryArgs != null ) {
-				q.getWherePartParameters().addAll( Arrays.asList( userQueryArgs ) );
-			}
+		if( !createSubSelect ) {
+			if( !isDate )
+				q.setGroupByPart( boqlGroupBy );
+			else
+				q.setGroupByPart( nativeQlTag1 + dutl.fnTruncateDate( groupByExpression ) + nativeQlTag2 );
 		}
 		
-		if( fulltext != null && fulltext.length() > 0 ) {
-			if( wherePart != null && wherePart.length() > 0 ) {
-				wherePart += " AND CONTAINS ?";
-			} else {
-				wherePart = "CONTAINS ?";
-			}
-			q.getWherePartParameters().add( fulltext );
-		}
 		
-		q.setWherePart( wherePart );
-		if( orderBy != null && orderBy.length() > 0 ) {
-			String orderField = orderBy;
-			String uOrderBy  = orderBy.toUpperCase();
-			if( uOrderBy.endsWith( " ASC" ) ) {
-				orderField = orderBy.substring( 0, orderBy.length() - 4 );
-			} else if ( uOrderBy.endsWith( " DESC" ) ) {
-				orderField = orderBy.substring( 0, orderBy.length() - 5 );
-			}
-			if( orderField.equals( this.groupAttribute ) ) {
-				q.setOrderByPart( orderBy );
+		String outerSelectOrderBy = null;
+		if( orderBy != null && orderBy.trim().length() > 0 ) {
+			OrderByTerms orderByTerms = new OrderByTerms( orderBy.trim() );
+			OrderByTerm term = orderByTerms.getSortTerm( this.groupAttribute );
+			if( term != null ) {
+				outerSelectOrderBy = "1" + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"");
+				if( boql.startsWith( "{" ) ) {
+					q.setOrderByPart( "1" + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"") );
+				}
+				else {
+					q.setOrderByPart( "[1" + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC]":"]") );
+				}
 				q.getOrderByPartParameters().clear();
 			}
 			else {
@@ -408,16 +516,22 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 			q.setOrderByPart( "" );
 			q.getOrderByPartParameters().clear();
 		}
+		addParentWhere( boql, qp, q );
 		
 		qp = new QLParser();
 		ArrayList<Object>	modifiedBoqlParams = new ArrayList<Object>();
 		
+		
 		String newboql 		= q.toBOQL( modifiedBoqlParams );
 		String newsql       = qp.toSql( newboql, getEboContext() );
 		
-		this.preparedSql  = newsql;
+		if (createSubSelect) {
+			newsql = "SELECT \"GROUP\".\"" + this.groupAttribute + "\", count(*) as count FROM (" + newsql + ") \"GROUP\"" +
+					 " GROUP BY \"" + this.groupAttribute +"\"" + 
+					 (outerSelectOrderBy!=null?" ORDER BY " + outerSelectOrderBy:"");
+		}
 		this.preparedSqlArgs = modifiedBoqlParams;
-		
+		this.preparedSql  = newsql;
 	}
 	
 	public void refresh() {
@@ -442,5 +556,13 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 	
 	private EboContext getEboContext() {
 		return boApplication.currentContext().getEboContext();
+	}
+
+	private boolean hasMoreResults() {
+		String hm = this.dataSet.getParameter("HaveMoreData");
+		if (hm != null && hm.equals("true")) {
+			return true;
+		}
+		return false;
 	}
 }

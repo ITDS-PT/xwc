@@ -8,27 +8,26 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import netgest.bo.data.DataSet;
 import netgest.bo.data.DriverUtils;
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
-import netgest.bo.runtime.boObjectList.SqlField;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.runtime.boObjectList.SqlField;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
 
-public class XEOObjectListConnector implements DataListConnector {
+public class XEOObjectListConnector implements GroupableDataList {
 
-	public String[] groupedAttributes;
-	
 	boObjectList oObjectList;
     
     public boObjectList getObjectList() {
 		return oObjectList;
 	}
-
+    
 	public XEOObjectListConnector( boObjectList oBoObjectList ) {
         this.oObjectList = oBoObjectList;
     }
@@ -38,7 +37,11 @@ public class XEOObjectListConnector implements DataListConnector {
     }
 
     public int getRecordCount() {
-        return (int)this.oObjectList.getRecordCount();
+    	if( this.oObjectList.haveMorePages() ) {
+    		return (int)this.oObjectList.getRecordCount();	
+    	}
+    	return 
+    		((this.oObjectList.getPage()-1) * this.oObjectList.getPageSize()) +  this.oObjectList.getRowCount();
     }
 
     public int getRowCount() {
@@ -68,7 +71,7 @@ public class XEOObjectListConnector implements DataListConnector {
     	while( it.hasNext() ) {
 
     		if( sb.length() > 0 )
-    			sb.append(';');
+    			sb.append(',');
     		
     		SortTerm st = it.next();
     		String field = st.getField();
@@ -83,8 +86,23 @@ public class XEOObjectListConnector implements DataListConnector {
 					throw new RuntimeException( e );
 				}
     		}
-    		String dir   = st.getDirection()==SortTerms.SORT_DESC?"DESC":"ASC";
-    		sb.append( field ).append( ' ' ).append( dir );
+    		boolean isSqlField = false;
+    		
+    		SqlField[] sqlFieldsList = this.oObjectList.getSqlFields();
+    		if( sqlFieldsList != null ) {
+	        	for( SqlField sqlField : sqlFieldsList ) {
+					if( field.equals( sqlField.getSqlAlias() ) ) {
+						isSqlField = true;
+					}
+	        	}
+    		}
+    		String dir   = st.getDirection()==SortTerms.SORT_DESC?"DESC":"";
+    		if( isSqlField ) {
+    			sb.append('"').append( field ).append('"').append( ' ' ).append( dir );	
+    		}
+    		else {
+    			sb.append( field ).append( ' ' ).append( dir );	
+    		}
     	}
     	
     	this.oObjectList.setQueryOrderBy( sb.toString() );
@@ -145,7 +163,7 @@ public class XEOObjectListConnector implements DataListConnector {
 						val = "%" + val + "%";
 					}
 					parVal = "?";
-					query.append( "UPPER(" + sqlExpr + ")" );
+					query.append( "UPPER((" + sqlExpr + "))" );
 					pars.add( val );
 				} else if ( val instanceof Boolean ) {
 					val = ((Boolean)val).booleanValue()?"1":"0";
@@ -308,7 +326,7 @@ public class XEOObjectListConnector implements DataListConnector {
 				return new XEOObjectAttributeMetaData(XEOObjectConnector.getAttributeDefinitionFromName(attributeName, this.oObjectList.getBoDef()));
 			}
 			
-			/*
+			
 			if( this.oObjectList.getRslt() != null ) {
 				DataSet dataSet = this.oObjectList.getRslt().getDataSet();
 				int col = dataSet.findColumn( attributeName );
@@ -316,7 +334,7 @@ public class XEOObjectListConnector implements DataListConnector {
 					return new XEOObjectConnector.GenericFieldConnector( attributeName, null, DataFieldTypes.VALUE_CHAR );
 				}
 			}
-			*/
+			
 			
 			return null;
 
@@ -336,27 +354,34 @@ public class XEOObjectListConnector implements DataListConnector {
 		this.oObjectList.setFullTextSearch( boObjectList.arrangeFulltext( this.oObjectList.getEboContext(), searchText ) );
 	}
 	
-	public DataListConnector getGroupDetails(int level, String[] parentGroups,
-			Object[] parentValues, int page, int pageSize) {
+	public DataListConnector getGroupDetails(
+			String[] parentGroups,
+			Object[] parentValues,
+			String groupField,
+			int page, 
+			int pageSize
+		) 
+	{
 		// TODO Auto-generated method stub
 		return new XEOObjectListGroupConnector( 
 				this, 
 				parentGroups, 
 				parentValues, 
-				this.groupedAttributes[level-1], 
+				groupField, 
 				page, 
 				pageSize 
 			).getDetails();
 	}
 
-	public DataGroupConnector getGroups(int level, String[] parentGroups,
-			Object[] parentValues, int page, int pageSize) {
-		
-		return new XEOObjectListGroupConnector( this, null, null, this.groupedAttributes[level-1], page, pageSize );
-	}
-
-	public void setGroupBy(String[] attributes) {
-		this.groupedAttributes = attributes;
+	public DataGroupConnector getGroups(
+			String[] parentGroups,
+			Object[] parentValues, 
+			String groupField, 
+			int page, 
+			int pageSize
+		) 
+	{
+		return new XEOObjectListGroupConnector( this, parentGroups, parentValues, groupField, page, pageSize );
 	}
 
 	public int dataListCapabilities() {
@@ -371,14 +396,19 @@ public class XEOObjectListConnector implements DataListConnector {
 	@Override
 	public int indexOf(String sUniqueIdentifier) {
 		int ret = -1;
-		
-		int lastRow = this.oObjectList.getRow();
-		if( this.oObjectList.haveBoui( Long.valueOf( sUniqueIdentifier ) ) ) {
-			ret = this.oObjectList.getRow();
+		//TODO: Bug no  boObjectList com multiplos colunas de order by.
+		String orderBy = this.oObjectList.getOrderBy();
+		try {
+			this.oObjectList.setQueryOrderBy("");
+			int lastRow = this.oObjectList.getRow();
+			if( this.oObjectList.haveBoui( Long.valueOf( sUniqueIdentifier ) ) ) {
+				ret = this.oObjectList.getRow();
+			}
+			this.oObjectList.moveTo( lastRow );
+			return ret;
 		}
-		this.oObjectList.moveTo( lastRow );
-		return ret;
+		finally {
+			this.oObjectList.setQueryOrderBy( orderBy );
+		}
 	}
-
-
 }

@@ -9,7 +9,6 @@ import netgest.bo.def.boDefHandler;
 import netgest.bo.def.v2.boDefInterfaceImpl;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
-import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;

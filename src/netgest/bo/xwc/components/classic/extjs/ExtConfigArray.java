@@ -1,14 +1,19 @@
 package netgest.bo.xwc.components.classic.extjs;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 
-public class ExtConfigArray {
+public class ExtConfigArray implements Serializable {
 
-    private List<Object> childs = new ArrayList<Object>();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3115786305770657441L;
+	private List<Object> childs = new ArrayList<Object>();
     
     public final ExtConfig addChild( ExtConfig oExtConfig ) {
         childs.add( oExtConfig );
@@ -33,11 +38,12 @@ public class ExtConfigArray {
             if( !bIsFirst ) {
                 oStringBuilder.append( ',' );
             }
-            
             oChild = oChildsIt.next();
-            
             if( oChild instanceof ExtConfig ) {
                 ((ExtConfig)oChild).renderExtConfig( oStringBuilder );
+            }
+            else if( oChild instanceof ExtConfigArray ) {
+                ((ExtConfigArray)oChild).renderExtConfig( oStringBuilder );
             }
             else {
                 oStringBuilder.append( oChild );

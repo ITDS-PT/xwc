@@ -149,6 +149,11 @@ public class ToolBar extends ViewerSecurityBase {
         }
         return ret;
     }
+    
+    @Override
+    public void restoreState(Object oState) {
+    	super.restoreState(oState);
+    }
 
 	@Override
 	public boolean isRendered() {
@@ -158,7 +163,7 @@ public class ToolBar extends ViewerSecurityBase {
 		return super.isRendered();
 	}
 
-    public static final class XEOHTMLRenderer extends XUIRenderer implements ExtJsRenderer {
+    public static class XEOHTMLRenderer extends XUIRenderer implements ExtJsRenderer {
 
         @Override
         public void encodeBegin(XUIComponentBase component) throws IOException {
@@ -276,95 +281,95 @@ public class ToolBar extends ViewerSecurityBase {
         }
 
         public ExtConfig renderExtJs( XUIComponentBase component ) {
-            ToolBar toolBar = (ToolBar)component;
-            
-            ExtConfig oToolBarCfg = new ExtConfig( "Ext.Toolbar" );
-            oToolBarCfg.addJSString("style","border:0px solid black;" );     
-            oToolBarCfg.add( "width" , "'auto'" );
-            oToolBarCfg.add( "hidden" , !toolBar.isVisible() );
-            oToolBarCfg.add( "disabled" , toolBar.isDisabled() );
-            oToolBarCfg.addJSString( "id", "ext-" + component.getClientId() );
-            
-            
+                ToolBar toolBar = (ToolBar)component;
+                
+                ExtConfig oToolBarCfg = new ExtConfig( "Ext.Toolbar" );
+                oToolBarCfg.addJSString("style","border:0px solid black;" );     
+                oToolBarCfg.add( "width" , "'auto'" );
+                oToolBarCfg.add( "hidden" , !toolBar.isVisible() );
+                oToolBarCfg.add( "disabled" , toolBar.isDisabled() );
+                oToolBarCfg.addJSString( "id", "ext-" + component.getClientId() );
+                
+                
 
-            ExtConfigArray oItemsCfg = oToolBarCfg.addChildArray( "items" );
+                ExtConfigArray oItemsCfg = oToolBarCfg.addChildArray( "items" );
 
-            Iterator<UIComponent> childs =  component.getChildren().iterator();
-            while( childs.hasNext() ) {
-                
-                ExtConfig oItemCfg = null;
-                
-                UIComponent currentItem = childs.next();
-                if (currentItem instanceof Menu){
-                
-                Menu oMenuChild = (Menu)currentItem;
-                oMenuChild.setRenderedOnClient( true );
-                
-                if( oMenuChild.isRendered() ) {
-                
-		            	String sText = oMenuChild.getText();
-		
-		            	if( "-".equals( sText ) ) {
-	            			ExtConfig sep = oItemsCfg.addChild( "ExtXeo.Toolbar.Separator" );
-	            			sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
-	            			sep.add( "hidden", !toolBar.isVisible() || !oMenuChild.isVisible()  );
-	            		}
-		            	else if ("->".equals( sText ) ){
-		            		ExtConfig sep = oItemsCfg.addChild();
-		            		sep.addJSString("xtype", "tbfill");
-		            		sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
-		            	}
-		            	else if (" ".equals( sText ) ){
-		            		ExtConfig sep = oItemsCfg.addChild();
-		            		sep.addJSString("xtype", "tbspacer");
-		            		sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
-		            	}
-		            	else if ( oMenuChild.getEffectivePermission( SecurityPermissions.READ ) ) {
-		                        oItemCfg = oItemsCfg.addChild(  );
-		                    	configExtMenu( this, toolBar , oMenuChild, oItemCfg);
-			                    if( oMenuChild.getChildCount() > 0) {
-			                    	//If our top Menu has an action, make it a split button with default action
-			                    	if (oMenuChild.serverAction != null && oMenuChild.serverAction.getValue() != null) 
-				                    	oItemCfg.addJSString( "xtype", "splitbutton" );
-			                    	if( oItemCfg != null ) {
-			    	                    encodeSubMenuJS( toolBar,oItemCfg.addChild( "menu" ), oMenuChild );
-			                    	}
-			                    }
-		                }
-	                }
+                Iterator<UIComponent> childs =  component.getChildren().iterator();
+                while( childs.hasNext() ) {
+                    ExtConfig oItemCfg = null;
+                    
+                    UIComponent currentItem = childs.next();
+                    if (currentItem instanceof Menu){
+                    
+	                    Menu oMenuChild = (Menu)currentItem;
+	                    oMenuChild.setRenderedOnClient( true );
+	                    
+	                    if( oMenuChild.isRendered() ) {
+    		            	String sText = oMenuChild.getText();
+    		
+    		            	if( "-".equals( sText ) ) {
+    	            			ExtConfig sep = oItemsCfg.addChild( "ExtXeo.Toolbar.Separator" );
+    	            			sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
+    	            			sep.add( "hidden", !toolBar.isVisible() || !oMenuChild.isVisible()  );
+    	            		}
+    		            	else if ("->".equals( sText ) ){
+    		            		ExtConfig sep = oItemsCfg.addChild();
+    		            		sep.addJSString("xtype", "tbfill");
+    		            		sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
+    		            	}
+    		            	else if (" ".equals( sText ) ){
+    		            		ExtConfig sep = oItemsCfg.addChild();
+    		            		sep.addJSString("xtype", "tbspacer");
+    		            		sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
+    		            	}
+    		            	else if ( oMenuChild.getEffectivePermission( SecurityPermissions.READ ) ) {
+    		                        oItemCfg = oItemsCfg.addChild(  );
+    		                    	configExtMenu( this, toolBar , oMenuChild, oItemCfg);
+    			                    if( oMenuChild.getChildCount() > 0) {
+    			                    	//If our top Menu has an action, make it a split button with default action
+    			                    	//if (oMenuChild.serverAction != null && oMenuChild.serverAction.getValue() != null) 
+    				                    oItemCfg.addJSString( "xtype", "splitbutton" );
+    			                    	if( oItemCfg != null ) {
+    			    	                    encodeSubMenuJS( toolBar,oItemCfg.addChild( "menu" ), oMenuChild );
+    			                    	}
+    			                    }
+    		                }
+    	                }
+                    }
+                    else if ( currentItem instanceof XUIExtJsComponent ) {
+                	   oItemsCfg.add( ((XUIExtJsComponent)currentItem).getExtConfig() );
+                    }
+                    //We may have other things, like form fields
+					else {
+                    	XUIRequestContext req = XUIRequestContext.getCurrentContext();
+                    	XUIComponentStore compStore = req.getApplicationContext().getComponentStore();
+                    	Map<String,XUIRendererDefinition> def = compStore.getMapOfRenderKit("XEOHTML");
+                    	XUIRendererDefinition definition = def.get(currentItem.getFamily()+":"+currentItem.getRendererType());
+                    	if (definition != null){ //For this to be null we probably have a component
+                    		//without a renderer class, like an instance of IToolBarGroup
+                    	String className = definition.getClassName();
+                    		try {
+    							//Instantiate the class and render the component
+    							//to a string (remove the renderTo property, because
+    							//it does not apply in this situation and totally screws up rendering)
+    	                		Object newInstance = Class.forName(className).newInstance();
+    	                		if (newInstance instanceof ExtJsRenderer)
+    	                		{
+    	                			ExtJsRenderer render = (ExtJsRenderer) newInstance;
+    								ExtConfig config = render.getExtJsConfig((XUIComponentBase)currentItem);
+    								if (currentItem instanceof AttributeBase)
+    									config.add("width", ((AttributeBase)currentItem).getWidth());
+    								config.removeConfig("renderTo");
+    								config.removeConfig("validator");
+    								oItemsCfg.addChild(config);
+    							}
+    						}  catch (Exception e) {
+    							e.printStackTrace();
+    						}
+    					}
+                    }
                 }
-              //We may have other things, like form fields
-                else {
-                	XUIRequestContext req = XUIRequestContext.getCurrentContext();
-                	XUIComponentStore compStore = req.getApplicationContext().getComponentStore();
-                	Map<String,XUIRendererDefinition> def = compStore.getMapOfRenderKit("XEOHTML");
-                	XUIRendererDefinition definition = def.get(currentItem.getFamily()+":"+currentItem.getRendererType());
-                	if (definition != null){ //For this to be null we probably have a component
-                		//without a renderer class, like an instance of IToolBarGroup
-                	String className = definition.getClassName();
-                		try {
-							//Instantiate the class and render the component
-							//to a string (remove the renderTo property, because
-							//it does not apply in this situation and totally screws up rendering)
-	                		Object newInstance = Class.forName(className).newInstance();
-	                		if (newInstance instanceof ExtJsRenderer)
-	                		{
-	                			ExtJsRenderer render = (ExtJsRenderer) newInstance;
-								ExtConfig config = render.getExtJsConfig((XUIComponentBase)currentItem);
-								if (currentItem instanceof AttributeBase)
-									config.add("width", ((AttributeBase)currentItem).getWidth());
-								config.removeConfig("renderTo");
-								config.removeConfig("validator");
-								oItemsCfg.addChild(config);
-							}
-						}  catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-                }
-            }
-            return oToolBarCfg;
-            
+                return oToolBarCfg;
         }
         
         public static final void configExtMenu( XUIRenderer renderer, ToolBar toolBar,  Menu oMenuChild, ExtConfig  oItemCfg ) {
@@ -386,9 +391,16 @@ public class ToolBar extends ViewerSecurityBase {
                 	oItemCfg.addJSString("cls", "x-btn-text-icon");
             	}
             }
+
+            String toolTip = oMenuChild.getToolTip();
+            String shortCut = oMenuChild.getShortCut();
             
-            if( oMenuChild.getToolTip() != null ) {
-            	oItemCfg.addJSString("tooltip", oMenuChild.getToolTip() );
+            if( shortCut != null ) {
+            	toolTip = (toolTip!=null?toolTip + " ":"") + "[" + shortCut + "]";
+            }
+            
+            if( toolTip != null ) {
+            	oItemCfg.addJSString("tooltip", toolTip );
             }
                 
             if( oMenuChild.getValue() instanceof Boolean ) {
@@ -400,13 +412,17 @@ public class ToolBar extends ViewerSecurityBase {
             	waitMode = XVWServerActionWaitMode.STATUS_MESSAGE;
             }
             
-            //Only menus with actions can have
-            if (oMenuChild.getChildCount() == 0 || oMenuChild.serverAction.getValue() != null ){
-	            oItemCfg.add( "handler", "function(){" +
-	            		XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode.ordinal() )+"}" 
-	            );
-            }
+            String handler = "function(){" + XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode.ordinal() ) +"}";
+            oItemCfg.add( "handler", handler  );
             
+            if( shortCut != null ) {
+            	XUIScriptContext sc = XUIRequestContext.getCurrentContext().getScriptContext();
+            	sc.add( 
+            		XUIScriptContext.POSITION_FOOTER, 
+            		oMenuChild.getClientId()+"_scut",
+            		"shortcut.add( '"+ shortCut +"' , " + handler + " );"
+            	);
+            }
         }
         
         

@@ -86,9 +86,7 @@ public class List extends GridPanel {
 		if( getRenderIconColumn() ) {
 			addIconColumn();
 		}
-
 		createToolBar( 0 );
-		
 	}
 	
 	public void applyComponentProperties() {
@@ -107,18 +105,16 @@ public class List extends GridPanel {
 
 //    	<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>
 		ColumnAttribute iconColumn = new ColumnAttribute();
-		iconColumn.setLabel("&nbsp;");
-		iconColumn.setWidth("20");
+		iconColumn.setLabel("Icn");
+		iconColumn.setWidth("25");
+		iconColumn.setResizable("false");
 		iconColumn.setHideable( "false" );
 		iconColumn.setSortable( "false" );
 		iconColumn.setGroupable( "false" );
 		iconColumn.setSearchable( "false" );
 		iconColumn.setDataField( "SYS_OBJECT_ICON_16" );
 		iconColumn.setContentHtml( true );
-		
 		c.getChildren().add( 0, iconColumn );
-		
-		
 	}
 	
 	public void createToolBar( int pos ) {

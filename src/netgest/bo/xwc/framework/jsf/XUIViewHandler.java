@@ -2,8 +2,10 @@ package netgest.bo.xwc.framework.jsf;
 
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -28,9 +30,14 @@ import javax.faces.render.ResponseStateManager;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import netgest.bo.def.boDefHandler;
 import netgest.bo.localizations.MessageLocalizer;
@@ -102,7 +109,12 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     public void renderView(FacesContext context,
                            UIViewRoot viewToRender) throws IOException,
         FacesException {
-
+    	
+    	long ini = System.currentTimeMillis();
+    	
+    	XUIRequestContext.getCurrentContext()
+    		.setRenderedViewer( viewToRender );
+    		
         ExternalContext extContext = context.getExternalContext();
 
         ServletRequest request = (ServletRequest) extContext.getRequest();
@@ -147,7 +159,12 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         }
         else
         {
-            renderNormal( context, request, response, renderKit, viewToRender );
+            if( "XEOXML".equals( viewToRender.getRenderKitId() ) ) {
+            	renderToBuffer( context, request, response, renderKit, viewToRender );
+            }
+            else {
+            	renderNormal( context, request, response, renderKit, viewToRender );
+            }
         }
 
         if (null != oldWriter) {
@@ -164,8 +181,101 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         }
 
         response.flushBuffer();
-
     }
+    
+    public void renderToBuffer( FacesContext context, ServletRequest request, ServletResponse response, RenderKit renderKit, UIViewRoot viewToRender ) throws IOException {
+		if( !viewToRender.isRendered() ) {
+			return;
+		}
+		
+		response.setContentType("text/html;charset=utf-8");
+		CharArrayWriter w = new CharArrayWriter();
+		
+	    XUIWriteBehindStateWriter headWriter =
+	          new XUIWriteBehindStateWriter(w,
+	                                     context,
+	                                     bufSize);
+	
+	    XUIWriteBehindStateWriter bodyWriter =
+	          new XUIWriteBehindStateWriter(w,
+	                                     context,
+	                                     bufSize);
+	
+	    XUIWriteBehindStateWriter footerWriter =
+	          new XUIWriteBehindStateWriter(w,
+	                                     context, 
+	                                     bufSize);
+	
+	    ResponseWriter newWriter;
+	    newWriter = renderKit.createResponseWriter(bodyWriter,
+	                                                   null,
+	                                                   request.getCharacterEncoding());
+	
+	    context.setResponseWriter(newWriter);
+	    
+	    // Sets the header and footer writer
+	    if( newWriter instanceof XUIResponseWriter )
+	    	PackageIAcessor.setHeaderAndFooterToWriter( (XUIResponseWriter)newWriter, headWriter, footerWriter );
+	
+	    newWriter.startDocument();
+	    viewToRender.encodeAll( context );
+	    newWriter.endDocument();
+	
+	    // Write header part of document
+	    headWriter.flushToWriter( false );
+	    headWriter.release();
+	    
+	    bodyWriter.flushToWriter();
+	
+	    // clear the ThreadLocal reference.
+	    bodyWriter.release();
+	    
+	    // Write footer (Before tag </body> ) part.
+	    footerWriter.flushToWriter( false );
+	    footerWriter.release();
+	    
+	    String xmlContent = w.toString();
+	    
+		final String		HTML_TEMPLATES = "html_templates.xsl";
+    	final String		PROJECT_HTML_TEMPLATES = "projectHtmlTemplates.xsl";
+
+		
+    	if( "true".equals( request.getAttribute("xsltransform") ) ) {
+			//Merge the Two transforms 
+			InputStream finalTransformer = 
+				Thread.currentThread().getContextClassLoader().getResourceAsStream( PROJECT_HTML_TEMPLATES ); 
+			
+			if( finalTransformer == null ) {
+				finalTransformer = 
+					Thread.currentThread().getContextClassLoader().getResourceAsStream( HTML_TEMPLATES );
+			}
+			
+			// JAXP reads data using the Source interface
+		    Source xmlSource = new StreamSource(new StringReader(xmlContent));
+		    Source xsltSource = new StreamSource(finalTransformer);
+		    
+		    CharArrayWriter out = new CharArrayWriter();
+		    try
+		    {
+		    	TransformerFactory transFact =
+		                TransformerFactory.newInstance();
+		        Transformer trans = transFact.newTransformer(xsltSource);
+		        trans.transform(xmlSource, new StreamResult(out) );
+		        xmlContent = out.toString();
+		    }
+		    catch (Exception e) 
+		    {
+		    	throw new RuntimeException("XEOEditBean - XSLT Transformation Error", e);
+		    }
+		    finally {
+			    response.getWriter().write( out.toString() );
+		    }
+    	}
+    	else {
+		    response.getWriter().write( xmlContent );
+    	}
+    }
+    
     
     public UIViewRoot restoreView(FacesContext context, String viewId ) {
         return restoreView( context, viewId, null );
@@ -928,7 +1038,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 				
             }
             
-            
             oCompElement = oAjaxXmlResp.createElement( "component" );
             oCompElement.setAttribute("id", oViewToRender.getClientId() );
             oCompElement.appendChild( oAjaxXmlResp.createCDATASection( sResult ) );
@@ -937,7 +1046,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             // Verifica se foi criada uma Writer, se sim guarda o script context
             // para passar à nova que é criada especificamente para 
             // este componente.
-            
             if( newWriter != null ) {
                 oSavedScriptContext = newWriter.getScriptContext();
             }

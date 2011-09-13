@@ -7,24 +7,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
-import javax.faces.el.MethodBinding;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.localizations.MessageLocalizer;
+import netgest.bo.preferences.Preference;
+import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.xwc.components.annotations.ObjectAttribute;
 import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.annotations.Values;
+import netgest.bo.xwc.components.classic.grid.GridTreeSelectorEditBean;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
@@ -43,6 +47,9 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMethodBindProperty;
+import netgest.bo.xwc.framework.XUIPreferenceManager;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
@@ -51,6 +58,7 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIInput;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 import org.json.JSONArray;
@@ -89,9 +97,6 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 	private XUIMethodBindProperty filterLookup = new XUIMethodBindProperty(
 			"filterLookup", this, "#{viewBean.lookupFilterObject}");
-
-	private XUIMethodBindProperty advancedFilterViewer = new XUIMethodBindProperty(
-			"advancedFilter", this, "#{viewBean.advancedFilter}");
 
 	/**
 	 * Determines how a user can select the rows in the grid panel. 
@@ -152,8 +157,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * The target for the action invoked when a row is double clicked
 	 */
 	@Values({"blank","window","tab","download","self","top"})
-	private XUIViewProperty<String> rowDblClickTarget = new XUIViewProperty<String>(
-			"rowDblClickTarget", this, "tab");
+	private XUIBindProperty<String> rowDblClickTarget = new XUIBindProperty<String>(
+			"rowDblClickTarget", this, "tab", String.class );
 
 	/**
 	 * The target for the action invoked when a row is clicked
@@ -176,6 +181,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIBaseProperty<String> currentFilters = new XUIBaseProperty<String>(
 			"currentFilters", this);
 
+	private XUIBaseProperty<String> currentExpandedGroups = new XUIBaseProperty<String>(
+			"currentExpandedGroups", this);
 
 	private String[] sSelectedRowsUniqueIdentifiers;
 
@@ -231,6 +238,12 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIViewBindProperty<Boolean> enableGroupBy = new XUIViewBindProperty<Boolean>(
 			"enableGroupBy", this, false, Boolean.class);
 
+	private XUIBindProperty<Boolean> autoSaveGridState = new XUIBindProperty<Boolean>(
+			"autoSaveGridState", this, false, Boolean.class);
+	
+	private XUIBindProperty<String> gridStateName = new XUIBindProperty<String>(
+			"gridStateName", this, null, String.class);
+	
 	/**
 	 * Whether or not columns can be sorted
 	 */
@@ -281,6 +294,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIViewProperty<String> currentSortTerms = new XUIViewProperty<String>(
 			"currentSortTerms", this, null);
 
+	private XUIViewProperty<String> currentColumnsConfig = new XUIViewProperty<String>(
+			"currentColumnsConfig", this, null);
+
 	/**
 	 * Defines the method that's invoked 
 	 * when a row of the GridPanel is doubled clicked.
@@ -305,12 +321,20 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIBindProperty<Boolean> autoReloadData = new XUIBindProperty<Boolean>(
 			"autoReloadData", this, true, Boolean.class );
 	
+	private XUIBaseProperty<HashMap<String,String>> defaultSettings = 
+		new XUIBaseProperty<HashMap<String,String>>("defaultSettings", this  );
+	
 	private boolean forcedReloadData = false;
 	
 	private String currentFullTextSearch;
 
 	private XUICommand filterLookupCommand;
+	private XUICommand selectColumnsCommand;
+	private XUICommand resetDefaultsCommand;
+	
 	private XUIInput filterLookupInput;
+	
+	private boolean updateClientView = true;
 
 	/**
 	 * Return the XUICommand associated with the filter actions
@@ -318,6 +342,14 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 */
 	public XUICommand getFilterLookupCommand() {
 		return this.filterLookupCommand;
+	}
+	
+	public XUICommand getSelectColumnsCommand() {
+		return this.selectColumnsCommand;
+	}
+	
+	public XUICommand getResetDefaultsCommand() {
+		return this.resetDefaultsCommand;
 	}
 	
 	/**
@@ -333,7 +365,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 */
 	@Override
 	public boolean wasStateChanged() {
-		return true;
+		return this.updateClientView;
 	}
 	
 	/**
@@ -370,7 +402,31 @@ public class GridPanel extends ViewerInputSecurityBase {
 	@Override
 	public void initComponent() {
 		super.initComponent();
-		loadUserPreferences();
+		HashMap<String, String> defaults = new HashMap<String, String>();
+		defaults.put("groupBy", getGroupBy() );
+		defaults.put("currentSortTerms", this.currentSortTerms.getValue() );
+		
+		try {
+			JSONArray jsonColsConfig = new JSONArray();
+			int i = 0;
+			for( Column c : getColumns() ) {
+				JSONObject j = new JSONObject();
+				j.put("position", ++i );
+				j.put("dataField", c.getDataField() );
+				j.put("hidden", c.isHidden() );
+				j.put("width", c.getWidth() );
+				jsonColsConfig.put(j);
+			}
+			defaults.put("currentColumnsConfig", jsonColsConfig.toString() );
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		this.defaultSettings.setValue(defaults);
+		if( getAutoSaveGridState() ) {
+			restoreUserState();
+		}
 	}
 
     public void setServerActionWaitMode( String waitModeName ) {
@@ -441,6 +497,26 @@ public class GridPanel extends ViewerInputSecurityBase {
 					+ "_lookupCommand");
 		}
 
+		if (findComponent(getId() + "_selectColumnsCommand") == null) {
+			selectColumnsCommand = new XUICommand();
+			selectColumnsCommand.setId(getId() + "_selectColumnsCommand");
+			selectColumnsCommand.addActionListener(new SelectColumnsListener());
+			getChildren().add(selectColumnsCommand);
+		} else {
+			selectColumnsCommand = (XUICommand) findComponent(getId()
+					+ "_selectColumnsCommand");
+		}
+
+		if (findComponent(getId() + "_resetDefaultsCommand") == null) {
+			resetDefaultsCommand = new XUICommand();
+			resetDefaultsCommand.setId(getId() + "_resetDefaultsCommand");
+			resetDefaultsCommand.addActionListener(new ResetDefaultsListener());
+			getChildren().add(resetDefaultsCommand);
+		} else {
+			resetDefaultsCommand = (XUICommand) findComponent(getId()
+					+ "_resetDefaultsCommand");
+		}
+		
 		if (findComponent(getId() + "_lookupInput") == null) {
 			filterLookupInput = new XUIInput();
 			filterLookupInput.setId(getId() + "_lookupInput");
@@ -467,6 +543,62 @@ public class GridPanel extends ViewerInputSecurityBase {
 					.getRequest()).getParameter(cmd.getClientId()));
 			((GridPanel) cmd.getParent()).doFilterLookup();
 		}
+	}
+
+	public static class ResetDefaultsListener implements ActionListener {
+		@Override
+		public void processAction(ActionEvent arg0)
+				throws AbortProcessingException {
+			
+			GridPanel gridPanel = (GridPanel)arg0.getComponent().getParent();
+			gridPanel.resetToDefaults();
+			
+		}
+		
+	}
+	
+	public static class SelectColumnsListener implements ActionListener {
+
+		@Override
+		public void processAction(ActionEvent arg0)
+				throws AbortProcessingException {
+			
+			XUIRequestContext requestContext
+				= XUIRequestContext.getCurrentContext();
+			
+			XUISessionContext sessionContext = 
+				requestContext.getSessionContext();
+			
+			XUIViewRoot viewSelCols = 
+					sessionContext.createView( "netgest/bo/xwc/components/classic/grid/GridTreeSelector.xvw" );
+			
+			GridTreeSelectorEditBean selectorBean = 
+				(GridTreeSelectorEditBean)viewSelCols.getBean( "viewBean" );
+			
+			GridPanel gridPanel = (GridPanel)arg0.getComponent().getParent(); 
+
+			selectorBean
+				.setGridPanelId( 
+						gridPanel.getClientId()  
+			);
+			
+			selectorBean.setGridPanelId(gridPanel.getClientId());
+			
+			Column[] columns = 
+					gridPanel.getColumns();
+
+			for( Column column : columns ) {
+				((ColumnAttribute)column).setLabel( 
+						GridPanel.getColumnLabel( 
+								gridPanel.getDataSource() , column ) 
+				);
+			}
+			selectorBean.setColumns( columns );
+
+			requestContext.setViewRoot( viewSelCols );
+			
+		}
+		
 	}
 	
 	private void doFilterLookup() {
@@ -504,6 +636,28 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public boolean getEnableGroupBy() {
 		return this.enableGroupBy.getEvaluatedValue();
 	}
+
+	
+	public void setGridStateName(String gridStateName ) {
+		this.gridStateName.setExpressionText( gridStateName );
+	}
+	
+	public String getGridStateName() {
+		String stateName = this.gridStateName.getEvaluatedValue();
+		if( stateName == null || stateName.length() == 0 ) {
+			stateName = XUIRequestContext.getCurrentContext().getViewRoot().getViewId();
+		}
+		return stateName;
+	}
+	
+	public void setAutoSaveGridState(String autoSaveGridState) {
+		this.autoSaveGridState.setExpressionText(autoSaveGridState);
+	}
+	
+	public boolean getAutoSaveGridState() {
+		return this.autoSaveGridState.getEvaluatedValue();
+	}
+	
 	
 	/**
 	 * Enable or disable the column sort in this Grid
@@ -617,6 +771,38 @@ public class GridPanel extends ViewerInputSecurityBase {
 		this.currentFilters.setValue(currentFilters);
 	}
 
+	/**
+	 * Return a JSON Object with the current filters
+	 * @return String JSON Object
+	 */
+	public String getCurrentColumnsConfig() {
+		return currentColumnsConfig.getValue();
+	}
+
+	/**
+	 * Set the current column filters with a JSON Object
+	 * @param currentFilters String JSON Object
+	 */
+	public void setCurrentColumnsConfig(String currentColumnsConfig) {
+		this.currentColumnsConfig.setValue(currentColumnsConfig);
+	}
+	
+	/**
+	 * Return a JSON Object with the current filters
+	 * @return String JSON Object
+	 */
+	public String getCurrentExpandedGroups() {
+		return currentExpandedGroups.getValue();
+	}
+
+	/**
+	 * Set the current column filters with a JSON Object
+	 * @param currentFilters String JSON Object
+	 */
+	public void setCurrentExpandedGroups(String currentExpandedGroups) {
+		this.currentExpandedGroups.setValue(currentExpandedGroups);
+	}
+	
 	/**
 	 * Return a the current FilterTerms applied to the columns
 	 * @return {@link FilterTerms}
@@ -939,7 +1125,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * @return RowDblClickTarget property value
 	 */
 	public String getRowDblClickTarget() {
-		return rowDblClickTarget.getValue();
+		return rowDblClickTarget.getEvaluatedValue();
 	}
 	
 	/**
@@ -947,7 +1133,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * @param rowDblClickTarget String with one of this values (tab - New Tab,self - Ajax Submit to the same page,window - Popup Window)
 	 */
 	public void setRowDblClickTarget(String rowDblClickTarget) {
-		this.rowDblClickTarget.setValue(rowDblClickTarget);
+		this.rowDblClickTarget.setExpressionText(rowDblClickTarget);
 	}
 
 	/**
@@ -1241,6 +1427,11 @@ public class GridPanel extends ViewerInputSecurityBase {
 		this.forcedReloadData = true;
 	}
 	
+	public void setClientViewUpdate( boolean updateClientView ) {
+		this.updateClientView = updateClientView;
+	}
+	
+	
 	/**
 	 * Check if the method reloadData was called
 	 * @return true / false
@@ -1251,7 +1442,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	/**
 	 * Set the onRowDoubleClick action
-	 * @param onRowDoubleClick {@link MethodBinding} expression 
+	 * @param onRowDoubleClick {@link MethodExpression} expression 
 	 */
 	public void setOnRowClick(String onRowDoubleClick) {
 		this.onRowClick.setExpressionText( onRowDoubleClick );
@@ -1259,7 +1450,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	/**
 	 * Get the current action for onRowClick
-	 * @return String whith {@link MethodBinding} expression
+	 * @return String whith {@link MethodExpression} expression
 	 */
 	public String getOnRowClick() {
 		return this.onRowClick.getExpressionString();
@@ -1267,7 +1458,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 	/**
 	 * Set the onSelectionChange action
-	 * @param onSelectionChange {@link MethodBinding} expression 
+	 * @param onSelectionChange {@link MethodExpression} expression 
 	 */
 	public void setOnSelectionChange(String onSelectionChange) {
 		this.onSelectionChange.setExpressionText( onSelectionChange );
@@ -1275,7 +1466,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	/**
 	 * Get the current action for onSelectionChange
-	 * @return String whith {@link MethodBinding} expression
+	 * @return String whith {@link MethodExpression} expression
 	 */
 	public String getOnSelectionChange() {
 		return this.onSelectionChange.getExpressionString();
@@ -1283,7 +1474,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	/**
 	 * Set the action for onRowDoubleClick
-	 * @param onRowDoubleClickExpr {@link MethodBinding} expression
+	 * @param onRowDoubleClickExpr {@link MethodExpression} expression
 	 */
 	public void setOnRowDoubleClick(String onRowDoubleClickExpr) {
 	
@@ -1292,8 +1483,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 	}
 	
 	/**
-	 * Get the current {@link MethodBinding} expression for onRowDoubleClick
-	 * @return {@link MethodBinding} expression String
+	 * Get the current {@link MethodExpression} expression for onRowDoubleClick
+	 * @return {@link MethodExpression} expression String
 	 */
 	public String getOnRowDoubleClick() {
 		return this.onRowDoubleClick.getExpressionString();
@@ -1420,19 +1611,23 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public SortTerms getCurrentSortTerms() {
 		String sSort = this.currentSortTerms.getValue();
 
-		SortTerms st = null;
+		SortTerms st = new SortTerms();;
 		if (sSort != null) {
-			String[] sSortDef = sSort.split("\\|");
-			if (sSortDef.length == 2) {
-				String sSortField = sSortDef[0];
-				String sSortDir = sSortDef[1];
-				st = new SortTerms();
-				st.addSortTerm(sSortField,
-						"DESC".equals(sSortDir) ? SortTerms.SORT_DESC
-								: SortTerms.SORT_ASC);
+			String[] sSortFields = sSort.split("\\,");
+			for( String sortField : sSortFields ) {
+				String[] sSortDef = sortField.split("\\|");
+				if (sSortDef.length == 2) {
+					String sSortField = sSortDef[0].trim();
+					String sSortDir = sSortDef[1].trim();
+					if( sSortField.length() > 0 ) {
+						st.addSortTerm(sSortField,
+								"DESC".equalsIgnoreCase(sSortDir) ? SortTerms.SORT_DESC
+										: SortTerms.SORT_ASC);
+					}
+				}
 			}
 		}
-		return st;
+		return st.isEmpty()?null:st;
 	}
 
 	public String getCurrentFullTextSearch() {
@@ -1443,64 +1638,81 @@ public class GridPanel extends ViewerInputSecurityBase {
 		this.currentFullTextSearch = fullTextSearch;
 	}
 
-	public void loadUserPreferences() {
-		/*
+	public void resetToDefaults() {
+		HashMap<String, String> defaults = this.defaultSettings.getValue();
+		setGroupBy( defaults.get("groupBy") );
+		setCurrentSortTerms( defaults.get("currentSortTerms") );
+		setCurrentColumnsConfig( defaults.get("currentColumnsConfig") );
+		setCurrentFilters( null );
+		forceRenderOnClient();
+	}
+	
+	public Preference getUserSatePreference() {
+		String stateName = getGridStateName();
 		Preference p = XUIPreferenceManager.getUserPreference(
-				GridPanel.class + ".user", 
-				XUIRequestContext.getCurrentContext().getViewRoot().getViewId()
+				GridPanel.class.getName() + ".state", 
+				stateName
 		);
-		String filters = p.getString("currentFilters");
+		return p;
+	}
+	
+	public void saveUserState() {
+		Preference preference = getUserSatePreference();
+		saveUserFilterState( preference );
+		saveUserViewState( preference );
+		saveUserExpandedGroupsState(preference);
+		preference.savePreference();
+	}
+	
+	public void restoreUserState() {
+		Preference preference = getUserSatePreference();
+		restoreUserViewState( preference );
+		restoreUserFilterState( preference );
+		restoreUserExpandedGroupsState(preference);
+	}
+	
+	public void saveUserViewState( Preference preference ) {
+		preference.setString("columnsConfig", getCurrentColumnsConfig() );
+		preference.setString("groupBy", getGroupBy() );
+		preference.setString("sortTerms", this.currentSortTerms.getValue() );
+	}
+
+	public void saveUserExpandedGroupsState( Preference preference ) {
+		preference.setString("currentExpandedGroups", this.currentExpandedGroups.getValue() );
+	}
+
+	public void restoreUserExpandedGroupsState( Preference preference ) {
+		if( getEnableGroupBy() ) {
+			this.setCurrentExpandedGroups( preference.getString("currentExpandedGroups") );
+		}
+	}
+	
+	public void restoreUserViewState( Preference preference ) {
+		String columnsConfig = preference.getString("columnsConfig");
+		if( columnsConfig != null ) {
+			this.setCurrentColumnsConfig( columnsConfig );
+		}
+		
+		if( getEnableGroupBy() ) {
+			this.setGroupBy( preference.getString("groupBy") );
+		}
+		
+		if( getEnableColumnSort() ) {
+			this.setCurrentSortTerms( preference.getString("sortTerms") );
+		}
+	}
+	
+	public void saveUserFilterState( Preference preference ) {
+		String currentFilters = getCurrentFilters();
+		preference.setString("currentFilters" , currentFilters );
+	}
+	
+	public void restoreUserFilterState( Preference preference ) {
+		String filters = preference.getString("currentFilters");
 		if( filters != null ) {
 			setCurrentFilters( filters );
 		}
-		String columnsState = p.getString("columnsState");
-		if( columnsState != null ) {
-			try {
-				JSONArray jcolarray = new JSONArray( columnsState );
-				for( int i = 0; i < jcolarray.length(); i++ ) {
-					JSONObject 	jcolstate = jcolarray.getJSONObject( i );
-					String		colName   = jcolstate.getString("dataField");
-					ColumnAttribute c = (ColumnAttribute)getColumn( colName );
-					if( c != null )  {
-						boolean hidden;
-						hidden = jcolstate.getBoolean("hidden");
-						c.setHidden( Boolean.toString( hidden ) );
-					}
-					
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-		*/
 	}
-	
-	public void saveUserPreferences() {
-		/*
-		Preference p = XUIPreferenceManager.getUserPreference(
-				GridPanel.class + ".user", 
-				XUIRequestContext.getCurrentContext().getViewRoot().getViewId()
-		);
-		String currentFilters = getCurrentFilters();
-		p.setString( "currentFilters" , currentFilters );
-		try {
-			Column[] columns = getColumns();
-			JSONArray jcolarray = new JSONArray();
-			for( Column col : columns ) {
-				JSONObject jcol = new JSONObject();
-				jcol.put("dataField", col.getDataField() );
-				jcol.put("hidden", col.isHidden() );
-				jcolarray.put( jcol );
-			}
-			p.setString("columnsState", jcolarray.toString() );
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		p.savePreference();
-		*/
-	}
-	
 
 	public void applyFilters(DataListConnector listConnector) {
 		if ((listConnector.dataListCapabilities() & DataListConnector.CAP_FILTER) > 0) {
@@ -1526,28 +1738,37 @@ public class GridPanel extends ViewerInputSecurityBase {
 		}
 	}
 
-	public void applySqlFields(DataListConnector listConnector) {
+	public void applySqlFields(DataListConnector listConnector ) {
+		String groupBy = this.getGroupBy();
+		String sortBy = this.currentSortTerms.getValue();
+		if( groupBy == null ) groupBy = "";
+		if( sortBy == null ) sortBy = "";
 		
 		List<boObjectList.SqlField> sqlFields = new ArrayList<boObjectList.SqlField>(1);
 		for( Column col : getColumns() ) {
-//			if( !col.isHidden() ) {
+			if( !col.isHidden() || 
+				sortBy.toUpperCase().indexOf( col.getDataField().toUpperCase() ) != -1 ||  
+				groupBy.toUpperCase().indexOf( col.getDataField().toUpperCase() ) != -1  
+			) {
 				String sqlExpression = col.getSqlExpression();
 				if( sqlExpression != null ) {
 					sqlFields.add( new boObjectList.SqlField( sqlExpression, col.getDataField() ) );
 				}
-//			}
+			}
 		}
-		
 		if( sqlFields.size() > 0 ) {
 			listConnector.setSqlFields( sqlFields );
 		}
-		
+		else {
+			listConnector.setSqlFields( null );
+		}
+	}
+
+	public Iterator<DataRecordConnector> applyLocalSort( Iterator<DataRecordConnector> dataListIterator ) {
+		return applyLocalSort( dataListIterator, getCurrentSortTerms() );
 	}
 	
-	public Iterator<DataRecordConnector> applyLocalSort(
-			Iterator<DataRecordConnector> dataListIterator) {
-
-		SortTerms sortTerms = getCurrentSortTerms();
+	public Iterator<DataRecordConnector> applyLocalSort( Iterator<DataRecordConnector> dataListIterator, final SortTerms sortTerms ) {
 
 		if (sortTerms != null && !sortTerms.isEmpty()) {
 
@@ -1555,47 +1776,55 @@ public class GridPanel extends ViewerInputSecurityBase {
 			while (dataListIterator.hasNext()) {
 				orderedList.add(dataListIterator.next());
 			}
-
-			SortTerm term = sortTerms.iterator().next();
-
-			final String sSort = term.getField();
-			final int direction = term.getDirection();
-
 			Collections.sort(orderedList,
 					new Comparator<DataRecordConnector>() {
 						@SuppressWarnings("unchecked")
 						public int compare(DataRecordConnector left,
 								DataRecordConnector right) {
 							Comparable<Comparable> sLeft, sRight;
-
-							DataFieldConnector leftField = left
-									.getAttribute(sSort);
-							byte fieldType = leftField.getDataType();
-
-							if (fieldType == DataFieldTypes.VALUE_DATE
-									|| fieldType == DataFieldTypes.VALUE_DATETIME
-									|| fieldType == DataFieldTypes.VALUE_NUMBER) {
-
-								sLeft = (Comparable) leftField.getValue();
-								sRight = (Comparable) right.getAttribute(sSort)
-										.getValue();
-
-							} else {
-
-								sLeft = (Comparable) leftField
-										.getDisplayValue();
-								sRight = (Comparable) right.getAttribute(sSort)
-										.getDisplayValue();
-
+							
+							int ret = 0;
+							
+							Iterator<SortTerm> sortTermIterator = sortTerms.iterator();
+							while( sortTermIterator.hasNext() ) {
+								SortTerm term = sortTermIterator.next();
+					
+								final String sSort = term.getField();
+								final int direction = term.getDirection();
+							
+							
+								DataFieldConnector leftField = left
+										.getAttribute(sSort);
+								byte fieldType = leftField.getDataType();
+	
+								if (fieldType == DataFieldTypes.VALUE_DATE
+										|| fieldType == DataFieldTypes.VALUE_DATETIME
+										|| fieldType == DataFieldTypes.VALUE_NUMBER) {
+	
+									sLeft = (Comparable) leftField.getValue();
+									sRight = (Comparable) right.getAttribute(sSort)
+											.getValue();
+	
+								} else {
+	
+									sLeft = (Comparable) leftField
+											.getDisplayValue();
+									sRight = (Comparable) right.getAttribute(sSort)
+											.getDisplayValue();
+	
+								}
+	
+								if (sLeft == null || sRight == null) {
+									return sLeft == null ? 1 : -1;
+								}
+								ret = direction == SortTerms.SORT_ASC ? 
+										sLeft.compareTo(sRight) : 
+										sRight.compareTo(sLeft);
+								
+								if( ret != 0 ) {
+									break;
+								}
 							}
-
-							if (sLeft == null || sRight == null) {
-								return sLeft == null ? 1 : -1;
-							}
-
-							int ret = direction == SortTerms.SORT_ASC ? sLeft
-									.compareTo(sRight) : sRight
-									.compareTo(sLeft);
 							return ret;
 						}
 					});
@@ -1605,15 +1834,22 @@ public class GridPanel extends ViewerInputSecurityBase {
 	}
 
 	public Iterator<DataRecordConnector> applyLocalFilter(
-			Iterator<DataRecordConnector> iterator) {
+			Iterator<DataRecordConnector> iterator ) {
+
+		FilterTerms filterTerms;
+
+		filterTerms = getCurrentFilterTerms();
+		
+		return applyLocalFilter( iterator, filterTerms );
+	}
+	
+	public Iterator<DataRecordConnector> applyLocalFilter(
+			Iterator<DataRecordConnector> iterator, FilterTerms filterTerms ) {
 
 		List<DataRecordConnector> finalList = new ArrayList<DataRecordConnector>();
 
 		Iterator<FilterTerms.FilterJoin> it;
 
-		FilterTerms filterTerms;
-
-		filterTerms = getCurrentFilterTerms();
 
 		if (filterTerms == null) {
 			return iterator;
@@ -1625,6 +1861,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 				it = filterTerms.iterator();
 				boolean addLine = true;
 				while (it.hasNext()) {
+					
+					if( !addLine )
+						break;
+					
 					FilterTerms.FilterJoin filterJoin = it.next();
 					FilterTerm filterTerm = filterJoin.getTerm();
 					Object val = filterTerm.getValue();
@@ -1633,16 +1873,27 @@ public class GridPanel extends ViewerInputSecurityBase {
 						if (val instanceof String) {
 							String sVal = val == null ? "" : val.toString()
 									.toUpperCase();
+							
 							String sDisplayValue = dataRecordConnector
 									.getAttribute(column).getDisplayValue();
+							
+							String sColValue = (String)dataRecordConnector
+							.getAttribute(column).getValue();
+							
 							String sColumnValue = sDisplayValue == null ? ""
 									: sDisplayValue.toUpperCase();
+							
+							
 							if (filterTerm.getOperator() == FilterTerms.OPERATOR_CONTAINS) {
 								if (!sColumnValue.contains(sVal)) {
 									addLine = false;
 								}
 							} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_NOT_CONTAINS) {
 								if (sColumnValue.contains(sVal)) {
+									addLine = false;
+								}
+							} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_EQUAL) {
+								if (!val.equals( sColValue==null?"":sColValue )) {
 									addLine = false;
 								}
 							} else {
@@ -1683,7 +1934,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 							BigDecimal nColumnValue = (BigDecimal) dataRecordConnector
 									.getAttribute(column).getValue();
 							if (filterTerm.getOperator() == FilterTerms.OPERATOR_EQUAL) {
-								if (nVal.compareTo(nColumnValue) != 0) {
+								if (nColumnValue == null || nVal.compareTo(nColumnValue) != 0) {
 									addLine = false;
 								}
 							} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_GREATER_THAN) {
@@ -1711,13 +1962,18 @@ public class GridPanel extends ViewerInputSecurityBase {
 								addLine = false;
 							}
 						}
-
-						if (addLine) {
-							finalList.add(dataRecordConnector);
+					}
+					else {
+						Object colValue = dataRecordConnector.getAttribute(column).getValue();
+						if( colValue == null ) {
+							addLine = false;
 						}
-
 					}
 				}
+				if (addLine) {
+					finalList.add(dataRecordConnector);
+				}
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,19 +1,64 @@
 package netgest.bo.xwc.components.classic.grid;
 
 public class GridPanelRequestParameters {
-	private String groupByValue;
+	
+	
 	private int	   page;
 	private int    pageSize;
 	
 	private int	   start;
 	private int	   limit;
 	
-	public String getGroupByValue() {
-		return groupByValue;
+	private Object[] parentValues;
+	private String[] groupBy;
+	private int 	 groupByLevel;
+	
+	/**
+	 * @return the groupByLevel
+	 */
+	public int getGroupByLevel() {
+		return groupByLevel;
 	}
-	public void setGroupByValue(String groupByValue) {
-		this.groupByValue = groupByValue;
+
+	/**
+	 * @param groupByLevel the groupByLevel to set
+	 */
+	public void setGroupByLevel(int groupByLevel) {
+		this.groupByLevel = groupByLevel;
 	}
+
+	public Object[] getGroupParentValues() {
+		return this.parentValues;
+	}
+
+	/**
+	 * @param groupBy the groupBy to set
+	 */
+	public void setGroupBy(String[] groupBy) {
+		this.groupBy = groupBy;
+	}
+
+	/**
+	 * @param parentValues the parentValues to set
+	 */
+	public void setParentValues(Object[] parentValues) {
+		this.parentValues = parentValues;
+	}
+
+	/**
+	 * @return the parentValues
+	 */
+	public Object[] getParentValues() {
+		return parentValues;
+	}
+
+	/**
+	 * @return the groupBy
+	 */
+	public String[] getGroupBy() {
+		return groupBy;
+	}
+
 	public int getPage() {
 		return page;
 	}

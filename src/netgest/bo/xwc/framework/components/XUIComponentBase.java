@@ -846,6 +846,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 	}
 	
 	public void forceRenderOnClient() {
+		this.setDestroyOnClient(true);
 		this._isRenderedOnClient = false;
 		List<UIComponent> children = getChildren();
 		for( UIComponent child : children ) 

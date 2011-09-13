@@ -100,6 +100,7 @@ public class XUIViewerDefinitonParser
     public XUIViewerDefinition parse( String viewerName ) 
     {
         XUIViewerDefinition xwvr;
+        
         xwvr = null;//viewCache.get( viewerName );
         if( xwvr == null ) {
             

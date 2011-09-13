@@ -161,4 +161,9 @@ public class XEOBridgeListConnector implements DataListConnector {
 		return ret;
 	}
 	
+    public boolean hasMoreResults() {
+    	return true;
+    }
+	
+	
 }

@@ -75,6 +75,7 @@ public class XVWScripts {
     
     public static final String getCommandScript( XUIComponentBase oComponent, int iWaitMode ) {
         return 
+            "XVW.Wait( " + iWaitMode + " );\n" + 
             "XVW.Command( '" + oComponent.findParentComponent(XUIForm.class).getClientId() +  "','" + oComponent.getClientId() + "','" + oComponent.getId() + "','"+iWaitMode+"')";
     }
     

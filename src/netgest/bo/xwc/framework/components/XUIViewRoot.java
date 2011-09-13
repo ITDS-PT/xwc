@@ -123,12 +123,6 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 	
 	@Override
-	public void setRenderKitId(String renderKitId) {
-		super.setRenderKitId(renderKitId);
-		_renderKit = null;
-	};
-
-	@Override
 	public String getRenderKitId() {
 		if( _renderKit == null ) {
 	    	_renderKit = super.getRenderKitId();
@@ -147,7 +141,15 @@ public class XUIViewRoot extends UIViewRoot {
 		}
     	return _renderKit; 
     } 
-
+	
+	@Override
+	public void setRenderKitId(String renderKitId) {
+		super.setRenderKitId(renderKitId);
+		if( !"HTML_BASIC".equals( renderKitId ) ) {  
+			this._renderKit = renderKitId;
+		}
+	}
+ 
 	public XUITheme getTheme() {
 		return oTheme;
 	}

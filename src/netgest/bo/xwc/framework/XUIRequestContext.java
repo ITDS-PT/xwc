@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.el.ELContext;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
@@ -17,7 +18,6 @@ import netgest.bo.transaction.XTransactionManager;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.jsf.XUIViewHandlerImpl;
-import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 
 public class XUIRequestContext {
@@ -30,6 +30,8 @@ public class XUIRequestContext {
 
     private XUIScriptContext        oScriptContext;
     private XUIStyleContext        	oStyleContext;
+    
+    private UIViewRoot				oRenderedViewer;
 
     //TODO: It's not the right place, must be putted on SessionContext
     private XTransactionManager     oTransactionManager;
@@ -187,7 +189,7 @@ public class XUIRequestContext {
     }
 
     private void throwCloseException() {
-        throw new RuntimeException( ExceptionMessage.XUICONTEXT_IS_CLOSED.toString() );
+        throw new RuntimeException( "XUIContext is closed" );
     }
 
     public XUIViewRoot getViewRoot() {
@@ -268,6 +270,14 @@ public class XUIRequestContext {
             (context.getApplication().getViewHandler()).
                   getResourceURL(context, path );
     	return actionURL;
+    }
+    
+    public void setRenderedViewer( UIViewRoot viewRoot ) {
+    	this.oRenderedViewer = viewRoot;
+	}
+    
+    public UIViewRoot getRenderedViewer() {
+    	return this.oRenderedViewer;
     }
 }
 

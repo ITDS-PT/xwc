@@ -70,10 +70,10 @@ public class JavaScriptArrayProvider {
     }
     
     public final void getJSONArray( StringBuilder oStringBuilder, GridPanel grid,String keyField, String[] selectedRows ) {
-    	getJSONArray( oStringBuilder, grid, keyField, selectedRows, null );
+    	getJSONArray( oStringBuilder, grid, keyField, selectedRows, grid.getRowClass(), null );
     }
 
-    public final void getJSONArray( StringBuilder oStringBuilder, GridPanel grid,String keyField, String[] selectedRows, Map<String,GridColumnRenderer> columnRenderers ) 
+    public final void getJSONArray( StringBuilder oStringBuilder, GridPanel grid,String keyField, String[] selectedRows, GridRowRenderClass rowClass, Map<String,GridColumnRenderer> columnRenderers ) 
     {
         DataFieldConnector      oDataField;
         int                     oDataFieldType;
@@ -97,13 +97,7 @@ public class JavaScriptArrayProvider {
         //    oDataIterator.skip( this.iStart );
         //}
         
-        GridRowRenderClass rowClass = null;
-        
-        if( grid != null ) {
-        	rowClass = grid.getRowClass(); 
-        }
-        
-        for (int i = 0; i < this.iStart; i++) {
+        for (int i = 0; oDataIterator.hasNext() && i < this.iStart; i++) {
             oDataIterator.next();
         }
         
@@ -139,91 +133,102 @@ public class JavaScriptArrayProvider {
                 oDataField = oDataRecord.getAttribute( sDataFields[i] );
                 
                 if( oDataField != null ) {
-                	if( columnRenderers != null && columnRenderers.containsKey( sDataFields[i] ) ) {
-                		oDataFieldValue = columnRenderers.get( sDataFields[i] ).render(  grid, oDataRecord, oDataField );
-                        oStringBuilder.append( '\'' );
-                        JavaScriptUtils.safeJavaScriptWrite( 
-                            oStringBuilder, 
-                            ((String)oDataFieldValue),
-                            '\''
-                        );
-                        oStringBuilder.append( '\'' );
-                	}
-                	else {
-                		
-                		sDisplayValue = null;
-                		
-                		oDataFieldValue = oDataField.getValue();
-                		
-                		Column c = grid.getColumn( sDataFields[i] );
-                		if( c != null )
-                			sDisplayValue = c.applyRenderTemplate( oDataFieldValue );
-                        
-	                    if( sDisplayValue != null ) {
-                            oStringBuilder.append( '\'' );
-                            JavaScriptUtils.safeJavaScriptWrite( 
-                                oStringBuilder, 
-                                sDisplayValue,
-                                '\''
-                            );
-                            oStringBuilder.append( '\'' );
-	                    }
-	                    else if ( oDataFieldValue != null )
-	                    {
-	                    	
-	                        if( sDataFields[i].equals( keyField ) ) {
-	                        	if( selRows.indexOf( String.valueOf( oDataFieldValue ) ) > -1 ) {
-	                        		selRowNums += iCntr + "|";
-	                        	}
-	                        }
+                	
+                	try {
+	                	if( columnRenderers != null && columnRenderers.containsKey( sDataFields[i] ) ) {
+	                		oDataFieldValue = columnRenderers.get( sDataFields[i] ).render(  grid, oDataRecord, oDataField );
+	                        oStringBuilder.append( '\'' );
+	                        JavaScriptUtils.safeJavaScriptWrite( 
+	                            oStringBuilder, 
+	                            ((String)oDataFieldValue),
+	                            '\''
+	                        );
+	                        oStringBuilder.append( '\'' );
+	                	}
+	                	else {
+	                		
+	                		sDisplayValue = null;
+	                		
+	                		oDataFieldValue = oDataField.getValue();
+	                		
+	                		Column c = grid.getColumn( sDataFields[i] );
+	                		if( c != null )
+	                			sDisplayValue = c.applyRenderTemplate( oDataFieldValue );
 	                        
-	                    	sDisplayValue = oDataField.getDisplayValue(); 
-	                    	if( sDisplayValue != null ) {
+		                    if( sDisplayValue != null ) {
 	                            oStringBuilder.append( '\'' );
-	                            JavaScriptUtils.safeJavaScriptWrite( oStringBuilder, sDisplayValue, '\'' );
+	                            JavaScriptUtils.safeJavaScriptWrite( 
+	                                oStringBuilder, 
+	                                sDisplayValue,
+	                                '\''
+	                            );
 	                            oStringBuilder.append( '\'' );
-	                    	}
-	                    	else {
-		                        oDataFieldType = oDataField.getDataType();
-		                        switch( oDataFieldType ) {
-		                            case DataFieldTypes.VALUE_BLOB:
-		                                // Don't passe to JavaScript
-		                                break;
-		                        
-		                            case DataFieldTypes.VALUE_BOOLEAN:
-		                                oStringBuilder.append( oDataFieldValue );
-		                                break;
-		                        
-		                            case DataFieldTypes.VALUE_CHAR:
-		                            case DataFieldTypes.VALUE_CLOB:
-		                                oStringBuilder.append( '\'' );
-		                                JavaScriptUtils.safeJavaScriptWrite( 
-		                                    oStringBuilder, 
-		                                    ((String)oDataFieldValue),
-		                                    '\''
-		                                );
-		                                oStringBuilder.append( '\'' );
-		                                break;
-		                            case DataFieldTypes.VALUE_NUMBER:
-		                                oStringBuilder.append( ((BigDecimal)oDataFieldValue).toString() );
-		                                break;
-		                            case DataFieldTypes.VALUE_DATE:
-		                                oStringBuilder.append('\'');
-		                                DateUtils.formatTimestampToDate( oStringBuilder, (Timestamp)oDataFieldValue );
-		                                oStringBuilder.append('\'');
-		                                break;
-		                            case DataFieldTypes.VALUE_DATETIME:
-		                                oStringBuilder.append('\'');
-		                                DateUtils.formatTimestampToDateTime( oStringBuilder, (Timestamp)oDataFieldValue );
-		                                oStringBuilder.append('\'');
-		                                break;
+		                    }
+		                    else if ( oDataFieldValue != null )
+		                    {
+		                    	
+		                        if( sDataFields[i].equals( keyField ) ) {
+		                        	if( selRows.indexOf( String.valueOf( oDataFieldValue ) ) > -1 ) {
+		                        		selRowNums += iCntr + "|";
+		                        	}
 		                        }
-	                    	}
+		                        
+		                    	sDisplayValue = oDataField.getDisplayValue(); 
+		                    	if( sDisplayValue != null ) {
+		                            oStringBuilder.append( '\'' );
+		                            JavaScriptUtils.safeJavaScriptWrite( oStringBuilder, sDisplayValue, '\'' );
+		                            oStringBuilder.append( '\'' );
+		                    	}
+		                    	else {
+			                        oDataFieldType = oDataField.getDataType();
+			                        switch( oDataFieldType ) {
+			                            case DataFieldTypes.VALUE_BLOB:
+			                                // Don't passe to JavaScript
+			                                break;
+			                        
+			                            case DataFieldTypes.VALUE_BOOLEAN:
+			                                oStringBuilder.append( oDataFieldValue );
+			                                break;
+			                        
+			                            case DataFieldTypes.VALUE_NUMBER:
+			                                oStringBuilder.append( ((BigDecimal)oDataFieldValue).toString() );
+			                                break;
+			                            case DataFieldTypes.VALUE_DATE:
+			                                oStringBuilder.append('\'');
+			                                DateUtils.formatTimestampToDate( oStringBuilder, (Timestamp)oDataFieldValue );
+			                                oStringBuilder.append('\'');
+			                                break;
+			                            case DataFieldTypes.VALUE_DATETIME:
+			                                oStringBuilder.append('\'');
+			                                DateUtils.formatTimestampToDateTime( oStringBuilder, (Timestamp)oDataFieldValue );
+			                                oStringBuilder.append('\'');
+			                                break;
+			                            case DataFieldTypes.VALUE_CHAR:
+			                            case DataFieldTypes.VALUE_CLOB:
+			                            default:
+			                                oStringBuilder.append( '\'' );
+			                                JavaScriptUtils.safeJavaScriptWrite( 
+			                                    oStringBuilder, 
+			                                    ((String)oDataFieldValue),
+			                                    '\''
+			                                );
+			                                oStringBuilder.append( '\'' );
+			                                break;
+			                               
+			                        }
+		                    	}
+		                    }
+		                    else {
+		                        oStringBuilder.append( EMPTY_FIELD );
+		                    }
 	                    }
-	                    else {
-	                        oStringBuilder.append( EMPTY_FIELD );
-	                    }
-                    }
+                	}
+                	catch( Exception e ) {
+                		e.printStackTrace();
+                    	oStringBuilder.append('\'');
+                        oStringBuilder.append( JavaScriptUtils.safeJavaScriptWrite( e.getMessage(), '\'') );
+                    	oStringBuilder.append('\'');
+                	}
                 }
                 else {
                 	oStringBuilder.append('\'');
@@ -247,10 +252,9 @@ public class JavaScriptArrayProvider {
             if( iCntr >= this.iLimit ) {
                 break;
             }
-            
+            oStringBuilder.append("\n");
         }
         oStringBuilder.append( ']' );
-
     }
     
 

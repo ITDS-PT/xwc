@@ -18,6 +18,17 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 public class AttributeNumber extends AttributeBase {
 
 	@Override
+	public String getDisplayValue() {
+		String displayValue = super.getDisplayValue();
+//		if( displayValue != null ) {
+//			displayValue = displayValue.replaceAll("\\,", "");
+//			displayValue = displayValue.replace('.', ',');
+//		}
+		return displayValue;
+	}
+	
+    @Override
+
     public void validate( FacesContext context ) {
         Object      oSubmitedValue = getSubmittedValue();
         String      sSubmitedValue = null;
