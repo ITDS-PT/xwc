@@ -17,6 +17,8 @@
                 	body
                 	{
                 		background-color: white;
+                		font-family: tahoma;
+                		font-size: 11px;
                 	}
                     p {
                         color:#ff9900;
@@ -79,15 +81,14 @@
                     
                     table.main td.label {
                         color: #000000;
+                        font-size: 11px;
                     }
                     table.main td.boolean {
                         background-color: #FFFFFF;
                     }
                     table.main td.value {
+                		font-size: 11px;
                         background-color: #EDEDED;
-                        border-width: 1px;
-                        border-style: solid;
-                        border-color: #ADADAD;
                     }
                     
                     table.list
@@ -133,15 +134,27 @@
                     span.lbl{
                         font-weight:bold;
                     }
+                    
+                    img.print{
+						border: 0px;                    
+                    }
+                    a.print{
+						position: absolute;
+   						right: 20;
+   						width: 50%;
+   						text-align: right; /* depends on element width */                    
+                    	text-align:right;
+                    	top: 3px;
+                    	
+                    }
                     <!-- Para que estilos CSS também sejam incluidos, se existirem -->
                     <xsl:value-of select="//style/text()"/>
                 </style>
             </head>
             <body>
             <a href='javascript:void(0)' onClick="window.print();">
-                <img src="ext-xeo/images/print-icon.png" alt="Print" width="16" height="16"/>
-            </a><br/><br/>
-            
+                <img src="ext-xeo/images/print-icon.png" alt="Print" width="16" height="16"/> <hr></hr>
+            </a>
                 <xsl:apply-templates select="html/body/div/*"/>
                 <hr></hr>
                 <xsl:apply-templates select="html/body/div/formEdit/formEditObject">
