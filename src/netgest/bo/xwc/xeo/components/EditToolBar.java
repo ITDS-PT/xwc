@@ -13,7 +13,6 @@ import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
@@ -34,7 +33,7 @@ public class EditToolBar extends ToolBar {
 	);
 	
 	public static final List<String> MapViewerMethods = Arrays.asList(
-			new String[] {"save","saveAndClose","saveAndCreateNew","processValidate","duplicate", "remove" }
+			new String[] {"save","saveAndClose","saveAndCreateNew","processValidate","duplicate", "removeConfirm" }
 	);
 
 	public static final List<String> staticMethods = Arrays.asList(
@@ -769,7 +768,7 @@ public class EditToolBar extends ToolBar {
 			exportHTMLMenu.setIcon("ext-xeo/images/menus/exportar-html.gif");
 			exportHTMLMenu.setToolTip(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_HTML_TOOLTIP.toString());
 			exportHTMLMenu.setServerAction("#{viewBean.exportHTML}");
-			String parameters = "{width:800, height:400, title:'Impressão'}";
+			String parameters = "{width:800, height:400, title:'Impressï¿½o'}";
 			exportHTMLMenu.setTarget("window:" + parameters);
 			exportGroup.getChildren().add(exportHTMLMenu);
 		}
