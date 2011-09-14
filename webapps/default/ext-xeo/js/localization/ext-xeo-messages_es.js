@@ -18,7 +18,7 @@ if(ExtXeo.PagingToolbar){
 	    firstText      : "Primera p&aacute;gina",
 	    prevText       : "P&aacute;gina anterior",
 	    nextText       : "P&aacute;gina siguiente",
-	    lastText       : "&Uacute;ltima Página",
+	    lastText       : "&Uacute;ltima Pï¿½gina",
 	    refreshText    : "Recarga..",
 	    displayMsg     : "Listado {0} - {1} de {2}",
 	    emptyMsg       : 'No hay datos para mostrar'
@@ -29,7 +29,7 @@ if(ExtXeo.grid.GroupingView) {
 	  Ext.apply(ExtXeo.grid.GroupingView.prototype , {
 	    emptyGroupText : '(Ninguno)',
 	    groupByText    : 'Grupo por este campo',
-	    showGroupsText : 'Mostrar en grupos',
+	    showGroupsText : 'Mostrar agrupado',
 	    loadingMsg	   : 'Una carga...'  	  
 	 });
 }	
@@ -50,14 +50,14 @@ if( Ext.grid.filter.ObjectFilter) {
 if( Ext.grid.filter.DateFilter) {
 	  Ext.apply(Ext.grid.filter.DateFilter.prototype , {
 		  beforeText: 'Antes de',
-		  afterText: 'Después de',
+		  afterText: 'Despu&eacute;s de',
 		  onText: 'En'
 	 });
 }
 
 if( Ext.grid.filter.BooleanFilter) {
 	  Ext.apply(Ext.grid.filter.BooleanFilter.prototype , {
-		  yesText: 'Sí'	,
+		  yesText: 'S&iacute;'	,
 		  noText: 'No'
 	 });
 }
@@ -71,8 +71,8 @@ if( Ext.grid.filter.ListFilter) {
 
 if( ExtXeo.form.NumberField) {
 	  Ext.apply(ExtXeo.form.NumberField.prototype , {
-		    minText : "El valor mínimo para este campo es {0}",
-		    maxText : "El valor máximo para este campo es {0}",
-		    nanText : "{0} no es un número válido"
+		    minText : "El valor m&iacute;nimo para este campo es {0}",
+		    maxText : "El valor m&aacute;ximo para este campo es {0}",
+		    nanText : "{0} no es un n&uacute;mero v&aacute;lido"
 	 });
 }

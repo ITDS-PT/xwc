@@ -29,7 +29,7 @@ if(ExtXeo.grid.GroupingView) {
 	  Ext.apply(ExtXeo.grid.GroupingView.prototype , {
 	    emptyGroupText : '(Nenhum)',
 	    groupByText    : 'Agrupar por este campo',
-	    showGroupsText : 'Mostrar nos Grupos',
+	    showGroupsText : 'Mostrar agrupado',
 	    loadingMsg	   : 'A Carregar...'  	  
 	 });
 }
@@ -43,7 +43,7 @@ if( Ext.grid.GridFilters) {
 if( Ext.grid.filter.ObjectFilter) {
 	  Ext.apply(Ext.grid.filter.ObjectFilter.prototype , {
 		  yesText: 'Seleccionar valores',
-		  noText: 'N�o'
+		  noText: 'N&atilde;o'
 	 });
 }
 
@@ -57,8 +57,8 @@ if( Ext.grid.filter.DateFilter) {
 
 if( Ext.grid.filter.BooleanFilter) {
 	  Ext.apply(Ext.grid.filter.BooleanFilter.prototype , {
-		  yesText: 'Sim'	,
-		  noText: 'N�o'
+		  yesText: 'SimA'	,
+		  noText: 'N&atilde;o'
 	 });
 }
 
@@ -70,8 +70,8 @@ if( Ext.grid.filter.ListFilter) {
 
 if( ExtXeo.form.NumberField) {
 	  Ext.apply(ExtXeo.form.NumberField.prototype , {
-		    minText : "O valor minimo para este campo � {0}",
-		    maxText : "O valor m�ximo para este campo � {0}",
-		    nanText : "{0} n�o � um n�mero v�lido"
+		    minText : "O valor m&iacute;nimo para este campo &eacute; {0}",
+		    maxText : "O valor m&aacute;ximo para este campo &eacute; {0}",
+		    nanText : "{0} n&atilde;o &eacute; um n&uacute;mero v&aacute;lido"
 	 });
 }
