@@ -222,4 +222,7 @@ public class MainAdminViewerMessages {
 		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "FAVORITES");
 	public static final XUILocalizedMessage HISTORY = 
 		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "HISTORY");
+	
+	public static final XUILocalizedMessage USER_INFORMATION = 
+		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "USER_INFORMATION");
 }

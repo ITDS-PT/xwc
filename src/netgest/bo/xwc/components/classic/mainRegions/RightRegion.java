@@ -4,9 +4,13 @@ import static netgest.bo.xwc.components.HTMLAttr.ID;
 import static netgest.bo.xwc.components.HTMLTag.DIV;
 
 import java.io.IOException;
+import java.util.Iterator;
+
+import javax.faces.component.UIComponent;
 
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
+import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -142,7 +146,7 @@ public class RightRegion extends BaseRegion  {
 		rightRegion.add("autoScroll",true);
 		rightRegion.add("allowDomMove", getAllowDomMove());
 		rightRegion.addJSString("layout",getLayout());
-		rightRegion.addJSString("contentEl","eastRegion");
+		
 		ExtConfig layoutConfig = rightRegion.addChild("layoutConfig");
 		layoutConfig.add("titleCollapse", true);
 		layoutConfig.add("animate", true);
@@ -152,7 +156,22 @@ public class RightRegion extends BaseRegion  {
 			rightRegion.add("listeners", listeners);
 		}
 		
-		
+		ExtConfigArray itemsArray = new ExtConfigArray();
+		boolean hasItems = false;
+		Iterator<UIComponent> it = getChildren().iterator();
+		while (it.hasNext()){
+			UIComponent curr = it.next();
+			if (curr instanceof ExtJSRegionRenderer){
+				ExtJSRegionRenderer p = (ExtJSRegionRenderer) curr;
+				ExtConfig config = p.renderRegion();
+				itemsArray.addChild(config);
+				hasItems = true;
+			}
+		}
+		if (!hasItems)
+			rightRegion.addJSString("contentEl","eastRegion");
+		else
+			rightRegion.add("items", itemsArray);
 		
 		return rightRegion;
 	}

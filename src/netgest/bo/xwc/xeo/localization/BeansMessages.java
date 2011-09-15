@@ -175,6 +175,10 @@ public interface BeansMessages {
 	public static final XUILocalizedMessage HISTORY_BEAN_NO_RESULTS = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "HISTORY_BEAN_NO_RESULTS" );
 	
+	//User Favorites
+	public static final XUILocalizedMessage FAVORITES_NO_RESULTS = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "FAVORITES_NO_RESULTS" );
+	
 	//Global Search
 	public static final XUILocalizedMessage GLOBAL_SEARCH_BEAN_NO_RESULTS = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "GLOBAL_SEARCH_BEAN_NO_RESULTS" );

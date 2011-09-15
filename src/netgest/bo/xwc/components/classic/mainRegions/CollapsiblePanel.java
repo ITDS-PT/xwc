@@ -6,6 +6,7 @@ import static netgest.bo.xwc.components.HTMLTag.DIV;
 import java.io.IOException;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -19,6 +20,32 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class CollapsiblePanel extends AbstractPanel{
 
+	/**
+	 * An icon for the panel title
+	 */
+	private XUIBaseProperty<String> icon = 
+		new XUIBaseProperty<String>("icon", this, "" );
+	
+	/**
+	 * 
+	 * Sets the panel title's icon
+	 * 
+	 * @param iconVal Path to the icon
+	 */
+	public void setIcon(String iconVal){
+		this.icon.setValue(iconVal);
+	}
+	
+	/**
+	 * 
+	 * Retrieves the panel titl'es icon
+	 * 
+	 * @return A path to the icon
+	 */
+	public String getIcon(){
+		return this.icon.getValue();
+	}
+	
 	public boolean wasStateChanged() {
 		return super.wasStateChanged();
 	};
@@ -50,7 +77,10 @@ public class CollapsiblePanel extends AbstractPanel{
 		ExtConfig configListeners = getListeners();
 		
 		ExtConfig panel = new ExtConfig("Ext.Panel");
-		panel.addJSString("title", getTitle());
+		if (getIcon() != null && !"".equalsIgnoreCase(getIcon()))
+			panel.addJSString("title", "<img style='padding-right:3px;vertical-align:bottom;' src='"+getIcon()+"' /> " + getTitle());
+		else
+			panel.addJSString("title",getTitle());
 		panel.add("collapsible", true);
 		panel.add("collapsed", false);
 		

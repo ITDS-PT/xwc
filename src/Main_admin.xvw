@@ -46,10 +46,7 @@
 					</xvw:toolBar>
 					</div>
 			</xvw:topRegion>
-			<xvw:leftRegion width='170' title='Menu' layout="fit">
-
-				<xvw:collapsiblePanel title=''>
-
+			<xvw:leftRegion width='170' title='Menu' layout="fit" renderComponent="false">
 
 					<xvw:treePanel id='tree' renderComponent="true">
 						<xvw:menu id='home' icon='ext-xeo/admin/home.gif'
@@ -152,31 +149,33 @@
 								value="{viewerName:'netgest/bo/xwc/components/viewers/MigrateXEOViewersToXWC.xvw',boql:select Ebo_Package}"
 								target='Tab' serverAction="#{viewBean.listObject}" />
 						</xvw:menu>
-
+						
+						
 					</xvw:treePanel>
-
-				</xvw:collapsiblePanel>
+			
 			</xvw:leftRegion>
 
-			 <xvw:rightRegion width='100' collapsible="true" title='Options' layout="accordion" >
-				
-				<xvw:menu id='favorite' target='Tab' serverAction='#{viewBean.openFavorite}'></xvw:menu>
+			<xvw:menu id='favorite' target='Tab' serverAction='#{viewBean.openFavorite}'></xvw:menu>
 				<xvw:menu id='history' target='Tab' serverAction='#{viewBean.openHistory}'></xvw:menu>
+	
+			 <xvw:rightRegion width='100' collapsible="true" collapsed="true" title='@{USER_INFORMATION}' layout="accordion">
 				
-				<xvw:panel title='@{FAVORITES}'>
+				<xvw:collapsiblePanel icon='ext-xeo/icons/favorite.png' title='@{FAVORITES}' >
 				
 					<input type='hidden' id='currentFavItem' name='currentFavItem' value=''></input>
 					<xvw:outputHtml valueExpression='#{viewBean.generatedFavorites}' ></xvw:outputHtml>
-				</xvw:panel>
+				
+				</xvw:collapsiblePanel>
 			
-					<xvw:panel title='@{HISTORY}'>
+				<xvw:collapsiblePanel  icon='ext-xeo/icons/history.png' title='@{HISTORY}'>
 					<input type='hidden' name='currentHistoryItem' id='currentHistoryItem' value=''></input>
 					<xvw:outputHtml valueExpression='#{viewBean.generatedHistory}' ></xvw:outputHtml>
-				</xvw:panel>
+				</xvw:collapsiblePanel>
+
 				
 			</xvw:rightRegion>
 
-		</xvw:regionLayout>
+		</xvw:regionLayout><!--
 
 			<script>
 				function openMyWork() {
@@ -190,6 +189,6 @@
 				}
 				window.setTimeout( openMyWork, 1000 );
                </script>
-		</xvw:form>
+		--></xvw:form>
 	</xvw:viewer>
 </xvw:root> 

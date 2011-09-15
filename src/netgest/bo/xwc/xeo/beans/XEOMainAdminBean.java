@@ -71,6 +71,9 @@ public class XEOMainAdminBean extends XEOExtendedMainBean {
 					logger.warn(e);
 				}
 			}
+			if (list.isEmpty()){
+				b.append(String.format("<li>%s</li>",BeansMessages.FAVORITES_NO_RESULTS.toString()));
+			}
 			b.append("</ul>");
 			generatedFavorites = b.toString();
 		}
