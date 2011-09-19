@@ -148,8 +148,16 @@ public class GlobalSearchBean extends XEOBaseBean {
 			st = conn.createStatement();
 			DriverUtils dbUtils = getEboContext().getDataBaseDriver().getDriverUtils();
 			String name = boDefHandler.getBoDefinition("Ebo_TextIndex").getBoMasterTable();
-			String sql = "select ui$,text,boui,SYS_DTCREATE,uiclass from "+ name +" WHERE "+ dbUtils.getFullTextSearchWhere("text", "'"+textSearch+"'") 
-				+ " AND " + dbUtils.getQueryLimitStatement(50);
+			
+			String sql = "select ";
+			if( dbUtils.getQueryLimitStatementPosition() == DriverUtils.QUERY_LIMIT_ON_SELECT_CLAUSE ) {
+				sql += dbUtils.getQueryLimitStatement(50) + " ";
+			}			
+			sql += "ui$,text,boui,SYS_DTCREATE,uiclass from "+ name +" WHERE "+ dbUtils.getFullTextSearchWhere("text", "'"+textSearch+"'");
+			
+			if( dbUtils.getQueryLimitStatementPosition() == DriverUtils.QUERY_LIMIT_ON_WHERE_CLAUSE ) {
+				sql += " AND " + dbUtils.getQueryLimitStatement(50) + " ";
+			}			
 			if (classRestrictions.length > 0 ){
 				sql += "AND uiClass IN (";
 				int k = 0;
@@ -160,6 +168,10 @@ public class GlobalSearchBean extends XEOBaseBean {
 						sql += ",";
 				}
 				sql += ")";
+			}
+			
+			if( dbUtils.getQueryLimitStatementPosition() == DriverUtils.QUERY_LIMIT_ON_END_OF_STATEMENT ) {
+				sql += " " +dbUtils.getQueryLimitStatement(50) + " ";
 			}
 			rs = st.executeQuery(sql);
 			

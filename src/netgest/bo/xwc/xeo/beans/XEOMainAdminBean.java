@@ -98,11 +98,14 @@ public class XEOMainAdminBean extends XEOExtendedMainBean {
 				st = conn.createStatement();
 				DriverUtils dbUtils = getEboContext().getDataBaseDriver().getDriverUtils();
 				String name = boDefHandler.getBoDefinition("Ebo_Registry").getBoMasterTable();
-				String sql = "select ui$,SYS_DTSAVE,name from "+ name +" WHERE SYS_USER = '" + getEboContext().getBoSession().getUser().getUserName()  
-					+ "' AND " + dbUtils.getQueryLimitStatement(5);
-				//sql += " AND name <> 'XVWAccessPolicy' ";
-				sql += " ORDER BY SYS_DTSAVE DESC";
-				rs = st.executeQuery(sql);
+				
+//				String sql = "select ui$,SYS_DTSAVE,name from "+ name +" WHERE SYS_USER = '" + getEboContext().getBoSession().getUser().getUserName()  
+//					+ "' AND " + dbUtils.getQueryLimitStatement(5);
+//				//sql += " AND name <> 'XVWAccessPolicy' ";
+//				sql += " ORDER BY SYS_DTSAVE DESC";
+//				rs = st.executeQuery(sql);
+				
+				rs = st.executeQuery("select boui from ebo_registry where 0=1");
 				
 				StringBuilder b = new StringBuilder(500);
 				b.append("<ul>");

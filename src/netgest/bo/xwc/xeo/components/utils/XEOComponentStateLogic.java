@@ -19,7 +19,7 @@ public class XEOComponentStateLogic {
 			}
 			return true;
 		} catch (Exception e) {
-			throw new RuntimeException();
+			throw new RuntimeException(e);
 		}
 	}
 	
