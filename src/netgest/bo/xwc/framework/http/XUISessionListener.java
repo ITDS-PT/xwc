@@ -6,10 +6,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import sun.org.mozilla.javascript.internal.Context;
-import sun.org.mozilla.javascript.internal.ContextListener;
-
-import netgest.bo.system.boAgentsControler;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.framework.XUISessionContext;
 
