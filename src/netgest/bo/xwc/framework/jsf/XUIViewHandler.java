@@ -225,8 +225,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	    headWriter.flushToWriter( false );
 	    headWriter.release();
 	    
-	    bodyWriter.flushToWriter();
-	
+	    bodyWriter.flushToWriter(false);
 	    // clear the ThreadLocal reference.
 	    bodyWriter.release();
 	    
@@ -234,7 +233,14 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	    footerWriter.flushToWriter( false );
 	    footerWriter.release();
 	    
-	    String xmlContent = w.toString();
+	    String temp = w.toString();
+	    
+	    XMLDocument doc = ngtXMLUtils.loadXML( temp );
+	    String xmlContent =ngtXMLUtils.getXML(doc);
+	    
+	     
+	    
+	    
 	    
 		final String		HTML_TEMPLATES = "html_templates.xsl";
     	final String		PROJECT_HTML_TEMPLATES = "projectHtmlTemplates.xsl";
@@ -251,6 +257,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 			}
 			
 			// JAXP reads data using the Source interface
+			//System.out.println(xmlContent);
+			
 		    Source xmlSource = new StreamSource(new StringReader(xmlContent));
 		    Source xsltSource = new StreamSource(finalTransformer);
 		    
@@ -998,7 +1006,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             oCompBodyWriter.release();
             
             String sResult = oComponentWriter.toString();
-            
+            System.out.println(sResult);
             if( "XEOXML".equals( oViewToRender.getRenderKitId() ) ) {
             	
             	long init = System.currentTimeMillis();
@@ -1006,10 +1014,12 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	
 					 // 2. Use the TransformerFactory to process the stylesheet Source and
 	//                 generate a Transformer.
+	            	 InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream( "html_templates.xsl" );
 	            	 
 	            	 if( transformer == null ) {
 	            		 transformer = tFactory.newTransformer
-	            	     	(new javax.xml.transform.stream.StreamSource("c:\\lixo\\XEOViewerToHTML.xsl"));	            		 
+	            	     	(new javax.xml.transform.stream.StreamSource(
+	            	     			in));	            		 
 	            	 }
 	
 					 // 3. Use the Transformer to transform an XML Source and send the
