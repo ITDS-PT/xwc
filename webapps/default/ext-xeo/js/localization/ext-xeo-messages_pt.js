@@ -57,7 +57,7 @@ if( Ext.grid.filter.DateFilter) {
 
 if( Ext.grid.filter.BooleanFilter) {
 	  Ext.apply(Ext.grid.filter.BooleanFilter.prototype , {
-		  yesText: 'SimA'	,
+		  yesText: 'Sim'	,
 		  noText: 'N&atilde;o'
 	 });
 }

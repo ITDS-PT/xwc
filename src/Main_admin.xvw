@@ -175,7 +175,7 @@
 				
 			</xvw:rightRegion>
 
-		</xvw:regionLayout><!--
+		</xvw:regionLayout>
 
 			<script>
 				function openMyWork() {
@@ -189,6 +189,6 @@
 				}
 				window.setTimeout( openMyWork, 1000 );
                </script>
-		--></xvw:form>
+		</xvw:form>
 	</xvw:viewer>
 </xvw:root> 

@@ -32,7 +32,7 @@ public class XMLViewRootRenderer extends XUIRenderer {
 
             // Write Header
             
-        	headerW.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE foo-bar [\n");
+        	headerW.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE foo [\n");
         	
         	InputStream is1 = Thread.currentThread().getContextClassLoader().getResourceAsStream("xhtml-lat1.ent");
         	headerW.write( new String(IOUtils.copyByte( is1 )) );
@@ -56,7 +56,7 @@ public class XMLViewRootRenderer extends XUIRenderer {
             	headerW.writeAttribute( "style", getTheme().getHtmlStyle(), "style" );
             }
             
-            headerW.writeText('\n');
+            //headerW.writeText('\n');
             headerW.startElement("head", component );
             	headerW.startElement("base", component);
 	            	HttpServletRequest req = (HttpServletRequest) getRequestContext()
@@ -69,7 +69,7 @@ public class XMLViewRootRenderer extends XUIRenderer {
 					+ getRequestContext().getResourceUrl("");
 					headerW.writeAttribute("href", link, "href");
             	headerW.endElement("base");
-            
+            	
             // Write Body
             w.startElement("body", component );
             if( t != null && t.getBodyStyle() != null ) {
@@ -131,7 +131,9 @@ public class XMLViewRootRenderer extends XUIRenderer {
         	}
         	
         	// Write Head Elements
-            headerW.writeText('\n');
+            //headerW.writeText('\n');
+        	headerW.startElement("title", component);
+        	headerW.endElement("title");
             headerW.endElement("head");
             headerW.writeText('\n');
                 

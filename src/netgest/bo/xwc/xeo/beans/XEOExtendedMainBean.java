@@ -144,23 +144,33 @@ public class XEOExtendedMainBean extends XEOMainBean {
 		
 		boObject themeObj;
 		try {
-			themeObj = boApplication.getDefaultApplication().getObjectManager().loadObject(getEboContext(), Long.parseLong(theme));
+			long boui = 0;
+			if (theme != null && !"".equalsIgnoreCase(theme)){
+				try{
+					boui = Long.parseLong(theme);
+				}catch (NumberFormatException e){}
+			}
+			if (boui > 0)
+			{			
+				themeObj = boApplication.getDefaultApplication().getObjectManager().loadObject(getEboContext(), Long.parseLong(theme));
 		 
-			bridgeHandler filesIncludeHandler = themeObj.getBridge(Theme.FILES);
-	    	Map<String,String> files = new HashMap<String, String>();
-	    	filesIncludeHandler.beforeFirst();
-	    	while(filesIncludeHandler.next()){
-	    		boObject currentFileInclude = filesIncludeHandler.getObject();
-	    		String id = currentFileInclude.getAttribute(ThemeIncludes.ID).getValueString();
-	    		String path = currentFileInclude.getAttribute(ThemeIncludes.FILEPATH).getValueString();
-	    		files.put(id, path);
-	    	}
-	    	getEboContext().getBoSession().getUser().setThemeFiles(files);
+				bridgeHandler filesIncludeHandler = themeObj.getBridge(Theme.FILES);
+		    	Map<String,String> files = new HashMap<String, String>();
+		    	filesIncludeHandler.beforeFirst();
+		    	while(filesIncludeHandler.next()){
+		    		boObject currentFileInclude = filesIncludeHandler.getObject();
+		    		String id = currentFileInclude.getAttribute(ThemeIncludes.ID).getValueString();
+		    		String path = currentFileInclude.getAttribute(ThemeIncludes.FILEPATH).getValueString();
+		    		files.put(id, path);
+		    	}
+		    	getEboContext().getBoSession().getUser().setThemeFiles(files);
+		    	getRequestContext().getScriptContext().add(XUIScriptContext.POSITION_HEADER, "refreshPage", "location.reload(true);");
+			}
 		}
     	catch (boRuntimeException e) {
 			logger.severe(e);
 		}
-    	getRequestContext().getScriptContext().add(XUIScriptContext.POSITION_HEADER, "refreshPage", "location.reload(true);");
+    	
 	}
 
 	/**
