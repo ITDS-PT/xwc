@@ -28,7 +28,7 @@ public class XEOObjectListGroupDataRecord implements DataRecordConnector {
 				boDefHandler childObjDef = objDef;
 				for( String att : atts ) {
 					defAtt = childObjDef.getAttributeRef(att);
-					if( defAtt != null ) {
+					if( defAtt != null && defAtt.getAtributeType()== boDefAttribute.TYPE_OBJECTATTRIBUTE ) {						
 						childObjDef = defAtt.getReferencedObjectDef();
 					}
 					else {
