@@ -1,6 +1,8 @@
 package netgest.bo.xwc.xeo.beans;
 
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import netgest.bo.runtime.boRuntimeException;
@@ -10,9 +12,16 @@ import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.framework.XUIActionEvent;
+import netgest.bo.xwc.framework.XUIComponentPlugIn;
 import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.def.XUIViewerDefinition;
+import netgest.bo.xwc.framework.def.XUIViewerDefinitionNode;
+import netgest.bo.xwc.framework.def.XUIViewerDefinitonParser;
+import netgest.bo.xwc.xeo.components.ColumnAttribute;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
+
 
 public class XEOBaseLookupList extends XEOBaseList {
     
@@ -155,6 +164,16 @@ public class XEOBaseLookupList extends XEOBaseList {
     	//TODO:
     }
     
+    /**
+     * 
+     * Whether the Lookup is for a specific object of for a list of objects
+     * 
+     * @return True if the lookup is for a relation with boObject and false otherwise
+     */
+    public boolean getBoObjectLookup(){
+    	return (lookupObjectsMap != null && lookupObjectsMap.size()  > 1);
+    }
+    
     
     public String getRowSelectionMode() {
         return isMultiLookup()?GridPanel.SELECTION_MULTI_ROW:GridPanel.SELECTION_ROW;
@@ -232,6 +251,89 @@ public class XEOBaseLookupList extends XEOBaseList {
 			baseBean.setParentBean( (XEOEditBean)getParentBean() );
 			baseBean.setParentComponentId( getParentComponentId() );
 			oViewRoot.setParentView( parentViewRoot );
+		}
+	}
+	
+	public XUIComponentPlugIn getAttributesColPlugIn() {
+		return new AttributesColPlugIn();
+	}
+
+	/**
+	 * 
+	 * Column Plugin that when using a boObject Lookup sets the columns of the list to the
+	 * columns of the Lookup viewer for that
+	 *
+	 */
+	private class AttributesColPlugIn extends XUIComponentPlugIn {
+
+		@Override
+		public void beforePreRender() {
+			
+				((XUIComponentBase)getComponent().getParent()).forceRenderOnClient();
+				getComponent().getChildren().clear();
+				if(selectedObject != null && !"".equalsIgnoreCase(selectedObject)){
+					
+					XUIViewerDefinitonParser parser = new XUIViewerDefinitonParser();
+					
+					InputStream is = parser.resolveViewer(selectedObject+"/lookup.xvw");
+					if (is == null)
+						is = parser.resolveViewer(selectedObject+"_lookup.xvw");
+					
+					XUIViewerDefinition viewer = parser.parse(is);
+			
+					List<XUIViewerDefinitionNode> cols = new FindLookupListCols(viewer.getRootComponent().
+							getChildren()).getColns();
+					for (int i = 0, n = cols.size(); i < n; i++){
+						ColumnAttribute ca = new ColumnAttribute();
+						XUIViewerDefinitionNode node = cols.get(i);
+						ca.setDataField(node.getProperty("dataField"));
+						ca.setWidth("100");
+						if (node.getProperty("hidden") != null){
+							ca.setHidden(node.getProperty("hidden"));
+						}
+						getComponent().getChildren().add(ca);
+					}
+			}
+		}
+	
+
+	}
+	
+	/**
+	 * 
+	 * Finds the xvw:columns Components children in a viewer
+	 *
+	 */
+	private class FindLookupListCols{
+		
+		private List<XUIViewerDefinitionNode> rootElements;
+		
+		public FindLookupListCols(List<XUIViewerDefinitionNode> node){
+			this.rootElements = node;
+		}
+		
+		public List<XUIViewerDefinitionNode> getColns(){
+			return recursiveSearch(rootElements);
+		}
+		
+		
+		private List<XUIViewerDefinitionNode> recursiveSearch(List<XUIViewerDefinitionNode> nodeList){
+			List<XUIViewerDefinitionNode> result = null;
+			for (int i = 0, k = nodeList.size(); i < k ; i++){
+				XUIViewerDefinitionNode curr = nodeList.get(i);
+				if (curr.getName().equalsIgnoreCase("xvw:columns"))
+					return curr.getChildren();
+				else{
+					result = recursiveSearch(curr.getChildren());
+					if (result != null)
+						return result;
+				}
+			}
+			return null;
+			
+			
+			
+			
 		}
 	}
 	

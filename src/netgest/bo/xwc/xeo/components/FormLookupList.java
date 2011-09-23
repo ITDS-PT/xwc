@@ -1,8 +1,13 @@
 package netgest.bo.xwc.xeo.components;
 
+import netgest.bo.xwc.components.classic.Attribute;
+import netgest.bo.xwc.components.classic.Cell;
 import netgest.bo.xwc.components.classic.Form;
+import netgest.bo.xwc.components.classic.Row;
+import netgest.bo.xwc.components.classic.Rows;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages;
 
 /**
  * 
@@ -34,6 +39,12 @@ public class FormLookupList extends Form {
 		new XUIViewBindProperty<Integer>("windowHeight", this, 400, Integer.class);
 
 	/**
+	 * If the lookup is a lookup for the boObject
+	 */
+	private XUIBindProperty<Boolean> isBoObjectLookup = 
+		new XUIBindProperty<Boolean>("isBoObjectLookup", this, Boolean.class, "#{viewBean.boObjectLookup}");
+	
+	/**
 	 * The width of the window where the form is rendered
 	 */
 	private XUIViewBindProperty<Integer> windowWidth = 
@@ -62,7 +73,15 @@ public class FormLookupList extends Form {
 	public void setWindowHeight(int windowHeight) {
 		this.windowHeight.setValue( windowHeight );
 	}
-
+	
+	public void setIsBoObjectLookup(String boObjExpr){
+		this.isBoObjectLookup.setExpressionText(boObjExpr);
+	}
+	
+	public boolean getIsBoObjectLookup(){
+		return this.isBoObjectLookup.getEvaluatedValue();
+	}
+	
 	public int getWindowWidth() {
 		return windowWidth.getEvaluatedValue();
 	}
@@ -87,6 +106,24 @@ public class FormLookupList extends Form {
 		
 		if( getRenderWindow() ) {
 			createEditWindow();
+		}
+		
+		if (getIsBoObjectLookup()){
+			Rows rows = new Rows();
+			Row row = new Row();
+			Cell cell = new Cell();
+			
+			Attribute attribute = new Attribute();
+			attribute.setLabel(MainAdminViewerMessages.TYPE_OF_OBJECT.toString());
+			attribute.setInputType("attributeLov");
+			attribute.setOnChangeSubmit(true);
+			attribute.setValueExpression("#{viewBean.selectedObject}");
+			attribute.setLovMap("#{viewBean.lookupObjects}");
+			
+			cell.getChildren().add(attribute);
+			row.getChildren().add(cell);
+			rows.getChildren().add(row);
+			getChildren().add(0,rows);
 		}
 		
 	}
