@@ -2,8 +2,6 @@ package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
 
-import javax.el.ValueExpression;
-
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsBaseRenderer;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
@@ -21,7 +19,7 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 
     public XUIViewStateProperty<String> text 		= new XUIViewStateProperty<String>("text", this, " Label Text ");
     
-    private XUIViewStateProperty<ValueExpression> 	visible        = new XUIViewStateProperty<ValueExpression>( "visible", this );
+    private XUIViewStateBindProperty<Boolean> 	visible        = new XUIViewStateBindProperty<Boolean>( "visible", this, Boolean.class );
     private XUIViewStateBindProperty<Boolean> 		modelRequired  = new XUIViewStateBindProperty<Boolean>( "modelRequired", this, Boolean.class );
     private XUIViewStateBindProperty<Boolean> 		recommended    = new XUIViewStateBindProperty<Boolean>( "recommended", this, Boolean.class );
     
@@ -34,7 +32,12 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
     }
 
     public void setVisible( String visible) {
-        this.visible.setValue( createValueExpression( visible, Boolean.class ) );
+    	this.visible.setExpressionText(visible);
+        //this.visible.setValue( createValueExpression( visible, Boolean.class ) );
+    }
+    
+    public boolean getVisible(){
+    	return visible.getEvaluatedValue();
     }
 
     public boolean isVisible() {
@@ -93,6 +96,11 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 			XUIResponseWriter w = getResponseWriter();
             w.writeAttribute( "class" , "xwc-form-label", null);
 		}
+		
+		@Override
+		public boolean reRenderField( XUIComponentBase comp ) {
+	    	return true;
+	    }
 		
 		@Override
 		public ExtConfig getExtJsConfig(XUIComponentBase oComp) {
