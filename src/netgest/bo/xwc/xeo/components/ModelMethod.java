@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import javax.faces.event.ActionEvent;
 
 import netgest.bo.runtime.boObject;
-import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -66,7 +65,7 @@ public class ModelMethod extends ViewerMethod {
 			
 			if( xeoObject.getObjectErrors() != null ) {
 		    	StringBuffer sErros = new StringBuffer();
-		        ArrayList oErrors = xeoObject.getObjectErrors();
+		        ArrayList<?> oErrors = xeoObject.getObjectErrors();
 				if( oErrors != null && oErrors.size() > 0 ) {
 				    for( Object error : oErrors ) {
 				    	sErros.append( (String)error ).append("<br>");
