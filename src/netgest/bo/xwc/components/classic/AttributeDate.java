@@ -124,16 +124,22 @@ public class AttributeDate extends AttributeBase {
     	@Override
     	public ScriptBuilder getEndComponentScript(AttributeBase oComp) {
     		// TODO Auto-generated method stub
-    		ScriptBuilder s = super.getEndComponentScript(oComp, false, false );
+    		ScriptBuilder s = new ScriptBuilder();
+    		s.startBlock();
+    		
+    		super.writeExtContextVar(s, oComp);
     		
             Object sJsValue = (Timestamp)oComp.getValue(); 
             String sValue = "";
             if( sJsValue != null )  {
         	  	sValue = oFormatDate.format( sJsValue );
           	}
-    		s.w( "c.setValue('" ).writeValue( sValue ).l( "')" );
+            
+            s.w( "c.setValue('" ).writeValue( sValue ).l( "');" );
     		
     		s.endBlock();
+    		
+    		s.w( super.getEndComponentScript(oComp, true, false ) );
     		
     		return s;
     		
@@ -151,7 +157,7 @@ public class AttributeDate extends AttributeBase {
 	            String clientId =  oAttrComp.getClientId();
             	// No extjs quando o comopent attribute e inicializado 
 	            // em disabled o name da input no form fica com ext-
-	            // Em principio será o um bug do extjs.
+	            // Em principio serï¿½ o um bug do extjs.
             	if( !reqMap.containsKey( oAttrComp.getClientId() ) ) {
             		clientId = "ext-" + clientId;
             	}

@@ -12,8 +12,8 @@ import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 /**
- * This component renderes a combo with day hour's. It can be bind to a {@link DataFieldConnector} and
- * the value is java.sql.Time. He igores the day and years of the Timestamp 
+ * This component renders a combo with day hour's. It can be bind to a {@link DataFieldConnector} and
+ * the value is java.sql.Time. Ignores the day and years of the Timestamp 
  * @author jcarreira
  *
  */
@@ -43,23 +43,30 @@ public class AttributeTime extends AttributeBase {
 		
 		@Override
 		public ScriptBuilder getEndComponentScript(AttributeBase oComp) {
-			ScriptBuilder sb = super.getEndComponentScript( oComp, false, false );
+			
+			ScriptBuilder sb = new ScriptBuilder();
+			sb.startBlock();
+			
+			super.writeExtContextVar(sb, oComp);
 			
 			if( oComp.isRenderedOnClient() ) {
-	            sb.w( "c.setValue('" ).writeValue( formatValue( oComp ) ).s("')");
+				String s = formatValue( oComp );
+				if (s.length() > 0)
+					sb.w( "c.setValue('" ).writeValue( s ).s("')");
 	            
 	        	if( oComp.getStateProperty("readOnly").wasChanged() ) { 
 	        		sb.w("c.setDisabled(").w( oComp.isReadOnly() ).w(")").endStatement();
 	        		sb.w("c.trigger.setDisplayed(").w( !oComp.isReadOnly() ).w(")").endStatement();
 	        	}
 			}
-			sb.endBlock();
 			
+			sb.endBlock();
+			sb.w(super.getEndComponentScript( oComp, true, false ));
 			return sb;
 		}
 
-		private String formatValue( AttributeBase attBase ) {
 			String	jsValue;
+			private String formatValue( AttributeBase attBase ) {
 			Object 	oValue;
             oValue = attBase.getValue();
             if( oValue != null ) {
