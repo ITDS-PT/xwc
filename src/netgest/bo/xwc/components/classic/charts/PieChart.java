@@ -30,6 +30,7 @@ import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 import org.jfree.chart.ChartFactory;
@@ -94,7 +95,7 @@ public class PieChart extends XUIComponentBase implements
 	/**
 	 * The source of data for the chart
 	 */
-	private XUIBindProperty<PieDataSet> dataSet = new XUIBindProperty<PieDataSet>(
+	private XUIStateBindProperty<PieDataSet> dataSet = new XUIStateBindProperty<PieDataSet>(
 			"dataSet", this, PieDataSet.class);
 
 	/**
@@ -118,7 +119,7 @@ public class PieChart extends XUIComponentBase implements
 	/**
 	 * A BOQL Expression to use as a data source
 	 */
-	private XUIBindProperty<String> boql = new XUIBindProperty<String>("boql",
+	private XUIStateBindProperty<String> boql = new XUIStateBindProperty<String>("boql",
 			this, String.class);
 
 	/**
@@ -130,7 +131,7 @@ public class PieChart extends XUIComponentBase implements
 	/**
 	 * A label for the chart
 	 */
-	private XUIBindProperty<String> label = new XUIBindProperty<String>(
+	private XUIStateBindProperty<String> label = new XUIStateBindProperty<String>(
 			"label", this, String.class);
 
 	/**
@@ -142,7 +143,7 @@ public class PieChart extends XUIComponentBase implements
 	/**
 	 * The sql query to get the data from
 	 */
-	private XUIBindProperty<String> sql = new XUIBindProperty<String>("sql",
+	private XUIStateBindProperty<String> sql = new XUIStateBindProperty<String>("sql",
 			this, String.class);
 
 	/**
@@ -158,6 +159,7 @@ public class PieChart extends XUIComponentBase implements
 			"sqlAttValues", this, String.class);
 
 	public boolean wasStateChanged() {
+		//return true;
 		return super.wasStateChanged();
 	};
 

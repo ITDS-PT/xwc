@@ -35,6 +35,7 @@ import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 import org.jfree.chart.ChartFactory;
@@ -95,8 +96,8 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 	/**
 	 * The source of data for the chart
 	 */
-	private XUIBindProperty<SeriesDataSet> dataSet = 
-		new XUIBindProperty<SeriesDataSet>("dataSet", this, SeriesDataSet.class );
+	private XUIStateBindProperty<SeriesDataSet> dataSet = 
+		new XUIStateBindProperty<SeriesDataSet>("dataSet", this, SeriesDataSet.class );
 	
 	/**
 	 * Optional configurations for the 
@@ -132,8 +133,8 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 	/**
 	 * The sql query to get the data from
 	 */
-	private XUIBindProperty<String> sql = 
-		new XUIBindProperty<String>("sql", this, String.class);
+	private XUIStateBindProperty<String> sql = 
+		new XUIStateBindProperty<String>("sql", this, String.class);
 	
 	/**
 	 * The sql attribute where the column names are stored

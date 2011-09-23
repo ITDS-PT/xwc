@@ -95,8 +95,8 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 	/**
 	 * The source of data for the chart
 	 */
-	private XUIBindProperty<SeriesDataSet> dataSet = 
-		new XUIBindProperty<SeriesDataSet>("dataSet", this, SeriesDataSet.class );
+	private XUIStateBindProperty<SeriesDataSet> dataSet = 
+		new XUIStateBindProperty<SeriesDataSet>("dataSet", this, SeriesDataSet.class );
 	
 	/**
 	 * The orientation of the bar char (horizontal / vertical
