@@ -28,6 +28,12 @@ public class XEOViewersMessages {
 	public static final XUILocalizedMessage SHW_PROPS_CLOSE_BTN = 
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "SHW_PROPS_CLOSE_BTN" );
 	
+	public static final XUILocalizedMessage SHW_PROPS_OBJECT_NAME = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "SHW_PROPS_OBJECT_NAME" );
+	
+	public static final XUILocalizedMessage SHW_PROPS_VIEWER = 
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "SHW_PROPS_VIEWER" );
+	
 	public static final XUILocalizedMessage LBL_PROPERTIES = 
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "LBL_PROPERTIES" );
 	
