@@ -112,6 +112,12 @@ public class XEOEditBean extends XEOBaseBean
     
     private Boolean					editInOrphanMode = null;
     private boolean 				bTransactionStarted = false;
+    /**
+     * Whether there is a relation with this object that makes it
+     * different from its normal status (as in object is orphan and relation is non-orphan)
+     * by default relations are orphan 
+     */
+    private boolean					bRelationInOrphanMode = true;
     
     
     /**
@@ -177,7 +183,27 @@ public class XEOEditBean extends XEOBaseBean
     	createNew( sObjectName, 0 );
     }
     
-    public boolean getEditInOrphanMode() {
+    public void setRelationInOrphanMode(boolean orphanMode){
+    	this.bRelationInOrphanMode = orphanMode;
+    }
+    
+    /**
+     * 
+     * Whether or not this object should be edited in orphan mode from its relation
+     * 
+     * @return True if the relation with the parent is an orphan relation and false otherwise
+     */
+    private boolean getEditInOrphanModeFromRelation(){
+    	return this.bRelationInOrphanMode;
+    }
+    
+    /**
+     * 
+     * Whether or not this object should be edited in orphan mode from its definition
+     * 
+     * @return True if the object should be edited in orphan mode and false otherwise
+     */
+    private boolean getEditInOrphaModeFromDefinition(){
     	if( this.editInOrphanMode == null ) {
     		if( this.oBoObect == null  ) {
     			getXEOObject();
@@ -190,6 +216,18 @@ public class XEOEditBean extends XEOBaseBean
     		}
     	}
     	return this.editInOrphanMode;
+    }
+    
+    /**
+     * 
+     * Whether or not this object should be edited in orphan mode
+     * 
+     * @return True if the object should be edited in orphan mode and false otherwi
+     * 
+     * Checks both the definition of the object and the relation it may have from a parent
+     */
+    public boolean getEditInOrphanMode() {
+    	return getEditInOrphaModeFromDefinition() && getEditInOrphanModeFromRelation();
     }
 
     public void setEditInOrphanMode( boolean editInOrphanMode ) {
@@ -465,7 +503,7 @@ public class XEOEditBean extends XEOBaseBean
     	}
     	
     	String xmlContent = this.getViewerContentAsXML();
-    	
+    	//System.out.print(xmlContent);
     	byte[] result = null;
     	if (customXSLT != null)
     		result = this.renderXSLT(customXSLT, null, xmlContent, parameters);
@@ -836,6 +874,7 @@ public class XEOEditBean extends XEOBaseBean
     		}
     	}
         
+    	
         
         // Obtem a bean do objecto a ser editado
         // e associa o objecto do parametro
@@ -847,12 +886,15 @@ public class XEOEditBean extends XEOBaseBean
     	if( lookupViewerName == null ) {
     		lookupViewerName = getLookupViewer( oAttHandler );
     	}
+    	
         
         if( !oAttDef.getChildIsOrphan( className ) ) {
             XEOEditBean   oBaseBean;
             
             oViewRoot = oSessionContext.createChildView( lookupViewerName );
             oBaseBean = (XEOEditBean)oViewRoot.getBean( "viewBean" );
+            oBaseBean.setRelationInOrphanMode(false);
+            
             oBaseBean.setParentBean( this );
             oBaseBean.setParentBeanId( "viewBean" );
             oBaseBean.setParentComponentId( oAtt.getClientId() );
@@ -871,6 +913,7 @@ public class XEOEditBean extends XEOBaseBean
         }
         else
         {
+        	
             XEOBaseLookupList   oBaseBean;
             oViewRoot = oSessionContext.createChildView( lookupViewerName );
             oBaseBean = (XEOBaseLookupList)oViewRoot.getBean( "viewBean" );
@@ -880,14 +923,17 @@ public class XEOEditBean extends XEOBaseBean
             	oWnd.setAnimateTarget( sCompId );
             }
             
+            
+            
             oBaseBean.setParentBean( this ); 
             oBaseBean.setParentAttributeName( oAttHandler.getName() );
             oBaseBean.setLookupObjects( getLookupObjectsMap( oAttHandler ) );
             oBaseBean.setSelectedObject( className );
+            
             oBaseBean.setParentParentBeanId( "viewBean" );
             oBaseBean.setParentComponentId( oAtt.getClientId() );
             String sBoql = getLookupQuery( oAttHandler, null );
-        	oBaseBean.executeBoql( sBoql );
+            oBaseBean.executeBoql( sBoql );
         }
 
         // Diz a que a view corrente ï¿½ a criada.
@@ -1095,7 +1141,7 @@ public class XEOEditBean extends XEOBaseBean
             oBaseBean.setMultiLookup( true );
         }
         else {
-            XEOEditBean   oBaseBean;
+            XEOEditBean   oEditBean;
 
             oViewRoot = oSessionContext.createChildView( viewerName );
             if( oRequestContext.getEvent() != null ) {  
@@ -1105,17 +1151,17 @@ public class XEOEditBean extends XEOBaseBean
 	            }
             }
 
-            oBaseBean = (XEOEditBean)oViewRoot.getBean("viewBean");
-
-            oBaseBean.setParentBeanId( "viewBean" );
-            oBaseBean.setParentComponentId( oGrid.getClientId() );
+            oEditBean = (XEOEditBean)oViewRoot.getBean("viewBean");
+            oEditBean.setRelationInOrphanMode(false);
+            oEditBean.setParentBeanId( "viewBean" );
+            oEditBean.setParentComponentId( oGrid.getClientId() );
             
+            oEditBean.createNew( refObj.getName(), getXEOObject().getBoui() );
             
-            oBaseBean.createNew( refObj.getName(), getXEOObject().getBoui() );
 //            oBaseBean.getXEOObject().addParent( getXEOObject() );
             
         }
-        // Diz a que a view corrente ï¿½ a criada.
+        // Current view is the newly created one
         oRequestContext.setViewRoot( oViewRoot );
         
         oRequestContext.renderResponse();
@@ -1882,7 +1928,7 @@ public class XEOEditBean extends XEOBaseBean
 					XUIScriptContext.POSITION_HEADER,
 					"canCloseDialog",
 					// Esconde os elementos do tipo OBJECT para que
-					// não se sobreponham ao zIndex da dialog
+					// nï¿½o se sobreponham ao zIndex da dialog
 					"var el = document.getElementsByTagName('OBJECT');for( var i=0;i<el.length;i++ ) { el[i].style.display='none' };\n" +
 					"" +
 					"Ext.MessageBox.show("
