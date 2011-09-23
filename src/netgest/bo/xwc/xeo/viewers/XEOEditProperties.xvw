@@ -60,6 +60,22 @@
 							</xvw:row>
 							<xvw:row>
 								<xvw:cell>
+									<xvw:attributeLabel text='@{SHW_PROPS_OBJECT_NAME}:' />
+								</xvw:cell>
+								<xvw:cell>
+									<xvw:outputHtml valueExpression='#{viewBean.modelName}'/>
+								</xvw:cell>
+							</xvw:row>
+							<xvw:row>
+								<xvw:cell>
+									<xvw:attributeLabel text='@{SHW_PROPS_VIEWER}:' />
+								</xvw:cell>
+								<xvw:cell>
+									<xvw:outputHtml valueExpression='#{viewBean.viewerName}'/>
+								</xvw:cell>
+							</xvw:row>
+							<xvw:row>
+								<xvw:cell>
 									<xvw:attributeLabel text='@{SHW_PROPS_CREATION_DATE}:' />
 								</xvw:cell>
 								<xvw:cell>
@@ -108,6 +124,8 @@
 									<xvw:outputHtml valueExpression='#{viewBean.boui}'/>
 								</xvw:cell>
 							</xvw:row>
+							
+							
 			 			</xvw:rows>
 						</xvw:section>
 					</xvw:tab>

@@ -15,6 +15,7 @@ import netgest.bo.xwc.xeo.localization.BeansMessages;
 public class XEOEditPropertiesBean extends XEOEditBean {
 
 	
+	
 	/**
 	 * 
 	 * Retrieves the dependencies of the current object 
@@ -189,6 +190,32 @@ public class XEOEditPropertiesBean extends XEOEditBean {
 	
 	public String getBoui() {
 		return Long.toString( getXEOObject().getBoui() );
+	}
+	
+	/**
+	 * Retrieves the Model Name
+	 * 
+	 * @return The CLASSNAME of the Model
+	 */
+	public String getModelName(){
+		return getXEOObject().getName();
+	}
+	
+	/**
+	 * 
+	 * Retrieves the path of the viewer
+	 * 
+	 * @return The viewer path
+	 */
+	public String getViewerName(){
+		try{
+			String s = getViewRoot().getParentView().getClientId(); 
+			String result = s.substring(0,s.lastIndexOf(":"));
+			return result;
+		
+		} catch( Throwable t){
+			return getViewRoot().getParentView().getClientId();
+		}
 	}
 	
 	@Override
