@@ -209,7 +209,7 @@ public class JavaScriptArrayProvider {
 			                                oStringBuilder.append( '\'' );
 			                                JavaScriptUtils.safeJavaScriptWrite( 
 			                                    oStringBuilder, 
-			                                    ((String)oDataFieldValue),
+			                                    (oDataFieldValue.toString()),
 			                                    '\''
 			                                );
 			                                oStringBuilder.append( '\'' );
