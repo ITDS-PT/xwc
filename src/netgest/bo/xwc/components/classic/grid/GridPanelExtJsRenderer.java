@@ -971,8 +971,29 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		            			oExtFiltersChild.add("value", value );
 	            			}
 	                    	
-	                    	
+	            			
+	            		} else if (metaData.getDataType() == DataFieldTypes.VALUE_NUMBER){
+	            			oExtFiltersChild.addJSString( "type", "object" );
+	            			colFilter.put("type", "object");
+		                	oExtFiltersChild.addJSString( "lookupInputName", oGrid.getFilterLookupInput().getClientId() );
+		                	oExtFiltersChild.add( "lookupCommand", 	            		
+		                			"function(){ " +
+		                				XVWScripts.getAjaxCommandScript( oGrid.getFilterLookupCommand(),col.getDataField(),XVWScripts.WAIT_DIALOG ) +
+		                			"}"
+		                	);	
+	            		} else { //Really big lovs
+	            			oExtFiltersChild.addJSString( "type", "" );
+	            			colFilter.put("type", "");
+	            			
+	            			ExtConfigArray valuesArray = oExtFiltersChild.addChildArray("options");
+	            			
+	            			filters = colFilter.optJSONArray("filters");
+	            			if( filters != null && filters.length() > 0 ) {
+		            			String value = filters.getJSONObject(0).getJSONArray("value").toString();
+		            			oExtFiltersChild.add("value", value );
+	            			}
 	            		}
+	            		
 	            	}
 	            	else if( metaData.getInputRenderType() == DataFieldTypes.RENDER_OBJECT_LOOKUP ) {
 	                	oExtFiltersChild.addJSString( "type", "object" );
