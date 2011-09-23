@@ -1006,7 +1006,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             oCompBodyWriter.release();
             
             String sResult = oComponentWriter.toString();
-            System.out.println(sResult);
+            //System.out.println(sResult);
             if( "XEOXML".equals( oViewToRender.getRenderKitId() ) ) {
             	
             	long init = System.currentTimeMillis();
