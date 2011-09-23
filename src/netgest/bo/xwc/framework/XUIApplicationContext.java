@@ -264,11 +264,7 @@ public class XUIApplicationContext {
             // Register registered components render Kits
             XUIComponentDefinition oComponentDef = oComponentStore.getComponent( oAllComponents[i] );
             
-            
-            if( "outputText".equals( oComponentDef.getName() ) ) {
-            	System.out.println( "todebug"  );
-            }
-            
+                       
             String[] sCompRenderKitTypes = oComponentDef.getRenderKitTypes();
                 
             for (int j = 0; j < sCompRenderKitTypes.length; j++)  {
