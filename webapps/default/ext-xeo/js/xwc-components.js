@@ -241,6 +241,7 @@ ExtXeo.MessageBox = function(){
                     autoCreate : true,
                     title:titleText,
                     resizable:false,
+                    id: id+"_msgBox",
                     constrain:true,
                     constrainHeader:true,
                     minimizable : false,
@@ -414,6 +415,17 @@ ExtXeo.MessageBox = function(){
                     }
                 }
             }
+            
+            //Show Buttons if hidden
+            //Fixes the issues of displaying the same 
+            //messagebox inside a window multiple times
+            //after closing the window and opening it again
+            for (btnCurr in d.buttons){
+            	if (btnCurr.hidden){
+            		btnCurr.show();
+            	}
+            }
+            
             if(opt.iconCls){
               d.setIconClass(opt.iconCls);
             }
