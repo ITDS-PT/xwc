@@ -102,4 +102,9 @@ public class XUIViewerDefinitionNode
     {
         return this.textContent;
     }
+    
+    @Override
+    public String toString(){
+    	return this.name;
+    }
 }
