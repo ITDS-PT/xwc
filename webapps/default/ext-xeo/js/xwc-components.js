@@ -234,8 +234,7 @@ ExtXeo.MessageBox = function(){
 
     return {
         
-        getDialog : function( id, titleText, btns, defaultBtn ){
-    		
+        getDialog : function( id, titleText, btns, defaultBtn, wndProps ){
            if(!dlgs[ id ]){
                 dlg = new Ext.Window({
                     autoCreate : true,
@@ -374,13 +373,21 @@ ExtXeo.MessageBox = function(){
 
         
         show : function(options){
-            if(this.isVisible()){
+            
+        	if(this.isVisible()){
                 this.hide();
             }
+            
             opt = options;
             this.buttonText = opt.buttonText;
             
-            var d = this.getDialog( opt.id , opt.title || "&#160;", opt.buttons );
+            var wndProps = { top:0, left:0 };
+            if( options.top )
+            	wndProps.top = options.top;
+            if( options.left )
+            	wndProps.left = options.left;
+            
+            var d = this.getDialog( opt.id , opt.title || "&#160;", opt.buttons, null, wndProps );
             d.setTitle(opt.title || "&#160;");
             var allowClose = (opt.closable !== false && opt.progress !== true && opt.wait !== true);
             d.tools.close.setDisplayed(allowClose);
@@ -446,10 +453,16 @@ ExtXeo.MessageBox = function(){
                 d.setAnimateTarget(opt.animEl);
                 d.show(opt.animEl);
             }
+            
+            var dp = d.getPosition();
+        	d.setPagePosition( 
+        		wndProps.left!=0?wndProps.left:dp[0],
+        		wndProps.top!=0?wndProps.top:dp[1]
+        	);
 
             //workaround for window internally enabling keymap in afterShow
             d.on('show', function(){
-                if(allowClose === true){
+            	if(allowClose === true){
                     d.keyMap.enable();
                 }else{
                     d.keyMap.disable();

@@ -163,6 +163,18 @@ public class MessageBox extends XUIInput {
 	 */
 	private XUIBaseProperty<Integer> maxWidth 
 		= new XUIBaseProperty<Integer>("maxWidth", this, 600 );
+	
+	/**
+	 * The top position of the {@link MessageBox}
+	 */
+	private XUIBindProperty<Integer> top 
+		= new XUIBindProperty<Integer>("top", this, 0, Integer.class );
+
+	/**
+	 * The left position of the {@link MessageBox}
+	 */
+	private XUIBindProperty<Integer> left 
+		= new XUIBindProperty<Integer>("left", this, 0, Integer.class  );
 
 	
 	/**
@@ -237,7 +249,45 @@ public class MessageBox extends XUIInput {
 	public void setTitle(String title) {
 		this.title.setExpressionText( title );
 	}
+	
+	/**
+	 * Gets the title of the Message Box.
+	 * 
+	 * @return the top position of the dialog
+	 */
+	public int getTop() {
+		return top.getEvaluatedValue();
+	}
 
+	/**
+	 * Sets the top position of the Message Box.
+	 * 
+	 * @param title the new postion of the Message Box
+	 */
+	public void setTop(String top) {
+		this.top.setExpressionText( top );
+	}
+	
+	/**
+	 * Gets the left position of the Message Box.
+	 * 
+	 * @return the postion of the dialog
+	 */
+	public int getLeft() {
+		return left.getEvaluatedValue();
+	}
+
+	/**
+	 * Sets the left position of the Message Box.
+	 * 
+	 * @param left the new postion of the Message Box
+	 */
+	public void setLeft(String left) {
+		this.left.setExpressionText( left );
+	}
+
+	
+	
 	/**
 	 * Gets the message to display in the Message Box.
 	 * 
@@ -651,6 +701,12 @@ public class MessageBox extends XUIInput {
 				mbConfig.add( "buttonText" , btnTextConfig.renderExtConfig() );
 				mbConfig.add( "buttons" , btnConfig.renderExtConfig() );
 				mbConfig.add( "fn" , sb.toString() );
+				
+				if( box.getTop() > 0 )
+					mbConfig.add( "top" , box.getTop() );
+				if( box.getLeft() > 0 )
+					mbConfig.add( "left" , box.getLeft() );
+				
 				mbConfig.addJSString( "defaultButton" , box.getDefaultConfirmButton() );
 				
 				MessageBoxType type = box.getMessageBoxType();
