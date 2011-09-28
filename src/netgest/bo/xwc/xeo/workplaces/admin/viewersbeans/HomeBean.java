@@ -199,7 +199,9 @@ public class HomeBean extends XEOBaseBean {
 	}
 
 	public String getObjectInstancesLastUpdated() {
-		return objectInstances.getLastUpdated();
+		if (getObjectInstancesPieChartRendered())
+			return objectInstances.getLastUpdated();
+		return "";
 	}
 
 	public void refreshJvmMemoryGraphs() throws Exception {
