@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
 
+import javax.el.ValueExpression;
 import javax.faces.context.ResponseWriter;
 
 import netgest.bo.xwc.components.security.SecurableComponent;
@@ -24,12 +25,12 @@ public class Section extends ViewerSecurityBase {
     /**
      * The label to display in the section
      */
-    public XUIViewStateBindProperty<String> label = new XUIViewStateBindProperty<String>( "label", this, String.class );
+    private XUIViewStateBindProperty<String> label = new XUIViewStateBindProperty<String>( "label", this, String.class );
     
     /**
      * Whether or not the section is visible
      */
-    public XUIViewStateBindProperty<Boolean> visible = new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
+    private XUIViewStateBindProperty<Boolean> visible = new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
 
     public void setLabel(String label)
     {
@@ -121,18 +122,24 @@ public class Section extends ViewerSecurityBase {
 
 	public String getViewerSecurityId() {
 		String securityId = null;
- 		if (getLabel()!=null && getLabel().length()>0) {
- 			securityId = getLabel();
+		Object label = getStateProperty("label").getValue();
+ 		if (label instanceof ValueExpression) {
+ 			securityId = ((ValueExpression) label).getExpressionString();
+ 		} else if (label != null){
+ 			securityId = String.valueOf(label);	
  		}
+ 			
 		return securityId;
 	}
 
 	public String getViewerSecurityLabel() {
-		String label = getViewerSecurityComponentType().toString();
-		if ( getViewerSecurityId()!=null ) {
-			label += " "+ getViewerSecurityId();
+		try {
+			String label = getLabel();
+			return label;
 		}
-		return label; 
+		catch( Throwable e ) {
+			return getViewerSecurityId();
+		}
 	}
 
 	public boolean isContainer() {
