@@ -152,9 +152,10 @@ public class HomeBean extends XEOBaseBean {
 			sysInfo.append("</th>");
 			sysInfo.append("</tr>");
 			sysInfo.append("</table>");
+			
 		} catch (Throwable e) {
 			sysInfo = new StringBuffer();
-			sysInfo.append("<br><br>Sigar Library error");
+			sysInfo.append("Sigar Library error");
 			e.printStackTrace();
 		}
 		
