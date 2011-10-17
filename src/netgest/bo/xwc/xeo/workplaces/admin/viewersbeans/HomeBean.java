@@ -137,7 +137,7 @@ public class HomeBean extends XEOBaseBean {
 			String pid = String.valueOf(sigar.getPid());
 			sysInfo.append("<br>pid: " + pid);
 	
-			sysInfo.append("<br>>"+MainAdminBeanMessages.CPU_USAGE.toString()+": " + CpuPerc.format(sigar.getProcCpu(pid).getPercent()));
+			sysInfo.append("<br>"+MainAdminBeanMessages.CPU_USAGE.toString()+": " + CpuPerc.format(sigar.getProcCpu(pid).getPercent()));
 
 			sysInfo.append("<br>"+MainAdminBeanMessages.MEMORY.toString()+": " 
 					+ netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(sigar.getProcMem(pid).getResident())
