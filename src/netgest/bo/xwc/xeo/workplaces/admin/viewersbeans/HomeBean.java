@@ -74,92 +74,90 @@ public class HomeBean extends XEOBaseBean {
 	public String getSysInfo() throws IOException, SigarException {	
 		StringBuffer sysInfo = new StringBuffer();
 
-		double uptime = sigar.getUptime().getUptime();
+		try {
+			double uptime = sigar.getUptime().getUptime();
 
-		sysInfo.append("<table style='width: 100%;'>");
-		sysInfo.append("<tr>");
-		// begin system cell 
-		sysInfo.append("<th>");
-
-		sysInfo.append(MainAdminBeanMessages.UP_TIME.toString()+": " + netgest.bo.xwc.xeo.workplaces.admin.Utils.formatTimeSeconds(uptime));
-
-		sysInfo.append("<br>"+MainAdminBeanMessages.CPU_USAGE.toString()+" : " + CpuPerc.format(this.sigar.getCpuPerc().getCombined()));
-
-		Mem mem   = this.sigar.getMem();
-		Swap swap = this.sigar.getSwap();
-
-		sysInfo.append("<table>");
-		sysInfo.append("<tr>");
-		sysInfo.append("<th>"+MainAdminBeanMessages.MEMORY.toString()+" (MB)</th>");
-		sysInfo.append("<th>"+MainAdminBeanMessages.TOTAL.toString()+"</th>");
-		sysInfo.append("<th>"+MainAdminBeanMessages.USED.toString()+"</th>");
-		sysInfo.append("<th>"+MainAdminBeanMessages.FREE.toString()+"</th>");
-		sysInfo.append("</tr>"); 
-
-		sysInfo.append("<tr>");
-		sysInfo.append("<td>"+MainAdminBeanMessages.REAL.toString()+"</td>");
-		sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getTotal())+"</td>");
-		sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getUsed())+"</td>");
-		sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getFree())+"</td>");
-		sysInfo.append("</tr>");
-
-		sysInfo.append("<tr>");
-		sysInfo.append("<td>Swap</td>");
-		sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(swap.getTotal())+"</td>");
-		sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(swap.getUsed())+"</td>");
-		sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(swap.getFree())+"</td>");
-		sysInfo.append("</tr>");
-
-
-		//e.g. linux
-		if ((mem.getUsed() != mem.getActualUsed()) ||
-				(mem.getFree() != mem.getActualFree()))
-		{
+			sysInfo.append("<table style='width: 100%;'>");
 			sysInfo.append("<tr>");
-			sysInfo.append("<td>"+MainAdminBeanMessages.ACTUAL.toString()+"</td>");
-			sysInfo.append("<td></td>");
-			sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getActualUsed())+"</td>");
-			sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getActualFree())+"</td>");
+			// begin system cell 
+			sysInfo.append("<th>");
+
+			sysInfo.append(MainAdminBeanMessages.UP_TIME.toString()+": " + netgest.bo.xwc.xeo.workplaces.admin.Utils.formatTimeSeconds(uptime));
+
+			sysInfo.append("<br>"+MainAdminBeanMessages.CPU_USAGE.toString()+" : " + CpuPerc.format(this.sigar.getCpuPerc().getCombined()));
+
+			Mem mem   = this.sigar.getMem();
+			Swap swap = this.sigar.getSwap();
+
+			sysInfo.append("<table>");
+			sysInfo.append("<tr>");
+			sysInfo.append("<th>"+MainAdminBeanMessages.MEMORY.toString()+" (MB)</th>");
+			sysInfo.append("<th>"+MainAdminBeanMessages.TOTAL.toString()+"</th>");
+			sysInfo.append("<th>"+MainAdminBeanMessages.USED.toString()+"</th>");
+			sysInfo.append("<th>"+MainAdminBeanMessages.FREE.toString()+"</th>");
+			sysInfo.append("</tr>"); 
+
+			sysInfo.append("<tr>");
+			sysInfo.append("<td>"+MainAdminBeanMessages.REAL.toString()+"</td>");
+			sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getTotal())+"</td>");
+			sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getUsed())+"</td>");
+			sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getFree())+"</td>");
 			sysInfo.append("</tr>");
-		}
-		sysInfo.append("</table>");
 
-		//end system cell 
-		sysInfo.append("</th>");
+			sysInfo.append("<tr>");
+			sysInfo.append("<td>Swap</td>");
+			sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(swap.getTotal())+"</td>");
+			sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(swap.getUsed())+"</td>");
+			sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(swap.getFree())+"</td>");
+			sysInfo.append("</tr>");
 
-		sysInfo.append("<th></th>");
 
-		// begin process cell 
-		sysInfo.append("<th>");
-		sysInfo.append("<br><b>"+MainAdminBeanMessages.JVM_PROCESS.toString()+"</b>");
+			//e.g. linux
+			if ((mem.getUsed() != mem.getActualUsed()) ||
+					(mem.getFree() != mem.getActualFree()))
+			{
+				sysInfo.append("<tr>");
+				sysInfo.append("<td>"+MainAdminBeanMessages.ACTUAL.toString()+"</td>");
+				sysInfo.append("<td></td>");
+				sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getActualUsed())+"</td>");
+				sysInfo.append("<td> "+netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(mem.getActualFree())+"</td>");
+				sysInfo.append("</tr>");
+			}
+			sysInfo.append("</table>");
 
-		String pid = String.valueOf(sigar.getPid());
-		sysInfo.append("<br>pid: " + pid);
-		try {
-			sysInfo.append("<br>"+MainAdminBeanMessages.CPU_USAGE.toString()+": " + CpuPerc.format(sigar.getProcCpu(pid).getPercent()));
-		} catch (SigarException e) {}
+			//end system cell 
+			sysInfo.append("</th>");
 
-		try {
+			sysInfo.append("<th></th>");
+
+			// begin process cell 
+			sysInfo.append("<th>");
+			sysInfo.append("<br><b>"+MainAdminBeanMessages.JVM_PROCESS.toString()+"</b>");
+
+			String pid = String.valueOf(sigar.getPid());
+			sysInfo.append("<br>pid: " + pid);
+	
+			sysInfo.append("<br>>"+MainAdminBeanMessages.CPU_USAGE.toString()+": " + CpuPerc.format(sigar.getProcCpu(pid).getPercent()));
+
 			sysInfo.append("<br>"+MainAdminBeanMessages.MEMORY.toString()+": " 
 					+ netgest.bo.xwc.xeo.workplaces.admin.Utils.formatBytesMB(sigar.getProcMem(pid).getResident())
 					+ " MB");
-		} catch (SigarException e) {}
 
-
-		try {
 			sysInfo.append("<br>"+MainAdminBeanMessages.TOTAL_CPU_TIME.toString()+": " 
 					+ netgest.bo.xwc.xeo.workplaces.admin.Utils.formatTimeMiliSeconds(sigar.getProcCpu(pid).getTotal()));
-		} catch (SigarException e) {}
 
-		try {
 			sysInfo.append("<br>Threads: " + sigar.getProcState(pid).getThreads());
-		} catch (SigarException e) {}
-
-		//end process cell 
-		sysInfo.append("</th>");
-		sysInfo.append("</tr>");
-		sysInfo.append("</table>");
-
+	
+			//end process cell 
+			sysInfo.append("</th>");
+			sysInfo.append("</tr>");
+			sysInfo.append("</table>");
+		} catch (Throwable e) {
+			sysInfo = new StringBuffer();
+			sysInfo.append("<br><br>Sigar Library error");
+			e.printStackTrace();
+		}
+		
 		return sysInfo.toString(); 	
 
 	}
