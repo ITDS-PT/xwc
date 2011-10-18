@@ -110,6 +110,9 @@ public class MessageBox extends XUIInput {
 		
 		/** The YESNOCANCEL template buttons. */
 		YESNOCANCEL,
+		
+		/** The YESCANCEL template buttons. */
+		YESCANCEL,
 	}
 	
 	/** The OK. */
@@ -129,6 +132,9 @@ public class MessageBox extends XUIInput {
 	
 	/** The YESNO. */
 	private final List<Menu> YESNO = new ArrayList<Menu>(2);
+	
+	/** The YESCANCEL. */
+	private final List<Menu> YESCANCEL = new ArrayList<Menu>(2);
 	
 	/** The YESNOCANCEL. */
 	private final List<Menu> YESNOCANCEL = new ArrayList<Menu>(3);
@@ -181,7 +187,7 @@ public class MessageBox extends XUIInput {
 	 * The set of buttons to display in the {@link MessageBox}, must be one from
 	 * {@link MessageBox.MessageBoxButtons}
 	 */
-	@Values({"YES","OK","OKCANCEL","YESNO","YESNOCANCEL"})
+	@Values({"YES","OK","OKCANCEL","YESNO","YESNOCANCEL","YESCANCEL"})
 	private XUIBaseProperty<String> buttons 
 		= new XUIBaseProperty<String>("buttons", this, MessageBoxButtons.OK.name() );
 
@@ -403,6 +409,7 @@ public class MessageBox extends XUIInput {
 	 * YES - Add a Yes button to the Message Box
 	 * OK - Add a OK button in the Message Box
 	 * YESNO - Add a YES and a NO buttons to the Message Box
+	 * YESCANCEL - Add a YES and a CANCEL buttons to the Message Box
 	 * YESNOCANCEL - Add a Yes, No and Cancel buttons to the Message Box 
 	 * OKCANCEL - Add a OK and Cancel buttons to the Message Box
 	 * 
@@ -541,6 +548,9 @@ public class MessageBox extends XUIInput {
 
 		YESNO.add( YES );
 		YESNO.add( NO );
+		
+		YESCANCEL.add( YES );
+		YESCANCEL.add( CANCEL );
 
 		YESNOCANCEL.add( YES );
 		YESNOCANCEL.add( NO );
@@ -631,6 +641,23 @@ public class MessageBox extends XUIInput {
 							}
 						}
 						break;
+					case YESCANCEL:
+						getChildren().addAll( YESCANCEL );
+						if( jarr != null ) {
+							if( jarr.length() > 0 ) { 
+								String serverAction = (String)jarr.get( 0 );
+								if( serverAction != null && serverAction.trim().length() > 0 ) {
+									YES.setServerAction( serverAction );
+								}
+							} 
+							if( jarr.length() > 1 ) { 
+								String serverAction = (String)jarr.get( 2 );
+								if( serverAction != null && serverAction.trim().length() > 0 ) {
+									CANCEL.setServerAction( serverAction );
+								}
+							}
+						}
+						break;	
 				}
 			}
 		} catch (JSONException e) {
