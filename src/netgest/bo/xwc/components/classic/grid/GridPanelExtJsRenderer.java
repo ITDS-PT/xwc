@@ -138,6 +138,15 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	                    }
 	                }
 	                ((ToolBar)oChildComp).setRenderedOnClient( true );
+	                ScriptBuilder sb = ToolBar.XEOHTMLRenderer.updateMenuItems( (ToolBar) oChildComp );
+                	ToolBar.XEOHTMLRenderer.generateToolBarUpdateScript(sb, (ToolBar) oChildComp );
+                    if( sb.length() > 0 ) {
+                    	getResponseWriter().getScriptContext().add( 
+                    			XUIScriptContext.POSITION_FOOTER, 
+                    			((ToolBar)oChildComp).getClientId(), 
+                    			sb.toString()
+                    	);
+                    }
                 }
             }
         }
@@ -562,8 +571,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                 "	var c = Ext.getCmp(\"" + oGrid.getClientId() +"\");\n" +
                 "	if( c && c.loadMask ) { " +
                 "		if( c.loadMask.xwc_wtout ) {window.clearTimeout(c.loadMask.xwc_wtout);}\n" + 		                
-                "		c.loadMask.onLoad();\n" + 		                
-        		"	}" +
+                "		c.loadMask.onLoad();\n" +
+        		"	} " +
         		"}" );
         
 /*        
