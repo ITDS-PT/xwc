@@ -64,10 +64,10 @@ ExtXeo.grid.GridView = Ext.extend(Ext.grid.GridView, {
         if(g.enableColumnHide !== false) {
 	        this.hmenu.items.key( 'columns' ).hide();
 	        var kidx = this.hmenu.items.indexOfKey('columns');
-	        
 	        var selCols = new Ext.menu.Item(        		
 	        	{
 					id:'selCols', 
+					cls:'xwc-grid-sel-cols',
 					text:'Seleccionar Colunas', 
 					iconCls: 'x-cols-icon' 
 				} 
@@ -79,6 +79,7 @@ ExtXeo.grid.GridView = Ext.extend(Ext.grid.GridView, {
         this.hmenu.add('-', 
         	{
 				id:'resetDefinitions', 
+				cls:'xwc-reset-grid-defs',
 				text:'Repôr Definições',
 				handler : this.onResetDefaults
 			} 
@@ -253,12 +254,14 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
             if(this.enableNoGroups){
                 this.hmenu.add('-',{
                     id:'showGroups',
+                    cls:'xwc-grid-group-by-column',
                     text: this.showGroupsText,
                     checked: true,
                     checkHandler: this.onShowGroupsClick,
                     scope: this
                 },{
                     id:'removeGroups',
+                    cls:'xwc-grid-reset-group-by',
                     text: "Remover Grupos",
                     handler: this.onClearGroups,
                     scope: this
