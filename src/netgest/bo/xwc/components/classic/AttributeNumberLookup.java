@@ -196,6 +196,11 @@ public class AttributeNumberLookup extends AttributeBase {
             	oInpConfig.addJSString("ctCls", "xeoObjectLink" );
             }
             
+            if (enableCardIdLink && oAttr.isDisabled()){
+            	oAttr.setDisabled("false");
+            	oAttr.setReadOnly("true");
+            }
+            
             if( oAttr.isReadOnly() ) {
             	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
 	            oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
