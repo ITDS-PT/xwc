@@ -678,6 +678,10 @@ public class EditToolBar extends ToolBar {
 		propertiesMenu.setToolTip(XEOViewersMessages.LBL_PROPERTIES.toString());
 		propertiesMenu.setServerAction("#{viewBean.showProperties}");
 		propertiesMenu.setTarget("self");
+		if (isDisabled())
+			propertiesMenu.setDisabled(true);
+		else
+			propertiesMenu.setDisabled(false);
 		return propertiesMenu;
 
 		
@@ -693,8 +697,13 @@ public class EditToolBar extends ToolBar {
 	private Menu createInformationMenu()
 	{
 		Menu informationGroup = new Menu();
+		informationGroup.setId(getId()+"_"+"information");
 		informationGroup.setIcon("ext-xeo/images/menus/information.gif");
 		informationGroup.setToolTip(XEOComponentMessages.EDITTB_INFORMATION_TTIP.toString());
+		if (isDisabled())
+			informationGroup.setDisabled(true);
+		else
+			informationGroup.setDisabled(false);
 		
 		//Only show if all are enabled
 		if (getRenderDependenciesBtn() || getRenderDependentsBtn()  ||
@@ -747,8 +756,13 @@ public class EditToolBar extends ToolBar {
 	private Menu createExportMenu()
 	{
 		Menu exportGroup = new Menu();
+		exportGroup.setId(getId()+"_"+"export"); 
 		exportGroup.setIcon("ext-xeo/images/menus/export-group.gif");
 		exportGroup.setToolTip(XEOComponentMessages.EDITTB_EXPORT_TTIP.toString());
+		if (isDisabled())
+			exportGroup.setDisabled(true);
+		else
+			exportGroup.setDisabled(false);
 		
 		if (getRenderExcelBtn()  || getRenderExportMenu())
 		{
