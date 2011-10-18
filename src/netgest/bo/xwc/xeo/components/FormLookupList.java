@@ -115,6 +115,7 @@ public class FormLookupList extends Form {
 			
 			Attribute attribute = new Attribute();
 			attribute.setLabel(MainAdminViewerMessages.TYPE_OF_OBJECT.toString());
+			attribute.setId(getId() +"_" + "boObjLov");
 			attribute.setInputType("attributeLov");
 			attribute.setOnChangeSubmit(true);
 			attribute.setValueExpression("#{viewBean.selectedObject}");

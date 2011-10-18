@@ -4,8 +4,6 @@ import java.util.Iterator;
 
 import javax.faces.component.UIComponent;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
-
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.model.Columns;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -21,20 +19,35 @@ import netgest.bo.xwc.framework.XUIBindProperty;
  */
 public class LookupList extends List {
 	
+	/**
+	 * If the lookup is a lookup for the boObject
+	 */
+	private XUIBindProperty<Boolean> isBoObjectLookup = 
+		new XUIBindProperty<Boolean>("isBoObjectLookup", this, Boolean.class, "#{viewBean.boObjectLookup}");
+	
 	@Override
 	public String getRendererType() {
 		return "gridPanel";
 	}
 	
+	public void setIsBoObjectLookup(String boObjExpr){
+		this.isBoObjectLookup.setExpressionText(boObjExpr);
+	}
+	
+	public boolean getIsBoObjectLookup(){
+		return this.isBoObjectLookup.getEvaluatedValue();
+	}
+	
 	@Override
 	public void initComponent(){
 		super.initComponent();
-		for (Iterator<UIComponent> it = this.getChildren().iterator(); it.hasNext();){
-			UIComponent comp = (UIComponent) it.next();
-			if (comp instanceof Columns)
-				((Columns)comp).setPlugIn("#{viewBean.attributesColPlugIn}");
+		if (getIsBoObjectLookup()){
+			for (Iterator<UIComponent> it = this.getChildren().iterator(); it.hasNext();){
+				UIComponent comp = (UIComponent) it.next();
+				if (comp instanceof Columns)
+					((Columns)comp).setPlugIn("#{viewBean.attributesColPlugIn}");
+			}
 		}
-		
 		
 	}
 	
@@ -55,6 +68,7 @@ public class LookupList extends List {
 	public void createToolBar(int pos) {
 		LookupListToolBar toolBar = new LookupListToolBar();
 		toolBar.setVisible( ((XUIBindProperty<?>)getStateProperty("renderToolBar")).getExpressionString() );
+		toolBar.setId( getId() + "_lookupToolBar" );
 		getChildren().add(pos, toolBar );
 	}
 
