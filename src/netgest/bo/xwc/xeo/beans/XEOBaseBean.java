@@ -160,7 +160,7 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
         oBaseBean.setParentAttributeName( column );
     	oBaseBean.executeBoql( "select " + lookupObjs.keySet().iterator().next() );
 
-        // Diz a que a view corrente é a criada.
+        // Diz a que a view corrente ï¿½ a criada.
         oRequestContext.setViewRoot( oViewRoot );
         
         oRequestContext.renderResponse();
@@ -309,7 +309,7 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
     }
 
     public String[] getUserProfiles() {
-    	return getUserBridge( USER_WORKQUEUES );
+    	return getUserBridge( USER_PROFILES );
     }
     
     public boolean getIsAdministrator() {
