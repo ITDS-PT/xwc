@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -43,6 +44,7 @@ public class GridPanelPDFRenderer {
     	
     	String sTitle = GridPanelRenderer.getExportTitle( oGrid );
     	sTitle = HTMLEntityDecoder.htmlEntityToChar( sTitle );
+    	((HttpServletResponse)oResponse).setHeader("Content-Disposition","attachment; filename="+ sTitle+".pdf"  );
     	
 		DataListConnector oDataSource = oGrid.getDataSource();
 		oDataSource.setPage(1);
@@ -213,7 +215,7 @@ public class GridPanelPDFRenderer {
 		}
 		// step5
 		document.close();
-
+		
     }
 
 }
