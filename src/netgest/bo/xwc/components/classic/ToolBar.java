@@ -103,6 +103,11 @@ public class ToolBar extends ViewerSecurityBase {
 			}
 			if (curr instanceof AttributeBase || curr instanceof AttributeLabel)
 				((XUIComponentBase)curr).setRenderComponent(false);
+			/*if (curr instanceof Menu){
+				Menu m = (Menu) curr;
+				if (isDisabled())
+					m.setDisabled(true);
+			}*/
 			
 			if (addRegularMenu)
 				finalList.add(curr);
@@ -219,6 +224,8 @@ public class ToolBar extends ViewerSecurityBase {
             return sb;
         }
 
+        
+        
         public static final void updateChildMenuItems( ScriptBuilder sb, Menu menu ) {
             Iterator<UIComponent> childs =  menu.getChildren().iterator();
             while( childs.hasNext() ) {
@@ -241,7 +248,7 @@ public class ToolBar extends ViewerSecurityBase {
         	boolean dChged = toolBar.disabled.wasChanged();
         	
         	if( vChged || dChged ) {
-	        	sb.w( "var m=Ext.getCmp('ext-").writeValue( toolBar.getClientId() ).l("');" );
+	        	sb.w( "var m=Ext.getCmp('ext-").writeValue( toolBar.getClientId() ).l("'); if (m) {" );
 	        	if( vChged ) {
 		        	if( !toolBar.isVisible() )
 		        		sb.w( "m.hide();" );
@@ -251,18 +258,29 @@ public class ToolBar extends ViewerSecurityBase {
 	        	
 	        	if( dChged )
 	        		sb.w( "m.setDisabled(").w( toolBar.isDisabled() ).l( ");" );
+	        	sb.w("};");
         	}
         } 
         
         public static final void generateUpdateScript( ScriptBuilder sb, Menu oMenuChild ) {
-        	sb.w( "var m=Ext.getCmp('ext-").writeValue( oMenuChild.getClientId() ).l("');" );
+        	sb.w( "var m=Ext.getCmp('ext-").writeValue( oMenuChild.getClientId() ).l("'); if (m) {" );
         	if( !oMenuChild.isVisible() )
         		sb.w( "m.hide();" );
         	else
         		sb.w( "m.show();" );
-        		
-        	sb.w( "m.setDisabled(").w( oMenuChild.isDisabled() ).l( ");" );
         	
+        	if (oMenuChild.getParent() instanceof ToolBar){
+        		if (((ToolBar)oMenuChild.getParent()).isDisabled())
+            		sb.w( "m.setDisabled(").w( true ).l( ");" );
+            	else
+            		sb.w( "m.setDisabled(").w( oMenuChild.isDisabled() ).l( ");" );
+        	} else{
+        		sb.w( "m.setDisabled(").w( oMenuChild.isDisabled() ).l( ");" );
+        	}
+        	
+        	
+        	
+        	sb.w("};");
         }
         
         
