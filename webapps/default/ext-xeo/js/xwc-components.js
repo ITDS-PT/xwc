@@ -313,6 +313,12 @@ ExtXeo.MessageBox = function(){
         },
 
         
+        move: function(x,y){
+        	dlg.setPagePosition(x,y);
+        },
+
+        
+        
         updateText : function(text){
             if(!dlg.isVisible() && !opt.width){
                 dlg.setSize(this.maxWidth, 100); // resize first so content is never clipped from previous shows
@@ -373,11 +379,9 @@ ExtXeo.MessageBox = function(){
 
         
         show : function(options){
-            
-        	if(this.isVisible()){
+            if(this.isVisible()){
                 this.hide();
             }
-            
             opt = options;
             this.buttonText = opt.buttonText;
             
@@ -462,7 +466,7 @@ ExtXeo.MessageBox = function(){
 
             //workaround for window internally enabling keymap in afterShow
             d.on('show', function(){
-            	if(allowClose === true){
+                if(allowClose === true){
                     d.keyMap.enable();
                 }else{
                     d.keyMap.disable();
