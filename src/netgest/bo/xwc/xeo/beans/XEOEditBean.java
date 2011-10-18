@@ -50,6 +50,7 @@ import netgest.bo.xwc.components.classic.MessageBox;
 import netgest.bo.xwc.components.classic.Tab;
 import netgest.bo.xwc.components.classic.Tabs;
 import netgest.bo.xwc.components.classic.Window;
+import netgest.bo.xwc.components.classic.MessageBox.MessageBoxButtons;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataListConnector;
@@ -57,6 +58,7 @@ import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOBridgeListConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.ExportMenu;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIEditableValueHolder;
@@ -815,7 +817,7 @@ public class XEOEditBean extends XEOBaseBean
 	    			{
 	        		        XUIRequestContext.getCurrentContext().addMessage(
 	            		                "Bean",
-	            		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
+	            		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
 	            		                    BeansMessages.TITLE_ERROR.toString(), 
 	            		                BeansMessages.UPDATE_FAILED_KEY_VIOLATED.toString()
 	            		                )            		            );        
@@ -932,7 +934,7 @@ public class XEOEditBean extends XEOBaseBean
             
             oBaseBean.setParentParentBeanId( "viewBean" );
             oBaseBean.setParentComponentId( oAtt.getClientId() );
-            String sBoql = getLookupQuery( oAttHandler, null );
+            String sBoql = getLookupQuery( oAttHandler, className );
             oBaseBean.executeBoql( sBoql );
         }
 
@@ -1884,15 +1886,21 @@ public class XEOEditBean extends XEOBaseBean
 			if (viewRoot.findComponent(FormEdit.class) != null)
 				showDiffButton = ((FormEdit)viewRoot.findComponent(FormEdit.class)).getShowDifferences();
 			
-			ExtConfig messageBoxConfig = new ExtConfig(); 
+			ExtConfig messageBoxConfig = new ExtConfig();
+			messageBoxConfig.addJSString( "id", "confirmClose_"+getXEOObject().getBoui());
 			messageBoxConfig.addJSString( "title" , BeansMessages.CHANGES_NOT_SAVED_TITLE.toString() );
 			messageBoxConfig.addJSString( "msg" , BeansMessages.CHANGES_NOT_SAVED_MESSAGE.toString() );
 			if (getIsChanged() && showDiffButton)
 				messageBoxConfig.add( "buttons" , " {yes:'"+XEOViewersMessages.FORM_CLOSE_MESSAGE_YES.toString()+"', " +
 						"cancel:'"+XEOViewersMessages.FORM_CLOSE_MESSAGE_DIFFS.toString()+"', " +
 						"no:'"+XEOViewersMessages.FORM_CLOSE_MESSAGE_NO.toString()+"'}  "); 
-			else
+			else{
+				ExtConfig btnTextConfig = new ExtConfig();
 				messageBoxConfig.add( "buttons" , " Ext.MessageBox.YESNO  ");
+				btnTextConfig.addJSString("yes", XEOViewersMessages.FORM_CLOSE_MESSAGE_YES.toString());
+				btnTextConfig.addJSString("no", XEOViewersMessages.FORM_CLOSE_MESSAGE_NO.toString());
+				messageBoxConfig.add( "buttonText" , btnTextConfig.renderExtConfig() );
+			}
 			messageBoxConfig.add( "fn",  "function(a1) { var el = document.getElementsByTagName('OBJECT');for( var i=0;i<el.length;i++ ) { el[i].style.display='' }; if( a1=='yes' ) { "+closeScript+" } if (a1=='cancel') { "+ openDiffScript +" } }" );
 			messageBoxConfig.add( "icon", "Ext.MessageBox.WARNING" );
 			
@@ -1931,7 +1939,7 @@ public class XEOEditBean extends XEOBaseBean
 					// n�o se sobreponham ao zIndex da dialog
 					"var el = document.getElementsByTagName('OBJECT');for( var i=0;i<el.length;i++ ) { el[i].style.display='none' };\n" +
 					"" +
-					"Ext.MessageBox.show("
+					"ExtXeo.MessageBox.show("
 					+ 
 					messageBoxConfig.renderExtConfig()
 					+
@@ -2264,49 +2272,51 @@ public class XEOEditBean extends XEOBaseBean
     	//Retrieve the object that keeps the users favorites (and history?)
     	try {
     		
-    		boManagerLocal objectManager = boApplication.getDefaultApplication().getObjectManager();
+    		if (!current.exists()){
     		
-			boObject userPreferences = objectManager.
-				loadObject(getEboContext(), "select Ebo_UserPreferences where owner = CTX_PERFORMER_BOUI");
-			
-			if (!userPreferences.exists()){
-				//Set the value of the owner to the current 
-				userPreferences.getAttribute("owner").setValueLong(getEboContext().getBoSession().getPerformerBoui());
-			}
-			
-			boObjectList list = boObjectList.list(getEboContext(),"select Ebo_UserPreferences.favorites where Ebo_UserPreferences.favorites.targetBouiObj = ? AND Ebo_UserPreferences.owner = CTX_PERFORMER_BOUI",new Object[]{current.getBoui()});
-			if (list.getRecordCount() > 0 ){
-				//Favorite already exists, show duplicate error message
-				getRequestContext().addMessage("duplicateMessage", new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, "Duplicate", "Duplicate Favorite"));
-			}
-			else{
-				//Create the favorite
-				boObject favoriteObject = objectManager.createObject(getEboContext(), "Ebo_FavoriteViewer");
+	    		boManagerLocal objectManager = boApplication.getDefaultApplication().getObjectManager();
+	    		
+				boObject userPreferences = objectManager.
+					loadObject(getEboContext(), "select Ebo_UserPreferences where owner = CTX_PERFORMER_BOUI");
 				
-				favoriteObject.getAttribute("targetBouiObj").setValueLong(current.getBoui());
-				//Add to bridge
-				userPreferences.getBridge("favorites").add(favoriteObject.getBoui());
-				getRequestContext().addMessage("success", new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, "Success", "Favorite saved " + current.getTextCARDID()));
-				userPreferences.update();
-			}
-			
-			
+				if (!userPreferences.exists()){
+					//Set the value of the owner to the current 
+					userPreferences.getAttribute("owner").setValueLong(getEboContext().getBoSession().getPerformerBoui());
+				}
+				
+				boObjectList list = boObjectList.list(getEboContext(),"select Ebo_UserPreferences.favorites where Ebo_UserPreferences.favorites.targetBouiObj = ? AND Ebo_UserPreferences.owner = CTX_PERFORMER_BOUI",new Object[]{current.getBoui()});
+				if (list.getRecordCount() > 0 ){
+					//Favorite already exists, show duplicate error message
+					getRequestContext().addMessage("duplicateMessage", new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
+							ComponentMessages.FAVORITES_DUPLICATE_TITLE.toString(),
+							ComponentMessages.FAVORITES_SUCCESS_MSG.toString()));
+				}
+				else{
+					//Create the favorite
+					boObject favoriteObject = objectManager.createObject(getEboContext(), "Ebo_FavoriteViewer");
+					
+					favoriteObject.getAttribute("targetBouiObj").setValueLong(current.getBoui());
+					//Add to bridge
+					userPreferences.getBridge("favorites").add(favoriteObject.getBoui());
+					getRequestContext().addMessage("success", new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, 
+							ComponentMessages.FAVORITES_SUCCESS_TITLE.toString(), 
+							ComponentMessages.FAVORITES_SUCCESS_MSG.toString(current.getTextCARDID().toString())));
+					userPreferences.update();
+				}
+				
+    		} else{
+    			getRequestContext().addMessage("objMustExist", new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, 
+    					XUIMessage.SEVERITY_ERROR, 
+    					ComponentMessages.FAVORITES_OBJ_MUST_EXIST_TITLE.toString(), 
+    					ComponentMessages.FAVORITES_OBJ_MUST_EXIST_MSG.toString()));
+    		}
 			
 		} catch (boRuntimeException e) {
-			e.printStackTrace();
 			log.severe(e);
 			getRequestContext().addMessage("errorSaving", 
 					new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, "Error", "Could not save your favorite"));
 			//Show message to display a problem
 		}
-    	
-    	//Check if the entry does not exist
-    		
-    		//Add a new entry in the bridge
-    		//Show a message saying message was added
-    	
-    		//Show message the viewer is already there
-    	
     	
     }
     
