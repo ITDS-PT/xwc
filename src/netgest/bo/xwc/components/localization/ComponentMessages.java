@@ -122,5 +122,29 @@ public interface ComponentMessages {
 	
 	public static final XUILocalizedMessage GLOBAL_SEARCH_LBL = 
 		new XUILocalizedMessage(ComponentMessages.class.getName(), "GLOBAL_SEARCH_LBL");
+	
+	public static final XUILocalizedMessage FAVORITES_SUCCESS_TITLE = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "FAVORITES_SUCCESS_TITLE");
+	
+	public static final XUILocalizedMessage FAVORITES_SUCCESS_MSG = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "FAVORITES_SUCCESS_MSG");
+	
+	public static final XUILocalizedMessage FAVORITES_DUPLICATE_TITLE = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "FAVORITES_DUPLICATE_TITLE");
+	
+	public static final XUILocalizedMessage FAVORITES_DUPLICATE_MSG = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "FAVORITES_DUPLICATE_MSG");
+	
+	public static final XUILocalizedMessage FAVORITES_OBJ_MUST_EXIST_TITLE = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "FAVORITES_OBJ_MUST_EXIST_TITLE");
+	
+	public static final XUILocalizedMessage FAVORITES_OBJ_MUST_EXIST_MSG = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "FAVORITES_OBJ_MUST_EXIST_MSG");
+	
+	public static final XUILocalizedMessage FAVORITES_ERROR_TITLE = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "FAVORITES_ERROR_TITLE");
+	
+	public static final XUILocalizedMessage FAVORITES_ERROR_MSG = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "FAVORITES_ERROR_MSG");
 		
 }
