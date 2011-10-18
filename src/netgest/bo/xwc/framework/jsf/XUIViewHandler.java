@@ -425,169 +425,180 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         //viewId = context.getExternalContext().getRequestServletPath() + viewId;
         
         XUIViewRoot result = new XUIViewRoot();
-        result.setViewId( viewId );
-        
-        XTransaction oTransaction;
-        
-        if( sTransactionId == null )
-        {
-            oTransaction = XUIRequestContext.
-                getCurrentContext().
-                    getSessionContext().
-                    getTransactionManager().
-                        createTransaction();
-            result.setOwnsTransaction( true );
-        }
-        else {
-            oTransaction = XUIRequestContext.
-                getCurrentContext().
-                    getSessionContext().
-                    getTransactionManager().getTransaction( sTransactionId );
-            result.setOwnsTransaction( false );
-        }
-        
-        if( oTransaction != null ) {
-	        result.setTransactionId( oTransaction.getId() );
-	        oTransaction.activate();
-        }
-        
-        if( context.getViewRoot() != null ) {
-            String pValue = XUIRequestContext.getCurrentContext().getRequestParameterMap().
-                  get(ResponseStateManager.VIEW_STATE_PARAM);
-            result.setParentViewState( pValue );
-        }
-        
-        if (log.isDebugEnabled()) 
-        {
-            log.debug(MessageLocalizer.getMessage("CREATE_NEW_VIEW_FOR")+" " + viewId);
-        }
-        
-        // PENDING(): not sure if we should set the RenderKitId here.
-        // The UIViewRoot ctor sets the renderKitId to the default
-        // one.
-        // if there was no locale from the previous view, calculate the locale 
-        // for this view.
-        if (locale == null) 
-        {
-            locale =
-                context.getApplication().getViewHandler().calculateLocale(
-                    context);
-            if (log.isDebugEnabled()) {
-                log.debug(MessageLocalizer.getMessage("LOCALE_FOR_THIS_VIEW_AS_DETERMINED_BY_CALCULATELOCALE")+" "
-                          + locale.toString());
-            }
-        } 
-        else 
-        {
-            if (log.isDebugEnabled()) 
-            {
-                log.debug(
-                    MessageLocalizer.getMessage("USING_LOCALE_FROM_PREVIOUS_VIEW")+" " + locale.toString());
-            }
-        }
-
-        if (renderKitId == null) 
-        {
-            renderKitId =
-                context.getApplication().getViewHandler().calculateRenderKitId(
-                    context);
-            if (log.isDebugEnabled()) {
-                log.debug(MessageLocalizer.getMessage("RENDERKITID_FOR_THIS_VIEW_AS_DETERMINATED_BY_CALCULTERENDERKIT")+" "
-                          + renderKitId);
-            }
-        } 
-        else
-        {
-            if (log.isDebugEnabled()) 
-            {
-                log.debug(MessageLocalizer.getMessage("USING_RENDERKITID_FROM_PREVIOUS_VIEW")+
-                    " " + renderKitId);
-            }
-        }
-
-        result.setLocale(locale);
-        result.setRenderKitId(renderKitId);
-        
-        // Load the Viewer definition a build component tree
-        
-        XUIViewerDefinition oViewerDef;
-        
-        if( viewerInputStream != null )
-        	oViewerDef = oApp.getViewerDef( viewerInputStream );
-        else
-        	oViewerDef = oApp.getViewerDef( viewId );
-        
-        result.setTransient( oViewerDef.isTransient() );
-        
-        // Set Bean to the viewer
-        String sBeanName      = oViewerDef.getViewerBeanId();
-        String sBeanClassName = oViewerDef.getViewerBean();
+        UIViewRoot previousViewRoot = context.getViewRoot();
         try {
-            // Initialize View Bean.
-            if( log.isDebugEnabled() ) {
-                log.debug(MessageLocalizer.getMessage("INITIALIZING_BEANS_FOR_VIEW")+" " + viewId );    
-            }
-            
-            if( sBeanClassName != null && sBeanClassName.length() > 0 ) {
-	            Class<?> oBeanClass = 
-	            	Thread.currentThread().getContextClassLoader().loadClass( sBeanClassName );
-	            
-	            Object oViewBean = oBeanClass.newInstance();
-	
-	            result.addBean( sBeanName, oViewBean );
-	            
-	            if( oViewBean instanceof XUIViewBean ) {
-	            	((XUIViewBean)oViewBean).setViewRoot( result.getViewState() );
+        	// Work around to allows expression evaluation during the viewer creation.
+        	// Property viewBean is mapped to the FacesContext viewRoot.
+        	context.setViewRoot( result );
+        
+	        result.setViewId( viewId );
+	        
+	        XTransaction oTransaction;
+	        
+	        if( sTransactionId == null )
+	        {
+	            oTransaction = XUIRequestContext.
+	                getCurrentContext().
+	                    getSessionContext().
+	                    getTransactionManager().
+	                        createTransaction();
+	            result.setOwnsTransaction( true );
+	        }
+	        else {
+	            oTransaction = XUIRequestContext.
+	                getCurrentContext().
+	                    getSessionContext().
+	                    getTransactionManager().getTransaction( sTransactionId );
+	            result.setOwnsTransaction( false );
+	        }
+	        
+	        if( oTransaction != null ) {
+		        result.setTransactionId( oTransaction.getId() );
+		        oTransaction.activate();
+	        }
+	        
+	        if( context.getViewRoot() != null ) {
+	            String pValue = XUIRequestContext.getCurrentContext().getRequestParameterMap().
+	                  get(ResponseStateManager.VIEW_STATE_PARAM);
+	            result.setParentViewState( pValue );
+	        }
+	        
+	        if (log.isDebugEnabled()) 
+	        {
+	            log.debug(MessageLocalizer.getMessage("CREATE_NEW_VIEW_FOR")+" " + viewId);
+	        }
+	        
+	        // PENDING(): not sure if we should set the RenderKitId here.
+	        // The UIViewRoot ctor sets the renderKitId to the default
+	        // one.
+	        // if there was no locale from the previous view, calculate the locale 
+	        // for this view.
+	        if (locale == null) 
+	        {
+	            locale =
+	                context.getApplication().getViewHandler().calculateLocale(
+	                    context);
+	            if (log.isDebugEnabled()) {
+	                log.debug(MessageLocalizer.getMessage("LOCALE_FOR_THIS_VIEW_AS_DETERMINED_BY_CALCULATELOCALE")+" "
+	                          + locale.toString());
 	            }
-            }
-        } 
-        catch ( Exception ex ) {
-            throw new FacesException( XUICoreMessages.VIEWER_CLASS_NOT_FOUND.toString( sBeanClassName, viewId ) );
-        }
-        
-        // Create a new instance of the view bean
-        if (log.isDebugEnabled()) 
-        {
-            log.debug(
-                MessageLocalizer.getMessage("START_BUILDING_COMPONENT_VIEW")+" " + viewId );
-        }
-        
-        oViewerBuilder.buildView( oContext, oViewerDef, result );
-
-        if (log.isDebugEnabled()) 
-        {
-            log.debug(MessageLocalizer.getMessage("END_BUILDING_COMPONENT_VIEW")+
-                  " " + viewId );
-        }
-
-        // Initialize security
-        try {
-        	
-        	Object bean = result.getBean( "viewBean" );
-        	
-    		// Only activates viewerSecurity if the XVWAccessPolicy object is deployed.
-    		if ( ViewerAccessPolicyBuilder.applyViewerSecurity ) {
-    			
-    			ViewerAccessPolicyBuilder.applyViewerSecurity = boDefHandler.getBoDefinition( "XVWAccessPolicy" ) != null;
-	        	if ( bean!=null && bean instanceof XEOSecurityBaseBean ) {
-	        		ViewerAccessPolicyBuilder viewerAccessPolicyBuilder = new ViewerAccessPolicyBuilder();
-	        		viewerAccessPolicyBuilder.processViewer( result, boApplication.currentContext().getEboContext(), false );
-	        		((XEOSecurityBaseBean)bean).initializeSecurityMap(viewerAccessPolicyBuilder, result.getViewId() );
-	        	}
+	        } 
+	        else 
+	        {
+	            if (log.isDebugEnabled()) 
+	            {
+	                log.debug(
+	                    MessageLocalizer.getMessage("USING_LOCALE_FROM_PREVIOUS_VIEW")+" " + locale.toString());
+	            }
+	        }
+	
+	        if (renderKitId == null) 
+	        {
+	            renderKitId =
+	                context.getApplication().getViewHandler().calculateRenderKitId(
+	                    context);
+	            if (log.isDebugEnabled()) {
+	                log.debug(MessageLocalizer.getMessage("RENDERKITID_FOR_THIS_VIEW_AS_DETERMINATED_BY_CALCULTERENDERKIT")+" "
+	                          + renderKitId);
+	            }
+	        } 
+	        else
+	        {
+	            if (log.isDebugEnabled()) 
+	            {
+	                log.debug(MessageLocalizer.getMessage("USING_RENDERKITID_FROM_PREVIOUS_VIEW")+
+	                    " " + renderKitId);
+	            }
+	        }
+	
+	        result.setLocale(locale);
+	        result.setRenderKitId(renderKitId);
+	        
+	        // Load the Viewer definition a build component tree
+	        
+	        XUIViewerDefinition oViewerDef;
+	        
+	        if( viewerInputStream != null )
+	        	oViewerDef = oApp.getViewerDef( viewerInputStream );
+	        else
+	        	oViewerDef = oApp.getViewerDef( viewId );
+	        
+	        result.setTransient( oViewerDef.isTransient() );
+	        
+	        // Set Bean to the viewer
+	        String sBeanName      = oViewerDef.getViewerBeanId();
+	        String sBeanClassName = oViewerDef.getViewerBean();
+	        try {
+	            // Initialize View Bean.
+	            if( log.isDebugEnabled() ) {
+	                log.debug(MessageLocalizer.getMessage("INITIALIZING_BEANS_FOR_VIEW")+" " + viewId );    
+	            }
+	            
+	            if( sBeanClassName != null && sBeanClassName.length() > 0 ) {
+		            Class<?> oBeanClass = 
+		            	Thread.currentThread().getContextClassLoader().loadClass( sBeanClassName );
+		            
+		            Object oViewBean = oBeanClass.newInstance();
+		
+		            result.addBean( sBeanName, oViewBean );
+		            
+		            if( oViewBean instanceof XUIViewBean ) {
+		            	((XUIViewBean)oViewBean).setViewRoot( result.getViewState() );
+		            }
+	            }
+	        } 
+	        catch ( Exception ex ) {
+	            throw new FacesException( XUICoreMessages.VIEWER_CLASS_NOT_FOUND.toString( sBeanClassName, viewId ) );
+	        }
+	        
+	        // Create a new instance of the view bean
+	        if (log.isDebugEnabled()) 
+	        {
+	            log.debug(
+	                MessageLocalizer.getMessage("START_BUILDING_COMPONENT_VIEW")+" " + viewId );
+	        }
+	        
+	        oViewerBuilder.buildView( oContext, oViewerDef, result );
+	
+	        if (log.isDebugEnabled()) 
+	        {
+	            log.debug(MessageLocalizer.getMessage("END_BUILDING_COMPONENT_VIEW")+
+	                  " " + viewId );
+	        }
+	
+	        // Initialize security
+	        try {
 	        	
-    		}
-    		
-    		
-    		UIViewRoot savedView = context.getViewRoot();
-    		context.setViewRoot( result );
-            result.notifyPhaseListeners(context, PhaseId.RESTORE_VIEW, true );
-            
-            if( result == context.getViewRoot() && savedView != null  )
-            	context.setViewRoot( savedView );
-    		
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	        	Object bean = result.getBean( "viewBean" );
+	        	
+	    		// Only activates viewerSecurity if the XVWAccessPolicy object is deployed.
+	    		if ( ViewerAccessPolicyBuilder.applyViewerSecurity ) {
+	    			
+	    			ViewerAccessPolicyBuilder.applyViewerSecurity = boDefHandler.getBoDefinition( "XVWAccessPolicy" ) != null;
+		        	if ( bean!=null && bean instanceof XEOSecurityBaseBean ) {
+		        		ViewerAccessPolicyBuilder viewerAccessPolicyBuilder = new ViewerAccessPolicyBuilder();
+		        		viewerAccessPolicyBuilder.processViewer( result, boApplication.currentContext().getEboContext(), false );
+		        		((XEOSecurityBaseBean)bean).initializeSecurityMap(viewerAccessPolicyBuilder, result.getViewId() );
+		        	}
+		        	
+	    		}
+	    		
+	    		
+	    		UIViewRoot savedView = context.getViewRoot();
+	    		context.setViewRoot( result );
+	            result.notifyPhaseListeners(context, PhaseId.RESTORE_VIEW, true );
+	            
+	            if( result == context.getViewRoot() && savedView != null  )
+	            	context.setViewRoot( savedView );
+	    		
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+        }
+        finally {
+        	if (previousViewRoot != null)
+        		context.setViewRoot( previousViewRoot );
+        }
 
         return result;
 
