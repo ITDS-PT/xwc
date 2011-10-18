@@ -125,12 +125,12 @@ public class UserPropertiesBean extends XEOEditBean {
 			if (sess.getPerformerIProfileBouiAsString() != profile) {
 				sess.setPerformerIProfileBoui(profile);
 				
-				AttributeHandler l = user.getAttribute("user_language");
+				AttributeHandler languageAtt = user.getAttribute("user_language");
 				EboContext cntxt = this.getEboContext();
 
-				if (l != null && l.toString() != "") {
+				if (languageAtt != null && languageAtt.toString() != "") {
 					boObjectList list = boObjectList.list(cntxt,
-							"select xeoapplicationlanguage where boui=" + l);
+							"select XeoApplicationLanguage where boui= ?", new Object[]{languageAtt.getValueLong()});
 					list.beforeFirst();
 					boObject languageObj = list.getObject();
 					AttributeHandler codeHandler = languageObj
