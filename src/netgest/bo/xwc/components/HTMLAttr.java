@@ -79,7 +79,7 @@ public final class HTMLAttr {
     public static final Attr ONFOCUS = new Attr( "onfocus" );
     public static final Attr ONKEYDOWN = new Attr( "onkeydown" );
     public static final Attr ONKEYPRESS = new Attr( "onkeypress" );
-    public static final Attr ONKEYUP = new Attr( "onekeyup" );
+    public static final Attr ONKEYUP = new Attr( "onkeyup" );
     public static final Attr ONLOAD = new Attr( "onload" );
     public static final Attr ONMOUSEDOWN = new Attr( "onmousedown" );
     public static final Attr ONMOUSEMOVE = new Attr( "onmousemove" );
