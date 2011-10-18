@@ -226,8 +226,8 @@ public class AttributeWordMacro extends AttributeBase {
                 oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
             }
             
-        	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
-            oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
+        	//oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
+            //oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
             
             
             
