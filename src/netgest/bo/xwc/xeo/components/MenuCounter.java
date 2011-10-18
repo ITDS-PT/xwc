@@ -231,7 +231,7 @@ public class MenuCounter extends Menu {
 				new PrintWriter( cw ).printf( m.getCounterMask() , counter );
 				
 				j.put( "counter" , counter );
-				j.put( "counterHtml" , m.getText() + "&nbsp;" + cw.toString() );
+				j.put( "counterHtml" , "<span class='xwc-menu-counter-text'>"+m.getText()+"</span>" + "&nbsp;" + "<span class='xwc-menu-counter-value'>"+cw.toString()+"</span>" );
 				oResponse.getWriter().write( j.toString() );
 			} catch (boqlParserException e) {
 				e.printStackTrace();
