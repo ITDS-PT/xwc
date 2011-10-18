@@ -14,6 +14,8 @@
 			        -webkit-border-radius: 5px;
 			        background-color: #ffffff;
 			        padding-bottom: 3px;
+			        font-family: tahoma,verdana,helvetica;
+					font-size: small;	
 			    }
 			
 			    .x-view-over{
