@@ -106,9 +106,7 @@ public class GridPanelJSonRenderer {
             	oGrid.setGroupBy( null );
         		oDataCon.setPageSize( reqParam.getLimit() ); 
                 oDataCon.setPage( reqParam.getPage() );
-                long init = System.currentTimeMillis();
                 dataIterator = getDataListIterator(oGrid, oDataCon);
-                System.out.println( "GridPanelJsonRenderer" + (System.currentTimeMillis()-init) );
                 StringBuilder oStrBldr = buildDataArray( oGrid, oDataCon, dataIterator, 0, reqParam.getLimit() );
                 w.print( oStrBldr );
         	} else {
