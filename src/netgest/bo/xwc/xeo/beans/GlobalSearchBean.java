@@ -1,9 +1,9 @@
 package netgest.bo.xwc.xeo.beans;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -140,12 +140,11 @@ public class GlobalSearchBean extends XEOBaseBean {
 	 */
 	public void executeSearch(String textSearch, String[] classRestrictions){
 		Connection conn = null;
-		Statement st = null;
+		PreparedStatement st = null;
 		ResultSet rs = null;
 		try{
 			
 			conn = getEboContext().getConnectionData(); 
-			st = conn.createStatement();
 			DriverUtils dbUtils = getEboContext().getDataBaseDriver().getDriverUtils();
 			String name = boDefHandler.getBoDefinition("Ebo_TextIndex").getBoMasterTable();
 			
@@ -153,7 +152,7 @@ public class GlobalSearchBean extends XEOBaseBean {
 			if( dbUtils.getQueryLimitStatementPosition() == DriverUtils.QUERY_LIMIT_ON_SELECT_CLAUSE ) {
 				sql += dbUtils.getQueryLimitStatement(50) + " ";
 			}			
-			sql += "ui$,text,boui,SYS_DTCREATE,uiclass from "+ name +" WHERE "+ dbUtils.getFullTextSearchWhere("text", "'"+textSearch+"'");
+			sql += "ui$,text,boui,SYS_DTCREATE,uiclass from "+ name +" WHERE "+ dbUtils.getFullTextSearchWhere("text", "?");
 			
 			if( dbUtils.getQueryLimitStatementPosition() == DriverUtils.QUERY_LIMIT_ON_WHERE_CLAUSE ) {
 				sql += " AND " + dbUtils.getQueryLimitStatement(50) + " ";
@@ -173,7 +172,9 @@ public class GlobalSearchBean extends XEOBaseBean {
 			if( dbUtils.getQueryLimitStatementPosition() == DriverUtils.QUERY_LIMIT_ON_END_OF_STATEMENT ) {
 				sql += " " +dbUtils.getQueryLimitStatement(50) + " ";
 			}
-			rs = st.executeQuery(sql);
+			st = conn.prepareStatement(sql);
+			st.setString(1, textSearch);
+			rs = st.executeQuery();
 			
 			StringBuilder b = new StringBuilder(500);
 			
