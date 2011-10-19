@@ -3,8 +3,10 @@ package netgest.bo.xwc.components.classic.scripts;
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Window;
+import netgest.bo.xwc.components.classic.MessageBox.MessageBoxButtons;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
+import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -50,6 +52,9 @@ public class XVWScripts {
     	}
     	else if ("noCloseTab".equalsIgnoreCase(target)){
     		return getOpenCommandTab(targetName, oComponent, actionValue, null, false);
+    	}
+    	else if ("alwaysNewTab".equalsIgnoreCase(target)){
+    		return getOpenCommandTab(targetName, oComponent, actionValue, null, true, true);
     	}
     	else if( "download".equalsIgnoreCase( target ) ) {
     		return getCommandDownloadFrame( oComponent, actionValue);
@@ -117,6 +122,7 @@ public class XVWScripts {
     	msgBoxConfig.addJSString( "title", sTitle );
     	msgBoxConfig.addJSString( "msg", sMessage.replaceAll("\n", "<br/>") );
     	msgBoxConfig.add( "buttons", "Ext.Msg.OK" );
+    	msgBoxConfig.addJSString( "id", "xeo"+icon+"" );
     	switch ( icon ) {
     		case ALERT_ICON_ERROR:
     			msgBoxConfig.add("icon", "Ext.MessageBox.ERROR" );
@@ -130,8 +136,17 @@ public class XVWScripts {
     		default:
     	}
     	
+    	//Added to reuse the ExtXeo MessageBox component
+		ExtConfig btnTextConfig = new ExtConfig();
+		ScriptBuilder sb = new ScriptBuilder();
+		sb.l( "function(o) { " );
+		sb.endBlock();
+		btnTextConfig.addJSString("ok", MessageBoxButtons.OK.toString());
+		msgBoxConfig.add( "buttonText" , btnTextConfig.renderExtConfig() );
+		msgBoxConfig.add( "fn" , sb.toString() );
+    	
         return
-            "Ext.onReady(function() { Ext.Msg.show( "  + msgBoxConfig.renderExtConfig() + "  );})";
+            "Ext.onReady(function() { ExtXeo.MessageBox.show( "  + msgBoxConfig.renderExtConfig() + "  );})";
     }
 
     public static final String getOpenCommandWindow(  XUIComponentBase oComponent )    {
@@ -223,10 +238,19 @@ public class XVWScripts {
     }
     
     public static final String getOpenCommandTab(  String targetName, XUIComponentBase oComponent, String sActionValue, String sTabTitle, boolean closeableTab )    {
+    	return getOpenCommandTab(  targetName, oComponent, sActionValue, sTabTitle, closeableTab, false );
+    }
+    
+    public static final String getOpenCommandTab(  String targetName, XUIComponentBase oComponent, String sActionValue, String sTabTitle, boolean closeableTab, boolean alwaysNewTab )    {
     	String sFrameName =  targetName!=null?targetName:"Frame_" + oComponent.getId();
+    	if (alwaysNewTab){
+    		sFrameName = "new Date().valueOf()";
+    	}else{
+    		sFrameName = "'" + sFrameName + "'"; 
+    	}
         return 
             "XVW.openCommandTab( " +
-            "'" + sFrameName + "'," +
+            sFrameName+"," +
             "'" + oComponent.findParentComponent(XUIForm.class).getClientId() + "'," +
             "'" + oComponent.getId() + "'," +
             "'" + JavaScriptUtils.writeValue( sActionValue ) + "'," +

@@ -198,7 +198,7 @@ public class GlobalSearch extends ViewerSecurityBase implements IToolbarGroup {
 		String icon = getIcon();
 		if (icon != null && !(icon.length() == 0))
 			m.setIcon(getIcon());
-		m.setTarget("tab");
+		m.setTarget("alwaysNewTab");
 		m.setServerAction("#{viewBean.searchGlobal}");
 		m.setServerActionWaitMode("STATUS_MESSAGE");
 		m.setId("globalSearchActionXEO");
