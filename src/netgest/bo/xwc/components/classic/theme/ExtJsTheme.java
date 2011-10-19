@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boBridgeIterator;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
@@ -78,12 +79,13 @@ public class ExtJsTheme implements XUITheme {
 	 */
 	private Map<String, String> themeFilesToInclude() {
 		if (boApplication.currentContext().getEboContext() != null) {
-			boSessionUser user = boApplication.currentContext().getEboContext()
-					.getBoSession().getUser();
+			EboContext ctx = boApplication.currentContext().getEboContext();
+			boSessionUser user = ctx.getBoSession().getUser();
 			try {
 				
 				//User has a theme
-				if (user.getThemeFiles().size() > 0) {
+				if (user.getThemeFiles().size() > 0 
+						|| ctx.getBoSession().getProperty("theme") != null) { //This case is when there are no files in the theme (default blue)
 					Map<String, String> result = user.getThemeFiles();
 					return result;
 				}
