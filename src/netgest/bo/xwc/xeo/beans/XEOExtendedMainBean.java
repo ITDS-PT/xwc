@@ -12,6 +12,7 @@ import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.xeomodels.system.Theme;
 import netgest.bo.xeomodels.system.ThemeIncludes;
+import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
@@ -135,6 +136,8 @@ public class XEOExtendedMainBean extends XEOMainBean {
 	public void setTheme(String newTheme) {
 		this.theme = newTheme;
 		getEboContext().getBoSession().setProperty("theme", this.theme);
+		//TODO: Verificar se é preciso ir ao boSession User adicionar o tema quando se tem um default
+		//getEboContext().getBoSession().getUser().setTheme(newTheme);
 	}
 	
 	/**
