@@ -92,7 +92,7 @@ public class Menu extends ViewerCommandSecurityBase {
      * Target in which the action will be executed
      * (default value is 'self')
      */
-    @Values({"blank","window","tab","download","self","top"})
+    @Values({"blank","window","tab","alwaysNewTab","noCloseTab","download","self","top"})
     public XUIStateProperty<String> target = new XUIStateProperty<String>( "target", this );
     public XUIStateProperty<String> shortCut = new XUIStateProperty<String>( "shortCut", this );
 
