@@ -90,7 +90,6 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	public void service(ServletRequest oRequest, ServletResponse oResponse, XUIComponentBase oComp ) throws IOException
     {
         
-		long init = System.currentTimeMillis();
 		
 		GridPanel oGrid;
         GridPanelRequestParameters reqParam;
@@ -191,7 +190,6 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        	}
 	        }
         }
-        System.out.println( "GridServlet Time:" + (System.currentTimeMillis()-init) );
     }
 	
 	public GridPanelRequestParameters decodeServiceParmeters( GridPanel oGridPanel, HttpServletRequest oRequest ) {
