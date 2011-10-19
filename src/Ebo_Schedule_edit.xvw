@@ -3,13 +3,6 @@
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
 	<xvw:viewer beanClass="netgest.bo.xwc.components.beans.XEOBaseBean" beanId="viewBean" localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
 		<xeo:formEdit>
-		<!-- 	<xvw:title valueExpression="#{viewBean.title}"/>
-			<xvw:toolBar id="MyTool">
-				<xvw:menu id="save" text="Guardar" icon="ext-xeo/images/menus/gravar.gif" serverAction="#{viewBean.save}"/>
-				<xvw:menu id="saveandclose" text="Guardar e Fechar" icon="ext-xeo/images/menus/gravar_e_sair.gif" serverAction="#{viewBean.saveAndClose}"/>
-				<xvw:menu id="remove" text="Remover" icon="ext-xeo/images/menus/cancel.gif" serverAction="#{viewBean.remove}"/>
-			</xvw:toolBar>
-			<xvw:errorMessages/> -->
 			<xvw:panel>
 				<xvw:panel>
 					<xvw:tabs>
@@ -51,13 +44,24 @@
 									<xvw:cell>
 										<xvw:attribute objectAttribute="state"/>
 									</xvw:cell>
-									<xvw:cell/>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="activeStatus"/>
+									</xvw:cell>
+								</xvw:row>
+								<xvw:row>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="timeout"/>
+									</xvw:cell>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="lastid"/>
+									</xvw:cell>
 								</xvw:row>								
 								<xvw:row>
 									<xvw:cell>
 										<xvw:attribute objectAttribute="errormessage"/>
 									</xvw:cell>
 								</xvw:row>
+								
 							</xvw:rows>
 						</xvw:tab>
 						<xvw:tab label="@{SCHEDULE}">
@@ -66,7 +70,9 @@
 									<xvw:cell>
 										<xvw:attribute objectAttribute="javaclass"/>
 									</xvw:cell>
-									<xvw:cell/>
+									<xvw:cell>
+										<xvw:attribute objectAttribute="onerrorjavaclass"/>
+									</xvw:cell>
 								</xvw:row>
 								<xvw:row>
 									<xvw:cell>
