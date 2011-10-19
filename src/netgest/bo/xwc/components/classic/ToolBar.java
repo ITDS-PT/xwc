@@ -28,6 +28,7 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.def.XUIComponentStore;
 import netgest.bo.xwc.framework.def.XUIRendererDefinition;
+import netgest.bo.xwc.xeo.components.ViewerMethod;
 
 
 /**
@@ -319,40 +320,44 @@ public class ToolBar extends ViewerSecurityBase {
                     UIComponent currentItem = childs.next();
                     if (currentItem instanceof Menu){
                     
-	                    Menu oMenuChild = (Menu)currentItem;
-	                    oMenuChild.setRenderedOnClient( true );
-	                    
-	                    if( oMenuChild.isRendered() ) {
-    		            	String sText = oMenuChild.getText();
-    		
-    		            	if( "-".equals( sText ) ) {
-    	            			ExtConfig sep = oItemsCfg.addChild( "ExtXeo.Toolbar.Separator" );
-    	            			sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
-    	            			sep.add( "hidden", !toolBar.isVisible() || !oMenuChild.isVisible()  );
-    	            		}
-    		            	else if ("->".equals( sText ) ){
-    		            		ExtConfig sep = oItemsCfg.addChild();
-    		            		sep.addJSString("xtype", "tbfill");
-    		            		sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
-    		            	}
-    		            	else if (" ".equals( sText ) ){
-    		            		ExtConfig sep = oItemsCfg.addChild();
-    		            		sep.addJSString("xtype", "tbspacer");
-    		            		sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
-    		            	}
-    		            	else if ( oMenuChild.getEffectivePermission( SecurityPermissions.READ ) ) {
-    		                        oItemCfg = oItemsCfg.addChild(  );
-    		                    	configExtMenu( this, toolBar , oMenuChild, oItemCfg);
-    			                    if( oMenuChild.getChildCount() > 0) {
-    			                    	//If our top Menu has an action, make it a split button with default action
-    			                    	//if (oMenuChild.serverAction != null && oMenuChild.serverAction.getValue() != null) 
-    				                    oItemCfg.addJSString( "xtype", "splitbutton" );
-    			                    	if( oItemCfg != null ) {
-    			    	                    encodeSubMenuJS( toolBar,oItemCfg.addChild( "menu" ), oMenuChild );
-    			                    	}
-    			                    }
-    		                }
-    	                }
+                        Menu oMenuChild = (Menu)currentItem;
+	                    if (oMenuChild.canAcess()){ //Check Permissions
+	                    	if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
+			                    oMenuChild.setRenderedOnClient( true );
+			                    
+			                    if( oMenuChild.isRendered() ) {
+		    		            	String sText = oMenuChild.getText();
+		    		
+		    		            	if( "-".equals( sText ) ) {
+		    	            			ExtConfig sep = oItemsCfg.addChild( "ExtXeo.Toolbar.Separator" );
+		    	            			sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
+		    	            			sep.add( "hidden", !toolBar.isVisible() || !oMenuChild.isVisible()  );
+		    	            		}
+		    		            	else if ("->".equals( sText ) ){
+		    		            		ExtConfig sep = oItemsCfg.addChild();
+		    		            		sep.addJSString("xtype", "tbfill");
+		    		            		sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
+		    		            	}
+		    		            	else if (" ".equals( sText ) ){
+		    		            		ExtConfig sep = oItemsCfg.addChild();
+		    		            		sep.addJSString("xtype", "tbspacer");
+		    		            		sep.addJSString( "id", "ext-" + oMenuChild.getClientId() );
+		    		            	}
+		    		            	else if ( oMenuChild.getEffectivePermission( SecurityPermissions.READ ) ) {
+		    		                        oItemCfg = oItemsCfg.addChild(  );
+		    		                    	configExtMenu( this, toolBar , oMenuChild, oItemCfg);
+		    			                    if( oMenuChild.getChildCount() > 0) {
+		    			                    	//If our top Menu has an action, make it a split button with default action
+		    			                    	//if (oMenuChild.serverAction != null && oMenuChild.serverAction.getValue() != null) 
+		    				                    oItemCfg.addJSString( "xtype", "splitbutton" );
+		    			                    	if( oItemCfg != null ) {
+		    			    	                    encodeSubMenuJS( toolBar,oItemCfg.addChild( "menu" ), oMenuChild );
+		    			                    	}
+		    			                    }
+		    		                }
+		    	                }
+	                    	}
+	                    }
                     }
                     else if ( currentItem instanceof XUIExtJsComponent ) {
                 	   oItemsCfg.add( ((XUIExtJsComponent)currentItem).getExtConfig() );
@@ -431,7 +436,9 @@ public class ToolBar extends ViewerSecurityBase {
             }
             
             String handler = "function(){" + XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode.ordinal() ) +"}";
-            oItemCfg.add( "handler", handler  );
+            if (oMenuChild.getActionExpression() != null || (oMenuChild instanceof ViewerMethod && ((ViewerMethod)oMenuChild).getTargetMethod() != null)){
+	            oItemCfg.add( "handler", handler  );
+            }
             
             if( shortCut != null ) {
             	XUIScriptContext sc = XUIRequestContext.getCurrentContext().getScriptContext();
