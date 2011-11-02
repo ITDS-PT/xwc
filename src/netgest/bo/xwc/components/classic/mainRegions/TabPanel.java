@@ -104,6 +104,7 @@ public class TabPanel extends XUIComponentBase implements ExtJSRegionRenderer{
 		ExtConfig defaults = treePanel.addChild("defaults");
 		defaults.add("autoScroll", true);
 		treePanel.add("items", null);
+		treePanel.add("listeners", getListeners());
 		
 		return treePanel;
 	}
@@ -111,7 +112,15 @@ public class TabPanel extends XUIComponentBase implements ExtJSRegionRenderer{
 	@Override
 	public ExtConfig getListeners() {
 		//TabPanel has
-		return null;
+		ExtConfig listeners = new ExtConfig();
+		listeners.add("beforeremove", "{ "+
+    			" fn:function( oTabCont, oComp ) { "+
+    			" return XEOLayout.onCloseTab( oTabCont, oComp ); "+
+    			" } }");
+		
+		return listeners;
+		
+		
 	}	
 	
 }

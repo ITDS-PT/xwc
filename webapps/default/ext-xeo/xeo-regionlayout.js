@@ -24,3 +24,31 @@ XVW.appendPanels = function appendPanelsToForm(){
 	if (right)	
 		right.appendTo(form);
 }
+
+/**
+ * 
+ * Before close tab
+ * 
+ * */
+XEOLayout.onCloseTab = function( oTabCont, oComp ) {
+	if( !oComp.forceClose ) {
+		var changed = false;
+		var x = oComp.el.dom.getElementsByTagName('iframe');
+		for( var i=0;!changed && i < x.length; i++ ) {
+			try {
+				var y = x[i].contentWindow.document.getElementsByName("__isChanged");
+				for( var k = 0;k < y.length; k++ ) {
+					var cmd = y[i].value;
+					if( !x[i].contentWindow.XVW.canCloseTab( cmd.split(':')[0], cmd.split(':')[1] ) ) {
+ 						oTabCont.activate( oComp );
+						return false;
+					}
+					break;
+				}
+			}
+			catch(e) {
+				e=e;
+			}
+		}
+    }
+}
