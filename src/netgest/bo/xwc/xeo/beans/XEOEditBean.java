@@ -50,7 +50,6 @@ import netgest.bo.xwc.components.classic.MessageBox;
 import netgest.bo.xwc.components.classic.Tab;
 import netgest.bo.xwc.components.classic.Tabs;
 import netgest.bo.xwc.components.classic.Window;
-import netgest.bo.xwc.components.classic.MessageBox.MessageBoxButtons;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataListConnector;
@@ -1890,17 +1889,20 @@ public class XEOEditBean extends XEOBaseBean
 			messageBoxConfig.addJSString( "id", "confirmClose_"+getXEOObject().getBoui());
 			messageBoxConfig.addJSString( "title" , BeansMessages.CHANGES_NOT_SAVED_TITLE.toString() );
 			messageBoxConfig.addJSString( "msg" , BeansMessages.CHANGES_NOT_SAVED_MESSAGE.toString() );
-			if (getIsChanged() && showDiffButton)
-				messageBoxConfig.add( "buttons" , " {yes:'"+XEOViewersMessages.FORM_CLOSE_MESSAGE_YES.toString()+"', " +
-						"cancel:'"+XEOViewersMessages.FORM_CLOSE_MESSAGE_DIFFS.toString()+"', " +
-						"no:'"+XEOViewersMessages.FORM_CLOSE_MESSAGE_NO.toString()+"'}  "); 
+			ExtConfig btnTextConfig = new ExtConfig();
+			if (getIsChanged() && showDiffButton){
+				messageBoxConfig.add( "buttons" , " Ext.MessageBox.YESNOCANCEL  ");
+				btnTextConfig.addJSString("yes", XEOViewersMessages.FORM_CLOSE_MESSAGE_YES.toString());
+				btnTextConfig.addJSString("no", XEOViewersMessages.FORM_CLOSE_MESSAGE_NO.toString());
+				btnTextConfig.addJSString("cancel", XEOViewersMessages.FORM_CLOSE_MESSAGE_DIFFS.toString());
+			}
 			else{
-				ExtConfig btnTextConfig = new ExtConfig();
 				messageBoxConfig.add( "buttons" , " Ext.MessageBox.YESNO  ");
 				btnTextConfig.addJSString("yes", XEOViewersMessages.FORM_CLOSE_MESSAGE_YES.toString());
 				btnTextConfig.addJSString("no", XEOViewersMessages.FORM_CLOSE_MESSAGE_NO.toString());
-				messageBoxConfig.add( "buttonText" , btnTextConfig.renderExtConfig() );
+				
 			}
+			messageBoxConfig.add( "buttonText" , btnTextConfig.renderExtConfig() );
 			messageBoxConfig.add( "fn",  "function(a1) { var el = document.getElementsByTagName('OBJECT');for( var i=0;i<el.length;i++ ) { el[i].style.display='' }; if( a1=='yes' ) { "+closeScript+" } if (a1=='cancel') { "+ openDiffScript +" } }" );
 			messageBoxConfig.add( "icon", "Ext.MessageBox.WARNING" );
 			
@@ -1925,23 +1927,22 @@ public class XEOEditBean extends XEOBaseBean
             		"winDiff.show();}";
 			
 			//Add the function to open a new Window
-			if (getIsChanged())
+			if (getIsChanged()){
 			oRequestContext.getScriptContext().add(  
 					XUIScriptContext.POSITION_HEADER,
 					"openDifferencesWindow",openWindowScript
 					);
-			
-			//
+			}
+			String configMsgBox = messageBoxConfig.renderExtConfig().toString(); 	
 			oRequestContext.getScriptContext().add(  
 					XUIScriptContext.POSITION_HEADER,
 					"canCloseDialog",
-					// Esconde os elementos do tipo OBJECT para que
-					// n�o se sobreponham ao zIndex da dialog
+					// Hide elements of type object so that they don't overlap the box's zindex
 					"var el = document.getElementsByTagName('OBJECT');for( var i=0;i<el.length;i++ ) { el[i].style.display='none' };\n" +
 					"" +
 					"ExtXeo.MessageBox.show("
 					+ 
-					messageBoxConfig.renderExtConfig()
+					configMsgBox
 					+
 					");"
 			);
