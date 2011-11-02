@@ -80,7 +80,7 @@ public interface XEOComponentMessages {
 
 	public static final XUILocalizedMessage SPLTDLOOKUP_INVALID_VALUE = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "SPLTDLOOKUP_INVALID_VALUE" );
-	///////
+	
 	public static final XUILocalizedMessage FORM_NAME = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "FORM_NAME" );
 	public static final XUILocalizedMessage FORM_CREATE_NEW = 
@@ -89,23 +89,61 @@ public interface XEOComponentMessages {
 	
 	public static final XUILocalizedMessage GENERAL = 
 			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "GENERAL" );
-		public static final XUILocalizedMessage PACKAGE = 
-		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "PACKAGE" );
+	public static final XUILocalizedMessage PACKAGE = 
+			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "PACKAGE" );
 		
-		public static final XUILocalizedMessage FORM_DESCRIPTION= 
-			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "FORM_DESCRIPTION" );
-		public static final XUILocalizedMessage EDITTB_SAVE_CLOSE= 
-			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_SAVE_CLOSE" );
-		public static final XUILocalizedMessage FORM_NEW= 
-			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "FORM_NEW" );
-		public static final XUILocalizedMessage FORM_CODE= 
-			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "FORM_CODE" );
-		public static final XUILocalizedMessage EDETTB_REMOVE= 
-			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDETTB_REMOVE" );
+	public static final XUILocalizedMessage FORM_DESCRIPTION= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "FORM_DESCRIPTION" );
+	public static final XUILocalizedMessage EDITTB_SAVE_CLOSE= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_SAVE_CLOSE" );
+	public static final XUILocalizedMessage FORM_NEW= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "FORM_NEW" );
+	public static final XUILocalizedMessage FORM_CODE= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "FORM_CODE" );
+	public static final XUILocalizedMessage EDETTB_REMOVE= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDETTB_REMOVE" );
+	
+	//Theme Changer
+	public static final XUILocalizedMessage THEME_CHANGER_MENU_TEXT= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "THEME_CHANGER_MENU_TEXT" );
 		
-		//Theme Changer
-		public static final XUILocalizedMessage THEME_CHANGER_MENU_TEXT= 
-			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "THEME_CHANGER_MENU_TEXT" );
-		
-		
+	//Grid Explorer
+	public static final XUILocalizedMessage EXPLORER_PREVIEW_BOTTOM= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_PREVIEW_BOTTOM" );
+	
+	public static final XUILocalizedMessage EXPLORER_PREVIEW_LEFT= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_PREVIEW_LEFT" );
+	
+	public static final XUILocalizedMessage EXPLORER_PREVIEW_RIGHT= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_PREVIEW_RIGHT" );
+	
+	public static final XUILocalizedMessage EXPLORER_SAVEVIEW_TOOLTIP= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_SAVEVIEW_TOOLTIP" );
+	
+	public static final XUILocalizedMessage EXPLORER_DELETE_VIEW= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_DELETE_VIEW" );
+	
+	public static final XUILocalizedMessage EXPLORER_EDIT_VIEW= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_EDIT_VIEW" );
+	
+	public static final XUILocalizedMessage EXPLORER_SAVENEW_VIEW= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_SAVENEW_VIEW" );
+	
+	public static final XUILocalizedMessage EXPLORER_ERROR_VIEW_CREATED_BY_OTHER= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_ERROR_VIEW_CREATED_BY_OTHER" );
+	
+	public static final XUILocalizedMessage EXPLORER_VIEW_SAVED= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_VIEW_SAVED" );
+	
+	public static final XUILocalizedMessage EXPLORER_SAVE_ERROR_TITLE= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_SAVE_ERROR_TITLE" );
+	
+	public static final XUILocalizedMessage EXPLORER_SAVE_SUCCESS= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_SAVE_SUCCESS" );
+	
+	public static final XUILocalizedMessage EXPLORER_VIEW_LIST_NO_NAME= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_VIEW_LIST_NO_NAME" );
+	
+	public static final XUILocalizedMessage EXPLORER_VIEW_CURRENT= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_VIEW_CURRENT" );
 }

@@ -68,7 +68,7 @@ ExtXeo.grid.GridView = Ext.extend(Ext.grid.GridView, {
 	        	{
 					id:'selCols', 
 					cls:'xwc-grid-sel-cols',
-					text:'Seleccionar Colunas', 
+					text:this.selectCols, 
 					iconCls: 'x-cols-icon' 
 				} 
 	        ); 
@@ -80,7 +80,7 @@ ExtXeo.grid.GridView = Ext.extend(Ext.grid.GridView, {
         	{
 				id:'resetDefinitions', 
 				cls:'xwc-reset-grid-defs',
-				text:'Repôr Definições',
+				text:this.resetDefs,
 				handler : this.onResetDefaults
 			} 
         );
@@ -262,7 +262,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
                 },{
                     id:'removeGroups',
                     cls:'xwc-grid-reset-group-by',
-                    text: "Remover Grupos",
+                    text: this.removeGroupText,
                     handler: this.onClearGroups,
                     scope: this
                 }

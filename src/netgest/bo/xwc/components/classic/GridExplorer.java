@@ -45,6 +45,7 @@ import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.List;
 import netgest.bo.xwc.xeo.components.ListToolBar;
+import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
 public class GridExplorer extends List {
 	
@@ -579,7 +580,7 @@ public class GridExplorer extends List {
 	//		PreviewPanelMode 		m = getPreviewPanelMode();
 			
 	//		PreviewModeMenu pvwE = new PreviewModeMenu();
-	//		pvwE.setText( "Mode Edição" );
+	//		pvwE.setText( "Mode Ediï¿½ï¿½o" );
 	//		pvwE.setValue( PreviewPanelMode.EDIT == m );
 	//		pvwE.setGroup( "mode" );
 	//		pvwE.setMode( PreviewPanelMode.EDIT.name() );
@@ -587,7 +588,7 @@ public class GridExplorer extends List {
 	//		pvw.getChildren().add( pvwE );
 	//
 	//		PreviewModeMenu pvwP = new PreviewModeMenu();
-	//		pvwP.setText( "Pré-Visualização" );
+	//		pvwP.setText( "Prï¿½-Visualizaï¿½ï¿½o" );
 	//		pvwP.setValue( PreviewPanelMode.PREVIEW == m );
 	//		pvwP.setGroup( "mode" );
 	//		pvwP.setMode( PreviewPanelMode.PREVIEW.name() );
@@ -595,7 +596,7 @@ public class GridExplorer extends List {
 	//		pvw.getChildren().add( pvwP );
 			
 			PreviewPositionMenu pvwb = new PreviewPositionMenu();
-			pvwb.setText( "Inferior" );
+			pvwb.setText( XEOComponentMessages.EXPLORER_PREVIEW_BOTTOM.toString() );
 			pvwb.setValue( PreviewPanelPosition.BOTTOM == p );
 			pvwb.setGroup( "preview" );
 			pvwb.setPosition( "BOTTOM" );
@@ -603,7 +604,7 @@ public class GridExplorer extends List {
 			pvw.getChildren().add( pvwb );
 	
 			PreviewPositionMenu pvwr = new PreviewPositionMenu();
-			pvwr.setText( "Direita" );
+			pvwr.setText( XEOComponentMessages.EXPLORER_PREVIEW_RIGHT.toString() );
 			pvwr.setValue( PreviewPanelPosition.RIGHT == p );
 			pvwr.setGroup( "preview" );
 			pvwr.setPosition( "RIGHT" );
@@ -611,7 +612,7 @@ public class GridExplorer extends List {
 			pvw.getChildren().add( pvwr );
 	
 			PreviewPositionMenu pvwl = new PreviewPositionMenu();
-			pvwl.setText( "Esquerda" );
+			pvwl.setText( XEOComponentMessages.EXPLORER_PREVIEW_LEFT.toString() );
 			pvwl.setValue( PreviewPanelPosition.LEFT == p );
 			pvwl.setGroup( "preview" );
 			pvwl.setPosition( "LEFT" );
@@ -635,7 +636,7 @@ public class GridExplorer extends List {
 		Menu save = new Menu();
 		save.setId( getId() + "_saveView" );
 		save.setIcon("ext-xeo/images/gridexplorer/gravar.gif");
-		save.setToolTip("Guardar Vista");
+		save.setToolTip(XEOComponentMessages.EXPLORER_SAVEVIEW_TOOLTIP.toString());
 		save.addActionListener( new SaveViewListener() );
 		
 
@@ -648,7 +649,7 @@ public class GridExplorer extends List {
 		Menu deleteView = new Menu();
 		deleteView.setId( getId() + "_deleteView" );
 		deleteView.setIcon("ext-xeo/images/gridexplorer/delete.jpg");
-		deleteView.setText("Eliminar");
+		deleteView.setText(XEOComponentMessages.EXPLORER_DELETE_VIEW.toString());
 		deleteView.addActionListener( new SaveViewListener() );
 		if( getCurrentSavedViewId() == null || !isSavedViewOwner.getValue() ) {
 			deleteView.setDisabled(true);
@@ -657,7 +658,7 @@ public class GridExplorer extends List {
 			
 		Menu editView = new Menu();
 		editView.setId( getId() + "_editView" );
-		editView.setText("Editar");
+		editView.setText(XEOComponentMessages.EXPLORER_EDIT_VIEW.toString());
 		editView.addActionListener( new SaveViewListener() );
 		if( getCurrentSavedViewId() == null || !isSavedViewOwner.getValue() ) {
 			editView.setDisabled(true);
@@ -667,7 +668,7 @@ public class GridExplorer extends List {
 		if( getCurrentSavedViewId() != null ) {
 			Menu saveNewView = new Menu();
 			saveNewView.setId( getId() + "_saveNewView" );
-			saveNewView.setText("Guardar Nova");
+			saveNewView.setText(XEOComponentMessages.EXPLORER_SAVENEW_VIEW.toString());
 			saveNewView.addActionListener( new SaveViewListener() );
 			save.getChildren().add( saveNewView );
 		}
@@ -733,8 +734,8 @@ public class GridExplorer extends List {
 								new XUIMessage( 
 										XUIMessage.TYPE_POPUP_MESSAGE, 
 										XUIMessage.SEVERITY_INFO, 
-										"Guardar Vista", 
-										"Esta vista não foi criada por si, não pode gravar. Crie uma nova."
+										XEOComponentMessages.EXPLORER_SAVE_ERROR_TITLE.toString(), 
+										XEOComponentMessages.EXPLORER_ERROR_VIEW_CREATED_BY_OTHER.toString()
 								)
 							);
 					}
@@ -752,8 +753,8 @@ public class GridExplorer extends List {
 							new XUIMessage( 
 									XUIMessage.TYPE_POPUP_MESSAGE, 
 									XUIMessage.SEVERITY_INFO, 
-									"Sucesso", 
-									"Vista guardada com sucesso!"
+									XEOComponentMessages.EXPLORER_SAVE_SUCCESS.toString(), 
+									XEOComponentMessages.EXPLORER_VIEW_SAVED.toString()
 							)
 						);
 					explorer.saveUserState( true );
@@ -822,7 +823,7 @@ public class GridExplorer extends List {
 			boObjectList list = getUserStateObjectList( gridExplorerId );
 			ExtConfigArray row = new ExtConfigArray();
 			row.addString( "" );
-			row.add( "'« Sem nome »'" );
+			row.add( "\""+XEOComponentMessages.EXPLORER_VIEW_CURRENT.toString()+"\"" );
 			dataArray.add( row );
 			
 			long userBoui = list.getEboContext().getSysUser().getBoui();
@@ -850,7 +851,7 @@ public class GridExplorer extends List {
 			viewsCombo.addString("triggerAction", "all");
 			viewsCombo.add("store", valuesStore );
 			viewsCombo.addString("mode", "local" );
-			viewsCombo.addString("blankText", "« Actual »" );
+			viewsCombo.addString("blankText", XEOComponentMessages.EXPLORER_VIEW_LIST_NO_NAME.toString() );
 			viewsCombo.add("width", 160 );
 			viewsCombo.addJSString("tooltip", "Filtros" );
 			viewsCombo.addString("displayField", "d" );

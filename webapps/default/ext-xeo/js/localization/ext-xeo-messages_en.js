@@ -26,11 +26,19 @@ if(ExtXeo.PagingToolbar){
 	  });
 	}
 
+if(ExtXeo.grid.GridView) {
+	  Ext.apply(ExtXeo.grid.GridView.prototype , {
+	    selectCols: 'Select columns',
+	    resetDefs	   : 'Reset definitions'  	  
+	 });
+}
+
 if( ExtXeo.grid.GroupingView) {
 	  Ext.apply(ExtXeo.grid.GroupingView.prototype , {
 	    emptyGroupText : '(None)',
 	    groupByText    : 'Group by this field',
 	    showGroupsText : 'Show in groups',
+	    removeGroupText: 'Remove group',
 	    loadingMsg	   : 'Loading...'  	  
 	 });
 }
