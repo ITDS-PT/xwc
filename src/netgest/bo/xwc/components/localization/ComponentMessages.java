@@ -95,6 +95,9 @@ public interface ComponentMessages {
 	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_EXPORT_HTML = 
 		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_EXPORT_HTML");
 	
+	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_EXPORT_HTML_TITLE = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_EXPORT_TITLE");
+	
 	public static final XUILocalizedMessage EDIT_TOOLBAR_BTN_EXPORT_PDF_TOOLTIP = 
 		new XUILocalizedMessage(ComponentMessages.class.getName(), "EDIT_TOOLBAR_BTN_EXPORT_PDF_TOOLTIP");
 	

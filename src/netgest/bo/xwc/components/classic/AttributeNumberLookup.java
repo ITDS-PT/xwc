@@ -201,17 +201,21 @@ public class AttributeNumberLookup extends AttributeBase {
             	oAttr.setReadOnly("true");
             }
             
-            if( oAttr.isReadOnly() ) {
+            if( oAttr.isReadOnly() || !oAttr.getEffectivePermission(SecurityPermissions.WRITE)) {
             	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
 	            oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
+	            if (enableCardIdLink)
+	            	oAttr.setReadOnly("true");
+	            else
+	            	oAttr.setDisabled("true");
             }
             else {
-	        	if ( !oAttr.getEffectivePermission(SecurityPermissions.DELETE) )
+	        	if ( !oAttr.getEffectivePermission(SecurityPermissions.DELETE))
 	            	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
 	        	else
 	            	oInpConfig.addJSString("trigger1Class", "x-form-clear-trigger");
-	        		
-	            oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
+	        	
+	        	oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
 	            
 	            oInpConfig.add("onTrigger1Click", "function(){if(!this.disabled){ " +
 	            			getClearCode(oForm, oAttr) +

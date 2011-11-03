@@ -4,6 +4,7 @@ import netgest.bo.def.boDefAttribute;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.bridgeHandler;
+import netgest.bo.security.securityOPL;
 import netgest.bo.system.boApplication;
 
 public class XEOComponentStateLogic {
@@ -30,6 +31,8 @@ public class XEOComponentStateLogic {
 					netgest.bo.security.securityRights.canWrite( xeoObject.getEboContext() ,xeoObject.getName() )
 					&&
 					!xeoObject.methodIsHidden( methodName )
+					&& 
+					securityOPL.canWrite(xeoObject)
 				) {
 					return false;
 				}
@@ -71,6 +74,8 @@ public class XEOComponentStateLogic {
 		try {
 			if (netgest.bo.security.securityRights.canWrite( bridgeHandler.getEboContext() , bridgeHandler.getParent().getName() ) ) {
 				boDefAttribute bridgeDef = bridgeHandler.getDefAttribute();
+				if (!securityOPL.canWrite(bridgeHandler.getParent()))
+					return false;
 				if( bridgeDef.supportManualAdd() && bridgeDef.supportManualOperation() ) {
 					if ( 
 							netgest.bo.security.securityRights.canAdd( 
@@ -83,6 +88,7 @@ public class XEOComponentStateLogic {
 						return true;
 					}
 				}
+				
 			}
 			return false;
 		} catch (boRuntimeException e) {
@@ -94,6 +100,8 @@ public class XEOComponentStateLogic {
 		try {
 			if (netgest.bo.security.securityRights.canWrite( bridgeHandler.getEboContext() , bridgeHandler.getParent().getName() ) ) {
 				boDefAttribute bridgeDef = bridgeHandler.getDefAttribute();
+				if (!securityOPL.canWrite(bridgeHandler.getParent()))
+					return false;
 				if( bridgeDef.supportManualCreate() && bridgeDef.supportManualOperation() ) {
 					if ( 
 							netgest.bo.security.securityRights.canAdd( 
@@ -106,6 +114,7 @@ public class XEOComponentStateLogic {
 						return true;
 					}
 				}
+				
 			}
 			return false;
 		} catch (boRuntimeException e) {
@@ -117,6 +126,8 @@ public class XEOComponentStateLogic {
 		try {
 			if (netgest.bo.security.securityRights.canWrite( bridgeHandler.getEboContext() , bridgeHandler.getParent().getName() ) ) {
 				boDefAttribute bridgeDef = bridgeHandler.getDefAttribute();
+				if (!securityOPL.canWrite(bridgeHandler.getParent()))
+					return false;
 				if( bridgeDef.supportManualOperation() ) {
 					if ( 
 							netgest.bo.security.securityRights.canDelete( 
@@ -129,6 +140,7 @@ public class XEOComponentStateLogic {
 						return true;
 					}
 				}
+				
 			}
 			return false;
 		} catch (boRuntimeException e) {

@@ -782,7 +782,7 @@ public class EditToolBar extends ToolBar {
 			exportHTMLMenu.setIcon("ext-xeo/images/menus/exportar-html.gif");
 			exportHTMLMenu.setToolTip(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_HTML_TOOLTIP.toString());
 			exportHTMLMenu.setServerAction("#{viewBean.exportHTML}");
-			String parameters = "{width:800, height:400, title:'Impress�o'}";
+			String parameters = "{width:800, height:400, title:'"+ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_HTML_TITLE.toString()+"'}";
 			exportHTMLMenu.setTarget("window:" + parameters);
 			exportGroup.getChildren().add(exportHTMLMenu);
 		}
