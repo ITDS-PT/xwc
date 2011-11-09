@@ -47,8 +47,8 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.utils.StringUtils;
 
-import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
