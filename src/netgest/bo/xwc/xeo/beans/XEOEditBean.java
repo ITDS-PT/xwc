@@ -2273,7 +2273,7 @@ public class XEOEditBean extends XEOBaseBean
     	//Retrieve the object that keeps the users favorites (and history?)
     	try {
     		
-    		if (!current.exists()){
+    		if (current.exists()){
     		
 	    		boManagerLocal objectManager = boApplication.getDefaultApplication().getObjectManager();
 	    		
@@ -2290,7 +2290,7 @@ public class XEOEditBean extends XEOBaseBean
 					//Favorite already exists, show duplicate error message
 					getRequestContext().addMessage("duplicateMessage", new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
 							ComponentMessages.FAVORITES_DUPLICATE_TITLE.toString(),
-							ComponentMessages.FAVORITES_SUCCESS_MSG.toString()));
+							ComponentMessages.FAVORITES_DUPLICATE_MSG.toString()));
 				}
 				else{
 					//Create the favorite
