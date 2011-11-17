@@ -9,14 +9,14 @@ import netgest.bo.ql.QLParser;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.security.securityOPL;
+import netgest.bo.security.securityRights;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.annotations.Visible;
-import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.framework.XUIMessage;
@@ -79,28 +79,27 @@ public class XEOBaseList extends XEOBaseBean {
 	        else {
 		        boObject sObjectToOpen = boObject.getBoManager().loadObject( boApplication.currentContext().getEboContext(), boui.longValue());
 		
-		        XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createView( 
-		        		getViewerResolver().getViewer( sObjectToOpen, XEOViewerResolver.ViewerType.EDIT )
-		        );
-		        XEOEditBean oEditBean = (XEOEditBean)oEditViewRoot.getBean("viewBean");
-		        
-		        if( oActiveRow == null ) {
+		        //If no security read permission, show the message box
+		        if (!securityOPL.canRead(sObjectToOpen) || !securityRights.canRead(getEboContext(), sObjectToOpen.getName())){
 		        	oRequestContext.addMessage( "bean" ,  
 		        			new XUIMessage( 
 		        					XUIMessage.TYPE_ALERT, 
 		        					XUIMessage.SEVERITY_ERROR, 
-		        					BeansMessages.TITLE_ERROR.toString(), 
-		        					BeansMessages.SELECTED_OBJECT_NOT_EXISTS.toString() 
+		        					"Error", 
+		        					"No permission to read" 
 		        			)
 		        	);
-		        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Error.xvw") );
-		        }
-		        else {
-		        	oEditBean.setCurrentObjectKey( String.valueOf( oActiveRow.getAttribute("BOUI").getValue() ) );
+		        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Dummy.xvw") );
+		        	
+		        } else{
+		        	XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createView( 
+			        		getViewerResolver().getViewer( sObjectToOpen, XEOViewerResolver.ViewerType.EDIT )
+			        );
+			        XEOEditBean oEditBean = (XEOEditBean)oEditViewRoot.getBean("viewBean");
+			    	oEditBean.setCurrentObjectKey( String.valueOf( oActiveRow.getAttribute("BOUI").getValue() ) );
 		            oRequestContext.setViewRoot( oEditViewRoot );
 		            oEditViewRoot.processInitComponents();
-		        }
-		        
+			    }
 		        //TODO: Call must be not necessary
 		        oRequestContext.renderResponse();
 	        }
