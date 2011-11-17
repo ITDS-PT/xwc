@@ -94,6 +94,10 @@ public class Menu extends ViewerCommandSecurityBase {
      */
     @Values({"blank","window","tab","alwaysNewTab","noCloseTab","download","self","top"})
     public XUIStateProperty<String> target = new XUIStateProperty<String>( "target", this );
+    /**
+     * Keyboard shortcut to execute the action associated 
+     * to this menu (Example values: "Ctrl+s". "Alt+e")
+     */
     public XUIStateProperty<String> shortCut = new XUIStateProperty<String>( "shortCut", this );
 
     /**
