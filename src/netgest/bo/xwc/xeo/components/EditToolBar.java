@@ -8,6 +8,7 @@ import javax.faces.component.UIComponent;
 import netgest.bo.def.boDefMethod;
 import netgest.bo.runtime.boObject;
 import netgest.bo.xwc.components.classic.ToolBar;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -487,6 +488,7 @@ public class EditToolBar extends ToolBar {
 		xeoMethod.setTargetMethod( methodName );
 		xeoMethod.setIcon( icon );
 		xeoMethod.setToolTip( toolTip );
+		xeoMethod.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 		getChildren().add( pos, xeoMethod );
 
 		return xeoMethod;
@@ -577,6 +579,7 @@ public class EditToolBar extends ToolBar {
 		xeoMethod.setTargetObject( this.targetObject.getExpressionString() );
 		xeoMethod.setTargetMethod( methodName );
 		xeoMethod.setToolTip( toolTip );
+		xeoMethod.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 		getChildren().add( pos, xeoMethod );
 		
 		return xeoMethod;
@@ -642,6 +645,7 @@ public class EditToolBar extends ToolBar {
 		xeoMethod.setTargetMethod( methodName );
 		xeoMethod.setIcon( icon );
 		xeoMethod.setToolTip( toolTip );
+		xeoMethod.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 		getChildren().add( xeoMethod );
 	
 		return xeoMethod;
@@ -657,6 +661,7 @@ public class EditToolBar extends ToolBar {
 		xeoMethod.setTargetObject( this.targetObject.getExpressionString() );
 		xeoMethod.setTargetMethod( methodName );
 		xeoMethod.setToolTip( toolTip );
+		xeoMethod.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 		getChildren().add( xeoMethod );
 		
 		return xeoMethod;
@@ -771,6 +776,7 @@ public class EditToolBar extends ToolBar {
 			exportExcelMenu.setToolTip(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_EXCEL_TOOLTIP.toString());
 			exportExcelMenu.setIcon("ext-xeo/images/menus/exportar-excel.gif");
 			exportExcelMenu.setServerAction("#{viewBean.exportExcel}");
+			exportExcelMenu.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 			exportExcelMenu.setTarget("download");
 			exportGroup.getChildren().add(exportExcelMenu);
 		}
@@ -784,6 +790,7 @@ public class EditToolBar extends ToolBar {
 			exportHTMLMenu.setServerAction("#{viewBean.exportHTML}");
 			String parameters = "{width:800, height:400, title:'"+ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_HTML_TITLE.toString()+"'}";
 			exportHTMLMenu.setTarget("window:" + parameters);
+			exportHTMLMenu.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 			exportGroup.getChildren().add(exportHTMLMenu);
 		}
 		
@@ -795,6 +802,7 @@ public class EditToolBar extends ToolBar {
 			exportPDFMenu.setToolTip(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_PDF_TOOLTIP.toString());
 			exportPDFMenu.setServerAction("#{viewBean.exportPDF}");
 			exportPDFMenu.setTarget("download");
+			exportPDFMenu.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 			exportGroup.getChildren().add(exportPDFMenu);
 		}
 		

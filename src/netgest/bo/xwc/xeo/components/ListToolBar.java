@@ -9,6 +9,7 @@ import netgest.bo.def.boDefHandler;
 import netgest.bo.def.v2.boDefInterfaceImpl;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -116,16 +117,18 @@ public class ListToolBar extends ToolBarMenuPositions {
 					rootMenu.setId( getId() + "_new_" + subClasseDef.getName() );
 					rootMenu.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 					rootMenu.setValue( subClasseDef.getName() );
+					rootMenu.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString()  );
 					rootMenu.setTargetMethod("addNew");
 					
 					if( subClassesDef.size() > 1 ) {
 						ViewerMethod viewerMethod = new ViewerMethod();
 						viewerMethod.setText( XEOComponentMessages.BRIDGETB_NEW.toString(subClasseDef.getLabel()) );
 						
-						viewerMethod.setToolTip("Novo(a) " + subClasseDef.getLabel() );
+						viewerMethod.setToolTip( XEOComponentMessages.BRIDGETB_NEW.toString(subClasseDef.getLabel()) );
 						viewerMethod.setId( getId() + "_new1_" + subClasseDef.getName() );
 						viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 						viewerMethod.setValue( subClasseDef.getName() );
+						viewerMethod.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString()  );
 						viewerMethod.setTargetMethod("addNew");
 	
 						rootMenu.getChildren().add( viewerMethod );
@@ -138,6 +141,7 @@ public class ListToolBar extends ToolBarMenuPositions {
 							
 							viewerMethod.setId( getId() + "_new_" + subClasseDef.getName() );
 							viewerMethod.setTargetMethod( "addNew" );
+							viewerMethod.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString()  );
 							viewerMethod.setValue( subClasseDef.getName() );
 							rootMenu.getChildren().add( viewerMethod );
 						}
