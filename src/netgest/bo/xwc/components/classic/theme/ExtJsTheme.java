@@ -92,7 +92,7 @@ public class ExtJsTheme implements XUITheme {
 				//Retrieve default theme from runtime
 				boObjectList list = boObjectList.list(boApplication
 						.currentContext().getEboContext(),
-						"select Theme where defaultTheme = 1");
+						"select Theme where defaultTheme = '1'");
 				if (list.getRecordCount() == 1) {
 					HashMap<String, String> result = new HashMap<String, String>();
 					list.beforeFirst();
@@ -219,6 +219,9 @@ public class ExtJsTheme implements XUITheme {
 				"xwc-components", composeUrl("ext-xeo/js/xwc-components.js"));
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
 				"ExtXeo.tabs", composeUrl("ext-xeo/js/Tabs.js"));
+		
+		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
+				"ExtXeo.TreePanelJCR", composeUrl("ext-xeo/js/TreePanelJCR.js"));
 
 		// Grid Filters
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
