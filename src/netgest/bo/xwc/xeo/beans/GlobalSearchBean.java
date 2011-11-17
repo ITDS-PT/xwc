@@ -146,7 +146,7 @@ public class GlobalSearchBean extends XEOBaseBean {
 			
 			conn = getEboContext().getConnectionData(); 
 			DriverUtils dbUtils = getEboContext().getDataBaseDriver().getDriverUtils();
-			String name = boDefHandler.getBoDefinition("Ebo_TextIndex").getBoMasterTable();
+			String name = "O"+boDefHandler.getBoDefinition("Ebo_TextIndex").getBoMasterTable();
 			
 			String sql = "select ";
 			if( dbUtils.getQueryLimitStatementPosition() == DriverUtils.QUERY_LIMIT_ON_SELECT_CLAUSE ) {
