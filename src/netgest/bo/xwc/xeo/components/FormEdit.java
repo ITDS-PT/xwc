@@ -102,6 +102,13 @@ public class FormEdit extends Form {
 	private XUIBindProperty<Boolean> orphanMode = 
 		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class, "#{viewBean.editInOrphanMode}" );
 
+	
+	/**
+	 * Whether a non-orphan object should be presented in full screen
+	 */
+	private XUIBindProperty<Boolean> nonOrphanFullScreen = 
+		new XUIBindProperty<Boolean>("nonOrphanFullScreen", this, false, Boolean.class);
+	
 	@Override
 	public String getRendererType() {
 		return "formEdit";
@@ -313,6 +320,14 @@ public class FormEdit extends Form {
 		return this.targetObject.getEvaluatedValue();
 	}
 
+	public void setNonOrphanFullScreen(String valExpr){
+		this.nonOrphanFullScreen.setExpressionText(valExpr);
+	}
+	
+	public Boolean getNonOrphanFullScreen(){
+		return this.nonOrphanFullScreen.getEvaluatedValue();
+	}
+	
 	/* (non-Javadoc)
 	 * @see netgest.bo.xwc.framework.components.XUIComponentBase#initComponent()
 	 */
@@ -409,14 +424,18 @@ public class FormEdit extends Form {
 	private void createEditWindow() {
 		ViewerWindow wnd = (ViewerWindow)findComponent( getId() + "_editWnd" );
 		if( wnd == null ) {
-			boObject object = getTargetObject();
-			//TODO: Check to see if the parent attribute have the flag orphanRelation = true....
 			if( !getOrphanMode() ) {
 				wnd = new ViewerWindow();
 				wnd.setId( getId() + "_editWnd" );
 				
-				wnd.setHeight( getWindowHeight() );
-				wnd.setWidth( getWindowWidth() );
+				if (getNonOrphanFullScreen())
+				{
+					wnd.setFullWindow(Boolean.TRUE);
+				}
+				else{
+					wnd.setHeight( getWindowHeight() );
+					wnd.setWidth( getWindowWidth() );
+				}
 				
 				//Muda todos os descendentes directos do form, para filhos da janela
 				wnd.getChildren().addAll( getChildren() );

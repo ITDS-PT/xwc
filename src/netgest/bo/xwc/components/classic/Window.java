@@ -22,7 +22,6 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
-import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -32,7 +31,7 @@ import netgest.bo.xwc.framework.components.XUIForm;
  * 
  * A {@link Window} is a component that's used to open a view in a separate window.
  * 
- * @author João Carreira
+ * @author Joï¿½o Carreira
  *
  */
 public class Window extends XUIComponentBase {
@@ -40,15 +39,29 @@ public class Window extends XUIComponentBase {
     /**
      * The width of the window
      */
-    public XUIViewProperty<Integer> width = new XUIViewProperty<Integer>( "width", this, 500 );
+    public XUIViewBindProperty<Integer> width = new XUIViewBindProperty<Integer>( "width", this, 500, Integer.class );
     /**
      * The height of the the window
      */
-    public XUIViewProperty<Integer> height = new XUIViewProperty<Integer>( "height", this, 300 );
+    public XUIViewBindProperty<Integer> height = new XUIViewBindProperty<Integer>( "height", this, 300, Integer.class );
 
+    /**
+     * Whether the window should be presented modally
+     */
     public XUIViewBindProperty<Boolean> modal = new XUIViewBindProperty<Boolean>( "modal", this, true, Boolean.class );
+    
+    /**
+     * Whether the window should be displayed in full screen
+     */
+    private XUIBaseProperty<Boolean> fullWindow = new XUIBaseProperty<Boolean>("fullWindow", this, false);
 
+    /**
+     * Distance from the top margin
+     */
     public XUIViewBindProperty<Integer> top = new XUIViewBindProperty<Integer>( "top", this, 0, Integer.class );
+    /**
+     * Distance from the left margin
+     */
     public XUIViewBindProperty<Integer> left = new XUIViewBindProperty<Integer>( "left", this, 0, Integer.class );
     
     public String animateTarget = null;
@@ -141,6 +154,14 @@ public class Window extends XUIComponentBase {
     	return this.modal.getEvaluatedValue();
     }
     
+    public void setFullWindow(Boolean val){
+    	this.fullWindow.setValue(val);
+    }
+    
+    public Boolean getFullWindow(){
+    	return fullWindow.getValue();
+    }
+    
     @Override
 	public void preRender() {
     	if( this.getOnClose() != null ) {
@@ -179,17 +200,25 @@ public class Window extends XUIComponentBase {
     public void setWidth( int width) {
         this.width.setValue( width );
     }
+    
+    public void setWidth(String widthExpr){
+    	this.width.setExpressionText(widthExpr);
+    }
 
     public int getWidth() {
-        return width.getValue();
+        return width.getEvaluatedValue();
     }
 
     public void setHeight(int height) {
         this.height.setValue( height );
     }
+    
+    public void setHeight(String heightExpr){
+    	this.height.setExpressionText(heightExpr);
+    }
 
     public int getHeight() {
-        return height.getValue();
+        return height.getEvaluatedValue();
     }
     
     public void close() {
@@ -281,8 +310,14 @@ public class Window extends XUIComponentBase {
             Window oWnd = (Window)oComp;
             
             oExtConfig.addJSString("layout","fit");
-            oExtConfig.add("width", oWnd.getWidth() );
-            oExtConfig.add("height", oWnd.getHeight() );
+            
+            if (oWnd.getFullWindow()){
+            	oExtConfig.add("width", "Ext.isIE?document.body.clientWidth-20:window.innerWidth-20" );
+            	oExtConfig.add("height", "Ext.isIE?document.body.clientHeight-20:window.innerHeight-20" );
+            } else {
+            	oExtConfig.add("width", oWnd.getWidth() );
+            	oExtConfig.add("height", oWnd.getHeight() );
+            }
             oExtConfig.add("plain",true);
             oExtConfig.addJSString( "id", oWnd.getClientId() );
             oExtConfig.addJSString("contentEl", oRequestContext.getViewRoot().getClientId() );
