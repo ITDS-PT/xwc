@@ -47,8 +47,8 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.utils.StringUtils;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -709,7 +709,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         }
         
         if( 
-        		oGrid.getRowSelectionMode() == GridPanel.SELECTION_MULTI_ROW  
+        		oGrid.getRowSelectionMode().equalsIgnoreCase(GridPanel.SELECTION_MULTI_ROW)  
         ) {  
         	oColsConfig.add( oGrid.getId() + "_selm" );
         }
@@ -730,6 +730,9 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             oColConfig.addJSString( "dataIndex", oGridColumns[ i ].getDataField().replaceAll("\\.", "__") );
             oColConfig.add( "resizable" , oGridColumns[ i ].isResizable() );
             oColConfig.add( "hideable" , oGridColumns[ i ].isHideable() );
+            if (oGridColumns[ i ].wrapText()){
+            	oColConfig.add( "renderer" , "ExtXeo.grid.nowrap" );
+            }
 
 			JSONObject colCfg = map.get( oGridColumns[ i ].getDataField() );
 			if( colCfg != null ) {

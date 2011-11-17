@@ -144,6 +144,11 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
     private XUIViewProperty<String> align = 
     	new XUIViewProperty<String>( "align", this, "" );
     
+    /**
+     * If the content of the column should be wrapped (defaults to false)
+     */
+    private XUIViewProperty<Boolean> wrapText =
+    	new XUIViewProperty<Boolean>( "wrapText", this, false );
     
     public void setSqlExpression( String sqlexpressionEl ) {
     	this.sqlExpression.setValue( sqlexpressionEl );
@@ -449,5 +454,25 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 	 */
 	public void setAlign(String align){
 		this.align.setValue(align);
+	}
+	
+	/**
+	 * 
+	 * Retrieves whether the content of the column should be wrapped or not
+	 * 
+	 * @return
+	 */
+	public boolean wrapText(){
+		return this.wrapText.getValue().booleanValue();
+	}
+	
+	/**
+	 * 
+	 * Sets the content of this column to be wrapped
+	 * 
+	 * @param wrap True or false
+	 */
+	public void setWrapText(String wrap){
+		this.wrapText.setValue(Boolean.parseBoolean( wrap ));
 	}
 }
