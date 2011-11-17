@@ -3,6 +3,7 @@ package netgest.bo.xwc.components.classic;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.el.MethodExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -526,7 +527,7 @@ public class GridExplorer extends List {
 		}
 		
 		boolean stateChaged = super.wasStateChanged();
-		System.out.println( stateChaged );
+		//System.out.println( stateChaged );
 	}
 	
 	public ToolBar getToolBar() {
@@ -595,12 +596,16 @@ public class GridExplorer extends List {
 	//		pvwP.setId( getId() + "_mpvwP" );
 	//		pvw.getChildren().add( pvwP );
 			
+			//The action to execute when button is pressed
+			MethodExpression previewAction = createMethodBinding( previewCommand.getValue() );
+			
 			PreviewPositionMenu pvwb = new PreviewPositionMenu();
 			pvwb.setText( XEOComponentMessages.EXPLORER_PREVIEW_BOTTOM.toString() );
 			pvwb.setValue( PreviewPanelPosition.BOTTOM == p );
 			pvwb.setGroup( "preview" );
 			pvwb.setPosition( "BOTTOM" );
 			pvwb.setId( getId() + "_mpvwb" );
+			pvwb.setActionExpression( previewAction );
 			pvw.getChildren().add( pvwb );
 	
 			PreviewPositionMenu pvwr = new PreviewPositionMenu();
@@ -609,6 +614,7 @@ public class GridExplorer extends List {
 			pvwr.setGroup( "preview" );
 			pvwr.setPosition( "RIGHT" );
 			pvwr.setId( getId() + "_mpvwr" );
+			pvwr.setActionExpression( previewAction );
 			pvw.getChildren().add( pvwr );
 	
 			PreviewPositionMenu pvwl = new PreviewPositionMenu();
@@ -616,6 +622,7 @@ public class GridExplorer extends List {
 			pvwl.setValue( PreviewPanelPosition.LEFT == p );
 			pvwl.setGroup( "preview" );
 			pvwl.setPosition( "LEFT" );
+			pvwl.setActionExpression( previewAction );
 			pvwl.setId( getId() + "_mpvwl" );
 			pvw.getChildren().add( pvwl );
 			
