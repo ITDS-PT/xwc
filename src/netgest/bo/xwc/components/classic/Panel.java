@@ -47,6 +47,11 @@ public class Panel extends ViewerSecurityBase {
 	private XUIViewStateBindProperty<Boolean> visible = new XUIViewStateBindProperty<Boolean>( "visible", this, "true", Boolean.class );
 	
 	/**
+     * An icon for the panel
+     */
+    private XUIViewStateProperty<String> icon = new XUIViewStateProperty<String>( "icon", this );
+	
+	/**
 	 * Returns the title of the panel 
 	 * @return Title
 	 */
@@ -117,6 +122,14 @@ public class Panel extends ViewerSecurityBase {
 		return super.wasStateChanged();
 	}
 	
+	public String getIcon(){
+		return icon.getValue();
+	}
+	
+	public void setIcon(String value){
+		this.icon.setValue(value);	
+	}
+	
 	public static class XEOHTMLRenderer extends XUIRenderer {
 
         @Override
@@ -162,7 +175,21 @@ public class Panel extends ViewerSecurityBase {
         		
         		w.startElement( HTMLTag.SPAN, component);
         		w.writeAttribute( HTMLAttr.CLASS , "x-panel-header-text", null);
+        		String sIcon = oPanel.getIcon();
+        		
+        		if (sIcon != null && sIcon.length() > 0 ){
+	        		w.startElement(HTMLTag.IMG, component);
+		            	w.writeAttribute(HTMLAttr.SRC, "resources/Ebo_Perf/ico16.gif", null);
+		            	w.writeAttribute(HTMLAttr.WIDTH, "16", null);
+		            	w.writeAttribute(HTMLAttr.HEIGHT, "16", null);
+		            	w.writeAttribute(HTMLAttr.STYLE, "padding-right:3px", null);
+	            	w.endElement(HTMLTag.IMG);
+        		}
+        		
         		w.writeText( oPanel.getTitle(), null );
+        		
+        		
+        		
         		w.endElement( HTMLTag.SPAN );
         		
         		w.endElement(DIV);

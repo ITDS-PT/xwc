@@ -28,7 +28,12 @@ public class Tab extends ViewerCommandSecurityBase
     /**
      * Whether or not this tab is visible
      */
-    protected XUIViewStateBindProperty<Boolean> visible = new XUIViewStateBindProperty<Boolean>( "visible", this, "true", Boolean.class ); 	
+    protected XUIViewStateBindProperty<Boolean> visible = new XUIViewStateBindProperty<Boolean>( "visible", this, "true", Boolean.class );
+    
+    /**
+     * The path to an icon to display in the tab
+     */
+    private XUIViewStateProperty<String> icon = new XUIViewStateProperty<String>( "icon", this );
     
     public void setLabel(String label)
     {
@@ -47,6 +52,14 @@ public class Tab extends ViewerCommandSecurityBase
     {
         return label.getValue();
     }
+	
+	public String getIcon(){
+		return icon.getValue();
+	}
+	
+	public void setIcon(String icon){
+		this.icon.setValue(icon);
+	}
 
     @Override
 	public void actionPerformed(ActionEvent event)

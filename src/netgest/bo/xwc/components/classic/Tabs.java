@@ -253,6 +253,15 @@ public class Tabs extends XUIComponentBase
 	                    w.writeAttribute("class", "x-tab-strip-text", null);
 	
 	                    String sLabel = oChildTab.getLabel();
+	                    String sIcon = oChildTab.getIcon();
+	                    if (sIcon != null && sIcon.length() > 0){
+		                    w.startElement(HTMLTag.IMG, component);
+		                    	w.writeAttribute(HTMLAttr.SRC, sIcon, null);
+		                    	w.writeAttribute(HTMLAttr.WIDTH, "16", null);
+		                    	w.writeAttribute(HTMLAttr.HEIGHT, "16", null);
+		                    	w.writeAttribute(HTMLAttr.STYLE, "padding-right:3px", null);
+		                    w.endElement(HTMLTag.IMG);
+	                    }
 	                    
 	                    if( sLabel != null ) {
 	                    	w.writeText( sLabel, component, null );
