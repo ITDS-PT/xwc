@@ -13,7 +13,7 @@
             <head>
                 <BASE href="{$baseUrl}" ></BASE>
                 <!-- As CSS desta página -->
-                <style type="text/css" media="screen">
+                <style type="text/css" media="screen, print">
                 	body
                 	{
                 		background-color: white;
