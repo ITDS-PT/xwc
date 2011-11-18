@@ -1059,10 +1059,12 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 				
             }
             
-            oCompElement = oAjaxXmlResp.createElement( "component" );
-            oCompElement.setAttribute("id", oViewToRender.getClientId() );
-            oCompElement.appendChild( oAjaxXmlResp.createCDATASection( sResult ) );
-            oRenderElement.appendChild( oCompElement );
+        	if( !oViewToRender.getViewId().equals("netgest/bo/xwc/components/viewers/Dummy.xvw") ) {
+	            oCompElement = oAjaxXmlResp.createElement( "component" );
+	            oCompElement.setAttribute("id", oViewToRender.getClientId() );
+	            oCompElement.appendChild( oAjaxXmlResp.createCDATASection( sResult ) );
+	            oRenderElement.appendChild( oCompElement );
+        	}
             
             // Verifica se foi criada uma Writer, se sim guarda o script context
             // para passar à nova que é criada especificamente para 

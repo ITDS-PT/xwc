@@ -187,6 +187,10 @@ ExtXeo.MessageBox = function(){
             dlg.hide();
             Ext.callback(opt.fn, opt.scope||window, [button, activeTextEl.dom.value, opt], 1);
         }
+        delete dlgs[dlg.dialogId];
+        dlg.destroy();
+        
+        
     };
 
     // private
@@ -280,6 +284,8 @@ ExtXeo.MessageBox = function(){
                 buttons["cancel"] = dlg.addButton(bt["cancel"], handleButton.createCallback("cancel"));
                 buttons["ok"].hideMode = buttons["yes"].hideMode = buttons["no"].hideMode = buttons["cancel"].hideMode = 'offsets';
                 */
+                
+                dlg.dialogId = id;
                 
                 dlg.render(document.body);
                 dlg.getEl().addClass('x-window-dlg');
@@ -391,8 +397,10 @@ ExtXeo.MessageBox = function(){
             if( options.left )
             	wndProps.left = options.left;
             
-            var d = this.getDialog( opt.id , opt.title || "&#160;", opt.buttons, null, wndProps );
+            
+            var d = this.getDialog( opt.id, opt.title || "&#160;", opt.buttons, null, wndProps );
             d.setTitle(opt.title || "&#160;");
+            
             var allowClose = (opt.closable !== false && opt.progress !== true && opt.wait !== true);
             d.tools.close.setDisplayed(allowClose);
             activeTextEl = textboxEl;
@@ -431,11 +439,13 @@ ExtXeo.MessageBox = function(){
             //Fixes the issues of displaying the same 
             //messagebox inside a window multiple times
             //after closing the window and opening it again
+            /*
             for (btnCurr in d.buttons){
             	if (btnCurr.hidden){
             		btnCurr.show();
             	}
-            }
+            }*/
+            
             
             if(opt.iconCls){
               d.setIconClass(opt.iconCls);
@@ -452,6 +462,9 @@ ExtXeo.MessageBox = function(){
             d.modal = opt.modal !== false;
             d.mask = opt.modal !== false ? mask : false;
             if(!d.isVisible()){
+            	
+            	//Add aqui
+            	
                 // force it to the end of the z-index stack so it gets a cursor in FF
                 document.body.appendChild(dlg.el.dom);
                 d.setAnimateTarget(opt.animEl);
