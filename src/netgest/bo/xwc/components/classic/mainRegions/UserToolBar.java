@@ -462,7 +462,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 				.findComponent("showFavoritesCmd");
 
 				if (showUserFavsCmd != null) {
-					String comandExecute = XVWScripts.getCommandScript("tab",showUserFavsCmd,1);
+					String comandExecute = XVWScripts.getCommandScript("tab",showUserFavsCmd,2);
 					arrayChildFavorites
 					.add(
 							"handler",
@@ -493,7 +493,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			
 			//Generate the Handler for the button
 			if (showUserHistoryCmd != null) {
-				historyCmdExecute = XVWScripts.getCommandScript("tab",showUserHistoryCmd,1);
+				historyCmdExecute = XVWScripts.getCommandScript("tab",showUserHistoryCmd,2);
 				arrayHistory
 				.add(
 						"handler",
@@ -513,7 +513,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 				newMenu.addJSString("cls", current.getIconCls());
 				newMenu.addJSString("text", current.getText());
 				newMenu.add( "handler", "function(){" +
-		            XVWScripts.getCommandScript( current.getTarget(), current, XVWServerActionWaitMode.STATUS_MESSAGE.ordinal() )+"}" 
+		            XVWScripts.getCommandScript( current.getTarget(), current, XVWServerActionWaitMode.DIALOG.ordinal() )+"}" 
 		           );
 			}
 		}
@@ -554,6 +554,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			menuUserProps.setText(USER_TOOLBAR_PROPERTIES_BTN_LBL.toString());
 			menuUserProps.setIcon("ext-xeo/admin/users.gif");
 			menuUserProps.setServerAction("#{viewBean.showUserProperties}");
+			menuUserProps.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString( ));
 			
 			list.add(menuUserProps);
 			list.add(SEPARATOR);
@@ -567,6 +568,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			showUserFavsCmd.setServerAction("#{viewBean.openViewer}");
 			showUserFavsCmd.setValue("{viewerName:'netgest/bo/xwc/xeo/viewers/UserFavorites.xvw',boui:'"+ctx.getBoSession().getPerformerBoui()+"'}");
 			showUserFavsCmd.setTarget("tab");
+			showUserFavsCmd.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString( ));
 			
 			list.add(showUserFavsCmd);
 			list.add(SEPARATOR);
@@ -622,6 +624,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			historyMenu.setTarget("tab");
 			historyMenu.setServerAction("#{viewBean.openViewer}");
 			historyMenu.setValue("{viewerName:'netgest/bo/xwc/xeo/viewers/UserHistory.xvw'}");
+			historyMenu.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString( ));
 			
 			list.add(historyMenu);
 			list.add(Menu.getMenuSpacer());

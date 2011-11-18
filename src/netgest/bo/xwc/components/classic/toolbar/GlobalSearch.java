@@ -9,6 +9,7 @@ import javax.faces.component.UIComponent;
 import netgest.bo.xwc.components.classic.AttributeLov;
 import netgest.bo.xwc.components.classic.AttributeText;
 import netgest.bo.xwc.components.classic.ViewerSecurityBase;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.security.SecurableComponent;
@@ -200,7 +201,7 @@ public class GlobalSearch extends ViewerSecurityBase implements IToolbarGroup {
 			m.setIcon(getIcon());
 		m.setTarget("alwaysNewTab");
 		m.setServerAction("#{viewBean.searchGlobal}");
-		m.setServerActionWaitMode("STATUS_MESSAGE");
+		m.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 		m.setId("globalSearchActionXEO");
 		
 		

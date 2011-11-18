@@ -13,6 +13,7 @@ import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
@@ -234,6 +235,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 				rootMenu.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 				rootMenu.setValue( subClasseDef.getName() );
 				rootMenu.setTargetMethod("addNewToBridge");
+				rootMenu.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 				
 				if( subClassesDef.size() > 1 ) {
 					ViewerMethod viewerMethod = new ViewerMethod();
@@ -243,6 +245,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 					viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 					viewerMethod.setValue( subClasseDef.getName() );
 					viewerMethod.setTargetMethod("addNewToBridge");
+					viewerMethod.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 
 					rootMenu.getChildren().add( viewerMethod );
 					
@@ -255,6 +258,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 						viewerMethod.setId( getId() + "_new_" + subClasseDef.getName() );
 						viewerMethod.setTargetMethod( "addNewToBridge" );
 						viewerMethod.setValue( subClasseDef.getName() );
+						viewerMethod.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 						rootMenu.getChildren().add( viewerMethod );
 					}
 				}
@@ -281,6 +285,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 			rootMenu.setToolTip( XEOComponentMessages.BRIDGETB_ADD.toString( subClasseDef.getLabel() ) );
 			rootMenu.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 			rootMenu.setValue( subClasseDef.getName() );
+			rootMenu.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 			
 			if (subClasseDef.getBoCanBeOrphan())
 			{
@@ -301,6 +306,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 				viewerMethod.setToolTip(XEOComponentMessages.BRIDGETB_ADD.toString( subClasseDef.getLabel() ));
 				viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 				viewerMethod.setValue( subClasseDef.getName() );
+				viewerMethod.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 				if (subClasseDef.getBoCanBeOrphan())
 				{
 					viewerMethod.setId( getId() + "_add1_" + subClasseDef.getName() );
@@ -322,6 +328,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 					viewerMethod.setText( subClasseDef.getLabel() );
 					viewerMethod.setValue( subClasseDef.getName() );
 					viewerMethod.setToolTip(XEOComponentMessages.BRIDGETB_ADD.toString( subClasseDef.getLabel() ));
+					viewerMethod.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 					if (subClasseDef.getBoCanBeOrphan())
 					{
 						viewerMethod.setId( getId() + "_add_" + subClasseDef.getName() );
@@ -405,6 +412,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		toolBarOpt.setText( label );
 		toolBarOpt.setTargetMethod( action );
 		toolBarOpt.setIcon( icon );
+		toolBarOpt.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 		toolBarOpt.setValue( findParentComponent(GridPanel.class).getClientId() );
 		getChildren().add( currentMenuPos++, toolBarOpt );
 		

@@ -7,6 +7,7 @@ import javax.faces.component.UIComponent;
 
 import netgest.bo.xwc.components.classic.AttributeLabel;
 import netgest.bo.xwc.components.classic.AttributeLov;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -103,6 +104,7 @@ public class ThemeChanger extends XUIComponentBase implements IToolbarGroup {
 		changeThemeBtn.setToolTip(getMenuTooltip());
 		changeThemeBtn.setId("changeThemeMenu");
 		changeThemeBtn.setServerAction("#{viewBean.changeTheme}");
+		changeThemeBtn.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 		
 		list.add(changeThemeBtn);
 		return list;

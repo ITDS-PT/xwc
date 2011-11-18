@@ -5,6 +5,7 @@ import java.util.List;
 import javax.faces.component.UIComponent;
 
 import netgest.bo.xwc.components.classic.ToolBar;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -77,6 +78,7 @@ public class LookupListToolBar extends ListToolBar {
 		xeoMethod.setTargetMethod( methodName );
 		xeoMethod.setIcon( icon );
 		xeoMethod.setToolTip( toolTip );
+		xeoMethod.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 		getChildren().add( currentMenuPos++, xeoMethod );
 	
 		return xeoMethod;
