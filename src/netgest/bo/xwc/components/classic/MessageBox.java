@@ -15,6 +15,7 @@ import org.json.JSONException;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.util.ScriptBuilder;
@@ -538,10 +539,14 @@ public class MessageBox extends XUIInput {
 		super.initComponent();
 		
 		OK.setText( ComponentMessages.DIALOG_OK_BTN.toString() );
+		OK.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 		CANCEL.setText( ComponentMessages.DIALOG_CANCEL_BTN.toString() );
+		CANCEL.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 		
 		YES.setText( ComponentMessages.DIALOG_YES_BTN.toString() );
+		YES.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 		NO.setText( ComponentMessages.DIALOG_NO_BTN.toString() );
+		NO.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 
 		OKCANCEL.add( OK );
 		OKCANCEL.add( CANCEL );
@@ -701,7 +706,7 @@ public class MessageBox extends XUIInput {
 								XVWScripts.getAjaxCommandScript( 
 										c, 
 										(String)c.getValue(), 
-										XVWScripts.WAIT_STATUS_MESSAGE  ) 
+										XVWScripts.WAIT_DIALOG  ) 
 								);
 						sb.endBlock();
 					}
@@ -718,7 +723,7 @@ public class MessageBox extends XUIInput {
 										m.getTarget(), 
 										m, 
 										(String)m.getValue(), 
-										XVWScripts.WAIT_STATUS_MESSAGE  ) 
+										XVWScripts.WAIT_DIALOG  ) 
 								);
 						sb.endBlock();
 					}
