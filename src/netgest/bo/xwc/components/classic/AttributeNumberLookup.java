@@ -278,7 +278,8 @@ public class AttributeNumberLookup extends AttributeBase {
 	        	if( "null".equals( sJsValue ) ) {
 	        		sJsValue = "NaN";
 	        	}
-	        	sb.w( "document.getElementById('" ).w( oComp.getClientId() ).w("_ci').value = '").w(  sJsValue  ).w( "';" );
+	        	sb.w("var look = document.getElementById('" ).w( oComp.getClientId() ).w("_ci');");
+	        	sb.w( " if (look) {document.getElementById('" ).w( oComp.getClientId() ).w("_ci').value = '").w(  sJsValue  ).w( "'; }" );
 			}
         	if( oComp.getStateProperty("visible").wasChanged() )
         		sb.w("c.setVisible(").writeValue( oComp.isVisible() ).w(")").endStatement();

@@ -230,7 +230,7 @@ public class AttributeFile extends AttributeBase {
 	            }
 	            oInpConfig.add("onTrigger2Click", "function(){if(!this.disabled){ " +
 	            		XVWScripts.getOpenCommandWindow( oAttFile.getLookupCommand(), 
-	            				oAttFile.getLookupCommand() + "_" + System.currentTimeMillis() ) +
+	            				oAttFile.getLookupCommand() + "_" + System.currentTimeMillis(), "{width:400, height:250}" ) +
 	            		"}}"
 	            );
             
