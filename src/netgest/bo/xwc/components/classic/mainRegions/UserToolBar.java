@@ -94,7 +94,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 	
 	
 	/**
-	 * Sets the componenent to not have a default action
+	 * Sets the component to not have a default action
 	 */
 	private XUIBindProperty<Boolean> noDefaultAction = 
 		new XUIBindProperty<Boolean>("noDefaultAction", this, Boolean.class, "false" );

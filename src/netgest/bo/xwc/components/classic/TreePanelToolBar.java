@@ -24,7 +24,7 @@ public class TreePanelToolBar extends ViewerSecurityBase {
 		new XUIBindProperty<String>("text", this, String.class, "ToolBar" );
 	
 	private XUIBindProperty<String> icon = 
-		new XUIBindProperty<String>("icon", this, String.class, "icons/favorite.png" );
+		new XUIBindProperty<String>("icon", this, String.class, "" );
 	
 	public String getText(){
 		return text.getEvaluatedValue();

@@ -8,9 +8,13 @@ import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boBridgeIterator;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
+import netgest.bo.system.boLoginBean;
+import netgest.bo.system.boLoginException;
+import netgest.bo.system.boSession;
 import netgest.bo.system.boSessionUser;
 import netgest.bo.utils.XeoUserTheme;
 import netgest.bo.utils.XeoUserThemeFile;
@@ -78,6 +82,7 @@ public class ExtJsTheme implements XUITheme {
 	 * @return An array with the files to include
 	 */
 	private Map<String, String> themeFilesToInclude() {
+		Map<String,String> result = new HashMap<String, String>();
 		if (boApplication.currentContext().getEboContext() != null) {
 			EboContext ctx = boApplication.currentContext().getEboContext();
 			boSessionUser user = ctx.getBoSession().getUser();
@@ -86,35 +91,30 @@ public class ExtJsTheme implements XUITheme {
 				//User has a theme
 				if (user.getThemeFiles().size() > 0 
 						|| ctx.getBoSession().getProperty("theme") != null) { //This case is when there are no files in the theme (default blue)
-					Map<String, String> result = user.getThemeFiles();
-					return result;
+					return  user.getThemeFiles();
 				}
 				//Retrieve default theme from runtime
-				boObjectList list = boObjectList.list(boApplication
-						.currentContext().getEboContext(),
-						"select Theme where defaultTheme = '1'");
-				if (list.getRecordCount() == 1) {
-					HashMap<String, String> result = new HashMap<String, String>();
-					list.beforeFirst();
-					list.next();
-					boObject currentTheme = list.getObject();
-					bridgeHandler bh = currentTheme.getBridge(Theme.FILES);
-					boBridgeIterator iterator = bh.iterator();
-					while (iterator.next()) {
-						boObject currentFile = iterator.currentRow()
-								.getObject();
-						String id = currentFile.getAttribute(ThemeIncludes.ID).getValueString();
-						String path = currentFile.getAttribute(ThemeIncludes.FILEPATH).getValueString();
-						result.put(id, path);
-					}
-				}
+				result = getDefaultThemeFiles(ctx);
 			} catch (Exception e) {
 				return new HashMap<String, String>(0);
+			}
+		} else{
+			try{
+				boApplication app = boApplication.getDefaultApplication();
+	            boSession session = app.boLogin("SYSUSER", boLoginBean.getSystemKey());
+	            EboContext ctx = app.createContext(session);
+	            result = getDefaultThemeFiles(ctx);
+	            ctx.close();
+	            session.closeSession();
+			}
+			catch (boRuntimeException e){
+				logger.warn("Could not read the default theme for the application", e);
+			} catch (boLoginException e) {
+				logger.warn("Could not login to the application while trying to read the default theme", e);
 			}
 		}
 
 		//Retrieve from boConfig
-		HashMap<String, String> result = new HashMap<String, String>();
 		XeoUserTheme defaultTheme = boApplication.getDefaultApplication()
 				.getApplicationConfig().getDefaultTheme();
 		if (defaultTheme != null) {
@@ -122,6 +122,33 @@ public class ExtJsTheme implements XUITheme {
 			for (XeoUserThemeFile f : files) {
 				result.put(f.getId(), f.getPath());
 			}
+		}
+		return result;
+	}
+	
+	private Map<String,String> getDefaultThemeFiles(EboContext ctx){
+		
+		Map<String,String> result = new HashMap<String, String>();
+		
+		boObjectList list = boObjectList.list(ctx,
+				"select Theme where defaultTheme = '1'");
+		try {
+			if (list.getRecordCount() == 1) {
+				list.beforeFirst();
+				list.next();
+				boObject currentTheme = list.getObject();
+				bridgeHandler bh = currentTheme.getBridge(Theme.FILES);
+				boBridgeIterator iterator = bh.iterator();
+				while (iterator.next()) {
+					boObject currentFile = iterator.currentRow()
+							.getObject();
+					String id = currentFile.getAttribute(ThemeIncludes.ID).getValueString();
+					String path = currentFile.getAttribute(ThemeIncludes.FILEPATH).getValueString();
+					result.put(id, path);
+				}
+			}
+		} catch (boRuntimeException e) {
+			logger.warn("Could not read the default theme", e);
 		}
 		return result;
 	}

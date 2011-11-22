@@ -69,6 +69,8 @@ public class BottomRegion extends ExtremeRegion implements ExtJSRegionRenderer {
 	@Override
 	public ExtConfig renderRegion() {
 		
+			ExtConfig listeners = getListeners();
+		
 			ExtConfig bottomRegion = new ExtConfig();
 			bottomRegion.addJSString("region", "south");
 			bottomRegion.addJSString("id", "south-panel");
@@ -83,6 +85,10 @@ public class BottomRegion extends ExtremeRegion implements ExtJSRegionRenderer {
 			bottomRegion.add("animated",true);
 			bottomRegion.add("border",true);
 			
+			if (listeners != null){
+				bottomRegion.add("listeners", listeners);
+			}
+			
 			ExtConfigArray itemsArray = new ExtConfigArray();
 			boolean hasItems = false;
 			Iterator<UIComponent> it = getChildren().iterator();
@@ -95,6 +101,8 @@ public class BottomRegion extends ExtremeRegion implements ExtJSRegionRenderer {
 					hasItems = true;
 				}
 			}
+			
+			
 			
 			if (!hasItems)
 				bottomRegion.addJSString("contentEl","southRegion");

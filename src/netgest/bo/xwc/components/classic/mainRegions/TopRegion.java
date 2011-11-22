@@ -68,7 +68,11 @@ public class TopRegion extends ExtremeRegion implements ExtJSRegionRenderer {
 
 	@Override
 	public ExtConfig renderRegion() {
+		
 		ExtConfig topRegion = new ExtConfig();
+		
+		ExtConfig listeners = getListeners();
+		
 		topRegion.addJSString("region", "north");
 		topRegion.addJSString("id", "north-panel");
 		String title = getTitle();
@@ -86,6 +90,10 @@ public class TopRegion extends ExtremeRegion implements ExtJSRegionRenderer {
 		topRegion.add("collapsed",getCollapsed());
 		topRegion.add("hideBorders",true);
 		topRegion.addJSString("margins","0 0 0 0");
+		
+		if (listeners != null){
+			topRegion.add("listeners", listeners);
+		}
 		
 		ExtConfigArray itemsArray = new ExtConfigArray();
 		boolean hasItems = false;

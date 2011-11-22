@@ -27,7 +27,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * A toolbar for the treepanel component
  *
  */
-public class TreePanelToolBar extends XUIComponentBase{
+public class MainTreePanelToolBar extends XUIComponentBase{
 
 	
 	/**
