@@ -644,8 +644,9 @@ public class GridExplorer extends List {
 		save.setId( getId() + "_saveView" );
 		save.setIcon("ext-xeo/images/gridexplorer/gravar.gif");
 		save.setToolTip(XEOComponentMessages.EXPLORER_SAVEVIEW_TOOLTIP.toString());
-		save.addActionListener( new SaveViewListener() );
 		
+		//save.setActionExpression(createMethodBinding("#{viewBean.rowDoubleClick}"));
+		save.addActionListener( new SaveViewListener() );
 
 //		Menu autoSaveView = new Menu();
 //		autoSaveView.setId( getId() + "_autoSaveView" );
@@ -714,10 +715,10 @@ public class GridExplorer extends List {
 	}
 	
 	
+	
 	public static class SaveViewListener implements ActionListener {
 
-		@Override
-		public void processAction(ActionEvent action) throws AbortProcessingException {
+		public void processAction(ActionEvent action)  {
 			
 			GridExplorer explorer = 
 					(GridExplorer)((XUIComponentBase)action.getComponent()).

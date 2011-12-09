@@ -11,9 +11,15 @@ public interface XEOComponentMessages {
 
 	public static final XUILocalizedMessage BRIDGETB_NEW = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "BRIDGETB_NEW" );
-
+	
 	public static final XUILocalizedMessage BRIDGETB_ADD = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "BRIDGETB_ADD" );
+	
+	public static final XUILocalizedMessage BRIDGETB_FAVORITE = 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "BRIDGETB_FAVORITE" );
+	
+	public static final XUILocalizedMessage BRIDGETB_FAVORITE_TTIP = 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "BRIDGETB_FAVORITE_TTIP" );
 	
 	public static final XUILocalizedMessage EDITTB_SAVE = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EDITTB_SAVE" );
@@ -146,4 +152,17 @@ public interface XEOComponentMessages {
 	
 	public static final XUILocalizedMessage EXPLORER_VIEW_CURRENT= 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_VIEW_CURRENT" );
+	
+	public static final XUILocalizedMessage TREE_SHUTLE_AVAILABLE= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "TREE_SHUTLE_AVAILABLE" );
+	
+	public static final XUILocalizedMessage TREE_SHUTLE_SELECTED= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "TREE_SHUTLE_SELECTED" );
+	
+	public static final XUILocalizedMessage TREE_SHUTLE_CANCEL= 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "TREE_SHUTLE_CANCEL" );
+	
+	
+	
+	
 }

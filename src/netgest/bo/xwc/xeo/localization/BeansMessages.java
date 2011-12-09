@@ -183,4 +183,10 @@ public interface BeansMessages {
 	public static final XUILocalizedMessage GLOBAL_SEARCH_BEAN_NO_RESULTS = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "GLOBAL_SEARCH_BEAN_NO_RESULTS" );
 	
+	public static final XUILocalizedMessage TREE_SHUTTLE_COLUMN_SELECTION = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "TREE_SHUTTLE_COLUMN_SELECTION" );
+	
+	public static final XUILocalizedMessage TREE_SHUTTLE_COLUMN_SELECTION_MUST_SELECT = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "TREE_SHUTTLE_COLUMN_SELECTION_MUST_SELECT" );
+	
 }

@@ -144,5 +144,8 @@ public interface ViewersMessages {
 		new XUILocalizedMessage( ViewersMessages.class.getName(), "BUILDER_DEV_OPENLOG" );		
 	public static final XUILocalizedMessage BUILD_PROGRESS = 
 		new XUILocalizedMessage( ViewersMessages.class.getName(), "BUILD_PROGRESS" );	
+	
+	public static final XUILocalizedMessage TREE_SHUTTLE_SELECT_COLS = 
+		new XUILocalizedMessage( ViewersMessages.class.getName(), "TREE_SHUTTLE_SELECT_COLS" );
 }
 

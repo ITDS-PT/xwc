@@ -3,9 +3,9 @@ package netgest.bo.xwc.components.classic.grid;
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.model.Column;
-import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
+import netgest.bo.xwc.xeo.localization.BeansMessages;
 
 public class GridTreeSelectorEditBean extends XEOEditBean {
 
@@ -78,7 +78,8 @@ public class GridTreeSelectorEditBean extends XEOEditBean {
 		sb.s("		var w = Ext.getCmp('" + getParentWindowId() + "')");
 		sb.s("  	w.close()");
 		sb.l("	} else { ");
-		sb.l("		Ext.Msg.alert('Selecção de colunas', 'Tem de seleccionar pelo menos uma coluna.');");
+		sb.l("		Ext.Msg.alert('"+BeansMessages.TREE_SHUTTLE_COLUMN_SELECTION.toString()+"'," +
+				" '"+BeansMessages.TREE_SHUTTLE_COLUMN_SELECTION_MUST_SELECT.toString()+"');");
 		sb.l("	}");
 		sb.l("}");
 		/*

@@ -34,6 +34,13 @@ public interface ComponentMessages {
 	public static final XUILocalizedMessage VALUE_ERROR_MIN_VALUE = 
 		new XUILocalizedMessage( ComponentMessages.class.getName(), "VALUE_ERROR_MIN_VALUE" );
 	
+	public static final XUILocalizedMessage VALUE_ERROR_MAX_VALUE_LABEL = 
+		new XUILocalizedMessage( ComponentMessages.class.getName(), "VALUE_ERROR_MAX_VALUE_LABEL" );
+
+	public static final XUILocalizedMessage VALUE_ERROR_MIN_VALUE_LABEL = 
+		new XUILocalizedMessage( ComponentMessages.class.getName(), "VALUE_ERROR_MIN_VALUE_LABEL" );
+
+	
 	public static final XUILocalizedMessage FILE_NOT_EDITABLE = 
 		new XUILocalizedMessage( ComponentMessages.class.getName(), "FILE_NOT_EDITABLE" );
 	

@@ -17,6 +17,7 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
 /**
  * Componente Tree Shuttle para selecção de colunas
@@ -273,7 +274,7 @@ public class TreeShuttle extends AttributeBase {
 			extComp.append("	var tree = new Tree.TreePanel({\n");
 			extComp.append("                rootVisible:false, \n");
 			extComp.append("                animate:true, \n");
-			extComp.append("                title:'Colunas Dispon�veis', \n");
+			extComp.append("                title:'"+XEOComponentMessages.TREE_SHUTLE_AVAILABLE.toString()+"', \n");
 			extComp.append("                frame:true, \n");
 			extComp.append("                bodyBorder:false, \n");
 			extComp.append("                bodyStyle:'background-color:white;', \n");
@@ -298,7 +299,7 @@ public class TreeShuttle extends AttributeBase {
 
 			// Nó raiz
 			extComp.append("	var root = new Tree.AsyncTreeNode({\n");
-			extComp.append("	                text: 'Colunas Dispon�veis', \n");
+			extComp.append("	                text: '"+XEOComponentMessages.TREE_SHUTLE_AVAILABLE.toString()+"', \n");
 			extComp.append("	                draggable:true,\n");
 			extComp.append("                	children:v_local_tree1_data,\n");
 			extComp.append("	                id:'src',\n");	
@@ -314,7 +315,7 @@ public class TreeShuttle extends AttributeBase {
 			// Segunda Tree
 			extComp.append("	var tree2 = new Tree.TreePanel({\n");
 			extComp.append("                rootVisible:false,\n");
-			extComp.append("                title:'Colunas Seleccionadas', \n");
+			extComp.append("                title:'"+XEOComponentMessages.TREE_SHUTLE_SELECTED.toString()+"', \n");
 			extComp.append("                frame:true, \n");
 			extComp.append("                bodyStyle:'background-color:white;', \n");
 			extComp.append("                animate:true,\n");
@@ -339,7 +340,7 @@ public class TreeShuttle extends AttributeBase {
 			
 			// Nó raiz
 			extComp.append("	var root2 = new Tree.AsyncTreeNode({\n");
-			extComp.append("                text: 'Colunas Seleccionadas', \n");
+			extComp.append("                text: '"+XEOComponentMessages.TREE_SHUTLE_SELECTED.toString()+"', \n");
 			extComp.append("                draggable:true, \n");
 			extComp.append("                children:v_local_tree2_data,\n");
 			extComp.append("                id:'ux',\n");	
@@ -380,7 +381,7 @@ public class TreeShuttle extends AttributeBase {
 			extComp.append("btnOk.render('" + oComp.getClientId() + "button-ok');");	
 			
 			
-			extComp.append("var btnCancel = new Ext.Button({id: 'button-cancel', text:'Cancelar', handler: " + cancelHandler + "});\n");			
+			extComp.append("var btnCancel = new Ext.Button({id: 'button-cancel', text:'"+XEOComponentMessages.TREE_SHUTLE_CANCEL.toString()+"', handler: " + cancelHandler + "});\n");			
 			extComp.append("btnCancel.render('" + oComp.getClientId() + "button-cancel');");	
 			extComp.append("});");
 			
