@@ -63,7 +63,7 @@ public class Attribute extends AttributeBase
     /**
      * The input type for the field
      */
-    @Values({"attributeText","attributeBoolean","attributeNumber","attributeDate","attributeTime","attributeDateTime","attributeHtmlEditor","attributeLov"})
+    @Values({"attributeText","attributeBoolean","attributeNumber","attributeDate","attributeTime","attributeDateTime","attributeHtmlEditor","attributeLov","bridgeLookup"})
     private XUIViewStateBindProperty<String> inputType   = new XUIViewStateBindProperty<String>( "inputType", this,"", String.class );
 
 
@@ -118,7 +118,6 @@ public class Attribute extends AttributeBase
 	            this.oInput = (AttributeBase)oRequestContext.getApplicationContext().getViewerBuilder()
 	                                    .createComponent( oRequestContext, sComponentType );
 	            
-	            //this.oInput = new AttributeText(  );
 	            this.oInput.setId( getId() + "_i" );
 	            
 	            propagateInputProperties( this.oInput );
@@ -190,6 +189,9 @@ public class Attribute extends AttributeBase
                 case DataFieldTypes.VALUE_DATETIME:
                     sRet = "attributeDateTime";
                     break;
+                case DataFieldTypes.VALUE_BRIDGE:
+                	sRet = "bridgeLookup";
+                	break;
             }
 
             setInputType( sRet );
@@ -248,6 +250,9 @@ public class Attribute extends AttributeBase
 
         if( getValueExpression("height") != null )
             oAttr.setHeight( getValueExpression("height").getExpressionString() );
+        
+        if( getValueExpression("label") != null )
+            oAttr.setLabel( getValueExpression("label").getExpressionString() );
 
         if( getValueExpression("lovMap") != null )
             oAttr.setLovMap( getValueExpression("lovMap").getExpressionString() );
@@ -263,6 +268,9 @@ public class Attribute extends AttributeBase
         
         if( getValueExpression( "securityPermissions" ) != null )
             oAttr.setSecurityPermissions( getValueExpression("securityPermissions").getExpressionString() );
+        
+        if( getValueExpression( "invalidText" ) != null )
+            oAttr.setInvalidText( getValueExpression("invalidText").getExpressionString() );
 
         if( getValueExpression( "viewerSecurityPermissions" ) != null )
             oAttr.setViewerSecurityPermissions( getValueExpression("viewerSecurityPermissions").getExpressionString() );
@@ -282,6 +290,11 @@ public class Attribute extends AttributeBase
         if( getValueExpression( "minValue" ) != null )
             oAttr.setMinValue( getValueExpression("minValue").getExpressionString() );
         
+        if( getValueExpression( "showFavorites" ) != null )
+            oAttr.setShowFavorites( getValueExpression("showFavorites").getExpressionString() );
+        
+        if( getValueExpression( "listFavorites" ) != null )
+            oAttr.setListFavorites( getValueExpression("listFavorites").getExpressionString() );
         
         oAttr.setInstanceId( getInstanceId() );
         

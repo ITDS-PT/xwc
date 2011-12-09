@@ -46,29 +46,30 @@ public class AttributeNumber extends AttributeBase {
                     double min = getMinValue();
                     if( oSubmitedBigDecimal.doubleValue() > max ) {
                     	setValid( false );
-                    	setInvalidText( ComponentMessages.VALUE_ERROR_MAX_VALUE.toString( max ) );
+                    	setInvalidText( ComponentMessages.VALUE_ERROR_MAX_VALUE_LABEL.toString(getLabel(), max ) );
                         getRequestContext().addMessage( getClientId(), 
                         		new XUIMessage(
                                         XUIMessage.TYPE_ALERT,
                                         XUIMessage.SEVERITY_ERROR,
                                         getLabel(),
-                                        ComponentMessages.VALUE_ERROR_MAX_VALUE.toString( max )
+                                        ComponentMessages.VALUE_ERROR_MAX_VALUE_LABEL.toString(getLabel(), max )
                                 )
                         );
                     }
                     else if ( oSubmitedBigDecimal.doubleValue() < min ) { 
                     	setValid( false );
-                    	setInvalidText( ComponentMessages.VALUE_ERROR_MIN_VALUE.toString( min ) );
+                    	setInvalidText( ComponentMessages.VALUE_ERROR_MIN_VALUE_LABEL.toString(getLabel(), min ) );
                         getRequestContext().addMessage( getClientId(), 
                         		new XUIMessage(
                                         XUIMessage.TYPE_ALERT,
                                         XUIMessage.SEVERITY_ERROR,
                                         getLabel(),
-                                        ComponentMessages.VALUE_ERROR_MIN_VALUE.toString( min )
+                                        ComponentMessages.VALUE_ERROR_MIN_VALUE_LABEL.toString(getLabel(), min )
                                 )
                         );
-                    } else { 
-                    	clearInvalid();
+                    }else { 
+                    	//clearInvalid();
+                    	setValid(true);
                     	setValue( oSubmitedBigDecimal );
                     }
                 }

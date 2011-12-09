@@ -59,7 +59,7 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
     	
         extConfig.addJSString( "name",  oAttr.getClientId() );
         extConfig.addJSString( "value", sDisplayValue );
-
+        
         extConfig.add( "maxLength", oAttr.getMaxLength());
 
         if( !oAttr.isVisible() ) {
@@ -164,10 +164,14 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
         	
         	
     	}
+        
+        boolean valid = oComp.getIsValid();
         String invalidText = oComp.getInvalidText();
+        if (!valid){
         if ( invalidText != null && invalidText.length() > 0 ) {
         	s.w("c._xwcvalid='").writeValue( invalidText ).w("'").endStatement();
         	s.w("c.markInvalid('" ).writeValue( invalidText ).w("')").endStatement();
+        }
         }
         else {
         	s.w("c.clearInvalid()").endStatement();

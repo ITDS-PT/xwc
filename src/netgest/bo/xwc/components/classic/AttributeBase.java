@@ -1,6 +1,7 @@
 package netgest.bo.xwc.components.classic;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.el.ELException;
@@ -11,7 +12,6 @@ import javax.faces.el.MethodBinding;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
@@ -20,7 +20,7 @@ import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
  * This component is not usable in the viewers,
  * is the base of all attribute Type Components
  * 
- * @author Jo„o Carreira
+ * @author Jo√£o Carreira
  *
  */
 public class AttributeBase extends ViewerInputSecurityBase {
@@ -56,10 +56,16 @@ public class AttributeBase extends ViewerInputSecurityBase {
     	new XUIViewBindProperty<Boolean>( "isLovEditable", this, Boolean.class );
 
     /**
+     * Stores the value of the validation result
+     */
+    private XUIBindProperty<Boolean> isValidAttribute	= 
+    	new XUIBindProperty<Boolean>( "isValidAttribute", this,Boolean.TRUE ,Boolean.class );
+    
+    /**
      * A method to perform validation on the value of this attribute
      */
-    private XUIMethodBindProperty validation	= 
-    	new XUIMethodBindProperty( "validation", this );
+    private XUIBindProperty<Boolean> validation	= 
+    	new XUIBindProperty<Boolean>( "validation", this,Boolean.TRUE ,Boolean.class );
     
     /**
      * Triggers a form submit whenever the value of this attribute
@@ -164,10 +170,10 @@ public class AttributeBase extends ViewerInputSecurityBase {
      * Whether or not the value of the component is required by the XEO Model
      */
     private XUIViewStateBindProperty<Boolean> modelRequired  	= 
-    	new XUIViewStateBindProperty<Boolean>( "modelRequired", this, Boolean.class );
+    	new XUIViewStateBindProperty<Boolean>( "modelRequired", this,"false", Boolean.class );
     
     private XUIViewStateBindProperty<Boolean> recommended     	= 
-    	new XUIViewStateBindProperty<Boolean>( "recommended", this, Boolean.class );
+    	new XUIViewStateBindProperty<Boolean>( "recommended", this,"false", Boolean.class );
     
     /**
      * The label of this attribute
@@ -206,6 +212,20 @@ public class AttributeBase extends ViewerInputSecurityBase {
      */
     private XUIViewStateBindProperty<String> invalidText = 
     	new XUIViewStateBindProperty<String>("invalidText", this, String.class ); 
+    
+    
+    /**
+     * Whether or not to show the favorites (only applicable to NumberLookup and BridgeLookup)
+     * 
+     */
+    private XUIViewStateBindProperty<Boolean> showFavorites = 
+    	new XUIViewStateBindProperty<Boolean>( "showFavorites", this, "false", Boolean.class);
+    
+    /**
+     * Retrieves the list of bouis to show for the favorites
+     */
+    private XUIViewStateBindProperty<List<Long>> listFavorites = 
+    	new XUIViewStateBindProperty<List<Long>>( "listFavorites", this, List.class);
     
     /**
      * Initialize the component
@@ -247,7 +267,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
             );
         
         this.validation.setValue( 
-                createMethodBinding( sBeanExpression + ".validate}", Boolean.class ) 
+        		createValueExpression( sBeanExpression + ".validate}", Boolean.class ) 
             );
 
         this.onChangeSubmit.setValue( 
@@ -333,6 +353,24 @@ public class AttributeBase extends ViewerInputSecurityBase {
      */
     public DataFieldConnector getDataFieldConnector() {
         return this.dataFieldConnector.getEvaluatedValue();
+    }
+    
+    /**
+     * 
+     * Returns the the valud of the property validation
+     * 
+     * @return True if the component is valid and false otherwise
+     */
+    public boolean getIsValid(){
+    	return isValidAttribute.getEvaluatedValue();
+    }
+    
+    public void setIsValid(String validExpr){
+    	this.isValidAttribute.setExpressionText(validExpr);
+    }
+    
+    public void setIsValid(Boolean val){
+    	this.isValidAttribute.setValue(val);
     }
     
     /**
@@ -424,13 +462,31 @@ public class AttributeBase extends ViewerInputSecurityBase {
     public void setRequired(String modelRequired) {
     	this.modelRequired.setExpressionText( modelRequired );
     }
-
+    
+    /**
+     * 
+     * Sets the required status
+     * 
+     * @param modelRequiredExpr
+     */
+    public void setModelRequired(String modelRequiredExpr){
+    	this.modelRequired.setExpressionText(modelRequiredExpr);
+    }
     /**
      * Set recommended property of the component
      * @param recomended true/false or a {@link ValueExpression}
      */
     public void setRecomended(String recomended) {
     	this.recommended.setExpressionText( recomended );
+    }
+    
+    /**
+     * Set recommended property of the component
+     * 
+     * @param recomendedExpr
+     */
+    public void setRecommended(String recomendedExpr){
+    	this.recommended.setExpressionText( recomendedExpr );
     }
     
     /**
@@ -942,6 +998,40 @@ public class AttributeBase extends ViewerInputSecurityBase {
     public String getBeanProperty() {
         return beanProperty.getValue();
     }
+    
+    /**
+     * 
+     * Whether to show the favorites or not (Lookups only)
+     * 
+     * @return True to show the lookups and false otherwise
+     */
+    public Boolean getShowFavorites(){
+    	return this.showFavorites.getEvaluatedValue();
+    }
+    
+    /**
+     * 
+     * Show or hide the favorites
+     * 
+     * @param favoritesExpr
+     */
+    public void setShowFavorites(String favoritesExpr){
+    	this.showFavorites.setExpressionText(favoritesExpr);
+    }
+    
+    /**
+     * 
+     * Retrieves a list of bouis to show as favorites
+     * 
+     * @return A list of bouis
+     */
+    public List<Long> getListFavorites(){
+    	return this.listFavorites.getEvaluatedValue();
+    }
+    
+    public void setListFavorites(String lstFavoritesExpr){
+    	this.listFavorites.setExpressionText(lstFavoritesExpr);
+    }
 
     /**
      * Update the XEO Model with the submited value
@@ -980,21 +1070,22 @@ public class AttributeBase extends ViewerInputSecurityBase {
 	@Override
 	public void validateModel() {
 		setModelValid( true );
-		this.validation.invoke();
-		Boolean ret = (Boolean)this.validation.getReturnValue();
-		if( ret != null ) {
-			if( !ret ) {
+		setIsValid((Boolean)this.validation.getEvaluatedValue().booleanValue());
+		String invalidText = getInvalidText();
+		if( isValidAttribute != null ) {
+			if( !getIsValid() ) {
 				setModelValid( false );
-				setInvalidText( "Valor inv·lido!" );
 				if( this.dataFieldConnector.getValue() != null) {
 					String sMsg = this.dataFieldConnector.getEvaluatedValue().getInvalidMessage();
 					if( sMsg != null && sMsg.length() > 0 ) {
 						setInvalidText(sMsg);
 					}
+				} else {
+					if (invalidText != null && invalidText.length() > 0)
+						setInvalidText(invalidText);
+					else
+						setInvalidText( "Valor inv√°lido!" );
 				}
-			}
-			else {
-				setInvalidText( null );
 			}
 		}
 	}
