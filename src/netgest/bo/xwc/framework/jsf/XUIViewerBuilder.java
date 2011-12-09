@@ -419,6 +419,9 @@ public class XUIViewerBuilder
             if( componentDef == null && name.indexOf( ':' ) == -1 ) {
             	componentDef = oContext.getApplicationContext().getComponentStore().findComponent(  "xvw:" + name );
             }
+            if( componentDef == null && name.indexOf( ':' ) == -1 ) {
+            	componentDef = oContext.getApplicationContext().getComponentStore().findComponent(  "xeo:" + name );
+            }
             if(componentDef != null)
             {
                 UIComponent fcomponent = (UIComponent)Class.forName( componentDef.getClassName() ).newInstance();
