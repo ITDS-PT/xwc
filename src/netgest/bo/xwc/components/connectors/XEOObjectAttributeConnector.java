@@ -32,8 +32,6 @@ import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
-import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 import netgest.io.FSiFile;
@@ -106,7 +104,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
               bh.beforeFirst();
               while (bh.next()) {
                     try {
-                         sb.append(bh.getObject().getCARDIDwLink()).append("<br>");
+                         sb.append(bh.getObject().getTextCARDID());
                     } catch (boRuntimeException e) {
                     	e.printStackTrace();
                     }
@@ -218,6 +216,10 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
             throw new RuntimeException(e);
         }
     }
+    
+    public boolean getValidate(){
+    	return validate();
+    }
 
     public boolean validate() {
         try {
@@ -237,6 +239,10 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 				sMessage = sMessage.substring(0,sMessage.lastIndexOf('['));
     	}
     	return sMessage;
+    }
+    
+    public String getInvalidText(){
+    	return getInvalidMessage();
     }
 
     public boolean getVisible() {

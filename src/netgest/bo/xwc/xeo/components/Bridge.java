@@ -1,5 +1,7 @@
 package netgest.bo.xwc.xeo.components;
 
+import java.util.List;
+
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.xwc.components.annotations.RequiredAlways;
@@ -7,6 +9,7 @@ import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 
 /**
  * 
@@ -38,6 +41,27 @@ public class Bridge extends GridPanel {
 	 */
 	private XUIViewBindProperty<Boolean> renderToolBar = 
 		new XUIViewBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
+	
+	/**
+     * Retrieves the list of bouis to show for the favorites
+     */
+    private XUIViewStateBindProperty<List<Long>> listFavorites = 
+    	new XUIViewStateBindProperty<List<Long>>( "listFavorites", this, List.class);
+    
+    
+    /**
+     * 
+     * Retrieves a list of bouis to show as favorites
+     * 
+     * @return A list of bouis
+     */
+    public List<Long> getListFavorites(){
+    	return this.listFavorites.getEvaluatedValue();
+    }
+    
+    public void setListFavorites(String lstFavoritesExpr){
+    	this.listFavorites.setExpressionText(lstFavoritesExpr);
+    }
 	
 	public boolean getRenderToolBar() {
 		return renderToolBar.getEvaluatedValue();

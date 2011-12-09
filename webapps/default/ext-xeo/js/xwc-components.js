@@ -462,9 +462,6 @@ ExtXeo.MessageBox = function(){
             d.modal = opt.modal !== false;
             d.mask = opt.modal !== false ? mask : false;
             if(!d.isVisible()){
-            	
-            	//Add aqui
-            	
                 // force it to the end of the z-index stack so it gets a cursor in FF
                 document.body.appendChild(dlg.el.dom);
                 d.setAnimateTarget(opt.animEl);
@@ -612,3 +609,89 @@ ExtXeo.MessageBox = function(){
     };
 }();
 
+
+/**
+ * 
+ * The Attribute Number Lookup
+ * 
+ * 
+ * */
+ExtXeo.form.Lookup = Ext.extend(Ext.form.TwinTriggerField,  {
+	
+	defaultAutoCreate : {tag: "input", type: "text", size: "16", autocomplete: "off"},
+	
+	initComponent : function(){
+	
+		//Flags when the user last "started" the hovering
+		this.lastActive = new Date();
+		//Flags if the user was hovering the mouse in the "lookup" trigger and then moves out
+		this.canceled = false;
+		
+		ExtXeo.form.Lookup.superclass.initComponent.call(this);
+
+		//If we want to add another "trigger" field we required to add another one of these
+		//And have the CSS and add the trigger3Click Function
+		
+		//, {tag: "img", src: Ext.BLANK_IMAGE_URL, cls: "x-form-trigger " + this.trigger3Class, id: this.id + "-fav"}
+		// onTrigger3Click : Ext.emptyFn,
+		/*
+		 oInpConfig.addJSString("trigger3Class", "x-form-favorite-trigger ");
+            oInpConfig.add("onTrigger3Click", "function(){ if(!this.disabled){" +
+            		XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_STATUS_MESSAGE ) +
+            		"}}"
+         );
+		 */
+		
+		//Same as the TwinTriggerField
+		this.triggerConfig = {
+	        tag:'span', cls:'x-form-twin-triggers', cn:[
+	        {tag: "img", src: Ext.BLANK_IMAGE_URL, cls: "x-form-trigger " + this.trigger1Class, id: this.id + "-clear"},
+	        {tag: "img", src: Ext.BLANK_IMAGE_URL, cls: "x-form-trigger " + this.trigger2Class, id: this.id + "-search"}
+	        ,{tag: "img", src: Ext.BLANK_IMAGE_URL, cls: "x-form-trigger " + this.trigger3Class, id: this.id + "-fav"}
+	    ]};
+	    
+	    
+	},
+	
+	favoriteDelay: 400,
+	
+	onTargetOver : function(e){
+		this.lastActive = new Date();
+        this.delayShow();
+    },
+    
+    initFavorite : function(){
+    	this.target = Ext.get(this.id + "-search");
+        this.target.on('mouseover', this.onTargetOver, this);
+        this.target.on('mouseout', this.onTargetOut, this);
+    },
+
+    // private
+    delayShow : function(){
+    	if (this.canceled){
+    		this.canceled = false;
+    		this.lastActive = new Date();
+    	}
+    	var time = this.lastActive.getElapsed();
+    	if(time > this.favoriteDelay){
+    		if (e.within(Ext.fly(this.id+'-search'))){
+	    		this.canceled = false;
+	    		this.lastActive = new Date();
+	    		this.onLookupHover();
+    		}
+    	}else{
+         if (!this.canceled)	
+        	 this.delayShow.defer(100, this);
+        }
+        
+    },
+
+    // private
+    onTargetOut : function(e){
+    	this.lastActive = new Date();
+    	this.canceled = true;
+    },
+	
+	onLookupHover : Ext.emptyFn,
+
+});

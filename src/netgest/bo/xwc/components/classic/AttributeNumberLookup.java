@@ -1,5 +1,11 @@
 package netgest.bo.xwc.components.classic;
 
+import static netgest.bo.xwc.components.HTMLAttr.ID;
+import static netgest.bo.xwc.components.HTMLAttr.NAME;
+import static netgest.bo.xwc.components.HTMLAttr.TYPE;
+import static netgest.bo.xwc.components.HTMLAttr.VALUE;
+import static netgest.bo.xwc.components.HTMLTag.INPUT;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +22,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import netgest.bo.def.boDefAttribute;
+import netgest.bo.def.boDefObjectFilter;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.HTMLAttr;
@@ -46,9 +54,13 @@ import netgest.io.iFile;
  */
 public class AttributeNumberLookup extends AttributeBase {
 
-    private XUICommand oLookupCommand;
+	private XUICommand oLookupCommand;
     private XUICommand oOpenCommand;
+    
+    private XUICommand oFavoriteCommand;
 
+    
+    
     @Override
 	public void initComponent() {
         // per component initializations.
@@ -64,6 +76,10 @@ public class AttributeNumberLookup extends AttributeBase {
         oOpenCommand.setActionExpression( createMethodBinding( "#{viewBean.openLookupObject}" ) );
         getChildren().add( oOpenCommand );
 
+        oFavoriteCommand = new XUICommand();
+        oFavoriteCommand.setId( getId() + "_showFav" );
+        oFavoriteCommand.setActionExpression( createMethodBinding( "#{viewBean.showFavorite}" ) );
+        getChildren().add( oFavoriteCommand );
     }
     
     
@@ -81,6 +97,10 @@ public class AttributeNumberLookup extends AttributeBase {
         } catch (boRuntimeException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    protected XUICommand getFavoriteCommand() {
+        return oFavoriteCommand;
     }
     
     @Override
@@ -144,6 +164,14 @@ public class AttributeNumberLookup extends AttributeBase {
     	
 		@Override
 		public String getExtComponentType( XUIComponentBase oComp ) {
+			AttributeNumberLookup oAtt = (AttributeNumberLookup)oComp;
+			if (oAtt.getShowFavorites()){
+				XEOObjectAttributeConnector attConnector = (XEOObjectAttributeConnector)oAtt.getDataFieldConnector();
+				boDefAttribute attributeDefinition = attConnector.getBoDefAttribute();
+				boDefObjectFilter[] objFilter = attributeDefinition.getObjectFilter();
+				if (objFilter == null || objFilter.length <= 1)
+					return "ExtXeo.form.Lookup";
+			}
 			return "Ext.form.TwinTriggerField";
 		}
 		
@@ -169,6 +197,34 @@ public class AttributeNumberLookup extends AttributeBase {
             w.writeAttribute(HTMLAttr.ID, oComp.getClientId() + "_ci", null);
             
             w.endElement(HTMLTag.INPUT);
+            
+            if (oAttr.getShowFavorites()){
+	            w.startElement( INPUT, oComp);
+	            w.writeAttribute(TYPE, "hidden", null);
+	            w.writeAttribute(VALUE, "" , null);
+	
+	            w.writeAttribute(NAME, oComp.getClientId() + "_top", null);
+	            w.writeAttribute(ID, oComp.getClientId() + "_top", null);
+	            
+	            w.endElement(INPUT);
+	            
+	            w.startElement( INPUT, oComp);
+	            w.writeAttribute(TYPE, "hidden", null);
+	            w.writeAttribute(VALUE, "" , null);
+	
+	            w.writeAttribute(NAME, oComp.getClientId() + "_left", null);
+	            w.writeAttribute(ID, oComp.getClientId() + "_left", null);
+	            
+	            w.endElement(INPUT);
+	            
+	            //Must init the behavior like this, because the img tag that has the trigger 
+	            //is only available ah this time (and not in the initComponent)
+	            /*String initHoverBehaviorForFavorites = "Ext.onReady(function() { Ext.getCmp('ext-"+oAttr.getClientId()+"').initFavorite()})";
+	            
+	            getRequestContext().getScriptContext().add(XUIScriptContext.POSITION_FOOTER, oAttr.getClientId()+"_initFav" + oComp.getId(), 
+						initHoverBehaviorForFavorites);*/
+            }
+            
 		}
 		
 		@Override
@@ -191,7 +247,6 @@ public class AttributeNumberLookup extends AttributeBase {
         	oInpConfig.add( "enableKeyEvents", true);
             oInpConfig.add("hideTrigger1", false);
             
-            
             if( enableCardIdLink ) {
             	oInpConfig.addJSString("ctCls", "xeoObjectLink" );
             }
@@ -200,6 +255,24 @@ public class AttributeNumberLookup extends AttributeBase {
             	oAttr.setDisabled("false");
             	oAttr.setReadOnly("true");
             }
+            
+            
+            
+            //if (oAttr.getShowFavorites() && (!oAttr.isReadOnly() && !oAttr.isDisabled())){
+	            StringBuilder b = new StringBuilder(300);
+	            //We only show favorites if this is not disabled 
+	            //Get reference to the image to extract coordinates X,Y
+				//b.append("Ext.get('ext-").append(oComp.getClientId()).append("-search')");
+				//Get X,Y coordinates and set the input values so that component can read them
+				b.append("Ext.get('").append(oComp.getClientId()).append("_left').dom.value=").append("Ext.get('ext-").append(oComp.getClientId()).append("-search')").append(".getX();");
+				b.append("Ext.get('").append(oComp.getClientId()).append("_top').dom.value=").append("Ext.get('ext-").append(oComp.getClientId()).append("-search')").append(".getY();");
+				//Set the show favorites command
+				b.append(XVWScripts.getAjaxCommandScript( oAttr.getFavoriteCommand(),XVWScripts.WAIT_DIALOG ));
+				b.append(";");
+	            //oInpConfig.add("onLookupHover", b.toString());
+            //}
+            
+            
             
             if( oAttr.isReadOnly() || !oAttr.getEffectivePermission(SecurityPermissions.WRITE)) {
             	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
@@ -221,11 +294,18 @@ public class AttributeNumberLookup extends AttributeBase {
 	            			getClearCode(oForm, oAttr) +
 	            		"}}"
 	            );
-	        	
-	        	oInpConfig.add("onTrigger2Click", "function(){ if(!this.disabled){" +
+	        	//this.onTargetOut(); <<--- Por cause do onMouseOver
+	        	oInpConfig.add("onTrigger2Click", "function(){ if(!this.disabled){  " + 
 	            		XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_STATUS_MESSAGE ) +
 	            		"}}"
 	            );
+	        	
+	        	if (oAttr.getShowFavorites()){
+	            	oInpConfig.addJSString("trigger3Class", "x-form-favorite-trigger ");
+	                oInpConfig.add("onTrigger3Click", "function(){ if(!this.disabled){" +
+	                		b.toString() +	"}}"
+	             	);
+	            }
             }
 			return oInpConfig;
 		}
@@ -320,12 +400,15 @@ public class AttributeNumberLookup extends AttributeBase {
                 	oAttrComp.setSubmittedValue( value );
                 }
             }
+            
+            String top = getRequestContext().getRequestParameterMap().get( oAttrComp.getClientId()+"_top" );
+            String left = getRequestContext().getRequestParameterMap().get( oAttrComp.getClientId()+"_string" );
+            
             super.decode(component);
 
         }
         
         
-        @SuppressWarnings("unchecked")
 		public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
         	HttpServletResponse resp = (HttpServletResponse)response;
         	

@@ -100,3 +100,56 @@ ul.x-tab-strip {
 	background-image: url(../images/grid/group-by.gif);
 	display: inline;
 }
+
+/* Bridge Lookup CSS Classes */
+.xwc-bridge-lookup{
+	padding-top: 2px;
+	padding-bottom: 2px;
+	display:block;
+	overflow-y:scroll;
+}
+
+a.xwc-search-trigger{
+	width:16px;
+	height:16px;
+	text-decoration:none;
+	background: url("/xeo/ext-xeo/icons/add-lookup-bridge-sprite.png");
+	display:block;
+}
+
+a.xwc-search-trigger:hover{
+	background-position: -16px 0;
+}
+
+a.xwc-clean-trigger{
+	width:16px;
+	height:16px;
+	text-decoration:none;
+	background: url("/xeo/ext-xeo/icons/remove-lookup-bridge-sprite.png");
+	display:block;
+}
+
+a.xwc-clean-trigger:hover{
+	background-position: -16px 0;
+}
+
+
+a.xwc-favorite-trigger{
+	width:16px;
+	height:16px;
+	text-decoration:none;
+	background: url("/xeo/ext-xeo/icons/favorite-lookup-bridge.png");
+	display:block;
+}
+
+a.xwc-favorite-trigger:hover{
+	background-position: -16px 0;
+}
+
+	
+/*For the special third button in AttributeNumber Lookup*/	
+
+.x-form-field-wrap .x-form-favorite-trigger{
+    background-image: url(../icons/favorites-sprite.png);
+    cursor:pointer;   
+}

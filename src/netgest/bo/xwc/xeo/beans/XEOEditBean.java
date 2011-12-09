@@ -30,6 +30,8 @@ import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.ejb.boManagerLocal;
 import netgest.bo.localizations.MessageLocalizer;
+import netgest.bo.preferences.Preference;
+import netgest.bo.preferences.PreferenceManager;
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
@@ -70,7 +72,12 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.components.Bridge;
+import netgest.bo.xwc.xeo.components.BridgeLookup;
+import netgest.bo.xwc.xeo.components.BridgeToolBar;
 import netgest.bo.xwc.xeo.components.FormEdit;
+import netgest.bo.xwc.xeo.components.utils.LookupFavorites;
+import netgest.bo.xwc.xeo.components.utils.DefaultFavoritesSwitcherAlgorithm;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
@@ -80,6 +87,7 @@ import oracle.xml.parser.v2.XMLDocument;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Element;
@@ -905,11 +913,13 @@ public class XEOEditBean extends XEOBaseBean
             	oWnd.setAnimateTarget( sCompId );
             }
             	
-            if( oAttHandler.getValueObject() == null ) {
+            if( oAttHandler.getValueObject() == null || oAttHandler.getValueString().length() == 0 
+            		|| boDefAttribute.ATTRIBUTE_OBJECTCOLLECTION.equalsIgnoreCase(oAttHandler.getDefAttribute().getAtributeDeclaredType())) {
+            	//This situation is for non-orphan adding on bridge or regular lookup
                 oBaseBean.createNew( oAttDef.getReferencedObjectName(), getXEOObject().getBoui() );
             }
             else {
-                oBaseBean.setCurrentObjectKey( Long.valueOf( oAttHandler.getValueLong() ) );
+                oBaseBean.setCurrentObjectKey( Long.valueOf( oAttHandler.getValueString() ) );
             }
         }
         else
@@ -1018,10 +1028,9 @@ public class XEOEditBean extends XEOBaseBean
     public void setOrphanEdit( XEOEditBean oEditBean ) throws boRuntimeException {
         XUIRequestContext   oRequestContext;
         XUIViewRoot         oLastView;
-        
         oRequestContext = XUIRequestContext.getCurrentContext();
         oLastView = oRequestContext.getViewRoot();
-
+        boObject currentObject = getXEOObject();
         try {
             XUIViewRoot oViewRoot = getViewRoot();
 
@@ -1031,16 +1040,29 @@ public class XEOEditBean extends XEOBaseBean
             
                     
                 long lEditedBoui = oEditBean.getXEOObject().getBoui();
-                    
-                // Verifica se � atributo
+                boolean updateModel = true;    
+                // Check if it's an attribute
                 if( oSrcComp instanceof AttributeBase ) {
                     oRequestContext.setViewRoot( oViewRoot );
                     XUIInput oInput = (XUIInput)oSrcComp;
                     oInput.setValue( BigDecimal.valueOf( lEditedBoui ) );
-                    oInput.updateModel();
+                    AttributeBase oAttBase = (AttributeBase) oSrcComp;
+                    if (oAttBase instanceof BridgeLookup){
+                    	bridgeHandler oBridgeHndlr = currentObject.getBridge(oAttBase.getObjectAttribute());
+                        if( !oBridgeHndlr.haveBoui( lEditedBoui ) ) {
+                            oBridgeHndlr.add( lEditedBoui );
+                            updateModel = false;
+                        }
+                    } 
+                    updateUserFavorites(currentObject.getName(), oAttBase.getObjectAttribute(),
+                    		new long[]{lEditedBoui});
+                    
+                    
+                    if (updateModel)
+                    	oInput.updateModel();
                 }
                 else if( oSrcComp instanceof GridPanel ) {
-                    // � uma grid... por isso deve-se adicionar � bridge
+                    // It's a grid, add to thebridge
                     GridPanel oGrid = (GridPanel)oSrcComp;
                     String sObjectAttribute = oGrid.getObjectAttribute();
                     
@@ -1054,7 +1076,11 @@ public class XEOEditBean extends XEOBaseBean
                         if( !oBridgeHndlr.haveBoui( lEditedBoui ) ) {
                             oBridgeHndlr.add( lEditedBoui );
                         }
+                        long[] bouisToCheck = new long[]{lEditedBoui};
+                        updateUserFavorites(oBridgeHndlr.getParent().getName(), oBridgeHndlr.getAttributeName(),
+                        		bouisToCheck);
                     }
+                    
                 }
             }
             showObjectErrors();
@@ -1462,14 +1488,8 @@ public class XEOEditBean extends XEOBaseBean
     	return ret;
     }
     
-    
-    /**
-     * @param lookupListBean
-     * @param oSelRecs
-     */
-    public void setLookupBridgeResults( XEOBaseLookupList lookupListBean, DataRecordConnector[] oSelRecs ) {
-        // Cria view
-        XUIRequestContext   oRequestContext;
+    public void setLookupBridgeResults( String parentBridgeId, DataRecordConnector[] oSelRecs ) {
+    	XUIRequestContext   oRequestContext;
         GridPanel           oGridPanel;
         bridgeHandler       oBridgeHandler;
         XUIViewRoot         oLastViewRoot;
@@ -1483,18 +1503,24 @@ public class XEOEditBean extends XEOBaseBean
                 XUIViewRoot oViewRoot = getViewRoot(); 
 
                 oGridPanel = 
-                        (GridPanel)oViewRoot.findComponent(lookupListBean.getParentComponentId());
+                        (GridPanel)oViewRoot.findComponent(parentBridgeId);
                 oRequestContext.setViewRoot(oViewRoot);
 
+                
                 oBridgeHandler  = ((XEOBridgeListConnector)oGridPanel.getDataSource()).getBridge();
+                String name = oBridgeHandler.getName();
+                long[] bouisToCheck = new long[oSelRecs.length];
                 for (int i = 0; i < oSelRecs.length; i++) {
                 	BigDecimal boui = (BigDecimal)oSelRecs[i].getAttribute("BOUI").getValue();
                 	if( boui != null ) {
+                		bouisToCheck[i] = boui.longValue();
                 		if( !oBridgeHandler.haveBoui( boui.longValue() ) ) {
                             oBridgeHandler.add( boui );
                 		}
                 	}
                 }
+                updateUserFavorites(oBridgeHandler.getParent().getName(), name, bouisToCheck);
+                
             }
             showObjectErrors();
         }
@@ -1505,14 +1531,17 @@ public class XEOEditBean extends XEOBaseBean
             oRequestContext.setViewRoot( oLastViewRoot );
         }
     }
-
+    
     /**
      * @param lookupListBean
      * @param oSelRecs
      */
-    public void setLookupAttributeResults( XEOBaseLookupList lookupListBean, DataRecordConnector[] oSelRecs ) {
-        // Cria view
-        XUIRequestContext   oRequestContext;
+    public void setLookupBridgeResults( XEOBaseLookupList lookupListBean, DataRecordConnector[] oSelRecs ) {
+    	setLookupBridgeResults(lookupListBean.getParentComponentId(), oSelRecs);
+    }
+
+    public void setLookupAttributeResults( String parentCompId, DataRecordConnector[] oSelRecs ) {
+    	XUIRequestContext   oRequestContext;
         XUIInput            oInput;
         XUIViewRoot         oLastViewRoot;
         
@@ -1523,15 +1552,98 @@ public class XEOEditBean extends XEOBaseBean
             if( oSelRecs.length > 0 )         
             {
                 XUIViewRoot oViewRoot = getViewRoot();
-                oInput = (XUIInput)oViewRoot.findComponent( lookupListBean.getParentComponentId() );
+                oInput = (XUIInput)oViewRoot.findComponent( parentCompId );
                 oRequestContext.setViewRoot( oViewRoot );
-                oInput.setValue( oSelRecs[0].getAttribute( "BOUI" ).getValue() );
+                //The BridgeLookup is a special case of Lookup
+                if (oInput instanceof BridgeLookup){
+                	BridgeLookup bridge = (BridgeLookup) oInput;
+                	XEOObjectAttributeConnector conn = (XEOObjectAttributeConnector) bridge.getDataFieldConnector();
+                	
+                	//Group the bouis selected to update the favorites 
+                	long[] bouisToCheck = new long[oSelRecs.length];
+                	int i = 0;
+                	try {
+                		String name = conn.getAttributeHandler().getName();
+                		bridgeHandler bh = conn.getAttributeHandler().getParent().getBridge(name);
+                		for (DataRecordConnector rec : oSelRecs){
+                			long boui = Long.valueOf(rec.getAttribute( "BOUI" ).getValue().toString());
+                			bouisToCheck[i++] = boui;
+                			if (!bh.haveBoui(boui)){
+                				bh.add(boui);
+                			}
+                		}
+                		//Update favorite selections
+                		updateUserFavorites(bh.getParent().getName(), name, bouisToCheck);
+					} catch (boRuntimeException e) {
+						e.printStackTrace();
+					}
+                	
+                }
+                else{
+                	AttributeBase att = (AttributeBase) oViewRoot.findComponent( parentCompId );
+                	String boui = oSelRecs[0].getAttribute( "BOUI" ).getValue().toString();
+                	oInput.setValue( boui  );
+                	updateUserFavorites(getXEOObject().getName(), att.getObjectAttribute(), 
+                			new long[]{Long.valueOf(boui)});
+                }
+                
                 oInput.updateModel();
                 showObjectErrors();
             }
         } finally {
             oRequestContext.setViewRoot( oLastViewRoot );
         }
+    }
+    
+    /**
+     * 
+     * Updates the user favorites for a given bridge/object name pair
+     * 
+     * @param objectName
+     * @param attributeName
+     * @param bouis
+     */
+    private void updateUserFavorites(String objectName, 
+    		String attributeName, long[] bouis){
+    	PreferenceManager manager = boApplication.getDefaultApplication().getPreferencesManager();
+    	Preference pref = manager.getUserPreference(BridgeLookup.PREFERENCE_PREFIX 
+    			+ objectName+ BridgeLookup.PREFERENCE_SEPARATOR +
+    			attributeName, getEboContext().getBoSession().getUser().getUserName());
+    	
+    	try{
+    		
+	    	Object jsonArraPref = pref.get(BridgeLookup.PREFERENCE_NAME);
+	    	JSONArray array = null;
+	    	if (jsonArraPref != null && jsonArraPref.toString().length() > 0){
+	    		String jsonArra = jsonArraPref.toString();
+	    		array = new JSONArray(jsonArra);
+	    	}
+	    	else
+	    		array = new JSONArray();
+    	
+	    	List<LookupFavorites> bouisLst = LookupFavorites.
+	    		getFavorites(array);
+	    	
+	    	bouisLst = new DefaultFavoritesSwitcherAlgorithm().replaceFavorites(bouisLst, bouis,
+	    			10);
+	    	
+	    	JSONArray value = LookupFavorites.encodeFavoritesAsJSON(bouisLst);
+	    	pref.put(BridgeLookup.PREFERENCE_NAME, value.toString());
+	    	pref.savePreference();
+	    }
+    	catch (JSONException e ){
+    		log.warn(e);
+    	}
+    }
+    
+    /**
+     * @param lookupListBean
+     * @param oSelRecs
+     */
+    public void setLookupAttributeResults( XEOBaseLookupList lookupListBean, DataRecordConnector[] oSelRecs ) {
+    	setLookupAttributeResults( lookupListBean.getParentComponentId(), oSelRecs );
+    	
+        
     }
 
     /**
@@ -1566,6 +1678,50 @@ public class XEOEditBean extends XEOBaseBean
             if( oBridgeHandler.haveBoui( rowBoui ) );
                 oBridgeHandler.remove();
         }
+        showObjectErrors();
+    }
+    
+    /**
+     * Removes an element from a bridge Lookup Component
+     */
+    public void removeBridgeLookup() throws boRuntimeException{
+    	
+    	ActionEvent oEvent = getRequestContext().getEvent();
+        
+        // Get the src of the event
+        XUICommand oCommand = (XUICommand)oEvent.getComponent();	
+    	
+    	String bouiToRemove = getRequestContext().getRequestParameterMap().
+    	get(((XUIComponentBase)oCommand.getParent()).getClientId()+"_toRemove");
+    	
+    	AttributeHandler att = ((BridgeLookup)oCommand.getParent()).getAttributeHandler();
+    	boObject parent = att.getParent();
+    	String bridgeName = att.getName();
+    	
+    	bridgeHandler oBridgeHandler  = parent.getBridge(bridgeName);
+        
+    	if (bouiToRemove != null && bouiToRemove.length() > 0){
+    		long bouiLong = Long.valueOf(bouiToRemove);
+	        if( oBridgeHandler.haveBoui( bouiLong ) );
+	            oBridgeHandler.remove();
+    	}
+        showObjectErrors();
+    	
+    }
+    
+    public void cleanBridgeLookup() throws boRuntimeException{
+ActionEvent oEvent = getRequestContext().getEvent();
+        
+        // Get the src of the event
+        XUICommand oCommand = (XUICommand)oEvent.getComponent();	
+    	
+    	AttributeHandler att = ((BridgeLookup)oCommand.getParent()).getAttributeHandler();
+    	boObject parent = att.getParent();
+    	String bridgeName = att.getName();
+    	
+    	bridgeHandler oBridgeHandler  = parent.getBridge(bridgeName);
+        oBridgeHandler.truncate();	    	
+        
         showObjectErrors();
     }
     
@@ -1659,14 +1815,18 @@ public class XEOEditBean extends XEOBaseBean
 		viewRoot.processValidateModel();
 		checkValidComponentState( viewRoot );
 		if( !isValid() ) {
-    		XUIRequestContext.getCurrentContext().addMessage( "validation" , 
-    				new XUIMessage(
-						XUIMessage.TYPE_ALERT, 
-						XUIMessage.SEVERITY_INFO, 
-						BeansMessages.VALID_ERRORS_TITLE.toString(),
-						BeansMessages.VALID_ERRORS.toString()
-    				)
-    		);
+			if (getXEOObject().haveErrors() )
+				showObjectErrors();
+			else{
+	    		XUIRequestContext.getCurrentContext().addMessage( "validation" , 
+	    				new XUIMessage(
+							XUIMessage.TYPE_ALERT, 
+							XUIMessage.SEVERITY_INFO, 
+							BeansMessages.VALID_ERRORS_TITLE.toString(),
+							BeansMessages.VALID_ERRORS.toString()
+	    				)
+	    		);
+			}
 		}
     }
     
@@ -1697,7 +1857,6 @@ public class XEOEditBean extends XEOBaseBean
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	@Visible
 	public void showObjectErrors() {
 	    showObjectErrors(getXEOObject());
@@ -1796,7 +1955,7 @@ public class XEOEditBean extends XEOBaseBean
 				);
 			
 			if( oAttHandler.getValueObject() != null ) {
-				long boui = oAttHandler.getValueLong();
+				long boui = Long.valueOf(oAttHandler.getValueString());
 				boObject objectToLookup = boObject.getBoManager().loadObject( getEboContext(),  boui );
 
 				boolean openInOrphanEdit = 
@@ -2319,6 +2478,182 @@ public class XEOEditBean extends XEOBaseBean
 			//Show message to display a problem
 		}
     	
+    }
+    
+    public void editBridgeLookup(){
+    	
+    	XUIRequestContext   oRequestContext;
+        XUIViewRoot			oViewRoot;
+        XUISessionContext	oSessionContext;
+        
+        boDefAttribute  	oAttDef; 
+        
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        oSessionContext = oRequestContext.getSessionContext();
+        
+        oViewRoot		= null;
+        oAttDef			= null;
+
+        ActionEvent oEvent = oRequestContext.getEvent();
+        
+        // Get the src of the event
+        XUICommand oCommand = (XUICommand)oEvent.getComponent();
+        BridgeLookup oBridgeLookup = (BridgeLookup)oEvent.getComponent().getParent();
+        
+        oAttDef = ((XEOObjectAttributeConnector)oBridgeLookup.getDataFieldConnector()).getBoDefAttribute();
+        
+        sBridgeKeyToEdit = getRequestContext().getRequestParameterMap().
+        	get(((XUIComponentBase)oCommand.getParent()).getClientId()+"_toEdit");
+		
+		try {
+			boObject childObj = boObject.getBoManager().loadObject(
+					getEboContext(), Long.valueOf(sBridgeKeyToEdit));
+			
+			if (securityRights.canRead(getEboContext(), childObj.getName())) {
+				if (oAttDef.getChildIsOrphan( childObj.getName() ) ) { 
+					
+						boObject sObjectToOpen;
+						try {
+							sObjectToOpen = boObject
+									.getBoManager()
+									.loadObject(
+											getEboContext(),
+											Long
+													.parseLong(sBridgeKeyToEdit));
+							oViewRoot = oSessionContext
+									.createChildView(
+							        		getViewerResolver().getViewer( sObjectToOpen, XEOViewerResolver.ViewerType.EDIT )
+										);
+							XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
+									.getBean("viewBean");
+							oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
+						} catch (NumberFormatException e) {
+							throw new RuntimeException(e);
+						} catch (boRuntimeException e) {
+							throw new RuntimeException(e);
+						}
+					
+				} 
+				else {
+					long lCurrentBoui;
+
+					lCurrentBoui = Long.valueOf(sBridgeKeyToEdit);
+
+					String sClassName;
+					try {
+						sClassName = boObject.getBoManager()
+								.getClassNameFromBOUI(getEboContext(),
+										lCurrentBoui);
+						oViewRoot = oSessionContext
+								.createChildView(
+						        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+								);
+						XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
+								.getBean("viewBean");
+						oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
+					} catch (NumberFormatException e) {
+						throw new RuntimeException(e);
+					} catch (boRuntimeException e) {
+						throw new RuntimeException(e);
+					}
+
+					oViewRoot = oSessionContext.createChildView(
+			        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+						);
+					XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
+							.getBean("viewBean");
+
+					oBaseBean.setParentBeanId("viewBean");
+					oBaseBean.setParentComponentId(oCommand.getClientId());
+					oBaseBean.setCurrentObjectKey(String
+							.valueOf(lCurrentBoui));
+				}
+			} else {
+				oRequestContext
+						.addMessage(
+								"error_edit_bridge",
+								new XUIMessage(XUIMessage.TYPE_ALERT,
+										XUIMessage.SEVERITY_ERROR,
+										BeansMessages.ERROR_EXECUTING_OPERATION.toString(),
+										BeansMessages.NOT_ENOUGH_PERMISSIONS_TO_OPEN_OBJECT.toString()
+									));
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+    
+    if( oViewRoot != null ) {
+        oRequestContext.setViewRoot( oViewRoot );
+        oRequestContext.getFacesContext().renderResponse();
+    }
+    	
+    }
+    
+    /**
+     * Displays the window with the favorites chosen for this bridge (by this user)
+     */
+    public void showFavorite(){
+    	
+    	int left = 300;
+    	int top = 300;
+    	
+    	ActionEvent oEvent = getRequestContext().getEvent();
+    	XUICommand oCommand = (XUICommand)oEvent.getComponent();
+    	
+    	XUIComponentBase base = ((XUIComponentBase)oCommand.getParent());
+    	String bridgeId = base.getClientId();
+    	boolean isBridge = false;
+    	
+    	
+    	String objectAtt = "";
+    	if (base instanceof AttributeBase)
+    		objectAtt = ((AttributeBase)base).getObjectAttribute();
+    	else if (base instanceof BridgeToolBar){
+    		BridgeToolBar b = (BridgeToolBar)base; 
+    		objectAtt = b.getBridgeName();
+    		bridgeId = ((Bridge)b.getParent()).getClientId();
+    		isBridge = true;
+    	}
+    		
+    	String leftParam = getRequestContext().getRequestParameterMap().
+    	get(((XUIComponentBase)oCommand.getParent()).getClientId()+"_left");
+    	
+    	if (leftParam == null || leftParam.length() == 0)
+    		leftParam = "0";
+    	
+    	Double tmpLeft =Double.parseDouble(leftParam); 
+    	left = tmpLeft.intValue();
+    	
+    	left = left-300; //Window size is 300, need to move so that it does not fall out of screen
+    	if (left < 0)
+    		left = 0;
+    	
+    	String topParam = getRequestContext().getRequestParameterMap().
+    		get(((XUIComponentBase)oCommand.getParent()).getClientId()+"_top");
+    	
+    	if (topParam == null || topParam.length() == 0)
+    		topParam = "0";
+    	
+    	Double tmpTop =Double.parseDouble(topParam); 
+    	top = tmpTop.intValue();
+    	
+    	//Create a XUIViewRoot representing the viewer (viewer can be located in the source code, or in the webapp of the application)
+    	  XUIViewRoot viewRoot = getSessionContext().createChildView("netgest/bo/xwc/xeo/viewers/LookupFavorites.xvw");
+    	  //Set the newly created viewroot as the view root of the request
+    	  
+    	  BridgeLookupBean bean = (BridgeLookupBean) viewRoot.getBean("viewBean");
+    	  bean.setLeft(left);
+    	  bean.setTop(top);
+    	  bean.setAttributeName(objectAtt);
+    	  bean.setInvokedFromBridge(isBridge);
+    	  bean.setObjectName(getXEOObject().getName());
+    	  bean.setParentComponentId(bridgeId);
+    	  
+    	  LookupFavorites.eliminateDeletedObjectsFromPreference(getXEOObject(), objectAtt);
+    	  
+    	  getRequestContext().setViewRoot(viewRoot);  
+    	  //Render the response
+    	  getRequestContext().renderResponse();  
     }
     
     

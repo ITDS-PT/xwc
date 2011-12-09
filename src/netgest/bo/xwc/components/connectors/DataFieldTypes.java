@@ -12,6 +12,7 @@ public class DataFieldTypes {
     public static final byte VALUE_DATE = 5;
     public static final byte VALUE_CLOB = 6;
     public static final byte VALUE_BLOB = 7;
+    public static final byte VALUE_BRIDGE = 8;
     //public static final byte VALUE_SEQUENCE = 11;
     //public static final byte VALUE_IFILELINK = 10;
 

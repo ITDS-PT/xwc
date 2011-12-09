@@ -63,6 +63,12 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 	 */
 	private XUIViewBindProperty<Boolean>  renderCreateNewBtn    = 
 		new XUIViewBindProperty<Boolean>( "renderCreateNewBtn", this, true, Boolean.class );
+	
+	/**
+	 * Whether to render or not the favorites button 
+	 */
+	private XUIViewBindProperty<Boolean>  renderFavoritesBtn    = 
+		new XUIViewBindProperty<Boolean>( "renderFavoritesBtn", this, false, Boolean.class );
 
 	
 	public boolean getRenderAddBtn() {
@@ -87,6 +93,14 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 
 	public void setRenderCreateNewBtn(String expression ) {
 		this.renderCreateNewBtn.setExpressionText( expression );
+	}
+	
+	public boolean getRenderFavoritesBtn(){
+		return this.renderFavoritesBtn.getEvaluatedValue();
+	}
+	
+	public void setRenderFavoritesBtn(String favBtnExpr){
+		this.renderFavoritesBtn.setExpressionText(favBtnExpr);
 	}
 	
 	@Deprecated
@@ -155,6 +169,16 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 			children.add( currentMenuPos++, Menu.getMenuSpacer() );
 			children.add( currentMenuPos++, menu );
 			children.add( currentMenuPos++, Menu.getMenuSpacer() );
+		}
+		
+		if (getRenderFavoritesBtn()){
+			menu = createViewerBeanMethod(  "showFavoritesBridge", 
+					XEOComponentMessages.BRIDGETB_FAVORITE.toString(), 
+					XEOComponentMessages.BRIDGETB_FAVORITE_TTIP.toString(),
+					"ext-xeo/icons/favorite.png", 
+					getParent().getClientId( getFacesContext() ), 
+					"showFavorite", "self")
+				;
 		}
 	}
 	

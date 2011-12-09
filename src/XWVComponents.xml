@@ -175,6 +175,7 @@
       		<xwc:render for='splitedLookup'>netgest.bo.xwc.xeo.components.SplitedLookup$XEOHTMLRenderer</xwc:render>
       		<xwc:render for='menuCounter'>netgest.bo.xwc.xeo.components.MenuCounter$XEOHTMLRenderer</xwc:render>
       		<xwc:render for="formEdit">netgest.bo.xwc.xeo.components.FormEdit$XEOHTMLRenderer</xwc:render>
+      		<xwc:render for="bridgeLookup">netgest.bo.xwc.xeo.components.BridgeLookup$XEOHTMLRenderer</xwc:render>
       		<!-- <xwc:render for="bridge">netgest.bo.xwc.xeo.components.Bridge$XEOHTMLRenderer</xwc:render> -->
         </xwc:renderKit>
 
@@ -831,6 +832,11 @@
         <xwc:component name='formEdit'>
             <xwc:className>netgest.bo.xwc.xeo.components.FormEdit</xwc:className>
             <xwc:description>Represents a Form to Edit a XEO Model</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name='bridgeLookup'>
+            <xwc:className>netgest.bo.xwc.xeo.components.BridgeLookup</xwc:className>
+            <xwc:description>Represents a bridge that can be edited as a lookup</xwc:description>
         </xwc:component>
 
         <xwc:component name='lookupList'>
