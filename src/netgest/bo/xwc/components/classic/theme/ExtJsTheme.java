@@ -106,6 +106,7 @@ public class ExtJsTheme implements XUITheme {
 	            result = getDefaultThemeFiles(ctx);
 	            ctx.close();
 	            session.closeSession();
+	            return result;
 			}
 			catch (boRuntimeException e){
 				logger.warn("Could not read the default theme for the application", e);
