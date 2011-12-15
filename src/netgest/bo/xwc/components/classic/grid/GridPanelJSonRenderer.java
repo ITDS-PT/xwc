@@ -142,6 +142,8 @@ public class GridPanelJSonRenderer {
 				oGrid.applyFilters( oDataCon );
 		if( (oDataCon.dataListCapabilities() & DataListConnector.CAP_SORT) > 0 )
 			oGrid.applySort( oDataCon );
+		if( (oDataCon.dataListCapabilities() & DataListConnector.CAP_AGGREGABLE) > 0 )
+			oGrid.applyAggregate( oDataCon );
 		
 		
         oDataCon.refresh();

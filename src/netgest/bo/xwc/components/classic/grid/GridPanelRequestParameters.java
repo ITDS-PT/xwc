@@ -11,7 +11,22 @@ public class GridPanelRequestParameters {
 	
 	private Object[] parentValues;
 	private String[] groupBy;
+	private String aggregateParameter;
 	private int 	 groupByLevel;
+	
+	/**
+	 * @return the aggregateParameter
+	 */
+	public String getAggregateParameter() {
+		return aggregateParameter;
+	}
+	
+	/**
+	 * @param summaryParameter the aggregateParameter to set
+	 */
+	public void setAggregateParameter(String aggregateParameter) {
+		this.aggregateParameter = aggregateParameter;
+	}
 	
 	/**
 	 * @return the groupByLevel

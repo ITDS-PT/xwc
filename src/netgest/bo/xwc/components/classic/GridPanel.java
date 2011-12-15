@@ -30,6 +30,7 @@ import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.grid.GridTreeSelectorEditBean;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
+import netgest.bo.xwc.components.connectors.AggregableDataList;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
@@ -97,6 +98,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 	private XUIMethodBindProperty filterLookup = new XUIMethodBindProperty(
 			"filterLookup", this, "#{viewBean.lookupFilterObject}");
+
+	private XUIViewProperty<HashMap<String, ArrayList<String>>> aggregateFields = new XUIViewProperty<HashMap<String, ArrayList<String>>>(
+			"aggregateFields", this, null);
 
 	/**
 	 * Determines how a user can select the rows in the grid panel. 
@@ -336,6 +340,92 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	private boolean updateClientView = true;
 
+	private String currAggregateFieldSet;
+	private String currAggregateFieldDescSet;
+	private String currAggregateFieldOpSet;
+	private String currAggregateFieldCheckSet;
+	private String aggregateData;
+
+	/**
+	 * 
+	 * Whether or not the user can execute stats on numeric columns
+	 * 
+	 */
+	private XUIViewBindProperty<Boolean> enableAggregate = new XUIViewBindProperty<Boolean>(
+			"enableAggregate", this, true, Boolean.class);
+
+	public String getCurrAggregateFieldSet() {
+		return this.currAggregateFieldSet;
+	}
+
+	public String getCurrAggregateFieldDescSet() {
+		return this.currAggregateFieldDescSet;
+	}
+
+	public String getCurrAggregateFieldOpSet() {
+		return this.currAggregateFieldOpSet;
+	}
+
+	public String getCurrAggregateFieldCheckSet() {
+		return this.currAggregateFieldCheckSet;
+	}
+
+	public String getAggregateData() {
+		return this.aggregateData;
+	}
+
+	public void setCurrAggregateFieldSet(String currAggregateFieldSet) {
+		this.currAggregateFieldSet = currAggregateFieldSet;
+	}
+
+	public void setCurrAggregateFieldDescSet(String currAggregateFieldDescSet) {
+		this.currAggregateFieldDescSet = currAggregateFieldDescSet;
+	}
+
+	public void setCurrAggregateFieldOpSet(String currAggregateFieldOpSet) {
+		this.currAggregateFieldOpSet = currAggregateFieldOpSet;
+	}
+
+	public void setCurrAggregateFieldCheckSet(String currAggregateFieldCheckSet) {
+		this.currAggregateFieldCheckSet = currAggregateFieldCheckSet;
+	}
+
+	/**
+	 * Return the enableNumericStats property of this Grid
+	 * 
+	 * @return true/false
+	 */
+	public boolean getEnableAggregate() {
+		return this.enableAggregate.getEvaluatedValue();
+	}
+
+	/**
+	 * Enable or disable numeric stats of the column
+	 * 
+	 * @param sExpressionText
+	 *            true/false or {@link ValueExpression}
+	 */
+	public void setEnableAggregate(String sExpressionText) {
+		this.enableAggregate.setExpressionText(sExpressionText);
+	}
+
+	public void setAggregateField(String fieldId, String fieldDesc,
+			String aggregateType, String aggregateCheck) {
+		this.currAggregateFieldSet = fieldId;
+		this.currAggregateFieldDescSet = fieldDesc;
+		this.currAggregateFieldOpSet = aggregateType;
+		this.currAggregateFieldCheckSet = aggregateCheck;
+	}
+
+	public void removeAggregateField(String fieldId, String aggregateType) {
+		this.currAggregateFieldSet = fieldId;
+		this.currAggregateFieldOpSet = aggregateType;
+	}
+
+	public void setAggregateData(String aggregateData) {
+		this.aggregateData = aggregateData;
+	}
+
 	/**
 	 * Return the XUICommand associated with the filter actions
 	 * @return Return the XUICommand associated with the filter actions
@@ -553,6 +643,37 @@ public class GridPanel extends ViewerInputSecurityBase {
 			GridPanel gridPanel = (GridPanel)arg0.getComponent().getParent();
 			gridPanel.resetToDefaults();
 			
+		}
+		
+	}
+
+	public void setCurrentAggregateField(String aggregateField) {
+		try {
+			if (aggregateField != null) {
+				String[] tokens = aggregateField.split(":");
+				currAggregateFieldCheckSet = tokens[0];
+				currAggregateFieldOpSet = tokens[1];
+				currAggregateFieldSet = tokens[2];
+				currAggregateFieldDescSet = tokens[3];
+
+				currAggregateFieldCheckSet = currAggregateFieldCheckSet != null
+						&& currAggregateFieldCheckSet.length() > 0 ? currAggregateFieldCheckSet
+						: null;
+				currAggregateFieldOpSet = currAggregateFieldOpSet != null
+						&& currAggregateFieldOpSet.length() > 0 ? currAggregateFieldOpSet
+						: null;
+				currAggregateFieldSet = currAggregateFieldSet != null
+						&& currAggregateFieldSet.length() > 0 ? currAggregateFieldSet
+						: null;
+				currAggregateFieldDescSet = currAggregateFieldDescSet != null
+						&& currAggregateFieldDescSet.length() > 0 ? currAggregateFieldDescSet
+						: null;
+			}
+		} catch (Exception e) {
+			currAggregateFieldCheckSet = null;
+			currAggregateFieldOpSet = null;
+			currAggregateFieldSet = null;
+			currAggregateFieldDescSet = null;
 		}
 		
 	}
@@ -1644,9 +1765,140 @@ public class GridPanel extends ViewerInputSecurityBase {
 		setCurrentSortTerms( defaults.get("currentSortTerms") );
 		setCurrentColumnsConfig( defaults.get("currentColumnsConfig") );
 		setCurrentFilters( null );
+		setAggregateData(null);
+		setAggregateFieldsFromString(getAggregateData());
 		forceRenderOnClient();
 	}
-	
+
+	public void aggregateSum(boolean check, String fieldId, String fieldDesc) {
+		if (check) {
+			updateAggregateFieldsBean();
+		} else {
+			removeAggregateFieldsBean();
+		}
+	}
+
+	public void aggregateMin(boolean check, String fieldId, String fieldDesc) {
+		if (check) {
+			updateAggregateFieldsBean();
+		} else {
+			removeAggregateFieldsBean();
+		}
+	}
+
+	public void aggregateMax(boolean check, String fieldId, String fieldDesc) {
+		if (check) {
+			updateAggregateFieldsBean();
+		} else {
+			removeAggregateFieldsBean();
+		}
+		;
+	}
+
+	public void aggregateAvg(boolean check, String fieldId, String fieldDesc) {
+		if (check) {
+			updateAggregateFieldsBean();
+		} else {
+			removeAggregateFieldsBean();
+		}
+	}
+
+	public void updateAggregateFieldsBean() {
+		try {
+			if (this.getDataSource() != null
+					&& (this.getDataSource().dataListCapabilities() & DataListConnector.CAP_AGGREGABLE) > 0) {
+				String aggregateFieldId = this.getCurrAggregateFieldSet();
+				String aggregateFieldDesc = this.getCurrAggregateFieldDescSet();
+				String aggregateFieldOp = this.getCurrAggregateFieldOpSet();
+
+				if (aggregateFieldId != null && aggregateFieldId.length() > 0
+						&& aggregateFieldDesc != null
+						&& aggregateFieldDesc.length() > 0
+						&& aggregateFieldOp != null
+						&& aggregateFieldOp.length() > 0) {
+					if (this.aggregateFields.getValue() == null) {
+						this.aggregateFields
+								.setValue(new HashMap<String, ArrayList<String>>());
+					}
+
+					ArrayList<String> listVals = this.aggregateFields
+							.getValue()
+							.get(aggregateFieldId + ":" + aggregateFieldDesc);
+
+					if (listVals == null) {
+						listVals = new ArrayList<String>();
+					}
+
+					if (!listVals.contains(aggregateFieldOp)) {
+						listVals.add(aggregateFieldOp);
+					}
+					this.aggregateFields.getValue().put(
+							aggregateFieldId + ":" + aggregateFieldDesc,
+							listVals);
+				}
+				this.setAggregateField(null, null, null, null);
+				((AggregableDataList) this.getDataSource())
+						.setAggregateFields(this.aggregateFields.getValue());
+			}
+		} catch (Exception e) {
+		}
+	}
+
+	public void removeAggregateFieldsBean() {
+		try {
+			if (this.getDataSource() != null
+					&& (this.getDataSource().dataListCapabilities() & DataListConnector.CAP_AGGREGABLE) > 0) {
+				String aggregateFieldId = this.getCurrAggregateFieldSet();
+				String aggregateFieldOp = this.getCurrAggregateFieldOpSet();
+				String aggregateFieldDesc = this.getCurrAggregateFieldDescSet();
+
+				if (aggregateFieldId != null && aggregateFieldId.length() > 0
+						&& aggregateFieldOp != null
+						&& aggregateFieldOp.length() > 0) {
+					if (this.aggregateFields.getValue() == null) {
+						this.aggregateFields
+								.setValue(new HashMap<String, ArrayList<String>>());
+					}
+
+					ArrayList<String> listVals = this.aggregateFields.getValue()
+							.get(aggregateFieldId + ":" + aggregateFieldDesc);
+
+					if (listVals != null && listVals.contains(aggregateFieldOp)) {
+						listVals.remove(aggregateFieldOp);
+						this.aggregateFields.getValue().put(aggregateFieldId + ":"
+								+ aggregateFieldDesc, listVals);
+					}
+
+					if (listVals == null || listVals.isEmpty()) {
+						this.aggregateFields.getValue().remove(aggregateFieldId + ":"
+								+ aggregateFieldDesc);
+					}
+				}
+				this.setAggregateField(null, null, null, null);
+				((AggregableDataList) this.getDataSource())
+						.setAggregateFields(this.aggregateFields.getValue());
+			}
+		} catch (Exception e) {
+		}
+	}
+
+	public void loadAggregateFieldsBean() {
+		try {
+			String aggregateFields = this.getAggregateData();
+			setAggregateFieldsFromString(aggregateFields);
+			this.setAggregateData(null);
+		} catch (Exception e) {
+		}
+	}
+
+	public void setAggregateFieldsBean() {
+		try {
+			this.setAggregateData(getAggregateFieldsString());
+		} catch (Exception e) {
+
+		}
+	}
+
 	public Preference getUserSatePreference() {
 		String stateName = getGridStateName();
 		Preference p = XUIPreferenceManager.getUserPreference(
@@ -1675,6 +1927,11 @@ public class GridPanel extends ViewerInputSecurityBase {
 		preference.setString("columnsConfig", getCurrentColumnsConfig() );
 		preference.setString("groupBy", getGroupBy() );
 		preference.setString("sortTerms", this.currentSortTerms.getValue() );
+		
+		/** ML: 07-10-2011 **/
+		this.setAggregateData(getAggregateFieldsString());
+		preference.setString("aggFields", this.getAggregateData());
+		/** END ML: 07-10-2011 **/
 	}
 
 	public void saveUserExpandedGroupsState( Preference preference ) {
@@ -1700,6 +1957,14 @@ public class GridPanel extends ViewerInputSecurityBase {
 		if( getEnableColumnSort() ) {
 			this.setCurrentSortTerms( preference.getString("sortTerms") );
 		}
+
+		/** ML: 07-10-2011 **/
+		if (getEnableAggregate()) {
+			this.setAggregateData(preference.getString("aggFields"));
+			this.setAggregateFieldsFromString(getAggregateData());
+			this.setAggregateData(null);
+		}
+		/** END ML: 07-10-2011 **/
 	}
 	
 	public void saveUserFilterState( Preference preference ) {
@@ -1711,6 +1976,13 @@ public class GridPanel extends ViewerInputSecurityBase {
 		String filters = preference.getString("currentFilters");
 		if( filters != null ) {
 			setCurrentFilters( filters );
+		}
+	}
+
+	public void applyAggregate(DataListConnector listConnector) {
+		if ((listConnector.dataListCapabilities() & DataListConnector.CAP_AGGREGABLE) > 0) {
+			((AggregableDataList) listConnector)
+					.setAggregateFields(this.aggregateFields.getValue());
 		}
 	}
 
@@ -1979,6 +2251,68 @@ public class GridPanel extends ViewerInputSecurityBase {
 			e.printStackTrace();
 		}
 		return finalList.iterator();
+	}
+
+	public void setAggregateFieldsFromString(String aggregateFieldsString) {
+		if (this.getDataSource() != null
+				&& (this.getDataSource().dataListCapabilities() & DataListConnector.CAP_AGGREGABLE) > 0) {
+			if (aggregateFieldsString != null
+					&& !"".equalsIgnoreCase(aggregateFieldsString)) {
+				// Convert String to HashMap
+				HashMap<String, ArrayList<String>> tempMap = new HashMap<String, ArrayList<String>>();
+
+				String[] aggregateSplit = aggregateFieldsString.split(";");
+				for (int i = 0; i < aggregateSplit.length; i++) {
+					String[] aggregateSplitNext = aggregateSplit[i].split("=");
+
+					String key = aggregateSplitNext[0];
+
+					String tempdetail = aggregateSplitNext[1];
+					tempdetail = tempdetail.replace("[", "");
+					tempdetail = tempdetail.replace("]", "");
+					tempdetail = tempdetail.replaceAll(" ", "");
+
+					String[] aggregateDetailSplit = tempdetail.split(",");
+
+					ArrayList<String> tempValues = new ArrayList<String>();
+					for (int j = 0; j < aggregateDetailSplit.length; j++) {
+
+						tempValues.add(aggregateDetailSplit[j]);
+					}
+
+					tempMap.put(key, tempValues);
+				}
+				this.aggregateFields.setValue(tempMap);
+			} else {
+				this.aggregateFields.setValue(null);
+			}
+			((AggregableDataList) this.getDataSource())
+					.setAggregateFields(this.aggregateFields.getValue());
+		}
+	}
+
+	public String getAggregateFieldsString() {
+		String result = "";
+
+		if (this.getDataSource() != null
+				&& (this.getDataSource().dataListCapabilities() & DataListConnector.CAP_AGGREGABLE) > 0) {
+			if (this.aggregateFields.getValue() != null) {
+				// Convert the HashMap to String
+				Iterator<String> it = this.aggregateFields.getValue().keySet().iterator();
+
+				while (it.hasNext()) {
+					String curr = it.next();
+					ArrayList<String> currList = this.aggregateFields.getValue().get(curr);
+
+					if (!result.equalsIgnoreCase("")) {
+						result += ";" + curr + "=" + currList.toString();
+					} else {
+						result = curr + "=" + currList.toString();
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 }

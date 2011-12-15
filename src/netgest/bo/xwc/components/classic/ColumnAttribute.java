@@ -150,6 +150,29 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
     private XUIViewProperty<Boolean> wrapText =
     	new XUIViewProperty<Boolean>( "wrapText", this, false );
     
+    /**
+     * If the collumn enables aggregate method returns <code>True</code> )
+     */
+    private XUIViewProperty<Boolean>    		enableAggregate	= 
+    	new XUIViewProperty<Boolean>( "enableAggregate", this, false );
+    
+    /**
+	 * Set the column enables Aggregate
+	 * @param sBooleanText true/false
+	 */
+	public void setEnableAggregate(String enableAggregate) {
+		this.enableAggregate.setValue( Boolean.parseBoolean( enableAggregate )  );
+	}
+	
+	/**
+	 * Getter for the property summary
+	 * 
+	 * @return true/false
+	 */
+	public boolean isEnableAggregate() {
+		return enableAggregate.getValue();
+	}
+    
     public void setSqlExpression( String sqlexpressionEl ) {
     	this.sqlExpression.setValue( sqlexpressionEl );
     }

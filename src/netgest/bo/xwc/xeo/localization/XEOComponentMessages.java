@@ -2,6 +2,11 @@ package netgest.bo.xwc.xeo.localization;
 import netgest.bo.xwc.framework.localization.XUILocalizedMessage;
 
 public interface XEOComponentMessages {
+	public static final XUILocalizedMessage BRIDGETB_MOVEUP = 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "BRIDGETB_MOVEUP" );
+	
+	public static final XUILocalizedMessage BRIDGETB_MOVEDOWN = 
+		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "BRIDGETB_MOVEDOWN" );
 
 	public static final XUILocalizedMessage BRIDGETB_REMOVE = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "BRIDGETB_REMOVE" );

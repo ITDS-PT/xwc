@@ -3,12 +3,14 @@ Ext.ns('ExtXeo','ExtXeo.data');
 
 ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 	{
+		recordIds : [],
 		suspendUploadCondig : false,
 		minHeight : 0,
 		getMinHeight : function() {
 			return this.minHeight;
 		},
 		setMinHeight : function( minHeight ) {
+			this.recordIds = [];
 			this.minHeight = minHeight; 
 		},
 		updateColumnConfig : function( submit ) {
@@ -38,9 +40,23 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 );
 
 ExtXeo.grid.GridView = Ext.extend(Ext.grid.GridView, {
+	aggregateText     : 'Agregar Valores',
+	aggregateSumText  : 'Somat&oacute;rio' ,
+	aggregateMinText  : 'M&iacute;nimo' ,
+	aggregateMaxText  : 'M&aacute;ximo' ,
+	aggregateAvgText  : 'M&eacute;dia' ,
+	aggregateCountText: 'Total',
+	aggregateState	  : '',
+    restoreDefsText   : 'Rep&ocirc;r Defini&ccedil;&otilde;es',
+    selectColsText    : 'Seleccionar Colunas',
+    enableSummary     : false,	
 	constructor: function( opts ) {
 		this.onSelColumns = opts.onSelColumns;
 		this.onResetDefaults = opts.onResetDefaults;
+		this.onSum = opts.onSum;
+		this.onMin = opts.onMin;
+		this.onMax = opts.onMax;
+		this.onAvg = opts.onAvg;
 		ExtXeo.grid.GridView.superclass.constructor.apply(this, arguments);
 	},
     initTemplates : function(){
@@ -60,6 +76,8 @@ ExtXeo.grid.GridView = Ext.extend(Ext.grid.GridView, {
     renderUI : function() {
         ExtXeo.grid.GridView.superclass.renderUI.call( this );
         
+        this.grid.getStore().grid = this.grid;
+                
         var g = this.grid;
         if(g.enableColumnHide !== false) {
 	        this.hmenu.items.key( 'columns' ).hide();
@@ -245,6 +263,35 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
            s.setDisabled( this.cm.config[this.hdCtxIndex].groupable === false);
            s.setChecked(grouped, true);
         }
+        
+        var s2 = this.hmenu.items.get('aggregate');
+        
+        if(s2){        	
+        	 var colIdText = this.cm.getDataIndex(this.hdCtxIndex);        	 
+        	 var colHeaderText = this.cm.config[this.hdCtxIndex].header;
+        	         	         	 
+        	 s2.menu.items.get('aggregateSum').itemId = 'SUM:' + colIdText + ':' + colHeaderText; 
+        	 s2.menu.items.get('aggregateSum').checkHandler = null;        	 
+        	 s2.menu.items.get('aggregateSum').setChecked(this.grid.store.isCheckedAggregate('SUM:' + colIdText + ':' + colHeaderText));
+        	 s2.menu.items.get('aggregateSum').checkHandler = this.checkHandlerAggregate; 
+        	         	        	 
+        	 s2.menu.items.get('aggregateMin').itemId = 'MIN:' + colIdText + ':' + colHeaderText;         	 
+        	 s2.menu.items.get('aggregateMin').checkHandler = null;        	  
+        	 s2.menu.items.get('aggregateMin').setChecked(this.grid.store.isCheckedAggregate('MIN:' + colIdText + ':' + colHeaderText)); 
+        	 s2.menu.items.get('aggregateMin').checkHandler = this.checkHandlerAggregate;    	 
+        	 
+        	 s2.menu.items.get('aggregateMax').itemId = 'MAX:' + colIdText + ':' + colHeaderText;    	 
+        	 s2.menu.items.get('aggregateMax').checkHandler = null;   
+      	 	 s2.menu.items.get('aggregateMax').setChecked(this.grid.store.isCheckedAggregate('MAX:' + colIdText + ':' + colHeaderText));
+        	 s2.menu.items.get('aggregateMax').checkHandler = this.checkHandlerAggregate;    	      	 
+        	 
+        	 s2.menu.items.get('aggregateAvg').itemId = 'AVG:' + colIdText + ':' + colHeaderText;    	 
+        	 s2.menu.items.get('aggregateAvg').checkHandler = null;  
+        	 s2.menu.items.get('aggregateAvg').setChecked(this.grid.store.isCheckedAggregate('AVG:' + colIdText + ':' + colHeaderText));
+        	 s2.menu.items.get('aggregateAvg').checkHandler = this.checkHandlerAggregate;    	 
+        	
+           s2.setVisible( this.cm.config[this.hdCtxIndex].aggregate === true);
+        }
     },
     renderUI : function(){
         ExtXeo.grid.GroupingView.superclass.renderUI.call(this);
@@ -268,8 +315,102 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
                 }
                 );
             }
+            
+            
+            if(this.enableAggregate)
+            {
+	            var aggregateMenu = new Ext.menu.Menu({
+	            id: 'aggregateMenu', // the menu's id we use later to assign as submenu
+	            items: [
+	                new Ext.menu.CheckItem(        		
+			        			{
+			                id:'aggregateSum',
+					        		itemId:'aggregateSum', 
+											text:this.aggregateSumText, 
+											checkHandler: this.checkHandlerAggregate,
+				              scope: this 
+										} 
+		        			),
+		        			new Ext.menu.CheckItem(        		
+					        	{
+			                id:'aggregateMin',
+					        		itemId:'aggregateMin', 
+											text:this.aggregateMinText,
+											checkHandler: this.checkHandlerAggregate,
+						          scope: this
+										} 
+				        	),
+				        	new Ext.menu.CheckItem(        		
+					        	{
+	                		id:'aggregateMax',
+					        		itemId:'aggregateMax', 
+											text:this.aggregateMaxText, 
+											checkHandler: this.checkHandlerAggregate ,
+				              scope: this
+										} 
+					        ),
+				        	new Ext.menu.CheckItem(        		
+					        	{
+			                id:'aggregateAvg',
+							        itemId:'aggregateAvg', 
+											text:this.aggregateAvgText, 
+											checkHandler: this.checkHandlerAggregate,
+						          scope: this
+										} 
+					        )
+			            ]
+			        });
+			        		        
+			        this.hmenu.add( 
+			            	{
+			    				id:'aggregate', 
+			    				text:this.aggregateText,
+			    				menu: 'aggregateMenu',
+	                scope: this
+			    			} 
+	            );
+            }
+            
+            // Fill summary fields saved
+            try
+            {
+	            var aggregateObjectsArray = this.aggregateState.SVALS;
+	            for (var i = 0; i < aggregateObjectsArray.length; i++) {
+	            	var fieldId = aggregateObjectsArray[i].VALUEAGG;
+	            	
+	            	var idx = this.grid.store.aggregateFieldsOn.indexOf( fieldId );
+	    		
+		    				if(idx == -1)
+		    				{
+		    					this.grid.store.aggregateFieldsOn[this.grid.store.aggregateFieldsOn.length] = fieldId;
+		      			}	            	
+	            }
+      			}
+      			catch(err)
+      			{ alert(err);}
+            
             this.hmenu.on('beforeshow', this.beforeMenuShow, this);
         }
+    },  
+    checkHandlerAggregate: function(mi, checked){
+    	if(checked)
+    	{
+    		this.grid.store.addAggregateField('T:' + mi.itemId, mi.itemId, checked);  
+              		
+    		if(this.grid.store.groupField.length	== 0)
+    		{    			
+      		this.grid.store.addGroupBy("/*DUMMY_AGGREGATE*/");
+    		}	
+      }
+      else
+    	{
+    		this.grid.store.addAggregateField('F:' + mi.itemId, mi.itemId, checked);
+    		
+    		if(this.grid.store.groupField.length == 1 && this.grid.store.groupField[0] == "/*DUMMY_AGGREGATE*/" &&  this.grid.store.aggregateFieldsOn.length == 0)
+    		{
+    			this.grid.store.clearGroupBy();
+    		}
+      }
     },
     onGroupByClick : function(){
         this.grid.store.addGroupBy(this.cm.getDataIndex(this.hdCtxIndex));
@@ -277,14 +418,29 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     },
     onShowGroupsClick : function(mi, checked){
         if(checked){
+        	  if(this.grid.store.aggregateFieldsOn.length > 0 && 
+        	  	(this.grid.store.groupField.length == 0 || 
+        	  	(this.grid.store.groupField.length == 1 && this.grid.store.groupField[0] == "/*DUMMY_AGGREGATE*/" ))
+        	  )
+        	  {
+        	  	this.grid.store.removeGroupBy("/*DUMMY_AGGREGATE*/");     
+        	  }
             this.onGroupByClick();
         }else{
-            this.grid.store.removeGroupBy(this.cm.getDataIndex(this.hdCtxIndex));
+        		this.grid.store.removeGroupBy(this.cm.getDataIndex(this.hdCtxIndex)); 
+        		
+            if(this.grid.store.groupField.length	== 0 && this.grid.store.aggregateFieldsOn.length > 0)
+			    	{ 			 
+			      	this.grid.store.addGroupBy("/*DUMMY_AGGREGATE*/");		       	  	     	
+			    	}	        
         }
     },
     onClearGroups : function() {
     	this.grid.store.clearGroupBy();
-    	
+    	if(this.grid.store.aggregateFieldsOn.length > 0)
+    	{    			
+      	this.grid.store.addGroupBy("/*DUMMY_AGGREGATE*/");   	  	
+    	}	
     },
     toggleGroup : function(groupEl, expanded){
         this.grid.stopEditing(true);
@@ -635,6 +791,7 @@ ExtXeo.grid.ViewGroup = function( opts ) {
 	this.grid = null;
 	this.displayVaue = null;
 	this.count = null;
+	this.aggregate = null;
 	this.text = null;
 	this.groupId = null;
 	this.cls = null;
@@ -644,8 +801,14 @@ ExtXeo.grid.ViewGroup = function( opts ) {
 }
 
 ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
+    aggregateTbField    : 'Agregar Valores',
+    aggregateTbSumText  : 'Somat&oacute;rio' ,
+    aggregateTbAvgText  : 'M&eacute;dia' ,
+    aggregateTbMinText  : 'M&iacute;nimo',
+    aggregateTbMaxText  : 'M&aacute;ximo',
 	uniqueId : 0,
-    groupTextTpl : '{displayValue} ({count})',
+    groupTextTpl : '{aggregateDetailAction}{displayValue} ({count})',
+    groupTextTplAggregate : '{aggregate}',
 	initTemplates : function() {
 	    if(!this.startGroup){
 	        this.startGroup = new Ext.XTemplate(
@@ -654,6 +817,7 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
 	            		'<table style="table-layout:auto"><tr><td><div>', this.groupTextTpl ,'</div></td><td>',
 	            			'<SPAN style="margin-left:20px;" id="{elemId}-tb"></span>',
 	            		'</td></tr></table>',
+	                this.groupTextTplAggregate,
 	                '</div>',
 	            '<div id="{elemId}-bd" class="x-grid-group-body">'
 	        );
@@ -661,6 +825,69 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
 	    this.startGroup.compile();
 	    this.endGroup = '</div></div>';
 	},
+	utf8_decode : function ( str ) {
+ 
+    var histogram = {};
+    var ret = str.toString();
+ 
+    var replacer = function(search, replace, str) {
+        var tmp_arr = [];
+        tmp_arr = str.split(search);
+        return tmp_arr.join(replace);
+    };
+ 
+    // The histogram is identical to the one in urlencode.
+    histogram["'"]   = '%27';
+    histogram['(']   = '%28';
+    histogram[')']   = '%29';
+    histogram['*']   = '%2A';
+    histogram['~']   = '%7E';
+    histogram['!']   = '%21';
+    histogram['%20'] = '+';
+    histogram['\u20AC'] = '%80';
+    histogram['\u0081'] = '%81';
+    histogram['\u201A'] = '%82';
+    histogram['\u0192'] = '%83';
+    histogram['\u201E'] = '%84';
+    histogram['\u2026'] = '%85';
+    histogram['\u2020'] = '%86';
+    histogram['\u2021'] = '%87';
+    histogram['\u02C6'] = '%88';
+    histogram['\u2030'] = '%89';
+    histogram['\u0160'] = '%8A';
+    histogram['\u2039'] = '%8B';
+    histogram['\u0152'] = '%8C';
+    histogram['\u008D'] = '%8D';
+    histogram['\u017D'] = '%8E';
+    histogram['\u008F'] = '%8F';
+    histogram['\u0090'] = '%90';
+    histogram['\u2018'] = '%91';
+    histogram['\u2019'] = '%92';
+    histogram['\u201C'] = '%93';
+    histogram['\u201D'] = '%94';
+    histogram['\u2022'] = '%95';
+    histogram['\u2013'] = '%96';
+    histogram['\u2014'] = '%97';
+    histogram['\u02DC'] = '%98';
+    histogram['\u2122'] = '%99';
+    histogram['\u0161'] = '%9A';
+    histogram['\u203A'] = '%9B';
+    histogram['\u0153'] = '%9C';
+    histogram['\u009D'] = '%9D';
+    histogram['\u017E'] = '%9E';
+    histogram['\u0178'] = '%9F';
+ 
+    for (replace in histogram) {
+        search = histogram[replace]; // Switch order when decoding
+        ret = replacer(search, replace, ret) // Custom replace. No regexing   
+    }
+ 
+    // End with decodeURIComponent, which most resembles PHP's encoding functions
+    
+    ret = decodeURIComponent(ret);
+ 
+    return ret;
+},	
 	doRender : function( parentGroup, cs, rs, ds, startRow, colCount, stripe ) {
     	var level = parentGroup?parentGroup.groupLevel + 1:0; 
     	this.cs = cs;
@@ -701,7 +928,150 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
             	gid = new Array(Ext.util.Format.htmlEncode(value)).join('|');
             
             var group = this.rows[gid]; 
+            var aggregateGrid;
             if( !group ) {
+            	var elemId = gidPrefix + gid;
+            	
+            	
+            	var aggregateFormatted = '';
+            	var aggregateDetailAction = '';
+            	
+            	if(r.json[groupField + "__aggregate"] != "none")
+            	{
+            		var hasSum = false;
+            		var hasMin = false;
+            		var hasMax = false;
+            		var hasAvg = false;
+            		
+            		aggregateDetailAction = '';
+            	
+	            	var aggregateArrJson = eval("(" + "{aggregateArr: [" + r.json[groupField + "__aggregate"] + "]}" + ")");
+	            	var aggregateArr = aggregateArrJson.aggregateArr;
+	            	var aggregateData = new Array();
+	            	
+	            	var colOdd = "#EDEDED";
+	            	var colEven  = "#FFFFFF";
+	            	
+	            	for(l = 0, lenA = aggregateArr.length; l < lenA; l++) {
+	            		 var aggregateR = aggregateArr[l];
+	            		 if(aggregateR != null)
+						 {
+	            		 	var aggregateSUM = aggregateR.SUM;	            		 
+	            			var aggregateAVG = aggregateR.AVG;	            		 
+	            		 	var aggregateMIN = aggregateR.SMIN;	            		 
+	            		 	var aggregateMAX = aggregateR.SMAX;
+	            		 
+	            		 
+	            		 	if(aggregateSUM != null && aggregateSUM != '')
+	            		 	{
+	            				 hasSum = true;
+	            		 	}
+	            		 	if(aggregateAVG != null && aggregateAVG != '')
+	            		 	{
+	            				 hasAvg = true;
+	            		 	}
+	            		 	if(aggregateMIN != null && aggregateMIN != '')
+	            		 	{
+	            				 hasMin = true;
+	            		 	}
+	            		 	if(aggregateMAX != null && aggregateMAX != '')
+	            		 	{
+	            				 hasMax = true;
+	            		 	}
+	            		 
+	            		 
+	            		 	if(hasSum && hasMin && hasMax && hasAvg)
+	            		 	{
+	            				 break;
+	            		 	}
+	            		 }
+	            	 }
+	            	
+	            	 if(hasSum || hasMin || hasMax || hasAvg)
+            		 {
+	             		aggregateFormatted = '<table name="agg_id_table" id="agg_tb-' + elemId + '" style="display:block"><thead><tr class="x-grid3-hd-row">' + 
+						 '<td class="x-grid3-hd-row x-grid3-cell x-grid3-cell-first " bgcolor="#3764A0" align="center" width="auto" style="color: #FFFFFF">&nbsp;' + this.aggregateTbField + '&nbsp;</td>';
+	             		
+	             		
+	             		if(hasSum) 
+	             		{
+	             			aggregateFormatted = aggregateFormatted +
+						 '<td class="x-grid3-hd x-grid3-cell" bgcolor="#3764A0" align="center" width="100px" style="color: #FFFFFF">&nbsp;' + this.aggregateTbSumText + '&nbsp;</td>';
+	             		}
+	             		if(hasAvg) 
+	             		{
+	             		aggregateFormatted = aggregateFormatted +
+						 '<td class="x-grid3-hd x-grid3-cell" bgcolor="#3764A0" align="center" width="100px" style="color: #FFFFFF">&nbsp;' + this.aggregateTbAvgText + '&nbsp;</td>'; 
+	             		}
+	             		if(hasMin) 
+	             		{
+						 aggregateFormatted = aggregateFormatted +
+						 '<td class="x-grid3-hd x-grid3-cell" bgcolor="#3764A0" align="center" width="100px" style="color: #FFFFFF">&nbsp;' + this.aggregateTbMinText + '&nbsp;</td>'; 
+	             		}
+	             		if(hasMax) 
+	             		{
+						 aggregateFormatted = aggregateFormatted +
+						 '<td class="x-grid3-hd x-grid3-cell" bgcolor="#3764A0" align="center" width="100px" style="color: #FFFFFF">&nbsp;' + this.aggregateTbMaxText + '&nbsp;</td>'; 
+	             		}
+	             		aggregateFormatted = aggregateFormatted + '</tr></thead><tbody>';
+		            	
+		            	
+		            	var curColour = colOdd;
+	            		 
+		            	 for(k = 0, len2 = aggregateArr.length; k < len2; k++) {
+		            	 	
+	            		   if(k%2 == 0)
+	            		   {
+	            		 		 curColour = colEven;
+	            		   }
+	            		   else
+	            		   {
+	            		 		 curColour = colOdd;
+	            		   }
+		            	 	
+		            		 var aggregateR = aggregateArr[k];
+		            		 var aggregateSUM = aggregateR.SUM;	            		 
+		            		 var aggregateAVG = aggregateR.AVG;	            		 
+		            		 var aggregateMIN = aggregateR.SMIN;	            		 
+		            		 var aggregateMAX = aggregateR.SMAX;
+		            		 var aggregateFieldName = aggregateR.name;
+		            		 var aggregateFieldDesc = aggregateR.desc;
+		            		 
+		            		 var aggregateDataTemp = new Array();
+		            		 aggregateDataTemp[0] = aggregateFieldDesc;
+		            		 aggregateDataTemp[1] = aggregateSUM;
+		            		 aggregateDataTemp[2] = aggregateAVG;
+		            		 aggregateDataTemp[3] = aggregateMIN;
+		            		 aggregateDataTemp[4] = aggregateMAX;
+		            		 
+		            		 aggregateData[k] = aggregateDataTemp;
+		            		 
+		            		 aggregateFormatted = aggregateFormatted + '<tr class="x-grid3-hd-row" bgcolor="' + curColour + '"><td class="x-grid3-col x-grid3-cell">&nbsp;' + 
+		            		 										this.utf8_decode(aggregateFieldDesc) + '&nbsp;</td>';
+		            		 
+		            		 if(hasSum) 
+		              		 {
+		              			aggregateFormatted = aggregateFormatted + '<td class="x-grid3-col x-grid3-cell" align="right">&nbsp;' + aggregateSUM + '&nbsp;</td>';
+		              		 }
+		            		 if(hasAvg) 
+		              		 {
+		              			aggregateFormatted = aggregateFormatted + '<td class="x-grid3-col x-grid3-cell" align="right">&nbsp;' + aggregateAVG + '&nbsp;</td>';
+		              		 }
+		            		 if(hasMin) 
+		              		 {
+		              			aggregateFormatted = aggregateFormatted + '<td class="x-grid3-col x-grid3-cell" align="right">&nbsp;' + aggregateMIN + '&nbsp;</td>';
+		              		 }
+		            		 if(hasMax) 
+		              		 {
+		              			aggregateFormatted = aggregateFormatted + '<td class="x-grid3-col x-grid3-cell" align="right">&nbsp;' + aggregateMAX + '&nbsp;</td>';
+		              		 }
+		            		 aggregateFormatted = aggregateFormatted + '</tr>';
+		            		 
+		            	 }
+		            	 aggregateFormatted = aggregateFormatted + "</tbody></table>";	
+            		 }
+            	}
+            	
 	            group = new ExtXeo.grid.GridGroup({
 	            	uniqueId : ++ExtXeo.grid.ViewGroup.prototype.uniqueId,
 	            	elemId : gidPrefix + gid,
@@ -709,8 +1079,10 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
 	        		rawValue : value,
 	        		cls : 'x-grid-group-collapsed',
 	        		groupLevel : level,
-	        		displayValue : r.json[groupField],
+	        		displayValue : r.json[groupField].indexOf('/*DUMMY_AGGREGATE*/') > 0 ? '' :  r.json[groupField] ,
 	        		count : r.json[groupField + "__count"],
+	        		aggregate : aggregateFormatted,
+	        		aggregateDetailAction : aggregateDetailAction,
 	        		parentFields : null,
 	        		rowIndex : rowIndex,
 	        		collapsed : true,
@@ -841,6 +1213,8 @@ ExtXeo.grid.GridGroup = function( opts ) {
 	this.toolBar = null;
 	this.groupStore = null;
 	this.groupingView = null;
+	this.aggregate = null;
+	this.aggregateDetailAction = null;
 	ExtXeo.grid.GridGroup.uniqueId++;
 	Ext.apply( this, opts );
 }
@@ -919,6 +1293,9 @@ ExtXeo.grid.GridGroup = Ext.extend( ExtXeo.grid.GridGroup, {
 ExtXeo.grid.GroupingView.GROUP_ID = 10000;
 
 ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
+	changePageControl: false, 
+    grid : null,
+	rowIdentifier : '',
 	constructor: function( opts ) {
 		this.groupStores = [];
 		if( opts.groupField ) 
@@ -934,7 +1311,9 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 			columnsConfig : null,
 			remoteGroup : true,
 			rootStore : null,
-			groupField : []
+			groupField : [],
+			aggregateField : null,
+			aggregateFieldsOn : []
 		});
 		this.storeId = (ExtXeo.grid.GroupingView.GROUP_ID++);
 		ExtXeo.data.GroupingStore.superclass.constructor.apply(this, arguments);
@@ -1070,6 +1449,32 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
             this.baseParams['groupBy'] = this.groupField;
         }
         this.reload();
+    }, 
+    isCheckedAggregate : function (fieldId)
+    {
+    	return this.aggregateFieldsOn.indexOf( fieldId ) > -1;
+    },
+    addAggregateField:  function( field, fieldId, check ){
+    	if(check === true)
+    	{
+    		var idx = this.aggregateFieldsOn.indexOf( fieldId );
+    		
+    		if(idx == -1)
+    		{
+    			this.aggregateFieldsOn[this.aggregateFieldsOn.length] = fieldId;
+    			this.aggregateField = field;
+      		this.baseParams['aggregateField'] = field;
+      	}
+    	}
+    	else if(this.aggregateFieldsOn.indexOf( fieldId ) > -1)
+    	{   
+		  	var idx = this.aggregateFieldsOn.indexOf( fieldId );
+		    this.aggregateFieldsOn.splice (idx,1);
+		    this.aggregateField = field;
+      	this.baseParams['aggregateField'] = field;
+    	}    		
+    	
+      this.reload();
     },
     applyGrouping : function(alwaysFireChange){
         if(this.groupField.length > 0 ){
@@ -1258,7 +1663,22 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
                 */
             }
         }
-    }
+    }, 
+    setSelectedPageRows: function() {	
+		this.changePageControl = true; 
+		if(this.grid) 
+		{	
+			var rows = [];
+			for(var i = 0, len = this.grid.recordIds.length; i < len; i++){
+				var index = this.find(this.rowIdentifier, this.grid.recordIds[i]);
+				if(index >= 0){
+					rows.push(index);
+				}
+			}
+			this.grid.getSelectionModel().selectRows(rows);
+		}
+		this.changePageControl = false; 
+	}
 });
 
 ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
@@ -1422,6 +1842,7 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
         }
     },
     doLoad : function(start){
+    	this.store.changePageControl = true;
         var o = {}, pn = this.paramNames;
         o[pn.start] = start;
         o[pn.limit] = this.pageSize;
@@ -1469,6 +1890,14 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
         store.on("load", this.onLoad, this);
         store.on("loadexception", this.onLoadError, this);
         this.store = store;
+    },
+	listeners: {
+        change: {
+            fn: function(){		
+                this.store.setSelectedPageRows();	
+            }
+        },
+        scope:this
     }
 });
 
@@ -1492,17 +1921,64 @@ ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentif
             sSelRecs += oSelRecs[i].get( rowIdentifier );
         }
         oInput.value = sSelRecs;
+        
+        try
+        {
+	        if(oSelModel.grid.getStore().changePageControl == false)
+			{
+				oSelModel.grid.getStore().rowIdentifier = rowIdentifier;
+				for(var j = 0; j < oSelModel.grid.getStore().getCount(); j++)
+				{
+					var currRow = oSelModel.grid.getStore().getAt(j);
+					var rId = currRow.get( rowIdentifier );				
+					var isRowSelected = false;
+					 
+					for (var k = 0; k < oSelRecs.length; k++)  {
+						var tempId = oSelRecs[k].get( rowIdentifier );
+						
+						if(tempId == rId)
+						{
+							isRowSelected = true;
+							break;
+						}
+					} 
+					if(isRowSelected == true)
+					{
+						var curIdx = oSelModel.grid.recordIds.indexOf(rId);
+						
+						if(curIdx < 0)
+						{
+							oSelModel.grid.recordIds[oSelModel.grid.recordIds.length] = rId;
+						}					
+					}
+					else
+					{ 
+						var curIdx = oSelModel.grid.recordIds.indexOf(rId);
+						
+						if(curIdx >= 0)
+						{			
+							oSelModel.grid.recordIds.splice(curIdx, 1);
+						}
+					}				 
+				}
+				
+				var tempSelectRecs = "";
+				var selectedControl = false;
+				for (var k = 0; k < oSelModel.grid.recordIds.length; k++)  {
+					if(k>0) tempSelectRecs += "|";
+					tempSelectRecs += oSelModel.grid.recordIds[k];
+					selectedControl = true;
+				}
+				if(selectedControl)
+				{
+					oInput.value = tempSelectRecs;
+				}
+			}
+        }
+        catch(err)
+        {}
     }
     else {
         alert('Select rows input not found!!');
     }
-}
-
-/**
- * 
- * Renderer for a column so that it wraps text
- * 
- * */
-ExtXeo.grid.nowrap = function(text){
-    return '<div style="white-space:normal !important;">'+ text +'</div>';
 }

@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,9 +21,58 @@ import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
 
-public class XEOObjectListConnector implements GroupableDataList {
+public class XEOObjectListConnector implements GroupableDataList, AggregableDataList {
 
 	boObjectList oObjectList;
+	
+	private HashMap<String, ArrayList<String>> aggregateFields;
+	
+	public void setAggregateFields(HashMap<String, ArrayList<String>> aggregateFields)
+	{
+		this.aggregateFields = aggregateFields;
+	}
+	
+	public HashMap<String, ArrayList<String>> getAggregateFields()
+	{
+		if(this.aggregateFields == null)
+		{
+			this.aggregateFields = new HashMap<String, ArrayList<String>>();
+		}		
+		return this.aggregateFields;
+	}
+	
+	public void addAggregateField(String fieldId, String fieldDesc,
+			String aggregateType) {
+		if (this.aggregateFields == null) {
+			this.aggregateFields = new HashMap<String, ArrayList<String>>();
+		}
+
+		ArrayList<String> sList = this.aggregateFields.get(fieldId);
+		if (sList != null) {
+			if(!sList.contains(aggregateType))
+			{
+				sList.add(aggregateType);
+			}
+		}
+		else
+		{
+			sList = new ArrayList<String>();
+			sList.add(aggregateType);
+			this.aggregateFields.put(fieldId, sList);
+		}
+	}
+
+	public void removeAggregateField(String fieldId, String aggregateType) {
+		if (this.aggregateFields != null) {
+			ArrayList<String> sList = this.aggregateFields.get(fieldId);
+			if (sList != null) {
+				if(sList.contains(aggregateType))
+				{
+					sList.remove(aggregateType);
+				}
+			}
+		}
+	}
     
     public boObjectList getObjectList() {
 		return oObjectList;
@@ -390,7 +440,8 @@ public class XEOObjectListConnector implements GroupableDataList {
 			DataListConnector.CAP_PAGING + 
 			DataListConnector.CAP_SORT + 
 			DataListConnector.CAP_FILTER +
-			DataListConnector.CAP_GROUPING;
+			DataListConnector.CAP_GROUPING + 
+			DataListConnector.CAP_AGGREGABLE;
 	}
 
 	@Override

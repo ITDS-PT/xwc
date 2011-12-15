@@ -43,7 +43,7 @@ public class XEOObjectListGroupDataRecord implements DataRecordConnector {
 			}
 			else if ( defAtt != null ) {
 				return new XEOObjectListGroupAttribute( defAtt, this.row, this.parent, true);
-			} else if ( name.contains("__" ) && !name.endsWith("__count") && !name.endsWith("__value")) {
+			} else if ( name.contains("__" ) && !name.endsWith("__count") && !name.endsWith("__value") && !name.endsWith("__aggregate")) {
 				//In the column definition for the attribute boql's dot syntax is used, but internal transformations
 				//use "__" instead of dot syntax, as such the comparison is done against the "__" string. 
 				//The "__value" and "__count" expressions are special to the grid's datastore
@@ -74,6 +74,10 @@ public class XEOObjectListGroupDataRecord implements DataRecordConnector {
 	private DataFieldConnector handleSpecialFields( boDefHandler objDef, String name ) {
 		if (name.endsWith("__count")) {
 			return new XEOObjectListAttributeCount(this.parent, this.row,
+					name);
+		}
+		else if (name.endsWith("__aggregate")) {
+			return new XEOObjectListAttributeAggregate(this.parent, this.row,
 					name);
 		}
 		else if (name.endsWith("__value")) {

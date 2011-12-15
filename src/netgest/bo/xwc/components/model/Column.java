@@ -18,5 +18,6 @@ public interface Column {
     public String getLookupViewer();
     public boolean isContentHtml();
     public String applyRenderTemplate( Object value );
+    public boolean isEnableAggregate();
     
 }

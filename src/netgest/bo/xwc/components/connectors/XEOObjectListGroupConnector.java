@@ -1,10 +1,13 @@
 package netgest.bo.xwc.components.connectors;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import netgest.bo.data.DataManager;
@@ -96,7 +99,12 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		
 		List<SqlField> sqlFieldsList = getRootList().getSqlFields();
 		
-		addParentWhere( boql, qp, q );
+		/** ML 07-10-2011 **/
+		if(!(this.parentValues.length == 1 && this.parentGroups[0].equalsIgnoreCase("/*DUMMY_AGGREGATE*/")))
+		{
+			addParentWhere( boql, qp, q );
+		}
+		/** END ML 07-10-2011 **/
 		
 		if( orderBy != null && orderBy.length() > 0 ) {
 			
@@ -408,6 +416,14 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		String boqlField = this.groupAttribute;
 		String boqlGroupBy = this.groupAttribute;
 		
+		// ML - 06-10-2011
+		if(this.groupAttribute != null && this.groupAttribute.equalsIgnoreCase("/*DUMMY_AGGREGATE*/"))
+		{
+			boqlField = nativeQlTag1 + "'ALL' as DUMMY_VALUE "  + nativeQlTag2;
+			boqlGroupBy = null ;
+		}
+		// END ML - 06-10-2011
+		
 //		boolean needFieldAlias = false;
 //		String[] relatedAtt = this.groupAttribute.split("__");
 //		if( relatedAtt.length > 1 ) {
@@ -481,11 +497,74 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		
 		if (!createSubSelect) {
 			fields += ", "+nativeQlTag1 +"count(*) as count" + nativeQlTag2;
+
+			// ML 22-09-2011 - Summary Fields
+			if (parentGroups != null
+					&& parentGroups.length > 0
+					&& parentGroups[parentGroups.length - 1]
+							.equalsIgnoreCase(this.groupAttribute)
+					&& getRootList() != null
+					&& getRootList().getAggregateFields() != null 
+					&& !getRootList().getAggregateFields().isEmpty()) {
+				fields += ", " + nativeQlTag1;
+
+				// obtain an Iterator for Collection
+				Iterator itr = getRootList().getAggregateFields().keySet().iterator();
+
+				// iterate through HashMap values iterator
+				boolean first = true;
+				while (itr.hasNext()) {
+					String currKey = (String) itr.next();
+					ArrayList<String> temp = getRootList().getAggregateFields().get(currKey);
+					
+					String aggregateFieldId = currKey.substring(0, currKey.indexOf(":"));
+					String aggregateFieldDesc = currKey.substring(currKey.indexOf(":")+1);
+
+					String sum = "''''", avg = "''''", min = "''''", max = "''''";
+
+					for (int k = 0; k < temp.size(); k++) {
+						if (temp.get(k) != null && temp.get(k).equalsIgnoreCase("SUM")) {
+							sum = "''' || NVL(SUM (" + aggregateFieldId + "),0) || '''";
+						} else if (temp.get(k) != null
+								&& temp.get(k).equalsIgnoreCase("AVG")) {
+							avg = "''' || round(NVL(AVG (" + aggregateFieldId
+									+ "),0),2) || '''";
+						} else if (temp.get(k) != null
+								&& temp.get(k).equalsIgnoreCase("MIN")) {
+							min = "''' || NVL(MIN (" + aggregateFieldId + "),0) || '''";
+						} else if (temp.get(k) != null
+								&& temp.get(k).equalsIgnoreCase("MAX")) {
+							max = "''' || NVL(MAX (" + aggregateFieldId + "),0) || '''";
+						}
+					}
+
+					if (!first) {
+						fields += " || ',' || ";
+					} else {
+						first = false;
+					}
+					try {
+						fields += "'{name: ''" + aggregateFieldId + "'',desc: ''" + URLEncoder.encode(aggregateFieldDesc.replaceAll("€", "&euro;"), "UTF-8")
+								+ "'', SUM: " + sum + ", AVG: " + avg + ", SMIN: "
+								+ min + ", SMAX: " + max + "}' ";
+					} catch (UnsupportedEncodingException e) {
+						fields += "'{name: ''" + aggregateFieldId + "'',desc: ''" + aggregateFieldId
+						+ "'', SUM: " + sum + ", AVG: " + avg + ", SMIN: "
+						+ min + ", SMAX: " + max + "}' ";
+					}
+				}
+
+				fields += " as aggregate" + nativeQlTag2;
+			} else {
+				fields += ", " + nativeQlTag1 + "'none' as aggregate"
+						+ nativeQlTag2;
+			}
+			// END ML 22-09-2011 - Summary Fields
 		}
 		
 		q.setFieldsPart( fields );
 		
-		if( !createSubSelect ) {
+		if( !createSubSelect && /* TODO: */ boqlGroupBy != null ) {
 			if( !isDate )
 				q.setGroupByPart( boqlGroupBy );
 			else
@@ -525,10 +604,84 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		String newboql 		= q.toBOQL( modifiedBoqlParams );
 		String newsql       = qp.toSql( newboql, getEboContext() );
 		
-		if (createSubSelect) {
-			newsql = "SELECT \"GROUP\".\"" + this.groupAttribute + "\", count(*) as count FROM (" + newsql + ") \"GROUP\"" +
+		if (createSubSelect) {			
+			// ML - Summary Fields
+			String dummyGroupBy = this.groupAttribute;
+			if(this.groupAttribute != null && this.groupAttribute.equalsIgnoreCase("/*DUMMY_AGGREGATE*/"))
+			{
+				dummyGroupBy = "'ALL' as DUMMY_VALUE ";
+			}
+			if (parentGroups != null
+					&& parentGroups.length > 0
+					&& parentGroups[parentGroups.length - 1]
+							.equalsIgnoreCase(this.groupAttribute)
+					&& getRootList() != null
+					&& getRootList().getAggregateFields() != null 
+					&& !getRootList().getAggregateFields().isEmpty()) {
+				String fieldsOnSubSelect = ", ";
+
+				// obtain an Iterator for Collection
+				Iterator itr = getRootList().getAggregateFields().keySet().iterator();
+
+				// iterate through HashMap values iterator
+				boolean first = true;
+				while (itr.hasNext()) {
+					String currKey = (String) itr.next();
+					ArrayList<String> temp = getRootList().getAggregateFields().get(currKey);
+					
+					String aggregateFieldId = currKey.substring(0, currKey.indexOf(":"));
+					String aggregateFieldDesc = currKey.substring(currKey.indexOf(":")+1);
+
+					String sum = "''''", avg = "''''", min = "''''", max = "''''";
+
+					for (int k = 0; k < temp.size(); k++) {
+						if (temp.get(k) != null && temp.get(k).equalsIgnoreCase("SUM")) {
+							sum = "''' || NVL(SUM (" + aggregateFieldId + "),0) || '''";
+						} else if (temp.get(k) != null
+								&& temp.get(k).equalsIgnoreCase("AVG")) {
+							avg = "''' || round(NVL(AVG (" + aggregateFieldId
+									+ "),0),2) || '''";
+						} else if (temp.get(k) != null
+								&& temp.get(k).equalsIgnoreCase("MIN")) {
+							min = "''' || NVL(MIN (" + aggregateFieldId + "),0) || '''";
+						} else if (temp.get(k) != null
+								&& temp.get(k).equalsIgnoreCase("MAX")) {
+							max = "''' || NVL(MAX (" + aggregateFieldId + "),0) || '''";
+						}
+					}
+
+					if (!first) {
+						fieldsOnSubSelect += " || ',' || ";
+					} else {
+						first = false;
+					}
+					try {
+						fieldsOnSubSelect += "'{name: ''" + aggregateFieldId + "'',desc: ''" + URLEncoder.encode(aggregateFieldDesc.replaceAll("€", "&euro;"), "UTF-8")
+								+ "'', SUM: " + sum + ", AVG: " + avg + ", SMIN: "
+								+ min + ", SMAX: " + max + "}' ";
+					} catch (UnsupportedEncodingException e) {
+						fieldsOnSubSelect += "'{name: ''" + aggregateFieldId + "'',desc: ''" + aggregateFieldId
+						+ "'', SUM: " + sum + ", AVG: " + avg + ", SMIN: "
+						+ min + ", SMAX: " + max + "}' ";
+					}
+				}
+
+				fieldsOnSubSelect += " as aggregate";	
+						
+				newsql = "SELECT \"GROUP\".\"" + dummyGroupBy + "\", count(*) as count " + fieldsOnSubSelect + " FROM (" + newsql + ") \"GROUP\"" +
+				 " GROUP BY \"" + dummyGroupBy +"\"" + 
+				 (outerSelectOrderBy!=null?" ORDER BY " + outerSelectOrderBy:"");				
+				
+			} else {
+				newsql = "SELECT \"GROUP\".\"" + dummyGroupBy + "\", count(*) as count,'none' as aggregate FROM (" + newsql + ") \"GROUP\"" +
+				 " GROUP BY \"" + dummyGroupBy +"\"" + 
+				 (outerSelectOrderBy!=null?" ORDER BY " + outerSelectOrderBy:"");
+			}
+			// END ML - Summary Fields
+			/*
+			newsql = "SELECT \"GROUP\".\"" + this.groupAttribute + "\", count(*) as count,'none' as aggregate FROM (" + newsql + ") \"GROUP\"" +
 					 " GROUP BY \"" + this.groupAttribute +"\"" + 
-					 (outerSelectOrderBy!=null?" ORDER BY " + outerSelectOrderBy:"");
+					 (outerSelectOrderBy!=null?" ORDER BY " + outerSelectOrderBy:"");*/
 		}
 		this.preparedSqlArgs = modifiedBoqlParams;
 		this.preparedSql  = newsql;

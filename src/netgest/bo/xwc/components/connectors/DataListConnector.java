@@ -14,6 +14,7 @@ public interface DataListConnector {
 	public static final int CAP_FILTER = 8;
 	public static final int CAP_GROUPING = 16;
 	public static final int CAP_SQLFIELDS = 32;
+	public static final int CAP_AGGREGABLE = 18;
 	
     public DataListIterator iterator();
     

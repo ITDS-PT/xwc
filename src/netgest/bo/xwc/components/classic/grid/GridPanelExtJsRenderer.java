@@ -746,6 +746,28 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             
             oColConfig.add( "hidden" , oGridColumns[ i ].isHidden() );
             oColConfig.add( "groupable", oGridColumns[ i ].isGroupable() );
+            
+            
+        	// BEGIN ML: 19-09-2011 - Number Type Columns/And aggregate Enable
+			DataFieldMetaData metaData = null;
+
+			metaData = oGrid.getDataSource().getAttributeMetaData(
+					oGridColumns[i].getDataField());
+
+			if (metaData != null) {
+				if (metaData.getDataType() == DataFieldTypes.VALUE_NUMBER
+						&& !metaData.getIsLov()
+						&& !(metaData.getInputRenderType() == DataFieldTypes.RENDER_OBJECT_LOOKUP)
+						&& oGridColumns[i].isEnableAggregate()
+						&& ((oGrid.getDataSource().dataListCapabilities() & DataListConnector.CAP_AGGREGABLE) > 0)) {
+					oColConfig.add("aggregate", true);
+				} else {
+					oColConfig.add("aggregate", false);
+				}
+			}
+			// END ML: 19-09-2011 - Number Type Columns
+            
+            
             if (!"".equalsIgnoreCase(oGridColumns[ i ].getAlign()))
             	oColConfig.addJSString( "align" , oGridColumns[ i ].getAlign() );
             oColConfig.add( "stateful", false );
@@ -814,6 +836,46 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             oView.add("showPreview", true );
             oView.add("getRowClass", "function(record, index){ return record.json['__rc']; }" );
         }
+        
+        oView.add("enableAggregate", oGrid.getEnableAggregate() );
+        
+        /** ML - 10-10-2011 **/
+        oGrid.setAggregateData(oGrid.getAggregateFieldsString());
+    	StringBuffer result = new StringBuffer();
+    	result.append("{\"SVALS\":[");
+        if(oGrid.getAggregateData() != null &&  !"".equalsIgnoreCase(oGrid.getAggregateData()))
+        {        	
+        	boolean first = true;
+    			
+			String[] aggregateSplit = oGrid.getAggregateData().split(";");
+			for(int i = 0; i < aggregateSplit.length; i++)
+			{
+				String[] aggregateSplitNext = aggregateSplit[i].split("=");
+				
+				String key = aggregateSplitNext[0];
+				
+				String tempdetail = aggregateSplitNext[1];
+				tempdetail = tempdetail.replace("[", "");
+				tempdetail = tempdetail.replace("]", "");
+				tempdetail = tempdetail.replaceAll(" ","");
+				
+				String[] aggregateDetailSplit = tempdetail.split(",");
+				
+				for(int j = 0; j < aggregateDetailSplit.length; j++)
+				{
+					if(!first)
+					{
+						result.append(",");
+					}
+					result.append("{\"VALUEAGG\":\"" + aggregateDetailSplit[j] + ":" + key + "\"}");
+					first = false;
+				}
+			}    	
+        }        
+    	result.append("]}");   
+        oView.add("aggregateState", result.toString());
+        /** END ML - 10-10-2011 **/
+        
         oView.add("onSelColumns", "function() { " + XVWScripts.getCommandScript("self", oGrid.getSelectColumnsCommand(), XVWScripts.WAIT_STATUS_MESSAGE ) + " }" );
         oView.add("onResetDefaults", "function() { " + XVWScripts.getCommandScript("self", oGrid.getResetDefaultsCommand(), XVWScripts.WAIT_STATUS_MESSAGE ) + " }" );
         //oGridConfig.addJSString("layout", "fit");

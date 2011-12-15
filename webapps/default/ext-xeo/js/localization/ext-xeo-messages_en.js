@@ -28,8 +28,24 @@ if(ExtXeo.PagingToolbar){
 
 if(ExtXeo.grid.GridView) {
 	  Ext.apply(ExtXeo.grid.GridView.prototype , {
-	    selectCols: 'Select columns',
-	    resetDefs	   : 'Reset definitions'  	  
+	    aggregateText   	  : 'Summary',
+	    aggregateSumText    : 'Sum' ,
+	    aggregateAvgText    : 'Avg' ,
+	    aggregateCountText  : 'Count',
+	    restoreDefsText   : 'Restore Definitions',
+	    selectColsText    : 'Select Columns',
+	    selectCols		  : 'Select columns',
+	    resetDefs	      : 'Reset definitions' 
+	 });
+}
+
+if(ExtXeo.grid.ViewGroup) {
+	  Ext.apply(ExtXeo.grid.ViewGroup.prototype , {
+	    aggregateTbField    : 'Field',
+	    aggregateTbSumText  : 'Sum' ,
+	    aggregateTbAvgText  : 'Average' ,
+	    aggregateTbMinText  : 'Min',
+	    aggregateTbMaxText  : 'Max'
 	 });
 }
 
@@ -38,6 +54,7 @@ if( ExtXeo.grid.GroupingView) {
 	    emptyGroupText : '(None)',
 	    groupByText    : 'Group by this field',
 	    showGroupsText : 'Show in groups',
+	    aggregateText  : 'Aggregate Values',
 	    removeGroupText: 'Remove group',
 	    loadingMsg	   : 'Loading...'  	  
 	 });

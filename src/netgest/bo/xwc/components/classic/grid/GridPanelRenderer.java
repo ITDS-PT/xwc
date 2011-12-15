@@ -125,6 +125,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        	oGrid.applyFilters( dataSource );
 	        	oGrid.applySort( dataSource );
 	        	oGrid.applyFullTextSearch( dataSource );
+	        	oGrid.applyAggregate( dataSource );
 	        	
 	        	
 	            Map<String,GridColumnRenderer> columnRenderer = new HashMap<String,GridColumnRenderer>();
@@ -174,14 +175,27 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	                s.append( '{' );
 	                s.append( oGrid.getId() ); 
 	                s.append( ":" );
-	                JavaScriptArrayProvider oJsArrayProvider = new JavaScriptArrayProvider( 
-	                		groupConnector.iterator(),
-	                		new String[] { grouByLevelField, grouByLevelField + "__value", grouByLevelField + "__count" },
-	                		0,
-	                		50
-	                	);
 	                
-	                
+	                JavaScriptArrayProvider oJsArrayProvider = null;
+	                if((dataSource.dataListCapabilities() & DataListConnector.CAP_AGGREGABLE) > 0)
+	                {
+	                	oJsArrayProvider = new JavaScriptArrayProvider( 
+		                		groupConnector.iterator(),
+		                		new String[] { grouByLevelField, grouByLevelField + "__value", grouByLevelField + "__count", grouByLevelField + "__aggregate" },
+		                		0,
+		                		50
+		                	);
+	                }
+	                else
+	                {
+	                	oJsArrayProvider = new JavaScriptArrayProvider( 
+		                		groupConnector.iterator(),
+		                		new String[] { grouByLevelField, grouByLevelField + "__value", grouByLevelField + "__count" },
+		                		0,
+		                		50
+		                	);
+	                }
+	                	                
 	                int cnt = groupConnector.getRecordCount();
 	                oJsArrayProvider.getJSONArray( s, oGrid, oGrid.getGroupBy(), null, null, columnRenderer );
 	                s.append(",totalCount:").append( cnt );
@@ -216,6 +230,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         String activeRow 		= oRequest.getParameter( "activeRow" );
         
         String[] groupBy 		= oRequest.getParameterValues( "groupBy" );
+        String aggregateField 		= oRequest.getParameter( "aggregateField" );
         
         // Fix empty group by array
         if( groupBy != null && groupBy.length == 1 && groupBy[0] != null && groupBy[0].trim().length() == 0 )
@@ -272,6 +287,37 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 		
 		GridPanelRequestParameters reqParam;
 		reqParam = new GridPanelRequestParameters();
+		
+		// Sumary Parameter
+		reqParam.setAggregateParameter(aggregateField);
+		
+        oGridPanel.setCurrentAggregateField( aggregateField );
+				
+        if (oGridPanel != null && 
+        		oGridPanel.getCurrAggregateFieldOpSet() != null &&
+        		oGridPanel.getCurrAggregateFieldCheckSet() != null &&
+        		oGridPanel.getCurrAggregateFieldSet() != null) {
+			String desc = oGridPanel.getCurrAggregateFieldDescSet() != null ? oGridPanel.getCurrAggregateFieldDescSet() : oGridPanel.getCurrAggregateFieldSet();
+			
+			boolean check = oGridPanel.getCurrAggregateFieldCheckSet().equalsIgnoreCase("T");
+			String op = oGridPanel.getCurrAggregateFieldOpSet();
+			if(op.equalsIgnoreCase("SUM"))
+			{
+				oGridPanel.aggregateSum(check, oGridPanel.getCurrAggregateFieldSet(), desc);
+			}
+			else if(op.equalsIgnoreCase("MIN"))
+			{
+				oGridPanel.aggregateMin(check, oGridPanel.getCurrAggregateFieldSet(), desc);
+			}
+			else if(op.equalsIgnoreCase("MAX"))
+			{
+				oGridPanel.aggregateMax(check, oGridPanel.getCurrAggregateFieldSet(), desc);
+			}
+			else if(op.equalsIgnoreCase("AVG"))
+			{
+				oGridPanel.aggregateAvg(check, oGridPanel.getCurrAggregateFieldSet(), desc);
+			}
+		}
 		
 		// Group by parameters
 		reqParam.setGroupBy( groupBy );
