@@ -25,7 +25,12 @@ public class XUIMethodBindProperty extends XUIBaseProperty<MethodExpression> {
     }
 
     public String getExpressionString() {
-        return super.getValue().getExpressionString();
+    	MethodExpression m = super.getValue(); 
+    	if( m != null ) 
+    		return super.getValue().getExpressionString();
+    	
+    	return null;
+    	
     }
 
     @SuppressWarnings("unchecked")

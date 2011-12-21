@@ -25,11 +25,17 @@ public class AttributeTextArea extends AttributeBase {
     	public ExtConfig getExtJsFieldConfig(AttributeBase oAttr) {
     		
     		ExtConfig config = super.getExtJsFieldConfig( oAttr );
+    		/*
+    		String height = oAttr.getHeight();
+    		
+    		if( height == null ) {
+    			height = "100";
+    		}
             
-    		if( !"auto".equals( oAttr.getHeight() ) ) {
+    		if( !"auto".equals( height ) ) {
             	config.add( "height" , oAttr.getHeight() );
     		}
-    		
+    		*/
     		return config;
     		
     	}

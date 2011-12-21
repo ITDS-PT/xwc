@@ -7,11 +7,17 @@
 	    localizationClasses='netgest.bo.xwc.xeo.localization.XEOViewersMessages' 
 	    beanClass='netgest.bo.xwc.xeo.beans.BridgeLookupBean' 
 	    beanId='viewBean'
+	    beforeRenderPhase='#{viewBean.beforeRenderView}'
   	>
         <xvw:form>
         	<xvw:window width='300' height='360' modal="true" top="#{viewBean.top}" left='#{viewBean.left}'
         	 title="Favoritos" >
-				<xvw:gridPanel dataSource='#{viewBean.dataSource}' rowSelectionMode="MULTI_ROW" enableColumnHide="false" >
+				<xvw:gridPanel 
+					dataSource='#{viewBean.dataSource}' 
+					rowSelectionMode="#{viewBean.gridSelectionMode}" 
+					enableColumnHide="false" 
+					onRowClick="#{viewBean.selectSingle}"
+				>
 					<xvw:toolBar>
 						<xvw:menu text='Select' icon='ext-xeo/images/menus/confirmar.gif' 
 							serverAction="#{viewBean.select}" serverActionWaitMode="DIALOG" />

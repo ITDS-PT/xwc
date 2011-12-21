@@ -3,6 +3,8 @@ package netgest.bo.xwc.xeo.beans;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.event.PhaseEvent;
+
 import netgest.bo.data.DataRow;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
@@ -27,6 +29,41 @@ import netgest.bo.xwc.xeo.components.utils.LookupFavorites;
  */
 public class BridgeLookupBean extends XEOBaseBean {
 
+	private boolean multiSelect;
+	
+	/**
+	 * @return the multiSelect
+	 */
+	public boolean isMultiSelect() {
+		return multiSelect;
+	}
+
+	/**
+	 * @param multiSelect the multiSelect to set
+	 */
+	public void setMultiSelect(boolean multiSelect) {
+		this.multiSelect = multiSelect;
+	}
+
+	public void beforeRenderView( PhaseEvent e ) {
+		if( this.multiSelect ) {
+			if( !getViewRoot().isPostBack() ) {
+				// Disable click event for multi row selection
+				GridPanel panel = (GridPanel)getViewRoot().findComponent( GridPanel.class );
+				panel.setOnRowClick(null);
+			}
+		}
+	}
+	
+	public String getGridSelectionMode() {
+		
+		if( this.multiSelect )
+			return GridPanel.SELECTION_MULTI_ROW;
+		
+		return GridPanel.SELECTION_ROW;
+		
+	}
+	
 	/**
 	 * 
 	 * Retrieves the list of instances that should appear in the
@@ -69,23 +106,30 @@ public class BridgeLookupBean extends XEOBaseBean {
 					getAttributeName(), getEboContext(),true, 10);
 		}	
 		
-		boObjectList list = boObjectList.list(getEboContext(),"boObject",bouis);
-		
-		if (list.getRecordCount() == bouis.length)
-			return new XEOObjectListConnector(list);
-		else{
-			//This situation is when non-orphans are added to the parent (but not saved)
-			//I need to manually added them to the list (because a list with a boui[] will always
-			//query the database, but the non-orphan is not yet in the database
-			for (long currentBoui : bouis){
-				if (!list.haveBoui(currentBoui)){
-					DataRow row = list.getRslt().getDataSet().createRow();
-					row.updateLong("BOUI", currentBoui);
-					list.getRslt().getDataSet().insertRow(row);
+		if( bouis.length > 0 ) {
+			boObjectList list = boObjectList.list(getEboContext(),"boObject",bouis);
+			
+			if (list.getRecordCount() == bouis.length)
+				return new XEOObjectListConnector(list);
+			else{
+				//This situation is when non-orphans are added to the parent (but not saved)
+				//I need to manually added them to the list (because a list with a boui[] will always
+				//query the database, but the non-orphan is not yet in the database
+				for (long currentBoui : bouis){
+					if (!list.haveBoui(currentBoui)){
+						DataRow row = list.getRslt().getDataSet().createRow();
+						row.updateLong("BOUI", currentBoui);
+						list.getRslt().getDataSet().insertRow(row);
+					}
 				}
+				return new XEOObjectListConnector(list);
 			}
-			return new XEOObjectListConnector(list);
 		}
+		else {
+			boObjectList list = boObjectList.list(getEboContext(),"select iXeoUser where 0=1");
+			return new XEOObjectListConnector( list );
+		}
+		
 	}
 	
 	
@@ -100,6 +144,12 @@ public class BridgeLookupBean extends XEOBaseBean {
     	XUIViewRoot viewRoot = oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Dummy.xvw");
     	oRequestContext.setViewRoot( viewRoot );
 		oRequestContext.renderResponse();
+	}
+	
+	public void selectSingle() {
+		if( !this.isInvokedBridge ) {
+			select();
+		}
 	}
 	
 	/**

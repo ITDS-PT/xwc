@@ -692,6 +692,6 @@ ExtXeo.form.Lookup = Ext.extend(Ext.form.TwinTriggerField,  {
     	this.canceled = true;
     },
 	
-	onLookupHover : Ext.emptyFn,
+	onLookupHover : Ext.emptyFn
 
 });

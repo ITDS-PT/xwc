@@ -103,8 +103,6 @@ ul.x-tab-strip {
 
 /* Bridge Lookup CSS Classes */
 .xwc-bridge-lookup{
-	padding-top: 2px;
-	padding-bottom: 2px;
 	display:block;
 	overflow-y:scroll;
 }
@@ -115,6 +113,7 @@ a.xwc-search-trigger{
 	text-decoration:none;
 	background: url("/xeo/ext-xeo/icons/add-lookup-bridge-sprite.png");
 	display:block;
+	cursor: pointer;
 }
 
 a.xwc-search-trigger:hover{
@@ -127,6 +126,7 @@ a.xwc-clean-trigger{
 	text-decoration:none;
 	background: url("/xeo/ext-xeo/icons/remove-lookup-bridge-sprite.png");
 	display:block;
+	cursor: pointer;
 }
 
 a.xwc-clean-trigger:hover{
@@ -140,6 +140,7 @@ a.xwc-favorite-trigger{
 	text-decoration:none;
 	background: url("/xeo/ext-xeo/icons/favorite-lookup-bridge.png");
 	display:block;
+	cursor: pointer;
 }
 
 a.xwc-favorite-trigger:hover{

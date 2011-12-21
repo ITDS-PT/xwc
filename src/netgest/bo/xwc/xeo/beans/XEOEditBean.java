@@ -46,6 +46,7 @@ import netgest.bo.system.boApplication;
 import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.annotations.Visible;
 import netgest.bo.xwc.components.classic.AttributeBase;
+import netgest.bo.xwc.components.classic.AttributeNumberLookup;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
 import netgest.bo.xwc.components.classic.MessageBox;
@@ -2602,17 +2603,23 @@ ActionEvent oEvent = getRequestContext().getEvent();
     	
     	XUIComponentBase base = ((XUIComponentBase)oCommand.getParent());
     	String bridgeId = base.getClientId();
+    	
     	boolean isBridge = false;
+    	boolean multiSelect = false;
     	
     	
     	String objectAtt = "";
-    	if (base instanceof AttributeBase)
+    	if (base instanceof AttributeNumberLookup)
     		objectAtt = ((AttributeBase)base).getObjectAttribute();
-    	else if (base instanceof BridgeToolBar){
+    	if (base instanceof BridgeLookup) {
+    		objectAtt = ((AttributeBase)base).getObjectAttribute();
+			multiSelect = true;
+    	} else if (base instanceof BridgeToolBar || base instanceof BridgeLookup ){
     		BridgeToolBar b = (BridgeToolBar)base; 
     		objectAtt = b.getBridgeName();
     		bridgeId = ((Bridge)b.getParent()).getClientId();
     		isBridge = true;
+			multiSelect = true;
     	}
     		
     	String leftParam = getRequestContext().getRequestParameterMap().
@@ -2648,6 +2655,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
     	  bean.setInvokedFromBridge(isBridge);
     	  bean.setObjectName(getXEOObject().getName());
     	  bean.setParentComponentId(bridgeId);
+    	  bean.setMultiSelect(multiSelect);
     	  
     	  LookupFavorites.eliminateDeletedObjectsFromPreference(getXEOObject(), objectAtt);
     	  

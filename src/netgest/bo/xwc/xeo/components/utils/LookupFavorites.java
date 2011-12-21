@@ -1,5 +1,6 @@
 package netgest.bo.xwc.xeo.components.utils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -184,23 +185,26 @@ public class LookupFavorites implements Comparable<LookupFavorites>{
 			String bridgeName, EboContext ctx){
 		
 		Preference p = getPreference(objectName, bridgeName, ctx.getBoSession().getUser().getUserName());
-		
-		Object jsonArraPref = p.get(BridgeLookup.PREFERENCE_NAME);
-    	JSONArray array = null;
-    	if (jsonArraPref != null && jsonArraPref.toString().length() > 0){
-    		String jsonArra = jsonArraPref.toString();
-    		try {
-				array = new JSONArray(jsonArra);
-				List<LookupFavorites> lst = LookupFavorites.getFavorites(array);
-	    		return lst;
-			} catch (JSONException e) {
-				logger.warn(e);
-			}
-    		
-    	}
-    	throw new RuntimeException("Could not load preference with objectName: " 
-    			+ objectName +" and bridgeName: " + bridgeName);
-		
+		if( p != null ) {
+			Object jsonArraPref = p.get(BridgeLookup.PREFERENCE_NAME);
+	    	JSONArray array = null;
+	    	if (jsonArraPref != null && jsonArraPref.toString().length() > 0){
+	    		String jsonArra = jsonArraPref.toString();
+	    		try {
+					array = new JSONArray(jsonArra);
+					List<LookupFavorites> lst = LookupFavorites.getFavorites(array);
+		    		return lst;
+				} catch (JSONException e) {
+					logger.warn(e);
+				}
+	    		
+	    	}
+		}
+		else {
+	    	throw new RuntimeException("Could not load preference with objectName: " 
+	    			+ objectName +" and bridgeName: " + bridgeName);
+		}
+		return new ArrayList<LookupFavorites>();
 	}
 	
 	/**
@@ -256,7 +260,7 @@ public class LookupFavorites implements Comparable<LookupFavorites>{
 	    				break;
 	    		}
 	    		if (result.length == 0)
-	    			return new long[]{0};
+	    			return new long[]{};
 	    		return result;
 	    	}
 	    }catch (JSONException e){
@@ -329,7 +333,7 @@ public class LookupFavorites implements Comparable<LookupFavorites>{
 		//Dynamic filter checking
 		boDefAttribute attDefinition = boDefHandler.getBoDefinition(objectName).getAttributeRef(bridgeName);
 		boDefObjectFilter[] objFilters = attDefinition.getObjectFilter();
-		if (objFilters.length == 1){
+		if (objFilters != null && objFilters.length == 1){
 			String filterBoqlQuery = obj.getAttribute(bridgeName).getFilterBOQL_query();
 			if (filterBoqlQuery != null){
 				boObjectList listDynamicFilter = new boObjectListBuilder(ctx, filterBoqlQuery).build();

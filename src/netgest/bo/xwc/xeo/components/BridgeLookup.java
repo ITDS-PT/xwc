@@ -38,7 +38,7 @@ import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIForm;
+import netgest.bo.xwc.framework.components.XUIForm;	
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.xeo.components.utils.BridgeLookupFavoriteSwitcher;
 import netgest.bo.xwc.xeo.components.utils.DefaultFavoritesSwitcherAlgorithm;
@@ -83,7 +83,7 @@ public class BridgeLookup extends AttributeBase {
      * The height of the component
      */
     private XUIViewStateBindProperty<String> height = 
-    	new XUIViewStateBindProperty<String>( "height", this, "20", String.class );
+    	new XUIViewStateBindProperty<String>( "height", this, "22", String.class );
     
     /**
      * The number of favorites 
@@ -139,7 +139,19 @@ public class BridgeLookup extends AttributeBase {
     	else
     		return new DefaultFavoritesSwitcherAlgorithm();
     }
-
+    
+    @Override
+    public boolean isVisible() {
+    	// TODO Auto-generated method stub
+    	return true;
+    }
+	
+    @Override
+	public boolean isDisabled() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
     @Override
 	public void initComponent() {
     	
@@ -205,15 +217,15 @@ public class BridgeLookup extends AttributeBase {
 					String openTabCmd = "XVW.openBridgeLookup(\""+formId+"\",\""+getId()+"\","+curr.getBoui()+","+!orphan+");";
 					String removeCmd = "XVW.removeBridgeLookup(\""+formId+"\",\""+getId()+"\","+curr.getBoui()+");";
 					if (getEnableCardIdLink())
-						b.append("<a href=\"javascript:void(0)\" onClick="+openTabCmd+">");
+						b.append("<span href=\"javascript:void(0)\" onClick="+openTabCmd+">");
 					b.append(curr.getTextCARDID());
 					if (getEnableCardIdLink())
-						b.append("</a>");
+						b.append("</span>");
 					
 					if (isUsable()){
-						b.append("<a href=\"javascript:void(0)\" onClick="+removeCmd+">");
-						b.append("<img src=\"ext-xeo/icons/remove-bridge.png\" width=\"16\" style=\"vertical-align:middle;margin-left:3px;margin-top:1px;margin-bottom:1px;\" height=\"16\" />");
-						b.append("</a>");
+						b.append("<span href=\"javascript:void(0)\" onClick="+removeCmd+">");
+						b.append("<img src=\"ext-xeo/icons/remove-bridge.png\" width=\"16\" style=\"cursor:pointer;vertical-align:middle;_margin-left:3px;_margin-top:1px;_margin-bottom:1px;\" height=\"16\" />");
+						b.append("</span>");
 					}
 					b.append("; ");
 				}
@@ -251,9 +263,7 @@ public class BridgeLookup extends AttributeBase {
         oRemoveElementCommand = (XUICommand)getChild( 3 );
         oCleanCommand = (XUICommand)getChild( 4 );
         oFavoriteCommand = (XUICommand)getChild( 5 );
-        
-        
-        getRequestContext().getScriptContext().addInclude(XUIScriptContext.POSITION_HEADER, "bridgeLook", "js/bridgeLookup.js");
+        getRequestContext().getScriptContext().addInclude(XUIScriptContext.POSITION_HEADER, "bridgeLook", "ext-xeo/js/bridgeLookup.js");
     }
     
     public AttributeHandler getAttributeHandler(){
@@ -317,18 +327,40 @@ public class BridgeLookup extends AttributeBase {
             BridgeLookup  oAttr;
             XUIResponseWriter w = getResponseWriter();
             oAttr = (BridgeLookup)oComp; 
-            String tableStyle = "width:100%;border:1px solid #9AB;";
+            String tableStyle = "width:100%;table-layout:fixed;" + (oAttr.isUsable()?"":"display:none;");
             
             w.startElement( HTMLTag.TABLE, oComp);
-            	w.writeAttribute( HTMLAttr.STYLE, tableStyle, null );
-            	w.writeAttribute( HTMLAttr.ID, oAttr.getClientId()+"_tblBtn", null );
+        	w.writeAttribute( HTMLAttr.CELLPADDING, "0", null );
+        	w.writeAttribute( HTMLAttr.CELLSPACING, "0", null );
+        	w.writeAttribute( HTMLAttr.STYLE, tableStyle, null );
+        	w.writeAttribute( HTMLAttr.ID, oAttr.getClientId()+"_tblBtn", null );
+            	
+            w.startElement( HTMLTag.COLGROUP, oComp);
+            
+            w.startElement( HTMLTag.COL, oComp);
+            w.writeAttribute( HTMLAttr.STYLE, "width:100%;text-align:justify;", null );
+            w.writeAttribute( HTMLAttr.CLASS, "x-form-text", null );
+            w.endElement(HTMLTag.COL);
+            
+            w.startElement( HTMLTag.COL, oComp);
+        	w.writeAttribute( HTMLAttr.ID, oAttr.getClientId()+"_colBtns", null );
+    		w.writeAttribute( HTMLAttr.STYLE, 
+    				"vertical-align:top;width:54px;1px solid #B5B8C8;"
+    	            + (oAttr.isUsable()?"":"display:none;")
+    				,null 
+    		);
+            w.endElement(HTMLTag.COL);
+            
+            w.endElement( HTMLTag.COLGROUP );
+            	
             w.startElement( HTMLTag.TR, oComp);
             w.startElement( HTMLTag.TD, oComp);
-            w.writeAttribute( HTMLAttr.STYLE, "width:90%;text-align:justify;", null );
+    		w.writeAttribute( HTMLAttr.STYLE, "border:1px solid #9AB;vertical-align:top;padding-left: 4px;", null );
+            
             super.encodeBeginPlaceHolder( oComp );
             
             // Add the a style to the place holder DIV
-            w.writeAttribute( HTMLAttr.STYLE, "width:90%;display:inline;", null );
+            w.writeAttribute( HTMLAttr.STYLE, "width:100%;display:inline;", null );
         	
             w.startElement( INPUT, oComp);
             w.writeAttribute(TYPE, "hidden", null);
@@ -381,11 +413,12 @@ public class BridgeLookup extends AttributeBase {
             
 			config.addString( "html" , JavaScriptUtils.writeValue( oBridgeLookp.getDislayList() ) );
 			
-            if( !oBridgeLookp.isVisible() )
-            	config.add("hidden",true);
+//            if( !oBridgeLookp.isVisible() )
+//            	config.add("hidden",true);
             
-            config.add("height",oBridgeLookp.getHeight());
-            if (oBridgeLookp.isVisible())
+            config.addJSString("height", oBridgeLookp.getHeight() );
+            
+//            if (oBridgeLookp.isVisible())
             	config.addString("cls", "xwc-bridge-lookup" );
             
             //Listeners, for the resize (handles resize to smaller width)
@@ -418,8 +451,8 @@ public class BridgeLookup extends AttributeBase {
 			
 				s.w( "c.setText('" ).writeValue( oBridgeLkup.getDislayList() ).l("',false);");
 
-				if( oComp.getStateProperty("visible").wasChanged() )
-					s.w( "c.setVisible(" ).writeValue( oBridgeLkup.isVisible() ).l(");");
+//				if( oComp.getStateProperty("visible").wasChanged() )
+//					s.w( "c.setVisible(" ).writeValue( oBridgeLkup.isVisible() ).l(");");
 					
 				s.endBlock();
 			}
@@ -462,41 +495,53 @@ public class BridgeLookup extends AttributeBase {
         	if (!oAttr.isRenderedOnClient()){
         		w.endElement(HTMLTag.TD);
         		w.startElement( HTMLTag.TD, oComp);
-        		w.writeAttribute( HTMLAttr.STYLE, "width:2%;", null );
+            	w.writeAttribute( HTMLAttr.ID, oAttr.getClientId()+"_tdBtns", null );
+        		w.writeAttribute( 
+        			HTMLAttr.STYLE, "vertical-align:top;"
+        	        + (oAttr.isUsable()?"":"display:none;")
+        			, null 
+        		);
         		
+            	w.startElement( HTMLTag.TABLE, oComp);
+            	w.writeAttribute( HTMLAttr.CELLPADDING, "0", null );
+            	w.writeAttribute( HTMLAttr.CELLSPACING, "2", null );
+        		w.startElement( HTMLTag.TR, oComp);
+        		w.startElement( HTMLTag.TD, oComp);
+        		w.writeAttribute( HTMLAttr.STYLE, "vertical-align:top;", null );
+        		
+        		w.writeAttribute( HTMLAttr.STYLE, "vertical-align:top;", null );
+        		        		
         		//Div for the add button
             	w.startElement( DIV, oComp);
+            	
             		w.writeAttribute(ID, oComp.getClientId() + "_addButton", null);
             		w.writeAttribute(HTMLAttr.STYLE, "display:inline", null);
             		
             		
-					if (oAttr.isUsable()){
             		w.startElement(HTMLTag.A, null);
             			
 		    			w.writeAttribute(HTMLAttr.SRC, "javascript:void(0)", null);
 		    			w.writeAttribute(HTMLAttr.ONCLICK, XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_DIALOG ), null);
 		    			w.writeAttribute(HTMLAttr.CLASS, "xwc-search-trigger", null);
+	            		
 	    			w.endElement(HTMLTag.A);
-					}
 	    			
         	    w.endElement(DIV);
     			
     			w.endElement(HTMLTag.TD);
     			w.startElement( HTMLTag.TD, oComp);
-        		w.writeAttribute( HTMLAttr.STYLE, "width:2%;", null );
+        		w.writeAttribute( HTMLAttr.STYLE, "vertical-align:top;", null );
         		
         		//Div for the Remove
             	w.startElement( DIV, oComp);
             		w.writeAttribute(ID, oComp.getClientId() + "_rmButton", null);
             		w.writeAttribute(HTMLAttr.STYLE, "display:inline", null);
             		
-            		if (oAttr.isUsable()){
 	            		w.startElement(HTMLTag.A, null);
 			    			w.writeAttribute(HTMLAttr.SRC, "javascript:void(0)", null);
 			    			w.writeAttribute(HTMLAttr.ONCLICK, XVWScripts.getAjaxCommandScript( oAttr.getCleanCommand(),XVWScripts.WAIT_DIALOG ), null);
 			    			w.writeAttribute(HTMLAttr.CLASS, "xwc-clean-trigger", null);
 		    			w.endElement(HTMLTag.A);
-            		}
 	    			
     			w.endElement(DIV);
     			
@@ -504,13 +549,13 @@ public class BridgeLookup extends AttributeBase {
     			
     			
     			w.startElement( HTMLTag.TD, oComp);
-        		w.writeAttribute( HTMLAttr.STYLE, "width:2%;", null );
+        		w.writeAttribute( HTMLAttr.STYLE, "vertical-align:top;", null );
         		
             	w.startElement( DIV, oComp);
             		w.writeAttribute(ID, oComp.getClientId() + "_favButton", null);
             		w.writeAttribute(HTMLAttr.STYLE, "display:inline", null);
             		
-            		if (oAttr.isUsable() && oAttr.getShowFavorites()){
+            		if ( oAttr.getShowFavorites()){
             			StringBuilder b = new StringBuilder(300);
             			b.append("var fav = Ext.get('").append(oComp.getClientId()).append("_fav');");
             			b.append("Ext.get('").append(oComp.getClientId())
@@ -528,6 +573,10 @@ public class BridgeLookup extends AttributeBase {
             		}
 	    			
     			w.endElement(DIV);
+    			
+    			w.endElement(HTMLTag.TD);
+    			w.endElement(HTMLTag.TR);
+    			w.endElement(HTMLTag.TABLE);
     			
     			w.endElement(HTMLTag.TD);
     			
@@ -559,19 +608,22 @@ public class BridgeLookup extends AttributeBase {
             	
             	StringBuilder b = new StringBuilder(200);
             	if (oAttr.isUsable()){ //Everything OK, show the buttons
-            		b.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setVisible(true);");
-            		b.append("Ext.get('").append(oAttr.getClientId()).append("_addButton').setVisible(true);");
-    				b.append("Ext.get('").append(oAttr.getClientId()).append("_rmButton').setVisible(true);");
-    				b.append("Ext.get('").append(oAttr.getClientId()).append("_favButton').setVisible(true);");
-            	} else{
-            		if (!oAttr.isVisible()){
-            			b.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setVisible(false);");
+        			b.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setDisplayed('');");
+            		b.append("Ext.get('").append(oAttr.getClientId()).append("_colBtns').setDisplayed('');");
+            		b.append("Ext.get('").append(oAttr.getClientId()).append("_tdBtns').setDisplayed('');");
+            	} else {
+            		if( !oAttr.isVisible() ) {
+            			b.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setDisplayed('none');");
             		} else {
-            			if (oAttr.isDisabled()|| oAttr.isReadOnly()){
-            				b.append("Ext.get('").append(oAttr.getClientId()).append("_addButton').setVisible(false);");
-            				b.append("Ext.get('").append(oAttr.getClientId()).append("_rmButton').setVisible(false);");
-            				b.append("Ext.get('").append(oAttr.getClientId()).append("_favButton').setVisible(false);");
+            			b.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setDisplayed('');");
+            			if (oAttr.isDisabled() || oAttr.isReadOnly() || oAttr.getEffectivePermission( SecurityPermissions.WRITE ) ) {
+                    		b.append("Ext.get('").append(oAttr.getClientId()).append("_colBtns').setDisplayed('none');");
+                    		b.append("Ext.get('").append(oAttr.getClientId()).append("_tdBtns').setDisplayed('none');");
                 		}
+            			else {
+                    		b.append("Ext.get('").append(oAttr.getClientId()).append("_colBtns').setDisplayed('');");
+                    		b.append("Ext.get('").append(oAttr.getClientId()).append("_tdBtns').setDisplayed('');");
+            			}
             		}
             		
             	}
