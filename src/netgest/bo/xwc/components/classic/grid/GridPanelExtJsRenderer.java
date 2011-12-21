@@ -892,7 +892,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
         String rowClickCode = "";
         XUICommand oRowClickComp = (XUICommand)oGrid.findComponent( oGrid.getId() + "_rowClick" );
-        if( oRowClickComp != null )
+        if( oRowClickComp != null && oGrid.getOnRowClick() != null)
         {
         		rowClickCode += XVWScripts.getCommandScript( 
                 		oGrid.getRowClickTarget(),
@@ -931,7 +931,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         
         XUICommand oRowDblClickComp = (XUICommand)oGrid.findComponent( oGrid.getId() + "_rowDblClick" );
-        if( oRowDblClickComp != null )
+        if( oRowDblClickComp != null && oGrid.getOnRowDoubleClick() != null )
         {
             String targetName = 
             	"edit_'+arguments[0].getStore().getAt( arguments[1] ).get(\"" + 
