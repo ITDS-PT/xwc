@@ -139,18 +139,6 @@ public class BridgeLookup extends AttributeBase {
     	else
     		return new DefaultFavoritesSwitcherAlgorithm();
     }
-    
-    @Override
-    public boolean isVisible() {
-    	// TODO Auto-generated method stub
-    	return true;
-    }
-	
-    @Override
-	public boolean isDisabled() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	
     @Override
 	public void initComponent() {
