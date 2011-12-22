@@ -100,7 +100,7 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		List<SqlField> sqlFieldsList = getRootList().getSqlFields();
 		
 		/** ML 07-10-2011 **/
-		if(!(this.parentValues.length == 1 && this.parentGroups[0].equalsIgnoreCase("/*DUMMY_AGGREGATE*/")))
+	//	if(!(this.parentValues.length == 1 && this.parentGroups[0].equalsIgnoreCase("/*DUMMY_AGGREGATE*/")))
 		{
 			addParentWhere( boql, qp, q );
 		}
@@ -229,7 +229,7 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		String nativeQlTag2 = "]";
 		String groupWhere   = "";
 		
-		if( this.parentValues != null ) {
+		if( this.parentValues != null && !(this.parentValues.length == 1 && this.parentGroups[0].equalsIgnoreCase("/*DUMMY_AGGREGATE*/"))) {
 			for( int i=0; i < this.parentValues.length; i++ ) {
 				String groupExpression = this.parentGroups[i];
 				if( boql.startsWith( "{" ) ) {
@@ -306,7 +306,7 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 			wherePart += groupWhere;
 		}
 		
-		if( this.parentValues != null ) {
+		if( this.parentValues != null && !(this.parentValues.length == 1 && this.parentGroups[0].equalsIgnoreCase("/*DUMMY_AGGREGATE*/"))) {
 			for( Object value : this.parentValues  ) {
 				boolean isNull = false;
 				if( value == null || String.valueOf( value ).length() == 0 ) {
