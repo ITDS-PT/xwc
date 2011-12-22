@@ -440,7 +440,8 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 			DataListConnector.CAP_PAGING + 
 			DataListConnector.CAP_SORT + 
 			DataListConnector.CAP_FILTER +
-			DataListConnector.CAP_GROUPING + 
+			DataListConnector.CAP_GROUPING +
+			DataListConnector.CAP_SQLFIELDS +
 			DataListConnector.CAP_AGGREGABLE;
 	}
 
