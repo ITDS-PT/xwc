@@ -1056,8 +1056,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		                			"}"
 		                	);	
 	            		} else { //Really big lovs
-	            			oExtFiltersChild.addJSString( "type", "" );
-	            			colFilter.put("type", "");
+	            			oExtFiltersChild.addJSString( "type", "string" );
+	            			colFilter.put("type", "string");
 	            			
 	            			ExtConfigArray valuesArray = oExtFiltersChild.addChildArray("options");
 	            			
