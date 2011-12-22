@@ -1,19 +1,25 @@
 package netgest.bo.xwc.components.classic.grid;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import netgest.bo.runtime.boConvertUtils;
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Tab;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
+import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataGroupConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.GroupableDataList;
@@ -245,6 +251,53 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         String 	 groupByLevelS 	= oRequest.getParameter( "groupByLevel" );
         String[] sParentValues	= oRequest.getParameterValues( "groupByParentValues" );
         
+        
+        //Decode parameters received as String into their native data types
+        //
+        //This is required because of PostGre implementation as it does not play well
+        //with PreparedStatements with bind parameters in situations where the value
+        //of the parameter is a string but the data type of the column is another thing (date, number)
+        //It must receive the correct data type.
+        //
+        //Other databases (Oracle, MySQl, SQLServer) can 
+        //figure the type automatically (or so it seems)
+        //and don't have any problems
+        
+        List<Object> serviceParameterValues = new LinkedList<Object>();
+        DataListConnector dataSource = oGridPanel.getDataSource(); 
+        if (sParentValues != null){
+	        for (int groupParameter = 0; groupParameter < sParentValues.length; groupParameter++){
+	        	String sParent = sParentValues[groupParameter];
+	        	String groupByColumn = groupBy[groupParameter];
+	        	byte dataType = dataSource.getAttributeMetaData(groupByColumn).getDataType();
+	        	switch (dataType){
+	        		case DataFieldTypes.VALUE_CHAR: serviceParameterValues.add(sParent); break;
+	        		case DataFieldTypes.VALUE_NUMBER: serviceParameterValues.add(Long.parseLong(sParent)); break;
+	        		case DataFieldTypes.VALUE_DATE:
+	        			Date result = boConvertUtils.convertToDate(sParent, null);
+	        			if (result != null){
+	        				Timestamp ts = new Timestamp(result.getTime());
+	        				serviceParameterValues.add(ts);
+	        			}
+	        			else
+	        				serviceParameterValues.add(sParent);
+	        			break;
+	        		case DataFieldTypes.VALUE_DATETIME: 
+	        			Date resultTime = boConvertUtils.convertToDate(sParent, null);
+	        			if (resultTime != null){
+	        				Timestamp ts = new Timestamp(resultTime.getTime());
+	        				serviceParameterValues.add(ts);
+	        			}
+	        			else
+	        				serviceParameterValues.add(sParent);
+	        			break;
+	        		case DataFieldTypes.VALUE_BOOLEAN: serviceParameterValues.add(Boolean.parseBoolean(sParent)); break;
+	        		//Default: Add as a String
+	        		default : serviceParameterValues.add(sParent); break;
+	        	}
+	        }
+        }
+        
         int groupByLevel = -1;
         
         if( groupByLevelS != null ) {
@@ -252,8 +305,16 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         }
         Object[] parentValues = null;
         
-        if( sParentValues != null ) {
+        /*if( sParentValues != null ) {
         	parentValues = Arrays.asList(sParentValues).toArray( new Object[ sParentValues.length ] );
+        }*/
+        if (sParentValues != null){
+        	parentValues = new Object[serviceParameterValues.size()];
+        	int k = 0;
+        	for (Iterator<Object> it = serviceParameterValues.iterator(); it.hasNext(); ){
+        		Object currentParameter = it.next();
+        		parentValues[k++] = currentParameter;
+        	}
         }
         
         
@@ -414,7 +475,6 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 				}
 				oGridPanel.setCurrentColumnsConfig( savedColsConfig.toString() );
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }
@@ -433,10 +493,10 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        	JSONObject jFilters;
 	    		JSONObject serverFilters;
 	    		
+	    		jFilters = new JSONObject( "{}" );
+	    		
 				if( sFilters != null ) {
 					jFilters = new JSONObject( sFilters );
-				} else {
-					jFilters = new JSONObject( "{}" );
 				}
 				
 				if( sServerFilters != null ) {
@@ -473,6 +533,8 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         }
 		return reqParam;
 	}
+	
+	
 	
 	public static String getExportTitle( GridPanel oGrid ) {
     	XUIViewRoot oViewRoot = XUIRequestContext.getCurrentContext().getViewRoot();
