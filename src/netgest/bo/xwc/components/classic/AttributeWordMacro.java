@@ -26,10 +26,12 @@ import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
+import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
+import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.components.xeodm.XEODMBuilder;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -215,23 +217,24 @@ public class AttributeWordMacro extends AttributeBase {
             oInpConfig.addJSString("value", sJsValue );
             oInpConfig.add("readOnly", true );
             
+            if (!oAttr.isVisible()){
+            	oInpConfig.add("hidden", true );
+            }
+            
         	oInpConfig.addJSString("ctCls", "xeoObjectLink" );
             
             if( oAttr.isDisabled() || oAttr.isReadOnly() ) {
-            	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
-	            oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
+            	oInpConfig.addJSString("trigger1Class", "x-form-clear-trigger");
+	            oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
+	            oInpConfig.add("disabled", true );
+            	
             }
             else {
                 oInpConfig.addJSString("trigger1Class", "x-form-clear-trigger");
                 oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
             }
             
-        	//oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
-            //oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
-            
-            
-            
-            if( !((XEOObjectAttributeConnector)oAttr.getDataFieldConnector()).getAttributeHandler().isObject() ) 
+        	if( !((XEOObjectAttributeConnector)oAttr.getDataFieldConnector()).getAttributeHandler().isObject() ) 
             {
 	            if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
 		            oInpConfig.add("onTrigger1Click", "function(){ if(!this.disabled){ " +
@@ -335,8 +338,7 @@ public class AttributeWordMacro extends AttributeBase {
             oInpConfig.renderExtConfig( sOut );          
             return sOut.toString();
         }
-
-
+        
         @Override
         public void decode(XUIComponentBase component) {
 
@@ -454,6 +456,8 @@ public class AttributeWordMacro extends AttributeBase {
 				}
         	}
 		}
+
+		
         
     }
 
