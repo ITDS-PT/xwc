@@ -42,6 +42,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
+import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.io.FSiFile;
 import netgest.io.iFile;
@@ -109,6 +110,8 @@ public class AttributeNumberLookup extends AttributeBase {
         String      sSubmitedValue = null;
         BigDecimal  oSubmitedBigDecimal;
         
+        Object oldValue = getValue();
+        
         if( oSubmitedValue != null )
         {
             sSubmitedValue = (String)oSubmitedValue;     
@@ -117,6 +120,10 @@ public class AttributeNumberLookup extends AttributeBase {
                 try {
                     oSubmitedBigDecimal = new BigDecimal( String.valueOf( sSubmitedValue ) );
                     setValue( oSubmitedBigDecimal );
+                    //Since we're overring  the validate, we need to send 
+                    //activate the value change listeners
+                    if (areValuesDifferent(oldValue, oSubmitedValue))
+                    	queueEvent(new XUIValueChangeEvent(this, oldValue, oSubmitedValue));
                 }
                 catch( NumberFormatException ex ) {
                     getRequestContext().addMessage( getClientId(), 
@@ -257,9 +264,8 @@ public class AttributeNumberLookup extends AttributeBase {
             }
             
             
-            
-            //if (oAttr.getShowFavorites() && (!oAttr.isReadOnly() && !oAttr.isDisabled())){
-	            StringBuilder b = new StringBuilder(300);
+            StringBuilder b = new StringBuilder(300);
+            if (oAttr.getShowFavorites()){
 	            //We only show favorites if this is not disabled 
 	            //Get reference to the image to extract coordinates X,Y
 				//b.append("Ext.get('ext-").append(oComp.getClientId()).append("-search')");
@@ -270,7 +276,7 @@ public class AttributeNumberLookup extends AttributeBase {
 				b.append(XVWScripts.getAjaxCommandScript( oAttr.getFavoriteCommand(),XVWScripts.WAIT_DIALOG ));
 				b.append(";");
 	            //oInpConfig.add("onLookupHover", b.toString());
-            //}
+            }
             
             
             
