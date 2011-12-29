@@ -1162,6 +1162,7 @@ public class XEOEditBean extends XEOBaseBean
             oBaseBean.setLookupObjects( getLookupObjectsMap( bridge ) );
             oBaseBean.setParentParentBeanId( "viewBean" );
             oBaseBean.setParentComponentId( oGrid.getClientId() );
+            oBaseBean.setSelectedObject(refObj.getName());
             oBaseBean.executeBoql( 
             			//"select "+ oAttDef.getReferencedObjectName()
             		getLookupQuery( bridge.getName(), objectName )
