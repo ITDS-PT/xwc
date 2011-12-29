@@ -1982,3 +1982,12 @@ ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentif
         alert('Select rows input not found!!');
     }
 }
+
+/**
+ * 
+ * Renderer for a column so that it wraps text
+ * 
+ * */
+ExtXeo.grid.nowrap = function(text){
+    return '<div style="white-space:normal !important;">'+ text +'</div>';
+}
