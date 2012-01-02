@@ -35,6 +35,9 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 			if(!this.suspendUploadCondig) {
 				this.updateColumnConfig( true );
 			}
+		},
+		reset : function () {
+			this.recordIds = [];
 		}
 	}
 );
@@ -1911,16 +1914,30 @@ ExtXeo.grid.rowClickHndlr = function( oGrid, rowIndex, oEvent, sGridInputId, sRo
     }
 }
 
-ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentifier ) {
+ExtXeo.grid.activeRowHndlr = function( oSelModel, oGridInputSelId, rowIdentifier ) {
+	var oInput = document.getElementById( oGridInputSelId );
+    var activeRow = "";
+    if( oInput != null ) {
+        var oSelRecs = oSelModel.getSelections();
+        for (var i = 0; i < oSelRecs.length; i++)  {
+            activeRow = oSelRecs[i].get( rowIdentifier );
+        }
+        oInput.value = activeRow;
+    }
+}
+
+
+ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentifier) {
 	var sSelRecs = "";
     var oInput = document.getElementById( oGridInputSelId );
+    
     if( oInput != null ) {
         var oSelRecs = oSelModel.getSelections();
         for (var i = 0; i < oSelRecs.length; i++)  {
             if(i>0) sSelRecs += "|";
             sSelRecs += oSelRecs[i].get( rowIdentifier );
         }
-        oInput.value = sSelRecs;
+       	oInput.value = sSelRecs;
         
         try
         {

@@ -621,11 +621,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                                     "'" + oGrid.getClientId() +"_srs'," +
                                     "'" + oGrid.getRowUniqueIdentifier() + "'" +
                                 ");\n" +
-                                "ExtXeo.grid.rowSelectionHndlr(" +
-	                                "oSelModel," +
+                                "ExtXeo.grid.activeRowHndlr(" + 
+                                    "oSelModel," +
 	                                "'" + oGrid.getClientId() +"_act'," +
 	                                "'" + oGrid.getRowUniqueIdentifier() + "'" +
-                                ");\n" +
+	                            ");\n" +
                                 rowSelChangeCode +
                             "}" 
                         );
@@ -905,7 +905,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             .add(
                 "fn",
                 "function( oGrid, rowIndex, oEvent ) {" +
-//                "   ExtXeo.grid.rowClickHndlr( oGrid, rowIndex, oEvent, '" + oGrid.getClientId() +"_act" + "', '" + oGrid.getRowUniqueIdentifier() + "' );" +
+  //              "   ExtXeo.grid.rowClickHndlr( oGrid, rowIndex, oEvent, '" + oGrid.getClientId() +"_act" + "', '" + oGrid.getRowUniqueIdentifier() + "' );" +
                 rowClickCode +
                 "}"
             );
@@ -924,7 +924,9 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         );
         
         oGridListeners.add("statesave", "function(comp, state) {var id = comp.getStateId(); if(id) Ext.state.Manager.clear(id); }" );
-        oGridListeners.add("beforestaterestore", "function() {return false;}" ); 
+        oGridListeners.add("beforestaterestore", "function() {return false;}" );
+        //To reset the recordIds that are being kept even after
+        oGridListeners.add("beforerender", "function(oGrid) { oGrid.reset(); return true;}" );
         oGridListeners.add("beforestatesave", "function() {return false;}" ); 
         oGridListeners.add("columnmove", "function(idx, n) { this.onColumnConfigChange('moved',idx, n ) }" );
         oGridListeners.add("columnresize", "function(idx, n) { this.onColumnConfigChange('width',idx,n ) }" );
