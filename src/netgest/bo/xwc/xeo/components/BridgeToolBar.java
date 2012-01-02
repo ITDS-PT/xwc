@@ -258,20 +258,23 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 				rootMenu.setId( getId() + "_new_" + subClasseDef.getName() );
 				rootMenu.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 				rootMenu.setValue( subClasseDef.getName() );
-				rootMenu.setTargetMethod("addNewToBridge");
-				rootMenu.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
+				if (subClasseDef.getClassType() == boDefHandler.TYPE_CLASS ){
+					rootMenu.setTargetMethod("addNewToBridge");
+					rootMenu.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
+				}
 				
 				if( subClassesDef.size() > 1 ) {
 					ViewerMethod viewerMethod = new ViewerMethod();
-					viewerMethod.setText( XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
-					viewerMethod.setToolTip(  XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
-					viewerMethod.setId( getId() + "_new1_" + subClasseDef.getName() );
-					viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
-					viewerMethod.setValue( subClasseDef.getName() );
-					viewerMethod.setTargetMethod("addNewToBridge");
-					viewerMethod.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
-
-					rootMenu.getChildren().add( viewerMethod );
+					if (subClasseDef.getClassType() == boDefHandler.TYPE_CLASS ){
+						viewerMethod.setText( XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
+						viewerMethod.setToolTip(  XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
+						viewerMethod.setId( getId() + "_new1_" + subClasseDef.getName() );
+						viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
+						viewerMethod.setValue( subClasseDef.getName() );
+						viewerMethod.setTargetMethod("addNewToBridge");
+						viewerMethod.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
+						rootMenu.getChildren().add( viewerMethod );
+					} 
 					
 					for( int i=1; i < subClassesDef.size(); i++ ) {
 						subClasseDef = subClassesDef.get( i );
@@ -280,9 +283,12 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 						viewerMethod.setText(  XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
 						
 						viewerMethod.setId( getId() + "_new_" + subClasseDef.getName() );
-						viewerMethod.setTargetMethod( "addNewToBridge" );
+						if (subClasseDef.getClassType() == boDefHandler.TYPE_CLASS ){
+							viewerMethod.setTargetMethod( "addNewToBridge" );
+							viewerMethod.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
+						}
 						viewerMethod.setValue( subClasseDef.getName() );
-						viewerMethod.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
+						
 						rootMenu.getChildren().add( viewerMethod );
 					}
 				}
