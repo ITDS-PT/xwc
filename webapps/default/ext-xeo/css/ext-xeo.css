@@ -111,7 +111,7 @@ a.xwc-search-trigger{
 	width:16px;
 	height:16px;
 	text-decoration:none;
-	background: url("/xeo/ext-xeo/icons/add-lookup-bridge-sprite.png");
+	background: url("../icons/add-lookup-bridge-sprite.png");
 	display:block;
 	cursor: pointer;
 }
@@ -124,7 +124,7 @@ a.xwc-clean-trigger{
 	width:16px;
 	height:16px;
 	text-decoration:none;
-	background: url("ext-xeo/icons/remove-lookup-bridge-sprite.png");
+	background: url("../icons/remove-lookup-bridge-sprite.png");
 	display:block;
 	cursor: pointer;
 }
@@ -138,7 +138,7 @@ a.xwc-favorite-trigger{
 	width:16px;
 	height:16px;
 	text-decoration:none;
-	background: url("ext-xeo/icons/favorite-lookup-bridge.png");
+	background: url("../icons/favorite-lookup-bridge.png");
 	display:block;
 	cursor: pointer;
 }
