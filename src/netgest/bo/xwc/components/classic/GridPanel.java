@@ -708,10 +708,12 @@ public class GridPanel extends ViewerInputSecurityBase {
 			Column[] columns = 
 					gridPanel.getColumns();
 
+			DataListConnector gridDataSource = gridPanel.getDataSource(); 
+			
 			for( Column column : columns ) {
 				((ColumnAttribute)column).setLabel( 
 						GridPanel.getColumnLabel( 
-								gridPanel.getDataSource() , column ) 
+								gridDataSource , column ) 
 				);
 			}
 			selectorBean.setColumns( columns );
@@ -2254,8 +2256,16 @@ public class GridPanel extends ViewerInputSecurityBase {
 	}
 
 	public void setAggregateFieldsFromString(String aggregateFieldsString) {
-		if (this.getDataSource() != null
-				&& (this.getDataSource().dataListCapabilities() & DataListConnector.CAP_AGGREGABLE) > 0) {
+		DataListConnector gridDataSource = null; 
+		try {
+			gridDataSource = this.getDataSource();
+		} catch (RuntimeException e){
+			//No dataSource defined yet, but we can proceed	
+			//Here we shouldn't try to access the data source
+		}
+		
+		if (gridDataSource != null
+				&& (gridDataSource.dataListCapabilities() & DataListConnector.CAP_AGGREGABLE) > 0) {
 			if (aggregateFieldsString != null
 					&& !"".equalsIgnoreCase(aggregateFieldsString)) {
 				// Convert String to HashMap
