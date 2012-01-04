@@ -436,9 +436,7 @@ public class ToolBar extends ViewerSecurityBase {
             }
             
             String handler = "function(){" + XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode.ordinal() ) +"}";
-            if (oMenuChild.getActionExpression() != null || (oMenuChild instanceof ViewerMethod && ((ViewerMethod)oMenuChild).getTargetMethod() != null)){
-	            oItemCfg.add( "handler", handler  );
-            }
+            oItemCfg.add( "handler", handler  );
             
             if( shortCut != null ) {
             	XUIScriptContext sc = XUIRequestContext.getCurrentContext().getScriptContext();
