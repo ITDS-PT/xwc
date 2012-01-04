@@ -10,6 +10,7 @@ import javax.faces.context.FacesContext;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.ScriptBuilder;
@@ -120,6 +121,13 @@ public class AttributeDate extends AttributeBase {
 
             return oInpDateConfig;
     	}
+    	
+    	@Override
+    	public ExtConfig getExtJsFieldListeners( AttributeBase oAtt ) {
+        	ExtConfig listeners = super.getExtJsFieldListeners(oAtt);
+        	listeners.add( "'blur'" , "function(fld){ExtXeo.DateField.ProcessDot(fld);}");
+            return listeners; 
+        }
     	
     	@Override
     	public ScriptBuilder getEndComponentScript(AttributeBase oComp) {

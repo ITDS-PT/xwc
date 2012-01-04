@@ -610,6 +610,43 @@ ExtXeo.MessageBox = function(){
 }();
 
 
+
+
+/**
+ * 
+ * Processes special date input (. for current date, .+1 ou .-1 for plus one day or minus one day)
+ * 
+ * Input is DOT SIGN NUMBER_DAYS where DOT symbolizes current date, SIGN is to mark 
+ * add or subtract NUMBER_DAYS to the current date 
+ * 
+ * */
+ExtXeo.DateField = {};
+ExtXeo.DateField.ProcessDot = function(field){
+	var sValue = field.getRawValue() + "";
+	var indexOfDot = sValue.indexOf('.'); 
+	if ( indexOfDot > -1) {
+		var today = new Date();
+		var indexOfMinus = sValue.indexOf('-');
+		var indexOfPlus = sValue.indexOf('+');
+		var index = 0;
+		if ( indexOfMinus > -1 || indexOfPlus > -1){
+			if (indexOfMinus > -1)
+				index = indexOfMinus;
+			if (indexOfPlus > -1)
+				index = indexOfPlus;
+			
+			var num  = sValue.substring(index,sValue.length);
+			var numProcessed = parseInt(num);
+			
+			if (isNaN(numProcessed))
+				numProcessed = 0;
+			
+			today.setDate(today.getDate() + numProcessed );
+		}
+		field.setValue(today);
+	}
+}
+
 /**
  * 
  * The Attribute Number Lookup
