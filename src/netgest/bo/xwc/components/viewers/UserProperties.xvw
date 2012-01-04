@@ -3,6 +3,18 @@
 xmlns:xeo="http://www.netgest.net/xeo/xeo">
 	<xvw:viewer beanClass="netgest.bo.xwc.components.viewers.beans.UserPropertiesBean" beanId="viewBean" localizationClasses='netgest.bo.xwc.xeo.localization.userProps'>
 		<xeo:formEdit renderToolBar="false">
+		<style>
+			/* Themes with grey background */
+			label{
+				color: black;
+			}
+			
+			span {
+				color: black;
+			}
+			
+			
+		</style>	
 			<xvw:toolBar>
 				<xvw:menu text='@{change}' serverAction="#{viewBean.updateUser}"> </xvw:menu> 
 				
@@ -17,7 +29,8 @@ xmlns:xeo="http://www.netgest.net/xeo/xeo">
 								<xvw:attribute lovMap='#{viewBean.profilesLovMap}'
 									 valueExpression='#{viewBean.profile}'
 									id='profile' inputType='attributeLov' label='Profile'
-									maxLength='20'></xvw:attribute>
+									maxLength='20'>
+								</xvw:attribute>
 					
 					   <font color="red"><br></br><xvw:attributeLabel text='@{profilewarning}'></xvw:attributeLabel>
 					   <br></br><xvw:attributeLabel text='@{languagewarning}'></xvw:attributeLabel> <br></br>

@@ -67,14 +67,7 @@ public class UserPropertiesBean extends XEOEditBean {
 		}
 		else{
 		String[] map = IProfileUtils.getIProfiles(session);
-		/**
-		 * try { EboContext cont=null; boObjectList
-		 * proflist=boObjectList.list(cont, "Ebo_Perf",
-		 * "profile",session.getPerformerBoui());
-		 * System.out.println(proflist.next()); } catch (boRuntimeException e) {
-		 * 
-		 * e.printStackTrace(); }
-		 **/
+		
 		for (String profileString : map) {
 			String[] currProfile = profileString.split(";");
 			oProfilesMap.put(currProfile[0], currProfile[1]);
@@ -91,7 +84,11 @@ public class UserPropertiesBean extends XEOEditBean {
 	}
 
 	public String getProfile() {
-		return profile;
+		String performerProfile = String.valueOf(getEboContext().getBoSession().getPerformerIProfileBoui());
+		if (profile != null && !"".equalsIgnoreCase(performerProfile))
+			return profile;
+		else 	
+			return String.valueOf(getEboContext().getBoSession().getPerformerIProfileBoui());
 	}
 
 	public void updateUser() {
