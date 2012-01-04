@@ -335,7 +335,7 @@ public class LookupFavorites implements Comparable<LookupFavorites>{
 		boDefObjectFilter[] objFilters = attDefinition.getObjectFilter();
 		if (objFilters != null && objFilters.length == 1){
 			String filterBoqlQuery = obj.getAttribute(bridgeName).getFilterBOQL_query();
-			if (filterBoqlQuery != null){
+			if (filterBoqlQuery != null && !"".equalsIgnoreCase(filterBoqlQuery)){
 				boObjectList listDynamicFilter = new boObjectListBuilder(ctx, filterBoqlQuery).build();
 				for (Iterator<LookupFavorites> it = favorites.iterator(); it.hasNext();){
 					LookupFavorites curr = it.next();
