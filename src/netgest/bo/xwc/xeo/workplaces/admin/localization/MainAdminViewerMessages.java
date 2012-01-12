@@ -225,4 +225,11 @@ public class MainAdminViewerMessages {
 	
 	public static final XUILocalizedMessage USER_INFORMATION = 
 		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "USER_INFORMATION");
+	
+	public static final XUILocalizedMessage THEMES = 
+		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "THEMES");
+	
+	public static final XUILocalizedMessage LIST_OF_VALUES = 
+		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "LIST_OF_VALUES");
+	
 }

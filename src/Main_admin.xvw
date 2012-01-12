@@ -131,9 +131,14 @@
 							<xvw:menu text='@{APPLICATION_LANGUAGES}'
 								value="{viewerName:'XeoApplicationLanguage_list.xvw',boql:select XeoApplicationLanguage}"
 								target='Tab' serverAction="#{viewBean.listObject}" icon='ext-xeo/admin/languages.gif' />
-							<xvw:menu text='Themes'
+							<xvw:menu text='@{THEMES}'
 								value="{viewerName:'viewers/Theme/list.xvw',boql:select Theme}"
 								target='Tab' serverAction="#{viewBean.listObject}" />
+							<xvw:menu text='@{LIST_OF_VALUES}'
+								value="{viewerName:'Ebo_LOV_list.xvw',boql:select Ebo_LOV}"
+								target='Tab' serverAction="#{viewBean.listObject}" />	
+								
+								
 						</xvw:menu>
 
 
