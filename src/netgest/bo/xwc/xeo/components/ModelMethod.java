@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import javax.faces.event.ActionEvent;
 
+import netgest.bo.def.boDefMethod;
 import netgest.bo.runtime.boObject;
 import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.model.Menu;
@@ -25,6 +26,15 @@ public class ModelMethod extends ViewerMethod {
 	public String getRendererType() {
 		return "xvw:menu";
 	}
+	
+	@Override
+	public void initComponent() {
+		super.initComponent();
+		boObject xeoObject = targetObject.getEvaluatedValue();
+		boDefMethod methodDefinition = xeoObject.getBoDefinition().getBoMethod(targetMethod.getEvaluatedValue());
+		String sIcon = methodDefinition.getPathToIcon();
+		this.setIcon(sIcon);
+    }
 	
 	/**
 	 * The {@link boObject} from which the method will be executed
@@ -62,8 +72,7 @@ public class ModelMethod extends ViewerMethod {
 			Method m = xeoObject.getClass().getMethod( this.targetMethod.getEvaluatedValue(), (Class[])null );
 			m.invoke( xeoObject, (Object[])null );			
 			
-			
-			if( xeoObject.getObjectErrors() != null ) {
+			if( xeoObject.getObjectErrors() != null  && xeoObject.getObjectErrors().size() > 0) {
 		    	StringBuffer sErros = new StringBuffer();
 		        ArrayList<?> oErrors = xeoObject.getObjectErrors();
 				if( oErrors != null && oErrors.size() > 0 ) {
