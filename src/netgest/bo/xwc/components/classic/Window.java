@@ -323,6 +323,8 @@ public class Window extends XUIComponentBase {
             oExtConfig.addJSString("contentEl", oRequestContext.getViewRoot().getClientId() );
             oExtConfig.addJSString("title", oWnd.getTitle() );
             oExtConfig.add("allowDomMove",false);
+            oExtConfig.add("constrain",true);
+            
             
             if( oWnd.getModal() )
             	oExtConfig.add("modal","true");
