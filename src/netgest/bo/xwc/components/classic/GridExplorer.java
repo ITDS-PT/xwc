@@ -522,7 +522,8 @@ public class GridExplorer extends List {
 	@Override
 	public void preRender() {
 		super.preRender();
-		if( this.currentSavedViewId.wasChanged() ) {
+		if( this.currentSavedViewId.wasChanged() ) 
+		{
 			UIComponent m;
 			int cmpIndex;
 			ToolBar tb = getToolBar();
@@ -621,7 +622,6 @@ public class GridExplorer extends List {
 			pvwb.setGroup( "preview" );
 			pvwb.setPosition( "BOTTOM" );
 			pvwb.setId( getId() + "_mpvwb" );
-			pvwb.setActionExpression( previewAction );
 			pvw.getChildren().add( pvwb );
 	
 			PreviewPositionMenu pvwr = new PreviewPositionMenu();
@@ -630,7 +630,6 @@ public class GridExplorer extends List {
 			pvwr.setGroup( "preview" );
 			pvwr.setPosition( "RIGHT" );
 			pvwr.setId( getId() + "_mpvwr" );
-			pvwr.setActionExpression( previewAction );
 			pvw.getChildren().add( pvwr );
 	
 			PreviewPositionMenu pvwl = new PreviewPositionMenu();
@@ -638,7 +637,6 @@ public class GridExplorer extends List {
 			pvwl.setValue( PreviewPanelPosition.LEFT == p );
 			pvwl.setGroup( "preview" );
 			pvwl.setPosition( "LEFT" );
-			pvwl.setActionExpression( previewAction );
 			pvwl.setId( getId() + "_mpvwl" );
 			pvw.getChildren().add( pvwl );
 			
@@ -1038,6 +1036,7 @@ public class GridExplorer extends List {
 		public String getPosition() {
 			return this.position.getValue();
 		}
+		
 	}
 	
 	
