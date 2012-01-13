@@ -30,12 +30,15 @@ import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
+import netgest.bo.utils.XEOQLModifier;
+import netgest.bo.xep.Xep;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 import netgest.io.FSiFile;
 import netgest.io.iFile;
+import netgest.utils.StringUtils;
 
 public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData implements DataFieldConnector {
 
@@ -468,7 +471,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 	                }
 	                Object[] toRet = list.toArray(new Object[ list.size() ]);
 	                
-	                if (!isListOrdered(oObjectList)){
+	                if (!isListOrdered(sql)){
 	                	Arrays.sort( toRet,0,toRet.length, new Comparator<Object>() {
 	                		public int compare( Object o1, Object o2 ) {
 	                			return ((String)((Object[])o1)[1]).compareTo( (String)((Object[])o2)[1] );
@@ -520,11 +523,11 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
         return lovMap;
     }
 
-    private boolean isListOrdered(boObjectList listToCheck){
-    	if (listToCheck.ordered() || 
-    		(listToCheck.getOrderBy() !=null && !"".equalsIgnoreCase(listToCheck.getOrderBy()))  || 
-    		listToCheck.getBOQL().toLowerCase().contains("order by")	)
-    		return true;
+    private boolean isListOrdered(String sql){
+    	XEOQLModifier qm = new XEOQLModifier( sql , new ArrayList<Object>(0) );
+    	if( !StringUtils.isEmpty(qm.getOrderByPart()) ) {
+    		return true; 
+    	}
     	return false;
     }
     
