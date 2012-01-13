@@ -7,30 +7,30 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.def.boDefInterface;
-import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boBridgeIterator;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.security.securityRights;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boPoolOwner;
-import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.GridExplorer;
 import netgest.bo.xwc.components.classic.GridPanel;
-import netgest.bo.xwc.components.classic.Window;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
-import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeMetaData;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.framework.XUIActionEvent;
 import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUIViewBean;
 import netgest.bo.xwc.framework.components.XUICommand;
@@ -451,6 +451,78 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 			logger.severe(e);
 		}
     	oRequestContext.responseComplete();	
+		
+	}
+	
+	public void openCardIdLink(){
+		
+		XUIRequestContext   oRequestContext;
+        XUIViewRoot			oViewRoot = null;
+        XUISessionContext	oSessionContext;
+        
+        oRequestContext = getRequestContext();
+        oSessionContext = oRequestContext.getSessionContext();
+
+        ActionEvent oEvent = oRequestContext.getEvent();
+        XUICommand oCommand = (XUICommand) oEvent.getComponent();
+        GridPanel oGridPanel = (GridPanel)oEvent.getComponent().getParent();
+        
+		Map<String,String> params = getRequestContext().getRequestParameterMap();
+		
+		//Retrieve the URL
+		String bouiToOpen = params.get(oGridPanel.getClientId() + "_cardIdLinkBoui");
+		if (bouiToOpen != null && !"".equalsIgnoreCase(bouiToOpen) ){
+			try {
+				boObject childObj = boObject.getBoManager().loadObject(
+						getEboContext(), Long.valueOf(bouiToOpen));
+				if (securityRights.canRead(getEboContext(), childObj.getName())) {
+					boolean isOrphan = childObj.getBoDefinition().getBoCanBeOrphan();
+					if (isOrphan){
+						if (oRequestContext.isAjaxRequest()) {
+							// Resubmit the to the command... to save the selected row.
+							oCommand.setValue( bouiToOpen );
+							
+							String frameId = "Frame_"+bouiToOpen;
+							
+							oRequestContext.getScriptContext().add(
+									XUIScriptContext.POSITION_FOOTER,
+									"cardIdLink_openTab",
+									XVWScripts.getOpenCommandTab(frameId,oCommand, "" , null ));
+							
+							oRequestContext.renderResponse();
+						} else {
+							boObject sObjectToOpen;
+							try {
+								sObjectToOpen = boObject
+										.getBoManager()
+										.loadObject(
+												getEboContext(),
+												Long
+														.parseLong(bouiToOpen));
+								oViewRoot = oSessionContext
+										.createChildView(
+								        		getViewerResolver().getViewer( sObjectToOpen, XEOViewerResolver.ViewerType.EDIT )
+											);
+								XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
+										.getBean("viewBean");
+								oBaseBean.setCurrentObjectKey(bouiToOpen);
+							} catch (NumberFormatException e) {
+								throw new RuntimeException(e);
+							} catch (boRuntimeException e) {
+								throw new RuntimeException(e);
+							}
+						}
+					} 
+				}
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+		
+			if( oViewRoot != null ) {
+		        oRequestContext.setViewRoot( oViewRoot );
+		        oRequestContext.getFacesContext().renderResponse();
+	        }
+		}
 		
 	}
 	
