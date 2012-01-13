@@ -760,8 +760,9 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	// BEGIN ML: 19-09-2011 - Number Type Columns/And aggregate Enable
 			DataFieldMetaData metaData = null;
 
-			metaData = oGrid.getDataSource().getAttributeMetaData(
-					oGridColumns[i].getDataField());
+			String dataField = oGridColumns[i].getDataField();
+			
+			metaData = oGrid.getDataSource().getAttributeMetaData( dataField );
 
 			if (metaData != null) {
 				if (metaData.getDataType() == DataFieldTypes.VALUE_NUMBER
