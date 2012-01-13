@@ -74,6 +74,9 @@ public class GridExplorer extends List {
 	private XUIViewProperty<Boolean> enablePreviewPanel = 
 		new XUIViewProperty<Boolean>("enablePreviewPanel", this, true );
 
+	private XUIViewProperty<Boolean> enableSaveView = 
+		new XUIViewProperty<Boolean>("enableSaveView", this, true );
+
 	private XUIViewProperty<Integer> previewPanelHeight = 
 		new XUIViewProperty<Integer>("previewPanelHeight", this, 250 );
 
@@ -95,7 +98,8 @@ public class GridExplorer extends List {
 	private XUIViewStateProperty<String> renderExplorerOnToolBar =
 		new XUIViewStateProperty<String>("renderExplorerOnToolBar", this );
 	
-	private XUIBindProperty<Boolean> renderViewPort = new XUIBindProperty<Boolean>("renderViewPort", this, true, Boolean.class );
+	private XUIBindProperty<Boolean> renderViewPort = 
+		new XUIBindProperty<Boolean>("renderViewPort", this, true, Boolean.class );
 	
 
 	private boolean restoreFiltersState = false;
@@ -138,6 +142,14 @@ public class GridExplorer extends List {
 
 	public int getPreviewPanelWidth() {
 		return this.previewPanelWidth.getValue();
+	}
+
+	public void setEnableSaveView( boolean enableSaveView ) {
+		this.enableSaveView.setValue( enableSaveView );
+	}
+
+	public boolean getEnableSaveView() {
+		return this.enableSaveView.getValue();
 	}
 	
 	public void setEnablePreviewPanel( boolean previewPanel ) {
@@ -484,6 +496,10 @@ public class GridExplorer extends List {
 
 		if ( super.getStateProperty("enableGroupBy").isDefaultValue() ) {
 			super.setEnableGroupBy( Boolean.toString( true ) );
+		}
+
+		if ( super.getStateProperty("autoSaveGridState").isDefaultValue() ) {
+			super.setAutoSaveGridState( Boolean.toString( true ) );
 		}
 		
 		super.initComponent();
