@@ -465,12 +465,9 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 
         ActionEvent oEvent = oRequestContext.getEvent();
         XUICommand oCommand = (XUICommand) oEvent.getComponent();
-        GridPanel oGridPanel = (GridPanel)oEvent.getComponent().getParent();
         
-		Map<String,String> params = getRequestContext().getRequestParameterMap();
-		
-		//Retrieve the URL
-		String bouiToOpen = params.get(oGridPanel.getClientId() + "_cardIdLinkBoui");
+        //Retrieve the URL
+		String bouiToOpen = oCommand.getCommandArgument().toString(); 
 		if (bouiToOpen != null && !"".equalsIgnoreCase(bouiToOpen) ){
 			try {
 				boObject childObj = boObject.getBoManager().loadObject(
@@ -479,15 +476,15 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 					boolean isOrphan = childObj.getBoDefinition().getBoCanBeOrphan();
 					if (isOrphan){
 						if (oRequestContext.isAjaxRequest()) {
-							// Resubmit the to the command... to save the selected row.
+							// Resubmit the to the command... 
 							oCommand.setValue( bouiToOpen );
-							
+							oCommand.setCommandArgument( bouiToOpen );
 							String frameId = "Frame_"+bouiToOpen;
 							
 							oRequestContext.getScriptContext().add(
 									XUIScriptContext.POSITION_FOOTER,
 									"cardIdLink_openTab",
-									XVWScripts.getOpenCommandTab(frameId,oCommand, "" , null ));
+									XVWScripts.getOpenCommandTab(frameId,oCommand, bouiToOpen , null ));
 							
 							oRequestContext.renderResponse();
 						} else {
