@@ -492,7 +492,7 @@ public class BridgeLookup extends AttributeBase {
         		
             	w.startElement( HTMLTag.TABLE, oComp);
             	w.writeAttribute( HTMLAttr.CELLPADDING, "0", null );
-            	w.writeAttribute( HTMLAttr.CELLSPACING, "2", null );
+            	w.writeAttribute( HTMLAttr.CELLSPACING, "0", null );
         		w.startElement( HTMLTag.TR, oComp);
         		w.startElement( HTMLTag.TD, oComp);
         		w.writeAttribute( HTMLAttr.STYLE, "vertical-align:top;", null );
@@ -510,7 +510,7 @@ public class BridgeLookup extends AttributeBase {
             			
 		    			w.writeAttribute(HTMLAttr.SRC, "javascript:void(0)", null);
 		    			w.writeAttribute(HTMLAttr.ONCLICK, XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_DIALOG ), null);
-		    			w.writeAttribute(HTMLAttr.CLASS, "xwc-search-trigger", null);
+		    			w.writeAttribute(HTMLAttr.CLASS, "search-lookup-trigger", null);
 	            		
 	    			w.endElement(HTMLTag.A);
 	    			
@@ -528,7 +528,7 @@ public class BridgeLookup extends AttributeBase {
 	            		w.startElement(HTMLTag.A, null);
 			    			w.writeAttribute(HTMLAttr.SRC, "javascript:void(0)", null);
 			    			w.writeAttribute(HTMLAttr.ONCLICK, XVWScripts.getAjaxCommandScript( oAttr.getCleanCommand(),XVWScripts.WAIT_DIALOG ), null);
-			    			w.writeAttribute(HTMLAttr.CLASS, "xwc-clean-trigger", null);
+			    			w.writeAttribute(HTMLAttr.CLASS, "search-lookup-clean-trigger", null);
 		    			w.endElement(HTMLTag.A);
 	    			
     			w.endElement(DIV);
@@ -556,7 +556,7 @@ public class BridgeLookup extends AttributeBase {
 	            			w.writeAttribute(HTMLAttr.ID, oAttr.getClientId()+"_fav", null);	
 			    			w.writeAttribute(HTMLAttr.SRC, "javascript:void(0)", null);
 			    			w.writeAttribute(HTMLAttr.ONCLICK, b.toString() , null);
-			    			w.writeAttribute(HTMLAttr.CLASS, "xwc-favorite-trigger", null);
+			    			w.writeAttribute(HTMLAttr.CLASS, "search-lookup-favorite-trigger", null);
 		    			w.endElement(HTMLTag.A);
             		}
 	    			
