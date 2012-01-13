@@ -19,6 +19,7 @@ import javax.faces.event.FacesEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.render.Renderer;
 
+import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.framework.XUIActionEvent;
 import netgest.bo.xwc.framework.XUIRequestContext;
 
@@ -78,6 +79,7 @@ public class XUICommand extends XUIComponentBase implements ActionSource2 {
 
 
     private Object value = null;
+    private Object commandArgument = null;
 
 
     // -------------------------------------------------------------- Properties
@@ -405,8 +407,20 @@ public class XUICommand extends XUIComponentBase implements ActionSource2 {
 
         Map<String,String> requestParamMap =
               context.getRequestParameterMap();
-        return (requestParamMap.containsKey(this.getClientId()));
 
+        if( requestParamMap.containsKey(this.getClientId()) ) {
+        	setCommandArgument( requestParamMap.get( this.getClientId() ) );
+	        return true;
+        }
+        return false;
+    }
+    
+    public void setCommandArgument( Object value ) {
+    	this.commandArgument = value;
+    }
+
+    public Object getCommandArgument() {
+    	return this.commandArgument;
     }
 
 }
