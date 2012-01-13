@@ -120,6 +120,8 @@
             <xwc:render for='attributeOutput'>netgest.bo.xwc.components.classic.AttributeOutput$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeFile'>netgest.bo.xwc.components.classic.AttributeFile$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributePassword'>netgest.bo.xwc.components.classic.AttributePassword$XEOHTMLRenderer</xwc:render>
+            
+            
 
             <xwc:render for='mainLayout'>netgest.bo.xwc.components.classic.MainLayout$XEOHTMLRenderer</xwc:render>
             
@@ -176,6 +178,7 @@
       		<xwc:render for='menuCounter'>netgest.bo.xwc.xeo.components.MenuCounter$XEOHTMLRenderer</xwc:render>
       		<xwc:render for="formEdit">netgest.bo.xwc.xeo.components.FormEdit$XEOHTMLRenderer</xwc:render>
       		<xwc:render for="bridgeLookup">netgest.bo.xwc.xeo.components.BridgeLookup$XEOHTMLRenderer</xwc:render>
+      		<xwc:render for='attributeSearchLookup'>netgest.bo.xwc.xeo.components.AttributeSearchLookup$XEOHTMLRenderer</xwc:render>
       		<!-- <xwc:render for="bridge">netgest.bo.xwc.xeo.components.Bridge$XEOHTMLRenderer</xwc:render> -->
         </xwc:renderKit>
 
@@ -881,36 +884,42 @@
 
         <xwc:component name='formList'>
             <xwc:className>netgest.bo.xwc.xeo.components.FormList</xwc:className>
-            <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
+            <xwc:description>Form to support a lista viewer</xwc:description>
         </xwc:component>
 
         <xwc:component name='formLookupList'>
             <xwc:className>netgest.bo.xwc.xeo.components.FormLookupList</xwc:className>
-            <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
+            <xwc:description>Form to support a lookup viewer</xwc:description>
         </xwc:component>
         
         <xwc:component name='listToolBar'>
             <xwc:className>netgest.bo.xwc.xeo.components.ListToolBar</xwc:className>
-            <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
+            <xwc:description>Toolbar for a list viewer</xwc:description>
         </xwc:component>
-
+        
+        <xwc:component name='attributeSearchLookup'>
+            <xwc:className>netgest.bo.xwc.xeo.components.AttributeSearchLookup</xwc:className>
+            <xwc:description>Lookup component that allows searching</xwc:description>
+        </xwc:component>
+        
+        
         <xwc:component name='lookupListToolBar'>
             <xwc:className>netgest.bo.xwc.xeo.components.LookupListToolBar</xwc:className>
-            <xwc:description></xwc:description>
+            <xwc:description>Toolbar of a lookup viewer</xwc:description>
         </xwc:component>
 
         <xwc:component name='list'>
             <xwc:className>netgest.bo.xwc.xeo.components.List</xwc:className>
-            <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
+            <xwc:description>List of XEO Objects</xwc:description>
         </xwc:component>
 
         <xwc:component name='splitedLookup'>
             <xwc:className>netgest.bo.xwc.xeo.components.SplitedLookup</xwc:className>
-            <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
+            <xwc:description>A lookup component that allows searching by a given key</xwc:description>
         </xwc:component>
         <xwc:component name='menuCounter'>
             <xwc:className>netgest.bo.xwc.xeo.components.MenuCounter</xwc:className>
-            <xwc:description></xwc:description>
+            <xwc:description>An outlook style menu counter (think unread messages)</xwc:description>
         </xwc:component>
     </xwc:components>
     
