@@ -32,7 +32,7 @@ public class ListToolBar extends ToolBarMenuPositions {
 	 * parent {@link netgest.bo.xwc.xeo.components.List} component 
 	 */
 	private XUIBindProperty<XEOObjectListConnector> targetList = 
-		new XUIBindProperty<XEOObjectListConnector>("targetList", this, XEOObjectListConnector.class, "#{viewBean.dataList}" );
+		new XUIBindProperty<XEOObjectListConnector>("targetList", this, XEOObjectListConnector.class, null );
 
 	/**
 	 * Whether or not the "Create New" button (to add to the list) is rendered
@@ -51,8 +51,10 @@ public class ListToolBar extends ToolBarMenuPositions {
 	
 	public XEOObjectListConnector getTargetList() {
 		UIComponent parentList = getParent();
-		if (parentList instanceof netgest.bo.xwc.xeo.components.List)
-			return  ((netgest.bo.xwc.xeo.components.List) parentList).getTargetList();
+		if( this.targetList.getValue() == null ) {
+			if (parentList instanceof netgest.bo.xwc.xeo.components.List)
+				return  ((netgest.bo.xwc.xeo.components.List) parentList).getTargetList();
+		}
 		return this.targetList.getEvaluatedValue();
 	}
 
