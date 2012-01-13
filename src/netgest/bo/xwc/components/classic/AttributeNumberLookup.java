@@ -129,7 +129,7 @@ public class AttributeNumberLookup extends AttributeBase {
                     setValue( oSubmitedBigDecimal );
                     //Since we're overring  the validate, we need to send 
                     //activate the value change listeners
-                    if (areValuesDifferent(oldValue, oSubmitedValue))
+                    if (!compareValue(oldValue, oSubmitedValue))
                     	queueEvent(new XUIValueChangeEvent(this, oldValue, oSubmitedValue));
                 }
                 catch( NumberFormatException ex ) {
