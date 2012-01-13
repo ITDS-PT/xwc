@@ -871,7 +871,7 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
             Object previous = getValue();
             setValue(newValue);
             setSubmittedValue(null);
-            if (areValuesDifferent(previous, newValue)) {
+            if (!compareValue(previous, newValue)) {
                 queueEvent(new XUIValueChangeEvent(this, previous, newValue));
             }
         }
@@ -1042,18 +1042,13 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
      * @param previous old value of this component (if any)
      * @param value    new value of this component (if any)
      */
-    protected boolean areValuesDifferent(Object previous, Object value) {
-
-        if (previous == null) {
-            return (value != null);
-        } else if (value == null) {
-            return (true);
+    protected boolean compareValue(Object previous, Object value) {
+        if (previous != null) {
+        	return previous.equals(value);
         } else {
-            return (!(previous.equals(value)));
+            return value == null;
         }
-
     }
-
 
     /**
      * Executes validation logic.
