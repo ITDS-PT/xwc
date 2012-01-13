@@ -709,7 +709,7 @@ XVW.searchLookup = function(element){
 	if (input != undefined ){
 		var inputValue = input.getValue();
 		if (inputValue != "" && inputValue.length > 0){
-			XVW.AjaxCommand(form,id+"_search",id+"_search",'1');
+			XVW.AjaxCommand(form,id+"_search",inputValue,'1');
 			input.setStyle("display","none");
 			list.setStyle("display","block");
 			//Reset user search value
