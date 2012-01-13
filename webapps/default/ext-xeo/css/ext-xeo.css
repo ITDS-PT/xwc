@@ -154,3 +154,60 @@ a.xwc-favorite-trigger:hover{
     background-image: url(../icons/favorites-sprite.png);
     cursor:pointer;   
 }
+
+/* For the Search-Lookup Trigger*/
+.search-lookup-trigger{
+	width:17px;
+    height:21px;
+    background-color: blue;
+	background-image: url(../../extjs/images/default/form/search-trigger.gif);
+	display:block;
+	cursor:pointer;
+	margin:0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;	
+}
+
+.search-lookup-trigger:hover{
+	background-position: -17px 0;
+}
+
+.search-lookup-trigger-click{
+	background-position: -34px 0;
+}
+
+.search-lookup-clean-trigger{
+	width:17px;
+    height:21px;
+	background-image: url(../../extjs/images/default/form/clear-trigger.gif);
+	display:block;
+	cursor:pointer;	
+	margin:0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+}
+
+.search-lookup-clean-trigger:hover{
+	background-position: -17px 0;
+}
+
+.search-lookup-clean-trigger-click{
+	background-position: -34px 0 ;
+}
+
+
+.search-lookup-favorite-trigger{
+	width:17px;
+    height:21px;
+	background: url("../icons/favorites-sprite.png");
+	display:block;
+	cursor:pointer;	
+	margin:0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+}
+
+.search-lookup-favorite-trigger:hover{
+	background-position: -17px 0;
+}
+
+.search-lookup-favorite-trigger-click{
+	background-position: -34px 0;
+}

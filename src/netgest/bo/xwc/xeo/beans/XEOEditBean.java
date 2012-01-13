@@ -2336,8 +2336,11 @@ ActionEvent oEvent = getRequestContext().getEvent();
     
     public XEOEditBean getParentBean() {
     	if( this.parentBean == null ){
-    		XEOEditBean b = (XEOEditBean)getParentView().getBean( getParentBeanId() ); 
-    		return b;
+    		Object baseBean =getParentView().getBean( getParentBeanId() );
+    		if (baseBean instanceof XEOEditBean )
+    			return  (XEOEditBean) baseBean;
+    		else 
+    			return null;
     	}
     	else
     		return this.parentBean;
@@ -2640,30 +2643,52 @@ ActionEvent oEvent = getRequestContext().getEvent();
     		get(((XUIComponentBase)oCommand.getParent()).getClientId()+"_top");
     	
     	if (topParam == null || topParam.length() == 0)
-    		topParam = "0";
+    		  topParam = "0";
     	
-    	Double tmpTop =Double.parseDouble(topParam); 
-    	top = tmpTop.intValue();
+	    	  Double tmpTop =Double.parseDouble(topParam); 
+	    	  top = tmpTop.intValue();
     	
-    	//Create a XUIViewRoot representing the viewer (viewer can be located in the source code, or in the webapp of the application)
-    	  XUIViewRoot viewRoot = getSessionContext().createChildView("netgest/bo/xwc/xeo/viewers/LookupFavorites.xvw");
-    	  //Set the newly created viewroot as the view root of the request
+	    	  XUIViewRoot viewRoot = getSessionContext().createChildView("netgest/bo/xwc/xeo/viewers/LookupFavorites.xvw");
+	    	  BridgeLookupBean bean = (BridgeLookupBean) viewRoot.getBean("viewBean");
+	    	  bean.setLeft(left);
+	    	  bean.setTop(top);
+	    	  bean.setAttributeName(objectAtt);
+	    	  bean.setInvokedFromBridge(isBridge);
+	    	  bean.setObjectName(getXEOObject().getName());
+	    	  bean.setParentComponentId(bridgeId);
+	    	  bean.setMultiSelect(multiSelect);
     	  
-    	  BridgeLookupBean bean = (BridgeLookupBean) viewRoot.getBean("viewBean");
-    	  bean.setLeft(left);
-    	  bean.setTop(top);
-    	  bean.setAttributeName(objectAtt);
-    	  bean.setInvokedFromBridge(isBridge);
-    	  bean.setObjectName(getXEOObject().getName());
-    	  bean.setParentComponentId(bridgeId);
-    	  bean.setMultiSelect(multiSelect);
+	    	  LookupFavorites.eliminateDeletedObjectsFromPreference(getXEOObject(), objectAtt);
     	  
-    	  LookupFavorites.eliminateDeletedObjectsFromPreference(getXEOObject(), objectAtt);
-    	  
-    	  getRequestContext().setViewRoot(viewRoot);  
-    	  //Render the response
-    	  getRequestContext().renderResponse();  
+	    	  getRequestContext().setViewRoot(viewRoot);  
+	    	  getRequestContext().renderResponse();  
     }
     
-    
+    public void searchTextIndexLookup(String lookupId) throws boRuntimeException{
+    	AttributeBase oAtt = (AttributeBase)getViewRoot().findComponent( lookupId );
+    	AttributeHandler    oAttHandler = ((XEOObjectAttributeConnector)oAtt.getDataFieldConnector()).getAttributeHandler();
+    	String searchParam = getRequestContext().getRequestParameterMap().get(lookupId + "_inputSearch");
+    	String targetObjectToSearch = oAttHandler.getDefAttribute().getReferencedObjectName();
+    	String boql = "select " +  targetObjectToSearch;
+    	boObjectList list = boObjectList.list(getEboContext(), boql, new Object[0],1,50,"",searchParam,null,"",true,true);
+    	long records = list.getRecordCount();
+    	if (records == 1){
+    		list.next();
+    		oAttHandler.setValueLong(list.getObject().getBoui());
+    	} else if (records > 1){
+    		XUIViewRoot oViewRoot = getRequestContext().getSessionContext().createChildView( "netgest/bo/xwc/xeo/viewers/LookupSearchResults.xvw" );
+            LookupSearchResultsBean oBaseBean = (LookupSearchResultsBean)oViewRoot.getBean( "viewBean" );
+            oBaseBean.setParentBean( this ); 
+            oBaseBean.setParentAttributeName( oAttHandler.getName() );
+            oBaseBean.setLookupObjects( getLookupObjectsMap( oAttHandler ) );
+            oBaseBean.setSelectedObject( targetObjectToSearch );
+            oBaseBean.setParentParentBeanId( "viewBean" );
+            oBaseBean.setParentComponentId( oAtt.getClientId() );
+            oBaseBean.setFullTextSearch(searchParam);
+            getRequestContext().setViewRoot(oViewRoot);  
+      	  	getRequestContext().renderResponse();
+    	} else {
+    		lookupAttribute(lookupId);
+    	}
+    }
 }

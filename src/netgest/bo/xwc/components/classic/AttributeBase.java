@@ -167,11 +167,16 @@ public class AttributeBase extends ViewerInputSecurityBase {
     	new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
     
     /**
-     * Whether or not the value of the component is required by the XEO Model
+     * Whether or not the value of the component is required 
      */
     private XUIViewStateBindProperty<Boolean> modelRequired  	= 
     	new XUIViewStateBindProperty<Boolean>( "modelRequired", this,"false", Boolean.class );
     
+    /**
+     * 
+     * Whether or not the value of the component is recommended to be filled 
+     * 
+     * */
     private XUIViewStateBindProperty<Boolean> recommended     	= 
     	new XUIViewStateBindProperty<Boolean>( "recommended", this,"false", Boolean.class );
     
@@ -226,6 +231,13 @@ public class AttributeBase extends ViewerInputSecurityBase {
      */
     private XUIViewStateBindProperty<List<Long>> listFavorites = 
     	new XUIViewStateBindProperty<List<Long>>( "listFavorites", this, List.class);
+    
+    
+    /**
+     * Name of the attribute of a XEO Model to bind this attribute
+     */
+    private XUIViewStateBindProperty<Boolean> enableFullTextSearch  = 
+    	new XUIViewStateBindProperty<Boolean>( "enableFullTextSearch", this, "false",Boolean.class );
     
     /**
      * Initialize the component
@@ -563,6 +575,16 @@ public class AttributeBase extends ViewerInputSecurityBase {
     }
     
     /**
+     * 
+     * Sets the search property of the component (only applies in relations)
+     * 
+     * @param enableSearch
+     */
+    public void setEnableFullTextSearch(String enableSearchExpr){
+    	this.enableFullTextSearch.setExpressionText(enableSearchExpr);
+    }
+    
+    /**
      * Get's the current label of the component
      * @return	Returns the current label text of the component
      */
@@ -586,6 +608,16 @@ public class AttributeBase extends ViewerInputSecurityBase {
      */
     public boolean getEnableCardIdLink() {
         return this.enableCardIdLink.getEvaluatedValue();
+    }
+    
+    /**
+     * 
+     * Retrieves whether or not the full text search property is enabled
+     * 
+     * @return True if the property is enabled and false otherwise
+     */
+    public boolean getEnableFullTextSearch(){
+    	return this.enableFullTextSearch.getEvaluatedValue();
     }
     
     /**

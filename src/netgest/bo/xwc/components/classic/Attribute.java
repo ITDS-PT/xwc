@@ -173,7 +173,10 @@ public class Attribute extends AttributeBase
                             sRet = "attributeLov";
                             break;
                         case DataFieldTypes.RENDER_OBJECT_LOOKUP:
-                            sRet = "attributeNumberLookup";
+                        	if (!getEnableFullTextSearch())
+                        		sRet = "attributeNumberLookup";
+                        	else
+                        		sRet = "attributeSearchLookup";
                             break;
                     }
                     break;
@@ -262,6 +265,9 @@ public class Attribute extends AttributeBase
 
         if( getValueExpression("enableCardIdLink") != null )
             oAttr.setEnableCardIdLink( getValueExpression("enableCardIdLink").getExpressionString() );
+        
+        if( getValueExpression("enableFullTextSearch") != null )
+            oAttr.setEnableFullTextSearch( getValueExpression("enableFullTextSearch").getExpressionString() );
         
         if( getValueExpression("lookupViewer") != null )
             oAttr.setLookupViewer( getValueExpression("lookupViewer").getExpressionString() );

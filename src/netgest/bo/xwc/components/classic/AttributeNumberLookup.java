@@ -88,6 +88,7 @@ public class AttributeNumberLookup extends AttributeBase {
     public void preRender() {
         oLookupCommand = (XUICommand)getChild( 0 );
         oOpenCommand = (XUICommand)getChild( 1 );
+        oFavoriteCommand = (XUICommand)getChild( 2 );
     }
 
     private void doLookup() {
@@ -103,6 +104,12 @@ public class AttributeNumberLookup extends AttributeBase {
     protected XUICommand getFavoriteCommand() {
         return oFavoriteCommand;
     }
+    
+    protected XUICommand getOpenCommand() {
+        return oOpenCommand;
+    }
+    
+    
     
     @Override
 	public void validate( FacesContext context ) {
@@ -336,6 +343,7 @@ public class AttributeNumberLookup extends AttributeBase {
 	            		"}" );
             }
             
+            
             if( !oAttr.isDisabled() && !oAttr.isReadOnly() ) {
 	            oInpLsnr.add("'keydown'", "function(f,e){ " +
 	            		"if(e.getKey()==13) {" +
@@ -406,9 +414,6 @@ public class AttributeNumberLookup extends AttributeBase {
                 	oAttrComp.setSubmittedValue( value );
                 }
             }
-            
-            String top = getRequestContext().getRequestParameterMap().get( oAttrComp.getClientId()+"_top" );
-            String left = getRequestContext().getRequestParameterMap().get( oAttrComp.getClientId()+"_string" );
             
             super.decode(component);
 
