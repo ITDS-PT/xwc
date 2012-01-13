@@ -231,13 +231,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         w.writeAttribute( ID, oComp.getClientId() +"_act", null );
         w.endElement( INPUT );
         
-        //Clicked CardIDLink
-        w.startElement( INPUT , oComp);
-        w.writeAttribute( TYPE, "hidden", null );
-        w.writeAttribute( NAME, oComp.getClientId() +"_cardIdLinkBoui", null );
-        w.writeAttribute( ID, oComp.getClientId() +"_cardIdLinkBoui", null );
-        w.endElement( INPUT );
-        
     }
 
 	public ExtConfig renderExtComponent( XUIResponseWriter w, XUIComponentBase oComp, boolean triggerLoadData ) {
