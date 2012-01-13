@@ -29,6 +29,9 @@ import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 
 public class XUIServlet extends HttpServlet
 {
+	
+	private String loginPage = "Login.xvw";
+	
 	Logger				logger = Logger.getLogger( XUIServlet.class ); 
     FacesServlet        facesServlet;
 //    boSession           oXEOSession;
@@ -44,6 +47,14 @@ public class XUIServlet extends HttpServlet
 
     public void init(ServletConfig servletConfig) throws ServletException
     {
+        String loginPageParam = servletConfig.getInitParameter("LoginPageWhenExpired");
+        if (loginPageParam != null && !"".equals(loginPageParam))
+        	this.loginPage = loginPageParam;
+        
+        if (!loginPage.startsWith("/")) {
+              loginPage = "/" + loginPage;
+        }
+
     	defaultLang = servletConfig.getInitParameter("DefaultLanguage");
     	if( defaultLang != null && defaultLang.length() > 0 ) {
         	defaultLocale = new Locale( defaultLang ); 
@@ -150,11 +161,18 @@ public class XUIServlet extends HttpServlet
             				sb.append( oRequest.getServerPort() );
             			}
             		}
-        			sb.append( "/" );
-            		sb.append( oRequest.getContextPath() );
-            		sb.append( "/Login.xvw?msg=1" );
-	        		
-	        		if( isAjax ) {
+            		
+            		String ctxPath = oRequest.getContextPath();
+
+                    if (!ctxPath.startsWith("/")) {
+                          ctxPath = "/" + ctxPath;
+                    }
+
+                    sb.append(ctxPath);
+                    sb.append(loginPage);
+                    sb.append("?msg=1");
+
+            		if( isAjax ) {
 		        		oResponse.setHeader( "login-url" , sb.toString() );
 		        		oResponse.sendError(401);
 	        		}

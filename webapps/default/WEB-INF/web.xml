@@ -54,6 +54,10 @@
 			<param-name>DefaultLanguage</param-name>
 			<param-value>pt</param-value>
 		</init-param>
+		<init-param>
+			<param-name>LoginPageWhenExpired</param-name>
+			<param-value>Login.xvw</param-value>
+		</init-param>
 	</servlet>
 	<filter>
 		<filter-name>DeployFilter</filter-name>
