@@ -72,10 +72,10 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
         try {
         	if( "BOUI".equals( this.oAttHandler.getName() ) || (getSecurityPermissions()&SecurityPermissions.READ) == SecurityPermissions.READ ) {
         		
-        		String val = this.oAttHandler.getDefAttribute().getAtributeDeclaredType();
-        		if (boDefAttribute.ATTRIBUTE_OBJECTCOLLECTION.equals(this.oAttHandler.getDefAttribute().getAtributeDeclaredType())){
+        		String attributeDeclaredType = this.oAttHandler.getDefAttribute().getAtributeDeclaredType();
+        		if (boDefAttribute.ATTRIBUTE_OBJECTCOLLECTION.equals(attributeDeclaredType)){
         			bridgeHandler bH = this.oAttHandler.getParent().getBridge(oAttHandler.getDefAttribute().getName());
-        			StringBuffer sb = getBridgeDisplayOutput(bH);
+        			StringBuilder sb = getBridgeDisplayOutput(bH);
         			return sb.toString();
         		}
         		else{
@@ -97,14 +97,17 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
      * @param bh The bridge to retrieve all elements from
      * @return A string with all elements of the bridge (1 per line)
      */
-    private StringBuffer getBridgeDisplayOutput(final bridgeHandler bh) {
+    private StringBuilder getBridgeDisplayOutput(final bridgeHandler bh) {
 
-    	StringBuffer sb = new StringBuffer("");
+    	StringBuilder sb = new StringBuilder("");
         if (bh != null) {
               bh.beforeFirst();
+              String append = "";
               while (bh.next()) {
                     try {
-                         sb.append(bh.getObject().getTextCARDID());
+                    	 sb.append(append);
+                    	 sb.append(bh.getObject().getTextCARDID());
+                    	 append = ", ";
                     } catch (boRuntimeException e) {
                     	e.printStackTrace();
                     }
@@ -122,7 +125,6 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
     	String sRetValue = null;
     	try {
 			if ( oAttHandler.getDefAttribute().getAtributeType() == boDefAttribute.TYPE_OBJECTATTRIBUTE ) {
-				
 				if (boDefAttribute.ATTRIBUTE_OBJECTCOLLECTION.equals(this.oAttHandler.getDefAttribute().getAtributeDeclaredType())){
 					bridgeHandler bH = this.oAttHandler.getParent().getBridge(oAttHandler.getDefAttribute().getName());
 					sRetValue = getBridgeDisplayOutput(bH).toString();
@@ -130,7 +132,6 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 				else{
 					boObject obj = oAttHandler.getObject();
 					if( obj != null ) {
-						//FIXME: Isto não pode ficar assim
 						sRetValue = obj.getTextCARDID().toString();
 					}
 				}
@@ -459,18 +460,23 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 	                    				  sql
 	                                      ,1,500
 	                                     );
+	                
+	                
+	                
 	                while (oObjectList.next()) {
 	                    list.add( new Object[] { oObjectList.getCurrentBoui(), oObjectList.getObject().getCARDIDwNoIMG().toString() } );
 	                }
 	                Object[] toRet = list.toArray(new Object[ list.size() ]);
 	                
-	                Arrays.sort( toRet,0,toRet.length, new Comparator<Object>() {
+	                if (!isListOrdered(oObjectList)){
+	                	Arrays.sort( toRet,0,toRet.length, new Comparator<Object>() {
 	                		public int compare( Object o1, Object o2 ) {
 	                			return ((String)((Object[])o1)[1]).compareTo( (String)((Object[])o2)[1] );
 	                		}
 	                	}
-	                );
-
+	                	);
+	                }
+	                
 	                for( Object lovItem : toRet ) {
 	                	lovMap.put( 
 	        				((Object[])lovItem)[0],
@@ -514,6 +520,14 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
         return lovMap;
     }
 
+    private boolean isListOrdered(boObjectList listToCheck){
+    	if (listToCheck.ordered() || 
+    		(listToCheck.getOrderBy() !=null && !"".equalsIgnoreCase(listToCheck.getOrderBy()))  || 
+    		listToCheck.getBOQL().toLowerCase().contains("order by")	)
+    		return true;
+    	return false;
+    }
+    
     public boolean getIsLovEditable() {
         boDefXeoCode oXeoCode = oAttHandler.getDefAttribute().getLovEditable();
         if( oXeoCode != null ) {
@@ -534,5 +548,6 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
     public AttributeHandler getAttributeHandler() {
         return oAttHandler;
     }
+
 }
 
