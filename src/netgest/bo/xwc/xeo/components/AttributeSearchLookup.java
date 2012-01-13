@@ -72,16 +72,16 @@ public class AttributeSearchLookup extends AttributeNumberLookup {
 	
 	public static class SearchActionListener implements ActionListener {
         public void processAction(ActionEvent event) {
-            ((AttributeSearchLookup)((XUICommand)event.getSource()).getParent()).doLookup();
+            ((AttributeSearchLookup)((XUICommand)event.getSource()).getParent()).search((XUICommand)event.getSource());
         }
     }
 	
 	
-	private void doLookup() {
+	private void search(XUICommand command) {
         try {
             XEOEditBean oXEOBaseBean;
             oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean("viewBean");
-            oXEOBaseBean.searchTextIndexLookup(getClientId());
+            oXEOBaseBean.searchTextIndexLookup(getClientId(),String.valueOf(command.getCommandArgument()));
         } catch (boRuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -257,7 +257,8 @@ public class AttributeSearchLookup extends AttributeNumberLookup {
 	            if (oAttr.getEnableCardIdLink()){
 	            	w.startElement(A, null);
 	            	w.writeAttribute( HREF, "javascript:void(0)", null );
-	        		w.writeAttribute( ONCLICK, XVWScripts.getAjaxCommandScript( oAttr.getOpenCommand() ,  XVWScripts.WAIT_STATUS_MESSAGE ) , null );
+	        		w.writeAttribute( ONCLICK, 
+	        				XVWScripts.getAjaxCommandScript( oAttr.getOpenCommand() ,  XVWScripts.WAIT_STATUS_MESSAGE ) , null );
 	            	w.write(oAttr.getDisplayValue());
 	            	w.endElement(A);
 	            } else{
