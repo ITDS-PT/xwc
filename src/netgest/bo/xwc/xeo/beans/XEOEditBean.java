@@ -2664,13 +2664,22 @@ ActionEvent oEvent = getRequestContext().getEvent();
 	    	  getRequestContext().renderResponse();  
     }
     
-    public void searchTextIndexLookup(String lookupId) throws boRuntimeException{
+    /**
+     * 
+     * Searches a given text in text index, if it finds 1 (one) result, sets the lookup
+     * to that value, if it finds several opens a window to select. If it finds none, opens the
+     * regular lookup 
+     * 
+     * @param lookupId The identifier of the lookup component
+     * @param textToSearch The text string to search for
+     * @throws boRuntimeException
+     */
+    public void searchTextIndexLookup(String lookupId, String textToSearch) throws boRuntimeException{
     	AttributeBase oAtt = (AttributeBase)getViewRoot().findComponent( lookupId );
     	AttributeHandler    oAttHandler = ((XEOObjectAttributeConnector)oAtt.getDataFieldConnector()).getAttributeHandler();
-    	String searchParam = getRequestContext().getRequestParameterMap().get(lookupId + "_inputSearch");
     	String targetObjectToSearch = oAttHandler.getDefAttribute().getReferencedObjectName();
     	String boql = "select " +  targetObjectToSearch;
-    	boObjectList list = boObjectList.list(getEboContext(), boql, new Object[0],1,50,"",searchParam,null,"",true,true);
+    	boObjectList list = boObjectList.list(getEboContext(), boql, new Object[0],1,50,"",textToSearch,null,"",true,true);
     	long records = list.getRecordCount();
     	if (records == 1){
     		list.next();
@@ -2684,7 +2693,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
             oBaseBean.setSelectedObject( targetObjectToSearch );
             oBaseBean.setParentParentBeanId( "viewBean" );
             oBaseBean.setParentComponentId( oAtt.getClientId() );
-            oBaseBean.setFullTextSearch(searchParam);
+            oBaseBean.setFullTextSearch(textToSearch);
             getRequestContext().setViewRoot(oViewRoot);  
       	  	getRequestContext().renderResponse();
     	} else {
