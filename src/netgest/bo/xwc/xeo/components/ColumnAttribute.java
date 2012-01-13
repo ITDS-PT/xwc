@@ -1,12 +1,30 @@
 package netgest.bo.xwc.xeo.components;
 
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
-import netgest.bo.xwc.components.classic.grid.CardIdLinkRenderer;
 import netgest.bo.xwc.framework.XUIViewProperty;
+import netgest.bo.xwc.framework.components.XUICommand;
+import netgest.bo.xwc.xeo.components.utils.CardIdLinkRenderer;
 
 
 
 public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAttribute {
+	
+	private XUICommand cardIdCommand;
+
+	public XUICommand getCardIdCommand(){
+		return cardIdCommand;
+	}
+	
+	@Override
+	public void initComponent(){
+		if (findComponent(getClientId() +"_cardIdLink") == null){
+			XUICommand cmd = new XUICommand();
+    		cmd.setActionExpression( createMethodBinding( "#{viewBean.openCardIdLink}") );
+    		cmd.setId(getId() + "_cardIdLink");
+    		this.cardIdCommand = cmd;
+    		getChildren().add( cmd );
+		}
+	}
 	
 	/**
      * Whether to enable cardid links on this column or not
@@ -40,7 +58,7 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 		GridColumnRenderer rendererer = super.getRenderer();
 		if (rendererer == null){
 			if (getEnableCardIdLink()){
-				return new CardIdLinkRenderer();
+				return new CardIdLinkRenderer(this);
 			}
 		}
 		return null;
