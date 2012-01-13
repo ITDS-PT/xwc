@@ -647,6 +647,81 @@ ExtXeo.DateField.ProcessDot = function(field){
 	}
 }
 
+ExtXeo.switchLookup = function(elementToSwitch){
+	
+	//Este dois
+	var elem = Ext.get(elementToSwitch + "_lookupColumn");
+	elem.first('input').on('blur',function(eventBlur,element){XVW.searchLookup(element);});
+	//Ext.get("inputSearch").on('blur',function(){XVW.searchLookup();});
+	//Fim
+	
+	elem.on('dblclick',function(evt,element){
+				//Estes dois
+				var list = elem.first();
+				var input  =  elem.first('input');
+				//var input = Ext.get("inputSearch");
+				//Fim
+				
+				if (!input.hasClass('xwc-unusable')){
+					var visiblity = input.getStyle("display");
+					if (visiblity == "block"){
+						input.setStyle("display","none");
+						list.setStyle("display","block");
+					} else{
+						input.setStyle("display","block");
+						input.focus();
+						list.setStyle("display","none");
+					}
+				}
+			}
+	);
+		
+}
+
+/**
+ * 
+ * Used to update the value of the search lookup and 
+ * trigger the formula if needed
+ * 
+ * Estou a apostar que consiga detectar a mudança de valor
+ * 
+ * */
+XVW.updateValue  = function( elementId, newValue ){
+	var oldValue = Ext.fly(elementId).getValue();
+	document.getElementById(elementId).value = newValue;
+	if (oldValue != newValue){
+		var id = Ext.fly(elementId).findParent('form').id;
+		XVW.AjaxCommand(id,null,null,0);
+	} 
+	
+	
+}
+
+XVW.searchLookup = function(element){
+	var newElement = Ext.get(element);
+	var divDom = newElement.findParent("div");
+	var formDom = newElement.findParent("form");
+	var id = divDom.id;
+	var form = formDom.id;
+	var input = newElement;
+	var list = newElement.prev();
+	
+	if (input != undefined ){
+		var inputValue = input.getValue();
+		if (inputValue != "" && inputValue.length > 0){
+			XVW.AjaxCommand(form,id+"_search",id+"_search",'1');
+			input.setStyle("display","none");
+			list.setStyle("display","block");
+			//Reset user search value
+			input.dom.value = "";
+		} else {
+			//Show the div with the lookup
+			input.setStyle("display","none");
+			list.setStyle("display","block");
+		}
+	}
+};
+
 /**
  * 
  * The Attribute Number Lookup
