@@ -29,6 +29,7 @@ import netgest.bo.xwc.components.annotations.ObjectAttribute;
 import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.grid.GridTreeSelectorEditBean;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.connectors.AggregableDataList;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -488,7 +489,13 @@ public class GridPanel extends ViewerInputSecurityBase {
 		}
 		return super.isRendered();
 	}
+	
+	private XUICommand cardIdCommand;
 
+	public String getCardIdCommand(){
+		return XVWScripts.getCommandScript(cardIdCommand, 2);
+	}
+	
 	@Override
 	public void initComponent() {
 		super.initComponent();
@@ -517,6 +524,15 @@ public class GridPanel extends ViewerInputSecurityBase {
 		if( getAutoSaveGridState() ) {
 			restoreUserState();
 		}
+		
+		if (findComponent(getClientId() +"_cardIdLink") == null){
+			XUICommand cmd = new XUICommand();
+    		cmd.setActionExpression( createMethodBinding( "#{viewBean.openCardIdLink}") );
+    		cmd.setId(getId() + "_cardIdLink");
+    		this.cardIdCommand = cmd;
+    		getChildren().add( cmd );
+		}
+		
 	}
 
     public void setServerActionWaitMode( String waitModeName ) {

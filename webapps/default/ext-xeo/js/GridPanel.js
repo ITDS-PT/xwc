@@ -2008,3 +2008,13 @@ ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentif
 ExtXeo.grid.nowrap = function(text){
     return '<div style="white-space:normal !important;">'+ text +'</div>';
 }
+
+/**
+ * 
+ * Opens the
+ * 
+ * */
+ExtXeo.grid.openCardIdLink = function( bouiToOpen, formId, gridId ){
+	Ext.fly(formId+":"+gridId + "_cardIdLinkBoui").dom.value = bouiToOpen;
+	XVW.AjaxCommand(formId,formId+":"+gridId+"_cardIdLink",formId+":"+gridId+"_cardIdLink",1);
+}
