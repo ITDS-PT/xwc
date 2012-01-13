@@ -1,13 +1,8 @@
 package netgest.bo.xwc.components.classic.gridexplorer;
 
 import netgest.bo.runtime.boRuntimeException;
-import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.GridExplorer;
-import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
 
@@ -48,28 +43,31 @@ public class XVWGridExplorerViewEditBean extends XEOEditBean {
 		XUIViewRoot parentView = getParentView();
 		
 		super.saveAndClose();
-
-		Long savedBoui = getXEOObject().getBoui(); 
 		
-		GridExplorer gridExplorer = (GridExplorer)parentView
-			.findComponent( this.explorerComponentId );
-		
-		// Associar à nova vista
-		gridExplorer.setCurrentSavedViewBOUI(savedBoui);
-		gridExplorer.saveUserState( true );
-		
-		if( isNew ) {  
-			// Colocar a vista default com os valores default
-			gridExplorer.setCurrentSavedViewBOUI(null);
-			gridExplorer.resetToDefaults();
+		if( isValid() ) {
+			
+			XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
+			oRequestContext.setViewRoot( parentView );
+			
+			Long savedBoui = getXEOObject().getBoui(); 
+			GridExplorer gridExplorer = (GridExplorer)parentView
+				.findComponent( this.explorerComponentId );
+			
+			// Associar à nova vista
+			gridExplorer.setCurrentSavedViewBOUI(savedBoui);
 			gridExplorer.saveUserState( true );
 			
-			// Volta a activar a vista gravada
-			gridExplorer.setCurrentSavedViewBOUI(savedBoui);
-			gridExplorer.restoreUserState();
+			if( isNew ) {  
+				// Colocar a vista default com os valores default
+				gridExplorer.setCurrentSavedViewBOUI(null);
+				gridExplorer.resetToDefaults();
+				gridExplorer.saveUserState( true );
+				
+				// Volta a activar a vista gravada
+				gridExplorer.setCurrentSavedViewBOUI(savedBoui);
+				gridExplorer.restoreUserState();
+			}
 		}
-		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
-		oRequestContext.setViewRoot( parentView );
 	}
 	
 	@Override
