@@ -81,6 +81,7 @@ public class XMLHtmlEditRenderer extends XUIRenderer{
 			value = ((ValueHolder)component).getValue();
 			if( value != null ) {
 				Tidy tidy = new Tidy();
+				tidy.setXHTML(true);
 				StringWriter w = new StringWriter();
 				String valueString = value.toString();
 				StringReader reader = new StringReader(valueString);
