@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Random;
 
 import netgest.bo.xwc.components.util.ComponentRenderUtils;
@@ -41,6 +42,15 @@ public class ChartUtils
 		String rgb = Integer.toHexString(color.getRGB());
 		rgb = rgb.substring(2, rgb.length());
 		return rgb;
+	}
+	
+
+	public static String getLabelOrReplacement(String original, Map<String,String> mappings){
+		if (mappings != null){
+			if (mappings.containsKey(original))
+				return mappings.get(original);
+		} 
+		return original;
 	}
 	
 	

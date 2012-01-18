@@ -5,13 +5,14 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -153,6 +154,25 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 	 */
 	private XUIBindProperty<String> sqlAttValues = 
 		new XUIBindProperty<String>("sqlAttValues", this, String.class);
+	
+	
+	/**
+	 * Label mapping for the columns
+	 */
+	private XUIBindProperty<Map<String,String>> columnLabelsMap = new XUIBindProperty<Map<String,String>>(
+			"columnLabelsMap", this, Map.class);
+	
+	/**
+	 * Label mapping for the series
+	 */
+	private XUIBindProperty<Map<String,String>> seriesLabelsMap = new XUIBindProperty<Map<String,String>>(
+			"seriesLabelsMap", this, Map.class);
+	
+	/**
+	 * The sql parameters for the query
+	 */
+	private XUIBindProperty<Object[]> sqlParameters = new XUIBindProperty<Object[]>(
+			"sqlParameters", this, Object[].class);
 	
 	public boolean wasStateChanged() 
 	{
@@ -395,6 +415,71 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 		return this.height.getEvaluatedValue();
 	}
 	
+	/**
+	 * 
+	 * Retrieve the labels map
+	 * 
+	 * @return a map between original column labels and their formating
+	 */
+	public Map<String,String> getColumnLabelsMap(){
+		return columnLabelsMap.getEvaluatedValue();
+	}
+
+	/**
+	 * 
+	 * Sets the labels map
+	 * 
+	 * @param labelsExpr
+	 * 
+	 */
+	public void setColumnLabelsMap(String labelsExpr){
+		this.columnLabelsMap.setExpressionText(labelsExpr);
+	}
+	
+	/**
+	 * 
+	 * Retrieve the labels map for series
+	 * 
+	 * @return a map between original series labels and their formating
+	 */
+	public Map<String,String> getSeriesLabelsMap(){
+		return seriesLabelsMap.getEvaluatedValue();
+	}
+
+	/**
+	 * 
+	 * Sets the labels map for series
+	 * 
+	 * @param labelsExpr
+	 * 
+	 */
+	public void setSeriesLabelsMap(String labelsExpr){
+		this.seriesLabelsMap.setExpressionText(labelsExpr);
+	}
+	
+	/**
+	 * 
+	 * Retrieves the array of parameters for the sql query
+	 * 
+	 * @return
+	 */
+	public Object[] getSqlParameters(){
+		Object[] params = sqlParameters.getEvaluatedValue();
+		if (params != null)
+			return params;
+		return new Object[0];
+	}
+	
+	/**
+	 * 
+	 * Sets the parameters for the sql query
+	 * 
+	 * @param sqlParamExpr
+	 */
+	public void setSqlParameters(String sqlParamExpr){
+		this.sqlParameters.setExpressionText(sqlParamExpr);
+	}
+	
 	@Override
 	public void preRender() {
 	}
@@ -424,24 +509,34 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 			
 			DefaultCategoryDataset data = new DefaultCategoryDataset();
 			
+			Map<String,String> columnMappings = getColumnLabelsMap();
+			Map<String,String> seriesMappings = getSeriesLabelsMap();
+			
 			if (getSql() != null)
 			{
 				java.sql.Connection conn = null;
-				Statement stmt= null;
+				PreparedStatement stmt= null;
 				ResultSet srs = null;
 				try
 				{
+					Object[] parameters = getSqlParameters();
 					EboContext ctx = boApplication.currentContext().getEboContext();
 					conn = ctx.getConnectionData();
-					stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+					stmt = conn.prepareStatement(getSql(),ResultSet.TYPE_SCROLL_SENSITIVE,
                             ResultSet.CONCUR_READ_ONLY);
-					srs = stmt.executeQuery(getSql());
-					HashSet<String> seriesMaps = new HashSet<String>();
+					for (int paramIndex = 0; paramIndex < parameters.length; paramIndex++)
+						stmt.setObject(paramIndex+1,parameters[paramIndex]);
+					srs = stmt.executeQuery();
 					
+					HashSet<String> seriesMaps = new HashSet<String>();
+					String sqlColumnName = getSqlAttColumn();
+					String sqlSeriesName =  getSqlAttSeries();
 					while (srs.next()) 
 					{
-					        String column = srs.getString(getSqlAttColumn());
-					        String series = srs.getString(getSqlAttSeries());
+							String column = ChartUtils.getLabelOrReplacement(srs.getString(sqlColumnName),columnMappings);
+							String series = ChartUtils.getLabelOrReplacement(srs.getString(sqlSeriesName),seriesMappings);
+					        //String column = srs.getString(getSqlAttColumn());
+					        //String series = srs.getString(getSqlAttSeries());
 					        float value = srs.getFloat(getSqlAttValues());
 					        data.setValue(value, series, column);
 					        
@@ -453,24 +548,26 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 				catch (Exception e)
 				{
 					logger.severe(e.getMessage(), e);
-					e.printStackTrace();
 				}
 				finally {
-						try {
-							if (srs!=null) srs.close();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						try {
-							if (stmt!=null) stmt.close();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						try {
-							if (conn!=null) conn.close();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+					try {
+						if (srs != null)
+							srs.close();
+					} catch (Exception e) {
+						logger.warn("Could not close resultset" , e);
+					}
+					try {
+						if (stmt != null)
+							stmt.close();
+					} catch (Exception e) {
+						logger.warn("Could not close statement" , e);
+					}
+					try {
+						if (conn != null)
+							conn.close();
+					} catch (Exception e) {
+						logger.warn("Could not close connection" , e);
+					}
 					
 				}
 			}
@@ -487,7 +584,10 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 					{
 						String currSeries = (String) itRows.next();
 						Number val = setMine.getValue(currSeries, currColum);
-						data.addValue(val, currSeries, currColum);
+						//data.addValue(val, currSeries, currColum);
+						data.addValue(val, 
+								ChartUtils.getLabelOrReplacement(currSeries,seriesMappings), 
+								ChartUtils.getLabelOrReplacement(currColum,columnMappings));
 					}
 				}
 				
@@ -576,7 +676,7 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 			try {
 				ChartUtilities.writeChartAsPNG(out, chart, width, height);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.warn(e);
 			}
 		}
 	}
@@ -607,6 +707,8 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 			LineChart component = (LineChart)oComp;
 			OutputStream out = oResponse.getOutputStream();
 			
+			
+			
 			//If the Chart is image based
 			if (component.getType().equalsIgnoreCase(TYPE_CHART_IMG))
 			{
@@ -615,6 +717,10 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 			}
 			else if (component.getType().equalsIgnoreCase(TYPE_CHART_FLASH)) //If the Chart is flash based
 			{
+				
+				Map<String,String> columnMapping = component.getColumnLabelsMap();
+				Map<String,String> seriesMapping = component.getSeriesLabelsMap();
+				
 				ILineChartConfiguration chartConfigurations = null;
 				if (component.getConfigOptions() != null)
 					chartConfigurations = (ILineChartConfiguration) component.getConfigOptions();
@@ -645,7 +751,8 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 					String attSeries = component.getSqlAttSeries();
 					String attValues = component.getSqlAttValues();
 					EboContext context = boApplication.currentContext().getEboContext();
-					setMine = new SeriesDataSetSQL(context, sqlExpression, attColumn, attSeries, attValues);
+					setMine = new SeriesDataSetSQL(context, sqlExpression, attColumn, 
+							attSeries, attValues, component.getSqlParameters());
 					Iterator<String> it = setMine.getSeriesKeys().iterator();
 					int colorCounter = 0;
 					
@@ -668,18 +775,18 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 						
 						currChart.setColour(rgb);
 						
-						String currRow = (String) it.next();
-						currChart.setText(currRow);
+						String currColumn = (String) it.next();
+						currChart.setText(ChartUtils.getLabelOrReplacement(currColumn,columnMapping));
 						Iterator<String> itRows = setMine.getColumnKeys().iterator();
 						while (itRows.hasNext())
 						{
-							String currColumn = (String) itRows.next();
-							if (!labelsUsed.contains(currColumn))
+							String currSeries = (String) itRows.next();
+							if (!labelsUsed.contains(currSeries))
 							{
-								labelsUsed.add(currColumn);
-								xAx.addLabels(currColumn);
+								labelsUsed.add(currSeries);
+								xAx.addLabels(ChartUtils.getLabelOrReplacement(currSeries,seriesMapping));
 							}
-							Number val = setMine.getValue(currRow,currColumn );
+							Number val = setMine.getValue(currColumn,currSeries );
 							currChart.addDots(new Dot(val));
 						}
 						

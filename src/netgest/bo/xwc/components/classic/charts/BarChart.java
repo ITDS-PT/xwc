@@ -4,11 +4,12 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -159,6 +160,24 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 	private XUIBindProperty<String> sqlAttValues = 
 		new XUIBindProperty<String>("sqlAttValues", this, String.class);
 	
+	/**
+	 * Label mapping for the columns
+	 */
+	private XUIBindProperty<Map<String,String>> columnLabelsMap = new XUIBindProperty<Map<String,String>>(
+			"columnLabelsMap", this, Map.class);
+	
+	/**
+	 * Label mapping for the series
+	 */
+	private XUIBindProperty<Map<String,String>> seriesLabelsMap = new XUIBindProperty<Map<String,String>>(
+			"seriesLabelsMap", this, Map.class);
+	
+	
+	/**
+	 * The sql parameters for the query
+	 */
+	private XUIBindProperty<Object[]> sqlParameters = new XUIBindProperty<Object[]>(
+			"sqlParameters", this, Object[].class);
 	
 	public boolean wasStateChanged() 
 	{
@@ -423,6 +442,71 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 		return this.height.getEvaluatedValue();
 	}
 	
+	/**
+	 * 
+	 * Retrieve the labels map
+	 * 
+	 * @return a map between original column labels and their formating
+	 */
+	public Map<String,String> getColumnLabelsMap(){
+		return columnLabelsMap.getEvaluatedValue();
+	}
+
+	/**
+	 * 
+	 * Sets the labels map
+	 * 
+	 * @param labelsExpr
+	 * 
+	 */
+	public void setColumnLabelsMap(String labelsExpr){
+		this.columnLabelsMap.setExpressionText(labelsExpr);
+	}
+	
+	/**
+	 * 
+	 * Retrieve the labels map for series
+	 * 
+	 * @return a map between original series labels and their formating
+	 */
+	public Map<String,String> getSeriesLabelsMap(){
+		return seriesLabelsMap.getEvaluatedValue();
+	}
+
+	/**
+	 * 
+	 * Sets the labels map for series
+	 * 
+	 * @param labelsExpr
+	 * 
+	 */
+	public void setSeriesLabelsMap(String labelsExpr){
+		this.seriesLabelsMap.setExpressionText(labelsExpr);
+	}
+	
+	/**
+	 * 
+	 * Retrieves the array of parameters for the sql query
+	 * 
+	 * @return
+	 */
+	public Object[] getSqlParameters(){
+		Object[] params = sqlParameters.getEvaluatedValue();
+		if (params != null)
+			return params;
+		return new Object[0];
+	}
+	
+	/**
+	 * 
+	 * Sets the parameters for the sql query
+	 * 
+	 * @param sqlParamExpr
+	 */
+	public void setSqlParameters(String sqlParamExpr){
+		this.sqlParameters.setExpressionText(sqlParamExpr);
+	}
+	
 	@Override
 	public void preRender() {
 	}
@@ -432,7 +516,58 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 		return super.saveState();
 	}
 	
-	
+	public DefaultCategoryDataset fillDataSet(){
+		DefaultCategoryDataset data = new DefaultCategoryDataset();
+		java.sql.Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet srs = null;
+		Map<String,String> columnMappings = getColumnLabelsMap();
+		Map<String,String> seriesMappings = getSeriesLabelsMap();
+		try
+		{
+			Object[] parameters = getSqlParameters();
+			EboContext ctx = boApplication.currentContext().getEboContext();
+			conn = ctx.getConnectionData();
+			stmt = conn.prepareStatement(getSql(),ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);
+			for (int paramIndex = 0; paramIndex < parameters.length; paramIndex++)
+				stmt.setObject(paramIndex+1,parameters[paramIndex]);
+			srs = stmt.executeQuery();
+			while (srs.next()) 
+			{
+			        String column = ChartUtils.getLabelOrReplacement(srs.getString(getSqlAttColumn()),columnMappings);
+			        String series = ChartUtils.getLabelOrReplacement(srs.getString(getSqlAttSeries()),seriesMappings);
+			        float value = srs.getFloat(getSqlAttValues());
+			        data.setValue(value, series, column);
+			}
+		}
+		catch (Exception e)
+		{
+			logger.severe(e.getMessage(), e);
+		}
+		finally {
+			try {
+				if (srs != null)
+					srs.close();
+			} catch (Exception e) {
+				logger.warn("Could not close resultset" , e);
+			}
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (Exception e) {
+				logger.warn("Could not close statement" , e);
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (Exception e) {
+				logger.warn("Could not close connection" , e);
+			}
+			
+		}
+		return data;
+	}
 	
 	/**
 	 * 
@@ -445,55 +580,16 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 		
 		if (getType().equalsIgnoreCase(TYPE_CHART_IMG) || force)
 		{
-			
 			String xAxisLabel = "";
 			String yAxisLabel = "";
 			
 			//Retrieve the data
 			DefaultCategoryDataset data = new DefaultCategoryDataset();
-			Statement stmt = null;
-			ResultSet srs = null;
-			if (getSql() != null)
-			{
-				java.sql.Connection conn = null;
-				try
-				{
-					EboContext ctx = boApplication.currentContext().getEboContext();
-					conn = ctx.getConnectionData();
-					stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                            ResultSet.CONCUR_READ_ONLY);
-					srs = stmt.executeQuery(getSql());
-					while (srs.next()) 
-					{
-					        String column = srs.getString(getSqlAttColumn());
-					        String series = srs.getString(getSqlAttSeries());
-					        float value = srs.getFloat(getSqlAttValues());
-					        data.setValue(value, series, column);
-					}
-				}
-				catch (Exception e)
-				{
-					logger.severe(e.getMessage(), e);
-					e.printStackTrace();
-				}
-				finally {
-						try {
-							if (srs!=null) srs.close();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						try {
-							if (stmt!=null) stmt.close();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						try {
-							if (conn!=null) conn.close();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					
-				}
+			
+			Map<String,String> columnMappings = getColumnLabelsMap();
+			Map<String,String> seriesMappings = getSeriesLabelsMap();
+			if (getSql() != null){
+				data = fillDataSet();
 			}
 			else
 			{
@@ -508,7 +604,9 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 					{
 						String currSeries = (String) itRows.next();
 						Number val = setMine.getValue(currSeries, currColum);
-						data.addValue(val, currSeries, currColum);
+						data.addValue(val, 
+								ChartUtils.getLabelOrReplacement(currSeries,seriesMappings), 
+								ChartUtils.getLabelOrReplacement(currColum,columnMappings));
 					}
 				}
 				xAxisLabel = setMine.getXAxisLabel(); 
@@ -613,7 +711,7 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 			try {
 				ChartUtilities.writeChartAsPNG(out, chart, width, height);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.warn(e);
 			}
 		}
 	}
@@ -644,6 +742,10 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 			{
 				Chart c = new Chart();
 				IBarChartConfiguration chartConfigurations = null;
+				
+				Map<String,String> columnMapping = component.getColumnLabelsMap();
+				Map<String,String> seriesMapping = component.getSeriesLabelsMap();
+				
 				if (component.getConfigOptions() != null)
 					chartConfigurations = (IBarChartConfiguration) component.getConfigOptions();
 				
@@ -664,7 +766,7 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 					String attSeries = component.getSqlAttSeries();
 					String attValues = component.getSqlAttValues();
 					EboContext context = boApplication.currentContext().getEboContext();
-					setMine = new SeriesDataSetSQL(context, sqlExpression, attColumn, attSeries, attValues);
+					setMine = new SeriesDataSetSQL(context, sqlExpression, attColumn, attSeries, attValues, component.getSqlParameters());
 				}
 				else
 				{
@@ -695,9 +797,8 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 						String rgb = ChartUtils.ColorToRGB(currentColor);
 						
 						String currentSeries = (String) it.next();
-						currChart.setText(currentSeries);
+						currChart.setText(ChartUtils.getLabelOrReplacement(currentSeries,seriesMapping));
 						currChart.setColour(rgb);
-						
 						
 						Iterator<String> itColum = setMine.getColumnKeys().iterator();
 						
@@ -710,21 +811,19 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 							if (!labelsUsed.contains(currentColumn))
 							{
 								labelsUsed.add(currentColumn);
-								xAx.addLabels(currentColumn);
+								xAx.addLabels(ChartUtils.getLabelOrReplacement(currentColumn,columnMapping));
 							}
 							currChart.addBars(barra);
 						}
 						colorCounter++;
 						
 						//Set the tooltip per Chart (equal for every one)
-						
 						if (chartConfigurations != null && chartConfigurations.getTooltipString() != null)
 						{
 							String expression = chartConfigurations.getTooltipString();
 							expression = expression.replace("$val", "#val#");
 							currChart.setTooltip(expression);
 						}
-						
 						c.addElements(currChart);
 					}
 					

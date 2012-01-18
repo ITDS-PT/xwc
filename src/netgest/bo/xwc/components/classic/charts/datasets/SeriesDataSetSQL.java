@@ -1,7 +1,7 @@
 package netgest.bo.xwc.components.classic.charts.datasets;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,6 +71,7 @@ public class SeriesDataSetSQL implements SeriesDataSet {
 	 */
 	private String attributeValues;
 	
+	
 	/**
 	 * 
 	 * Constructor from a SQL ResultSet
@@ -135,15 +136,18 @@ public class SeriesDataSetSQL implements SeriesDataSet {
 	 * @param attValues The name of the attribute where the values are
 	 */
 	public SeriesDataSetSQL(EboContext context, String sqlExpression, String attColumn, String attSeries,
-			String attValues)
+			String attValues, Object[] params)
 	{
 		try
 		{
 			EboContext ctx = boApplication.currentContext().getEboContext();
 			java.sql.Connection conn = ctx.getConnectionData();
-			Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+			PreparedStatement pstmt = conn.prepareStatement(sqlExpression,ResultSet.TYPE_SCROLL_SENSITIVE,
 	                ResultSet.CONCUR_READ_ONLY);
-			ResultSet srs = stmt.executeQuery(sqlExpression);
+			for (int paramIndex = 0; paramIndex < params.length ; paramIndex++){
+				pstmt.setObject(paramIndex + 1, params[paramIndex]);
+			}
+			ResultSet srs = pstmt.executeQuery();
 			this.data = srs;
 			this.attributeColumn = attColumn;
 			this.attributeSeries = attSeries;
