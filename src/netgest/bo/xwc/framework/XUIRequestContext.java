@@ -140,19 +140,13 @@ public class XUIRequestContext {
     }
 
     public void release() {
-        EboContext      oEboContext = boApplication.currentContext().getEboContext();
-
-        this.oTransactionManager.release();
-
-        /*
-        boApplication   boApp        = oEboContext.getApplication();
-        boMemoryArchive boMemArchive = boApp.getMemoryArchive();
-        boPoolManager   boPoolMgr    = boMemArchive.getPoolManager();
-        boPoolMgr.realeaseObjects(this.oTransactionManager.poolUniqueId(), oEboContext);
-		*/
-
-        bIsClosed = true;
-        if( oCurrentContext.get()==this ) oCurrentContext.set( null );
+        try {
+        	this.oTransactionManager.release();
+        }
+        finally { 
+        	bIsClosed = true;
+        	oCurrentContext.set( null );
+        }
     }
 
     public void addMessage( String sClientId, XUIMessage oMessage ) {

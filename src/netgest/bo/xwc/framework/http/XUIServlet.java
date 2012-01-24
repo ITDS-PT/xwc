@@ -102,13 +102,10 @@ public class XUIServlet extends HttpServlet
         }
     
     	if( oXEOSession != null ) {
-    		
     		oXEOSession.setDefaultLocale( defaultLocale );
-    		
-			if( boApplication.currentContext().getEboContext() == null ) {
-		        oEboContext = oXEOSession.createRequestContextInServlet( oRequest, oResponse, getServletContext() );
-		        boApplication.currentContext().addEboContext( oEboContext );
-			}
+    		oXEOSession.getApplication().removeContextFromThread();
+	        oEboContext = oXEOSession.createRequestContextInServlet( oRequest, oResponse, getServletContext() );
+	        boApplication.currentContext().addEboContext( oEboContext );
     	}
     	
     	if( defaultLocale != null ) {
@@ -214,14 +211,20 @@ public class XUIServlet extends HttpServlet
             if (XUIRequestContext.getCurrentContext() != null )
             {
                 XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
-                oRequestContext.release();
+                try {
+                	oRequestContext.release();
+                } catch( Throwable e ) {};
             }
             
-            if( oEboContext != null ) 
-                oEboContext.close();
+            try {
+	            if( oEboContext != null ) 
+	                oEboContext.close();
+            } catch( Throwable e ) {};
 
-            if( oXEOSession != null )
-                oXEOSession.getApplication().removeContextFromThread();    
+            try {
+	            if( oXEOSession != null )
+	                oXEOSession.getApplication().removeContextFromThread();    
+            } catch( Throwable e ) {};
 
         }
     }
