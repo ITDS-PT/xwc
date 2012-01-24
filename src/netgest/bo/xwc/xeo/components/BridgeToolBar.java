@@ -237,7 +237,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 	}
 	
 	private Menu addCreateNew() {
-		ViewerMethod rootMenu;
+		BridgeMethod rootMenu;
 		boDefHandler subClasseDef;
 
 		
@@ -252,7 +252,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 			
 			if( subClassesDef.size() > 0 ) {
 				subClasseDef = subClassesDef.get( 0 );
-				rootMenu = new ViewerMethod();
+				rootMenu = new BridgeMethod();
 				rootMenu.setText( XEOComponentMessages.BRIDGETB_NEW.toString("") );
 				rootMenu.setToolTip(  XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
 				rootMenu.setId( getId() + "_new_" + subClasseDef.getName() );
@@ -264,7 +264,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 				}
 				
 				if( subClassesDef.size() > 1 ) {
-					ViewerMethod viewerMethod = new ViewerMethod();
+					BridgeMethod viewerMethod = new BridgeMethod();
 					if (subClasseDef.getClassType() == boDefHandler.TYPE_CLASS ){
 						viewerMethod.setText( XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
 						viewerMethod.setToolTip(  XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
@@ -278,7 +278,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 					
 					for( int i=1; i < subClassesDef.size(); i++ ) {
 						subClasseDef = subClassesDef.get( i );
-						viewerMethod = new ViewerMethod();
+						viewerMethod = new BridgeMethod();
 						viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 						viewerMethod.setText(  XEOComponentMessages.BRIDGETB_NEW.toString( subClasseDef.getLabel() ) );
 						
@@ -299,7 +299,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 
 	private Menu addAddMenu() {
 		
-		ViewerMethod rootMenu;
+		BridgeMethod rootMenu;
 		
 		rootMenu = null;
 		
@@ -310,7 +310,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		if( subClassesDef.size() > 0 ) {
 			subClasseDef = subClassesDef.get( 0 );
 			
-			rootMenu = new ViewerMethod();
+			rootMenu = new BridgeMethod();
 			rootMenu.setText( XEOComponentMessages.BRIDGETB_ADD.toString("") );
 			rootMenu.setToolTip( XEOComponentMessages.BRIDGETB_ADD.toString( subClasseDef.getLabel() ) );
 			rootMenu.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
@@ -331,7 +331,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 			if( subClassesDef.size() > 1 ) {
 				
 				
-				ViewerMethod viewerMethod = new ViewerMethod();
+				BridgeMethod viewerMethod = new BridgeMethod();
 				viewerMethod.setText( subClasseDef.getLabel() );
 				viewerMethod.setToolTip(XEOComponentMessages.BRIDGETB_ADD.toString( subClasseDef.getLabel() ));
 				viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
@@ -353,7 +353,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 				for( int i=1; i < subClassesDef.size(); i++ ) {
 					subClasseDef = subClassesDef.get( i );
 					
-					viewerMethod = new ViewerMethod();
+					viewerMethod = new BridgeMethod();
 					viewerMethod.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
 					viewerMethod.setText( subClasseDef.getLabel() );
 					viewerMethod.setValue( subClasseDef.getName() );
@@ -373,9 +373,45 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 				}
 			}
 		}
+		
+		//Generate tooltip for minimum and maximum
+		boObject 		targetObject = getTargetObject();
+		bridgeHandler 	targetBridge = targetObject.getBridge( getBridgeName() );
+		boDefAttribute	defAttribute = targetBridge.getDefAttribute();
+		rootMenu.setToolTip(getTooltipForAddButton(rootMenu.getToolTip(),defAttribute));
+		
 		return rootMenu;
 		
 	}
+	
+	private String getTooltipForAddButton(String originalTooltip, boDefAttribute bridgeDefinition){
+		
+		boolean hasMaxOccurs = bridgeDefinition.getMaxOccurs() != Integer.MAX_VALUE;
+		boolean hasMinOccurs = bridgeDefinition.getMinOccurs() > 0;
+		
+		StringBuilder tooltip = new StringBuilder();
+		tooltip.append(originalTooltip);
+		
+		if (hasMaxOccurs  || hasMinOccurs){
+			tooltip.append(" - ");
+			
+			if (hasMinOccurs){
+				tooltip.append(" ");
+				tooltip.append(XEOComponentMessages.BRIDGETB_ADD_MINIMUM.toString());
+				tooltip.append(" ");
+				tooltip.append(bridgeDefinition.getMinOccurs());
+				if (hasMaxOccurs)
+					tooltip.append(", ");
+			}
+			if (hasMaxOccurs){
+				tooltip.append(XEOComponentMessages.BRIDGETB_ADD_MAXIMUM.toString());
+				tooltip.append(" ");
+				tooltip.append(bridgeDefinition.getMaxOccurs());
+			}
+		}	
+		return tooltip.toString();
+	}
+	
 	
 	private List<boDefHandler> getObjectsForAddMenu() {
 		boObject 		targetObject = getTargetObject();

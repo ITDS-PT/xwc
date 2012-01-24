@@ -256,7 +256,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 			"enableColumnSort", this, true, Boolean.class);
 
 	/**
-	 * FIXME: Does not work
+	 * FIXME: Does not work, 
 	 */
 	private XUIViewBindProperty<Boolean> enableColumnFilter = new XUIViewBindProperty<Boolean>(
 			"enableColumnFilter", this, true, Boolean.class);
@@ -346,7 +346,72 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private String currAggregateFieldOpSet;
 	private String currAggregateFieldCheckSet;
 	private String aggregateData;
+	
+	
+	
+	/**
+	 * Represents the maximum number of rows that can be selected in the Grid
+	 * if this property has a positive value a user can only select rows until it reaches
+	 * that number. To select other rows he will have to de-select others first
+	 * 
+	 */
+	private XUIBindProperty<Integer> maxSelections = 
+		new XUIBindProperty<Integer>("maxSelections", this, Integer.class, "-1");
+	
+	public int getMaxSelections(){
+		Integer value = maxSelections.getEvaluatedValue();
+		if (value != null)
+			return value.intValue();
+		
+		return -1;
+	}
 
+	public void setMaxSelections(String maxExpr){
+		this.maxSelections.setExpressionText(maxExpr);
+	}
+	
+	
+	/**
+	 * Flag to reset any selections made in the grid
+	 */
+	private boolean clearSelections = false;
+	
+	/**
+	 * Sets the grid to clear the existing selections (if any)
+	 */
+	public void clearSelections(){
+		clearSelections = true;
+	}
+	
+	/**
+	 * Sets the grid to maintain selections (if any)
+	 * (default behavior is to maintain)
+	 */
+	public void maintainSelections(){
+		clearSelections = false;
+	}
+	
+	public boolean getClearSelections(){
+		return clearSelections;
+	}
+	
+	
+	/**
+	 * Flag to tell the grid panel to maintain row selections between page
+	 * changes
+	 */
+	private XUIViewProperty<Boolean> enableSelectionAcrossPages =
+		new XUIViewProperty<Boolean>("enableSelectionAcrossPages", this, Boolean.FALSE);
+	
+	public Boolean getEnableSelectionAcrossPages(){
+		return enableSelectionAcrossPages.getValue() && (getRowSelectionMode().equalsIgnoreCase(SELECTION_MULTI_ROW));
+	}
+	
+	public void setEnableSelectionAcrossPages(boolean preserve){
+		this.enableSelectionAcrossPages.setValue(Boolean.valueOf(preserve));
+	}
+	
+	
 	/**
 	 * 
 	 * Whether or not the user can execute stats on numeric columns

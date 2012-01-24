@@ -1157,6 +1157,11 @@ public class XEOEditBean extends XEOBaseBean
             
             oBaseBean = (XEOBaseLookupList)oViewRoot.getBean("viewBean");
             
+            if (oAttDef.getMaxOccurs() < Integer.MAX_VALUE){
+            	int elementsInBridge = (int) bridge.getRecordCount();
+            	oBaseBean.setMaxSelections( oAttDef.getMaxOccurs() -  elementsInBridge );
+            }
+            
             oBaseBean.setParentBean( this ); 
             oBaseBean.setParentAttributeName( bridge.getName() );
             oBaseBean.setLookupObjects( getLookupObjectsMap( bridge ) );
@@ -1677,7 +1682,7 @@ public class XEOEditBean extends XEOBaseBean
         
         for (int i = 0; i < oSelectedRows.length; i++) {
             long rowBoui = ((BigDecimal)oSelectedRows[i].getAttribute("BOUI").getValue()).longValue();
-            if( oBridgeHandler.haveBoui( rowBoui ) );
+            if( oBridgeHandler.haveBoui( rowBoui ) )
                 oBridgeHandler.remove();
         }
         showObjectErrors();

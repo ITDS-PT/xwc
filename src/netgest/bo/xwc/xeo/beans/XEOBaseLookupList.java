@@ -31,6 +31,7 @@ public class XEOBaseLookupList extends XEOBaseList {
     private boolean     bFilterLookup;
     private XEOEditBean	parentBean;
     private String		parentAttribute;
+    private int 		maxSelections = -1;
     
     Map<String,Object>	    	attributes;
 
@@ -100,6 +101,15 @@ public class XEOBaseLookupList extends XEOBaseList {
     public boolean isFilterLookup() {
     	return this.bFilterLookup;
     }
+    
+    public int getMaxSelections(){
+    	return maxSelections;
+    }
+    
+    public void setMaxSelections(int max){
+    	this.maxSelections = max;
+    }
+    
     @Visible
     public void confirm() {
         XUIRequestContext oRequestContext;

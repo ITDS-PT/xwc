@@ -41,6 +41,7 @@ public class LookupList extends List {
 	@Override
 	public void initComponent(){
 		super.initComponent();
+		this.setMaxSelections("#{viewBean.maxSelections}");
 		if (getIsBoObjectLookup()){
 			for (Iterator<UIComponent> it = this.getChildren().iterator(); it.hasNext();){
 				UIComponent comp = (UIComponent) it.next();

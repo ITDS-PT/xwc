@@ -178,9 +178,21 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                 	w.getScriptContext().add( XUIScriptContext.POSITION_HEADER , oGrid.getClientId() + "_filters" , scriptBuilder.toString() );
             	}
 
-                if( oGrid.getAutoReloadData() || oGrid.isMarkedToReloadData() ) {
+            	if( oGrid.getAutoReloadData() || oGrid.isMarkedToReloadData() ) {
             		triggerLoadData( w, oGrid );
+            	} else {
+            		if (oGrid.getClearSelections()){
+                    	ScriptBuilder scriptBuilder = new ScriptBuilder();
+                		scriptBuilder.startBlock();
+                		scriptBuilder.w( "Ext.getCmp('").w( oGrid.getClientId() ).w( "').reset();" );
+                		scriptBuilder.endBlock();
+                    	w.getScriptContext().add( XUIScriptContext.POSITION_HEADER , 
+                    			oGrid.getClientId() + "_clearSelections" , scriptBuilder.toString() );
+                    	oGrid.maintainSelections();
+                    }
             	}
+                
+                
 
             }
             else {
@@ -315,9 +327,12 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         }
 
         StringBuilder sb = new StringBuilder();
+        
+        boolean clearSelections = oGrid.getClearSelections();
+        
         if( GridPanel.SELECTION_CELL.equals( oGrid.getRowSelectionMode() ) ) {
         	DataRecordConnector d = oGrid.getActiveRow();
-        	if( d != null ) {
+        	if( d != null  && !clearSelections) {
 		        oLoadParams.add("callback", 
 		        		"function(){" +
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
@@ -336,7 +351,14 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	    		sb.append( sel - 1 );
 	    	}
 	    	sb.append( "]");
-	    	if( sb.length() > 2 ) {
+	    	
+	    	//Prevent row selection if selections are to be cleared
+	    	//by the GridPanel.reset() function 
+	    	if (clearSelections)
+	    		sb = new StringBuilder("");
+	    	
+	    	if( sb.length() > 2) {
+	    		//Select rows on datatore load event callback
 		        oLoadParams.add("callback", 
 		        		"function(){" +
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
@@ -346,6 +368,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		        );
 	    	}
         }
+        
+        oGrid.maintainSelections();
         
     	w.getScriptContext().add(
                 XUIScriptContext.POSITION_FOOTER,
@@ -427,7 +451,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         if( oNavBarComp == null || oNavBarComp.getShowFullTextSearch() ) {
 	        if( (oGrid.getDataSource().dataListCapabilities() & DataListConnector.CAP_FULLTEXTSEARCH) != 0 ) {
-	            oPagingItems.addChild("Ext.form.Label" ).addJSString( "text", ComponentMessages.GRID_FREE_SEARCH.toString() );
+	            oPagingItems.addChild("Ext.form.ToolBarLabel" ).addJSString( "text", ComponentMessages.GRID_FREE_SEARCH.toString() );
 	            ExtConfig oSearchField = oPagingItems.addChild("Ext.form.TwinTriggerField" );
 	            
 	            oSearchField.add("hideTrigger1", false);
@@ -454,6 +478,19 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	            );
 	        }
         }
+        
+        //
+        if (oGrid.getMaxSelections() > 0){
+        	//oPagingItems.add( "'-'" );
+            ExtConfig selections = oPagingItems.addChild("Ext.form.ToolBarLabel" );
+            selections.addJSString( "text", "0 " );
+            selections.addJSString( "id", oGrid.getClientId() + "_selections" );
+            oPagingItems.add( "' '" );
+            ExtConfig labelMaxSelection = oPagingItems.addChild("Ext.form.ToolBarLabel" );
+            labelMaxSelection.addJSString( "text", " / "  + oGrid.getMaxSelections() +  " selec." );
+        } 
+        
+        
         return oPagingConfig;
 
     
@@ -632,6 +669,20 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                             "}" 
                         );
         
+        if ( oGrid.getMaxSelections() > 0 ){
+        	//We only need these handlers to prevent selection of items that 
+        	//cardinality restriction
+	        ExtConfig oBeforeRowSelect = oExtListeners.addChild( "'beforerowselect'");
+	        oBeforeRowSelect.add( "fn",
+	                "function( selModel, rowIndex, keepExisting, record){" +
+	                    "return ExtXeo.grid.beforeRowSelectionHndlr(selModel);}\n");
+	        
+	        ExtConfig oRowDeselect = oExtListeners.addChild( "'rowdeselect'");
+	        oRowDeselect.add( "fn",
+	                "function( selModel, rowIndex, record){" +
+	                    "return ExtXeo.grid.rowDeselectionHndlr(selModel);}\n");
+	        
+        }
         return oSelModelConfig;
     }
 
@@ -643,6 +694,9 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oGridConfig = new ExtConfig( "ExtXeo.grid.GridPanel" );
 
         oGridConfig.add( "store", oGrid.getId() + "_store" );
+        oGridConfig.add( "maxSelections", oGrid.getMaxSelections() );
+        oGridConfig.add( "multiPagePreserve", oGrid.getEnableSelectionAcrossPages() );
+        
         
         DataListConnector dataList = oGrid.getDataSource();
         
@@ -929,7 +983,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oGridListeners.add("statesave", "function(comp, state) {var id = comp.getStateId(); if(id) Ext.state.Manager.clear(id); }" );
         oGridListeners.add("beforestaterestore", "function() {return false;}" );
         //To reset the recordIds that are being kept even after
-        oGridListeners.add("beforerender", "function(oGrid) { oGrid.reset(); return true;}" );
+        //oGridListeners.add("beforerender", "function(oGrid) { oGrid.reset(); return true;}" );
         oGridListeners.add("beforestatesave", "function() {return false;}" ); 
         oGridListeners.add("columnmove", "function(idx, n) { this.onColumnConfigChange('moved',idx, n ) }" );
         oGridListeners.add("columnresize", "function(idx, n) { this.onColumnConfigChange('width',idx,n ) }" );
