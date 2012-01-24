@@ -1088,3 +1088,22 @@ shortcut = {
 		else ele['on'+type] = false;
 	}
 }
+
+Ext.form.ToolBarLabel = Ext.extend(Ext.form.Label,  {
+	
+	cls : 'xwc-toolbar-label',
+	
+	initComponent: function(){
+	        // Config object has already been applied to 'this' so properties can 
+	        // be overriden here or new properties (e.g. items, tools, buttons) 
+	        // can be added, eg:
+	        Ext.apply(this, {
+	        	cls: 'xwc-toolbar-label'
+	        });
+	 
+	         // Call parent (required)
+	        Ext.form.ToolBarLabel.superclass.initComponent.apply(this, arguments);
+	        
+	    }
+	
+});
