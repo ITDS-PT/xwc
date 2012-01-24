@@ -214,24 +214,6 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	
 	public GridPanelRequestParameters decodeServiceParmeters( GridPanel oGridPanel, HttpServletRequest oRequest ) {
 		
-		// Paramterers at gridLevel
-		/*
-		Enumeration<String> paramEnum = oRequest.getParameterNames();
-		while( paramEnum.hasMoreElements() ) {
-			String pname = paramEnum.nextElement();
-			String[] values = oRequest.getParameterValues( pname );
-			System.out.print( pname + "="  );
-			boolean first = true;
-			for( String v : values ) {
-				if( !first ) {
-					System.out.print(",");
-				}
-				System.out.print( v );
-				first = false;
-			}
-			System.out.println("");
-		}
-		*/
 		String selectedRows 	= oRequest.getParameter( "selectedRows" );
         String activeRow 		= oRequest.getParameter( "activeRow" );
         
