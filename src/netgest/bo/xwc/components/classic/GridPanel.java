@@ -370,6 +370,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 		this.maxSelections.setExpressionText(maxExpr);
 	}
 	
+	public void setMaxSelections(int maxSelections){
+		this.maxSelections.setValue(Integer.valueOf(maxSelections));
+	}
 	
 	/**
 	 * Flag to reset any selections made in the grid
@@ -411,6 +414,15 @@ public class GridPanel extends ViewerInputSecurityBase {
 		this.enableSelectionAcrossPages.setValue(Boolean.valueOf(preserve));
 	}
 	
+	/**
+	 * 
+	 * Whether or not the GridPanel has multi selection
+	 * 
+	 * @return True if the grid has multi selection and false otherwise
+	 */
+	public boolean isMultiSelection(){
+		return getRowSelectionMode().equalsIgnoreCase(SELECTION_MULTI_ROW);
+	}
 	
 	/**
 	 * 

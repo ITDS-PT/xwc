@@ -3,15 +3,24 @@ Ext.ns('ExtXeo','ExtXeo.data');
 
 ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 	{
-		recordIds : [],
+		recordIds : null,
 		suspendUploadCondig : false,
 		minHeight : 0,
+		constructor: function( opts ) {
+        	if(!this.recordIds) {
+        		this.recordIds = [];
+        	}
+        	ExtXeo.grid.GridPanel.superclass.constructor.apply(this, arguments);
+        },
 		getMinHeight : function() {
 			return this.minHeight;
 		},
 		setMinHeight : function( minHeight ) {
-			this.recordIds = [];
 			this.minHeight = minHeight; 
+		},
+		multiSelection : false,
+		getMultiSelections : function(){
+			return this.multiSelection;
 		},
 		maxSelections : -1,
 		getMaxSelections : function(){
@@ -44,19 +53,40 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 				this.updateColumnConfig( true );
 			}
 		},
+		//Return the Id of the selected rows hidden input
+		getSelectedRowsInputId : function(){
+			return this.id + "_srs";
+		},
+		//Return the Id of the active hidden input
+		getActiveRowInputId : function(){
+			return this.id + "_act";
+		},
+		//Return the Id of the label with the number of selected elements
+		getNumberSelectionsCounterId : function(){
+			return this.id + "_selections";
+		},
 		reset : function () {
 			this.recordIds = [];
-			var selectedRecorsdInput = Ext.get(this.id + "_srs");
-			var activeRecorsdInput = Ext.get(this.id + "_act");
+			var selectedRecorsdInput = Ext.get(this.getSelectedRowsInputId());
+			var activeRecorsdInput = Ext.get(this.getActiveRowInputId());
+			
 			if (selectedRecorsdInput !== undefined && selectedRecorsdInput !== null)
 				selectedRecorsdInput.set({value:''});
 			if (activeRecorsdInput !== undefined && activeRecorsdInput !== null)
-				Ext.get(this.id + "_act").set({value:''});
+				activeRecorsdInput.set({value:''});
+			
 			var selectionModel = this.getSelectionModel();
 			if (selectionModel !== undefined && selectionModel !== null){
 				selectionModel.clearSelections(true);
 			}
+			//Reset the label with the counter if we have multi-selections
+			if (this.getMultiSelections()){
+				var label = Ext.getCmp(this.getNumberSelectionsCounterId());
+				label.setText('0');
+			}
 		}
+		
+		
 	}
 );
 
@@ -1953,39 +1983,58 @@ ExtXeo.grid.activeRowHndlr = function( oSelModel, oGridInputSelId, rowIdentifier
  * */
 ExtXeo.grid.beforeRowSelectionHndlr = function (oSelModel){
 	
+	console.log("BeforeRowSelection");
+	
 	var maxSelections = oSelModel.grid.getMaxSelections();
 	var oSelRecs = oSelModel.getSelections();
+	var label = Ext.getCmp(oSelModel.grid.getNumberSelectionsCounterId());
+	var gridPanel = oSelModel.grid;
 	
-	if (maxSelections == -1)
+	if (maxSelections == -1){
 		return true;
-	
+	}
 	if (oSelRecs.length < maxSelections || oSelRecs.length == 0){
-		var label = Ext.getCmp(oSelModel.grid.getId() + "_selections");
-		if (label != undefined && label != null){
-       	if (oSelRecs.length < maxSelections - 1)
-       		label.setText(oSelRecs.length + 1);
-       	else
-       		label.setText("<span style='color:red'>" + (oSelRecs.length + 1 )+ "</span>",false);
-		}
-       	return true;
-	} else
-		return false;
+		return true;
+	} 
+	
+	return false;
 	
 }
 
 /**
  * 
- * Handles a row deselection (decrementing the counter if needed)
+ * Handles row selection (incrementing/decrementing counter if needed)
  * 
  * */
-ExtXeo.grid.rowDeselectionHndlr = function (oSelModel){
-	if (oSelModel.grid.getMaxSelections() > 0){
-		var label = Ext.getCmp(oSelModel.grid.getId() + "_selections");
-		label.setText(oSelModel.getSelections().length);
+ExtXeo.grid.updateCounter = function (oSelModel){
+	
+	console.log("UpdateCounter");
+	
+	var gridPanel = oSelModel.grid;
+	var label = Ext.getCmp(gridPanel.getNumberSelectionsCounterId());
+	var oSelRecs = oSelModel.getSelections();
+	var maxSelections = gridPanel.getMaxSelections();
+	if (gridPanel.getMultiSelections()){
+		
+		var countItems = 0;
+		
+		if (gridPanel.getMultiPageSelections()){
+			countItems = gridPanel.recordIds.length; 
+		}
+		else{
+			countItems = oSelRecs.length;
+		}
+		
+		if (countItems <= maxSelections - 1 || maxSelections == -1)
+       		label.setText(countItems);
+       	else
+       		label.setText("<span style='color:red'>" + countItems + "</span>",false);
 	}
 }
 
 ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentifier) {
+	
+	
 	var sSelRecs = "";
     var oInput = document.getElementById( oGridInputSelId );
     
@@ -2057,6 +2106,10 @@ ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentif
 	        catch(err)
 	        {console.log(err);}
        	}
+       	
+       	//Update Counter
+       	ExtXeo.grid.updateCounter(oSelModel);
+       	
     }
     else {
         alert('Select rows input not found!!');

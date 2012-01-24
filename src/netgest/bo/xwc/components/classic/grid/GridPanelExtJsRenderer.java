@@ -58,6 +58,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
     private ExtConfigArray oExtButtons;
     private ExtConfigArray oExtToolbar;
     
+    /**
+     * Represents the Javascript empty array string length : '[]'
+     */
+    private static final int EMPTY_ARRAY_STRING_SIZE = 2;
+    
     @Override
     public void encodeBegin(XUIComponentBase component) throws IOException {
         this.oExtButtons = null;
@@ -152,6 +157,15 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         }
     }
     
+    private String getCodeClearSelections(GridPanel oGrid ){
+    	ScriptBuilder scriptBuilder = new ScriptBuilder();
+		scriptBuilder.startBlock();
+		scriptBuilder.w( "Ext.getCmp('").w( oGrid.getClientId() ).w( "').reset();" );
+		scriptBuilder.endBlock();
+    	return scriptBuilder
+    	.toString();
+    }
+    
     @Override
     public void encodeEnd(XUIComponentBase oComp) throws IOException {
         ExtConfig oGridConfig;
@@ -180,17 +194,13 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
             	if( oGrid.getAutoReloadData() || oGrid.isMarkedToReloadData() ) {
             		triggerLoadData( w, oGrid );
-            	} else {
-            		if (oGrid.getClearSelections()){
-                    	ScriptBuilder scriptBuilder = new ScriptBuilder();
-                		scriptBuilder.startBlock();
-                		scriptBuilder.w( "Ext.getCmp('").w( oGrid.getClientId() ).w( "').reset();" );
-                		scriptBuilder.endBlock();
-                    	w.getScriptContext().add( XUIScriptContext.POSITION_HEADER , 
-                    			oGrid.getClientId() + "_clearSelections" , scriptBuilder.toString() );
-                    	oGrid.maintainSelections();
-                    }
-            	}
+            	} 
+            	
+        		if (oGrid.getClearSelections()){
+                	w.getScriptContext().add( XUIScriptContext.POSITION_HEADER , 
+                			oGrid.getClientId() + "_clearSelections" , getCodeClearSelections(oGrid) );
+                	oGrid.maintainSelections();
+                }
                 
                 
 
@@ -357,7 +367,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	    	if (clearSelections)
 	    		sb = new StringBuilder("");
 	    	
-	    	if( sb.length() > 2) {
+	    	if( sb.length() > EMPTY_ARRAY_STRING_SIZE) {
 	    		//Select rows on datatore load event callback
 		        oLoadParams.add("callback", 
 		        		"function(){" +
@@ -369,9 +379,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	    	}
         }
         
-        oGrid.maintainSelections();
-        
-    	w.getScriptContext().add(
+        w.getScriptContext().add(
                 XUIScriptContext.POSITION_FOOTER,
                 oGrid.getId() + "_loadData",
                 oGrid.getId() + "_store.load(" + oLoadParams.renderExtConfig().toString() + ");"
@@ -479,16 +487,24 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	        }
         }
         
-        //
-        if (oGrid.getMaxSelections() > 0){
-        	//oPagingItems.add( "'-'" );
-            ExtConfig selections = oPagingItems.addChild("Ext.form.ToolBarLabel" );
+        //Always have the counter if we have multi-selected
+        if (oGrid.isMultiSelection()){
+        	oPagingItems.add( "' '" );
+        	oPagingItems.add( "' '" );
+        	ExtConfig selections = oPagingItems.addChild("Ext.form.ToolBarLabel" );
             selections.addJSString( "text", "0 " );
             selections.addJSString( "id", oGrid.getClientId() + "_selections" );
-            oPagingItems.add( "' '" );
+        }
+        
+        if (oGrid.getMaxSelections() > 0){
+        	oPagingItems.add( "' '" );
             ExtConfig labelMaxSelection = oPagingItems.addChild("Ext.form.ToolBarLabel" );
             labelMaxSelection.addJSString( "text", " / "  + oGrid.getMaxSelections() +  " selec." );
-        } 
+        } else if (oGrid.isMultiSelection()){
+        	oPagingItems.add( "' '" );
+        	ExtConfig labelNumSelected = oPagingItems.addChild("Ext.form.ToolBarLabel" );
+        	labelNumSelected.addJSString( "text", " selec." );
+        }
         
         
         return oPagingConfig;
@@ -669,19 +685,14 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                             "}" 
                         );
         
-        if ( oGrid.getMaxSelections() > 0 ){
+        if ( oGrid.getMaxSelections() > 0 || 
+        		oGrid.isMultiSelection() ){
         	//We only need these handlers to prevent selection of items that 
         	//cardinality restriction
 	        ExtConfig oBeforeRowSelect = oExtListeners.addChild( "'beforerowselect'");
 	        oBeforeRowSelect.add( "fn",
 	                "function( selModel, rowIndex, keepExisting, record){" +
-	                    "return ExtXeo.grid.beforeRowSelectionHndlr(selModel);}\n");
-	        
-	        ExtConfig oRowDeselect = oExtListeners.addChild( "'rowdeselect'");
-	        oRowDeselect.add( "fn",
-	                "function( selModel, rowIndex, record){" +
-	                    "return ExtXeo.grid.rowDeselectionHndlr(selModel);}\n");
-	        
+	                    "return ExtXeo.grid.beforeRowSelectionHndlr(selModel);}\n" );
         }
         return oSelModelConfig;
     }
@@ -696,6 +707,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oGridConfig.add( "store", oGrid.getId() + "_store" );
         oGridConfig.add( "maxSelections", oGrid.getMaxSelections() );
         oGridConfig.add( "multiPagePreserve", oGrid.getEnableSelectionAcrossPages() );
+        if (oGrid.isMultiSelection())
+        	oGridConfig.add( "multiSelection", true );
         
         
         DataListConnector dataList = oGrid.getDataSource();
@@ -764,9 +777,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	        
         }
         
-        if( 
-        		oGrid.getRowSelectionMode().equalsIgnoreCase(GridPanel.SELECTION_MULTI_ROW)  
-        ) {  
+        if( oGrid.isMultiSelection() ){  
         	oColsConfig.add( oGrid.getId() + "_selm" );
         }
 
@@ -982,8 +993,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         oGridListeners.add("statesave", "function(comp, state) {var id = comp.getStateId(); if(id) Ext.state.Manager.clear(id); }" );
         oGridListeners.add("beforestaterestore", "function() {return false;}" );
-        //To reset the recordIds that are being kept even after
-        //oGridListeners.add("beforerender", "function(oGrid) { oGrid.reset(); return true;}" );
         oGridListeners.add("beforestatesave", "function() {return false;}" ); 
         oGridListeners.add("columnmove", "function(idx, n) { this.onColumnConfigChange('moved',idx, n ) }" );
         oGridListeners.add("columnresize", "function(idx, n) { this.onColumnConfigChange('width',idx,n ) }" );

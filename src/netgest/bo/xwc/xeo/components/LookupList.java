@@ -64,6 +64,9 @@ public class LookupList extends List {
 		if( super.getStateProperty( "onRowDoubleClick" ).isDefaultValue() )
 			setOnRowDoubleClick( "#{viewBean.rowDoubleClick}" );
 		
+		if( super.getStateProperty( "enableSelectionAcrossPages" ).isDefaultValue() )
+			setEnableSelectionAcrossPages(true);
+		
 	}
 	
 	public void createToolBar(int pos) {

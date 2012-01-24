@@ -211,3 +211,7 @@ a.xwc-favorite-trigger:hover{
 .search-lookup-favorite-trigger-click{
 	background-position: -34px 0;
 }
+
+.xwc-toolbar-label{
+	color:black; 
+}
