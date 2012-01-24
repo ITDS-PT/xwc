@@ -13,6 +13,14 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 			this.recordIds = [];
 			this.minHeight = minHeight; 
 		},
+		maxSelections : -1,
+		getMaxSelections : function(){
+			return this.maxSelections;
+		},
+		multiPagePreserve : false,
+		getMultiPageSelections : function(){
+			return this.multiPagePreserve;
+		},
 		updateColumnConfig : function( submit ) {
 			var cm = this.getColumnModel();
 			var cc = cm.getColumnCount();
@@ -38,6 +46,16 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 		},
 		reset : function () {
 			this.recordIds = [];
+			var selectedRecorsdInput = Ext.get(this.id + "_srs");
+			var activeRecorsdInput = Ext.get(this.id + "_act");
+			if (selectedRecorsdInput !== undefined && selectedRecorsdInput !== null)
+				selectedRecorsdInput.set({value:''});
+			if (activeRecorsdInput !== undefined && activeRecorsdInput !== null)
+				Ext.get(this.id + "_act").set({value:''});
+			var selectionModel = this.getSelectionModel();
+			if (selectionModel !== undefined && selectionModel !== null){
+				selectionModel.clearSelections(true);
+			}
 		}
 	}
 );
@@ -1927,6 +1945,46 @@ ExtXeo.grid.activeRowHndlr = function( oSelModel, oGridInputSelId, rowIdentifier
 }
 
 
+/**
+ * 
+ * Handles the before row selection event, prevents row selection if the
+ * max selections are reached
+ * 
+ * */
+ExtXeo.grid.beforeRowSelectionHndlr = function (oSelModel){
+	
+	var maxSelections = oSelModel.grid.getMaxSelections();
+	var oSelRecs = oSelModel.getSelections();
+	
+	if (maxSelections == -1)
+		return true;
+	
+	if (oSelRecs.length < maxSelections || oSelRecs.length == 0){
+		var label = Ext.getCmp(oSelModel.grid.getId() + "_selections");
+		if (label != undefined && label != null){
+       	if (oSelRecs.length < maxSelections - 1)
+       		label.setText(oSelRecs.length + 1);
+       	else
+       		label.setText("<span style='color:red'>" + (oSelRecs.length + 1 )+ "</span>",false);
+		}
+       	return true;
+	} else
+		return false;
+	
+}
+
+/**
+ * 
+ * Handles a row deselection (decrementing the counter if needed)
+ * 
+ * */
+ExtXeo.grid.rowDeselectionHndlr = function (oSelModel){
+	if (oSelModel.grid.getMaxSelections() > 0){
+		var label = Ext.getCmp(oSelModel.grid.getId() + "_selections");
+		label.setText(oSelModel.getSelections().length);
+	}
+}
+
 ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentifier) {
 	var sSelRecs = "";
     var oInput = document.getElementById( oGridInputSelId );
@@ -1939,61 +1997,66 @@ ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentif
         }
        	oInput.value = sSelRecs;
         
-        try
-        {
-	        if(oSelModel.grid.getStore().changePageControl == false)
-			{
-				oSelModel.grid.getStore().rowIdentifier = rowIdentifier;
-				for(var j = 0; j < oSelModel.grid.getStore().getCount(); j++)
+       	var gridPanel = oSelModel.grid;
+       	
+       	if (gridPanel.getMultiPageSelections())
+       	{
+	        try
+	        {
+		        if(oSelModel.grid.getStore().changePageControl == false)
 				{
-					var currRow = oSelModel.grid.getStore().getAt(j);
-					var rId = currRow.get( rowIdentifier );				
-					var isRowSelected = false;
-					 
-					for (var k = 0; k < oSelRecs.length; k++)  {
-						var tempId = oSelRecs[k].get( rowIdentifier );
-						
-						if(tempId == rId)
-						{
-							isRowSelected = true;
-							break;
-						}
-					} 
-					if(isRowSelected == true)
+					oSelModel.grid.getStore().rowIdentifier = rowIdentifier;
+					for(var j = 0; j < oSelModel.grid.getStore().getCount(); j++)
 					{
-						var curIdx = oSelModel.grid.recordIds.indexOf(rId);
-						
-						if(curIdx < 0)
+						var currRow = oSelModel.grid.getStore().getAt(j);
+						var rId = currRow.get( rowIdentifier );				
+						var isRowSelected = false;
+						 
+						for (var k = 0; k < oSelRecs.length; k++)  {
+							var tempId = oSelRecs[k].get( rowIdentifier );
+							
+							if(tempId == rId)
+							{
+								isRowSelected = true;
+								break;
+							}
+						} 
+						if(isRowSelected == true)
 						{
-							oSelModel.grid.recordIds[oSelModel.grid.recordIds.length] = rId;
-						}					
-					}
-					else
-					{ 
-						var curIdx = oSelModel.grid.recordIds.indexOf(rId);
-						
-						if(curIdx >= 0)
-						{			
-							oSelModel.grid.recordIds.splice(curIdx, 1);
+							var curIdx = oSelModel.grid.recordIds.indexOf(rId);
+							
+							if(curIdx < 0)
+							{
+								oSelModel.grid.recordIds[oSelModel.grid.recordIds.length] = rId;
+							}					
 						}
-					}				 
+						else
+						{ 
+							var curIdx = oSelModel.grid.recordIds.indexOf(rId);
+							
+							if(curIdx >= 0)
+							{			
+								oSelModel.grid.recordIds.splice(curIdx, 1);
+							}
+						}				 
+					}
+					
+					var tempSelectRecs = "";
+					var selectedControl = false;
+					for (var k = 0; k < oSelModel.grid.recordIds.length; k++)  {
+						if(k>0) tempSelectRecs += "|";
+						tempSelectRecs += oSelModel.grid.recordIds[k];
+						selectedControl = true;
+					}
+					if(selectedControl)
+					{
+						oInput.value = tempSelectRecs;
+					}
 				}
-				
-				var tempSelectRecs = "";
-				var selectedControl = false;
-				for (var k = 0; k < oSelModel.grid.recordIds.length; k++)  {
-					if(k>0) tempSelectRecs += "|";
-					tempSelectRecs += oSelModel.grid.recordIds[k];
-					selectedControl = true;
-				}
-				if(selectedControl)
-				{
-					oInput.value = tempSelectRecs;
-				}
-			}
-        }
-        catch(err)
-        {}
+	        }
+	        catch(err)
+	        {console.log(err);}
+       	}
     }
     else {
         alert('Select rows input not found!!');
