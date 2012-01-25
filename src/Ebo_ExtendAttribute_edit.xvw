@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xvw:root xmlns:xeo="http://www.netgest.net/xeo/xeo" xmlns:xvw="http://www.netgest.net/xeo/xvw">
+    <xvw:viewer beanClass="netgest.bo.xwc.xeo.beans.XEOEditBean" beanId="viewBean">
+        <xeo:formEdit renderToolBar="false" showDifferences="true">
+            <xeo:editToolBar renderExportMenu="true"
+                renderInformationMenu="true" renderListVersionBtn="true"/>
+            <xvw:panel>
+                <xvw:section label="Geral">
+                    <xvw:rows>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="alias"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="shortAlias"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="attributeRequire"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="attributeConstraints"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="attributeCardinal"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="attributeType"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="changed"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="quickView"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="object"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="lov"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="valueText"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="valueNumber"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="valueDate"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="valueDateTime"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="valueBoolean"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="valueLov"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="valueObject"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="decimals"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="minDecimals"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="minNumber"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="maxNumber"/>
+                            </xvw:cell>
+                        </xvw:row>
+                        <xvw:row>
+                            <xvw:cell>
+                                <xvw:attribute objectAttribute="grouping"/>
+                            </xvw:cell>
+                        </xvw:row>
+                    </xvw:rows>
+                </xvw:section>
+                <xvw:tabs>
+                    <xvw:tab label="Lista">
+                        <xeo:bridge bridgeName="valueList">
+                            <xvw:columns>
+                                <xvw:columnAttribute
+                                    dataField="SYS_CARDID" label="Lista" width="150"/>
+                            </xvw:columns>
+                        </xeo:bridge>
+                    </xvw:tab>
+                </xvw:tabs>
+            </xvw:panel>
+        </xeo:formEdit>
+    </xvw:viewer>
+</xvw:root>
