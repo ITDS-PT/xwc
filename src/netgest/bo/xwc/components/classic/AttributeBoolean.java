@@ -1,7 +1,5 @@
 package netgest.bo.xwc.components.classic;
 
-import java.sql.Timestamp;
-
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
@@ -46,12 +44,18 @@ public class AttributeBoolean extends AttributeBase {
 		
     	@Override
     	public ScriptBuilder getEndComponentScript(AttributeBase oComp) {
-    		// TODO Auto-generated method stub
     		ScriptBuilder s = super.getEndComponentScript(oComp, false, false );
     		
+    		//We need the suspend/resume events because if something changes the
+    		//value of this component and we have the "onChangeSubmit" property
+    		//that could create a loop where the value is changed, the "checked" event
+    		//is triggered, which in turns triggers a submission which can change the value
+    		//of this component again
             Object sJsValue = oComp.getValue();
-    		s.w( "c.setValue('" ).writeValue( sJsValue ).l( "')" );
-    		s.endBlock();
+            s.w( "c.suspendEvents();" );
+            s.w( "c.setValue('" ).writeValue( sJsValue ).l( "')" );
+            s.w( "c.resumeEvents();" );
+            s.endBlock();
     		
     		return s;
     		
@@ -94,9 +98,17 @@ public class AttributeBoolean extends AttributeBase {
             }
             if( oForm.haveDependents( oAttrBoolean.getObjectAttribute() ) || oAttrBoolean.isOnChangeSubmit() )
             {
-            	oCheckConfig.add( "handler", "function(fld,newValue,oldValue){fld.setValue(newValue);" 
-                        + XVWScripts.getAjaxUpdateValuesScript( (XUIComponentBase)oComp.getParent(), 0 ) + "}"
-	            );
+            	//Script for the check event, sets the value and triggers a form submission
+            	StringBuilder chkBoxHandler = new StringBuilder();
+            	chkBoxHandler.append("function(fld, newValue){");
+	            	chkBoxHandler.append("fld.setValue(newValue);");
+	            		chkBoxHandler.append(XVWScripts.getAjaxUpdateValuesScript( (XUIComponentBase)oComp.getParent(), 0 ));
+	            	chkBoxHandler.append("; ");
+            	chkBoxHandler.append("}");
+            	ExtConfig listeners = new ExtConfig();
+            	listeners.add("check", chkBoxHandler.toString());
+            	oCheckConfig.add("listeners", listeners);
+            	
             }
 
             return oCheckConfig;
@@ -113,30 +125,36 @@ public class AttributeBoolean extends AttributeBase {
         public void decode(XUIComponentBase component) {
 
             AttributeBoolean oAttrComp;
-             
             oAttrComp = (AttributeBoolean)component;
             
-            String value = getFacesContext().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
-            // Por vezes o ExtJs devolve yes.. não percebi porque razão, deve ser bug do extjs
-            if( "on".equalsIgnoreCase( value ) ) {
-                if( oAttrComp.getUseBooleanValues() )
-                	oAttrComp.setSubmittedValue( true );
-                else
-                	oAttrComp.setSubmittedValue( "1" );
-                	
-            }
-            else if ( value != null ) {
-                if( oAttrComp.getUseBooleanValues() )
-                	oAttrComp.setSubmittedValue( false );
-                else
-                	oAttrComp.setSubmittedValue( "0" );
-            }
+            if( !oAttrComp.isDisabled() && !oAttrComp.isReadOnly() && oAttrComp.isVisible() ) {
             
+	            String value = getFacesContext().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
+	            // Por vezes o ExtJs devolve yes.. nao percebi porque razao, deve ser bug do extjs
+	            if( "on".equalsIgnoreCase( value ) ) {
+	                if( oAttrComp.getUseBooleanValues() )
+	                	oAttrComp.setSubmittedValue( true );
+	                else
+	                	oAttrComp.setSubmittedValue( "1" );
+	                	
+	            }
+	            else if ( value != null ) {
+	                if( oAttrComp.getUseBooleanValues() )
+	                	oAttrComp.setSubmittedValue( false );
+	                else
+	                	oAttrComp.setSubmittedValue( "0" );
+	            }
+            }
             super.decode(component);
 
             
         }
     }
+	
+	@Override
+	public String toString(){
+		return this.getId();
+	}
 
 
 }
