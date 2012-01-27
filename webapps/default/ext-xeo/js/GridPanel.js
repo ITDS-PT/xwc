@@ -1983,7 +1983,6 @@ ExtXeo.grid.activeRowHndlr = function( oSelModel, oGridInputSelId, rowIdentifier
  * */
 ExtXeo.grid.beforeRowSelectionHndlr = function (oSelModel){
 	
-	console.log("BeforeRowSelection");
 	
 	var maxSelections = oSelModel.grid.getMaxSelections();
 	var oSelRecs = oSelModel.getSelections();
@@ -2008,7 +2007,6 @@ ExtXeo.grid.beforeRowSelectionHndlr = function (oSelModel){
  * */
 ExtXeo.grid.updateCounter = function (oSelModel){
 	
-	console.log("UpdateCounter");
 	
 	var gridPanel = oSelModel.grid;
 	var label = Ext.getCmp(gridPanel.getNumberSelectionsCounterId());
