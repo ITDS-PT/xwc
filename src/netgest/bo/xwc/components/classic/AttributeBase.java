@@ -103,7 +103,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
      * The height of the component
      */
     private XUIViewStateBindProperty<String> height = 
-    	new XUIViewStateBindProperty<String>( "height", this, "100",String.class );
+    	new XUIViewStateBindProperty<String>( "height", this, String.class );
 
     /**
      * The maximum length of the component
