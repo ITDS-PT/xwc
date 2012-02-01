@@ -6,6 +6,7 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.utils.StringUtils;
 
 /**
  * This attribute renderes a textarea from a {@link DataFieldConnector}
@@ -25,17 +26,17 @@ public class AttributeTextArea extends AttributeBase {
     	public ExtConfig getExtJsFieldConfig(AttributeBase oAttr) {
     		
     		ExtConfig config = super.getExtJsFieldConfig( oAttr );
-    		/*
+    		
     		String height = oAttr.getHeight();
     		
-    		if( height == null ) {
+    		if( StringUtils.isEmpty( height ) ) {
     			height = "100";
     		}
             
     		if( !"auto".equals( height ) ) {
             	config.add( "height" , oAttr.getHeight() );
     		}
-    		*/
+    		
     		return config;
     		
     	}
