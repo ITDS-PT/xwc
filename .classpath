@@ -56,7 +56,6 @@
 	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/jcr-1.0.jar"/>
 	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/JimiProClasses.jar"/>
 	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/mysql-connector-java-5.1.7-bin.jar"/>
 	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/regex4j.jar"/>
 	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/timerservice.jar"/>
