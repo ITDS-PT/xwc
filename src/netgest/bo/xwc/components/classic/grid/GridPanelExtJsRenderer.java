@@ -706,6 +706,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
         oGridConfig.add( "store", oGrid.getId() + "_store" );
         oGridConfig.add( "maxSelections", oGrid.getMaxSelections() );
+        oGridConfig.add( "toolBarVisible", oGrid.getShowGroupToolBar() );
         oGridConfig.add( "multiPagePreserve", oGrid.getEnableSelectionAcrossPages() );
         if (oGrid.isMultiSelection())
         	oGridConfig.add( "multiSelection", true );
@@ -1244,6 +1245,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "xwc-grid-filter-list", ExtJsTheme.composeUrl( "extjs/grid/filter/ListFilter.js" ) );
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "xwc-grid-filter-numeric", ExtJsTheme.composeUrl( "extjs/grid/filter/NumericFilter.js" ) );
         scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "xwc-grid-filter-string", ExtJsTheme.composeUrl( "extjs/grid/filter/StringFilter.js" ) );
+        
     }
 
     

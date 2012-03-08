@@ -241,6 +241,10 @@ public class ExtJsTheme implements XUITheme {
 				composeUrl("ext-xeo/js/ext-xeo.js"));
 		// scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
 		// "ext-xeo1", composeUrl( "ext-xeo/js/SearchField.js" ) );
+		
+		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
+				"gridDrag", composeUrl("ext-xeo/js/griddrag.js"));
+		
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
 				"ExtXeo.grid", composeUrl("ext-xeo/js/GridPanel.js"));
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
@@ -294,6 +298,8 @@ public class ExtJsTheme implements XUITheme {
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
 				"ext-xeo-app", composeUrl("ext-xeo/js/App.js"));
 
+		
+		
 		// Utility Scrits
 		XUIRequestContext oRequestContext;
 		oRequestContext = XUIRequestContext.getCurrentContext();

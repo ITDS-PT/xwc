@@ -127,6 +127,8 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        else if ( reqParam.getGroupBy() != null  ) {
 	        	oResponse.setContentType( "text/plain;charset=utf-8" );
 	        	
+	        	if (reqParam.isGroupToolBarVisible() != null)
+	        		oGrid.setShowGroupToolBar(reqParam.isGroupToolBarVisible());
 	        	oGrid.applySqlFields(dataSource);
 	        	oGrid.applyFilters( dataSource );
 	        	oGrid.applySort( dataSource );
@@ -219,6 +221,13 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         
         String[] groupBy 		= oRequest.getParameterValues( "groupBy" );
         String aggregateField 		= oRequest.getParameter( "aggregateField" );
+        
+        String groupToolBarVisible = oRequest.getParameter( "toolBarVisible" );
+        
+        if (groupToolBarVisible != null){
+        	Boolean groupToolBarVisibleValue = Boolean.parseBoolean( groupToolBarVisible );
+        	oGridPanel.setShowGroupToolBar(groupToolBarVisibleValue);
+        }
         
         // Fix empty group by array
         if( groupBy != null && groupBy.length == 1 && groupBy[0] != null && groupBy[0].trim().length() == 0 )
@@ -330,6 +339,9 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 		
 		GridPanelRequestParameters reqParam;
 		reqParam = new GridPanelRequestParameters();
+		
+		if (groupToolBarVisible != null)
+			reqParam.setGroupToolBarVisible(Boolean.parseBoolean(groupToolBarVisible));
 		
 		// Sumary Parameter
 		reqParam.setAggregateParameter(aggregateField);

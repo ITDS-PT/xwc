@@ -51,6 +51,7 @@ import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIPreferenceManager;
 import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
@@ -328,6 +329,24 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	private XUIBaseProperty<HashMap<String,String>> defaultSettings = 
 		new XUIBaseProperty<HashMap<String,String>>("defaultSettings", this  );
+	
+	/**
+	 * Whether or not to show the group toolbar (defaults to false) 
+	 */
+	private XUIBindProperty<Boolean> showGroupToolBar =
+		new XUIBindProperty<Boolean>("showGroupToolBar", this, Boolean.FALSE , Boolean.class);
+	
+	public Boolean getShowGroupToolBar(){
+		return this.showGroupToolBar.getEvaluatedValue();
+	}
+	
+	public void setShowGroupToolBar(String newVal){
+		this.showGroupToolBar.setExpressionText(newVal);
+	}
+	
+	public void setShowGroupToolBar(Boolean newVal){
+		this.showGroupToolBar.setValue(newVal);
+	}
 	
 	private boolean forcedReloadData = false;
 	
@@ -1993,7 +2012,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 		Preference preference = getUserSatePreference();
 		saveUserFilterState( preference );
 		saveUserViewState( preference );
-		saveUserExpandedGroupsState(preference);
+		saveUserExpandedGroupsState( preference );
+		saveGroupToolBarVisibility( preference );
 		preference.savePreference();
 	}
 	
@@ -2001,7 +2021,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 		Preference preference = getUserSatePreference();
 		restoreUserViewState( preference );
 		restoreUserFilterState( preference );
-		restoreUserExpandedGroupsState(preference);
+		restoreUserExpandedGroupsState( preference );
+		restoreGroupToolBarVisiblity( preference );
 	}
 	
 	public void saveUserViewState( Preference preference ) {
@@ -2017,6 +2038,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 	public void saveUserExpandedGroupsState( Preference preference ) {
 		preference.setString("currentExpandedGroups", this.currentExpandedGroups.getValue() );
+	}
+	
+	public void saveGroupToolBarVisibility( Preference preference ){
+		preference.setString("groupToolBarVisibility", String.valueOf(this.showGroupToolBar.getEvaluatedValue()) );
 	}
 
 	public void restoreUserExpandedGroupsState( Preference preference ) {
@@ -2046,6 +2071,11 @@ public class GridPanel extends ViewerInputSecurityBase {
 			this.setAggregateData(null);
 		}
 		/** END ML: 07-10-2011 **/
+	}
+	
+	public void restoreGroupToolBarVisiblity( Preference preference ){
+		Boolean visibility  =  preference.getBoolean("groupToolBarVisibility");
+		this.setShowGroupToolBar(visibility);
 	}
 	
 	public void saveUserFilterState( Preference preference ) {

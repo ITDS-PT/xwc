@@ -1,98 +1,99 @@
 @CHARSET "ISO-8859-1";
+
 .x-tab-panel-body {
-    border-right: 1px solid #8db2e3;
-    border-left: 1px solid #8db2e3;
-    border-bottom: 1px solid #8db2e3;
-    __background:#dfe8f6;
-    padding: 0pt;
+	border-right: 1px solid #8db2e3;
+	border-left: 1px solid #8db2e3;
+	border-bottom: 1px solid #8db2e3;
+	__background: #dfe8f6;
+	padding: 0pt;
 }
 
 .xwc-rows-row {
-	font-family: tahoma,verdana,helvetica;
-	font-size: small;	
+	font-family: tahoma, verdana, helvetica;
+	font-size: small;
 }
 
 .xwc-tab {
-	position:relative!important;	
-	overflow-y:auto;
+	position: relative !important;
+	overflow-y: auto;
 }
 
 .xwc-form-required {
-	color:red;
+	color: red;
 }
 
 .xwc-form-recommended {
-	color:green;
+	color: green;
 }
 
 .xwc-form-label {
-	font-size: 12px;	
+	font-size: 12px;
 }
 
 .xwc-att-file {
-	cursor:hand;
+	cursor: hand;
 }
 
 .x-fieldset {
-	margin:3px;
+	margin: 3px;
 }
 
 .gridRowUnRead {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 .gridRowUnRead .x-grid3-cell-inner {
-    font-weight: bold;
+	font-weight: bold;
 }
 
-.xeoObjectLink .x-form-text  {
-    color: blue;
-    cursor: pointer;
-    text-decoration: underline; 
+.xeoObjectLink .x-form-text {
+	color: blue;
+	cursor: pointer;
+	text-decoration: underline;
 }
 
 .x-grid3-header-offset {
-	width: 100px;	
+	width: 100px;
 }
 
 ul.x-tab-strip {
-    width:100%;
+	width: 100%;
 }
 
-.x-grid3-hd-row td.ux-filtered-column {   
-    font-style: italic;  
-    font-weight: bold;
+.x-grid3-hd-row td.ux-filtered-column {
+	font-style: italic;
+	font-weight: bold;
 }
 
 .x-item-disabled {
-    color: black;
-    cursor: default;
-    opacity: .6;
-    -moz-opacity: .6;
-    filter: alpha(opacity=60);
+	color: black;
+	cursor: default;
+	opacity: .6;
+	-moz-opacity: .6;
+	filter: alpha(opacity = 60);
 }
 
 .x-item-disabled * {
-    color: black !important;
-    cursor: default !important;
+	color: black !important;
+	cursor: default !important;
 }
 
 .x-grid-group-tb DIV {
 	background: white;
-	background-image:'';
+	background-image: '';
 }
 
 .x-grid-group-hd {
-	border-bottom:1px solid lightgray;
-	font-color:black;
+	border-bottom: 1px solid lightgray;
+	font-color: black;
 }
 
-.x-grid3-group-icon{
+.x-grid3-group-icon {
 	background-repeat: no-repeat;
 	display: none;
 	height: 16px;
 	width: 16px;
-	margin-left:3px;
+	margin-left: 3px;
 	vertical-align: middle;
 }
 
@@ -102,116 +103,200 @@ ul.x-tab-strip {
 }
 
 /* Bridge Lookup CSS Classes */
-.xwc-bridge-lookup{
-	display:block;
-	overflow-y:scroll;
+.xwc-bridge-lookup {
+	display: block;
+	overflow-y: scroll;
 }
 
-a.xwc-search-trigger{
-	width:16px;
-	height:16px;
-	text-decoration:none;
+a.xwc-search-trigger {
+	width: 16px;
+	height: 16px;
+	text-decoration: none;
 	background: url("../icons/add-lookup-bridge-sprite.png");
-	display:block;
+	display: block;
 	cursor: pointer;
 }
 
-a.xwc-search-trigger:hover{
+a.xwc-search-trigger:hover {
 	background-position: -16px 0;
 }
 
-a.xwc-clean-trigger{
-	width:16px;
-	height:16px;
-	text-decoration:none;
+a.xwc-clean-trigger {
+	width: 16px;
+	height: 16px;
+	text-decoration: none;
 	background: url("../icons/remove-lookup-bridge-sprite.png");
-	display:block;
+	display: block;
 	cursor: pointer;
 }
 
-a.xwc-clean-trigger:hover{
+a.xwc-clean-trigger:hover {
 	background-position: -16px 0;
 }
 
-
-a.xwc-favorite-trigger{
-	width:16px;
-	height:16px;
-	text-decoration:none;
+a.xwc-favorite-trigger {
+	width: 16px;
+	height: 16px;
+	text-decoration: none;
 	background: url("../icons/favorite-lookup-bridge.png");
-	display:block;
+	display: block;
 	cursor: pointer;
 }
 
-a.xwc-favorite-trigger:hover{
+a.xwc-favorite-trigger:hover {
 	background-position: -16px 0;
 }
 
-	
-/*For the special third button in AttributeNumber Lookup*/	
-
-.x-form-field-wrap .x-form-favorite-trigger{
-    background-image: url(../icons/favorites-sprite.png);
-    cursor:pointer;   
+/*For the special third button in AttributeNumber Lookup*/
+.x-form-field-wrap .x-form-favorite-trigger {
+	background-image: url(../icons/favorites-sprite.png);
+	cursor: pointer;
 }
 
 /* For the Search-Lookup Trigger*/
-.search-lookup-trigger{
-	width:17px;
-    height:21px;
-    background-color: blue;
-	background-image: url(../../extjs/images/default/form/search-trigger.gif);
-	display:block;
-	cursor:pointer;
-	margin:0px 0px 0px 0px;
-	padding:0px 0px 0px 0px;	
+.search-lookup-trigger {
+	width: 17px;
+	height: 21px;
+	background-color: blue;
+	background-image:
+		url(../../extjs/images/default/form/search-trigger.gif);
+	display: block;
+	cursor: pointer;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
 }
 
-.search-lookup-trigger:hover{
+.search-lookup-trigger:hover {
 	background-position: -17px 0;
 }
 
-.search-lookup-trigger-click{
+.search-lookup-trigger-click {
 	background-position: -34px 0;
 }
 
-.search-lookup-clean-trigger{
-	width:17px;
-    height:21px;
+.search-lookup-clean-trigger {
+	width: 17px;
+	height: 21px;
 	background-image: url(../../extjs/images/default/form/clear-trigger.gif);
-	display:block;
-	cursor:pointer;	
-	margin:0px 0px 0px 0px;
-	padding:0px 0px 0px 0px;
+	display: block;
+	cursor: pointer;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
 }
 
-.search-lookup-clean-trigger:hover{
+.search-lookup-clean-trigger:hover {
 	background-position: -17px 0;
 }
 
-.search-lookup-clean-trigger-click{
-	background-position: -34px 0 ;
-}
-
-
-.search-lookup-favorite-trigger{
-	width:17px;
-    height:21px;
-	background: url("../icons/favorites-sprite.png");
-	display:block;
-	cursor:pointer;	
-	margin:0px 0px 0px 0px;
-	padding:0px 0px 0px 0px;
-}
-
-.search-lookup-favorite-trigger:hover{
-	background-position: -17px 0;
-}
-
-.search-lookup-favorite-trigger-click{
+.search-lookup-clean-trigger-click {
 	background-position: -34px 0;
 }
 
-.xwc-toolbar-label{
-	color:black; 
+.search-lookup-favorite-trigger {
+	width: 17px;
+	height: 21px;
+	background: url("../icons/favorites-sprite.png");
+	display: block;
+	cursor: pointer;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+.search-lookup-favorite-trigger:hover {
+	background-position: -17px 0;
+}
+
+.search-lookup-favorite-trigger-click {
+	background-position: -34px 0;
+}
+
+.xwc-toolbar-label {
+	color: black;
+}
+
+.regular {
+	display: block;
+	float: left;
+	margin: 2px 2px 2px 2px;
+	background-color: #f5f5f5;
+	border: 1px solid #dedede;
+	border-top: 1px solid #eee;
+	border-left: 1px solid #eee;
+	font-family: "Lucida Grande", Tahoma, Arial, Verdana, sans-serif;
+	font-size: 12px;
+	line-height: 130%;
+	text-decoration: none;
+	font-weight: bold;
+	color: #336699;
+	cursor: pointer;
+	padding: 5px 5px 5px 5px; /* Links */
+}
+
+.regular_disabled {
+	display: block;
+	float: left;
+	margin: 2px 2px 2px 2px;
+	background-color: #f5f5f5;
+	border: 1px solid #dedede;
+	border-top: 1px solid #eee;
+	border-left: 1px solid #eee;
+	font-family: "Lucida Grande", Tahoma, Arial, Verdana, sans-serif;
+	font-size: 12px;
+	line-height: 130%;
+	text-decoration: none;
+	font-weight: bold;
+	color: #CCCCCC;
+	cursor: pointer;
+	padding: 5px 5px 5px 5px; /* Links */
+}
+
+.no_sort {
+	display: inline;
+	height: 4px;
+	vertical-align: middle;
+}
+
+.sort_asc {
+	background-image: url(../../extjs/resources/images/default/grid/sort_asc.gif);
+	margin-left: 3px;
+	width: 13px;
+}
+
+.sort_desc {
+	background-image: url(../../extjs/resources/images/default/grid/sort_desc.gif);
+	margin-left: 3px;
+	width: 13px;
+}
+
+.regular:hover {
+	background-color: #dff4ff;
+	border: 1px solid #c2e1ef;
+	color: #336699;
+}
+
+.regular:active {
+	background-color: #6299c5;
+	border: 1px solid #6299c5;
+	color: #fff;
+}
+
+.group_divider {
+	width: 10px;
+	height: 20px;
+	margin-top: 5px;
+	margin-left: 5px;
+	padding-left: 4px;
+	margin-right: 5px;
+	padding-right: 4px;
+	background-color: transparent;
+}
+
+.group_dividir_hover {
+	background-image: url(../ext-xeo/images/drophere.png);
+	background-repeat: no-repeat;
+	vertical-align: bottom;
+}
+
+.placeHolder {
+	float: left;
 }

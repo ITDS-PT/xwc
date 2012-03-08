@@ -3,19 +3,133 @@ Ext.ns('ExtXeo','ExtXeo.data');
 
 ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 	{
-		recordIds : null,
-		suspendUploadCondig : false,
-		minHeight : 0,
-		constructor: function( opts ) {
+		 recordIds : null
+		, suspendUploadCondig : false
+		, minHeight : 0
+		, gridDragDrop : null
+		, toolBarVisible : false
+		, constructor: function( opts ) {
         	if(!this.recordIds) {
         		this.recordIds = [];
         	}
         	ExtXeo.grid.GridPanel.superclass.constructor.apply(this, arguments);
-        },
-		getMinHeight : function() {
+        }
+        , buildDragPlugin : function(){
+        	this.gridDragDrop = new ExtXeo.GridGroupDragDrop(
+        	{
+        		grid:this, 
+        		gridView:this.getView()
+        	});
+        }
+        //Add to Original
+        , getGroupDragDropPlugin : function() {
+        	return this.gridDragDrop;
+        }
+        , getDropTargetIdentifier : function() {
+        	return this.id + "_dragDropGroup";
+        }
+        , getId : function () {
+        	return this.id;
+        }
+        , getColumnLabel : function ( columnId ){
+        	return this.getColumnModel().getColumnById( columnId ).header;
+        }
+        , getColumnIndex : function ( columnId ){
+        	return this.getColumnModel().getIndexById( columnId );
+        }
+        , getGroups : function (){
+        	return this.store.groupField;
+        }
+        , groupByColumn : function ( columnId ){
+        	this.store.addGroupByWithoutReload( columnId );
+        } 
+        , groupByColumnWithReload : function ( columnId ){
+        	this.store.addGroupBy( columnId );
+        } 
+        , reload : function () {
+        	this.store.reload();
+        }
+        , clearGroups : function() {
+        	this.store.clearGroupByWithoutReload();
+        }
+        , clearGroupsWithReload : function() {
+        	this.store.clearGroupBy();
+        }
+        , removeGroupByColumn : function ( columnId ){
+        	
+        	//Note: I tried using the removeGroup function
+        	//of the DataStore but when we had multiple groups, removing
+        	//one of them would make the GridPanel throw an error
+        	//when trying to display a hidden column (right after pressing
+        	//the X button to remove a group). Had to switch back to
+        	//this solution: Removing all groups and adding them again (without the one
+        	//to remove)
+        	
+        	var groups = this.store.groupField;
+        	var newGroups = [];
+        	this.clearGroups();
+        	for ( k = 0 ; k < groups.length ; k++){
+        		if (groups[k] != columnId ){
+        			newGroups.push(groups[k]);
+        		}
+        	}
+        	
+        	for ( i = 0 ; i < newGroups.length ; i++){
+        		this.groupByColumn(newGroups[i]);
+        	}
+        	
+        	this.reload();
+        	
+        	
+        }
+        , canGroupColumn : function ( columnId ){
+        	return this.getColumnModel().getColumnById( columnId ).groupable;
+        }
+        , hideColumn : function ( columnId ) {
+        	var idx = this.getColumnModel().findColumnIndex( columnId );
+            this.getColumnModel().setHidden( idx, true );
+        }
+        , showColumn : function ( columnId ) {
+        	var idx = this.getColumnModel().findColumnIndex( columnId );
+            this.getColumnModel().setHidden( idx, false );
+        }
+        , sortColumn : function ( columnId, sortDirection ){
+        	this.getStore().sort(columnId,sortDirection);
+        }
+        , isColumnSorted : function ( columnId ){
+        	sortState = this.getStore().getSortState();
+        	if (sortState && sortState.length > 0){
+	        	var sortObject = sortState[0];
+	        	var field = sortObject.field; 
+	        	if ( field == columnId ){
+	        		if ( sortObject.direction != '' )
+	        			return true;
+	        	}
+        	}
+        	return false;
+        }
+        , getColumnSort : function ( columnId ){
+        	sortState = this.getStore().getSortState();
+        	if (sortState && sortState.length > 0){
+	        	var sortObject = sortState[0];
+		     	if (sortObject.field == columnId){
+	        		return sortObject.direction;
+	        	}
+        	}
+        	return "";
+        }
+        , isColumnSortable : function ( columnId ){
+        	var columnIndex = this.getColumnIndex( columnId );
+        	if (columnIndex >= 0)
+        		return this.getColumnModel().isSortable( columnIndex );
+        	
+        	return false;
+        }
+        //End Add to Original
+		,getMinHeight : function() {
 			return this.minHeight;
-		},
-		setMinHeight : function( minHeight ) {
+		}
+		,setMinHeight : function( minHeight ) {
 			this.minHeight = minHeight; 
 		},
 		multiSelection : false,
@@ -347,7 +461,14 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     renderUI : function(){
         ExtXeo.grid.GroupingView.superclass.renderUI.call(this);
         this.mainBody.on('mousedown', this.interceptMouse, this);
-
+        
+        if (this.enableGrouping){
+        	this.createDragDropGroupPlaceholder();
+        	this.grid.buildDragPlugin();
+        	this.initialGroupToolBarDisplay();
+        }
+        	
+        
         if(this.enableGroupingMenu && this.hmenu){
             if(this.enableNoGroups){
                 this.hmenu.add('-',{
@@ -362,6 +483,14 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
                     cls:'xwc-grid-reset-group-by',
                     text: this.removeGroupText,
                     handler: this.onClearGroups,
+                    scope: this
+                }
+                ,{
+                    id:'groupToolBar',
+                    cls:'xwc-grid-group-toolbar',
+                    text: 'Mostrar agrupamentos',
+                    checkHandler: this.handleGroupToolbarDisplay,
+                    checked: this.grid.toolBarVisible,
                     scope: this
                 }
                 );
@@ -442,8 +571,57 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
             
             this.hmenu.on('beforeshow', this.beforeMenuShow, this);
         }
-    },  
-    checkHandlerAggregate: function(mi, checked){
+    }  
+    ,createDragDropGroupPlaceholder : function (){
+    	var elem = Ext.get(document.createElement('div'));
+    	var ddGroupId = (this.grid.id || Ext.id()) + "_dragDropGroup";
+    	elem.set({id : ddGroupId, style : 'width:100%;height:35px; background-color:#FFFFFF;display:none;'});
+        this.mainBody.parent('.x-panel-bwrap').insertFirst(elem);
+        elem.appendChild(this.createTableForDividersAndGroups());
+    }
+    
+    , initialGroupToolBarDisplay : function () {
+    	if ( this.grid.toolBarVisible ){
+    		this.showGroupToolBar();
+    	}
+    	else{
+    		this.hideGroupToolBar();
+    	}
+    }
+    
+    , handleGroupToolbarDisplay : function() {
+    	if ( this.grid.toolBarVisible ){
+    		this.hideGroupToolBar();
+    		this.grid.toolBarVisible = false;	
+    	}
+    	else{
+    		this.showGroupToolBar();
+    		this.grid.toolBarVisible = true;
+    	}
+    	this.grid.getStore().uploadConfig();
+    } 
+    , showGroupToolBar : function () {
+    	var elem = Ext.get(this.grid.id + "_dragDropGroup");
+    	elem.setStyle('display','block');
+    	
+    }
+    , hideGroupToolBar : function () {
+    	var elem = Ext.get(this.grid.id + "_dragDropGroup");
+    	elem.setStyle('display','none');
+    }
+    ,createTableForDividersAndGroups : function (){
+    	
+//    	var table = Ext.get(document.createElement('table'));
+//    	var row = Ext.get(document.createElement('tr'));
+    	
+    	var table = Ext.get(document.createElement('div'));
+    	var row = Ext.get(document.createElement('div'));
+    	row.addClass('DDrowDrop');
+    	
+    	table.appendChild(row);
+    	return table;
+    }
+    ,checkHandlerAggregate: function(mi, checked){
     	if(checked)
     	{
     		this.grid.store.addAggregateField('T:' + mi.itemId, mi.itemId, checked);  
@@ -464,7 +642,8 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
       }
     },
     onGroupByClick : function(){
-        this.grid.store.addGroupBy(this.cm.getDataIndex(this.hdCtxIndex));
+    	this.grid.getGroupDragDropPlugin().createGroup(this.cm.getDataIndex(this.hdCtxIndex));
+        //this.grid.store.addGroupBy(this.cm.getDataIndex(this.hdCtxIndex));
         this.beforeMenuShow(); 
     },
     onShowGroupsClick : function(mi, checked){
@@ -1370,6 +1549,14 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 		ExtXeo.data.GroupingStore.superclass.constructor.apply(this, arguments);
 	},
     clearGroupBy : function( field ){
+    	
+    	this.clearGroupByWithoutReload( field );
+		if( this.groupField.length > 0 ) {
+			this.reload();
+		}
+		this.clearExpandedGroups();
+	}
+	, clearGroupByWithoutReload : function ( field ){
 		if( this.groupField.length > 0 ) {
 			this.groupField = [];
 	        if(this.baseParams){
@@ -1377,9 +1564,11 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 	            if( this.lastOptions.params )
 	            	delete this.lastOptions.params.groupBy;
 	        }
-	        this.reload();
-		}
-
+	    }
+		this.clearExpandedGroups();
+	}
+	
+	, clearExpandedGroups : function () {
 		// Clear expanded groups
 		try {
 			var eg = this.expandedGroups;
@@ -1391,8 +1580,9 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 			}
 		}
 		catch(e) {}
-	},
-    removeGroupBy : function( field ){
+	}
+	
+    , removeGroupBy : function( field ){
 		if( this.groupField.indexOf( field ) != -1 ) {
 			this.groupField.remove( field );
 	        if(this.baseParams){
@@ -1482,6 +1672,10 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     	return 9999;
     },
     addGroupBy : function( field, forceRegroup ){
+    	this.addGroupByWithoutReload(field, forceRegroup);
+        this.reload();
+    }
+    , addGroupByWithoutReload : function (field, forceRegroup ){
     	if(this.groupField.indexOf( field ) > -1 && !forceRegroup){
             return; 
         }
@@ -1499,9 +1693,8 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
             }
             this.baseParams['groupBy'] = this.groupField;
         }
-        this.reload();
-    }, 
-    isCheckedAggregate : function (fieldId)
+    }
+    , isCheckedAggregate : function (fieldId)
     {
     	return this.aggregateFieldsOn.indexOf( fieldId ) > -1;
     },
@@ -1638,12 +1831,21 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     			p.groupByParentValues = this.groupByParentValues;
     		}
     	}
+    	
+    	
+    	
     },
     uploadConfig : function() {
     	var params = {};
     	this.preparedHttpParams(params);
     	params.updateConfig = true;
         var p = Ext.apply(params || {}, this.baseParams);
+        
+        //Parameter for the visibility of the group toolbar
+        if ( this.grid != null ) {
+    		p.toolBarVisible = Ext.encode(this.grid.toolBarVisible);
+    	}
+        
         var url = this.url;
 		Ext.Ajax.request( { 
             	url: this.url,

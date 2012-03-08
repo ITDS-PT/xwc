@@ -15,6 +15,20 @@ public class GridPanelRequestParameters {
 	private int 	 groupByLevel;
 	
 	/**
+	 * Whether the toolbar displaying the currents groups is hidden or not
+	 */
+	private Boolean groupToolBarVisible = null;
+	
+	public Boolean isGroupToolBarVisible(){
+		return groupToolBarVisible;
+	}
+	
+	public void setGroupToolBarVisible(boolean newValue){
+		this.groupToolBarVisible = Boolean.valueOf(newValue);
+	}
+	
+	
+	/**
 	 * @return the aggregateParameter
 	 */
 	public String getAggregateParameter() {
