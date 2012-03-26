@@ -510,9 +510,10 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 
 				// obtain an Iterator for Collection
 				Iterator itr = getRootList().getAggregateFields().keySet().iterator();
-
+				
 				// iterate through HashMap values iterator
 				boolean first = true;
+				String agregateExp="";
 				while (itr.hasNext()) {
 					String currKey = (String) itr.next();
 					ArrayList<String> temp = getRootList().getAggregateFields().get(currKey);
@@ -524,37 +525,28 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 
 					for (int k = 0; k < temp.size(); k++) {
 						if (temp.get(k) != null && temp.get(k).equalsIgnoreCase("SUM")) {
-							sum = "''' || NVL(SUM (" + aggregateFieldId + "),0) || '''";
+							sum = getEboContext().getDataBaseDriver().getDriverUtils().getSumForAggregate(aggregateFieldId);
 						} else if (temp.get(k) != null
 								&& temp.get(k).equalsIgnoreCase("AVG")) {
-							avg = "''' || round(NVL(AVG (" + aggregateFieldId
-									+ "),0),2) || '''";
+							avg = getEboContext().getDataBaseDriver().getDriverUtils().getAvgForAggregate(aggregateFieldId);
 						} else if (temp.get(k) != null
 								&& temp.get(k).equalsIgnoreCase("MIN")) {
-							min = "''' || NVL(MIN (" + aggregateFieldId + "),0) || '''";
+							min = getEboContext().getDataBaseDriver().getDriverUtils().getMinForAggregate(aggregateFieldId);
 						} else if (temp.get(k) != null
 								&& temp.get(k).equalsIgnoreCase("MAX")) {
-							max = "''' || NVL(MAX (" + aggregateFieldId + "),0) || '''";
+							max = getEboContext().getDataBaseDriver().getDriverUtils().getMaxForAggregate(aggregateFieldId);
 						}
 					}
 
 					if (!first) {
-						fields += " || ',' || ";
+						agregateExp += getEboContext().getDataBaseDriver().getDriverUtils().getAggregateConcatenation();
 					} else {
 						first = false;
 					}
-					try {
-						fields += "'{name: ''" + aggregateFieldId + "'',desc: ''" + URLEncoder.encode(aggregateFieldDesc.replaceAll("€", "&euro;"), "UTF-8")
-								+ "'', SUM: " + sum + ", AVG: " + avg + ", SMIN: "
-								+ min + ", SMAX: " + max + "}' ";
-					} catch (UnsupportedEncodingException e) {
-						fields += "'{name: ''" + aggregateFieldId + "'',desc: ''" + aggregateFieldId
-						+ "'', SUM: " + sum + ", AVG: " + avg + ", SMIN: "
-						+ min + ", SMAX: " + max + "}' ";
-					}
+					agregateExp+=getEboContext().getDataBaseDriver().getDriverUtils().getAggregateExpression(aggregateFieldId, aggregateFieldDesc, sum, avg, min, max);
 				}
-
-				fields += " as aggregate" + nativeQlTag2;
+				agregateExp=getEboContext().getDataBaseDriver().getDriverUtils().getConcatFunction(agregateExp);
+				fields += agregateExp+" as aggregate" + nativeQlTag2;
 			} else {
 				fields += ", " + nativeQlTag1 + "'none' as aggregate"
 						+ nativeQlTag2;
@@ -625,6 +617,7 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 
 				// iterate through HashMap values iterator
 				boolean first = true;
+				String agregateExp="";
 				while (itr.hasNext()) {
 					String currKey = (String) itr.next();
 					ArrayList<String> temp = getRootList().getAggregateFields().get(currKey);
@@ -636,37 +629,29 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 
 					for (int k = 0; k < temp.size(); k++) {
 						if (temp.get(k) != null && temp.get(k).equalsIgnoreCase("SUM")) {
-							sum = "''' || NVL(SUM (" + aggregateFieldId + "),0) || '''";
+							sum = getEboContext().getDataBaseDriver().getDriverUtils().getSumForAggregate(aggregateFieldId);
 						} else if (temp.get(k) != null
 								&& temp.get(k).equalsIgnoreCase("AVG")) {
-							avg = "''' || round(NVL(AVG (" + aggregateFieldId
-									+ "),0),2) || '''";
+							avg = getEboContext().getDataBaseDriver().getDriverUtils().getAvgForAggregate(aggregateFieldId);
 						} else if (temp.get(k) != null
 								&& temp.get(k).equalsIgnoreCase("MIN")) {
-							min = "''' || NVL(MIN (" + aggregateFieldId + "),0) || '''";
+							min = getEboContext().getDataBaseDriver().getDriverUtils().getMinForAggregate(aggregateFieldId);
 						} else if (temp.get(k) != null
 								&& temp.get(k).equalsIgnoreCase("MAX")) {
-							max = "''' || NVL(MAX (" + aggregateFieldId + "),0) || '''";
+							max = getEboContext().getDataBaseDriver().getDriverUtils().getMaxForAggregate(aggregateFieldId);
 						}
 					}
 
 					if (!first) {
-						fieldsOnSubSelect += " || ',' || ";
+						agregateExp += getEboContext().getDataBaseDriver().getDriverUtils().getAggregateConcatenation();
 					} else {
 						first = false;
 					}
-					try {
-						fieldsOnSubSelect += "'{name: ''" + aggregateFieldId + "'',desc: ''" + URLEncoder.encode(aggregateFieldDesc.replaceAll("€", "&euro;"), "UTF-8")
-								+ "'', SUM: " + sum + ", AVG: " + avg + ", SMIN: "
-								+ min + ", SMAX: " + max + "}' ";
-					} catch (UnsupportedEncodingException e) {
-						fieldsOnSubSelect += "'{name: ''" + aggregateFieldId + "'',desc: ''" + aggregateFieldId
-						+ "'', SUM: " + sum + ", AVG: " + avg + ", SMIN: "
-						+ min + ", SMAX: " + max + "}' ";
-					}
+					agregateExp+=getEboContext().getDataBaseDriver().
+						getDriverUtils().getAggregateExpression(aggregateFieldId, aggregateFieldDesc, sum, avg, min, max);					
 				}
-
-				fieldsOnSubSelect += " as aggregate";	
+				agregateExp=getEboContext().getDataBaseDriver().getDriverUtils().getConcatFunction(agregateExp);
+				fieldsOnSubSelect += agregateExp+ " as aggregate";	
 						
 				newsql = "SELECT \"GROUP\".\"" + dummyGroupBy + "\", count(*) as count " + fieldsOnSubSelect + " FROM (" + newsql + ") \"GROUP\"" +
 				 " GROUP BY \"" + dummyGroupBy +"\"" + 
