@@ -260,7 +260,9 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        for (int groupParameter = 0; groupParameter < sParentValues.length; groupParameter++){
 	        	String sParent = sParentValues[groupParameter];
 	        	String groupByColumn = groupBy[groupParameter];
-	        	byte dataType = dataSource.getAttributeMetaData(groupByColumn).getDataType();
+	        	byte dataType = DataFieldTypes.VALUE_UNKNOWN;
+	        	if (dataSource.getAttributeMetaData(groupByColumn)!=null)
+	        		dataType = dataSource.getAttributeMetaData(groupByColumn).getDataType();	        
 	        	switch (dataType){
 	        		case DataFieldTypes.VALUE_CHAR: serviceParameterValues.add(sParent); break;
 	        		case DataFieldTypes.VALUE_NUMBER: serviceParameterValues.add(Long.parseLong(sParent)); break;
