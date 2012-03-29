@@ -576,7 +576,12 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     	var elem = Ext.get(document.createElement('div'));
     	var ddGroupId = (this.grid.id || Ext.id()) + "_dragDropGroup";
     	elem.set({id : ddGroupId, style : 'width:100%;height:35px; background-color:#FFFFFF;display:none;'});
-        this.mainBody.parent('.x-panel-bwrap').insertFirst(elem);
+    	/*
+    	This is added here (.x-panel-body) so that we don't have the problem of the grouptoolbar
+    	adding a new scrollbar to the grid panel, if it's in another place in the
+    	structure it will add a new scrollbar (unless there's space in the window naturally)
+    	*/
+        this.mainBody.parent('.x-panel-body').insertFirst(elem);
         elem.appendChild(this.createTableForDividersAndGroups());
     }
     
