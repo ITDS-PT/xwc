@@ -92,8 +92,8 @@ public class ThemeChanger extends XUIComponentBase implements IToolbarGroup {
 		}
 		
 		AttributeLov themesLov = new AttributeLov();
-		themesLov.setLovMap("#{viewBean.themeMap}");
-		themesLov.setValueExpression("#{viewBean.theme}");
+		themesLov.setLovMap("#{ " + getBeanId() + ".themeMap}");
+		themesLov.setValueExpression("#{ " + getBeanId() + ".theme}");
 		themesLov.setMaxLength(20);
 		themesLov.setId("themesChangedLov");
 		list.add(themesLov);
@@ -103,7 +103,7 @@ public class ThemeChanger extends XUIComponentBase implements IToolbarGroup {
 		changeThemeBtn.setIcon(getMenuIcon());
 		changeThemeBtn.setToolTip(getMenuTooltip());
 		changeThemeBtn.setId("changeThemeMenu");
-		changeThemeBtn.setServerAction("#{viewBean.changeTheme}");
+		changeThemeBtn.setServerAction("#{ " + getBeanId() + ".changeTheme}");
 		changeThemeBtn.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 		
 		list.add(changeThemeBtn);

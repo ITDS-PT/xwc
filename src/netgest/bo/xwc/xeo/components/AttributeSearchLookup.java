@@ -80,7 +80,7 @@ public class AttributeSearchLookup extends AttributeNumberLookup {
 	private void search(XUICommand command) {
         try {
             XEOEditBean oXEOBaseBean;
-            oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean("viewBean");
+            oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean( getBeanId() );
             oXEOBaseBean.searchTextIndexLookup(getClientId(),String.valueOf(command.getCommandArgument()));
         } catch (boRuntimeException e) {
             throw new RuntimeException(e);

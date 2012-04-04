@@ -1,5 +1,6 @@
 package netgest.bo.xwc.xeo.components;
 
+import javax.faces.component.UIComponent;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.connectors.DataListConnector;
@@ -7,6 +8,7 @@ import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Columns;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 /**
@@ -22,7 +24,7 @@ public class List extends GridPanel {
 	 * The list of XEO Objects to display
 	 */
 	private XUIBindProperty<XEOObjectListConnector> targetList = 
-		new XUIBindProperty<XEOObjectListConnector>("targetList", this, XEOObjectListConnector.class, "#{viewBean.dataList}" );
+		new XUIBindProperty<XEOObjectListConnector>("targetList", this, XEOObjectListConnector.class);
 	
 	/**
 	 * Whether or not the default {@link ListToolBar} should be rendered
@@ -79,6 +81,9 @@ public class List extends GridPanel {
 	
 	@Override
 	public void initComponent() {
+		
+		this.setTargetList( "#{" + getBeanId() + ".dataList}" );
+		
 		super.initComponent();
 		
 		applyComponentProperties();
@@ -87,6 +92,20 @@ public class List extends GridPanel {
 			addIconColumn();
 		}
 		createToolBar( 0 );
+		java.util.List<UIComponent> children = getChildren();
+		for (UIComponent child : children){
+			setBeanIdOnChildren((XUIComponentBase)child, getBeanId());
+		}
+		
+	}
+	
+	private void setBeanIdOnChildren(XUIComponentBase comp, String beanId){
+		comp.setBeanId(beanId);
+		java.util.List<UIComponent> children = comp.getChildren();
+		for (UIComponent child : children){
+			if (child instanceof XUIComponentBase)
+				setBeanIdOnChildren(((XUIComponentBase)child),beanId);
+		}
 	}
 	
 	public void applyComponentProperties() {
@@ -97,7 +116,7 @@ public class List extends GridPanel {
 			setRowSelectionMode( GridPanel.SELECTION_CELL );
 		
 		if( super.getStateProperty( "onRowDoubleClick" ).isDefaultValue() )
-			setOnRowDoubleClick( "#{viewBean.rowDoubleClick}" );
+			setOnRowDoubleClick( "#{"+getBeanId()+".rowDoubleClick}" );
 	}
 	
 	public void addIconColumn() {

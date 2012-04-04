@@ -324,11 +324,11 @@ public class Menu extends ViewerCommandSecurityBase {
     
     private Boolean check( Boolean ret, String varName, String roles ) {
     	if( roles != null ) {
-	    	ValueExpression v = createValueExpression( "#{viewBean.isAdministrator}" ,  Boolean.TYPE );
+	    	ValueExpression v = createValueExpression( "#{"+getBeanId()+".isAdministrator}" ,  Boolean.TYPE );
 	    	if( !((Boolean)v.getValue( getELContext() )).booleanValue() ) {
 	    		String[] rolesA = roles.split( "," );
 	    		if( rolesA.length > 0  ) { 
-			    	v = createValueExpression( "#{viewBean."+varName+"}",  String[].class );
+			    	v = createValueExpression( "#{"+getBeanId()+"."+varName+"}",  String[].class );
 			    	String[] 		values = (String[])v.getValue( getELContext() );
 			    	List<String>	valuesList = Arrays.asList( values );
 			    	for( String role : rolesA ) {

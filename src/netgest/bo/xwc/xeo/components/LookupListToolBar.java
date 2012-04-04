@@ -26,7 +26,7 @@ public class LookupListToolBar extends ListToolBar {
 	 * the parent {@link LookupList} component
 	 */
 	XUIBindProperty<XEOObjectListConnector> 	targetList = 
-		new XUIBindProperty<XEOObjectListConnector>("targetList", this ,XEOObjectListConnector.class, "#{viewBean.dataList}" );
+		new XUIBindProperty<XEOObjectListConnector>("targetList", this ,XEOObjectListConnector.class);
 		
 	@Override
 	public String getRendererType() {
@@ -51,7 +51,7 @@ public class LookupListToolBar extends ListToolBar {
 	@Override
 	public void initComponent() { 
 		// Render ToolBar Methods
-		
+		this.setTargetList("#{" + getBeanId() + ".dataList}");
 		getChildren().add( currentMenuPos++, Menu.getMenuSpacer() );
 		createViewerBeanMethod( 
 				XEOComponentMessages.LOOKUPLISTTB_CONFIRM.toString(), 

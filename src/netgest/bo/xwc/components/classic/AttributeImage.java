@@ -41,7 +41,7 @@ import netgest.io.iFile;
  */
 public class AttributeImage extends ViewerOutputSecurityBase {
 	
-    private XUIBaseProperty<String> beanProperty         		= new XUIBaseProperty<String>( "beanProperty", this, "viewBean.currentData" );
+    private XUIBaseProperty<String> beanProperty         		= new XUIBaseProperty<String>( "beanProperty", this, "currentData" );
     
     private XUIBaseProperty<ValueExpression> dataType       	= new XUIBaseProperty<ValueExpression>( "dataType", this );
     private XUIBaseProperty<ValueExpression> dataFieldConnector = new XUIBaseProperty<ValueExpression>( "dataFieldConnector", this );
@@ -64,8 +64,9 @@ public class AttributeImage extends ViewerOutputSecurityBase {
 
     @Override
 	public void initComponent() {
-        // Component initializations.
+    	this.setBeanProperty(getBeanId() + ".currentData");
         createChildComponents();
+        
     }
     
     public void createChildComponents() {
@@ -155,7 +156,7 @@ public class AttributeImage extends ViewerOutputSecurityBase {
 	public void setObjectAttribute( String sObjectAttribute ) {
         
 
-        String sBeanExpression = "#{" + getBeanProperty() + "." + sObjectAttribute;
+        String sBeanExpression = "#{" + getBeanId()+ "." + getBeanProperty() + "." + sObjectAttribute;
 
         this.objectAttribute.setExpressionText( sObjectAttribute );
 

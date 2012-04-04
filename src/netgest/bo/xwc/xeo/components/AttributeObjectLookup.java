@@ -54,7 +54,7 @@ public class AttributeObjectLookup extends AttributeBase {
         
         oOpenCommand = new XUICommand();
         oOpenCommand.setId( getId() + "_op" );
-        oOpenCommand.setActionExpression( createMethodBinding( "#{viewBean.openLookupObject}" ) );
+        oOpenCommand.setActionExpression( createMethodBinding( "#{" + getBeanId() + ".openLookupObject}" ) );
         getChildren().add( oOpenCommand );
 
     }
@@ -68,7 +68,7 @@ public class AttributeObjectLookup extends AttributeBase {
     private void doLookup() {
         try {
             XEOEditBean oXEOBaseBean;
-            oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean("viewBean");
+            oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean( getBeanId() );
             oXEOBaseBean.lookupAttribute( this.getClientId() );
         } catch (boRuntimeException e) {
             throw new RuntimeException(e);

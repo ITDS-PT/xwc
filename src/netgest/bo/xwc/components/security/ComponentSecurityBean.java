@@ -247,7 +247,7 @@ public class ComponentSecurityBean extends XEOEditBean {
 			}
 			item.setText( label );
 			item.setValue( viewerName + "|" + id );
-			item.setServerAction( "#{viewBean.selectComponent}" );
+			item.setServerAction( "#{" + getId() + ".selectComponent}" );
 			folderMenu.getChildren().add( item );
 			menuMap.put( sBoui, item );
 			
@@ -321,7 +321,7 @@ public class ComponentSecurityBean extends XEOEditBean {
 		oBaseBean = (ComponentSecurityPermissionsBean)oViewRoot.getBean("viewBean");
 		oBaseBean.createNew( "XVWAccessPolicyDetail" );
 		oRequestContext.setViewRoot( oViewRoot );
-		oBaseBean.setParentBeanId( "viewBean" );
+		oBaseBean.setParentBeanId( getId() );
 		oBaseBean.load();
 		oViewRoot.processInitComponents();
 	}
@@ -436,7 +436,7 @@ public class ComponentSecurityBean extends XEOEditBean {
 			
 			oRequestContext.setViewRoot( oViewRoot );
 			oBaseBean.setCurrentObjectKey( String.valueOf( editValue ) );
-			oBaseBean.setParentBeanId( "viewBean" );
+			oBaseBean.setParentBeanId( getId() );
 			oBaseBean.load();
 			oViewRoot.processInitComponents();
 			

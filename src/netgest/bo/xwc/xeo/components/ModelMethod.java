@@ -30,6 +30,7 @@ public class ModelMethod extends ViewerMethod {
 	@Override
 	public void initComponent() {
 		super.initComponent();
+		this.setTargetObject( "#{" + getBeanId() + ".XEOObject}" );
 		if(this.icon.isDefaultValue()) {
 			boObject xeoObject = targetObject.getEvaluatedValue();
 			boDefMethod methodDefinition = xeoObject.getBoDefinition().getBoMethod(targetMethod.getEvaluatedValue());
@@ -42,7 +43,7 @@ public class ModelMethod extends ViewerMethod {
 	 * The {@link boObject} from which the method will be executed
 	 */
 	XUIBindProperty<boObject> 	targetObject = 
-		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
+		new XUIBindProperty<boObject>("targetObject", this, boObject.class );
 		
 	/**
 	 * The name of the method from the {@link boObject} to execute

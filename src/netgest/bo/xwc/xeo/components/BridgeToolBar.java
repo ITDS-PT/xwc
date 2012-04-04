@@ -17,6 +17,7 @@ import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 
@@ -35,7 +36,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 	 * Allows to change the object that will be used to retrieve the bridge from
 	 */
 	private XUIBindProperty<boObject> 	targetObject 	= 
-		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
+		new XUIBindProperty<boObject>("targetObject", this, boObject.class );
 
 	/**
 	 * The name of the bridge to where the toolbar is connected.
@@ -140,9 +141,25 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 	
 	@Override
 	public void initComponent() {
-		
+		this.setTargetObject("#{" + getBeanId() + ".XEOObject}");
+		System.out.println(getBeanId());
 		super.initComponent();
 		createToolBar();
+		
+		//Set the beanId for all children that are dynamically created
+		List<UIComponent> children = getChildren();
+		for (UIComponent child : children){
+			setBeanIdOnChildren((XUIComponentBase)child, getBeanId());
+		}
+	}
+	
+	private void setBeanIdOnChildren(XUIComponentBase comp, String beanId){
+		comp.setBeanId(beanId);
+		List<UIComponent> children = comp.getChildren();
+		for (UIComponent child : children){
+			if (child instanceof XUIComponentBase)
+				setBeanIdOnChildren(((XUIComponentBase)child),beanId);
+		}
 	}
 	
 	public void createToolBar() {

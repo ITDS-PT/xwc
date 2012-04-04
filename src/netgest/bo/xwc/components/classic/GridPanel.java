@@ -99,7 +99,11 @@ public class GridPanel extends ViewerInputSecurityBase {
 			"dataSource", this, DataListConnector.class);
 
 	private XUIMethodBindProperty filterLookup = new XUIMethodBindProperty(
-			"filterLookup", this, "#{viewBean.lookupFilterObject}");
+			"filterLookup", this);
+	
+	public void setFilterLookup( String lookupExpr ){
+		this.filterLookup.setExpressionText( lookupExpr );
+	}
 
 	private XUIViewProperty<HashMap<String, ArrayList<String>>> aggregateFields = new XUIViewProperty<HashMap<String, ArrayList<String>>>(
 			"aggregateFields", this, null);
@@ -589,6 +593,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 	@Override
 	public void initComponent() {
 		super.initComponent();
+		
+		this.setFilterLookup( "#{" + getBeanId() + ".lookupFilterObject}" );
+
+		
 		HashMap<String, String> defaults = new HashMap<String, String>();
 		defaults.put("groupBy", getGroupBy() );
 		defaults.put("currentSortTerms", this.currentSortTerms.getValue() );
@@ -789,7 +797,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 				requestContext.getSessionContext();
 			
 			XUIViewRoot viewSelCols = 
-					sessionContext.createView( "netgest/bo/xwc/components/classic/grid/GridTreeSelector.xvw" );
+					sessionContext.createChildView( "netgest/bo/xwc/components/classic/grid/GridTreeSelector.xvw" );
 			
 			GridTreeSelectorEditBean selectorBean = 
 				(GridTreeSelectorEditBean)viewSelCols.getBean( "viewBean" );
@@ -806,6 +814,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 			Column[] columns = 
 					gridPanel.getColumns();
 
+			
 			DataListConnector gridDataSource = gridPanel.getDataSource(); 
 			
 			for( Column column : columns ) {
@@ -1312,14 +1321,14 @@ public class GridPanel extends ViewerInputSecurityBase {
 				String.class));
 		
 		if( this.dataSource.isDefaultValue() )
-			this.setDataSource("#{viewBean.currentData." + getObjectAttribute()
+			this.setDataSource("#{" + getBeanId() + ".currentData." + getObjectAttribute()
 					+ ".dataList}");
 		
 		if( this.rowClass.isDefaultValue() )
-			this.setRowClass("#{viewBean.rowClass}");
+			this.setRowClass("#{" + getBeanId() + ".rowClass}");
 		
 		if( this.onRowDoubleClick.isDefaultValue() )
-			this.setOnRowDoubleClick("#{viewBean.editBridge}");
+			this.setOnRowDoubleClick("#{" + getBeanId() + ".editBridge}");
 		
 		if( this.rowDblClickTarget.isDefaultValue() )
 			this.setRowDblClickTarget("self");

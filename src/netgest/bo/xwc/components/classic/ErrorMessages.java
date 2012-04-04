@@ -72,7 +72,7 @@ public class ErrorMessages extends XUIComponentBase {
 	public void preRender() {
     	if( getChildCount() == 0 ) {
     		XUICommand cmd = new XUICommand();
-    		cmd.setActionExpression( createMethodBinding( "#{viewBean.canCloseTab}") );
+    		cmd.setActionExpression( createMethodBinding( "#{" + getBeanId() + ".canCloseTab}" ) );
     		getChildren().add( cmd );
     	}
 	}

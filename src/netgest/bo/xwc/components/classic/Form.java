@@ -57,7 +57,7 @@ public class Form extends XUIForm
 		// N�o existe outra maneira j� que o propriedade � sempre resolvida atrav�s da class
 		// ScopedAttributeELResolver 
 		
-		if( getRequestContext().getViewRoot().getBean("viewBean") != null ) {
+		if( getRequestContext().getViewRoot().getBean( getBeanId() ) != null ) {
 			try {
 				byte ret =  this.securityPermissions.getEvaluatedValue();
 				return ret;

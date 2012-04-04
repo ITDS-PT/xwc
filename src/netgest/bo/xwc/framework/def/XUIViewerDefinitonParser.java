@@ -6,18 +6,24 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.el.ExpressionFactory;
+import javax.el.ValueExpression;
+import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+import netgest.utils.StringUtils;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.NSResolver;
 import oracle.xml.parser.v2.XMLDocument;
@@ -31,14 +37,20 @@ public class XUIViewerDefinitonParser
 {
 	
 	private static final String DEFAULT_VIEWERS_ROOT = "viewers";
+	private static final String DEFAULT_BEAN_ID = "viewBean";
     private static NSResolver ns = new GenericResolver();
     private static HashMap<String, XUIViewerDefinition> viewCache = new HashMap<String, XUIViewerDefinition>();
-
-    public XUIViewerDefinitonParser()
-    {
+    
+    
+    public XUIViewerDefinitonParser(){
+    	
     }
     
     public XUIViewerDefinition parse( InputStream inputStream ) {
+    	return parse(inputStream, new HashSet<String>());
+    }
+    
+    public XUIViewerDefinition parse( InputStream inputStream, Set<String> viewersAlreadyParsed ) {
         XUIViewerDefinition xwvr;
         try
         {
@@ -50,21 +62,22 @@ public class XUIViewerDefinitonParser
             node = (XMLElement)xmldoc.selectSingleNode("/xvw:root/xvw:viewer", ns);
             xwvr = new XUIViewerDefinition();
 
-            xwvr.setViewerBean( node.getAttribute( "beanClass" ) );
-            xwvr.setViewerBeanId( node.getAttribute( "beanId" ) );
+            parseBeanClasses( xwvr, node.getAttribute( "beanClass" ) );
+            parseBeanIds( xwvr, node.getAttribute( "beanId" ) );
+            
             xwvr.setRenderKitId( node.getAttribute( "renderKitId" ) ); 
 
-            xwvr.setOnRestoreViewPhase( node.getAttribute( "onRestoreViewPhase" ) );
-            xwvr.setOnCreateViewPhase( node.getAttribute( "onCreateViewPhase" ) );
+            xwvr.addOnRestoreViewPhase( node.getAttribute( "onRestoreViewPhase" ) );
+            xwvr.addOnCreateViewPhase( node.getAttribute( "onCreateViewPhase" ) );
 
-            xwvr.setBeforeApplyRequestValuesPhase( node.getAttribute( "beforeApplyRequestValuesPhase" ) );
-            xwvr.setAfterApplyRequestValuesPhase( node.getAttribute( "afterApplyRequestValuesPhase" ) );
+            xwvr.addBeforeApplyRequestValuesPhase( node.getAttribute( "beforeApplyRequestValuesPhase" ) );
+            xwvr.addAfterApplyRequestValuesPhase( node.getAttribute( "afterApplyRequestValuesPhase" ) );
             
-            xwvr.setBeforeUpdateModelPhase( node.getAttribute( "beforeUpdateModelPhase" ) );
-            xwvr.setAfterUpdateModelPhase( node.getAttribute( "afterUpdateModelPhase" ) );
+            xwvr.addBeforeUpdateModelPhase( node.getAttribute( "beforeUpdateModelPhase" ) );
+            xwvr.addAfterUpdateModelPhase( node.getAttribute( "afterUpdateModelPhase" ) );
             
-            xwvr.setBeforeRenderPhase( node.getAttribute( "beforeRenderPhase" ) );
-            xwvr.setAfterRenderPhase( node.getAttribute( "afterRenderPhase" ) );
+            xwvr.addBeforeRenderPhase( node.getAttribute( "beforeRenderPhase" ) );
+            xwvr.addAfterRenderPhase( node.getAttribute( "afterRenderPhase" ) );
             
             String localizationClasses = node.getAttribute( "localizationClasses" );
             
@@ -83,7 +96,7 @@ public class XUIViewerDefinitonParser
                 Node childNode = nlist.item( i );
                 if( childNode.getNodeType() == Node.ELEMENT_NODE )
                 {
-                    xwvr.setRootComponent( parseNode( xwvr, (XMLElement)childNode, null ) );
+                    xwvr.setRootComponent( parseNode( xwvr, (XMLElement)childNode, null, viewersAlreadyParsed ) );
                 }
             }
             
@@ -97,7 +110,35 @@ public class XUIViewerDefinitonParser
         return xwvr;
     }
     
-    public XUIViewerDefinition parse( String viewerName ) 
+    private void parseBeanClasses(XUIViewerDefinition vdef, String beanClasses){
+    	String[] beans = beanClasses.split( "," );
+    	for (String bean : beans){
+    		if ( !StringUtils.isEmpty( bean ) )
+    			vdef.addViewerBean( bean );
+    	}
+    }
+    
+    private void parseBeanIds( XUIViewerDefinition vdef, String beanIds ){
+    	String[] beanIdentifiers = beanIds.split( "," );
+    	for (String beanId : beanIdentifiers){
+    		vdef.addViewerBeanId( beanId );
+    	}
+    }
+    
+    public XUIViewerDefinition parse( String viewerName ){
+    	return parse( viewerName, new HashSet<String>() );
+    }
+    
+    /**
+     * 
+     * Parses a viewer definition from a filename
+     * 
+     * @param viewerName The path to the viewer
+     * @param viewersParsed A list of already parsed viewers (to check for cyclic references)
+     * 
+     * @return The viewer definition
+     */
+    public XUIViewerDefinition parse( String viewerName, Set<String> viewersParsed ) 
     {
         XUIViewerDefinition xwvr;
         
@@ -109,7 +150,7 @@ public class XUIViewerDefinitonParser
             if( is != null )
             {
             	try {
-            		xwvr = parse( is );
+            		xwvr = parse( is , viewersParsed );
             		viewCache.put( viewerName, xwvr );
             	} finally {
             		if( is != null )
@@ -129,6 +170,17 @@ public class XUIViewerDefinitonParser
         }
         return xwvr;
     }
+    
+    /**
+     * 
+     * Checks whether a given viewer was already parsed in the processing of this viewers
+     * 
+     * @param viewerName The viewer name
+     * @return
+     */
+    private boolean wasViewerAlreadyParsed(String viewerName, Set<String> parsed){
+    	return parsed.contains( viewerName );
+    }
 
     public InputStream resolveViewer( String viewerName ) {
     	InputStream is = resolveViewerFromWebContext( viewerName );
@@ -147,6 +199,9 @@ public class XUIViewerDefinitonParser
     	if( is == null ) {
     		is = contextClassLoader.getResourceAsStream( viewerName );
     	}
+    	
+    	if ( is == null)
+    		is  = this.getClass().getResourceAsStream( viewerName );
 
     	if( is == null ) {
 			int underScoreIdx = viewerName.lastIndexOf( '_' );
@@ -208,12 +263,19 @@ public class XUIViewerDefinitonParser
     	return null;
     }
     
-    public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, XUIViewerDefinitionNode parent )
+    public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, XUIViewerDefinitionNode parent ){
+    	return parseNode(root, node, parent, new HashSet<String>());
+    }
+    
+    public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, XUIViewerDefinitionNode parent, Set<String> alreadyParsedViewers )
     {
         XUIViewerDefinitionNode component = new XUIViewerDefinitionNode();
         component.setRoot( root );
         component.setParent( parent );
         
+        if ( isIncludeComponent( node ) ){
+        	return replaceIncludeContent( root, node, parent, alreadyParsedViewers );
+        }
         
         if( node.getNodeName().indexOf(':') == -1 )
         {
@@ -236,26 +298,28 @@ public class XUIViewerDefinitonParser
             component.setName( node.getNodeName() );
         }
         
+        setComponentBeanIdPropertyForNonDefaultBean(component, root);
+        
         NamedNodeMap atts = node.getAttributes();
         for (int i = 0; i < atts.getLength(); i++) 
         {
-            Node xnode = atts.item( i );
-            if( "id".equalsIgnoreCase( xnode.getNodeName() ) )
-            {
+        	Node xnode = atts.item( i );
+            if( "id".equalsIgnoreCase( xnode.getNodeName() ) ) {
                 component.setId( xnode.getNodeValue() );   
             }
-            else
-            {
-                component.setProperty( xnode.getNodeName(), getLocalizedMessage( root, xnode.getNodeValue() ) );
+            else  {
+            	component.setProperty( xnode.getNodeName(), getLocalizedMessage( root, xnode.getNodeValue() ) );
             }
         }
+        
+        
         NodeList nlist = node.getChildNodes();
         for (int i = 0; i < nlist.getLength(); i++) 
         {
             Node cnode = nlist.item( i );
             if( cnode.getNodeType() == Node.ELEMENT_NODE )
             {
-                component.addChild( parseNode( root, (XMLElement)nlist.item( i ), component ) );
+                component.addChild( parseNode( root, (XMLElement)nlist.item( i ), component, alreadyParsedViewers ) );
             } 
             else if ( cnode.getNodeType() == Node.TEXT_NODE ) 
             {
@@ -268,8 +332,112 @@ public class XUIViewerDefinitonParser
         return component; 
     }
     
+    ///// TESTING 
     
-    @SuppressWarnings("unchecked")
+    private void setComponentBeanIdPropertyForNonDefaultBean( XUIViewerDefinitionNode component, XUIViewerDefinition viewerDef ){
+    	String beanId = component.getProperty("beanId");
+    	if ( StringUtils.isEmpty( beanId ) ){
+    		if ( viewerHasOneBeanIdentifier( viewerDef ) ) {
+    			String viewerBeanIdentifier = getBeanIdentifier( viewerDef );
+    			if ( !viewerBeanIdentifier.equalsIgnoreCase( DEFAULT_BEAN_ID ) ){
+    				component.setProperty("beanId",viewerBeanIdentifier);
+    			}
+    		}
+    	}
+    }
+    
+    private String getBeanIdentifier( XUIViewerDefinition def ){
+    	if (def.getViewerBeanIds().size() > 0)
+    		return def.getViewerBeanIds().get( 0 );
+    	return "";
+    }
+    
+    private boolean viewerHasOneBeanIdentifier( XUIViewerDefinition def ){
+    	return def.getViewerBeanIds().size() == 1 
+    	 && !StringUtils.isEmpty(def.getViewerBeanIds().get(0));
+    }
+    private boolean isIncludeComponent( XMLElement node ){
+    	return node.getNodeName().indexOf("include") > -1;
+    }
+    
+    private XUIViewerDefinitionNode replaceIncludeContent( XUIViewerDefinition def,  XMLElement node, XUIViewerDefinitionNode parent, Set<String> parsed ){
+    	
+    	String includeFilePath = node.getAttribute( "src" );
+    	
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	
+        ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
+        ValueExpression m = oExFactory.createValueExpression( context.getELContext(), includeFilePath, String.class);
+        
+        if ( !m.isLiteralText() ){
+        	includeFilePath = (String)m.getValue( context.getELContext() );
+        	if ("".equalsIgnoreCase(includeFilePath))
+        		throw new RuntimeException( String.format("The expression %s does not resolve to a viewer path to include", m.getExpressionString() ) );
+        }
+        
+    	
+    	if (wasViewerAlreadyParsed(includeFilePath, parsed))
+    		throw new RuntimeException( String.format("Cyclic reference: %s was already processed", includeFilePath ) );
+    	parsed.add( includeFilePath );
+    	
+    	XUIViewerDefinition included =  this.parse( includeFilePath , parsed );
+    	
+    	String rootComponentName = included.getRootComponent().getName();
+    	if (!rootComponentName.contains( "composition" ) )
+    		throw new RuntimeException( String.format( "Cannot include a viewer that's not a xvw:composition fragment: %s", includeFilePath ) );
+    	
+    	addBeansToViewerDefinition( def , included.getViewerBeans() );
+    	addBeanIdsToViewerDefinition( def , included.getViewerBeanIds() );
+    	addEventsFromIncludedViewer( def, included );
+    	
+    	XUIViewerDefinitionNode wrapper = wrapInclusion( def, included.getRootComponent().getChildren(), parent );
+    	return wrapper;
+    }
+    
+    private void addBeansToViewerDefinition( XUIViewerDefinition toAdd, List<String> beans ){
+    	Iterator<String> it = beans.iterator();
+    	while ( it.hasNext() ){
+    		toAdd.addViewerBean( it.next() );
+    	}
+    }
+    
+    private void addBeanIdsToViewerDefinition( XUIViewerDefinition toAdd, List<String> beanIds ){
+    	Iterator<String> it = beanIds.iterator();
+    	while ( it.hasNext() ){
+    		toAdd.addViewerBeanId( it.next() );
+    	}
+    }
+    
+    private void addEventsFromIncludedViewer( XUIViewerDefinition mainViewerDefinition, XUIViewerDefinition includedViewer ){
+    	
+    	mainViewerDefinition.addOnRestoreViewPhase( includedViewer.getOnRestoreViewPhaseList() );
+    	mainViewerDefinition.addOnCreateViewPhase( includedViewer.getOnCreateViewPhaseList() );
+    	
+    	mainViewerDefinition.addBeforeApplyRequestValuesPhase( includedViewer.getBeforeApplyRequestValuesPhaseList() );
+    	mainViewerDefinition.addAfterApplyRequestValuesPhase( includedViewer.getAfterApplyRequestValuesPhaseList() );
+    	
+    	mainViewerDefinition.addBeforeUpdateModelPhase( includedViewer.getBeforeUpdateModelPhaseList() );
+    	mainViewerDefinition.addAfterUpdateModelPhase( includedViewer.getAfterUpdateModelPhaseList() );
+    	
+    	mainViewerDefinition.addBeforeRenderPhase( includedViewer.getBeforeRenderPhaseList() );
+    	mainViewerDefinition.addAfterRenderPhase( includedViewer.getAfterRenderPhaseList() );
+    	
+    }
+    
+    private XUIViewerDefinitionNode wrapInclusion( XUIViewerDefinition def, List<XUIViewerDefinitionNode> result , XUIViewerDefinitionNode parent ){
+    	XUIViewerDefinitionNode wrapper = new XUIViewerDefinitionNode();
+    	wrapper.setRoot( def );
+    	wrapper.setParent( parent );
+    	wrapper.setName( "xvw:panel" );
+    	
+    	for (XUIViewerDefinitionNode child : result){
+    		wrapper.addChild(child);
+    	}
+    	return wrapper;
+    }
+    
+    //END TESTING
+    
 	private static String getLocalizedMessage( XUIViewerDefinition vwrDef, String message ) {
     	Pattern p = Pattern.compile("\\@\\{([a-zA-Z0-9_-]{1,})\\}");
     	Matcher m = p.matcher( message );
@@ -283,7 +451,7 @@ public class XUIViewerDefinitonParser
 		    		if( localizationClass != null && localizationClass.trim().length() > 0 ) {
 		    			try {
 							String 	fieldName = m.group(1); 
-							Class 	classInst = Class.forName( localizationClass );
+							Class<?> 	classInst = Class.forName( localizationClass );
 							try {
 								Field field = classInst.getField( fieldName );
 								message = field.get( null ).toString();

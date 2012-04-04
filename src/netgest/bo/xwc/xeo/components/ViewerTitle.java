@@ -10,7 +10,7 @@ public class ViewerTitle extends Title {
 
 	@Override
 	public void initComponent() {
-		super.setValueExpression( "#{viewBean.title}" );
+		super.setValueExpression( "#{" + getBeanId() + ".title}" );
 	}
 	
 

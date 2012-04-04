@@ -47,7 +47,7 @@ public class XUIViewerDefinitionNode
     {
         properties.put( name, value );
     }
-
+    
     public String getProperty( String name )
     {
         return (String)properties.get( name );

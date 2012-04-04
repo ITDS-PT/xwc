@@ -156,7 +156,7 @@ public class XEOEditBean extends XEOBaseBean
 			    	}
 					Window wnd = (Window)XUIRequestContext.getCurrentContext().getViewRoot().findComponent( Window.class );
 					if( wnd != null && wnd.getOnClose() == null ) {
-						wnd.setOnClose( "#{viewBean.cancel}" );
+						wnd.setOnClose( "#{"+ getId() +".cancel}" );
 					}
 				}
 	            return oBoObect;
@@ -906,7 +906,7 @@ public class XEOEditBean extends XEOBaseBean
             oBaseBean.setRelationInOrphanMode(false);
             
             oBaseBean.setParentBean( this );
-            oBaseBean.setParentBeanId( "viewBean" );
+            oBaseBean.setParentBeanId( getId() );
             oBaseBean.setParentComponentId( oAtt.getClientId() );
             
             oWnd = (Window)oViewRoot.findComponent(Window.class); 
@@ -942,7 +942,7 @@ public class XEOEditBean extends XEOBaseBean
             oBaseBean.setLookupObjects( getLookupObjectsMap( oAttHandler ) );
             oBaseBean.setSelectedObject( className );
             
-            oBaseBean.setParentParentBeanId( "viewBean" );
+            oBaseBean.setParentParentBeanId( getId() );
             oBaseBean.setParentComponentId( oAtt.getClientId() );
             String sBoql = getLookupQuery( oAttHandler, className );
             oBaseBean.executeBoql( sBoql );
@@ -1165,7 +1165,7 @@ public class XEOEditBean extends XEOBaseBean
             oBaseBean.setParentBean( this ); 
             oBaseBean.setParentAttributeName( bridge.getName() );
             oBaseBean.setLookupObjects( getLookupObjectsMap( bridge ) );
-            oBaseBean.setParentParentBeanId( "viewBean" );
+            oBaseBean.setParentParentBeanId( getId() );
             oBaseBean.setParentComponentId( oGrid.getClientId() );
             oBaseBean.setSelectedObject(refObj.getName());
             oBaseBean.executeBoql( 
@@ -1187,7 +1187,7 @@ public class XEOEditBean extends XEOBaseBean
 
             oEditBean = (XEOEditBean)oViewRoot.getBean("viewBean");
             oEditBean.setRelationInOrphanMode(false);
-            oEditBean.setParentBeanId( "viewBean" );
+            oEditBean.setParentBeanId( getId() );
             oEditBean.setParentComponentId( oGrid.getClientId() );
             
             oEditBean.createNew( refObj.getName(), getXEOObject().getBoui() );
@@ -1318,7 +1318,7 @@ public class XEOEditBean extends XEOBaseBean
 						XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 								.getBean("viewBean");
 
-						oBaseBean.setParentBeanId("viewBean");
+						oBaseBean.setParentBeanId( getId() );
 						oBaseBean.setParentComponentId(oGrid.getClientId());
 						oBaseBean.setCurrentObjectKey(String
 								.valueOf(lCurrentBoui));
@@ -1416,7 +1416,7 @@ public class XEOEditBean extends XEOBaseBean
 								else { 
 									oBaseBean.createNew( oObjectName );
 								}
-								oBaseBean.setParentBeanId("viewBean");
+								oBaseBean.setParentBeanId( getId() );
 								oBaseBean.setParentBean( this );
 								oBaseBean.setParentComponentId( oGrid.getClientId() );
 								
@@ -1434,7 +1434,7 @@ public class XEOEditBean extends XEOBaseBean
 
 						oBaseBean.createNew( oObjectName, getXEOObject().getBoui() );
 						
-						oBaseBean.setParentBeanId("viewBean");
+						oBaseBean.setParentBeanId( getId() );
 						oBaseBean.setParentBean( this );
 						oBaseBean.setParentComponentId( oGrid.getClientId() );
 					}
@@ -1769,7 +1769,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
     	clonedObject = getXEOObject().cloneObject();
     	XUIViewRoot clonedView = getSessionContext().createChildView( getRequestContext().getViewRoot().getViewId() );
     	
-    	((XEOEditBean)clonedView.getBean("viewBean")).setCurrentObjectKey( 
+    	( ( XEOEditBean ) clonedView.getBean( getId() ) ).setCurrentObjectKey( 
     			Long.toString( clonedObject.getBoui() ) 
     	);
     	getRequestContext().setViewRoot( clonedView );
@@ -2573,7 +2573,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
 					XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 							.getBean("viewBean");
 
-					oBaseBean.setParentBeanId("viewBean");
+					oBaseBean.setParentBeanId( getId() );
 					oBaseBean.setParentComponentId(oCommand.getClientId());
 					oBaseBean.setCurrentObjectKey(String
 							.valueOf(lCurrentBoui));
@@ -2696,7 +2696,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
             oBaseBean.setParentAttributeName( oAttHandler.getName() );
             oBaseBean.setLookupObjects( getLookupObjectsMap( oAttHandler ) );
             oBaseBean.setSelectedObject( targetObjectToSearch );
-            oBaseBean.setParentParentBeanId( "viewBean" );
+            oBaseBean.setParentParentBeanId( getId() );
             oBaseBean.setParentComponentId( oAtt.getClientId() );
             oBaseBean.setFullTextSearch(textToSearch);
             getRequestContext().setViewRoot(oViewRoot);  

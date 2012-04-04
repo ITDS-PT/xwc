@@ -2,6 +2,8 @@ package netgest.bo.xwc.xeo.components;
 
 import java.util.List;
 
+import javax.faces.component.UIComponent;
+
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.xwc.components.annotations.RequiredAlways;
@@ -10,6 +12,7 @@ import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 /**
  * 
@@ -26,7 +29,7 @@ public class Bridge extends GridPanel {
 	 * the bridge should be selected
 	 */
 	private XUIBindProperty<boObject> 	targetObject 			= 
-		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
+		new XUIBindProperty<boObject>("targetObject", this, boObject.class);
 		
 	/**
 	 * The name of the bridge to select from the 
@@ -104,17 +107,19 @@ public class Bridge extends GridPanel {
 	@Override
 	public void initComponent() {
 		
+		this.setTargetObject("#{" + getBeanId() + ".XEOObject}");
+		
 		if( getStateProperty("rowSelectionMode").isDefaultValue() )
 			this.setRowSelectionMode( GridPanel.SELECTION_MULTI_ROW );
 		
 		if( getStateProperty( "dataSource" ).isDefaultValue() )
-			this.setDataSource( "#{viewBean.currentData." + getBridgeName() + ".dataList}" );
+			this.setDataSource( "#{"+getBeanId()+".currentData." + getBridgeName() + ".dataList}" );
 		
 		if( getStateProperty( "rowClass" ).isDefaultValue() )
-			this.setRowClass( "#{viewBean.rowClass}" );
+			this.setRowClass( "#{"+getBeanId()+".rowClass}" );
 
 		if( getStateProperty( "onRowDoubleClick" ).isDefaultValue() )
-			this.setOnRowDoubleClick( "#{viewBean.editBridge}" );
+			this.setOnRowDoubleClick( "#{"+getBeanId()+".editBridge}" );
 		
 		if( getStateProperty( "rowDblClickTarget" ).isDefaultValue() )
 			this.setRowDblClickTarget("self");
@@ -127,6 +132,21 @@ public class Bridge extends GridPanel {
     	
 		
         super.initComponent();
+        
+        //Set the beanId for all children that are dynamically created
+		List<UIComponent> children = getChildren();
+		for (UIComponent child : children){
+			setBeanIdOnChildren((XUIComponentBase)child, getBeanId());
+		}
+	}
+	
+	private void setBeanIdOnChildren(XUIComponentBase comp, String beanId){
+		comp.setBeanId(beanId);
+		List<UIComponent> children = comp.getChildren();
+		for (UIComponent child : children){
+			if (child instanceof XUIComponentBase)
+				setBeanIdOnChildren(((XUIComponentBase)child),beanId);
+		}
 	}
 	
 	private ToolBar createToolbar() {

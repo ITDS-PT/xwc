@@ -19,7 +19,7 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 	public void initComponent(){
 		if (findComponent(getClientId() +"_cardIdLink") == null){
 			XUICommand cmd = new XUICommand();
-    		cmd.setActionExpression( createMethodBinding( "#{viewBean.openCardIdLink}") );
+    		cmd.setActionExpression( createMethodBinding( "#{" + getBeanId() + ".openCardIdLink}") );
     		cmd.setId(getId() + "_cardIdLink");
     		this.cardIdCommand = cmd;
     		getChildren().add( cmd );

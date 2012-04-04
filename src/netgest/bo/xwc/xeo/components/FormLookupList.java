@@ -1,5 +1,9 @@
 package netgest.bo.xwc.xeo.components;
 
+import java.util.List;
+
+import javax.faces.component.UIComponent;
+
 import netgest.bo.xwc.components.classic.Attribute;
 import netgest.bo.xwc.components.classic.Cell;
 import netgest.bo.xwc.components.classic.Form;
@@ -7,6 +11,7 @@ import netgest.bo.xwc.components.classic.Row;
 import netgest.bo.xwc.components.classic.Rows;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages;
 
 /**
@@ -127,6 +132,21 @@ public class FormLookupList extends Form {
 			getChildren().add(0,rows);
 		}
 		
+		//Set the beanId for all children that are dynamically created
+		List<UIComponent> children = getChildren();
+		for (UIComponent child : children){
+			setBeanIdOnChildren((XUIComponentBase)child, getBeanId());
+		}
+		
+	}
+	
+	private void setBeanIdOnChildren(XUIComponentBase comp, String beanId){
+		comp.setBeanId(beanId);
+		List<UIComponent> children = comp.getChildren();
+		for (UIComponent child : children){
+			if (child instanceof XUIComponentBase)
+				setBeanIdOnChildren(((XUIComponentBase)child),beanId);
+		}
 	}
 	
 	private void createViewerTitle() {

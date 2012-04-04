@@ -143,14 +143,14 @@ public class AttributeWordMacro extends AttributeBase {
 	    	FileBrowseBean oFileBrowseBean = (FileBrowseBean)oViewRoot.getBean( "viewBean" );
 	    	
 	    	oFileBrowseBean.setParentComponentId( getClientId() );
-	    	oFileBrowseBean.setParentBeanId("viewBean" );
+	    	oFileBrowseBean.setParentBeanId( getBeanId() );
 	    	
 	    	getRequestContext().renderResponse();
     	}
     	else {
             try {
                 XEOEditBean oXEOBaseBean;
-                oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean("viewBean");
+                oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean( getBeanId() );
                 oXEOBaseBean.lookupAttribute( this.getClientId() );
             } catch (boRuntimeException e) {
                 throw new RuntimeException(e);

@@ -115,7 +115,7 @@ public class PreferenceStoreEditBean extends XEOBaseBean {
 				Menu m = new Menu();
 				m.setText( key );
 				m.setValue( key );
-				m.setServerAction("#{viewBean.selectComponent}");
+				m.setServerAction("#{" + getId() + ".selectComponent}");
 				parentMenu.getChildren().add( m );
 			}
 		}

@@ -74,12 +74,12 @@ public class AttributeNumberLookup extends AttributeBase {
         
         oOpenCommand = new XUICommand();
         oOpenCommand.setId( getId() + "_op" );
-        oOpenCommand.setActionExpression( createMethodBinding( "#{viewBean.openLookupObject}" ) );
+        oOpenCommand.setActionExpression( createMethodBinding( "#{"+getBeanId()+".openLookupObject}" ) );
         getChildren().add( oOpenCommand );
 
         oFavoriteCommand = new XUICommand();
         oFavoriteCommand.setId( getId() + "_showFav" );
-        oFavoriteCommand.setActionExpression( createMethodBinding( "#{viewBean.showFavorite}" ) );
+        oFavoriteCommand.setActionExpression( createMethodBinding( "#{"+getBeanId()+".showFavorite}" ) );
         getChildren().add( oFavoriteCommand );
     }
     
@@ -93,9 +93,9 @@ public class AttributeNumberLookup extends AttributeBase {
 
     private void doLookup() {
         try {
-            XEOEditBean oXEOBaseBean;
-            oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean("viewBean");
-            oXEOBaseBean.lookupAttribute( this.getClientId() );
+            XEOEditBean oXEOEditBean;
+            oXEOEditBean = (XEOEditBean)getRequestContext().getViewRoot().getBean( getBeanId() );
+            oXEOEditBean.lookupAttribute( this.getClientId() );
         } catch (boRuntimeException e) {
             throw new RuntimeException(e);
         }

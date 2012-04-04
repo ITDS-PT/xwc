@@ -534,7 +534,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	
 	public static String getExportTitle( GridPanel oGrid ) {
     	XUIViewRoot oViewRoot = XUIRequestContext.getCurrentContext().getViewRoot();
-    	Object viewBean = oViewRoot.getBean("viewBean");
+    	Object viewBean = oViewRoot.getBean( oGrid.getBeanId() );
     	String sTitle;
     	if( viewBean instanceof XEOEditBean  ) {
     		sTitle = ((XEOEditBean)viewBean).getTitle();

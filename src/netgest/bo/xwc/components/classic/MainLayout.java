@@ -55,7 +55,7 @@ public class MainLayout extends XUIComponentBase {
 			showUserPropsCmd = new XUICommand();
 			showUserPropsCmd.setId("showUserPropsCmd");
 			showUserPropsCmd
-					.setActionExpression(createMethodBinding("#{viewBean.showUserProperties}"));
+					.setActionExpression(createMethodBinding("#{" + getBeanId() + ".showUserProperties}"));
 			this.getChildren().add(showUserPropsCmd);
 		}
 	}

@@ -14,6 +14,7 @@ import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
@@ -46,6 +47,7 @@ public class EditToolBar extends ToolBar {
 		);
 	
 	
+	
 	/**
 	 * Whether or not the "Confirm" button is rendered
 	 * Only works if the parent {@link FormEdit} is working 
@@ -68,7 +70,7 @@ public class EditToolBar extends ToolBar {
 	 * inherited from the parent {@link FormEdit}
 	 */
 	private XUIViewBindProperty<boObject> 	targetObject = 
-		new XUIViewBindProperty<boObject>("targetObject", this ,boObject.class, "#{viewBean.XEOObject}" );
+		new XUIViewBindProperty<boObject>("targetObject", this ,boObject.class );
 
 	/**
 	 * Whether or not he "save" button is rendered
@@ -186,7 +188,7 @@ public class EditToolBar extends ToolBar {
 	 * Whether or not the {@link EditToolBar} is in orphan mode
 	 */
 	private XUIBindProperty<Boolean> orphanMode = 
-		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class, "#{viewBean.editInOrphanMode}" );
+		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class );
 		
 	public boolean getRenderConfirmBtn() {
 		return renderConfirmBtn.getEvaluatedValue();
@@ -368,16 +370,36 @@ public class EditToolBar extends ToolBar {
 		return this.renderFavoritesBtn.getEvaluatedValue();
 	}
 	
-	public void setRenderFavoritesBtn(String favoritesExpr){
-		this.renderFavoritesBtn.setExpressionText(favoritesExpr);
+	public void setRenderFavoritesBtn( String favoritesExpr ){
+		this.renderFavoritesBtn.setExpressionText( favoritesExpr );
 	}
+	
+	
 	
 	@Override
 	public void initComponent() {
+		this.setTargetObject("#{" + getBeanId() + ".XEOObject}");
+		this.setOrphanMode("#{" + getBeanId() + ".editInOrphanMode}");
 		if( getOrphanMode() )
 			initOrphanComponent();
 		else
 			initNonOrphanComponent();
+		
+		//Set the beanId for all children that are dynamically created
+		List<UIComponent> children = getChildren();
+		for (UIComponent child : children){
+			setBeanIdOnChildren((XUIComponentBase)child, getBeanId());
+		}
+		
+	}
+	
+	private void setBeanIdOnChildren(XUIComponentBase comp, String beanId){
+		comp.setBeanId(beanId);
+		List<UIComponent> children = comp.getChildren();
+		for (UIComponent child : children){
+			if (child instanceof XUIComponentBase)
+				setBeanIdOnChildren(((XUIComponentBase)child),beanId);
+		}
 	}
 	
 	@Override
@@ -681,7 +703,7 @@ public class EditToolBar extends ToolBar {
 		propertiesMenu.setText("");
 		propertiesMenu.setIcon("extjs/resources/images/default/tree/leaf.gif");
 		propertiesMenu.setToolTip(XEOViewersMessages.LBL_PROPERTIES.toString());
-		propertiesMenu.setServerAction("#{viewBean.showProperties}");
+		propertiesMenu.setServerAction("#{" + getBeanId() + ".showProperties}");
 		propertiesMenu.setTarget("self");
 		if (isDisabled())
 			propertiesMenu.setDisabled(true);
@@ -717,7 +739,7 @@ public class EditToolBar extends ToolBar {
 			if (getRenderDependentsBtn() || getRenderInformationMenu()){
 				Menu dependents = new Menu();
 				dependents.setText(XEOViewersMessages.LBL_DEPENDENTS.toString());
-				dependents.setServerAction("#{viewBean.showDependents}");
+				dependents.setServerAction("#{" + getBeanId() + ".showDependents}");
 				dependents.setTarget("window");
 				informationGroup.getChildren().add(dependents);
 			}
@@ -725,7 +747,7 @@ public class EditToolBar extends ToolBar {
 			if (getRenderDependenciesBtn() || getRenderInformationMenu()){
 				Menu dependenciesMenu = new Menu();
 				dependenciesMenu.setText(XEOViewersMessages.LBL_DEPENDENCIES.toString());
-				dependenciesMenu.setServerAction("#{viewBean.showDependencies}");
+				dependenciesMenu.setServerAction("#{" + getBeanId() + ".showDependencies}");
 				dependenciesMenu.setTarget("window");
 				informationGroup.getChildren().add(dependenciesMenu);
 			}
@@ -735,7 +757,7 @@ public class EditToolBar extends ToolBar {
 		{
 			Menu versioningMenu = new Menu();
 			versioningMenu.setText(XEOComponentMessages.EDITTB_LIST_VERSIONS_TTIP.toString());
-			versioningMenu.setServerAction("#{viewBean.listVersions}");
+			versioningMenu.setServerAction("#{" + getBeanId() + ".listVersions}");
 			versioningMenu.setTarget("window");
 			informationGroup.getChildren().add(versioningMenu);
 		}
@@ -744,7 +766,7 @@ public class EditToolBar extends ToolBar {
 		{
 			Menu oplMenu = new Menu();
 			oplMenu.setText(XEOComponentMessages.EDITTB_OPL.toString());
-			oplMenu.setServerAction("#{viewBean.showOPL}");
+			oplMenu.setServerAction("#{" + getBeanId() + ".showOPL}");
 			oplMenu.setTarget("self");
 			informationGroup.getChildren().add(oplMenu);
 		}
@@ -775,7 +797,7 @@ public class EditToolBar extends ToolBar {
 			exportExcelMenu.setText(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_EXCEL_TOOLTIP.toString());
 			exportExcelMenu.setToolTip(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_EXCEL_TOOLTIP.toString());
 			exportExcelMenu.setIcon("ext-xeo/images/menus/exportar-excel.gif");
-			exportExcelMenu.setServerAction("#{viewBean.exportExcel}");
+			exportExcelMenu.setServerAction("#{" + getBeanId() + ".exportExcel}");
 			exportExcelMenu.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 			exportExcelMenu.setTarget("download");
 			exportGroup.getChildren().add(exportExcelMenu);
@@ -787,7 +809,7 @@ public class EditToolBar extends ToolBar {
 			exportHTMLMenu.setText(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_HTML.toString());
 			exportHTMLMenu.setIcon("ext-xeo/images/menus/exportar-html.gif");
 			exportHTMLMenu.setToolTip(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_HTML_TOOLTIP.toString());
-			exportHTMLMenu.setServerAction("#{viewBean.exportHTML}");
+			exportHTMLMenu.setServerAction("#{" + getBeanId() + ".exportHTML}");
 			String parameters = "{width:800, height:400, title:'"+ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_HTML_TITLE.toString()+"'}";
 			exportHTMLMenu.setTarget("window:" + parameters);
 			exportHTMLMenu.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
@@ -800,7 +822,7 @@ public class EditToolBar extends ToolBar {
 			exportPDFMenu.setText(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_PDF_TOOLTIP.toString());
 			exportPDFMenu.setIcon("ext-xeo/images/menus/exportar-pdf.gif");
 			exportPDFMenu.setToolTip(ComponentMessages.EDIT_TOOLBAR_BTN_EXPORT_PDF_TOOLTIP.toString());
-			exportPDFMenu.setServerAction("#{viewBean.exportPDF}");
+			exportPDFMenu.setServerAction("#{" + getBeanId() + ".exportPDF}");
 			exportPDFMenu.setTarget("download");
 			exportPDFMenu.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 			exportGroup.getChildren().add(exportPDFMenu);

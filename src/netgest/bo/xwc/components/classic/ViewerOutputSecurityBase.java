@@ -34,7 +34,7 @@ public abstract class ViewerOutputSecurityBase extends XUIOutput implements Secu
 		super.preRender();
 		String viewerSecurityId = getInstanceId();
 		if ( viewerSecurityId!=null ) {
-			setViewerSecurityPermissions( "#{viewBean.viewerPermissions."+viewerSecurityId+"}" );    		
+			setViewerSecurityPermissions( "#{" + getBeanId() + ".viewerPermissions."+viewerSecurityId+"}" );    		
 		}
 	}
 	

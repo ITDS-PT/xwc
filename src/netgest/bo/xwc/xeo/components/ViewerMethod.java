@@ -44,7 +44,7 @@ public class ViewerMethod extends Menu {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		try {
-			MethodExpression m = super.createMethodBinding( "#{viewBean." + getTargetMethod() + "}" );
+			MethodExpression m = super.createMethodBinding( "#{"+ getBeanId() +"." + getTargetMethod() + "}" );
 			m.invoke( getELContext(), null );
 		} catch (Exception e) {
 			throw new RuntimeException(e);

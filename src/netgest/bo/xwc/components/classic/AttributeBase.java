@@ -31,7 +31,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
     /**
      * Bean property where to keep the value of the attribute
      */
-    private XUIBaseProperty<String> beanProperty         		= new XUIBaseProperty<String>( "beanProperty", this, "viewBean.currentData" );
+    private XUIBaseProperty<String> beanProperty         		= new XUIBaseProperty<String>( "beanProperty", this, "currentData" );
     /**
      * Name of the attribute of a XEO Model to bind this attribute
      */
@@ -259,9 +259,12 @@ public class AttributeBase extends ViewerInputSecurityBase {
      */
     public void setObjectAttribute(String sObjectAttribute) {
     	
-        String sBeanExpression = "#{" + getBeanProperty() + "." + sObjectAttribute;
+        String sBeanExpression = "#{" + getBeanId() + "." + getBeanProperty() + "." + sObjectAttribute;
         
-        this.dataFieldConnector.setExpressionText( "#{" + getBeanProperty() + "." + sObjectAttribute + "}" );
+        if (beanProperty.isDefaultValue())
+        	this.dataFieldConnector.setExpressionText( "#{" + getBeanId() + "." + getBeanProperty() + "." + sObjectAttribute + "}" );
+        else
+        	this.dataFieldConnector.setExpressionText( "#{" + getBeanProperty() + "." + sObjectAttribute + "}" );
         
         this.objectAttribute.setValue( sObjectAttribute );
 
@@ -1028,6 +1031,8 @@ public class AttributeBase extends ViewerInputSecurityBase {
      * @return String in the format of {@link ValueExpression}
      */
     public String getBeanProperty() {
+    	//TODO: Como a coisa está, quebra a compatibilide com "viewBean.ZZZZ" tem
+    	//de se mudar para caso tenha o beanProperty remover o "viewBean."
         return beanProperty.getValue();
     }
     

@@ -30,20 +30,16 @@ public class TreeShuttle extends AttributeBase {
 	 * Lista de colunas a mostrar
 	 */	
 	private XUIBindProperty<String> columnAvailableList = new XUIBindProperty<String>(
-			"columnAvailableList", this, String.class,
-			"#{viewBean.columnsAvailable}");
+			"columnAvailableList", this, String.class);
 
 	private XUIBindProperty<String> columnSelectedList = new XUIBindProperty<String>(
-			"columnSelectedList", this, String.class,
-			"#{viewBean.columnSelected}");	
+			"columnSelectedList", this, String.class);	
 	
 	private XUIBindProperty<String> parentWindowId = new XUIBindProperty<String>(
-			"parentWindowId", this, String.class,
-			"#{viewBean.parentWindowId}");
+			"parentWindowId", this, String.class);
 
 	private XUIBindProperty<String> parentComponentId = new XUIBindProperty<String>(
-			"parentComponentId", this, String.class,
-			"#{viewBean.parentComponentId}");
+			"parentComponentId", this, String.class);
 	
 	private XUIBindProperty<String> submitActionHandler = new XUIBindProperty<String>(
 			"submitActionHandler", this, String.class,
@@ -103,6 +99,10 @@ public class TreeShuttle extends AttributeBase {
 	
 	@Override
 	public void initComponent() {
+		setColumnAvailableList("#{" + getBeanId() + ".columnsAvailable}");
+		setColumnSelectedList("#{" + getBeanId() + ".columnSelected}");
+		setParentWindowId("#{" + getBeanId() + ".parentWindowId}");
+		setParentComponentId("#{" + getBeanId() + ".parentComponentId}");
 	}
 
 	public static final class XEOHTMLRenderer extends XUIRenderer {

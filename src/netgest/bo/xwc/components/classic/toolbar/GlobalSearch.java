@@ -61,7 +61,7 @@ public class GlobalSearch extends ViewerSecurityBase implements IToolbarGroup {
 	 * A map containing the XEO Models to restrict the search
 	 */
 	private XUIBindProperty<HashMap<String,String>> comboModelOptions = 
-		new XUIBindProperty<HashMap<String,String>>("comboModelOptions", this, HashMap.class, "#{viewBean.searchOptions}" );
+		new XUIBindProperty<HashMap<String,String>>("comboModelOptions", this, HashMap.class );
 	
 	/**
 	 * The width of the combobox
@@ -173,12 +173,18 @@ public class GlobalSearch extends ViewerSecurityBase implements IToolbarGroup {
 	}
 
 	@Override
+	public void initComponent(){
+		this.setComboModelOptions("#{" + getBeanId() + ".searchOptions}");
+		super.initComponent();
+	}
+	
+	@Override
 	public List<UIComponent> getComponentList() {
 
 		AttributeText t = new AttributeText();
 		t.setMaxLength(30);
 		t.setRenderComponent(false);
-		t.setValueExpression("#{viewBean.textSearch}");
+		t.setValueExpression("#{ " + getBeanId() + ".textSearch}");
 		t.setWidth(getSearchWidth());
 		t.setId("textSearchXEO");
 		
@@ -186,7 +192,7 @@ public class GlobalSearch extends ViewerSecurityBase implements IToolbarGroup {
 		if (getShowModelsCombo()){
 			lov = new AttributeLov();
 			lov.setRenderComponent(false);
-			lov.setValueExpression("#{viewBean.searchModel}");
+			lov.setValueExpression("#{ " + getBeanId() + ".searchModel}");
 			lov.setLovMap(comboModelOptions.getExpressionString());
 			lov.setWidth(getComboWidth());
 			lov.setOnChangeSubmit(true);
@@ -200,7 +206,7 @@ public class GlobalSearch extends ViewerSecurityBase implements IToolbarGroup {
 		if (icon != null && !(icon.length() == 0))
 			m.setIcon(getIcon());
 		m.setTarget("alwaysNewTab");
-		m.setServerAction("#{viewBean.searchGlobal}");
+		m.setServerAction("#{ " + getBeanId() + ".searchGlobal}");
 		m.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 		m.setId("globalSearchActionXEO");
 		

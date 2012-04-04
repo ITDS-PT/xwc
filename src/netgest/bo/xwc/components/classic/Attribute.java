@@ -228,14 +228,21 @@ public class Attribute extends AttributeBase
     protected void propagateInputProperties( AttributeBase oAttr ) {
 
     	oAttr.setValueExpression( "value", getValueExpression("value") );
+    	
+    	if (getBeanId() != null){
+        	oAttr.setBeanId( getBeanId() );
+        }
+    	
         if( getObjectAttribute() != null ) {
         	oAttr.setObjectAttribute( getObjectAttribute() );
         }
     	
+        
+        
         // Set attribute properties
         if( getBeanProperty() != null )
             oAttr.setBeanProperty( getBeanProperty() );
-
+        
         if( getValueExpression("maxLength") != null )
             oAttr.setMaxLength( getValueExpression("maxLength").getExpressionString() );
 

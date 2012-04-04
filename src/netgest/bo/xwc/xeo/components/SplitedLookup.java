@@ -63,7 +63,7 @@ public class SplitedLookup extends Attribute {
 	 * 
 	 */
 	private XUIBindProperty<boObject> targetObject 	=
-		new XUIBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
+		new XUIBindProperty<boObject>("targetObject", this, boObject.class );
 		
 	/**
 	 * Situation:
@@ -162,6 +162,8 @@ public class SplitedLookup extends Attribute {
 	@Override
 	public void initComponent() {
 
+		this.setTargetObject("#{" + getBeanId() + ".XEOObject}");
+		
 		boObject targetObject = getTargetObject();
 		String 	 attName	  =  getObjectAttribute();
 		
@@ -408,7 +410,7 @@ public class SplitedLookup extends Attribute {
 				Object inputValue = lookup.getInputComponent().getValue(); 
 				
 				boObject objAtt = lookup.getTargetObject();
-				XEOEditBean b = (XEOEditBean)XUIRequestContext.getCurrentContext().getViewRoot().getBean( "viewBean" );
+				XEOEditBean b = (XEOEditBean)XUIRequestContext.getCurrentContext().getViewRoot().getBean( lookup.getBeanId() );
 				Object value = b.validateLookupValue(  
 						objAtt.getAttribute( lookup.getObjectAttribute() ), 
 						new String[] { lookup.getTargetLookupAttribute() }, 

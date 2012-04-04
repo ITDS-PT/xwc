@@ -92,7 +92,7 @@ public class AttributeFile extends AttributeBase {
     	FileBrowseBean oFileBrowseBean = (FileBrowseBean)oViewRoot.getBean( "viewBean" );
     	
     	oFileBrowseBean.setParentComponentId( getClientId() );
-    	oFileBrowseBean.setParentBeanId("viewBean" );
+    	oFileBrowseBean.setParentBeanId( getBeanId() );
     	
     	getRequestContext().renderResponse();
     	

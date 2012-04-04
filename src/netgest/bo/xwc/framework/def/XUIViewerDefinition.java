@@ -1,11 +1,19 @@
 package netgest.bo.xwc.framework.def;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import netgest.utils.StringUtils;
+
 
 
 public class XUIViewerDefinition
 {
     protected String                   viewerBean;
     protected String                   viewerBeanId;
+    
+    protected List<String>			   viewerBeanList;
+    protected List<String>			   viewerBeanListId;
     
     protected String				   renderKitId;
     
@@ -16,20 +24,41 @@ public class XUIViewerDefinition
 	protected XUIViewerDefinitionNode  rootComponent;
 	
 	protected String				   onRestoreViewPhase;
+	protected List<String>			   onRestoreViewPhaseList;
 	protected String				   onCreateViewPhase;
+	protected List<String>			   onCreateViewPhaseList;
 	
 	protected String				   beforeApplyRequestValuesPhase;
+	protected List<String>			   beforeApplyRequestValuesList;
 	protected String				   afterApplyRequestValuesPhase;
+	protected List<String>			   afterApplyRequestValuesList;
 	
 	protected String				   beforeUpdateModelPhase;
+	protected List<String>			   beforeUpdateModelPhaseList;
 	protected String				   afterUpdateModelPhase;
+	protected List<String>			   afterUpdateModelPhaseList;
 	
 	protected String				   beforeRenderPhase;
+	protected List<String>			   beforeRenderPhaseList;
 	protected String				   afterRenderPhase;
+	protected List<String>			   afterRenderPhaseList;
 	
     public XUIViewerDefinition()
     {
+        viewerBeanList = new LinkedList<String>();
+        viewerBeanListId = new LinkedList<String>();
         
+        onRestoreViewPhaseList = new LinkedList<String>();
+        onCreateViewPhaseList = new LinkedList<String>();
+        
+        beforeApplyRequestValuesList = new LinkedList<String>();
+        afterApplyRequestValuesList = new LinkedList<String>();
+        
+        beforeUpdateModelPhaseList = new LinkedList<String>();
+        afterUpdateModelPhaseList = new LinkedList<String>();
+        
+        beforeRenderPhaseList = new LinkedList<String>();
+        afterRenderPhaseList = new LinkedList<String>();
     }
     
     
@@ -42,9 +71,6 @@ public class XUIViewerDefinition
 		return onRestoreViewPhase;
 	}
 
-
-
-
 	/**
 	 * @param onRestoreViewPhase the onRestoreViewPhase to set
 	 */
@@ -52,7 +78,19 @@ public class XUIViewerDefinition
 		this.onRestoreViewPhase = onRestoreViewPhase;
 	}
 
-
+	public List<String> getOnRestoreViewPhaseList(){
+		return onRestoreViewPhaseList;
+	}
+	
+	public void addOnRestoreViewPhase(String action){
+		if ( !StringUtils.isEmpty( action ) )
+			onRestoreViewPhaseList.add( action );
+	}
+	
+	public void addOnRestoreViewPhase( List<String> actions ){
+		for ( String act : actions )
+			addOnRestoreViewPhase( act );
+	}
 
 
 	/**
@@ -62,9 +100,6 @@ public class XUIViewerDefinition
 		return onCreateViewPhase;
 	}
 
-
-
-
 	/**
 	 * @param onCreateViewPhase the onCreateViewPhase to set
 	 */
@@ -72,7 +107,19 @@ public class XUIViewerDefinition
 		this.onCreateViewPhase = onCreateViewPhase;
 	}
 
-
+	public List<String> getOnCreateViewPhaseList(){
+		return onCreateViewPhaseList;
+	}
+	
+	public void addOnCreateViewPhase( String action ){
+		if ( !StringUtils.isEmpty( action ) )
+			onCreateViewPhaseList.add( action );
+	}
+	
+	public void addOnCreateViewPhase( List<String> actions ){
+		for ( String action : actions )
+			addOnCreateViewPhase( action );
+	}
 
 
 	/**
@@ -82,8 +129,6 @@ public class XUIViewerDefinition
 		return beforeApplyRequestValuesPhase;
 	}
 
-
-
 	/**
 	 * @param beforeApplyRequestValuesPhase the beforeApplyRequestValuesPhase to set
 	 */
@@ -91,7 +136,20 @@ public class XUIViewerDefinition
 			String beforeApplyRequestValuesPhase) {
 		this.beforeApplyRequestValuesPhase = beforeApplyRequestValuesPhase;
 	}
+	
+	public List<String> getBeforeApplyRequestValuesPhaseList(){
+		return beforeApplyRequestValuesList;
+	}
+	
+	public void addBeforeApplyRequestValuesPhase( String action ){
+		if ( !StringUtils.isEmpty( action ) )
+			beforeApplyRequestValuesList.add( action );
+	}
 
+	public void addBeforeApplyRequestValuesPhase( List<String> actions ){
+		for ( String action : actions) 
+			addBeforeApplyRequestValuesPhase( action );
+	}
 
 
 	/**
@@ -101,15 +159,28 @@ public class XUIViewerDefinition
 		return afterApplyRequestValuesPhase;
 	}
 
-
-
 	/**
 	 * @param afterApplyRequestValuesPhase the afterApplyRequestValuesPhase to set
 	 */
 	public void setAfterApplyRequestValuesPhase(String afterApplyRequestValuesPhase) {
 		this.afterApplyRequestValuesPhase = afterApplyRequestValuesPhase;
 	}
+	
+	public List<String> getAfterApplyRequestValuesPhaseList(){
+		return afterApplyRequestValuesList;
+	}
+	
+	public void addAfterApplyRequestValuesPhase(String action){
+		if ( !StringUtils.isEmpty( action ) )
+			afterApplyRequestValuesList.add( action );
+	}
+	
+	public void addAfterApplyRequestValuesPhase(List<String> actions){
+		for ( String action : actions )
+			addAfterApplyRequestValuesPhase( action );
+	}
 
+	
 
 
 	/**
@@ -119,15 +190,26 @@ public class XUIViewerDefinition
 		return beforeUpdateModelPhase;
 	}
 
-
-
 	/**
 	 * @param beforeUpdateModelPhase the beforeUpdateModelPhase to set
 	 */
 	public void setBeforeUpdateModelPhase(String beforeUpdateModelPhase) {
 		this.beforeUpdateModelPhase = beforeUpdateModelPhase;
 	}
+	
+	public List<String> getBeforeUpdateModelPhaseList(){
+		return beforeUpdateModelPhaseList;
+	}
+	
+	public void addBeforeUpdateModelPhase( String action ){
+		if ( !StringUtils.isEmpty( action ) )
+			beforeUpdateModelPhaseList.add( action );
+	}
 
+	public void addBeforeUpdateModelPhase( List<String> actions ){
+		for ( String action : actions )
+			addBeforeUpdateModelPhase( action );
+	}
 
 
 	/**
@@ -137,8 +219,6 @@ public class XUIViewerDefinition
 		return afterUpdateModelPhase;
 	}
 
-
-
 	/**
 	 * @param afterUpdateModelPhase the afterUpdateModelPhase to set
 	 */
@@ -146,8 +226,23 @@ public class XUIViewerDefinition
 		this.afterUpdateModelPhase = afterUpdateModelPhase;
 	}
 
+	public List<String> getAfterUpdateModelPhaseList(){
+		return afterUpdateModelPhaseList;
+	}
+	
+	public void addAfterUpdateModelPhase( String action ){
+		if ( !StringUtils.isEmpty( action ) )
+			afterUpdateModelPhaseList.add( action );
+	}
+	
+	public void addAfterUpdateModelPhase( List<String> actions ){
+		for ( String action : actions )
+			addAfterUpdateModelPhase( action );
+	}
 
 
+	
+	
 	/**
 	 * @return the beforeRenderPhase
 	 */
@@ -155,15 +250,26 @@ public class XUIViewerDefinition
 		return beforeRenderPhase;
 	}
 
-
-
 	/**
 	 * @param beforeRenderPhase the beforeRenderPhase to set
 	 */
 	public void setBeforeRenderPhase(String beforeRenderPhase) {
 		this.beforeRenderPhase = beforeRenderPhase;
 	}
+	
+	public List<String> getBeforeRenderPhaseList(){
+		return beforeRenderPhaseList;
+	}
+	
+	public void addBeforeRenderPhase( String action ){
+		if ( !StringUtils.isEmpty( action ) )
+			beforeRenderPhaseList.add( action );
+	}
 
+	public void addBeforeRenderPhase( List<String> actions ){
+		for( String action : actions )
+			addBeforeRenderPhase( action );
+	}
 
 
 	/**
@@ -172,9 +278,6 @@ public class XUIViewerDefinition
 	public String getAfterRenderPhase() {
 		return afterRenderPhase;
 	}
-
-
-
 	/**
 	 * @param afterRenderPhase the afterRenderPhase to set
 	 */
@@ -182,6 +285,19 @@ public class XUIViewerDefinition
 		this.afterRenderPhase = afterRenderPhase;
 	}
 
+	public List<String> getAfterRenderPhaseList(){
+		return afterRenderPhaseList;
+	}
+	
+	public void addAfterRenderPhase( String action ){
+		if ( !StringUtils.isEmpty( action ) )
+			afterRenderPhaseList.add( action );
+	}
+	
+	public void addAfterRenderPhase( List<String> actions ){
+		for ( String action : actions )
+			addAfterRenderPhase( action );
+	}
 
 
 	public String[] getLocalizationClasses() {
@@ -203,11 +319,28 @@ public class XUIViewerDefinition
     public void setViewerBean(String viewerBean)
     {
         this.viewerBean = viewerBean;
+        addViewerBean( viewerBean );
     }
 
     public String getViewerBean()
     {
         return viewerBean;
+    }
+    
+    public void addViewerBean( String viewerBean ){
+    	this.viewerBeanList.add( viewerBean );
+    }
+    
+    public void addViewerBeanId( String viewerBeanId ){
+    	this.viewerBeanListId.add( viewerBeanId );
+    }
+    
+    public List<String> getViewerBeans(){
+    	return viewerBeanList; 
+    }
+    
+    public List<String> getViewerBeanIds(){
+    	return viewerBeanListId; 
     }
     
     public String getViewerBeanId() {
@@ -229,6 +362,7 @@ public class XUIViewerDefinition
 
     public void setViewerBeanId(String viewerBeanId) {
         this.viewerBeanId = viewerBeanId;
+        addViewerBeanId( viewerBeanId );
     }
 
 
@@ -250,4 +384,49 @@ public class XUIViewerDefinition
 	public void setRenderKitId(String renderKitId) {
 		this.renderKitId = renderKitId;
 	}
+	
+	
+	/**
+	 * 
+	 * Checks if a given component (prefix + name) exists in the
+	 * component tree
+	 * 
+	 * @return True if the component exists and false otherwise
+	 */
+	public boolean hasComponent(String name, String prefix){
+		return hasComponentRecursive(name, prefix, rootComponent);
+	}
+	
+	private boolean hasComponentRecursive(String name, String prefix, XUIViewerDefinitionNode node){
+		if (node.getName().equals(prefix + ":" + name))
+			return true;
+		List<XUIViewerDefinitionNode> children = node.getChildren();
+		for (XUIViewerDefinitionNode child : children){
+			return hasComponentRecursive(name, prefix, child);
+		}
+		return false;
+	}
+	
+	/**
+	 * 
+	 * Checks if a given component within the component tree contains within its the name
+	 * the given name passes as parameter, for instance, searching for form would find
+	 * "xvw:form" and "xeo:formEdit"
+	 * 
+	 * @return True if any component has "name" as part of its name
+	 */
+	public boolean hasComponentContaningName(String name){
+		return hasComponentContainingNameRecursive(name, rootComponent);
+	}
+	
+	private boolean hasComponentContainingNameRecursive(String name, XUIViewerDefinitionNode node){
+		if (node.getName().contains(name))
+			return true;
+		List<XUIViewerDefinitionNode> children = node.getChildren();
+		for (XUIViewerDefinitionNode child : children){
+			return hasComponentContainingNameRecursive(name, child);
+		}
+		return false;
+	}
+	
 }

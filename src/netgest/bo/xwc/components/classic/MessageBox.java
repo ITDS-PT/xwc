@@ -526,7 +526,6 @@ public class MessageBox extends XUIInput {
 	 */
 	@Override
 	public boolean wasStateChanged() {
-		// TODO Auto-generated method stub
 		return getShowMessageBox();
 	}
 
@@ -535,7 +534,6 @@ public class MessageBox extends XUIInput {
 	 */
 	@Override
 	public void initComponent() {
-		// TODO Auto-generated method stub
 		super.initComponent();
 		
 		OK.setText( ComponentMessages.DIALOG_OK_BTN.toString() );

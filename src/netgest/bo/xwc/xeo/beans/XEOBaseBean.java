@@ -47,6 +47,7 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 	private String sViewStateId;
     private String sParentBeanId;
 	private String sTitle;
+	private String id = "viewBean" ;
 	
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final byte	  USER_ROLES = 1;
@@ -65,6 +66,14 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 	public XEOBaseBean() {
         super( boApplication.currentContext().getEboContext() );
     }
+	
+	public String getId(){
+		return id;
+	}
+	
+	public void setId( String newId ){
+		this.id = newId;
+	}
 	
     @Override
 	public EboContext getEboContext() {

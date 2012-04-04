@@ -77,7 +77,7 @@ public class Window extends XUIComponentBase {
     /**
      * The action that is executed before the window closes	
      */
-    public XUIMethodBindProperty onbeforeclose = new XUIMethodBindProperty( "onbeforeclose", this, "#{viewBean.canCloseTab}" );
+    public XUIMethodBindProperty onbeforeclose = new XUIMethodBindProperty( "onbeforeclose", this );
 
     /**
      * Whether or not the ExtJS renderer should be used
@@ -184,6 +184,10 @@ public class Window extends XUIComponentBase {
     	}
 	}
 
+    public void initComonent(){
+    	this.setOnBeforeClose("#{" + getBeanId() + ".canCloseTab}");
+    }
+    
 	@Override
     public boolean wasStateChanged() {
         return super.wasStateChanged();

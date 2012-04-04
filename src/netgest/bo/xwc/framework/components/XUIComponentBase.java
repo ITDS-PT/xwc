@@ -5,8 +5,8 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
@@ -19,11 +19,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.render.RenderKit;
 import javax.servlet.http.HttpServletRequest;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import com.sun.faces.io.FastStringWriter;
-
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.framework.PackageIAcessor;
@@ -33,9 +28,15 @@ import netgest.bo.xwc.framework.XUIComponentPlugIn;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUISessionContext;
+import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
 import netgest.bo.xwc.framework.properties.XUIProperty;
 import netgest.bo.xwc.framework.properties.XUIPropertyVisibility;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.sun.faces.io.FastStringWriter;
 
 
 public abstract class XUIComponentBase extends UIComponentBase 
@@ -54,6 +55,20 @@ public abstract class XUIComponentBase extends UIComponentBase
     private boolean	wasPreRenderProcessed = false;
     private boolean	wasInitComponentProcessed = false;
     
+    /**
+     * The identifier of the bean to fetch values from,
+     * defaults to "viewBean"
+     */
+    private XUIBindProperty<String> beanId = 
+    	new XUIBindProperty<String>("beanId", this, "viewBean", String.class);
+    
+    public void setBeanId( String newBeanId ){
+    	this.beanId.setExpressionText( newBeanId );
+    }
+    
+    public String getBeanId(){
+    	return this.beanId.getEvaluatedValue();
+    }
 
     private XUIBaseProperty<Boolean> isRenderedOnClient = 
     	new XUIBaseProperty<Boolean>("isRenderedOnClient", this, false);

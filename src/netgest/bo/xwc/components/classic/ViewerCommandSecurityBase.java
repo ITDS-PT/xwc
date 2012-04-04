@@ -16,7 +16,7 @@ public abstract class ViewerCommandSecurityBase extends XUICommand implements Se
 		super.preRender();
 		String viewerSecurityId = getInstanceId();
 		if ( viewerSecurityId!=null ) {
-			setViewerSecurityPermissions( "#{viewBean.viewerPermissions."+viewerSecurityId+"}" );    		
+			setViewerSecurityPermissions( "#{" + getBeanId() + ".viewerPermissions."+viewerSecurityId+"}" );    		
 		}
 	}
 	

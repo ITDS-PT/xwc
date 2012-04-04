@@ -115,7 +115,7 @@ public class DialogProgress extends XUIComponentBase {
 		actionCmd = (XUICommand)findComponent( getId() + "_action" );
 		if( actionCmd == null ) {
 			actionCmd = new XUICommand();
-			actionCmd.setActionExpression( createMethodBinding("#{viewBean.executeAction}") );
+			actionCmd.setActionExpression( createMethodBinding("#{" + getBeanId() + ".executeAction}") );
 			actionCmd.setId( getId() + "_action" );
 			this.getChildren().add( actionCmd );
 		}

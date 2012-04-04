@@ -153,29 +153,29 @@ public class BridgeLookup extends AttributeBase {
         
         oOpenCommand = new XUICommand();
         oOpenCommand.setId( getId() + "_op" );
-        oOpenCommand.setActionExpression( createMethodBinding( "#{viewBean.openLookupObject}" ) );
+        oOpenCommand.setActionExpression( createMethodBinding( "#{" + getBeanId() + ".openLookupObject}" ) );
         getChildren().add( oOpenCommand );
         
         oOpenEditViewer = new Menu();
         oOpenEditViewer.setId( getId() + "_ed" );
         oOpenEditViewer.setTarget( "tab" );
-        oOpenEditViewer.setActionExpression( createMethodBinding( "#{viewBean.editBridgeLookup}" ) );
+        oOpenEditViewer.setActionExpression( createMethodBinding( "#{" + getBeanId() + ".editBridgeLookup}" ) );
         
         getChildren().add( oOpenEditViewer );
         
         oRemoveElementCommand = new XUICommand();
         oRemoveElementCommand.setId( getId() + "_rmBridge" );
-        oRemoveElementCommand.setActionExpression( createMethodBinding( "#{viewBean.removeBridgeLookup}" ) );
+        oRemoveElementCommand.setActionExpression( createMethodBinding( "#{" + getBeanId() + ".removeBridgeLookup}" ) );
         getChildren().add( oRemoveElementCommand );
 
         oCleanCommand = new XUICommand();
         oCleanCommand.setId( getId() + "_cleanBridge" );
-        oCleanCommand.setActionExpression( createMethodBinding( "#{viewBean.cleanBridgeLookup}" ) );
+        oCleanCommand.setActionExpression( createMethodBinding( "#{" + getBeanId() + ".cleanBridgeLookup}" ) );
         getChildren().add( oCleanCommand );
         
         oFavoriteCommand = new XUICommand();
         oFavoriteCommand.setId( getId() + "_showFav" );
-        oFavoriteCommand.setActionExpression( createMethodBinding( "#{viewBean.showFavorite}" ) );
+        oFavoriteCommand.setActionExpression( createMethodBinding( "#{" + getBeanId() + ".showFavorite}" ) );
         getChildren().add( oFavoriteCommand );
         
         
@@ -261,7 +261,7 @@ public class BridgeLookup extends AttributeBase {
     private void doLookup() {
         try {
             XEOEditBean oXEOBaseBean;
-            oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean("viewBean");
+            oXEOBaseBean = (XEOEditBean)getRequestContext().getViewRoot().getBean( getBeanId() );
             oXEOBaseBean.lookupAttribute( this.getClientId() );
         } catch (boRuntimeException e) {
             throw new RuntimeException(e);

@@ -43,6 +43,7 @@ import netgest.bo.def.boDefHandler;
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.boApplication;
 import netgest.bo.transaction.XTransaction;
+import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
 import netgest.bo.xwc.framework.PackageIAcessor;
@@ -58,6 +59,7 @@ import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.bo.xwc.xeo.beans.XEOSecurityBaseBean;
+import netgest.utils.StringUtils;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
 
@@ -525,31 +527,13 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        
 	        result.setTransient( oViewerDef.isTransient() );
 	        
-	        // Set Bean to the viewer
-	        String sBeanName      = oViewerDef.getViewerBeanId();
-	        String sBeanClassName = oViewerDef.getViewerBean();
-	        try {
-	            // Initialize View Bean.
-	            if( log.isDebugEnabled() ) {
-	                log.debug(MessageLocalizer.getMessage("INITIALIZING_BEANS_FOR_VIEW")+" " + viewId );    
-	            }
-	            
-	            if( sBeanClassName != null && sBeanClassName.length() > 0 ) {
-		            Class<?> oBeanClass = 
-		            	Thread.currentThread().getContextClassLoader().loadClass( sBeanClassName );
-		            
-		            Object oViewBean = oBeanClass.newInstance();
-		
-		            result.addBean( sBeanName, oViewBean );
-		            
-		            if( oViewBean instanceof XUIViewBean ) {
-		            	((XUIViewBean)oViewBean).setViewRoot( result.getViewState() );
-		            }
-	            }
-	        } 
-	        catch ( Exception ex ) {
-	            throw new FacesException( XUICoreMessages.VIEWER_CLASS_NOT_FOUND.toString( sBeanClassName, viewId ) );
-	        }
+	        initializeAndAssociateBeansToView(oViewerDef, result, viewId);
+	        
+	        //ReplaceDynamyicIncludes
+	        
+	        //Método próprio na bean que depois o que faz é acrescentar ao request o nome do viewer
+	        //que se quer incluir.
+	        
 	        
 	        // Create a new instance of the view bean
 	        if (log.isDebugEnabled()) 
@@ -567,9 +551,85 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        }
 	
 	        // Initialize security
-	        try {
-	        	
-	        	Object bean = result.getBean( "viewBean" );
+	        initializeSecurity(result, oViewerDef, context);
+//	        
+        }
+        finally {
+        	if (previousViewRoot != null)
+        		context.setViewRoot( previousViewRoot );
+        }
+
+        return result;
+
+        
+    }
+    
+    private void initializeAndAssociateBeansToView( XUIViewerDefinition oViewerDef, XUIViewRoot result, String viewId  ){
+    	
+    	List<String> beanList = oViewerDef.getViewerBeans();
+        List<String> beanIdList = oViewerDef.getViewerBeanIds();
+        
+        // Initialize View Bean.
+        if( log.isDebugEnabled() ) {
+            log.debug(MessageLocalizer.getMessage("INITIALIZING_BEANS_FOR_VIEW")+" " + viewId );    
+        }
+        
+        int k = 0;
+        for (String beanClassName : beanList){
+        	
+            if( !StringUtils.isEmpty(beanClassName) ) {
+            	
+            	try {
+            		String beanId = beanIdList.get(k);
+            		
+		            Object oViewBean = instantiateBean(beanClassName);
+		            
+		            associateBeanToView(oViewBean, result, beanId);
+		            setBeanId( oViewBean, beanId );
+		            associateViewToBean(oViewBean, result);
+	            
+            	} 
+                catch ( Exception ex ) {
+                    throw new FacesException( XUICoreMessages.VIEWER_CLASS_NOT_FOUND.toString( beanClassName, viewId ) );
+                }
+            }
+            k++;
+        }
+    }
+    
+    private Object instantiateBean (String beanClassName) throws ClassNotFoundException, 
+    	InstantiationException, IllegalAccessException{
+    	Class<?> oBeanClass = 
+        	Thread.currentThread().getContextClassLoader().loadClass( beanClassName );
+    	return oBeanClass.newInstance();
+    	
+    }
+    
+    private void setBeanId(Object oViewBean, String beanId){
+    	if (oViewBean instanceof XEOBaseBean){
+            XEOBaseBean bean = (XEOBaseBean) oViewBean;
+            bean.setId( beanId );
+        }
+    }
+    
+    private void associateBeanToView(Object bean, XUIViewRoot root, String beanId){
+    	root.addBean( beanId, bean );
+    }
+    
+    private void associateViewToBean(Object bean, XUIViewRoot root){
+    	if( bean instanceof XUIViewBean ) {
+        	((XUIViewBean)bean).setViewRoot( root.getViewState() );
+        }
+    }
+    
+    private void initializeSecurity(XUIViewRoot result, XUIViewerDefinition definition, FacesContext context){
+    	try {
+        	
+    		List<String> beanIds = definition.getViewerBeanIds();
+    		
+    		for (String beanId: beanIds){
+    		
+	    		Object bean = result.getBean( beanId );
 	        	
 	    		// Only activates viewerSecurity if the XVWAccessPolicy object is deployed.
 	    		if ( ViewerAccessPolicyBuilder.applyViewerSecurity ) {
@@ -580,29 +640,21 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 		        		viewerAccessPolicyBuilder.processViewer( result, boApplication.currentContext().getEboContext(), false );
 		        		((XEOSecurityBaseBean)bean).initializeSecurityMap(viewerAccessPolicyBuilder, result.getViewId() );
 		        	}
-		        	
 	    		}
+    		}	
 	    		
-	    		
-	    		UIViewRoot savedView = context.getViewRoot();
-	    		context.setViewRoot( result );
-	            result.notifyPhaseListeners(context, PhaseId.RESTORE_VIEW, true );
-	            
-	            if( result == context.getViewRoot() && savedView != null  )
-	            	context.setViewRoot( savedView );
-	    		
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-        }
-        finally {
-        	if (previousViewRoot != null)
-        		context.setViewRoot( previousViewRoot );
-        }
-
-        return result;
-
-        
+    		UIViewRoot savedView = context.getViewRoot();
+    		context.setViewRoot( result );
+            result.notifyPhaseListeners(context, PhaseId.RESTORE_VIEW, true );
+            
+            if( result == context.getViewRoot() && savedView != null  )
+            	context.setViewRoot( savedView );
+            
+    		
+    		
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
     }
     
     public void processInitComponent( XUIViewRoot oViewRoot ) {
@@ -779,16 +831,12 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 				f.setAccessible(true);
 				f.set(  viewToRender, pValue );
 			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1045,17 +1093,14 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 					 sResult = out.toString();
 					 
 				} catch (TransformerConfigurationException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (TransformerFactoryConfigurationError e) {
-					// TODO Auto-generated catch block 
 					e.printStackTrace();
 				} catch (TransformerException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}                
 				
-				System.out.println( MessageLocalizer.getMessage("XSL_TIME") + (System.currentTimeMillis()-init) );
+				log.debug(( MessageLocalizer.getMessage("XSL_TIME") + (System.currentTimeMillis()-init) ));
 				
             }
             

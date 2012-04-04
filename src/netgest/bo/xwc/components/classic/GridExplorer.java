@@ -93,7 +93,7 @@ public class GridExplorer extends List {
 		new XUIViewStateProperty<Long>("currentSavedViewBOUI", this );
 	
 	private XUIBaseProperty<String> previewCommand = 
-		new XUIBaseProperty<String>("previewCommand", this, "#{viewBean.previewObject}");
+		new XUIBaseProperty<String>("previewCommand", this);
 	
 	private XUIViewStateProperty<String> renderExplorerOnToolBar =
 		new XUIViewStateProperty<String>("renderExplorerOnToolBar", this );
@@ -473,11 +473,13 @@ public class GridExplorer extends List {
 	@Override
 	public void initComponent() {
 		
+		this.setPreviewCommand("#{" + getBeanId() + ".previewObject}");
+		
 		if( super.getStateProperty( "rowSelectionMode" ).isDefaultValue() )
 			setRowSelectionMode( GridPanel.SELECTION_CELL );
 		
 		if( super.getStateProperty( "onRowDoubleClick" ).isDefaultValue() )
-			setOnRowDoubleClick( "#{viewBean.rowDoubleClick}" );
+			setOnRowDoubleClick( "#{" + getBeanId() + ".rowDoubleClick}" );
 
 //		if( super.getStateProperty( "forceColumnsFitWidth" ).isDefaultValue() ) {
 //			setForceColumnsFitWidth( "true" );
@@ -659,7 +661,6 @@ public class GridExplorer extends List {
 		save.setIcon("ext-xeo/images/gridexplorer/gravar.gif");
 		save.setToolTip(XEOComponentMessages.EXPLORER_SAVEVIEW_TOOLTIP.toString());
 		
-		//save.setActionExpression(createMethodBinding("#{viewBean.rowDoubleClick}"));
 		save.addActionListener( new SaveViewListener() );
 
 //		Menu autoSaveView = new Menu();

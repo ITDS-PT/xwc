@@ -23,7 +23,7 @@ public class LookupList extends List {
 	 * If the lookup is a lookup for the boObject
 	 */
 	private XUIBindProperty<Boolean> isBoObjectLookup = 
-		new XUIBindProperty<Boolean>("isBoObjectLookup", this, Boolean.class, "#{viewBean.boObjectLookup}");
+		new XUIBindProperty<Boolean>("isBoObjectLookup", this, Boolean.class);
 	
 	@Override
 	public String getRendererType() {
@@ -41,12 +41,13 @@ public class LookupList extends List {
 	@Override
 	public void initComponent(){
 		super.initComponent();
-		this.setMaxSelections("#{viewBean.maxSelections}");
+		this.setIsBoObjectLookup("#{" + getBeanId() + ".boObjectLookup}");
+		this.setMaxSelections("#{" + getBeanId() + ".maxSelections}");
 		if (getIsBoObjectLookup()){
 			for (Iterator<UIComponent> it = this.getChildren().iterator(); it.hasNext();){
 				UIComponent comp = (UIComponent) it.next();
 				if (comp instanceof Columns)
-					((Columns)comp).setPlugIn("#{viewBean.attributesColPlugIn}");
+					((Columns)comp).setPlugIn("#{" + getBeanId() + ".attributesColPlugIn}");
 			}
 		}
 		
@@ -56,13 +57,13 @@ public class LookupList extends List {
 	public void applyComponentProperties() {
 		
 		if( getStateProperty("dataSource").isDefaultValue() )
-			super.setDataSource( "#{viewBean.dataList}" );
+			super.setDataSource( "#{" + getBeanId() + ".dataList}" );
 
 		if( super.getStateProperty( "rowSelectionMode" ).isDefaultValue() )
 			setRowSelectionMode( GridPanel.SELECTION_MULTI_ROW );
 		
 		if( super.getStateProperty( "onRowDoubleClick" ).isDefaultValue() )
-			setOnRowDoubleClick( "#{viewBean.rowDoubleClick}" );
+			setOnRowDoubleClick( "#{" + getBeanId() + ".rowDoubleClick}" );
 		
 		if( super.getStateProperty( "enableSelectionAcrossPages" ).isDefaultValue() )
 			setEnableSelectionAcrossPages(true);

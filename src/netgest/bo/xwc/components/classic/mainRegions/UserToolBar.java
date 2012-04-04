@@ -297,7 +297,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 				if (showUserFavsCmd == null) {
 					showUserFavsCmd = new Menu();
 					showUserFavsCmd.setId("showFavoritesCmd");
-					showUserFavsCmd.setActionExpression(createMethodBinding("#{viewBean.openViewer}"));
+					showUserFavsCmd.setActionExpression(createMethodBinding("#{" + getBeanId() + ".openViewer}"));
 					showUserFavsCmd.setValue("{viewerName:'netgest/bo/xwc/xeo/viewers/UserFavorites.xvw',boui:'"+ctx.getBoSession().getPerformerBoui()+"'}");
 					showUserFavsCmd.setTarget("tab");
 					this.getChildren().add(showUserFavsCmd);
@@ -312,7 +312,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 		if (showUserHistory == null){
 			showUserHistory = new Menu();
 			showUserHistory.setId("showHistoryCmd");
-			showUserHistory.setActionExpression(createMethodBinding("#{viewBean.openViewer}"));
+			showUserHistory.setActionExpression(createMethodBinding("#{" + getBeanId() + ".openViewer}"));
 			showUserHistory.setValue("{viewerName:'netgest/bo/xwc/xeo/viewers/UserHistory.xvw'}");
 			showUserHistory.setTarget("tab");
 			this.getChildren().add(showUserHistory);
@@ -541,7 +541,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			Menu menuLogout = new Menu();
 			menuLogout.setText(USER_TOOLBAR_LOGOUT_BTN_LBL.toString());
 			menuLogout.setIcon("ext-xeo/images/menus/logout.gif");
-			menuLogout.setServerAction("#{viewBean.openLink}");
+			menuLogout.setServerAction("#{" + getBeanId() + ".openLink}");
 			menuLogout.setTarget("top");
 			menuLogout.setValue("LogoutXVW.jsp");
 			
@@ -553,7 +553,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			Menu menuUserProps = new Menu();
 			menuUserProps.setText(USER_TOOLBAR_PROPERTIES_BTN_LBL.toString());
 			menuUserProps.setIcon("ext-xeo/admin/users.gif");
-			menuUserProps.setServerAction("#{viewBean.showUserProperties}");
+			menuUserProps.setServerAction("#{" + getBeanId() + ".showUserProperties}");
 			menuUserProps.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString( ));
 			
 			list.add(menuUserProps);
@@ -565,7 +565,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			showUserFavsCmd.setId("showFavoritesCmd");
 			showUserFavsCmd.setText(USER_TOOLBAR_FAVORITES_BTN_LBL.toString());
 			showUserFavsCmd.setIcon("ext-xeo/icons/favorite.png");
-			showUserFavsCmd.setServerAction("#{viewBean.openViewer}");
+			showUserFavsCmd.setServerAction("#{" + getBeanId() + ".openViewer}");
 			showUserFavsCmd.setValue("{viewerName:'netgest/bo/xwc/xeo/viewers/UserFavorites.xvw',boui:'"+ctx.getBoSession().getPerformerBoui()+"'}");
 			showUserFavsCmd.setTarget("tab");
 			showUserFavsCmd.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString( ));
@@ -596,7 +596,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 						currentProfile.setText(valuesIt.next());
 						currentProfile.setIcon("ext-xeo/admin/profiles.gif");
 						currentProfile.setTarget("top");
-						currentProfile.setServerAction("#{viewBean.openLink}");
+						currentProfile.setServerAction("#{" + getBeanId() + ".openLink}");
 						currentProfile.setValue("Login.xvw?action=change_profile&boui="+keyIt.next());
 						if (!groupProfiles){
 							list.add(currentProfile);
@@ -622,7 +622,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			historyMenu.setText(ComponentMessages.USER_TOOLBAR_HISTORY_BTN_LBL.toString());
 			historyMenu.setIcon("ext-xeo/icons/history.png");
 			historyMenu.setTarget("tab");
-			historyMenu.setServerAction("#{viewBean.openViewer}");
+			historyMenu.setServerAction("#{" + getBeanId() + ".openViewer}");
 			historyMenu.setValue("{viewerName:'netgest/bo/xwc/xeo/viewers/UserHistory.xvw'}");
 			historyMenu.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString( ));
 			
