@@ -154,7 +154,8 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 		
 		this.groupDataStoreByColumnAtIndex( columnIdentifier, this.indexOfCurrentDivider );
     	this.addGroupAtIndex( columnIdentifier, this.indexOfCurrentDivider );
-    	this.hideGroupedColumn( columnIdentifier );
+    	if (this.grid.isGroupToolBarVisible())
+    		this.hideGroupedColumn( columnIdentifier );
     	
     	this.unHighlightAllDividers();
 		this.reset();

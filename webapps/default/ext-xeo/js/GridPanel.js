@@ -83,7 +83,10 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         	
         }
         , canGroupColumn : function ( columnId ){
-        	return this.getColumnModel().getColumnById( columnId ).groupable;
+        	return this.getColumnModel().getColumnById( columnId ).groupable && !this.isGroupByField( columnId );
+        }
+        , isGroupByField : function ( columnId ){
+        	return this.store.isGroupByField( columnId );
         }
         , hideColumn : function ( columnId ) {
         	var idx = this.getColumnModel().findColumnIndex( columnId );
@@ -92,6 +95,20 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         , showColumn : function ( columnId ) {
         	var idx = this.getColumnModel().findColumnIndex( columnId );
             this.getColumnModel().setHidden( idx, false );
+        }
+        , hideGroupedColumns : function () {
+        	var groupedColumns = this.getGroups();
+        	for ( i = 0; i < groupedColumns.length; i++ ){
+        		var columnId = groupedColumns[ i ];
+        		this.hideColumn(columnId);
+        	}
+        }
+        , showGroupedColumns : function() {
+        	var groupedColumns = this.getGroups();
+        	for ( i = 0; i < groupedColumns.length; i++ ){
+        		var columnId = groupedColumns[ i ];
+        		this.showColumn( columnId )
+        	}
         }
         , sortColumn : function ( columnId, sortDirection ){
         	this.getStore().sort(columnId,sortDirection);
@@ -124,6 +141,9 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         		return this.getColumnModel().isSortable( columnIndex );
         	
         	return false;
+        }
+        , isGroupToolBarVisible : function () {
+        	return this.toolBarVisible;
         }
         //End Add to Original
 		,getMinHeight : function() {
@@ -597,11 +617,15 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     , handleGroupToolbarDisplay : function() {
     	if ( this.grid.toolBarVisible ){
     		this.hideGroupToolBar();
-    		this.grid.toolBarVisible = false;	
+    		this.grid.toolBarVisible = false;
+    		this.grid.showGroupedColumns();
+    		//Show Grouped Columns
     	}
     	else{
     		this.showGroupToolBar();
     		this.grid.toolBarVisible = true;
+    		this.grid.hideGroupedColumns();
+    		//Hide Grouped Columns
     	}
     	this.grid.getStore().uploadConfig();
     } 
@@ -662,12 +686,12 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         	  }
             this.onGroupByClick();
         }else{
-        		this.grid.store.removeGroupBy(this.cm.getDataIndex(this.hdCtxIndex)); 
+        	this.grid.store.removeGroupBy(this.cm.getDataIndex(this.hdCtxIndex)); 
         		
-            if(this.grid.store.groupField.length	== 0 && this.grid.store.aggregateFieldsOn.length > 0)
-			    	{ 			 
-			      	this.grid.store.addGroupBy("/*DUMMY_AGGREGATE*/");		       	  	     	
-			    	}	        
+            if(this.grid.store.groupField.length == 0 
+            		&& this.grid.store.aggregateFieldsOn.length > 0){ 			 
+			      		this.grid.store.addGroupBy("/*DUMMY_AGGREGATE*/");		       	  	     	
+			}	        
         }
     },
     onClearGroups : function() {
