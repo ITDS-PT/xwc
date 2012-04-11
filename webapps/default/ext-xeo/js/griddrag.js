@@ -42,6 +42,8 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
     		
 	    	ddGroup : "gridHeader" + this.grid.getGridEl().id //Same as the GridHeaderDrag/DropZone
 	    	
+	    	, isGroupDragDrop : true
+	    	
 	    	,notifyOver: function ( source, evtObj, data ){ 
 	    		
 	    		var grid = source.grid;

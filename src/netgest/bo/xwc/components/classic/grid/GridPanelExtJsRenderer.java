@@ -994,10 +994,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         oGridListeners.add("statesave", "function(comp, state) {var id = comp.getStateId(); if(id) Ext.state.Manager.clear(id); }" );
         oGridListeners.add("beforestaterestore", "function() {return false;}" );
-        oGridListeners.add("beforestatesave", "function() {return false;}" ); 
+        oGridListeners.add("beforestatesave", "function() {return false;}" );
         oGridListeners.add("columnmove", "function(idx, n) { this.onColumnConfigChange('moved',idx, n ) }" );
         oGridListeners.add("columnresize", "function(idx, n) { this.onColumnConfigChange('width',idx,n ) }" );
-        
+        if (oGrid.getEnableGroupBy())
+        	oGridListeners.add("beforedestroy", "function(grid) {return ExtXeo.grid.destroyGroupDDSupport(grid);}" );
         
         XUICommand oRowDblClickComp = (XUICommand)oGrid.findComponent( oGrid.getId() + "_rowDblClick" );
         if( oRowDblClickComp != null && oGrid.getOnRowDoubleClick() != null )

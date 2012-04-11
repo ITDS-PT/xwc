@@ -31,6 +31,9 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         , getId : function () {
         	return this.id;
         }
+        , getGridHeaderId : function () {
+        	return 'gridHeader' + this.getGridEl().id;
+        }
         , getColumnLabel : function ( columnId ){
         	return this.getColumnModel().getColumnById( columnId ).header;
         }
@@ -2343,6 +2346,23 @@ ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentif
     else {
         alert('Select rows input not found!!');
     }
+}
+
+/**
+ * 
+ * Removes the drag and drop support of the grid panel before destroying it
+ * 
+ * */
+ExtXeo.grid.destroyGroupDDSupport  = function (grid){
+	
+	var dds = Ext.dd.DDM.ids[grid.getGridHeaderId()];
+	for(var dd in dds){
+			if (dd.isGroupDragDrop && dd.isGroupDragDrop === true){
+	            var elid = dds[dd].dragElId;
+	            dds[dd].unreg();
+	            Ext.get(elid).remove();
+			}
+        }
 }
 
 /**
