@@ -139,12 +139,30 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 			this.groupDataStoreByColumnAtIndex(columnIdentifier, this.indexOfCurrentDivider);
 	    	this.addGroupAtIndex( columnIdentifier, this.indexOfCurrentDivider );
 	    	this.hideGroupedColumn( columnIdentifier );
+	    	this.hideInviteGroupMessage();
     	}
 		this.unHighlightAllDividers();
 		this.reset();
 		
 		return true;
     	
+	}
+	/** Hides the message that show the user the place to create groups */
+	, hideInviteGroupMessage : function () {
+		Ext.get(this.grid.id + "_groupInvite").hide();
+	}
+	
+	/** Shows the message that show the user the place to create groups */
+	, showInviteGroupMessageWhenNoGroupsVisible : function () {
+		if (this.grid.getGroups().length == 0)
+			Ext.get(this.grid.id + "_groupInvite").show();
+	}
+	
+	, checkAndToogleGroupMessageVisibility : function(){
+		if (this.grid.getGroups().length == 0)
+			Ext.get(this.grid.id + "_groupInvite").show();
+		else
+			this.hideInviteGroupMessage();
 	}
 	
 	/**
@@ -579,6 +597,7 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 	, ungroup : function (groupId){
 		this.removeGroup(groupId);
 		this.showColumnAfterGroupRemove(groupId);
+		this.showInviteGroupMessageWhenNoGroupsVisible();
 		this.reset();
 	}
 	
@@ -602,7 +621,7 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 		cleanButton.on( 'click', ExtXeo.removeColumn, null, {gridId: this.grid.id, colId : columnId } );
 		
 		var imgRemove = new Ext.Element( document.createElement( 'img' ) );
-		imgRemove.set({ src : "icons/delete.png" , style : 'vertical-align:middle'});
+		imgRemove.set({ src : "ext-xeo/icons/remove-group.png" , style : 'vertical-align:middle'});
 		
 		cleanButton.appendChild(imgRemove.dom);
 		
@@ -640,7 +659,7 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
     			}
     		}
     	}
-    	
+    	this.checkAndToogleGroupMessageVisibility();
     	
     }
     
@@ -660,9 +679,11 @@ ExtXeo.removeColumn = function(ev, target, options){
 	grid.removeGroupByColumn(columnId);
 	ExtXeo.destroyGroupElements(target);
 	
+	grid.getGroupDragDropPlugin().showInviteGroupMessageWhenNoGroupsVisible();	
 	grid.getGroupDragDropPlugin().reset();
 	
 	grid.showColumn(columnId);
+	
 	
     
 };

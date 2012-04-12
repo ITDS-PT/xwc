@@ -262,22 +262,31 @@ mean "drop here */
 /* Style applied to the DIV */
 .placeHolder {
 	float: left;
-	margin-top:10px;
+	margin-top:6px;
+	margin-bottom:6px;
 }
 
 /* These two styles allow to imitate the aspect of gridPanel columns */
 .x-grid3-header-1 {
 	font-family:arial, tahoma, helvetica, sans-serif;
 	font-size:11px;
-}
+} 
 				
 .x-grid3-header:hover {
 	background: #ebf3fd;
 	url( extjs/resources/images/default/grid/grid3-hrow-over.gif );
-	repeat-x left bottom;
+	repeat-x: left bottom;
 }
 
 /* Background for the group toolbar (copied from ExtJS toolbar to be similar */
 .xwc-group-toolbar-bg{
 	background-color: #D9E8FB;
+}
+
+.xwc-group_warning{
+	font-family:arial, tahoma, helvetica, sans-serif;
+	font-size:11px;
+	color:#0033CC;
+	left:10px;
+	top:5px;
 }

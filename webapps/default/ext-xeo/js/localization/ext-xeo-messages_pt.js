@@ -1,6 +1,6 @@
 Ext.ns('ExtXeo');
 
-ExtXeo.Messages = {
+ExtXeo.Messages = { 
 		PROCESSING 		: 'A processar...',
 		SENDING_DATA 	: 'A enviar dados, aguarde p.f. ...',
 		WELCOME			: 'Bem Vindo',
@@ -8,7 +8,8 @@ ExtXeo.Messages = {
 		XEODM_ACTIVE	: "XEODM Activo",
 		XEODM_INACTIVE	: "XEODM Inactivo",
 		LOGOUT_BTN		: 'Terminar Sess&atilde;o',
-		USER_PROPS		: "Utilizador"	
+		USER_PROPS		: "Utilizador",
+		INVITE_MESSAGE 	: "Arraste o cabeçalho de uma coluna para aqui para agrupar por ela" 
 };
 
 if(ExtXeo.PagingToolbar){
@@ -23,7 +24,7 @@ if(ExtXeo.PagingToolbar){
 	    displayMsg     : "A mostrar {0} - {1} de {2}",
 	    emptyMsg       : 'Sem dados para mostrar'
 	  });
-	}
+}
 
 if(ExtXeo.grid.GridView) {
 	  Ext.apply(ExtXeo.grid.GridView.prototype , {

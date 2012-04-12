@@ -11,6 +11,11 @@ ExtXeo.Messages = {
 	USER_PROPS		: 'Idioma'	
 };
 
+ExtXeo.GridMessages = {
+		INVITE_MESSAGE 		: 'Arraste o cabeçalho de uma coluna para aqui para agrupar por ela'
+			
+};
+
 if(ExtXeo.PagingToolbar){
 	  Ext.apply(ExtXeo.PagingToolbar.prototype, {
 	    beforePageText : "P&aacute;gina",

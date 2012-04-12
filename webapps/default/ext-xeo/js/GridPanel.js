@@ -189,20 +189,23 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 			if(!this.suspendUploadCondig) {
 				this.updateColumnConfig( true );
 			}
-		},
+		}
 		//Return the Id of the selected rows hidden input
-		getSelectedRowsInputId : function(){
+		, getSelectedRowsInputId : function(){
 			return this.id + "_srs";
-		},
+		}
 		//Return the Id of the active hidden input
-		getActiveRowInputId : function(){
+		, getActiveRowInputId : function(){
 			return this.id + "_act";
-		},
+		}
 		//Return the Id of the label with the number of selected elements
-		getNumberSelectionsCounterId : function(){
+		, getNumberSelectionsCounterId : function(){
 			return this.id + "_selections";
-		},
-		reset : function () {
+		}
+		, checkAndToogleGroupMessageVisibility : function () {
+			this.gridDragDrop.checkAndToogleGroupMessageVisibility();
+		}
+		, reset : function () {
 			this.recordIds = [];
 			var selectedRecorsdInput = Ext.get(this.getSelectedRowsInputId());
 			var activeRecorsdInput = Ext.get(this.getActiveRowInputId());
@@ -596,10 +599,17 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         }
     }  
     ,createDragDropGroupPlaceholder : function (){
-    	var elem = Ext.get(document.createElement('div'));
-    	var ddGroupId = (this.grid.id || Ext.id()) + "_dragDropGroup";
-    	elem.set({id : ddGroupId, style : 'width:100%;height:35px;display:none;'});
+    	var elem = Ext.get( document.createElement( 'div' ) );
+    	var ddGroupId = ( this.grid.id || Ext.id()) + "_dragDropGroup";
+    	elem.set( { id : ddGroupId, style : 'width:100%;height:30px;display:none;' } );
+    	
+    	var messageInvite = Ext.get( document.createElement( 'span' ) );
+    	messageInvite.set({ id : this.grid.id+"_groupInvite" , style : 'position:absolute' })
+    	messageInvite.addClass('xwc-group_warning');
+    	messageInvite.update(ExtXeo.Messages.INVITE_MESSAGE);
+    	
     	elem.addClass('xwc-group-toolbar-bg');
+    	elem.appendChild(messageInvite.dom);
     	/*
     	This is added here (.x-panel-body) so that we don't have the problem of the grouptoolbar
     	adding a new scrollbar to the grid panel, if it's in another place in the
@@ -622,6 +632,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     	if ( this.grid.toolBarVisible ){
     		this.hideGroupToolBar();
     		this.grid.toolBarVisible = false;
+    		this.grid.checkAndToogleGroupMessageVisibility();
     		this.grid.showGroupedColumns();
     		//Show Grouped Columns
     	}
@@ -629,6 +640,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     		this.showGroupToolBar();
     		this.grid.toolBarVisible = true;
     		this.grid.hideGroupedColumns();
+    		this.grid.checkAndToogleGroupMessageVisibility();
     		//Hide Grouped Columns
     	}
     	this.grid.getStore().uploadConfig();

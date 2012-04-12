@@ -9,8 +9,10 @@ ExtXeo.Messages = {
 	XEODM_ACTIVE	: "XEODM Enabled",
 	XEODM_INACTIVE	: "XEODM Disabled",
 	LOGOUT_BTN		: 'Logout',
-	USER_PROPS			: 'User settings'
+	USER_PROPS		: 'User settings',
+	INVITE_MESSAGE 	: 'Drag a column header here to group it'
 };
+
 
 if(ExtXeo.PagingToolbar){
 	  Ext.apply(ExtXeo.PagingToolbar.prototype, {
