@@ -262,7 +262,7 @@ mean "drop here */
 /* Style applied to the DIV */
 .placeHolder {
 	float: left;
-	margin-top:8px;
+	margin-top:10px;
 }
 
 /* These two styles allow to imitate the aspect of gridPanel columns */
@@ -284,13 +284,5 @@ mean "drop here */
 
 /* Background for the group toolbar (copied from ExtJS toolbar to be similar */
 .xwc-group-toolbar-bg{
-	background-image: url(extjs/resources/images/default/toolbar/bg.gif);
-	background-repeat-x: repeat;
-	background-repeat-y: no-repeat;
-	background-attachment: initial;
-	background-position-x: 0%;
-	background-position-y: 0%;
-	background-origin: initial;
-	background-clip: initial;
-	background-color: #D0DEF0;
+	background-color: #D9E8FB;
 }

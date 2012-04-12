@@ -598,7 +598,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     ,createDragDropGroupPlaceholder : function (){
     	var elem = Ext.get(document.createElement('div'));
     	var ddGroupId = (this.grid.id || Ext.id()) + "_dragDropGroup";
-    	elem.set({id : ddGroupId, style : 'width:100%;height:35px; background-color:#FFFFFF;display:none;'});
+    	elem.set({id : ddGroupId, style : 'width:100%;height:35px;display:none;'});
     	elem.addClass('xwc-group-toolbar-bg');
     	/*
     	This is added here (.x-panel-body) so that we don't have the problem of the grouptoolbar
