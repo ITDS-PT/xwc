@@ -214,72 +214,32 @@ a.xwc-favorite-trigger:hover {
 	color: black;
 }
 
-.regular {
-	display: block;
-	float: left;
-	margin: 2px 2px 2px 2px;
-	background-color: #f5f5f5;
-	border: 1px solid #dedede;
-	border-top: 1px solid #eee;
-	border-left: 1px solid #eee;
-	font-family: "Lucida Grande", Tahoma, Arial, Verdana, sans-serif;
-	font-size: 12px;
-	line-height: 130%;
-	text-decoration: none;
-	font-weight: bold;
-	color: #336699;
-	cursor: pointer;
-	padding: 5px 5px 5px 5px; /* Links */
-}
+/* Grid Drag and Drop Support CSS Classes  */
 
-.regular_disabled {
-	display: block;
-	float: left;
-	margin: 2px 2px 2px 2px;
-	background-color: #f5f5f5;
-	border: 1px solid #dedede;
-	border-top: 1px solid #eee;
-	border-left: 1px solid #eee;
-	font-family: "Lucida Grande", Tahoma, Arial, Verdana, sans-serif;
-	font-size: 12px;
-	line-height: 130%;
-	text-decoration: none;
-	font-weight: bold;
-	color: #CCCCCC;
-	cursor: pointer;
-	padding: 5px 5px 5px 5px; /* Links */
-}
 
+/* Grouped Column not sorted */
 .no_sort {
 	display: inline;
 	height: 4px;
 	vertical-align: middle;
 }
 
+/* Grouped Column sorted ascending */
 .sort_asc {
 	background-image: url(../../extjs/resources/images/default/grid/sort_asc.gif);
 	margin-left: 3px;
 	width: 13px;
 }
 
+/* Grouped Column sorted descending */
 .sort_desc {
 	background-image: url(../../extjs/resources/images/default/grid/sort_desc.gif);
 	margin-left: 3px;
 	width: 13px;
 }
 
-.regular:hover {
-	background-color: #dff4ff;
-	border: 1px solid #c2e1ef;
-	color: #336699;
-}
 
-.regular:active {
-	background-color: #6299c5;
-	border: 1px solid #6299c5;
-	color: #fff;
-}
-
+/* Style applied to divider between groups */
 .group_divider {
 	width: 10px;
 	height: 20px;
@@ -291,12 +251,46 @@ a.xwc-favorite-trigger:hover {
 	background-color: transparent;
 }
 
+/* Style applied when a dividir is being hovered (shows a small arrow to 
+mean "drop here */
 .group_dividir_hover {
 	background-image: url(../images/drophere.png);
 	background-repeat: no-repeat;
 	vertical-align: bottom;
 }
 
+/* Style applied to the DIV */
 .placeHolder {
 	float: left;
+	margin-top:8px;
+}
+
+/* These two styles allow to imitate the aspect of gridPanel columns */
+.x-grid3-header-1 {
+	font-family:arial, tahoma, helvetica, sans-serif;
+	font-size:11px;
+}
+				
+.x-grid3-header:hover {
+	background: #ebf3fd;
+	url( extjs/resources/images/default/grid/grid3-hrow-over.gif );
+	repeat-x left bottom;
+}
+
+/* When a Grouped Column is disabled */
+.xwc-disabled-group{
+	color: #CCCCCC;
+}
+
+/* Background for the group toolbar (copied from ExtJS toolbar to be similar */
+.xwc-group-toolbar-bg{
+	background-image: url(extjs/resources/images/default/toolbar/bg.gif);
+	background-repeat-x: repeat;
+	background-repeat-y: no-repeat;
+	background-attachment: initial;
+	background-position-x: 0%;
+	background-position-y: 0%;
+	background-origin: initial;
+	background-clip: initial;
+	background-color: #D0DEF0;
 }

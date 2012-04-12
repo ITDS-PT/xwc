@@ -599,6 +599,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     	var elem = Ext.get(document.createElement('div'));
     	var ddGroupId = (this.grid.id || Ext.id()) + "_dragDropGroup";
     	elem.set({id : ddGroupId, style : 'width:100%;height:35px; background-color:#FFFFFF;display:none;'});
+    	elem.addClass('xwc-group-toolbar-bg');
     	/*
     	This is added here (.x-panel-body) so that we don't have the problem of the grouptoolbar
     	adding a new scrollbar to the grid panel, if it's in another place in the
@@ -2357,7 +2358,7 @@ ExtXeo.grid.destroyGroupDDSupport  = function (grid){
 	
 	var dds = Ext.dd.DDM.ids[grid.getGridHeaderId()];
 	for(var dd in dds){
-			if (dd.isGroupDragDrop && dd.isGroupDragDrop === true){
+			if (dds[dd].isGroupDragDrop && dds[dd].isGroupDragDrop === true){
 	            var elid = dds[dd].dragElId;
 	            dds[dd].unreg();
 	            Ext.get(elid).remove();

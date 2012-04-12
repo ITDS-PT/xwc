@@ -191,9 +191,7 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 	   //Reset groups
 	   this.setGroupSeparators([]);
 	   
-	   //Ext.get( this.grid.getDropTargetIdentifier() ).appendChild( groupButton.dom );
-	   
-	   this.addDragDropSupportToGroupButton( groupButton.child('label') );
+	   this.addDragDropSupportToGroupButton( groupButton.child('div') );
    }
    
    , groupDataStoreByColumnAtIndex : function (columnId, index) {
@@ -349,11 +347,12 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 	,createGroupButton : function (columnIdentifier) {
 		
 		
-		myEl = new Ext.Element(document.createElement('label'));
+		myEl = new Ext.Element(document.createElement('div'));
 		
 		var name = this.grid.getColumnLabel( columnIdentifier );
 		
 		var nameElement = new Ext.Element(document.createElement('div'));
+		nameElement.addClass('x-grid3-hd-inner x-grid3-header-1 sort-desc');
 		nameElement.update(name + ' ');
 		nameElement.set({	
 					  style : 'display:inline'
@@ -361,6 +360,8 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 		
 		var imgDirection = new Ext.Element(document.createElement('img'));
 		imgDirection.addClass('no_sort');
+		imgDirection.addClass('x-grid3-sort-icon');
+		
 		imgDirection.set({	
 			  src : 'extjs/resources/images/default/s.gif'
 		});
@@ -386,17 +387,17 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 			
 		});
 		
-		
+		myEl.addClass('x-grid3-header');
 		if ( this.grid.isColumnSortable( columnIdentifier ) ){
-			nameElement.on('click', ExtXeo.sortGroupedColumn, 
+				nameElement.on('click', ExtXeo.sortGroupedColumn, 
 					this,
 					{
 						gridId: this.grid.id
 					}
 			);
-			myEl.addClass('regular');
-		} else  
-		myEl.addClass('regular_disabled');
+		} else  {
+			myEl.addClass('xwc-disabled-group'); 
+		}
 		
 		var parentColumn = new Ext.Element( document.createElement( 'div' ) );
 		parentColumn.appendChild( myEl.dom );
@@ -442,12 +443,6 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 				
 				gridPlugin.indexGroupDragForReoder = index;
 				
-				//TODO: Vou precisar de bonecos para mostrar que está ordernado
-				//Descobrir qual a API que faz o sort de determinada coluna
-				
-				//Tem de respeitar o facto de poder não estar o sort disponível
-				//para cada coluna individual
-				
 				return true;
 			}
 				
@@ -455,7 +450,7 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 			 , onDragDrop : function ( evtObj, targetElId ){
 				var target = Ext.get(targetElId);
 				
-				//NOTE; Have to call this PERIOD or the Drag ceases to function
+				//NOTE; Have to call this, PERIOD. Or the Drag ceases to function
 				//The visual effect is kinda ugly
 				this.getProxy().repair(target.getXY(), this.afterRepair, this);
 				this.getProxy().hide(true);
@@ -602,16 +597,21 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 	 * the grouped column so that the group can be removed
 	 * 
 	 * */
-    ,createRemoveGroupButton : function (columnId) {
-    	var cleanButton = new Ext.Element(document.createElement('div'));
-		cleanButton.set({style : "display:inline; color:#800000; background-color:transparent; cursor:hand"});
-		cleanButton.update("(X)");
-		cleanButton.on('click', ExtXeo.removeColumn, null, {gridId: this.grid.id, colId : columnId });
+    ,createRemoveGroupButton : function ( columnId ) {
+    	var cleanButton = new Ext.Element( document.createElement( 'div' ) );
+		cleanButton.set( { style : "display:inline; color:#800000; background-color:transparent; cursor:hand" } );
+		cleanButton.update( " " );
+		cleanButton.on( 'click', ExtXeo.removeColumn, null, {gridId: this.grid.id, colId : columnId } );
+		
+		var imgRemove = new Ext.Element( document.createElement( 'img' ) );
+		imgRemove.set({ src : "icons/delete.png" , style : 'vertical-align:middle'});
+		
+		cleanButton.appendChild(imgRemove.dom);
+		
 		return cleanButton;
     }
-     
     
-  //Retrieve the currently selected groups
+    //Retrieve the currently selected groups
     ,getCurrentGroups : function(){
     	return this.grid.getGroups();
     }
@@ -712,7 +712,7 @@ ExtXeo.sortGroupedColumn = function (ev, target, options ){
  * when it's being removed
  * */
 ExtXeo.destroyGroupElements = function ( target ){
-	var element = Ext.get(target).parent('div');
+	var element = Ext.get(target).parent('div.placeHolder');
 	var divider = element.next('.group_divider');
 	element.remove();
 	divider.remove();
