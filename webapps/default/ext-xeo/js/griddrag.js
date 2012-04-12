@@ -395,9 +395,7 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 						gridId: this.grid.id
 					}
 			);
-		} else  {
-			myEl.addClass('xwc-disabled-group'); 
-		}
+		} 
 		
 		var parentColumn = new Ext.Element( document.createElement( 'div' ) );
 		parentColumn.appendChild( myEl.dom );

@@ -277,11 +277,6 @@ mean "drop here */
 	repeat-x left bottom;
 }
 
-/* When a Grouped Column is disabled */
-.xwc-disabled-group{
-	color: #CCCCCC;
-}
-
 /* Background for the group toolbar (copied from ExtJS toolbar to be similar */
 .xwc-group-toolbar-bg{
 	background-color: #D9E8FB;
