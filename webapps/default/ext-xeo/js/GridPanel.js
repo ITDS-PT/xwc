@@ -25,6 +25,9 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         , getGroupDragDropPlugin : function() {
         	return this.gridDragDrop;
         }
+        , removeGroupButton : function ( columnId ){
+        	this.gridDragDrop.removeGroupButton( columnId );
+        }
         , getDropTargetIdentifier : function() {
         	return this.id + "_dragDropGroup";
         }
@@ -86,7 +89,8 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         	
         }
         , canGroupColumn : function ( columnId ){
-        	return this.getColumnModel().getColumnById( columnId ).groupable && !this.isGroupByField( columnId );
+        	return this.getColumnModel().getColumnById( columnId ).groupable &&
+        			!this.isGroupByField( columnId );
         }
         , isGroupByField : function ( columnId ){
         	return this.store.isGroupByField( columnId );
@@ -181,20 +185,20 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 		}
 		,setMinHeight : function( minHeight ) {
 			this.minHeight = minHeight; 
-		},
-		multiSelection : false,
-		getMultiSelections : function(){
+		}
+		, multiSelection : false
+		, getMultiSelections : function(){
 			return this.multiSelection;
-		},
-		maxSelections : -1,
-		getMaxSelections : function(){
+		}
+		, maxSelections : -1
+		, getMaxSelections : function(){
 			return this.maxSelections;
-		},
-		multiPagePreserve : false,
-		getMultiPageSelections : function(){
+		}
+		, multiPagePreserve : false
+		, getMultiPageSelections : function(){
 			return this.multiPagePreserve;
-		},
-		updateColumnConfig : function( submit ) {
+		}
+		, updateColumnConfig : function( submit ) {
 			var cm = this.getColumnModel();
 			var cc = cm.getColumnCount();
 			if( !this.columnsSavedConfig )
@@ -209,8 +213,8 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 				colsCfg[i].hidden = cm.isHidden( i );
 			}
 			this.getStore().setColumnsConfig( colsCfg, submit );
-		},
-		onColumnConfigChange : function( evname, idx, newvalue ) {
+		}
+		, onColumnConfigChange : function( evname, idx, newvalue ) {
 			this.getView().updateHeaderSortState();
 			this.getView().updateGroupByState();
 			if(!this.suspendUploadCondig) {
@@ -718,17 +722,17 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         	  if(this.grid.store.aggregateFieldsOn.length > 0 && 
         	  	(this.grid.store.groupField.length == 0 || 
         	  	(this.grid.store.groupField.length == 1 && this.grid.store.groupField[0] == "/*DUMMY_AGGREGATE*/" ))
-        	  )
-        	  {
+        	  ){
         	  	this.grid.store.removeGroupBy("/*DUMMY_AGGREGATE*/");     
         	  }
             this.onGroupByClick();
         }else{
-        	this.grid.store.removeGroupBy(this.cm.getDataIndex(this.hdCtxIndex)); 
-        		
-            if(this.grid.store.groupField.length == 0 
+        	var columnId = this.cm.getDataIndex( this.hdCtxIndex );
+        	this.grid.store.removeGroupBy( columnId );
+        	this.grid.removeGroupButton( columnId )
+        	if(this.grid.store.groupField.length == 0 
             		&& this.grid.store.aggregateFieldsOn.length > 0){ 			 
-			      		this.grid.store.addGroupBy("/*DUMMY_AGGREGATE*/");		       	  	     	
+	      		this.grid.store.addGroupBy("/*DUMMY_AGGREGATE*/");		       	  	     	
 			}	        
         }
     },

@@ -398,8 +398,8 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
     	
     	var buttonToRemoveGroup = this.createRemoveGroupButton(columnIdentifier);
     	
-    	myEl.appendChild(imgDirection.dom);
     	myEl.appendChild(nameElement.dom);
+    	myEl.appendChild(imgDirection.dom);
     	myEl.appendChild(buttonToRemoveGroup.dom);
 		
 		myEl.set(
@@ -666,9 +666,39 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
     	this.checkAndToogleGroupMessageVisibility();
     	
     }
+    /**
+     * 
+     * Retrieves an array with all the Html elements representing the groups
+     * for the current grid
+     * 
+     * */
+    , getAllGroupedButtons : function () {
+    	var columnsToRemove = Ext.get( this.idDivForDrop ).query( '.xwc_group_box' );
+    	return columnsToRemove;
+    }
     
+    /**
+     * 
+     * Remove a specific button from the group bar
+     * 
+     * @param columnId The identifier of the grouped column
+     * */
+    , removeGroupButton : function ( columnId ){
+    	var columnsToRemove = this.getAllGroupedButtons();
+    	for ( i = 0 ; i < columnsToRemove.length; i++ ){
+			var currElem = columnsToRemove[ i ];
+			var elem = Ext.get(currElem);
+			if ( ExtXeo.getAttribute( currElem, 'data' ) === columnId )
+				ExtXeo.destroyGroupElements( currElem );
+		}
+    }
+    
+    /**
+     * 
+     * Removes all buttons from the group bar
+     * */
 	, removeAllGroupButtons : function(){
-		var columnsToRemove = Ext.get( this.idDivForDrop ).query( '.xwc_group_box' );
+		var columnsToRemove = this.getAllGroupedButtons();
 		for ( i = 0 ; i < columnsToRemove.length; i++ ){
 			var currElem = columnsToRemove[ i ];
 			ExtXeo.destroyGroupElements( currElem );
