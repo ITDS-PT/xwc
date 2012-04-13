@@ -49,7 +49,8 @@ public class XUIScriptContext {
 
     public void addInclude( RenderPosition oPosition, String sId, String sURL ) {
         int iIdIdx;
-        assert oPosition != null: MessageLocalizer.getMessage("OPOSITION_CANNOT_BE_NULL");
+        assert oPosition != null : MessageLocalizer.getMessage("OPOSITION_CANNOT_BE_NULL");
+        assert oPosition != POSITION_INLINE : "Cannot include scripts in POSTION_INLINE";
         assert sId != null: MessageLocalizer.getMessage("SID_CANNOT_BE_NULL");
 
         // Muda a flag para notificar que existem  inline para ser feito o render
