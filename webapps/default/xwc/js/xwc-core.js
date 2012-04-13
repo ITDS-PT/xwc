@@ -194,7 +194,6 @@ XVW.ErrorDialog = function( sTitle, sMessage ) {}
 XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
 	// Handle view Element -- Update ViewId
     var oScriptId;
-    var oScriptSrc;
     var oDocElm = oXmlReq.responseXML.documentElement;
     var sViewId     = oDocElm.getAttribute("viewId");
     var bIsPostBack = "true" == oDocElm.getAttribute("isPostBack");
@@ -261,14 +260,8 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         for( var i=0; i < oScriptNodes.length; i++ ) {
             var oScriptNode = oScriptNodes.item(i);
             oScriptId = oScriptNode.getAttribute("id");
-            oScriptSrc = oScriptNode.getAttribute("src");
-            if( oScriptSrc != null ) {
-            	XVW.addScriptInclude( oScriptId, oScriptSrc );
-            }
-            else { 
-            	if(oScriptNode.textContent /*Mozilla*/) { sScriptToEval += oScriptNode.textContent + "\n" }
-            	else /*IE*/ { sScriptToEval += oScriptNode.text + "\n"  };
-            }
+            if(oScriptNode.textContent /*Mozilla*/) { sScriptToEval += oScriptNode.textContent + "\n" }
+            else /*IE*/ { sScriptToEval += oScriptNode.text + "\n"  };
 
         }            
     }        
@@ -367,16 +360,13 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
     {
         var oScriptNodes = oFooterScriptNodeList.item(nl3).getElementsByTagName( 'script' );
         for( var i=0; i < oScriptNodes.length; i++ ) {
+            
             var oScriptNode = oScriptNodes.item(i);
             oScriptId = oScriptNode.getAttribute("id");
-            oScriptSrc = oScriptNode.getAttribute("src");
-            if( oScriptSrc != null ) {
-            	XVW.addScriptInclude( oScriptId, oScriptSrc );
-            }
-            else { 
-	            if(oScriptNode.textContent /*Mozilla*/) { sScriptToEval += oScriptNode.textContent; }
-	            else /*IE*/ { sScriptToEval += oScriptNode.text };
-            }
+            
+            if(oScriptNode.textContent /*Mozilla*/) { sScriptToEval += oScriptNode.textContent; }
+            else /*IE*/ { sScriptToEval += oScriptNode.text };
+            
             sScriptToEval += "\n";
         }            
     }
@@ -401,17 +391,6 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
     
     // Performance analisis
     //window.setTimeout( function() { alert ( (window.ts2-window.ts) + "-" + ((new Date())-window.ts2) ) }, 50 );
-}
-
-XVW.addScriptInclude = function( oScriptId, xsrc ) {
-	if( document.getElementById( oScriptId )==null ) {
-		var head = document.getElementsByTagName('head')[0];
-		var scriptElement = document.createElement('script');
-		scriptElement.id = oScriptId;
-		scriptElement.type = 'text/javascript';
-		scriptElement.src = xsrc;
-		head.appendChild( scriptElement );
-	}
 }
 
 XVW.getViewInputById = function( sViewDivId, sInputId ) {

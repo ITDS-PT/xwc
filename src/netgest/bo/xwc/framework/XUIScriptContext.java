@@ -1,8 +1,12 @@
 package netgest.bo.xwc.framework;
 
 import java.io.IOException;
+
+import java.util.Calendar;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
+
 
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.framework.jsf.XUIStaticField;
@@ -164,7 +168,6 @@ public class XUIScriptContext {
                         // Render inline elements 
                         w.writeText("\n", null );
                         w.startElement("script", null );
-                        w.writeAttribute("id", oFragment.getScriptId(), null);
                         w.writeAttribute("type", "text/javascript", null);
                         renderFragment( w, oFragment );
                         w.writeText("\n", null );
@@ -254,7 +257,6 @@ public class XUIScriptContext {
                 w.write('\n');
                 w.startElement("script", null);
                 w.writeAttribute("type","text/javascript", null );
-                w.writeAttribute("id", oFragment.getScriptId(), null );
                 w.writeAttribute("src", oRequestContext.getResourceUrl( oFragment.getContent().toString() ), null );
                 w.endElement("script");
             }
@@ -304,13 +306,15 @@ public class XUIScriptContext {
             oFragment = oFragmentsEnum.nextElement();    
             switch( oFragment.getPosition().getValue() ) {
                 case 1:
-            		renderFragmentForAjaxDom( headElement, oFragment );
+                	if( oFragment.getType() != TYPE_INCLUDE )
+                		renderFragmentForAjaxDom( headElement, oFragment );
                     break;
                 case 2:
                     // Do not render inline 
                     break;
                 case 3:
-            		renderFragmentForAjaxDom( footerElement, oFragment );
+                	if( oFragment.getType() != TYPE_INCLUDE )
+                		renderFragmentForAjaxDom( footerElement, oFragment );
                     break;
             }
         }
@@ -326,13 +330,10 @@ public class XUIScriptContext {
 
         headScriptElement = oXmlDoc.createElement("script");
         headScriptElement.setAttribute( "id", oFragment.getScriptId() );
-        
-        if( oFragment.getType() == TYPE_TEXT )
-        	headScriptElement.appendChild( oXmlDoc.createCDATASection( String.valueOf( oFragment.getContent() ) ) );
-        else
-        	headScriptElement.setAttribute("src", String.valueOf( oFragment.getContent() ) );
+        headScriptElement.appendChild( oXmlDoc.createCDATASection( String.valueOf( oFragment.getContent() ) ) );
 
         Element.appendChild( headScriptElement );
+        
     }
     
 
