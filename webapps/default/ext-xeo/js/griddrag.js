@@ -141,7 +141,7 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 	    	this.hideGroupedColumn( columnIdentifier );
 	    	this.hideInviteGroupMessage();
     	}
-		this.unHighlightAllDividers();
+    	this.unHighlightAllDividers();
 		this.reset();
 		
 		return true;
@@ -174,8 +174,12 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 		
 		this.groupDataStoreByColumnAtIndex( columnIdentifier, this.indexOfCurrentDivider );
     	this.addGroupAtIndex( columnIdentifier, this.indexOfCurrentDivider );
-    	if (this.grid.isGroupToolBarVisible())
-    		this.hideGroupedColumn( columnIdentifier );
+    	
+    	this.hideInviteGroupMessage();
+    	if (!this.grid.isGroupToolBarVisible())
+    		this.grid.showGroupBar();
+    	
+    	this.hideGroupedColumn( columnIdentifier );
     	
     	this.unHighlightAllDividers();
 		this.reset();
@@ -344,7 +348,7 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 	   
    }
    
-   ,hideGroupedColumn : function (columnIdentifier) {
+   , hideGroupedColumn : function (columnIdentifier) {
 		var idx = this.grid.colModel.findColumnIndex(columnIdentifier);
 		if (idx >= 0)
 			this.grid.colModel.setHidden(idx,true);
@@ -406,6 +410,8 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 		});
 		
 		myEl.addClass('x-grid3-header');
+		myEl.addClass('xwc_group_box');
+		
 		if ( this.grid.isColumnSortable( columnIdentifier ) ){
 				nameElement.on('click', ExtXeo.sortGroupedColumn, 
 					this,
@@ -423,22 +429,20 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
     }
 	
 	
-	, unHighlightAllDividers : function (){
-		var elems = Ext.get(this.idDivForDrop).query('.group_divider');
-		Ext.each(elems, function(element,index){
-			Ext.get(element).removeClass('group_dividir_hover');
+	, unHighlightAllDividers : function() {
+		var elems = Ext.get( this.idDivForDrop ).query( '.group_divider' );
+		Ext.each( elems, function( element, index ){
+			Ext.get( element ).removeClass( 'group_dividir_hover' );
 		});
 	} 
 	
-	,addDragDropSupportToGroupButton : function (btn){
-		
-		this.addReorderGroupsDragSupportToButton(btn);
-		
+	,addDragDropSupportToGroupButton : function ( btn ){
+		this.addReorderGroupsDragSupportToButton( btn );
 	}
 	
-	, addReorderGroupsDragSupportToButton : function (groupButton) {
+	, addReorderGroupsDragSupportToButton : function ( groupButton ) {
 		
-		var ddReorder = new Ext.dd.DragSource(groupButton, {
+		var ddReorder = new Ext.dd.DragSource( groupButton, {
 			  grid : this.grid
 			  , ddGroup : this.grid.id + "_reorderGroup"
 			  , isTarget : false
@@ -663,7 +667,13 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
     	
     }
     
-	
+	, removeAllGroupButtons : function(){
+		var columnsToRemove = Ext.get( this.idDivForDrop ).query( '.xwc_group_box' );
+		for ( i = 0 ; i < columnsToRemove.length; i++ ){
+			var currElem = columnsToRemove[ i ];
+			ExtXeo.destroyGroupElements( currElem );
+		}
+	}
 });
 
 /**
@@ -683,8 +693,7 @@ ExtXeo.removeColumn = function(ev, target, options){
 	grid.getGroupDragDropPlugin().reset();
 	
 	grid.showColumn(columnId);
-	
-	
+		
     
 };
 

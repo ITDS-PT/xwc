@@ -55,7 +55,7 @@ if(ExtXeo.grid.GroupingView) {
 	    groupByText    : 'Agrupar por este campo',
 	    showGroupsText : 'Mostrar agrupado',
 	    aggregateText  : 'Agregar Valores',
-	    removeGroupText: 'Remover grupo',
+	    removeGroupText: 'Remover grupos',
 	    loadingMsg	   : 'A Carregar...'  	  
 	 });
 }

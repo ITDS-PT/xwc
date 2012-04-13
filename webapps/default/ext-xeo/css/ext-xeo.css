@@ -262,8 +262,16 @@ mean "drop here */
 /* Style applied to the DIV */
 .placeHolder {
 	float: left;
-	margin-top:6px;
-	margin-bottom:6px;
+	margin-top:8px;
+	margin-bottom:6px; 
+	
+}
+
+/* Style applied to the div which holds the name and the buttons for the group*/
+.xwc_group_box{
+	height:18x;
+	vertical-align: middle;
+	padding-top : 4px;
 }
 
 /* These two styles allow to imitate the aspect of gridPanel columns */
@@ -286,7 +294,8 @@ mean "drop here */
 .xwc-group_warning{
 	font-family:arial, tahoma, helvetica, sans-serif;
 	font-size:11px;
-	color:#0033CC;
+	color:#15428B;
+	font-weight:bold;
 	left:10px;
 	top:5px;
 }

@@ -106,6 +106,22 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         		this.hideColumn(columnId);
         	}
         }
+        , removeAllGroups : function () {
+        	//Order is important, we must show the columns first and
+        	//only after we can remove them
+        	this.showGroupedColumns();
+        	this.getGroupDragDropPlugin().removeAllGroupButtons();
+        	
+        	//Clear the data grouping
+        	this.store.clearGroupBy();
+        	this.store.reload();
+        	
+        	//Finally toggle the message (only after groups have been removed
+        	this.getGroupDragDropPlugin().checkAndToogleGroupMessageVisibility();
+        	
+        	
+        	
+        }
         , showGroupedColumns : function() {
         	var groupedColumns = this.getGroups();
         	for ( i = 0; i < groupedColumns.length; i++ ){
@@ -148,6 +164,17 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         , isGroupToolBarVisible : function () {
         	return this.toolBarVisible;
         }
+        
+        , showGroupBar : function () {
+        	var elem = Ext.get(this.id + "_dragDropGroup");
+        	elem.setStyle('display','block');
+        	
+        }
+        , hideGroupBar : function () {
+        	var elem = Ext.get(this.id + "_dragDropGroup");
+        	elem.setStyle('display','none');
+        }
+        
         //End Add to Original
 		,getMinHeight : function() {
 			return this.minHeight;
@@ -601,7 +628,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     ,createDragDropGroupPlaceholder : function (){
     	var elem = Ext.get( document.createElement( 'div' ) );
     	var ddGroupId = ( this.grid.id || Ext.id()) + "_dragDropGroup";
-    	elem.set( { id : ddGroupId, style : 'width:100%;height:30px;display:none;' } );
+    	elem.set( { id : ddGroupId, style : 'width:100%;height:35px;display:none;' } );
     	
     	var messageInvite = Ext.get( document.createElement( 'span' ) );
     	messageInvite.set({ id : this.grid.id+"_groupInvite" , style : 'position:absolute' })
@@ -621,23 +648,23 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     
     , initialGroupToolBarDisplay : function () {
     	if ( this.grid.toolBarVisible ){
-    		this.showGroupToolBar();
+    		this.grid.showGroupBar();
     	}
     	else{
-    		this.hideGroupToolBar();
+    		this.grid.hideGroupBar();
     	}
     }
     
     , handleGroupToolbarDisplay : function() {
     	if ( this.grid.toolBarVisible ){
-    		this.hideGroupToolBar();
+    		this.grid.hideGroupBar();
     		this.grid.toolBarVisible = false;
     		this.grid.checkAndToogleGroupMessageVisibility();
     		this.grid.showGroupedColumns();
     		//Show Grouped Columns
     	}
     	else{
-    		this.showGroupToolBar();
+    		this.grid.showGroupBar();
     		this.grid.toolBarVisible = true;
     		this.grid.hideGroupedColumns();
     		this.grid.checkAndToogleGroupMessageVisibility();
@@ -645,15 +672,8 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     	}
     	this.grid.getStore().uploadConfig();
     } 
-    , showGroupToolBar : function () {
-    	var elem = Ext.get(this.grid.id + "_dragDropGroup");
-    	elem.setStyle('display','block');
-    	
-    }
-    , hideGroupToolBar : function () {
-    	var elem = Ext.get(this.grid.id + "_dragDropGroup");
-    	elem.setStyle('display','none');
-    }
+    
+    
     ,createTableForDividersAndGroups : function (){
     	
 //    	var table = Ext.get(document.createElement('table'));
@@ -688,8 +708,10 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     },
     onGroupByClick : function(){
     	this.grid.getGroupDragDropPlugin().createGroup(this.cm.getDataIndex(this.hdCtxIndex));
-        //this.grid.store.addGroupBy(this.cm.getDataIndex(this.hdCtxIndex));
-        this.beforeMenuShow(); 
+        this.beforeMenuShow();
+        
+        var cmp = Ext.getCmp('groupToolBar');
+        cmp.setChecked(true);
     },
     onShowGroupsClick : function(mi, checked){
         if(checked){
@@ -711,7 +733,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         }
     },
     onClearGroups : function() {
-    	this.grid.store.clearGroupBy();
+    	this.grid.removeAllGroups();
     	if(this.grid.store.aggregateFieldsOn.length > 0)
     	{    			
       	this.grid.store.addGroupBy("/*DUMMY_AGGREGATE*/");   	  	
