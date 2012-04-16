@@ -357,7 +357,7 @@ public class XUIViewerDefinitonParser
     	 && !StringUtils.isEmpty(def.getViewerBeanIds().get(0));
     }
     private boolean isIncludeComponent( XMLElement node ){
-    	return node.getNodeName().indexOf("include") > -1;
+    	return node.getNodeName().equalsIgnoreCase("xvw:include");
     }
     
     private XUIViewerDefinitionNode replaceIncludeContent( XUIViewerDefinition def,  XMLElement node, XUIViewerDefinitionNode parent, Set<String> parsed ){
