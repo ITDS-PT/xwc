@@ -55,13 +55,14 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 	}
 	
 	public GridColumnRenderer getRenderer() {
-		GridColumnRenderer rendererer = super.getRenderer();
-		if (rendererer == null){
+		GridColumnRenderer renderer = super.getRenderer();
+		if (renderer == null){
 			if (getEnableCardIdLink()){
 				return new CardIdLinkRenderer(this);
 			}
 		}
-		return null;
+		return renderer;
+		
 	}
 
 }
