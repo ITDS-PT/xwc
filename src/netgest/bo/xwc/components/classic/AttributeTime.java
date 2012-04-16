@@ -51,8 +51,7 @@ public class AttributeTime extends AttributeBase {
 			
 			if( oComp.isRenderedOnClient() ) {
 				String s = formatValue( oComp );
-				if (s.length() > 0)
-					sb.w( "c.setValue('" ).writeValue( s ).s("')");
+				sb.w( "c.setValue('" ).writeValue( s ).s("')");
 	            
 	        	if( oComp.getStateProperty("readOnly").wasChanged() ) { 
 	        		sb.w("c.setDisabled(").w( oComp.isReadOnly() ).w(")").endStatement();
@@ -66,7 +65,7 @@ public class AttributeTime extends AttributeBase {
 		}
 
 			String	jsValue;
-			private String formatValue( AttributeBase attBase ) {
+		private String formatValue( AttributeBase attBase ) {
 			Object 	oValue;
             oValue = attBase.getValue();
             if( oValue != null ) {
