@@ -651,6 +651,16 @@
 			<xwc:className>netgest.bo.xwc.components.classic.toolbar.ThemeChanger</xwc:className>
 			<xwc:description>A theme changer</xwc:description>
 		</xwc:component>
+		
+		<xwc:component name="includeScript">
+			<xwc:className>netgest.bo.xwc.components.classic.IncludeScript</xwc:className>
+			<xwc:description>Component to Include Javascript files</xwc:description>
+		</xwc:component>
+		
+		<xwc:component name="includeCss">
+			<xwc:className>netgest.bo.xwc.components.classic.IncludeCSS</xwc:className>
+			<xwc:description>Component to Include CSS files</xwc:description>
+		</xwc:component>
 
     </xwc:components>
     
