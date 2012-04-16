@@ -259,12 +259,14 @@ public class AttributeBase extends ViewerInputSecurityBase {
      */
     public void setObjectAttribute(String sObjectAttribute) {
     	
-        String sBeanExpression = "#{" + getBeanId() + "." + getBeanProperty() + "." + sObjectAttribute;
+    	String beanProperty = getBeanProperty();
+    	String sBeanExpression = "";
+    	if (beanProperty.startsWith("viewBean.")) //Backward compatibility
+    		sBeanExpression = "#{" + getBeanProperty() + "." + sObjectAttribute;
+    	else
+    		sBeanExpression = "#{" + getBeanId() + "." + getBeanProperty() + "." + sObjectAttribute;
         
-        if (beanProperty.isDefaultValue())
-        	this.dataFieldConnector.setExpressionText( "#{" + getBeanId() + "." + getBeanProperty() + "." + sObjectAttribute + "}" );
-        else
-        	this.dataFieldConnector.setExpressionText( "#{" + getBeanProperty() + "." + sObjectAttribute + "}" );
+        this.dataFieldConnector.setExpressionText( sBeanExpression + "}" );
         
         this.objectAttribute.setValue( sObjectAttribute );
 
@@ -1031,8 +1033,6 @@ public class AttributeBase extends ViewerInputSecurityBase {
      * @return String in the format of {@link ValueExpression}
      */
     public String getBeanProperty() {
-    	//TODO: Como a coisa está, quebra a compatibilide com "viewBean.ZZZZ" tem
-    	//de se mudar para caso tenha o beanProperty remover o "viewBean."
         return beanProperty.getValue();
     }
     
