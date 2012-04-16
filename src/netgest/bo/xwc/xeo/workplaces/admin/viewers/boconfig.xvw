@@ -2,64 +2,64 @@
 <xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
 	<xvw:viewer beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.BoConfigBean"
 		beanId="viewBean">
+		
 		<xvw:form id="form">
 		<style>
-			table.relations {
-  margin: 1em 1em 1em 2em;
-  background-color: whitesmoke;
-  border-collapse: collapse;
-  width: 90%;
-}
-table.relations th, table.relations td {
-  border: 1px silver solid;
-  padding: 0.2em;
-}
-
-table.relations tr.small {
-  border: 1px silver solid;
-  padding: 0.2em;
-  font-size:75%;
-  width:90%;
-}
-
-table.relations th.icon,td.icon {
-  border: 1px silver solid;
-  padding: 0.2em;
-  width:20px;
-}
-
-table.relations tr.center 
-{
-  border: 1px silver solid;
-  padding: 0.2em;
-  font-size: 90%;
-  text-align:center;
-  font-weight:bold;
-}
-
-table.relations th {
-  background: #99B3FF;
-  text-align: left;
-}
-
-table.relations caption 
-{
-  margin-left: inherit;
-  margin-right: inherit;
-}
-
-table.relations input
-{
-	width:90%;
-}
+		
+		 
+		
+		legend {
+			padding: 6px 6px 6px 12px;
+			font: bold 14px "Trebuchet MS", Verdana, Arial, Helvetica,	sans-serif;
+			color: #006666;
+		}
+		
+			  table.relations 
+			  {
+				  margin: 1em 1em 1em 2em;
+				  border-collapse: collapse;
+				  width:90%;
+				  font-size: 12px;
+				  font-family: Verdana;
+			  }
+			
+				table.relations td {
+				    border-left: 1px solid #C1DAD7;
+					border-right: 1px solid #C1DAD7;
+					border-bottom: 1px solid #C1DAD7;
+					border-top: 1px solid #C1DAD7;
+					background: #fff;
+					padding: 6px 6px 6px 12px;
+					color: dark-blue;	
+				}
+			
+				table.relations th 
+				{
+					font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica,
+					sans-serif;
+					color: #003399;
+					border-right: 1px solid #C1DAD7;
+					border-left: 1px solid #C1DAD7;
+					border-bottom: 1px solid #C1DAD7;
+					border-top: 1px solid #C1DAD7;
+					letter-spacing: 2px;
+					text-transform: uppercase;
+					text-align: left;
+					padding: 6px 6px 6px 12px;
+					background: #B0C4DE;
+				}
+				input {
+					size : 100%;
+					width:100%;
+				}
 		</style>
 			<xvw:title valueExpression='boConfig'></xvw:title>
 			<xvw:tabs>
-				<xvw:tab label='Overview'>
-					 <xvw:outputHtml  valueExpression='#{viewBean.render}'></xvw:outputHtml>
-				</xvw:tab>
 				<xvw:tab label='XML Source'>
-					<xvw:outputHtml  valueExpression='#{viewBean.xmlString}'></xvw:outputHtml>
+					 <xvw:outputHtml  valueExpression='#{viewBean.xmlString}'></xvw:outputHtml> 
+				</xvw:tab>
+				<xvw:tab label='Overview'>
+					   <xvw:outputHtml  valueExpression='#{viewBean.render}'></xvw:outputHtml> 
 				</xvw:tab>
 			</xvw:tabs>
 		</xvw:form>

@@ -76,11 +76,12 @@
         <xsl:apply-templates select="./win32Client"></xsl:apply-templates>
         </div>
         
-        <script type="text/javascript">
+       <!--  <script type="text/javascript">
             Ext.onReady(function(){
             var generalPanel = new Ext.Panel({
             title: 'General Definitions',
             collapsible:true,
+            allowDomMove : false,
             <xsl:value-of select="concat('renderTo:',&quot;&apos;&quot;,'generalDiv',$id,&quot;&apos;&quot;,',')"></xsl:value-of>
             <xsl:value-of select="concat('contentEl:',&quot;&apos;&quot;,'generalPanel',$id,&quot;&apos;&quot;,',')"></xsl:value-of>
             autoWidth : true
@@ -93,6 +94,7 @@
             var generalPanel = new Ext.Panel({
             title: 'Deployment Configurations',
             collapsible:true,
+            allowDomMove : false,
             <xsl:value-of select="concat('renderTo:',&quot;&apos;&quot;,'deploymentDiv',$id,&quot;&apos;&quot;,',')"></xsl:value-of>
             <xsl:value-of select="concat('contentEl:',&quot;&apos;&quot;,'deploymentPanel',$id,&quot;&apos;&quot;,',')"></xsl:value-of>
             autoWidth : true
@@ -104,6 +106,7 @@
             Ext.onReady(function(){
             var generalPanel = new Ext.Panel({
             title: 'EJB Thread',
+            allowDomMove : false,
             collapsible:true,
             <xsl:value-of select="concat('renderTo:',&quot;&apos;&quot;,'ejbDiv',$id,&quot;&apos;&quot;,',')"></xsl:value-of>
             <xsl:value-of select="concat('contentEl:',&quot;&apos;&quot;,'ejbPanel',$id,&quot;&apos;&quot;,',')"></xsl:value-of>
@@ -116,6 +119,7 @@
             Ext.onReady(function(){
             var generalPanel = new Ext.Panel({
             title: 'Data Sources',
+            allowDomMove : false,
             collapsible:true,
             <xsl:value-of select="concat('renderTo:',&quot;&apos;&quot;,'sourcesDiv',$id,&quot;&apos;&quot;,',')"></xsl:value-of>
             <xsl:value-of select="concat('contentEl:',&quot;&apos;&quot;,'sourcesPanel',$id,&quot;&apos;&quot;,',')"></xsl:value-of>
@@ -128,16 +132,17 @@
             Ext.onReady(function(){
             var generalPanel = new Ext.Panel({
             title: 'Other Configurations',
+            allowDomMove : false,
             collapsible:true,
             <xsl:value-of select="concat('renderTo:',&quot;&apos;&quot;,'otherDiv',$id,&quot;&apos;&quot;,',')"></xsl:value-of>
             <xsl:value-of select="concat('contentEl:',&quot;&apos;&quot;,'otherPanel',$id,&quot;&apos;&quot;,',')"></xsl:value-of>
             autoWidth : true
             });
             });	
-        </script>
+        </script> -->
         
         
-    </xsl:template>
+    </xsl:template> 
     
     
     <xsl:template match="deployment">
