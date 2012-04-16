@@ -7,6 +7,7 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.utils.StringUtils;
 
 public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements ExtJsRenderer {
 	
@@ -164,18 +165,17 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
         	
         	
     	}
-        
         boolean valid = oComp.getIsValid();
-        String invalidText = oComp.getInvalidText();
         if (!valid){
-        if ( invalidText != null && invalidText.length() > 0 ) {
-        	s.w("c._xwcvalid='").writeValue( invalidText ).w("'").endStatement();
-        	s.w("c.markInvalid('" ).writeValue( invalidText ).w("')").endStatement();
-        }
-        }
-        else {
-        	s.w("c.clearInvalid()").endStatement();
-        	s.s("c._xwcvalid=true").endStatement();
+        	String invalidText = oComp.getInvalidText();
+	        if ( StringUtils.hasValue( invalidText ) ) {
+	        	s.w( "c._xwcvalid='" ).writeValue( invalidText ).w( "'" ).endStatement();
+	        	s.w( "c.markInvalid('" ).writeValue( invalidText ).w( "')" ).endStatement();
+	        }
+	    }
+	    else {
+	      	s.w( "c.clearInvalid()" ).endStatement();
+	       	s.s( "c._xwcvalid=true" ).endStatement();
         }
     	
         if( closeBlock ) {
