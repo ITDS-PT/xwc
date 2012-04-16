@@ -10,6 +10,7 @@ import javax.faces.component.ValueHolder;
 
 import netgest.bo.system.Logger;
 import netgest.bo.xwc.components.classic.OutputHtml;
+import netgest.bo.xwc.components.classic.grid.HTMLEntityDecoder;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -94,7 +95,7 @@ public class XMLBasicRenderer extends XUIRenderer {
 						rw.writeText( value, component, "value");
 					}
 					else {
-						rw.write(value.toString());
+						rw.write(HTMLEntityDecoder.charsToHtmlEntity(value.toString()));
 					}
 					//rw.writeText( value, component, "value");
 				}

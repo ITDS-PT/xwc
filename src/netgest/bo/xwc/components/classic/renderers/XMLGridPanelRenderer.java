@@ -95,7 +95,6 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 	                	else 
 	                	{
 	                		Column current = columns[i];
-	                		w.writeAttribute("width",current.getWidth(),null);
 	                		if (current instanceof ColumnAttribute)
 	                		{
 	                			ColumnAttribute currentCol = (ColumnAttribute) current;
