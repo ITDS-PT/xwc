@@ -3,16 +3,29 @@ package netgest.bo.xwc.xeo.beans;
 import java.io.StringWriter;
 import java.util.Date;
 
+import javax.faces.event.PhaseEvent;
+
+import netgest.bo.def.boDefHandler;
+import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.system.Logger;
+import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUISessionContext;
+import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.localization.XUILocalizationUtils;
 import netgest.bo.xwc.xeo.components.FormEdit;
+import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
+import netgest.utils.ngtXMLUtils;
+import oracle.xml.parser.v2.XMLDocument;
 
 /**
  * 
@@ -26,10 +39,88 @@ import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
  */
 public class XEOVersionListBean extends XEOEditBean
 {
-	public XEOVersionListBean()
-	{
-		super();
+	
+	
+	private static final Logger logger = Logger.getLogger(XEOVersionListBean.class);
+	
+	public void showDifference() {
+		
+		XUIRequestContext   oRequestContext;
+        XUISessionContext   oSessionContext;
+        XUIViewRoot         oViewRoot;
+
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        oSessionContext = oRequestContext.getSessionContext();
+        
+        oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/ShowVersionDifferences.xvw");
+        ShowVersionDifferenceBean bean = (ShowVersionDifferenceBean) oViewRoot.getBean( "viewBean" );
+        
+        Object value = ((XUICommand)oRequestContext.getEvent().getSource()).getCommandArgument();
+        long 			bouiVersion = Long.valueOf(value.toString());
+        
+        boSession 		session = getXEOObject().getEboContext().getBoSession();
+        XMLDocument viewToShowDiff = getViewerContentAsXML(getRequestContext().getViewRoot().getParentView());
+        EboContext		newContext = session.createRequestContextInServlet(null,null,null);
+        
+    	String 			result = XEOListVersionHelper.renderDifferencesWithPreviousVersion(getXEOObject(),bouiVersion,viewToShowDiff,newContext);
+    	
+    	bean.setDifferences(result);
+        
+        oRequestContext.setViewRoot( oViewRoot );
+        oRequestContext.renderResponse();
+		
 	}
+	
+	public void showLogs(){
+		
+		XUIRequestContext   oRequestContext;
+        XUISessionContext   oSessionContext;
+        XUIViewRoot         oViewRoot;
+
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        oSessionContext = oRequestContext.getSessionContext();
+        
+        oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/ShowLogsVersion.xvw");
+        ShowLogsVersionBean bean = (ShowLogsVersionBean) oViewRoot.getBean( "viewBean" );
+        
+        Object value = ((XUICommand)oRequestContext.getEvent().getSource()).getCommandArgument();
+        long 			bouiVersion = Long.valueOf(value.toString());
+        
+        if (bouiVersion > 0 ){
+	        String 			result = XEOListVersionHelper.getListOfLogsObject(bouiVersion, getXEOObject());
+	    	bean.setDifferences(result);
+        } else 
+        	bean.setDifferences("Cannot display");
+        
+        oRequestContext.setViewRoot( oViewRoot );
+        oRequestContext.renderResponse();
+		
+	}
+	
+	/**
+     * 
+     * Retrieves the content of a viewer as XML
+     * 
+     * @return A {@link XMLDocument} with a viewer converted to XML
+     */
+    private XMLDocument getViewerContentAsXML(XUIViewRoot root)
+    {
+    	XUIRequestContext r = XUIRequestContext.getCurrentContext();
+    	XMLDocument doc;
+    	
+		try 
+		{
+			String s =  r.getSessionContext().renderViewToBuffer("XEOXML", root.getViewState() ).toString();
+			doc = ngtXMLUtils.loadXML(s);
+			return doc;
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			return null;
+		}
+    	
+    }
 	
 	/**
 	 * 
@@ -54,6 +145,12 @@ public class XEOVersionListBean extends XEOEditBean
 	 */
 	public String getListOfVersions()
 	{
+		getRequestContext().getScriptContext().addInclude(
+				XUIScriptContext.POSITION_FOOTER, 
+				"versionListScript", 
+				"ext-xeo/js/versionList.js");
+		
+		
 		boObject currentObject = getXEOObject();
     	boObjectList list = boObjectList.list(getEboContext(), "select Ebo_Versioning where CHANGEDOBJECT = "
     			+ currentObject.getBoui() + " ORDER BY version ASC");
@@ -141,12 +238,14 @@ public class XEOVersionListBean extends XEOEditBean
 						 
 						 w.startElement(HTMLTag.TD, null);
 							w.write(String.valueOf("<input type='radio' name='versionItem' value='"+
-									currentObjectVersion.getBoui()+"' onClick='checkButtons(document.listVersionForm.versionItem)' />"));
+									currentObjectVersion.getBoui()+"' onClick='XVW.checkButtons(document.listVersionForm.versionItem);' />"));
 						 w.endElement(HTMLTag.TD);
 						 
 						 w.startElement(HTMLTag.TD, null);
-						 String urlLogs = url + "&showLogs=true&versionBoui=" + currentObjectVersion.getBoui(); 
-							w.write(String.valueOf("<a class='logs' onClick=\"javascript:openLogWindow('"+urlLogs+ "','"+
+						 
+						 
+						 
+						w.write(String.valueOf("<a class='logs' onClick=\"javascript:XVW.openLogWindow('"+currentObjectVersion.getBoui()+ "','"+
 									BeansMessages.LBL_WND_SHOW_LOGS.toString()
 									+"')\">"
 									+BeansMessages.SHOW_LOGS.toString() +" </a>"));
@@ -159,21 +258,25 @@ public class XEOVersionListBean extends XEOEditBean
 	    		w.endElement(HTMLTag.TABLE);
 	    		
 	    		//Build the URL for the edit Servlet
-	    		
+	    		String openDifferenceWindowScript = "XVW.openDiffWindow(document.listVersionForm.versionItem);";
 	    		
 				//Write the buttons
-	    		w.write("<input type='button' id='compareCurrent' 	" +
+	    		/*w.write("<input type='button' id='compareCurrent' 	" +
 	    				"value='"+BeansMessages.LBL_BTN_CMP_ACTUAL.toString()+"' 		disabled='true' 	" +
 	    				"onClick=\"javascript:openDiffWindow('"+url+"',document.listVersionForm.versionItem,'"+
 	    				BeansMessages.LBL_WND_SHOW_DIFF.toString()
-	    				+"');\" />");
+	    				+"');\" />");*/
+	    		
+	    		w.write("<input type='button' id='compareCurrent' 	" +
+	    				"value='"+BeansMessages.LBL_BTN_CMP_ACTUAL.toString()+"' disabled='true' " +
+	    				"onClick=\""+openDifferenceWindowScript+";\" />");
 	    		
 	    		w.endElement(HTMLTag.DIV);
 			
 	    	}
 	    	else
 	    	{
-	    		if (currentObject.getBoDefinition().getVersioning())
+	    		if (hasVersioning(currentObject.getBoDefinition()))
 	    			return BeansMessages.NO_VERSIONS_EXIST.toString();
 	    		else
 	    			return BeansMessages.VERSIONING_NOT_ACTIVE.toString();
@@ -185,10 +288,14 @@ public class XEOVersionListBean extends XEOEditBean
 		 } 
 		 catch (Exception e) 
 		 {
-			e.printStackTrace();
+			logger.warn(e);
 			return "";
 		 }
 			
+	}
+	
+	private boolean hasVersioning(boDefHandler objectMetadata){
+		return objectMetadata.getVersioning();
 	}
 	
 	

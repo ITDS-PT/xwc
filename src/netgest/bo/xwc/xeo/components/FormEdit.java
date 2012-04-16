@@ -4,30 +4,17 @@ import java.io.IOException;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
-import netgest.bo.system.boApplication;
-import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.MessageBox;
 import netgest.bo.xwc.components.classic.Panel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIRendererServlet;
-import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
+import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
-import netgest.utils.ngtXMLUtils;
-import oracle.xml.parser.v2.XMLDocument;
 
 /**
  * 
@@ -354,6 +341,10 @@ public class FormEdit extends Form {
 		if ( getRenderWindow() ) {
 			createEditWindow();
 		}
+		
+		if ( getShowDifferences() )
+			createShowDifferencesCommand( position++ );
+		
 		super.initComponent();
 	}
 	
@@ -445,7 +436,17 @@ public class FormEdit extends Form {
 		}
 	}
 	
-	public static class XEOHTMLRenderer extends Form.XEOHTMLRenderer implements XUIRendererServlet
+	private void createShowDifferencesCommand(int pos){
+		XUICommand cmd = ( XUICommand ) findComponent( getId() + "_showDiffCmd" );
+		if( cmd == null ) {
+			cmd = new XUICommand();
+			cmd.setId( getId() + "_showDiffCmd" );
+			cmd.setActionExpression( createMethodBinding( "#{" + getBeanId() + ".showDifferences}" ) );
+			getChildren().add( pos, cmd );
+		}
+	}
+	
+	public static class XEOHTMLRenderer extends Form.XEOHTMLRenderer
 	{
 		public XEOHTMLRenderer()
 		{
@@ -484,101 +485,8 @@ public class FormEdit extends Form {
         	super.encodeChildren(component);
         }
         
-        /**
-         * 
-         * Retrieves the content of a viewer as XML
-         * 
-         * @return A {@link XMLDocument} with a viewer converted to XML
-         */
-        private XMLDocument getViewerContentAsXML(XUIViewRoot root)
-        {
-        	XUIRequestContext r = XUIRequestContext.getCurrentContext();
-        	XMLDocument doc;
-        	
-    		try 
-    		{
-    			String s =  r.getSessionContext().renderViewToBuffer("XEOXML", root.getViewState() ).toString();
-    			doc = ngtXMLUtils.loadXML(s);
-    			return doc;
-    		} 
-    		catch (Exception e) 
-    		{
-    			e.printStackTrace();
-    			return null;
-    		}
-        	
-        }
         
         
-        /* (non-Javadoc)
-         * 
-         * 
-         * 
-		 * @see netgest.bo.xwc.framework.XUIRendererServlet#service(javax.servlet.ServletRequest, javax.servlet.ServletResponse, netgest.bo.xwc.framework.components.XUIComponentBase)
-		 */
-		@Override
-		public void service(ServletRequest oRequest, ServletResponse oResponse,
-				XUIComponentBase oComp) throws IOException 
-		{
-			
-			HttpServletRequest request = 
-				(HttpServletRequest) getRequestContext().getRequest();
-			HttpServletResponse response = 
-				(HttpServletResponse) getRequestContext().getResponse();
-	        response.setCharacterEncoding("UTF-8");
-	        
-	        
-	        XUIRequestContext.getCurrentContext().getTransactionManager().release();
-	        boApplication.currentContext().getEboContext().close();
-	        
-	        //Get the FormEdit component
-			FormEdit 		frmComponent = (FormEdit) oComp;
-	        
-			/*
-			 * Shows the Logs of the version of the object
-			 * 
-			 * */
-	        if (request.getParameter("showLogs") != null)
-	        {
-	        	
-	        	//Get the BOUI of the object
-	        	long			bouiOfVersion = Long.valueOf(request.getParameter("versionBoui"));
-	        	
-	        	//Produce the HTML result
-	        	String 			result = XEOListVersionHelper.getListOfLogsObject(bouiOfVersion, frmComponent);
-	        	
-	        	response.getWriter().write(result);
-    			getRequestContext().responseComplete();
-	        }
-	        else if (request.getParameter("version") != null)
-			{
-	        	boSession 		session = frmComponent.getTargetObject().getEboContext().getBoSession();
-	        	EboContext		newContext = session.createRequestContextInServlet(
-        				(HttpServletRequest)getRequestContext().getRequest(), 
-        				(HttpServletResponse)getRequestContext().getResponse(), 
-        				(ServletContext)getRequestContext().getServletContext());
-	        	long 			bouiVersion = Long.valueOf(request.getParameter("version"));
-	        	String 			result = XEOListVersionHelper.renderDifferencesWithPreviousVersion(frmComponent,bouiVersion,getViewerContentAsXML(getContext().getViewRoot().getParentView()),newContext);
-	        	
-	        	response.getWriter().write(result);
-				getRequestContext().responseComplete();
-			}
-			else
-			{	//FIXME: Colocar um parametro para isto
-				/*
-				 * Renders the difference between the current object and the object
-				 * saved in the database
-				 * 
-				 * */
-				String result = XEOListVersionHelper.renderDifferencesWithFlashBack(frmComponent, getViewerContentAsXML(getRequestContext().getViewRoot()));
-				response.getWriter().write(result);
-				getRequestContext().responseComplete();
-			}
-		}
-		
-		
-		
-	
 		
 	}
 

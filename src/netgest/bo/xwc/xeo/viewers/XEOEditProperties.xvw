@@ -54,7 +54,7 @@
 			
 			
 		</style>	
-        	<xvw:window width='500' height='250'>
+        	<xvw:window width='500' height='250' modal='true'>
 	            <xvw:title valueExpression='@{LBL_PROPERTIES}'></xvw:title>
 	            <xvw:errorMessages></xvw:errorMessages>
 	            <xvw:tabs renderTabBar="false">

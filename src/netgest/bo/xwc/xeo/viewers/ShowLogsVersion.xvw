@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xvw:root 
+	xmlns:xvw="http://www.netgest.net/xeo/xvw"
+	xmlns:xeo="http://www.netgest.net/xeo/xeo"
+>
+    <xvw:viewer 
+	    localizationClasses='netgest.bo.xwc.xeo.localization.XEOViewersMessages' 
+	    beanClass='netgest.bo.xwc.xeo.beans.ShowLogsVersionBean' 
+	    beanId='viewBean'>
+        <xvw:form id='formVersionDifference'>
+        	<xvw:window width='550' height='500' modal="true" title="" >
+				<xvw:tabs renderTabBar='false'>
+					<xvw:tab>
+						<xvw:outputHtml valueExpression="#{viewBean.differences}"></xvw:outputHtml>
+					</xvw:tab>
+				</xvw:tabs>
+			</xvw:window>
+        </xvw:form>
+    </xvw:viewer>
+</xvw:root>

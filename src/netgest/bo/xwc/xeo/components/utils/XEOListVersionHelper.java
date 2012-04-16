@@ -309,10 +309,10 @@ public class XEOListVersionHelper
      * 
      * @return A HTML table with the list of Logs
      */
-    public static String getListOfLogsObject(long bouiOfObjectLogs, FormEdit component)
+    public static String getListOfLogsObject(long bouiOfObjectLogs, boObject current)
     {
     	String			boql = "SELECT Ebo_Log where parent = " + bouiOfObjectLogs;
-    	EboContext		ctx = component.getTargetObject().getEboContext();
+    	EboContext		ctx = current.getEboContext();
     	
     	boObjectList 	listOfLogs = boObjectList.list(ctx, boql);
     	listOfLogs.beforeFirst();
@@ -454,11 +454,16 @@ public class XEOListVersionHelper
      * 
      * @return A HTML string with the render of the differences
      */
-    public static String renderDifferencesWithPreviousVersion(FormEdit frmComponent, long bouiVersion, XMLDocument doc, EboContext newContext)
+    public static String renderDifferencesWithPreviousVersion(boObject current, long bouiVersion, XMLDocument doc, EboContext newContext)
     {
     	try
 		{
-			EboContext		eboCtx = frmComponent.getTargetObject().getEboContext();
+    		if (doc == null){
+    			return "Não foi possível aceder ao viewer, ocorreu um erro"; //FIXME: Internacionalizar
+    		}
+    		
+    		
+			EboContext		eboCtx = current.getEboContext();
 			//Boui of the Ebo_Versioning
 			
 			boObject		objectVersion = boObject.getBoManager().loadObject(eboCtx, bouiVersion);
@@ -474,7 +479,7 @@ public class XEOListVersionHelper
 			boObject		rollBackVersion =  boObject.getBoManager().loadObject(newContext, bouiOfObject);
 			
 			//Get the difference between objects
-			ObjectDifference diffObj = new ObjectDifference(frmComponent.getTargetObject(), rollBackVersion);
+			ObjectDifference diffObj = new ObjectDifference(current, rollBackVersion);
 			
 			//Get the Map of differences of attributes
 			HashMap<String,ObjectAttributeValuePair> diffAttributes = diffObj.getAttributeDifferencesOfObjects();
@@ -534,15 +539,20 @@ public class XEOListVersionHelper
 		} 
 		
 		//Show the Logs in case of error 
-		String logs = getListOfLogsObject(bouiVersion, frmComponent);
+		String logs = getListOfLogsObject(bouiVersion, current);
 		
 		return BeansMessages.MSG_ERROR_IN_DIFFERENCES_RENDER.toString()
 				+ "<br />" + logs;
     }
     
     
-    public static String renderDifferencesWithFlashBack(FormEdit frmComponent, XMLDocument doc)
+    public static String renderDifferencesWithFlashBack(boObject current, XMLDocument doc)
     {
+    	
+    	if (doc == null){
+			return "Não foi possível aceder ao viewer, ocorreu um erro"; //FIXME: Internacionalizar
+		}
+    	
     	/*
 		 * This method is responsible for the generation of the HTML form with the differences
 		 * between the object being edited (and not saved) in this form and the last
@@ -559,8 +569,6 @@ public class XEOListVersionHelper
 		 * 
 		 * 
 		 * */
-		
-		boObject 		current = frmComponent.getTargetObject();
 		
 		//Retrieve the XML Serialization
 		try 

@@ -79,6 +79,7 @@ import netgest.bo.xwc.xeo.components.BridgeToolBar;
 import netgest.bo.xwc.xeo.components.FormEdit;
 import netgest.bo.xwc.xeo.components.utils.LookupFavorites;
 import netgest.bo.xwc.xeo.components.utils.DefaultFavoritesSwitcherAlgorithm;
+import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
@@ -1589,7 +1590,7 @@ public class XEOEditBean extends XEOBaseBean
                 else{
                 	AttributeBase att = (AttributeBase) oViewRoot.findComponent( parentCompId );
                 	String boui = oSelRecs[0].getAttribute( "BOUI" ).getValue().toString();
-                	oInput.setValue( boui  );
+                	oInput.setValue( boui );
                 	updateUserFavorites(getXEOObject().getName(), att.getObjectAttribute(), 
                 			new long[]{Long.valueOf(boui)});
                 }
@@ -2011,7 +2012,14 @@ ActionEvent oEvent = getRequestContext().getEvent();
         
 	}
 	
-	
+	private String getDifferenceCommand(){
+		UIComponent form = getViewRoot().findComponent(XUIForm.class);
+		XUICommand cmd = (XUICommand) getViewRoot().findComponent(form.getId() + ":" + form.getId() + "_showDiffCmd");
+		if (cmd != null){
+			return XVWScripts.getAjaxCommandScript(cmd, XVWScripts.WAIT_STATUS_MESSAGE);
+		}
+		return "";
+	}
 	
 	/**
 	 * Checks if the current tab where the form is being displayed can be closed
@@ -2027,8 +2035,6 @@ ActionEvent oEvent = getRequestContext().getEvent();
 		if( getIsChanged() ) 
 		{
 			String closeScript;
-			
-			String openDiffScript = "openDiffWindow()" ;
 			
 			Window xWnd = (Window)viewRoot.findComponent(Window.class);
 			if( xWnd != null ) {
@@ -2069,7 +2075,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
 				
 			}
 			messageBoxConfig.add( "buttonText" , btnTextConfig.renderExtConfig() );
-			messageBoxConfig.add( "fn",  "function(a1) { var el = document.getElementsByTagName('OBJECT');for( var i=0;i<el.length;i++ ) { el[i].style.display='' }; if( a1=='yes' ) { "+closeScript+" } if (a1=='cancel') { "+ openDiffScript +" } }" );
+			messageBoxConfig.add( "fn",  "function(a1) { var el = document.getElementsByTagName('OBJECT');for( var i=0;i<el.length;i++ ) { el[i].style.display='' }; if( a1=='yes' ) { "+closeScript+" } if (a1=='cancel') { "+ getDifferenceCommand() +" } }" );
 			messageBoxConfig.add( "icon", "Ext.MessageBox.WARNING" );
 			
 			String url = getRequestContext().getAjaxURL();
@@ -2256,6 +2262,31 @@ ActionEvent oEvent = getRequestContext().getEvent();
          
          oRequestContext.setViewRoot( oViewRoot );
          oRequestContext.renderResponse();
+    }
+    
+    public void showDifferences() throws IOException{
+    	
+    	XUIRequestContext   oRequestContext;
+        XUISessionContext   oSessionContext;
+        XUIViewRoot         oViewRoot;
+
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        oSessionContext = oRequestContext.getSessionContext();
+        
+        oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/ShowDifferences.xvw");
+        
+        String s =  getSessionContext().renderViewToBuffer("XEOXML", getViewRoot().getViewState() ).toString();
+		XMLDocument doc = ngtXMLUtils.loadXML(s);
+        
+        String result = XEOListVersionHelper.renderDifferencesWithFlashBack( getXEOObject(), doc );
+        
+        ShowDifferenceBean bean = (ShowDifferenceBean)oViewRoot.getBean("viewBean");
+        bean.setDifferences( result );
+        
+        
+        oRequestContext.setViewRoot( oViewRoot );
+        oRequestContext.renderResponse();
+    	
     }
     
     

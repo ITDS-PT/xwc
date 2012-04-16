@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xvw:root 
+	xmlns:xvw="http://www.netgest.net/xeo/xvw"
+	xmlns:xeo="http://www.netgest.net/xeo/xeo"
+>
+    <xvw:viewer 
+	    localizationClasses='netgest.bo.xwc.xeo.localization.XEOViewersMessages' 
+	    beanClass='netgest.bo.xwc.xeo.beans.ShowDifferenceBean' 
+	    beanId='viewBean'
+	>
+        <xvw:form>
+        <style type="text/css" media="screen, print">
+              	body
+              	{
+              		background-color: white;
+              		font-family: tahoma;
+              		font-size: 11px;
+              	}
+                  p {
+                      color:#ff9900;
+                      font-size: 110%;
+                  }
+                  h1.title{
+                      font-size:150%;
+                  }
+                  
+                  h1 {
+                      color:#5E5B5B;
+                      padding-bottom : 1px;
+                      margin-bottom : 1px;
+                      font-size: 120%;
+                  }
+                  h2 {
+                      color:#5E5B5B;
+                      padding-bottom : 1px;
+                      margin-bottom : 1px;
+                      font-size: 90%;
+                  }
+                  h2.innerTab {
+                      margin-left: 10px;
+                      padding-left: 5px;
+                      color:#5E5B5B;
+                      padding-bottom : 1px;
+                      margin-bottom : 1px;
+                      font-size: 100%;
+                  }
+                  div.innerTabDiv {
+                      border-top:1px solid #171330;
+                      margin-left: 10px;
+                      padding-left: 5px;
+                  }
+                  div.tab {
+                      border-bottom:2px solid #171330;
+                      margin-bottom: 1px;
+                      padding-bottom: 1px;
+                  }
+                  div.title {
+                      border-bottom:1px solid #26252B;
+                      margin-bottom: 1px;
+                      padding-bottom: 1px;
+                  }
+                  h3 {
+                      color:#0000FF;
+                  }
+                  table.main {
+                      background-color: #FFFFFF;
+                      width: 100%;
+                      font-size: 80%;
+                      font-family: Verdana, Times New Roman;
+                  }
+                  
+                  td.innerMain{
+                      font-size: 80%;
+                      font-family: Verdana, Times New Roman;
+                      color: #000000;
+                  }
+                  
+                  table.main td.label {
+                      color: #000000;
+                      font-size: 11px;
+                  }
+                  table.main td.boolean {
+                      background-color: #FFFFFF;
+                  }
+                  table.main td.value {
+              		font-size: 11px;
+                      background-color: #EDEDED;
+                  }
+                  
+                  table.list
+                  {
+                      font-size : 90%;
+                      font-family: Verdana;
+                      width: 100%;
+                      margin-top: 10px;
+                      margin-bottom : 5px;
+                  }
+                  
+                  table.list tr.headerrow
+                  {
+                      background-color: #EDEDED;
+                      font-color: #0A2136;
+                      font-weight: bold;
+                      font-size: 85%;
+                  }
+                  
+                  table.list tr.listrow
+                  {
+                      background-color: #EDEDED;
+                      font-color: #000000;
+                      font-size: 85%;
+                  }
+                  
+                  table.list tr.listrow th
+                  {
+                      text-align: center;
+                  }
+                  
+                  table.list tr.listrow td
+                  {
+                      text-align: left;
+                  }
+                  
+                  table.formProps{
+                      font-color: #000000;
+                      font-size: 8px;
+                      text-align:left;
+                  }
+                  
+                  span.lbl{
+                      font-weight:bold;
+                  }
+                  
+                  img.print{
+				border: 0px;                    
+                  }
+                  a.print{
+				position: absolute;
+ 						right: 20;
+ 						width: 50%;
+ 						text-align: right; /* depends on element width */                    
+                  	text-align:right;
+                  	top: 3px;
+                  	
+                  }
+               </style>
+        	<xvw:window width='550' height='500' modal="true" title="" >
+				<xvw:tabs renderTabBar='false'>
+					<xvw:tab>
+						<xvw:outputHtml valueExpression="#{viewBean.showDifferences}"></xvw:outputHtml>
+					</xvw:tab>
+				</xvw:tabs>
+			</xvw:window>
+        </xvw:form>
+    </xvw:viewer>
+</xvw:root>

@@ -740,7 +740,6 @@ public class EditToolBar extends ToolBar {
 				Menu dependents = new Menu();
 				dependents.setText(XEOViewersMessages.LBL_DEPENDENTS.toString());
 				dependents.setServerAction("#{" + getBeanId() + ".showDependents}");
-				dependents.setTarget("window");
 				informationGroup.getChildren().add(dependents);
 			}
 			
@@ -748,7 +747,6 @@ public class EditToolBar extends ToolBar {
 				Menu dependenciesMenu = new Menu();
 				dependenciesMenu.setText(XEOViewersMessages.LBL_DEPENDENCIES.toString());
 				dependenciesMenu.setServerAction("#{" + getBeanId() + ".showDependencies}");
-				dependenciesMenu.setTarget("window");
 				informationGroup.getChildren().add(dependenciesMenu);
 			}
 		}
@@ -758,7 +756,6 @@ public class EditToolBar extends ToolBar {
 			Menu versioningMenu = new Menu();
 			versioningMenu.setText(XEOComponentMessages.EDITTB_LIST_VERSIONS_TTIP.toString());
 			versioningMenu.setServerAction("#{" + getBeanId() + ".listVersions}");
-			versioningMenu.setTarget("window");
 			informationGroup.getChildren().add(versioningMenu);
 		}
 		

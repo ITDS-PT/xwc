@@ -6,111 +6,10 @@
     <xvw:viewer 
 	    localizationClasses='netgest.bo.xwc.xeo.localization.XEOViewersMessages' 
 	    beanClass='netgest.bo.xwc.xeo.beans.XEOVersionListBean' 
-	    beanId='viewBean'
+	    beanId='viewBean' 
   	>
         <xeo:formEdit id='listVersionForm' renderToolBar="false">
-        	<script>
-        		<![CDATA[
-        		/*
-        		
-        		Checks the number of options selected and activates the buttons accordingly
-        		One check box selected activates the button to compare with the current version
-        		Two checkboxes selected activates the button to compare the two versions
-        		
-        		Zero checkboxes or more than tow checkboxes selected disables the buttons
-        		
-        		@param field The radio list to verify
-        		
-        		*/
-        		function checkButtons(field)
-        		{
-        			var counter = 0;
-        			var buttonActual = document.getElementById('compareCurrent');
-        			for (i = 0; i < field.length; i++){
-						if (field[i].checked)
-							counter++;
-					}
-					
-					if (counter == 1)
-						buttonActual.disabled = false;
-					else
-					{
-						if (field.checked)
-							buttonActual.disabled = false;
-						
-					}
-				}
-				
-				/*
-				
-				Opens a Window with the comparison of the two versions of the object
-				
-				@param url 			The URL to open the window
-				@param bouiCurrent 	The boui of the first object
-				@param bouiOther 	The boui of the second object	
-				
-				*/
-				function openDiffWindow(url, field, title)
-				{
-					
-					var counter = 0;
-					var version = 0;
-					for (i = 0; i < field.length; i++)
-					{
-						if (field[i].checked)
-						{
-							version = field[i].value;
-						}
-					}
-						
-					var urlToLoad = url;
-					urlToLoad = urlToLoad + '&version=' + version 
-					
-					//This trick with new "window.parent" is because the window
-					//we're opening is inside an iframe. Without this, the opened
-					//would be stuck inside the first one
-					var winWithDifferences = new window.parent.Ext.Window({
-                	 title: title
-                	,width       : 700
-                	,autoScroll : true
-                	,height      : 300
-                	,autoLoad       : urlToLoad
-                	});
-                	
-                	winWithDifferences.show();
-            		
-				}
-				
-				/*
-				
-				Opens a window with the specified URL
-				
-				@param url The URL of the data
-				
-				*/
-				
-				function openLogWindow(url,title)
-				{
-					var urlToLoad = url;
-					urlToLoad = urlToLoad 
-					
-					//This trick with new "window.parent" is because the window
-					//we're opening is inside an iframe. Without this, the opened
-					//would be stuck inside the first one
-					var winWithDifferences = new window.parent.Ext.Window({
-                	 title: title
-                	,width       : 700
-                	,id			: 'logWindow'
-                	,autoScroll : true
-                	,height      : 300
-                	,autoLoad       : urlToLoad
-                	});
-                	
-                	winWithDifferences.show();
-				}
-        		
-        		]]>
-        	</script>
+        	<xvw:includeScript source="ext-xeo/js/versionList.js" ></xvw:includeScript>
         	<style>
         	
         	a.logs
@@ -159,12 +58,12 @@
 				background: #B0C4DE;
 			}
 		</style>	
-        	<xvw:window width='600' height='300'>
-	            <xvw:section label='@{LBL_PROPERTIES}'>
+        	<xvw:window width='600' height='300' modal='true'>
+        		<xvw:section label='@{LBL_PROPERTIES}'>
+        			<xvw:actionButton id='showDiff' serverAction='#{viewBean.showDifference}' visible='false' label="showDiff" />
+        			<xvw:actionButton id='showLogs' serverAction='#{viewBean.showLogs}' visible='false' label="showLogs" />
 					<xvw:outputHtml valueExpression='#{viewBean.listOfVersions}'/>
-					 
 				</xvw:section>
-				
 			</xvw:window>
         </xeo:formEdit>
     </xvw:viewer>
