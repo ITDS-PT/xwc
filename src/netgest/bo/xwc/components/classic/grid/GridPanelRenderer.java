@@ -140,7 +140,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	            Column[] oAttributeColumns = oGrid.getColumns();
 	            for( Column gridCol : oAttributeColumns ) {
 	                if( gridCol != null && gridCol instanceof ColumnAttribute ) {
-	                    GridColumnRenderer r = ((ColumnAttribute)gridCol).getRenderer();
+	                    GridColumnRenderer r = ( ( ColumnAttribute ) gridCol ).getRenderer();
 	                    if( r != null ) {
 	                    	columnRenderer.put( gridCol.getDataField(), r );
 	                    }

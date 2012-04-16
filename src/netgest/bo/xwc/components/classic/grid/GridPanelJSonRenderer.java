@@ -53,7 +53,7 @@ public class GridPanelJSonRenderer {
         	if( gridCol != null && (!gridCol.isHidden() && !rowIdentifier.equals( gridCol.getDataField() ) ) ) {
         		columns.add( gridCol.getDataField() );
 	        	if( gridCol instanceof ColumnAttribute ) {
-	        		GridColumnRenderer r = ((ColumnAttribute)gridCol).getRenderer();
+	        		GridColumnRenderer r = ( ( ColumnAttribute ) gridCol ).getRenderer();
 	        		if( r != null ) {
 	        			columnRenderer.put( gridCol.getDataField(), r );
 	        		}
