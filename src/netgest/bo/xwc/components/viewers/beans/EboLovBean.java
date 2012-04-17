@@ -20,7 +20,7 @@ public class EboLovBean extends XEOEditBean {
     	XeoApplicationLanguage apl;
     	while(it.hasNext()){
     		apl=(XeoApplicationLanguage) it.next();
-    		olanguagesMap.put(apl.code, apl.description);
+    		olanguagesMap.put(apl.getCode(), apl.getDescription());
     	}
     	return olanguagesMap;
     }
