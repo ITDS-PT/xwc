@@ -17,7 +17,7 @@ public class BridgeMethod extends ViewerMethod {
 			if (connector instanceof XEOBridgeListConnector){
 				XEOBridgeListConnector bridgeConnector = (XEOBridgeListConnector) connector;
 				bridgeHandler handler = bridgeConnector.getBridge();
-				return handler.hasMaxElements();
+				return handler.hasMaxElements() || super.isDisabled();
 			}
 		}
 		return false;
