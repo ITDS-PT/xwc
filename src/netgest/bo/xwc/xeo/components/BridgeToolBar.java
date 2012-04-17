@@ -434,6 +434,8 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		boObject 		targetObject = getTargetObject();
 		bridgeHandler 	targetBridge = targetObject.getBridge( getBridgeName() );
 		
+		assert targetBridge != null : targetObject.getName() + " does not have a bridge with name " + getBridgeName();
+		
 		boDefAttribute	defAttribute = targetBridge.getDefAttribute(); 
 		boDefHandler refDef = defAttribute.getReferencedObjectDef();
 
