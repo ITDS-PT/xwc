@@ -77,8 +77,8 @@ import netgest.bo.xwc.xeo.components.Bridge;
 import netgest.bo.xwc.xeo.components.BridgeLookup;
 import netgest.bo.xwc.xeo.components.BridgeToolBar;
 import netgest.bo.xwc.xeo.components.FormEdit;
-import netgest.bo.xwc.xeo.components.utils.LookupFavorites;
 import netgest.bo.xwc.xeo.components.utils.DefaultFavoritesSwitcherAlgorithm;
+import netgest.bo.xwc.xeo.components.utils.LookupFavorites;
 import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
@@ -936,15 +936,14 @@ public class XEOEditBean extends XEOBaseBean
             	oWnd.setAnimateTarget( sCompId );
             }
             
-            
-            
             oBaseBean.setParentBean( this ); 
             oBaseBean.setParentAttributeName( oAttHandler.getName() );
-            oBaseBean.setLookupObjects( getLookupObjectsMap( oAttHandler ) );
-            oBaseBean.setSelectedObject( className );
-            
             oBaseBean.setParentParentBeanId( getId() );
             oBaseBean.setParentComponentId( oAtt.getClientId() );
+            oBaseBean.setLookupObjects( getLookupObjectsMap( oAttHandler ) );
+            //Order is important, this must come after setParentComponentId
+            oBaseBean.setSelectedObject( className );
+            
             String sBoql = getLookupQuery( oAttHandler, className );
             oBaseBean.executeBoql( sBoql );
         }
@@ -1168,6 +1167,7 @@ public class XEOEditBean extends XEOBaseBean
             oBaseBean.setLookupObjects( getLookupObjectsMap( bridge ) );
             oBaseBean.setParentParentBeanId( getId() );
             oBaseBean.setParentComponentId( oGrid.getClientId() );
+            //Order is important, setSelectedObject cannot be called before setComponentId
             oBaseBean.setSelectedObject(refObj.getName());
             oBaseBean.executeBoql( 
             			//"select "+ oAttDef.getReferencedObjectName()
@@ -2688,16 +2688,40 @@ ActionEvent oEvent = getRequestContext().getEvent();
 	    	  BridgeLookupBean bean = (BridgeLookupBean) viewRoot.getBean("viewBean");
 	    	  bean.setLeft(left);
 	    	  bean.setTop(top);
+	    	  
+	    	  
+	    	  AttributeHandler handler = getHandlerFromAttribute(base);
+	    	  boObject sourceObject =  handler.getParent();
+	    	  
 	    	  bean.setAttributeName(objectAtt);
 	    	  bean.setInvokedFromBridge(isBridge);
-	    	  bean.setObjectName(getXEOObject().getName());
+	    	  bean.setObjectName(sourceObject.getName());
 	    	  bean.setParentComponentId(bridgeId);
 	    	  bean.setMultiSelect(multiSelect);
     	  
-	    	  LookupFavorites.eliminateDeletedObjectsFromPreference(getXEOObject(), objectAtt);
+	    	  LookupFavorites.eliminateDeletedObjectsFromPreference(sourceObject, objectAtt);
     	  
 	    	  getRequestContext().setViewRoot(viewRoot);  
 	    	  getRequestContext().renderResponse();  
+    }
+    
+    private AttributeHandler getHandlerFromAttribute(XUIComponentBase base){
+    	
+    	
+    	if (base instanceof AttributeBase){
+    		
+    		AttributeBase objectAtt = ( AttributeBase ) base;
+    		XEOObjectAttributeConnector connector = (XEOObjectAttributeConnector)objectAtt.getDataFieldConnector();
+  	  		return connector.getAttributeHandler();
+    	}
+    	else if (base instanceof BridgeToolBar   ){
+    		BridgeToolBar b = ( BridgeToolBar )base; 
+    		Bridge bridge = ( Bridge ) b.getParent();
+    		return bridge.getTargetObject().getAttribute( b.getBridgeName() );
+    	}
+    	
+    	return null;
+    	
     }
     
     /**
@@ -2726,9 +2750,10 @@ ActionEvent oEvent = getRequestContext().getEvent();
             oBaseBean.setParentBean( this ); 
             oBaseBean.setParentAttributeName( oAttHandler.getName() );
             oBaseBean.setLookupObjects( getLookupObjectsMap( oAttHandler ) );
-            oBaseBean.setSelectedObject( targetObjectToSearch );
             oBaseBean.setParentParentBeanId( getId() );
             oBaseBean.setParentComponentId( oAtt.getClientId() );
+            //Order is important setParentComponentId must be called before setSelectObject
+            oBaseBean.setSelectedObject( targetObjectToSearch );
             oBaseBean.setFullTextSearch(textToSearch);
             getRequestContext().setViewRoot(oViewRoot);  
       	  	getRequestContext().renderResponse();

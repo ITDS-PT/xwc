@@ -5,12 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import netgest.bo.runtime.AttributeHandler;
+import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.annotations.Visible;
+import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
+import netgest.bo.xwc.components.connectors.XEOBridgeListConnector;
+import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.framework.XUIActionEvent;
 import netgest.bo.xwc.framework.XUIComponentPlugIn;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -19,6 +24,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.def.XUIViewerDefinitionNode;
 import netgest.bo.xwc.framework.def.XUIViewerDefinitonParser;
+import netgest.bo.xwc.xeo.components.Bridge;
 import netgest.bo.xwc.xeo.components.ColumnAttribute;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 
@@ -46,10 +52,29 @@ public class XEOBaseLookupList extends XEOBaseList {
     	//  Dummy
     }
     
+    private AttributeHandler getHandlerForParentComponent(){
+    	
+    	AttributeHandler result = null;
+		XUIComponentBase base = ( XUIComponentBase ) getParentBean().getViewRoot().findComponent( sParentComponentId );
+		if ( base instanceof AttributeBase ){
+			AttributeBase attribute = ( AttributeBase ) base;
+			XEOObjectAttributeConnector connector = ( XEOObjectAttributeConnector ) attribute.getDataFieldConnector();
+			result = connector.getAttributeHandler();
+		} else if ( base instanceof Bridge ){
+			Bridge bridge = ( Bridge ) base;
+			boObject parent = ( ( XEOBridgeListConnector ) bridge.getDataSource() ).getBridge().getParent();
+			result = parent.getAttribute( bridge.getBridgeName() );
+		}
+		return result;
+    }
+    
 	public void setSelectedObject(String selectedObject) {
 		if( !selectedObject.equals( this.selectedObject ) ) {
 			this.selectedObject = selectedObject;
-	    	executeBoql( getParentBean().getLookupQuery( this.parentAttribute, this.selectedObject ) );
+			if (this.sParentComponentId != null)
+				executeBoql( ((XEOEditBean) getParentBean()).getLookupQuery( getHandlerForParentComponent(), this.selectedObject ) );
+			else
+				executeBoql( ((XEOBaseBean) getParentBean()).getLookupQuery( this.parentAttribute , this.selectedObject ) );
 		}
 	}
 
