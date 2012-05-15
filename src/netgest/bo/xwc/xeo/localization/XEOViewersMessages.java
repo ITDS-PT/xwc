@@ -131,4 +131,36 @@ public class XEOViewersMessages {
 	//GlobalSearch.xvw
 	public static final XUILocalizedMessage GLOBAL_SEARCH_TITLE =
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "GLOBAL_SEARCH_TITLE" );
+	
+	//Advanced Search
+	public static final XUILocalizedMessage ADVANCED_SEARCH_SAVE_FILTER =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "ADVANCED_SEARCH_SAVE_FILTER" );
+	
+	public static final XUILocalizedMessage ADVANCED_SEARCH_APPLY_FILTER =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "ADVANCED_SEARCH_APPLY_FILTER" );
+	
+	public static final XUILocalizedMessage ADVANCED_SEARCH_REMOVE_FILTER =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "ADVANCED_SEARCH_REMOVE_FILTER" );
+	
+	public static final XUILocalizedMessage ADVANCED_SEARCH_TBL_HEADER_OPERATOR =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "ADVANCED_SEARCH_TBL_HEADER_OPERATOR" );
+	
+	public static final XUILocalizedMessage ADVANCED_SEARCH_TBL_HEADER_ATTRIBUTE =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "ADVANCED_SEARCH_TBL_HEADER_ATTRIBUTE" );
+	
+	public static final XUILocalizedMessage ADVANCED_SEARCH_TBL_HEADER_CONDITION =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "ADVANCED_SEARCH_TBL_HEADER_CONDITION" );
+	
+	public static final XUILocalizedMessage ADVANCED_SEARCH_TBL_HEADER_VALUE =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "ADVANCED_SEARCH_TBL_HEADER_VALUE" );
+	
+	public static final XUILocalizedMessage ADVANCED_SEARCH_QUERY_TO_EXECUTE =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "ADVANCED_SEARCH_QUERY_TO_EXECUTE" );
+	
+	public static final XUILocalizedMessage ADVANCED_SEARCH_WINDOW_TITLE =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "ADVANCED_SEARCH_WINDOW_TITLE" );
+	
+	//LovChoser
+	public static final XUILocalizedMessage LOV_CHOICE_CHOOSE_A_VALUE =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "LOV_CHOICE_CHOOSE_A_VALUE" );
 }		

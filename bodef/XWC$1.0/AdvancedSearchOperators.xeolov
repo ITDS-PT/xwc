@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xeoLov name="AdvancedSearchOperators">
+	<General />
+	<Lov retainValues="No" name="adv.all">
+		<description>Text e Objecto</description>
+		<details>
+			<item>
+				<value>0</value>
+				<label>Igual a</label>
+			</item>
+			<item>
+				<value>1</value>
+				<label>Diferente de</label>
+			</item>
+			<item>
+				<value>2</value>
+				<label>Maior que</label>
+			</item>
+			<item>
+				<value>3</value>
+				<label>Menor que</label>
+			</item>
+			<item>
+				<value>4</value>
+				<label>Maior ou igual que</label>
+			</item>
+			<item>
+				<value>5</value>
+				<label>Menor ou igual que</label>
+			</item>
+			<item>
+				<value>6</value>
+				<label>Contém</label>
+			</item>
+			<item>
+				<value>7</value>
+				<label>Não Contém</label>
+			</item>
+			<item>
+				<value>8</value>
+				<label>Contém dados</label>
+			</item>
+			<item>
+				<value>9</value>
+				<label>Não contém dados</label>
+			</item>
+			<item>
+				<value>10</value>
+				<label>Começando com</label>
+			</item>
+			<item>
+				<value>11</value>
+				<label>Terminando em</label>
+			</item>
+		</details>
+	</Lov>
+	<Lov retainValues="No" name="adv.text">
+		<description>Text e Objecto</description>
+		<details>
+			<item>
+				<value>0</value>
+				<label>Igual a</label>
+			</item>
+			<item>
+				<value>1</value>
+				<label>Diferente de</label>
+			</item>
+			<item>
+				<value>2</value>
+				<label>Maior que</label>
+			</item>
+			<item>
+				<value>3</value>
+				<label>Menor que</label>
+			</item>
+			<item>
+				<value>4</value>
+				<label>Maior ou igual que</label>
+			</item>
+			<item>
+				<value>5</value>
+				<label>Menor ou igual que</label>
+			</item>
+			<item>
+				<value>6</value>
+				<label>Contém</label>
+			</item>
+			<item>
+				<value>7</value>
+				<label>Não Contém</label>
+			</item>
+			<item>
+				<value>8</value>
+				<label>Contém dados</label>
+			</item>
+			<item>
+				<value>9</value>
+				<label>Não contém dados</label>
+			</item>
+			<item>
+				<value>10</value>
+				<label>Começando com</label>
+			</item>
+			<item>
+				<value>11</value>
+				<label>Terminando em</label>
+			</item>
+		</details>
+	</Lov>
+	<Lov retainValues="No" name="adv.obj">
+		<description>Text e Objecto</description>
+		<details>
+			<item>
+				<value>0</value>
+				<label>Igual a</label>
+			</item>
+			<item>
+				<value>8</value>
+				<label>Contém dados</label>
+			</item>
+			<item>
+				<value>9</value>
+				<label>Não contém dados</label>
+			</item>
+		</details>
+	</Lov>
+	<Lov retainValues="No" name="adv.ltext">
+		<description>Long Text</description>
+		<details>
+			<item>
+				<value>6</value>
+				<label>Contém</label>
+			</item>
+			<item>
+				<value>7</value>
+				<label>Não Contém</label>
+			</item>
+			<item>
+				<value>8</value>
+				<label>Contém dados</label>
+			</item>
+			<item>
+				<value>9</value>
+				<label>Não contém dados</label>
+			</item>
+		</details>
+	</Lov>
+	<Lov retainValues="true" name="adv.boolean">
+		<description>Boolean e File</description>
+		<details>
+			<item>
+				<value>0</value>
+				<label>Igual a</label>
+			</item>
+			<item>
+				<value>8</value>
+				<label>Contém dados</label>
+			</item>
+			<item>
+				<value>9</value>
+				<label>Não contém dados</label>
+			</item>
+		</details>
+	</Lov>
+	<Lov retainValues="No" name="adv.date">
+		<description>Data e Numero</description>
+		<details>
+			<item>
+				<value>0</value>
+				<label>Igual a</label>
+			</item>
+			<item>
+				<value>1</value>
+				<label>Diferente de</label>
+			</item>
+			<item>
+				<value>2</value>
+				<label>Maior que</label>
+			</item>
+			<item>
+				<value>3</value>
+				<label>Menor que</label>
+			</item>
+			<item>
+				<value>4</value>
+				<label>Maior ou igual que</label>
+			</item>
+			<item>
+				<value>5</value>
+				<label>Menor ou igual que</label>
+			</item>
+			<item>
+				<value>6</value>
+				<label>Diferente de</label>
+			</item>
+			<item>
+				<value>9</value>
+				<label>Contém dados</label>
+			</item>
+			<item>
+				<value>10</value>
+				<label>Não contém dados</label>
+			</item>
+		</details>
+	</Lov>
+	<Lov retainValues="true" name="op.initial">
+		<description>Operadores iniciais</description>
+		<details>
+			<item>
+				<value>0</value>
+				<label>(</label>
+			</item>
+		</details>
+	</Lov>
+	<Lov retainValues="true" name="op.all">
+		<description>All operators</description>
+		<details>
+			<item>
+				<value>0</value>
+				<label>(</label>
+			</item>
+			<item>
+				<value>1</value>
+				<label>)</label>
+			</item>
+			<item>
+				<value>2</value>
+				<label> e </label>
+			</item>
+			<item>
+				<value>3</value>
+				<label> ou </label>
+			</item>
+			<item>
+				<value>4</value>
+				<label> e (</label>
+			</item>
+			<item>
+				<value>5</value>
+				<label>) e </label>
+			</item>
+			<item>
+				<value>6</value>
+				<label>) e ( </label>
+			</item>
+			<item>
+				<value>7</value>
+				<label>ou (</label>
+			</item>
+			<item>
+				<value>8</value>
+				<label>) ou</label>
+			</item>
+			<item>
+				<value>9</value>
+				<label>) ou (</label>
+			</item>
+		</details>
+	</Lov>
+</xeoLov>

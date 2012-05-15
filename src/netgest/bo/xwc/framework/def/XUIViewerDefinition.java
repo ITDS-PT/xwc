@@ -428,5 +428,19 @@ public class XUIViewerDefinition
 		}
 		return false;
 	}
+
+
+
+
+	/**
+	 * @param newBean
+	 * @param beanId
+	 */
+	public void replaceBean( String newBean, String beanId ) {
+		this.viewerBeanList.clear();
+		this.viewerBeanListId.clear();
+		this.addViewerBean( newBean );
+		this.addViewerBeanId( beanId );
+	}
 	
 }

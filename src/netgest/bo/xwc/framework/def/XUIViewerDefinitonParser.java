@@ -37,7 +37,7 @@ public class XUIViewerDefinitonParser
 {
 	
 	private static final String DEFAULT_VIEWERS_ROOT = "viewers";
-	private static final String DEFAULT_BEAN_ID = "viewBean";
+	public static final String DEFAULT_BEAN_ID = "viewBean";
     private static NSResolver ns = new GenericResolver();
     private static HashMap<String, XUIViewerDefinition> viewCache = new HashMap<String, XUIViewerDefinition>();
     
@@ -489,5 +489,10 @@ public class XUIViewerDefinitonParser
             return "http://www.netgest.net/xeo/xvw";
         }
     }
+
+
+	public void replaceBean( String newBean ) {
+		
+	}
     
 }

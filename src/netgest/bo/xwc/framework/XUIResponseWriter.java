@@ -513,6 +513,11 @@ public class XUIResponseWriter extends ResponseWriter {
         // do nothing;
 
     }
+    
+    public void startElement(XUIWriterElementConst oElementConst )
+    	throws IOException {
+    	startElement( oElementConst, null );
+    }
 
     public void startElement(XUIWriterElementConst oElementConst , UIComponent componentForElement)
           throws IOException {
@@ -521,6 +526,9 @@ public class XUIResponseWriter extends ResponseWriter {
             
     }
 
+    public void startElement(String name) throws IOException {
+    	startElement( name, null );
+    }
 
     /**
      * <p>Write the start of an element, up to and including the
@@ -614,8 +622,17 @@ public class XUIResponseWriter extends ResponseWriter {
                                String componentPropertyName) throws IOException {
         writeAttribute( oAttrName.getValue(), value, componentPropertyName );
     }
+    
+    public void writeAttribute(XUIWriterAttributeConst oAttrName, Object value
+            ) throws IOException {
+    		writeAttribute( oAttrName.getValue(), value, null );
+}
 
 
+    public void writeAttribute(String name, Object value) throws IOException{
+    	writeAttribute( name, value, null );
+    }
+    
     /**
      * <p>Write a properly escaped attribute name and the corresponding
      * value.  The value text will be converted to a String if

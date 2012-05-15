@@ -117,10 +117,11 @@
             <xwc:render for='attributeBoolean'>netgest.bo.xwc.components.classic.AttributeBoolean$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeNumber'>netgest.bo.xwc.components.classic.AttributeNumber$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeNumberLookup'>netgest.bo.xwc.components.classic.AttributeNumberLookup$XEOHTMLRenderer</xwc:render>
+            <xwc:render for='genericLookup'>netgest.bo.xwc.components.classic.GenericLookup$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeOutput'>netgest.bo.xwc.components.classic.AttributeOutput$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeFile'>netgest.bo.xwc.components.classic.AttributeFile$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributePassword'>netgest.bo.xwc.components.classic.AttributePassword$XEOHTMLRenderer</xwc:render>
-            
+            <xwc:render for='lovChooser'>netgest.bo.xwc.components.classic.LovChooser$XEOHTMLRenderer</xwc:render>
             
 
             <xwc:render for='mainLayout'>netgest.bo.xwc.components.classic.MainLayout$XEOHTMLRenderer</xwc:render>
@@ -418,9 +419,17 @@
         </xwc:component>
         <xwc:component name='attributeNumberLookup'>
             <xwc:className>netgest.bo.xwc.components.classic.AttributeNumberLookup</xwc:className>
-            <xwc:description>Attribute Number</xwc:description>
+            <xwc:description>Attribute Lookup</xwc:description>
         </xwc:component>
-
+        <xwc:component name='genericLookup'>
+            <xwc:className>netgest.bo.xwc.components.classic.GenericLookup</xwc:className>
+            <xwc:description>Generic Lookup</xwc:description>
+        </xwc:component>
+        <xwc:component name='lovChooser'>
+            <xwc:className>netgest.bo.xwc.components.classic.LovChooser</xwc:className>
+            <xwc:description>Selects values from a Lov</xwc:description>
+        </xwc:component>
+        
         <xwc:component name='mainLayout'>
             <xwc:className>netgest.bo.xwc.components.classic.MainLayout</xwc:className>
             <xwc:description>Main Layout</xwc:description>

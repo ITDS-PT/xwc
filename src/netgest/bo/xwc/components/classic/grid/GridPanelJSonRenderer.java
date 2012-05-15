@@ -219,7 +219,7 @@ public class GridPanelJSonRenderer {
 	    				break;
 	    			case DataFieldTypes.VALUE_NUMBER:
 	    				if( ((String)oParentValues[i]).length() > 0 )
-	    					parentValues[i] = new BigDecimal( (String)oParentValues[i] );
+	    					parentValues[i] = new BigDecimal( oParentValues[i].toString() );
 	    				break;
 	    		}
 	    	}

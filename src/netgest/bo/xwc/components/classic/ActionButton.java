@@ -27,7 +27,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * 
  * This components represents a XUICommand in the form of an HTML button
  *  
- * @author João Carreira
+ * @author Joï¿½o Carreira
  * @author Pedro Rio
  *
  */
@@ -321,9 +321,15 @@ public class ActionButton extends XUICommand
             if (!oActionButton.getLabel().equalsIgnoreCase("#Button#"))
             	oConfig.addJSString( "text", oActionButton.getLabel() );
             if( oActionButton.getActionExpression() != null ) {
+            	
+            	Object commandArg = oActionButton.getCommandArgument();
+            	String arg = "";
+            	if (commandArg != null)
+            		arg = commandArg.toString();
+            	
                 oConfig.add( "handler", 
                              "function(){" + 
-                             	XVWScripts.getCommandScript( oActionButton.getTarget() , oActionButton, oActionButton.getWaitMode() ) +
+                             	XVWScripts.getCommandScript( oActionButton.getTarget() , oActionButton, arg , oActionButton.getWaitMode() ) +
                              "}"
                             );
             }

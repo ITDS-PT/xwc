@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 
 import netgest.bo.transaction.XTransactionManager;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
@@ -94,6 +95,25 @@ public class XUISessionContext {
         viewRoot = (XUIViewRoot)viewHandler.
 	        createView( 
 	                facesContext, sViewName, viewerInputStream,((XUIViewRoot)facesContext.getViewRoot()).getTransactionId()
+	        );        
+        
+        return viewRoot;
+    }
+    
+    public XUIViewRoot createChildView( String sViewName, XUIViewerDefinition viewerDefinition ) {
+        FacesContext facesContext;
+        facesContext = FacesContext.getCurrentInstance();
+        
+        assert facesContext.getViewRoot() != null : MessageLocalizer.getMessage("CANT_CREATE_A_CHILD_VIEW_OF_NULL");
+        XUIViewRoot viewRoot;
+        
+        XUIViewHandler viewHandler;
+        viewHandler = (XUIViewHandler)Util.getViewHandler(facesContext);
+        viewRoot = (XUIViewRoot)viewHandler.
+	        createView( 
+	                facesContext, sViewName, 
+	                null,((XUIViewRoot)facesContext.getViewRoot()).getTransactionId(),
+	                viewerDefinition
 	        );        
         
         return viewRoot;

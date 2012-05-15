@@ -1,8 +1,9 @@
 package netgest.bo.xwc.components.classic.grid;
 
 import java.io.IOException;
-import java.sql.Timestamp;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -32,8 +33,8 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.beans.XEOBaseList;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
+import netgest.utils.StringUtils;
 
-import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -265,7 +266,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        		dataType = dataSource.getAttributeMetaData(groupByColumn).getDataType();	        
 	        	switch (dataType){
 	        		case DataFieldTypes.VALUE_CHAR: serviceParameterValues.add(sParent); break;
-	        		case DataFieldTypes.VALUE_NUMBER: serviceParameterValues.add(Long.parseLong(sParent)); break;
+	        		case DataFieldTypes.VALUE_NUMBER: serviceParameterValues.add(StringUtils.hasValue( sParent ) ? new BigDecimal(sParent) : null); break;
 	        		case DataFieldTypes.VALUE_DATE:
 	        			Date result = boConvertUtils.convertToDate(sParent, null);
 	        			if (result != null){
@@ -284,7 +285,8 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        			else
 	        				serviceParameterValues.add(sParent);
 	        			break;
-	        		case DataFieldTypes.VALUE_BOOLEAN: serviceParameterValues.add(Boolean.parseBoolean(sParent)); break;
+	        		case DataFieldTypes.VALUE_BOOLEAN:
+	        			serviceParameterValues.add(new BigDecimal( sParent )); break;
 	        		//Default: Add as a String
 	        		default : serviceParameterValues.add(sParent); break;
 	        	}
@@ -380,7 +382,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 		reqParam.setGroupBy( groupBy );
 		
 		
-		oGridPanel.setGroupBy( StringUtils.join(groupBy, ',') );
+		oGridPanel.setGroupBy( org.apache.commons.lang.StringUtils.join(groupBy, ',') );
 		 
 		reqParam.setGroupByLevel( groupByLevel );
 		reqParam.setParentValues( parentValues );

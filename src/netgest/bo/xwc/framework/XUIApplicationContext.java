@@ -21,7 +21,6 @@ import netgest.bo.xwc.framework.def.XUIComponentStore;
 import netgest.bo.xwc.framework.def.XUIRendererDefinition;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.def.XUIViewerDefinitonParser;
-import netgest.bo.xwc.framework.jsf.XUIRenderKit;
 import netgest.bo.xwc.framework.jsf.XUIViewerBuilder;
 
 public class XUIApplicationContext {
@@ -104,7 +103,7 @@ public class XUIApplicationContext {
     		String sRenderKitClassName = oComponentStore.getRenderKitClassName( sRenderKits[i] );
             try
             {
-                Class      cRenderKit = null;
+                Class<?>      cRenderKit = null;
                 RenderKit  oRenderKit = null;
                 
                 cRenderKit = Class.forName( sRenderKitClassName );
@@ -131,8 +130,6 @@ public class XUIApplicationContext {
 
         RenderKit oRenderKit;
         
-        FacesContext oFacesContext = FacesContext.getCurrentInstance();
-        //String[] oAllComponents = oComponentStore.getComponentNames();
 
         Iterator<String> itAllRenderKits = oComponentStore.getRenderKitsList();
         
@@ -152,7 +149,7 @@ public class XUIApplicationContext {
         		
         		try
                 {
-                    Class      oRenderClass     = null;
+                    Class<?>      oRenderClass     = null;
                     Renderer   oComponentRender = null;
                     String	   sFamilyName		= oRenderDef.getFamilyName();
                     String 	   sRendererType	= oRenderDef.getRendererType();
@@ -174,67 +171,6 @@ public class XUIApplicationContext {
         	}
         }
         
-        /*for (int i = 0; i < oAllComponents.length; i++) 
-        {
-
-            // Register registered components render Kits
-            XUIComponentDefinition oComponentDef = oComponentStore.getComponent( oAllComponents[i] );
-            
-            if( "outputText".equals( oComponentDef.getName() ) ) {
-            	System.out.println( "todebug"  );
-            }
-            
-            String[] sCompRenderKitTypes = oComponentDef.getRenderKitTypes();
-                
-            for (int j = 0; j < sCompRenderKitTypes.length; j++)  {
-                
-                
-                oRenderKit = oRenderKits.get( sCompRenderKitTypes[j] );
-                if( oRenderKit != null ){
-                     
-//                  oRenderKit = new XUIRenderKit();
-                    
-                    oRenderKits.put( sCompRenderKitTypes[j], oRenderKit );
-
-                    sRenderClassName = oComponentDef.getRenderKitClassName( sCompRenderKitTypes[j] );
-
-	                if ( log.isFinerEnabled() )
-	                {
-	                    log.finer("Loading class "+ sRenderClassName +" for component " + oAllComponents[i] );
-	                }
-
-	                try
-	                {
-	                    Class      oRenderClass     = null;
-	                    Renderer   oComponentRender = null;
-	                    
-	                    oRenderClass = Class.forName( 
-	                                                    sRenderClassName 
-	                                                    );
-	                    oComponentRender = (Renderer)oRenderClass.newInstance();
-	                    
-	                    //TODO: Register render with java server faces
-	                    
-	                    oRenderKit.addRenderer( 
-	                        oComponentDef.getFamily(), 
-	                        oComponentDef.getName(), 
-	                        oComponentRender
-	                    ); //FIXME: Estava aqui o getName() em vez do getFamily()
-	                }
-	                catch (Exception e)
-	                {
-	                    log.warn("Error loading class "+ sRenderClassName +" for component " + oAllComponents[i] + ":" + e.getClass().getName() + "-" + e.getMessage() );
-	                }
-
-                }
-                else {
-                    log.warn("Cannot register " + sCompRenderKitTypes[j] + " for component " + oAllComponents[i] + " render kit [" + sCompRenderKitTypes[j] + "] doesn't exist. "  );
-                }
-            }
-        }*/
-
-        // Register platform render Kits --
-        // TODO: Paste this to XVWComponents;
         oRenderKit = oRenderKits.get( "XEOHTML" );
         if( oRenderKit != null ) {
             oRenderKit.addRenderer( XUIViewRoot.class.getName(), XUIViewRoot.class.getName(), new XUIViewRoot.XEOHTMLRenderer() );    
@@ -249,85 +185,5 @@ public class XUIApplicationContext {
         }
     }
     
-    private synchronized void registerComponentRenders2()
-    {
-        String sRenderClassName;
-
-        RenderKit oRenderKit;
-        
-        FacesContext oFacesContext = FacesContext.getCurrentInstance();
-        String[] oAllComponents = oComponentStore.getComponentNames();
-
-        for (int i = 0; i < oAllComponents.length; i++) 
-        {
-
-            // Register registered components render Kits
-            XUIComponentDefinition oComponentDef = oComponentStore.getComponent( oAllComponents[i] );
-            
-                       
-            String[] sCompRenderKitTypes = oComponentDef.getRenderKitTypes();
-                
-            for (int j = 0; j < sCompRenderKitTypes.length; j++)  {
-                
-                
-                oRenderKit = oRenderKits.get( sCompRenderKitTypes[j] );
-                if( oRenderKit != null ){
-                     
-//                  oRenderKit = new XUIRenderKit();
-                    
-                    oRenderKits.put( sCompRenderKitTypes[j], oRenderKit );
-
-                    sRenderClassName = oComponentDef.getRenderKitClassName( sCompRenderKitTypes[j] );
-
-	                if ( log.isFinerEnabled() )
-	                {
-	                    log.finer(MessageLocalizer.getMessage("LOADING_CLASS")+" "+ sRenderClassName +" "+MessageLocalizer.getMessage("FOR_COMPONENT")+" " + oAllComponents[i] );
-	                }
-
-	                try
-	                {
-	                    Class      oRenderClass     = null;
-	                    Renderer   oComponentRender = null;
-	                    
-	                    oRenderClass = Class.forName( 
-	                                                    sRenderClassName 
-	                                                    );
-	                    oComponentRender = (Renderer)oRenderClass.newInstance();
-	                    
-	                    //TODO: Register render with java server faces
-	                    
-	                    oRenderKit.addRenderer( 
-	                        oComponentDef.getName(), 
-	                        oComponentDef.getName(), 
-	                        oComponentRender
-	                    ); //FIXME: Estava aqui o getName() em vez do getFamily()
-	                }
-	                catch (Exception e)
-	                {
-	                    log.warn(MessageLocalizer.getMessage("ERROR_LOADING_CLASS")+" "+ sRenderClassName +" "+MessageLocalizer.getMessage("FOR_COMPONENT")+" " + oAllComponents[i] + ":" + e.getClass().getName() + "-" + e.getMessage() );
-	                }
-
-                }
-                else {
-                    log.warn(MessageLocalizer.getMessage("CANNOT_REGISTER")+" " + sCompRenderKitTypes[j] + " "+MessageLocalizer.getMessage("FOR_COMPONENT")+" " + oAllComponents[i] + " render kit [" + sCompRenderKitTypes[j] + "] "+MessageLocalizer.getMessage("DOESNT_EXIST")+". "  );
-                }
-            }
-        }
-
-        // Register platform render Kits --
-        // TODO: Paste this to XVWComponents;
-        oRenderKit = oRenderKits.get( "XEOHTML" );
-        if( oRenderKit != null ) {
-            oRenderKit.addRenderer( XUIViewRoot.class.getName(), XUIViewRoot.class.getName(), new XUIViewRoot.XEOHTMLRenderer() );    
-        }
-        oRenderKit = oRenderKits.get( "XEOV2" );
-        if( oRenderKit != null ) {
-            oRenderKit.addRenderer( XUIViewRoot.class.getName(), XUIViewRoot.class.getName(), new XUIViewRoot.XEOHTMLRenderer() );    
-        }
-        oRenderKit = oRenderKits.get( "XEOXML" );
-        if( oRenderKit != null ) {
-            oRenderKit.addRenderer( XUIViewRoot.class.getName(), XUIViewRoot.class.getName(), new XMLViewRootRenderer() );    
-        }
-    }
 
 }

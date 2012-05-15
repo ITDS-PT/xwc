@@ -27,6 +27,9 @@ import netgest.bo.xwc.components.classic.grid.GridPanelExtJsRenderer;
 import netgest.bo.xwc.components.classic.grid.GridPanelRenderer;
 import netgest.bo.xwc.components.classic.gridexplorer.XVWGridExplorerViewEditBean;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
+import netgest.bo.xwc.components.connectors.DataListConnector;
+import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIBaseProperty;
@@ -651,7 +654,31 @@ public class GridExplorer extends List {
 
 		tb.getChildren().add( Menu.getMenuSpacer() );
 		tb.getChildren().add( createViewsCombo() );
+		
+		createAdvancedSearchButton( tb );
+		
 		getChildren().add( tb );
+	}
+
+	private void createAdvancedSearchButton( ToolBar tb ) {
+		DataListConnector connector = getDataSource();
+		if (connector instanceof XEOObjectListConnector){
+			Menu m = new Menu();
+			m.setText("Pesquisa Avançada");
+			m.setServerAction("#{" + getBeanId() + ".advancedSearch}");
+			m.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
+			m.setIcon( "ext-xeo/images/gridexplorer/search.png" );
+			
+			try{
+				XEOObjectListConnector objConnector = (XEOObjectListConnector) connector;
+				String name = objConnector.getObjectList().getBoDef().getName();
+				m.setValue(name);
+				tb.getChildren().add( m );
+			} catch (boRuntimeException e){
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 	private Menu createSaveMenu( ) {

@@ -396,7 +396,11 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     	return createView( context, viewId, null, sTransactionId );
     }
     
-    public UIViewRoot createView(FacesContext context, String viewId, InputStream viewerInputStream, String sTransactionId ) 
+    public UIViewRoot createView(FacesContext context, String viewId, InputStream viewerInputStream, String sTransactionId ){
+    	return createView( context, viewId, viewerInputStream, sTransactionId, null );
+    }
+    
+    public UIViewRoot createView(FacesContext context, String viewId, InputStream viewerInputStream, String sTransactionId, XUIViewerDefinition viewerDefinition ) 
     {
         XUIViewerBuilder oViewerBuilder;
         XUIRequestContext      oContext;
@@ -517,13 +521,15 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        result.setRenderKitId(renderKitId);
 	        
 	        // Load the Viewer definition a build component tree
-	        
 	        XUIViewerDefinition oViewerDef;
 	        
-	        if( viewerInputStream != null )
-	        	oViewerDef = oApp.getViewerDef( viewerInputStream );
-	        else
-	        	oViewerDef = oApp.getViewerDef( viewId );
+	        if (viewerDefinition == null){
+	            if( viewerInputStream != null )
+		        	oViewerDef = oApp.getViewerDef( viewerInputStream );
+		        else
+		        	oViewerDef = oApp.getViewerDef( viewId );
+	        } else
+	        	oViewerDef = viewerDefinition;
 	        
 	        result.setTransient( oViewerDef.isTransient() );
 	        

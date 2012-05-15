@@ -66,7 +66,7 @@ public class XVWScripts {
     		return getCommandScript( oComponent, iWaitMode );
     	}
     	else if (target == null)
-    		return getAjaxCommandScript( oComponent, iWaitMode );	
+    		return getAjaxCommandScript( oComponent, actionValue, iWaitMode );	
     	else if( target != null ) 
     	{
     		//The Window can have parameters, which will come embedded in the target, like this:

@@ -156,5 +156,13 @@ public interface ComponentMessages {
 	
 	public static final XUILocalizedMessage FAVORITES_ERROR_MSG = 
 		new XUILocalizedMessage(ComponentMessages.class.getName(), "FAVORITES_ERROR_MSG");
+	
+	//LovChooser
+	public static final XUILocalizedMessage LOV_OPTIONS = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "LOV_OPTIONS");
+	
+	public static final XUILocalizedMessage LOV_CHOSEN = 
+		new XUILocalizedMessage(ComponentMessages.class.getName(), "LOV_CHOSEN");
+	
 		
 }

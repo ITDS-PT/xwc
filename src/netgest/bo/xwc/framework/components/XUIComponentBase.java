@@ -364,6 +364,49 @@ public abstract class XUIComponentBase extends UIComponentBase
         return super.getChildren().get( i );
     }
     
+    /**
+     * 
+     * Appends a child to the children of the component
+     * 
+     * @param child The child to append
+     * 
+     */
+    public void addChild( UIComponent child ){
+    	this.getChildren().add( child );
+    }
+    
+    /**
+     * 
+     * Appends a child at a specific index
+     * 
+     * @param child The child to append
+     * @param index The index where to append
+     */
+    public void addChildAtIndex(UIComponent child, int index){
+    	this.getChildren().add( index, child );
+    }
+    
+    /**
+     * 
+     * Adds the sibling to the component
+     * 
+     * @param sibling The sibling to add
+     */
+    public void addSibling( UIComponent sibling ){
+    	UIComponent parent = this.getParent();
+    	if (parent != null){
+    		int position = 0;
+    		for (UIComponent curr : parent.getChildren()){
+    			if (curr.getId().equalsIgnoreCase( getId() )){
+    				break;
+    			}
+    			position++;
+    		}
+    		
+    		parent.getChildren().add( position, sibling );
+    	}
+    }
+    
 
     public void decode()
     {

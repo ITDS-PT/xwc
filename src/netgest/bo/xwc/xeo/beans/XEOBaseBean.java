@@ -24,6 +24,8 @@ import netgest.bo.system.boApplication;
 import netgest.bo.system.boPoolOwner;
 import netgest.bo.xwc.components.classic.GridExplorer;
 import netgest.bo.xwc.components.classic.GridPanel;
+import netgest.bo.xwc.components.classic.ToolBar;
+import netgest.bo.xwc.components.classic.grid.GridPanelJSonFiltersBuilder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeMetaData;
@@ -531,6 +533,48 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 		}
 		
 	}
+	
+	public void advancedSearch(){
+		
+		XUIRequestContext   oRequestContext;
+        XUISessionContext   oSessionContext;
+        XUIViewRoot         oViewRoot;
+
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        oSessionContext = oRequestContext.getSessionContext();
+        
+        Object value = ((XUICommand)oRequestContext.getEvent().getSource()).getValue();
+        ToolBar tb = (ToolBar) ((XUICommand)oRequestContext.getEvent().getSource()).getParent();
+        GridPanel explorer = (GridPanel) tb.getParent();
+        String advancedFilters = explorer.getAdvancedFilters();
+        
+        oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/AdvancedSearch.xvw");
+        AdvancedSearchBean bean = (AdvancedSearchBean) oViewRoot.getBean("viewBean");
+        bean.setObjectName(value.toString());
+        
+        GridPanelJSonFiltersBuilder builder = new GridPanelJSonFiltersBuilder( advancedFilters );
+        
+        initializeAdvancedSearch( oRequestContext, oViewRoot, bean, builder );
+        
+        
+	}
+
+	/**
+	 * 
+	 * Initializes the advanced search bean
+	 * 
+	 * @param oRequestContext
+	 * @param oViewRoot
+	 * @param bean
+	 * @param builder 
+	 */
+	private void initializeAdvancedSearch( XUIRequestContext oRequestContext, XUIViewRoot oViewRoot,
+			AdvancedSearchBean bean, GridPanelJSonFiltersBuilder builder ) {
+		oRequestContext.setViewRoot( oViewRoot );
+		bean.initializeFilters( builder.getFilters() );
+	}
+
+	
 	
 }
 

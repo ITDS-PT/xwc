@@ -1,8 +1,6 @@
 package netgest.bo.xwc.components.classic;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,8 +26,8 @@ import netgest.bo.runtime.boObjectList;
 import netgest.bo.xwc.components.annotations.ObjectAttribute;
 import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.annotations.Values;
+import netgest.bo.xwc.components.classic.grid.GridPanelUtilities;
 import netgest.bo.xwc.components.classic.grid.GridTreeSelectorEditBean;
-import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.connectors.AggregableDataList;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -38,8 +36,8 @@ import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.FilterTerms;
-import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
+import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Column;
@@ -51,7 +49,6 @@ import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIPreferenceManager;
 import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
@@ -90,6 +87,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public static final String SELECTION_MULTI_ROW = "MULTI_ROW";
 	public static final String SELECTION_CELL = "CELL";
 
+	private GridPanelUtilities gridUtilities = new GridPanelUtilities( this );
+	
 	/**
 	 * The list of items for the GridPanel (must be an implementation
 	 * of the {@link DataListConnector} interface
@@ -186,10 +185,15 @@ public class GridPanel extends ViewerInputSecurityBase {
 	/**
 	 * A JSON Object with the current filters for the columns, not to be set directly
 	 * 
-	 * 
 	 */
 	private XUIBaseProperty<String> currentFilters = new XUIBaseProperty<String>(
 			"currentFilters", this);
+	
+	/**
+	 * A JSON Object with the filters for the advanced search 
+	 */
+	private XUIStateProperty<String> advancedFilters = new XUIStateProperty<String>(
+			"advancedFilters", this );
 
 	private XUIBaseProperty<String> currentExpandedGroups = new XUIBaseProperty<String>(
 			"currentExpandedGroups", this);
@@ -992,6 +996,16 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public String getCurrentFilters() {
 		return currentFilters.getValue();
 	}
+	
+	/**
+	 * 
+	 * Return a JSON Object with advanced search filters
+	 * 
+	 * @return A JSON Object as String
+	 */
+	public String getAdvancedFilters(){
+		return advancedFilters.getValue();
+	}
 
 	/**
 	 * Set the current column filters with a JSON Object
@@ -999,6 +1013,15 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 */
 	public void setCurrentFilters(String currentFilters) {
 		this.currentFilters.setValue(currentFilters);
+	}
+	
+	/**
+	 * Set the advanced filters with a JSON Object
+	 * 
+	 * @param advancedFilters
+	 */
+	public void setAdvancedFilters( String advancedFilters ){
+		this.advancedFilters.setValue( advancedFilters );
 	}
 
 	/**
@@ -1038,135 +1061,14 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * @return {@link FilterTerms}
 	 */
 	public FilterTerms getCurrentFilterTerms() {
-		FilterTerms terms = null;
-
-		String sCFilter = this.getCurrentFilters();
-
-		try {
-			JSONObject jFilters = new JSONObject(sCFilter);
-			String[] names = JSONObject.getNames(jFilters);
-			if (names != null) {
-
-				for (String name : names) {
-
-					JSONObject jsonColDef = jFilters.getJSONObject( name );
-					String submitedType = jsonColDef.getString("type");
-
-					boolean active = jsonColDef.getBoolean("active");
-
-					if( active ) {
-						boolean bAddCodition = true;
-
-						Object value = null;
-						Byte operator = null;
-
-						if ("object".equals(submitedType)) {
-							List<String> valuesList = new ArrayList<String>();
-
-							JSONArray jArray = jsonColDef.optJSONArray("value");
-							if (jArray != null) {
-								for (int z = 0; z < jArray.length(); z++) {
-									valuesList.add(jArray.getString(z));
-								}
-								value = valuesList.toArray();
-								operator = FilterTerms.OPERATOR_IN;
-							}
-							if (valuesList.size() == 0) {
-								bAddCodition = false;
-							}
-
-						} else if ("list".equals(submitedType)) {
-							List<String> valuesList = new ArrayList<String>();
-							JSONArray jArray = jsonColDef
-									.getJSONArray("value");
-
-							for (int z = 0; z < jArray.length(); z++) {
-								valuesList.add(jArray.getString(z));
-							}
-							value = valuesList.toArray();
-							operator = FilterTerms.OPERATOR_IN;
-
-							if (valuesList.size() == 0) {
-								bAddCodition = false;
-							}
-
-						} else if ("string".equals(submitedType)) {
-							value = jsonColDef.getString("value");
-							operator = FilterTerms.OPERATOR_CONTAINS;
-						} else if ("date".equals(submitedType)) {
-							SimpleDateFormat sdf = new SimpleDateFormat(
-									"dd/MM/yyyy");
-							
-							JSONArray jArray = jsonColDef.getJSONArray("value");
-							for( int i=0; i<jArray.length(); i++ ) {
-								
-								JSONObject jsonColFilter = jArray.getJSONObject( i );
-								try {
-									value = sdf.parse( jsonColFilter.getString( "value" ) );
-								} catch (ParseException e) {
-									e.printStackTrace();
-									value = null;
-								}
-								String comp = jsonColFilter
-										.getString("comparison");
-								if ("lt".equals(comp))
-									operator = FilterTerms.OPERATOR_LESS_THAN;
-								else if ("eq".equals(comp))
-									operator = FilterTerms.OPERATOR_EQUAL;
-								else
-									operator = FilterTerms.OPERATOR_GREATER_THAN;
-								
-								terms = addFilterTerm(terms, name, getColumn( name ).getSqlExpression(),operator, value);
-							}
-							bAddCodition = false;
-						} else if ("boolean".equals(submitedType)) {
-							value = Boolean.valueOf(jsonColDef.getString("value"));
-							operator = FilterTerms.OPERATOR_EQUAL;
-						} else if ("numeric".equals(submitedType)) {
-							JSONArray jArray = jsonColDef.getJSONArray("value");
-							for( int i=0; i<jArray.length(); i++ ) {
-								JSONObject jsonColFilter = jArray.getJSONObject( i );
-								String submitedValue = jsonColFilter.getString( "value" );
-								
-								String comp = jsonColFilter.getString("comparison");
-								value = new BigDecimal(submitedValue);
-								if ("lt".equals(comp))
-									operator = FilterTerms.OPERATOR_LESS_THAN;
-								else if ("eq".equals(comp))
-									operator = FilterTerms.OPERATOR_EQUAL;
-								else
-									operator = FilterTerms.OPERATOR_GREATER_THAN;
-								
-								terms = addFilterTerm(terms, name, getColumn( name ).getSqlExpression(), operator, value);
-							}
-							bAddCodition = false;
-						} else {
-							value = null;
-						}
-
-						if (bAddCodition) {
-							terms = addFilterTerm(terms, name, getColumn( name ).getSqlExpression() ,operator, value);
-						}
-					}
-				}
-			}
-		} catch (JSONException e) {
-			// Error reading filters....
-			e.printStackTrace();
-		}
-		return terms;
+		FilterTerms terms = gridUtilities.createSimpleFilterTerms( this.getCurrentFilters() );
+		FilterTerms advancedTerms = gridUtilities.createAdvancedFilterTerms( this.getAdvancedFilters() );
+		FilterTerms finalTerms = gridUtilities.mergeFilterTerms( terms, advancedTerms );
+		
+		return finalTerms;
 	}
+
 	
-
-	private FilterTerms addFilterTerm( FilterTerms terms, String name, String sqlExpression, byte operator, Object value ) {
-		if (terms == null) {
-			terms = new FilterTerms(new FilterTerm( name, sqlExpression, operator, value) ); 
-		} else {
-			terms.addTerm(FilterTerms.JOIN_AND, name, getColumn( name ).getSqlExpression(),
-					operator, value);
-		}
-		return terms;
-	}
 	/**
 	 * Define the {@link DataListConnector} witch this grid i binding to
 	 * @param dataSource {@link DataListConnector} to bind this grid

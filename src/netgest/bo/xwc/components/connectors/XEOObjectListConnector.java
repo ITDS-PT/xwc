@@ -14,12 +14,13 @@ import netgest.bo.data.DriverUtils;
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
-import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.boObjectList.SqlField;
+import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
+import netgest.utils.StringUtils;
 
 public class XEOObjectListConnector implements GroupableDataList, AggregableDataList {
 
@@ -158,9 +159,13 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
     	this.oObjectList.setQueryOrderBy( sb.toString() );
 	}
     
-    public void setFilterTerms( FilterTerms filterTerms ) {
-    	
+    public void setFilterTerms( FilterTerms filterTerms ){
     	EboContext eboCtx = boApplication.currentContext().getEboContext();
+    	setFilterTerms( filterTerms, eboCtx );
+    }
+    
+    public void setFilterTerms( FilterTerms filterTerms, EboContext eboCtx ) {
+    	
     	DriverUtils dutl = eboCtx.getDataBaseDriver().getDriverUtils();
     	
     	if ( filterTerms == null ) {
@@ -187,10 +192,40 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 	    			case FilterTerms.JOIN_AND:
 						query.append( " AND " );
 						break;
-					default:
-						query.append( " AND " );
+	    			case FilterTerms.JOIN_OPEN_BRACKET:
+						query.append( " ( " );
+						break;
+	    			case FilterTerms.JOIN_CLOSE_BRACKET:
+						query.append( " ) " );
+						break;	
+	    			case FilterTerms.JOIN_AND_OPEN_BRACKET:
+						query.append( " AND ( " );
+						break;	
+	    			case FilterTerms.JOIN_CLOSE_BRACKET_AND:
+						query.append( " ) AND " );
+						break;	
+	    			case FilterTerms.JOIN_CLOSE_BRACKET_AND_OPEN_BRACKET:
+						query.append( " ) AND ( " );
+						break;
+	    			case FilterTerms.JOIN_OR_OPEN_BRACKET:
+						query.append( " OR ( " );
+						break;	
+	    			case FilterTerms.JOIN_CLOSE_BRACKET_OR:
+						query.append( " ) OR " );
+						break;	
+	    			case FilterTerms.JOIN_CLOSE_BRACKET_OR_OPEN_BRACKET:
+						query.append( " ) OR ( " );
+						break;	
+	    			default:
+						query.append( "" );
     			}
+    		} else {
+    			if (j.getJoinType() == FilterTerms.JOIN_OPEN_BRACKET)
+    				query.append( " ( " );
     		}
+    		
+    		
+    		
 			FilterTerm t =  j.getTerm();
 			
 			String name = t.getDataField();
@@ -209,9 +244,13 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 			if( val != null ) {
 				if( val instanceof String ) {
 					val = ((String)val).replace( "'" , "''").toUpperCase();
-					if( t.getOperator() == FilterTerms.OPERATOR_CONTAINS || t.getOperator() == FilterTerms.OPERATOR_NOT_CONTAINS ) {
+					if( t.getOperator() == FilterTerms.OPERATOR_NOT_LIKE  || t.getOperator() == FilterTerms.OPERATOR_LIKE) {
 						val = "%" + val + "%";
 					}
+					else if (t.getOperator() == FilterTerms.OPERATOR_STARTS_WITH)
+						val = val + "%";
+					else if (t.getOperator() == FilterTerms.OPERATOR_ENDS_WITH)
+						val = "%" + val;
 					parVal = "?";
 					query.append( "UPPER((" + sqlExpr + "))" );
 					pars.add( val );
@@ -250,14 +289,19 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 					pars.add( val );
 				}
 			} else {
-				query.append( sqlExpr );
-				parVal = "?";
-				pars.add( val );
+				if ( StringUtils.hasValue( sqlExpr ) ){
+					query.append( sqlExpr );
+					parVal = "?";
+					pars.add( val );
+				}
 			}
+			
+			if (isCheckingForNullPresence( t ) )
+				removeLastParameter( pars );
 			
 			switch ( t.getOperator() ) {
 				case FilterTerms.OPERATOR_CONTAINS:
-					query.append( " LIKE " ).append( parVal );
+					query.append( " IS NOT NULL " );
 					break;
 				case FilterTerms.OPERATOR_EQUAL:
 					query.append( " = " ).append( parVal );
@@ -278,7 +322,7 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 					query.append( " LIKE " ).append( parVal );
 					break;
 				case FilterTerms.OPERATOR_NOT_CONTAINS:
-					query.append( " NOT LIKE " ).append( parVal );
+					query.append( " IS NULL " );
 					break;
 				case FilterTerms.OPERATOR_NOT_LIKE:
 					query.append( " NOT LIKE " ).append( parVal );
@@ -286,13 +330,34 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 				case FilterTerms.OPERATOR_IN:
 					query.append( " IN " ).append( parVal );
 					break;
+				case FilterTerms.OPERATOR_STARTS_WITH:
+					query.append( " LIKE " ).append( parVal );
+					break;	
+				case FilterTerms.OPERATOR_ENDS_WITH:
+					query.append( " LIKE " ).append( parVal );
+					break;	
+				case FilterTerms.OPERATOR_NONE:
+					break;
+				default: break;
 			}
+			
     	}
+    	
     	if( query.length() > 0 )
-    		oObjectList.setUserQuery( query.length()>0?query.toString():null, pars.toArray() );
+    		oObjectList.setUserQuery( query.length() > 0 ? query.toString() : null , pars.toArray() );
     	else
     		oObjectList.setUserQuery( null, null );
+    	
     }
+
+	private void removeLastParameter( List<Object> pars ) {
+		if (!pars.isEmpty())
+			pars.remove( pars.size() - 1);
+	}
+
+	private boolean isCheckingForNullPresence( FilterTerm t ) {
+		return t.getOperator() == FilterTerms.OPERATOR_CONTAINS || t.getOperator() == FilterTerms.OPERATOR_NOT_CONTAINS;
+	}
     
     public DataRecordConnector findByUniqueIdentifier(String sUniqueIdentifier) {
 		long boui;
@@ -321,16 +386,12 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 			pageField.setAccessible( true );
 			pageField.setInt( this.oObjectList , pageNo);
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -343,16 +404,12 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 			pageField.setAccessible( true );
 			pageField.setInt( this.oObjectList , pageSize);
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -412,7 +469,6 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 			int pageSize
 		) 
 	{
-		// TODO Auto-generated method stub
 		return new XEOObjectListGroupConnector( 
 				this, 
 				parentGroups, 
