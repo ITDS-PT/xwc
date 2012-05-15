@@ -1419,6 +1419,7 @@ public class XEOEditBean extends XEOBaseBean
 								}
 								oBaseBean.setParentBeanId( getId() );
 								oBaseBean.setParentBean( this );
+								oBaseBean.setRelationInOrphanMode( false );
 								oBaseBean.setParentComponentId( oGrid.getClientId() );
 								
 							} catch (NumberFormatException e) {
@@ -1710,7 +1711,7 @@ public class XEOEditBean extends XEOBaseBean
         
     	if (bouiToRemove != null && bouiToRemove.length() > 0){
     		long bouiLong = Long.valueOf(bouiToRemove);
-	        if( oBridgeHandler.haveBoui( bouiLong ) );
+	        if( oBridgeHandler.haveBoui( bouiLong ) )
 	            oBridgeHandler.remove();
     	}
         showObjectErrors();
