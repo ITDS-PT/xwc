@@ -102,7 +102,7 @@ public class MigrateXEOViewersToXWCBean extends XEOBaseList {
     public XEOObjectListConnector getDataList()
 	{
     	boObjectList list=boObjectList.list(this.getEboContext(),
-			"select Ebo_Package where deployed=1");
+			"select Ebo_Package where deployed='1'");
     	return new XEOObjectListConnector(list);
 	}
 
