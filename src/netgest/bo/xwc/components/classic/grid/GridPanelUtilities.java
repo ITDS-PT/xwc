@@ -264,8 +264,11 @@ public class GridPanelUtilities {
 	}
 
 	private byte fixOperatorForObjectType( byte valueOpParam, String submitedType ) {
-		if (valueOpParam != FilterTerms.OPERATOR_CONTAINS && valueOpParam != FilterTerms.OPERATOR_NOT_CONTAINS)
+		if (valueOpParam != FilterTerms.OPERATOR_CONTAINS && valueOpParam != FilterTerms.OPERATOR_NOT_CONTAINS){
+			if (valueOpParam == FilterTerms.OPERATOR_NOT_EQUAL)
+				return FilterTerms.OPERATOR_NOT_IN;
 			return FilterTerms.OPERATOR_IN;
+		}
 		else
 			return valueOpParam;
 	}
@@ -413,8 +416,7 @@ public class GridPanelUtilities {
 	 * @param advanced The terms from the advanced search
 	 * @return The merge of the two terms
 	 */
-	public FilterTerms mergeFilterTerms(FilterTerms simple, final FilterTerms advanced){
-		
+	public FilterTerms mergeFilterTerms(FilterTerms simple, final FilterTerms advanced){ 
 		
 		if ( advanced != null && simple != null ){
 			Iterator<FilterJoin> it = advanced.iterator();

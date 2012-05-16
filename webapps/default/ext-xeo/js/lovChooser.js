@@ -70,3 +70,18 @@ XVW.changeToSourceTree = function( button ){
 	destiny.doLayout();
 	
 };
+
+
+XVW.checkNode = function ( idDestiny, idInput){
+	
+	var result = "";
+	var choices = Ext.getCmp(idDestiny).getChecked();
+	var append = "";
+	for (var k = 0 ; k < choices.length; k++){
+		result += append;
+		result += choices[k].id;
+		append = ",";
+	} 
+	
+	Ext.get(idInput).set({'value' : result});
+};

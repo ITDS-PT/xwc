@@ -19,7 +19,8 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
-import netgest.bo.xwc.components.classic.ActionButton;
+import netgest.bo.xwc.components.HTMLAttr;
+import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.Attribute;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.AttributeBoolean;
@@ -32,6 +33,7 @@ import netgest.bo.xwc.components.classic.AttributeText;
 import netgest.bo.xwc.components.classic.AttributeTextArea;
 import netgest.bo.xwc.components.classic.Cell;
 import netgest.bo.xwc.components.classic.GenericLookup;
+import netgest.bo.xwc.components.classic.GridExplorer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Panel;
 import netgest.bo.xwc.components.classic.Row;
@@ -40,15 +42,20 @@ import netgest.bo.xwc.components.classic.grid.GridPanelJSonFiltersBuilder;
 import netgest.bo.xwc.components.classic.grid.GridPanelJSonFiltersBuilder.Filter;
 import netgest.bo.xwc.components.classic.grid.GridPanelJSonFiltersBuilder.ValueType;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.html.GenericTag;
+import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIActionEvent;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUICommand;
+import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.def.XUIViewerDefinitonParser;
 import netgest.bo.xwc.framework.jsf.XUIViewerBuilder;
+import netgest.bo.xwc.framework.jsf.XUIWriterAttributeConst;
+import netgest.bo.xwc.framework.jsf.XUIWriterElementConst;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchAttributeChooser;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchLovValueChooserBean;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchRow.JOIN_OPERATOR;
@@ -116,7 +123,8 @@ public class AdvancedSearchBean extends XEOBaseBean {
 	 */
 	public void applyFilter(){
 		
-		GridPanel explorer = (GridPanel) getParentView().findComponent( GridPanel.class );
+		GridExplorer explorer = (GridExplorer) getParentView().findComponent( GridExplorer.class );
+		explorer.markAdvancedSearchActive();
 		
 		List<AdvancedRowComponentIds> rows = sortRows();
 		String querySql = generateBoqlExpression(rows);
@@ -146,10 +154,9 @@ public class AdvancedSearchBean extends XEOBaseBean {
 					new XUIMessage( 
 							XUIMessage.TYPE_ALERT, 
 							XUIMessage.SEVERITY_ERROR, 
-							"Erro", 
-							"Cannot apply query because: " + e.getErrorMessage() + "<br /> <span style='color:red'>"  + e.getErrorSpot() + "</span>"
+							"!", 
+							BeansMessages.ADVANCED_SEARCH_QUERY_ERROR.toString() + e.getErrorMessage() + "<br /> <span style='color:red'>"  + e.getErrorSpot() + "</span>"
 							));
-			e.printStackTrace();
 		}
 		
 		
@@ -160,8 +167,9 @@ public class AdvancedSearchBean extends XEOBaseBean {
 	 * Remove any existing filter from the explorer
 	 */
 	public void removeFilters(){
-		GridPanel explorer = (GridPanel) getParentView().findComponent( GridPanel.class );
+		GridExplorer explorer = (GridExplorer) getParentView().findComponent( GridExplorer.class );
 		explorer.setAdvancedFilters( null );
+		explorer.markAdvancedSearchInactive();
 		
 		//Fecha a view
 		XVWScripts.closeView( getViewRoot() );
@@ -411,8 +419,8 @@ public class AdvancedSearchBean extends XEOBaseBean {
 	
 	        oBaseBean.setParentParentBeanId( getId() );
 	        oBaseBean.setParentComponentId( this.componentIds.get(rowId).getValueId() );
-	        if (MetadataUtils.isCollection( oAttDef ))
-	        	oBaseBean.setMultiLookup( true );
+	        //if (MetadataUtils.isCollection( oAttDef ))
+	        oBaseBean.setMultiLookup( true );
 	        HashMap<String,String> mapObjects = new HashMap<String, String>();
 	        mapObjects.put( modelName, modelName );
 	        oBaseBean.setLookupObjects( mapObjects );
@@ -991,10 +999,7 @@ public class AdvancedSearchBean extends XEOBaseBean {
 			if (MetadataUtils.isLov( refAttribute )){
 				String displayValue = getLovDisplayValue( refAttribute.getLOVName(), value.toString() );
 				gl.setDisplayValue( displayValue );
-			} else if (MetadataUtils.isObject( refAttribute )){
-				String displayValue = getDisplayValue( value.toString() );
-				gl.setDisplayValue( displayValue );
-			} else if (MetadataUtils.isCollection( refAttribute )){
+			} else if (MetadataUtils.isObjectOrCollection( refAttribute )){
 				String currentValue = value.toString();
 				List<String> listOfValues = createListFromCommaString( currentValue );
 				String displayValue = getDisplayValueBridge( listOfValues );
@@ -1157,11 +1162,13 @@ public class AdvancedSearchBean extends XEOBaseBean {
 		Cell cell = new Cell();
 		
 		if (baseId > 1){
-			ActionButton button = new ActionButton();
+			
+			Menu button = new Menu();
+			
+			
 			button.setServerAction( createActionExpression( getId() , "removeRow" ) );
-			button.setLabel( "-" );
 			button.setId("deleteRow_" + baseId);
-			button.setWidth( 15 );
+			
 			
 			RowInfo json = new RowInfo();
 			json.setId( String.valueOf( baseId ) );
@@ -1169,7 +1176,14 @@ public class AdvancedSearchBean extends XEOBaseBean {
 			button.setValue( json.toString() );
 			button.setCommandArgument( json.toString() );
 			
+			String result = "XVW.AjaxCommand( 'search','search:" + button.getId() + "','" + json.toString() + "','1')"; 
+			GenericTag tag = createTag( HTMLTag.IMG, HTMLAttr.SRC, "ext-xeo/images/menus/remover-bridge.gif" );
+			tag.getProperties().put("onclick",
+					result);
+			
 			cell.addChild( button );
+			cell.addChild( tag );
+			
 		}
 		return cell;
 	}
@@ -1214,6 +1228,14 @@ public class AdvancedSearchBean extends XEOBaseBean {
 		return "header".equalsIgnoreCase( currentRow.getId() );
 	}
 
+	private GenericTag createTag(XUIWriterElementConst name, XUIWriterAttributeConst property, String value){
+		GenericTag newTag = new GenericTag();
+		newTag.setProperties( new HashMap<String, String>() );
+		newTag.getProperties().put( "__tagName", name.getValue() );
+		newTag.getProperties().put( property.getValue()	, value );
+		return newTag;
+	}
+	
 	/**
 	 * Update the order of a specific button
 	 * 
@@ -1221,7 +1243,7 @@ public class AdvancedSearchBean extends XEOBaseBean {
 	 * @param order the new order
 	 */
 	private void updateCurrentButtonOrder( Row currentRow, int order ) {
-		List<ActionButton> buttons = new LinkedList<ActionButton>();
+		List<Menu> buttons = new LinkedList<Menu>();
 		List<UIComponent> cells = currentRow.getChildren();
 
 		final int CELL_WITH_ADD_BTN_INDEX = 4;
@@ -1230,14 +1252,14 @@ public class AdvancedSearchBean extends XEOBaseBean {
 		Cell cellAdd = (Cell) cells.get( CELL_WITH_ADD_BTN_INDEX );
 		Cell cellRemove = (Cell) cells.get( CELL_WITH_REMOVE_BTN_INDEX );
 		
-		ActionButton addBtn = (ActionButton) cellAdd.findComponent( ActionButton.class );
-		ActionButton removeBtn = (ActionButton) cellRemove.findComponent( ActionButton.class );
+		Menu addBtn = (Menu) cellAdd.findComponent( Menu.class );
+		Menu removeBtn = (Menu) cellRemove.findComponent( Menu.class );
 		
 		buttons.add( addBtn );
 		if ( isSecondOrLaterRow( removeBtn ) )
 			buttons.add( removeBtn );
 		
-		for (ActionButton button : buttons){
+		for (Menu button : buttons){
 			if (button.getValue() != null){
 				RowInfo row = new RowInfo(button.getValue().toString());
 				int id = Integer.valueOf(row.getId());
@@ -1260,7 +1282,7 @@ public class AdvancedSearchBean extends XEOBaseBean {
 	 * 
 	 * @return True if the button is in the second
 	 */
-	private boolean isSecondOrLaterRow( ActionButton removeBtn ) {
+	private boolean isSecondOrLaterRow( Menu removeBtn ) {
 		return removeBtn != null;
 	}
 
@@ -1396,11 +1418,11 @@ public class AdvancedSearchBean extends XEOBaseBean {
 	 */
 	private Cell createAddNewRowCell( int baseId ){
 		Cell cell = new Cell();
-		ActionButton button = new ActionButton();
+		
+		Menu button = new Menu();
 		button.setServerAction( createActionExpression( getId() , "addNewRowAndRefresh" ) );
-		button.setLabel( "+" );
 		button.setId("newRow_" + baseId);
-		button.setWidth( 15 );
+		button.setServerActionWaitMode( "DIALOG" );
 		RowInfo json = new RowInfo();
 		json.setId( String.valueOf( baseId ) );
 		json.setOrder( baseId );
@@ -1412,6 +1434,11 @@ public class AdvancedSearchBean extends XEOBaseBean {
 		button.setCommandArgument( json.toString() );
 		
 		cell.addChild( button );
+		String result = "XVW.AjaxCommand( 'search','search:" + button.getId() + "','" + json.toString() + "','1')"; 
+		GenericTag tag = createTag( HTMLTag.IMG, HTMLAttr.SRC, "ext-xeo/images/menus/add.png" );
+		tag.getProperties().put("onclick",
+				result);
+		cell.addChild( tag );
 		return cell;
 	}
 	
@@ -1741,7 +1768,7 @@ public class AdvancedSearchBean extends XEOBaseBean {
 					valueContent = con.toString();
 			}
 			
-			b.append( operator + " " + attName + " " + valueOperator + " " + valueContent.toString() + "<br />");
+			b.append(operator).append(" ").append(attName).append(" ").append(valueOperator).append(" ").append(valueContent.toString()).append(" ");
 		}
 		
 		String query = b.toString();

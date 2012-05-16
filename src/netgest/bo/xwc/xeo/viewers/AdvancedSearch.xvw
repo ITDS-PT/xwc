@@ -5,9 +5,6 @@
 		<xvw:form id='search'>
 			<xvw:errorMessages />
 			<xvw:toolBar>
-				<!-- <xvw:menu text='@{ADVANCED_SEARCH_SAVE_FILTER}' 
-					icon='ext-xeo/images/gridexplorer/gravar.gif' serverActionWaitMode="DIALOG"></xvw:menu>
-				<xvw:menu text='-'></xvw:menu> -->
 				<xvw:menu text='@{ADVANCED_SEARCH_APPLY_FILTER}' serverAction="#{viewBean.applyFilter}"
 					serverActionWaitMode="DIALOG" icon='ext-xeo/images/gridexplorer/apply.png'></xvw:menu>
 				<xvw:menu text='-'></xvw:menu>
@@ -19,7 +16,7 @@
 					<xvw:tabs renderTabBar="false">
 						<xvw:tab id='tab'>
 							<xvw:rows labelPosition="top" columns='6' id='rows'
-								columnWidths="10%,25%,20%,35%,5%,5%">
+								columnWidths="10%,25%,20%,39%,3%,3%">
 								<xvw:row id='header'>
 									<xvw:cell><xvw:attributeLabel text="@{ADVANCED_SEARCH_TBL_HEADER_OPERATOR}" /></xvw:cell>
 									<xvw:cell><xvw:attributeLabel text="@{ADVANCED_SEARCH_TBL_HEADER_ATTRIBUTE}" /></xvw:cell>

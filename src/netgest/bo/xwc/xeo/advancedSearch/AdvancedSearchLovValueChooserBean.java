@@ -3,6 +3,7 @@ package netgest.bo.xwc.xeo.advancedSearch;
 import java.util.HashMap;
 import java.util.Map;
 
+import netgest.bo.xwc.components.classic.CheckGroup;
 import netgest.bo.xwc.components.classic.LovChooser;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.xeo.beans.AdvancedSearchBean;
@@ -68,11 +69,10 @@ public class AdvancedSearchLovValueChooserBean extends XEOBaseBean {
 		
 		XVWScripts.closeView( getViewRoot() );
 		
-		LovChooser lov = (LovChooser) getViewRoot().findComponent( LovChooser.class );
-		Object value = lov.getValue();
+		CheckGroup checkGroupCmp = (CheckGroup) getViewRoot().findComponent( CheckGroup.class );
+		Object value = checkGroupCmp.getValue();
 		
 		parentBean.setLovChoiceValueResult( parentCompId, value.toString() , lovName );
-		System.out.println(value);
 			
 	}
 	

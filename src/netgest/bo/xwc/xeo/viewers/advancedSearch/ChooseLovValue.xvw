@@ -8,19 +8,14 @@
 				<xvw:title valueExpression="@{LOV_CHOICE_CHOOSE_A_VALUE}"></xvw:title>
 				<xvw:tabs renderTabBar="false">
 					<xvw:tab>
+					<xvw:toolBar>
+						<xvw:menu text="@{LOV_CHOICE_CONFIRM}" icon='ext-xeo/images/menus/confirmar.gif' serverActionWaitMode="DIALOG" serverAction="#{viewBean.confirm}" ></xvw:menu>
+					</xvw:toolBar>
 						<xvw:rows>
 							<xvw:row>
 								<xvw:cell>
-									<xvw:lovChooser choices="#{viewBean.lovMap}"
-										valueExpression='#{viewBean.valuesChosen}'></xvw:lovChooser>
-								</xvw:cell>
-							</xvw:row>
-						</xvw:rows>
-						<xvw:rows>
-							<xvw:row>
-								<xvw:cell>
-									<xvw:actionButton label="Confirmar" waitMode="DIALOG"
-										action="#{viewBean.confirm}"></xvw:actionButton>
+									<xvw:checkGroup choices="#{viewBean.lovMap}"
+										valueExpression='#{viewBean.valuesChosen}' />
 								</xvw:cell>
 							</xvw:row>
 						</xvw:rows>

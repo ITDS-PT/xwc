@@ -163,4 +163,7 @@ public class XEOViewersMessages {
 	//LovChoser
 	public static final XUILocalizedMessage LOV_CHOICE_CHOOSE_A_VALUE =
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "LOV_CHOICE_CHOOSE_A_VALUE" );
+	
+	public static final XUILocalizedMessage LOV_CHOICE_CONFIRM =
+		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "LOV_CHOICE_CONFIRM" );
 }		

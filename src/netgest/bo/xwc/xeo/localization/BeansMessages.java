@@ -196,6 +196,9 @@ public interface BeansMessages {
 	
 	public static final XUILocalizedMessage ADVANCED_SEARCH_WHERE = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "ADVANCED_SEARCH_WHERE" );
+	
+	public static final XUILocalizedMessage ADVANCED_SEARCH_QUERY_ERROR = 
+		new XUILocalizedMessage( BeansMessages.class.getName(), "ADVANCED_SEARCH_QUERY_ERROR" );
 	 
 	  
 }

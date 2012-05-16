@@ -341,6 +341,15 @@ public class GridExplorer extends List {
 		expPref.savePreference();
 	}
 	
+	
+	public static class RemoveSearchActionListener implements ActionListener {
+        public void processAction(ActionEvent event) {
+        	GridExplorer explorer = (GridExplorer)((XUICommand)event.getSource()).findParentComponent( GridExplorer.class ); 
+        	explorer.setAdvancedFilters( null );
+        	explorer.markAdvancedSearchInactive();
+        }
+    }
+	
 	@Override
 	public void restoreUserState() {
 		Long savedViewBoui = getCurrentSavedViewBOUI();
@@ -659,15 +668,35 @@ public class GridExplorer extends List {
 		
 		getChildren().add( tb );
 	}
+	
+	public void markAdvancedSearchActive(){
+		Menu m = (Menu) this.findComponent( getId() + "_advSearch" );
+		m.setText("<span style=\"font-weight:bold;text-decoration:underline;\">"+XEOComponentMessages.EXPLORER_TOOLBAR_ADVANCED_SEARCH.toString()+"</span>");
+	}
+	
+	public void markAdvancedSearchInactive(){
+		Menu m = (Menu) this.findComponent( getId() + "_advSearch" );
+		m.setText(XEOComponentMessages.EXPLORER_TOOLBAR_ADVANCED_SEARCH.toString());
+	}
+	
 
 	private void createAdvancedSearchButton( ToolBar tb ) {
 		DataListConnector connector = getDataSource();
 		if (connector instanceof XEOObjectListConnector){
 			Menu m = new Menu();
-			m.setText("Pesquisa Avançada");
+			
+			m.setText( XEOComponentMessages.EXPLORER_TOOLBAR_ADVANCED_SEARCH.toString() );
+			m.setId(getId() + "_advSearch");
 			m.setServerAction("#{" + getBeanId() + ".advancedSearch}");
 			m.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 			m.setIcon( "ext-xeo/images/gridexplorer/search.png" );
+			
+			Menu removeSearch = new Menu();
+			removeSearch.setText( XEOComponentMessages.EXPLORER_TOOLBAR_REMOVE_ADVANCED_SEARCH.toString() );
+			removeSearch.setIcon( "ext-xeo/images/gridexplorer/remove.png" );
+			removeSearch.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
+			removeSearch.addActionListener( new RemoveSearchActionListener() );
+			m.getChildren().add( removeSearch );
 			
 			try{
 				XEOObjectListConnector objConnector = (XEOObjectListConnector) connector;

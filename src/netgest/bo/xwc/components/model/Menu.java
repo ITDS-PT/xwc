@@ -26,6 +26,7 @@ import netgest.bo.xwc.xeo.components.EditToolBar;
 import netgest.bo.xwc.xeo.components.ListToolBar;
 import netgest.bo.xwc.xeo.components.LookupListToolBar;
 
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -76,6 +77,9 @@ public class Menu extends ViewerCommandSecurityBase {
      * CSS class to apply to the icon(requires that the icon property is used)
      */
     public XUIViewStateProperty<String> iconCls = new XUIViewStateProperty<String>( "iconCls", this );
+    
+    
+    
     /**
      * Icon to display next to the label (path to the icon)
      */
@@ -412,6 +416,17 @@ public class Menu extends ViewerCommandSecurityBase {
 			return this.getText() + ":"+ this.getValue().toString();
 		else
 			return this.getText();
+	}
+	
+	
+	/**
+	 * 
+	 * Checks whether the text was changed
+	 * 
+	 * @return
+	 */
+	public boolean wasTextChanged(){
+		return text.wasChanged();
 	}
 	
 }

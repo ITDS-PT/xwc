@@ -278,7 +278,8 @@ public class ToolBar extends ViewerSecurityBase {
         	} else{
         		sb.w( "m.setDisabled(").w( oMenuChild.isDisabled() ).l( ");" );
         	}
-        	
+        	if (oMenuChild.wasTextChanged())
+        		sb.w( "m.setText('").w( oMenuChild.getText() ).l( "');" );
         	
         	
         	sb.w("};");

@@ -164,5 +164,7 @@ public interface ComponentMessages {
 	public static final XUILocalizedMessage LOV_CHOSEN = 
 		new XUILocalizedMessage(ComponentMessages.class.getName(), "LOV_CHOSEN");
 	
+	
+	
 		
 }

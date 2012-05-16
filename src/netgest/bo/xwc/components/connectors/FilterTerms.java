@@ -14,6 +14,7 @@ public class FilterTerms {
 	public static final byte OPERATOR_LESS_THAN 			= 3;
 	public static final byte OPERATOR_LESS_OR_EQUAL_THAN 	= 4;
 	public static final byte OPERATOR_IN 					= 5;
+	
 
 	public static final byte OPERATOR_EQUAL 			= 6;
 	public static final byte OPERATOR_NOT_EQUAL 		= 7;
@@ -28,6 +29,7 @@ public class FilterTerms {
 	
 	public static final byte OPERATOR_STARTS_WITH		= 13;
 	public static final byte OPERATOR_ENDS_WITH		= 14;
+	public static final byte OPERATOR_NOT_IN 		= 15;
 	
 	public static final byte CONDITION_NOT_NULL = 1;
 	public static final byte CONDITION_IS_NULL 	= 2;

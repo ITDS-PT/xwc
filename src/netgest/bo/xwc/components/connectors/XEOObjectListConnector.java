@@ -306,6 +306,9 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 				case FilterTerms.OPERATOR_EQUAL:
 					query.append( " = " ).append( parVal );
 					break;
+				case FilterTerms.OPERATOR_NOT_EQUAL:
+					query.append( " != " ).append( parVal );
+					break;
 				case FilterTerms.OPERATOR_GREATER_OR_EQUAL_THAN:
 					query.append( " >= " ).append( parVal );
 					break;
@@ -330,6 +333,9 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 				case FilterTerms.OPERATOR_IN:
 					query.append( " IN " ).append( parVal );
 					break;
+				case FilterTerms.OPERATOR_NOT_IN:
+					query.append( " NOT IN " ).append( parVal );
+					break;	
 				case FilterTerms.OPERATOR_STARTS_WITH:
 					query.append( " LIKE " ).append( parVal );
 					break;	

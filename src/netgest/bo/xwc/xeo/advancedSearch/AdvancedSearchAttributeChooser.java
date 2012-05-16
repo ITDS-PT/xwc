@@ -1,5 +1,12 @@
 package netgest.bo.xwc.xeo.advancedSearch;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+
+import netgest.bo.def.boDefActivity;
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
@@ -25,6 +32,8 @@ public class AdvancedSearchAttributeChooser extends XEOBaseBean {
 	 * The name of the Model to list the attributes to choose
 	 */
 	private String objectName;
+	
+	private AttributeComparator comparator = new AttributeComparator();
 
 	/**
 	 * Id of the component where to set the chosen attribute
@@ -70,6 +79,7 @@ public class AdvancedSearchAttributeChooser extends XEOBaseBean {
 		boDefHandler definitionHandler = getObjectMetadata( modelName );
 
 		boDefAttribute[] attributes = definitionHandler.getAttributesDef();
+		Arrays.sort( attributes, comparator );
 		for ( boDefAttribute current : attributes ) {
 
 			if ( StringUtils.hasValue( current.getName() ) && isNotStateAttribute( current ) ) {
@@ -117,6 +127,7 @@ public class AdvancedSearchAttributeChooser extends XEOBaseBean {
 		boDefHandler definitionHandler = getObjectMetadata( targetObject );
 
 		boDefAttribute[] attributes = definitionHandler.getAttributesDef();
+		Arrays.sort( attributes, comparator );
 		for ( boDefAttribute current : attributes ) {
 
 			if ( StringUtils.hasValue( current.getName() ) ) {
@@ -185,7 +196,13 @@ public class AdvancedSearchAttributeChooser extends XEOBaseBean {
 	}
 
 	
-	
-	
+	private class AttributeComparator implements Comparator<boDefAttribute>{
+
+		@Override
+		public int compare( boDefAttribute o1, boDefAttribute o2 ) {
+			return o1.getLabel().compareTo( o2.getLabel() );
+		}
+		
+	}
 	
 }
