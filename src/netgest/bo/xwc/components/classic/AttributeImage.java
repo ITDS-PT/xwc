@@ -64,7 +64,10 @@ public class AttributeImage extends ViewerOutputSecurityBase {
 
     @Override
 	public void initComponent() {
-    	this.setBeanProperty(getBeanId() + ".currentData");
+    	
+    	if( beanProperty.isDefaultValue() )
+    		this.setBeanProperty(getBeanId() + ".currentData");
+    	
         createChildComponents();
         
     }

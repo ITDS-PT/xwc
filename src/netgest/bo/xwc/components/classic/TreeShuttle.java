@@ -99,10 +99,18 @@ public class TreeShuttle extends AttributeBase {
 	
 	@Override
 	public void initComponent() {
-		setColumnAvailableList("#{" + getBeanId() + ".columnsAvailable}");
-		setColumnSelectedList("#{" + getBeanId() + ".columnSelected}");
-		setParentWindowId("#{" + getBeanId() + ".parentWindowId}");
-		setParentComponentId("#{" + getBeanId() + ".parentComponentId}");
+		if(columnAvailableList.isDefaultValue())
+			setColumnAvailableList("#{" + getBeanId() + ".columnsAvailableList}");
+		
+		if(columnSelectedList.isDefaultValue())
+			setColumnSelectedList("#{" + getBeanId() + ".columnSelectedList}");
+		
+		if(parentWindowId.isDefaultValue())
+			setParentWindowId("#{" + getBeanId() + ".parentWindowId}");
+		
+		if(parentComponentId.isDefaultValue())
+			setParentComponentId("#{" + getBeanId() + ".parentComponentId}");
+		
 	}
 
 	public static final class XEOHTMLRenderer extends XUIRenderer {

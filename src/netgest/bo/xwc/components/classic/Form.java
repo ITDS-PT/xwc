@@ -112,13 +112,16 @@ public class Form extends XUIForm
             if( oKid instanceof AttributeBase ) {
                 
                 oAttributeBase = (AttributeBase)oKid;
-                oComponentDependences = oAttributeBase.getDependences();
-                for (int i = 0;oComponentDependences != null && i < oComponentDependences.length; i++) {
-                    if( !oComponentDependeces.containsKey( oComponentDependences[i] ) )
-                    {
-                        oComponentDependeces.put( oComponentDependences[i], Boolean.TRUE );
-                    }
-                }
+                try {
+                	oComponentDependences = oAttributeBase.getDependences();
+	                for (int i = 0;oComponentDependences != null && i < oComponentDependences.length; i++) {
+	                    if( !oComponentDependeces.containsKey( oComponentDependences[i] ) )
+	                    {
+	                        oComponentDependeces.put( oComponentDependences[i], Boolean.TRUE );
+	                    }
+	                }
+                } catch (Exception e) {};
+	               
             }
             buildComponentDependences( oKid );
         }

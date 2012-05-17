@@ -9,8 +9,6 @@ import static netgest.bo.xwc.components.HTMLTag.TR;
 
 import java.io.IOException;
 
-import javax.faces.component.UIComponent;
-
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -53,8 +51,8 @@ import netgest.bo.xwc.framework.components.XUIMethodBindingValueChangeListener;
 public class Attribute extends AttributeBase
 {
 
-    private AttributeLabel      oLabel = null;
-    private AttributeBase       oInput = null;
+//    private AttributeLabel      oLabel = null;
+//    private AttributeBase       oInput = null;
 
     /**
      * Whether or not the label of this attribute should be rendered
@@ -91,6 +89,10 @@ public class Attribute extends AttributeBase
     
     public void createChildComponents() {
         
+    	AttributeLabel      oLabel = null;
+    	AttributeBase       oInput = null;
+    	
+    	
         String sComponentType;
         if( isLov() ) {
             sComponentType = "attributeLov";
@@ -102,27 +104,27 @@ public class Attribute extends AttributeBase
         if( sComponentType != null ) {
 	        if( oLabel == null && "1".equals( getRenderLabel() ) ) {
 	
-	            this.oLabel = new AttributeLabel();
-	            this.oLabel.setId( getId() +  "_l" );
-	            this.oLabel.setText( getLabel() );
+	            oLabel = new AttributeLabel();
+	            oLabel.setId( getId() +  "_l" );
+	            oLabel.setText( getLabel() );
 	
 	            propagateLabelProperties( oLabel );
 	            
-	            this.getChildren().add( this.oLabel );
+	            this.getChildren().add( oLabel );
 	            
 	        }
 	        
 	        if( oInput == null ) {
 	            XUIRequestContext oRequestContext = getRequestContext();
 	            
-	            this.oInput = (AttributeBase)oRequestContext.getApplicationContext().getViewerBuilder()
+	            oInput = (AttributeBase)oRequestContext.getApplicationContext().getViewerBuilder()
 	                                    .createComponent( oRequestContext, sComponentType );
 	            
-	            this.oInput.setId( getId() + "_i" );
+	            oInput.setId( getId() + "_i" );
 	            
-	            propagateInputProperties( this.oInput );
+	            propagateInputProperties( oInput );
 	            
-	            this.getChildren().add( this.oInput );
+	            this.getChildren().add( oInput );
 	            
 	            
 	        }
@@ -326,20 +328,12 @@ public class Attribute extends AttributeBase
     }
      
 
-    public void setLabelComponent(AttributeLabel oLabel) {
-        this.oLabel = oLabel;
-    }
-
     public AttributeLabel getLabelComponent() {
-        return oLabel;
-    }
-
-    public void setInputComponent(AttributeText oInput) {
-        this.oInput = oInput;
+        return (AttributeLabel)findComponent( getId() + "_l" );
     }
 
     public XUIComponentBase getInputComponent() {
-        return oInput;
+        return (XUIComponentBase)findComponent( getId() + "_i" );
     }
 
     @Override
@@ -350,10 +344,9 @@ public class Attribute extends AttributeBase
 
     @Override
     public void restoreState(Object oState) {
+    	/*        	
         if( this.getChildCount() > 0 ) {
-        	
         	UIComponent comp = getChild( 0 );
-        	
         	if( comp instanceof AttributeLabel ) {
         		this.oLabel = (AttributeLabel)comp;
         		this.oInput = (AttributeBase)getChild( 1 );
@@ -361,7 +354,7 @@ public class Attribute extends AttributeBase
         	else {
         		this.oInput = (AttributeBase)getChild( 0 );
         	}
-        }
+        }*/
         super.restoreState(oState);
     }
 
@@ -417,7 +410,7 @@ public class Attribute extends AttributeBase
         return inputType.getEvaluatedValue();
     }
 
-    public static final class XEOHTMLRenderer extends XUIRenderer {
+    public static  class XEOHTMLRenderer extends XUIRenderer {
 
 
         @Override
@@ -514,11 +507,14 @@ public class Attribute extends AttributeBase
             String value = getContext().getRequestParameterMap().get( oComp.getClientId() );
             ((Attribute)oComp).setSubmittedValue( value );
             
-            if( oAttrComp.oLabel != null )
-                oAttrComp.oLabel.decode( );
+            XUIComponentBase label = oAttrComp.getLabelComponent();
+            XUIComponentBase input = oAttrComp.getInputComponent();
+            
+            if( label != null )
+            	label.decode( );
     
-            if( oAttrComp.oInput != null )
-                oAttrComp.oInput.decode( );
+            if( input != null )
+                input.decode( );
             
             
         }

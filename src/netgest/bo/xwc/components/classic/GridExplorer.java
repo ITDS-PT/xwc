@@ -485,7 +485,8 @@ public class GridExplorer extends List {
 	@Override
 	public void initComponent() {
 		
-		this.setPreviewCommand("#{" + getBeanId() + ".previewObject}");
+		if( previewCommand.isDefaultValue() )
+			this.setPreviewCommand("#{" + getBeanId() + ".previewObject}");
 		
 		if( super.getStateProperty( "rowSelectionMode" ).isDefaultValue() )
 			setRowSelectionMode( GridPanel.SELECTION_CELL );
@@ -671,12 +672,14 @@ public class GridExplorer extends List {
 	
 	public void markAdvancedSearchActive(){
 		Menu m = (Menu) this.findComponent( getId() + "_advSearch" );
-		m.setText("<span style=\"font-weight:bold;text-decoration:underline;\">"+XEOComponentMessages.EXPLORER_TOOLBAR_ADVANCED_SEARCH.toString()+"</span>");
+		m.setText("<span style=\"font-weight:bold;font-style:italic;\">"+XEOComponentMessages.EXPLORER_TOOLBAR_ADVANCED_SEARCH.toString()+"</span>");
+		((Menu)m.getChild(0)).setDisabled( false );
 	}
 	
 	public void markAdvancedSearchInactive(){
 		Menu m = (Menu) this.findComponent( getId() + "_advSearch" );
 		m.setText(XEOComponentMessages.EXPLORER_TOOLBAR_ADVANCED_SEARCH.toString());
+		((Menu)m.getChild(0)).setDisabled( true );
 	}
 	
 
@@ -697,6 +700,7 @@ public class GridExplorer extends List {
 			removeSearch.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
 			removeSearch.addActionListener( new RemoveSearchActionListener() );
 			m.getChildren().add( removeSearch );
+			((Menu)m.getChild(0)).setDisabled( true );
 			
 			try{
 				XEOObjectListConnector objConnector = (XEOObjectListConnector) connector;
@@ -707,7 +711,6 @@ public class GridExplorer extends List {
 				e.printStackTrace();
 			}
 		}
-		
 	}
 
 	private Menu createSaveMenu( ) {
