@@ -9,6 +9,7 @@ import netgest.bo.lovmanager.lovObject;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.Logger;
+import netgest.bo.system.boApplication;
 import netgest.utils.LovUtils;
 
 /**
@@ -24,11 +25,7 @@ public class OperatorMapLoader {
 	 */
 	private Map<String,Map<String,String>> mapsCache = new HashMap<String, Map<String,String>>();
 	
-	private EboContext ctx = null;
-	
-	public OperatorMapLoader(EboContext ctx){
-		this.ctx = ctx;
-	}
+	public OperatorMapLoader(){}
 	
 	/**
 	 * Name of XEO Lov containing operators for the initial row
@@ -80,7 +77,7 @@ public class OperatorMapLoader {
 		if (mapsCache.containsKey( name ))
 			return mapsCache.get( name );
 		
-		return LovUtils.createMapFromLov( ctx, name );
+		return LovUtils.createMapFromLov( boApplication.currentContext().getEboContext(), name );
 		
 	}
 	
