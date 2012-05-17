@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import javax.faces.component.UIComponent;
 
@@ -34,7 +34,6 @@ import netgest.bo.xwc.components.classic.AttributeTextArea;
 import netgest.bo.xwc.components.classic.Cell;
 import netgest.bo.xwc.components.classic.GenericLookup;
 import netgest.bo.xwc.components.classic.GridExplorer;
-import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Panel;
 import netgest.bo.xwc.components.classic.Row;
 import netgest.bo.xwc.components.classic.Rows;
@@ -49,7 +48,6 @@ import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUICommand;
-import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.def.XUIViewerDefinitonParser;
@@ -58,10 +56,10 @@ import netgest.bo.xwc.framework.jsf.XUIWriterAttributeConst;
 import netgest.bo.xwc.framework.jsf.XUIWriterElementConst;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchAttributeChooser;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchLovValueChooserBean;
-import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchRow.JOIN_OPERATOR;
-import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchRow.VALUE_OPERATOR;
 import netgest.bo.xwc.xeo.advancedSearch.OperatorMapLoader;
 import netgest.bo.xwc.xeo.advancedSearch.RowInfo;
+import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchRow.JOIN_OPERATOR;
+import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchRow.VALUE_OPERATOR;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.utils.LovUtils;
 import netgest.utils.MetadataUtils;
@@ -116,7 +114,7 @@ public class AdvancedSearchBean extends XEOBaseBean {
 	 * Helper class to load XEOLovs as Map<String,String> to display the join
 	 * and value operator lovs
 	 */
-	private OperatorMapLoader mapLoader = new OperatorMapLoader( getEboContext() );
+	private OperatorMapLoader mapLoader = new OperatorMapLoader();
 	
 	/**
 	 * Apply the existing query to the parent explorer
