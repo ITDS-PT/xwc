@@ -598,7 +598,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public void initComponent() {
 		super.initComponent();
 		
-		this.setFilterLookup( "#{" + getBeanId() + ".lookupFilterObject}" );
+		if (filterLookup.isDefaultValue())
+			setFilterLookup( "#{" + getBeanId() + ".lookupFilterObject}" );
 
 		
 		HashMap<String, String> defaults = new HashMap<String, String>();

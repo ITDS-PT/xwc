@@ -50,6 +50,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.List;
 import netgest.bo.xwc.xeo.components.ListToolBar;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
+import netgest.utils.StringUtils;
 
 public class GridExplorer extends List {
 	
@@ -370,6 +371,7 @@ public class GridExplorer extends List {
 	@Override
 	public void resetToDefaults() {
 		setCurrentSavedViewBOUI(null);
+		setAdvancedFilters( null );
 		super.resetToDefaults();
 	}
 	
@@ -456,6 +458,10 @@ public class GridExplorer extends List {
 		if( currentSavedViewBOUI != 0 )
 			this.setCurrentSavedViewBOUI( currentSavedViewBOUI );
 
+		String advancedFilters = p.getString( "AdvancedFilters" );
+		if (StringUtils.hasValue( advancedFilters ))
+			this.setAdvancedFilters( advancedFilters );
+		
 		if( currentSavedViewBOUI == 0 ) {
 			String currentSavedViewId = p.getString( "CurrentSavedViewId" );
 			if( currentSavedViewId != null && currentSavedViewId.length() > 0 ) {
@@ -476,6 +482,10 @@ public class GridExplorer extends List {
 		super.saveUserViewState(p);
 		p.setString("PreviewPanelPosition", this.getPreviewPanelPosition().name() );
 		p.setString("CurrentSavedViewId", this.getCurrentSavedViewId() );
+		String advancedFilters = this.getAdvancedFilters();
+		if (StringUtils.hasValue( advancedFilters )){
+			p.setString( "AdvancedFilters", advancedFilters );
+		}
 		if( this.getCurrentSavedViewBOUI() != null )
 			p.setLong("CurrentSavedViewBOUI", this.getCurrentSavedViewBOUI() );
 		else
