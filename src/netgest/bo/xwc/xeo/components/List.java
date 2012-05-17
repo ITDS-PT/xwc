@@ -82,9 +82,8 @@ public class List extends GridPanel {
 	@Override
 	public void initComponent() {
 		
-		this.setTargetList( "#{" + getBeanId() + ".dataList}" );
-		
-		super.initComponent();
+		if( this.targetList.isDefaultValue() )
+			this.setTargetList( "#{" + getBeanId() + ".dataList}" );
 		
 		applyComponentProperties();
 		
@@ -92,11 +91,12 @@ public class List extends GridPanel {
 			addIconColumn();
 		}
 		createToolBar( 0 );
+		super.initComponent();
+		
 		java.util.List<UIComponent> children = getChildren();
 		for (UIComponent child : children){
 			setBeanIdOnChildren((XUIComponentBase)child, getBeanId());
 		}
-		
 	}
 	
 	private void setBeanIdOnChildren(XUIComponentBase comp, String beanId){

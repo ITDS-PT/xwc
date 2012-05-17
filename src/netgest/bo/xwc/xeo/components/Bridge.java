@@ -107,7 +107,8 @@ public class Bridge extends GridPanel {
 	@Override
 	public void initComponent() {
 		
-		this.setTargetObject("#{" + getBeanId() + ".XEOObject}");
+		if( targetObject.isDefaultValue() ) 
+			this.setTargetObject("#{" + getBeanId() + ".XEOObject}");
 		
 		if( getStateProperty("rowSelectionMode").isDefaultValue() )
 			this.setRowSelectionMode( GridPanel.SELECTION_MULTI_ROW );

@@ -141,7 +141,10 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 	
 	@Override
 	public void initComponent() {
-		this.setTargetObject("#{" + getBeanId() + ".XEOObject}");
+		
+		if( targetObject.isDefaultValue() )
+			this.setTargetObject("#{" + getBeanId() + ".XEOObject}");
+		
 		super.initComponent();
 		createToolBar();
 		

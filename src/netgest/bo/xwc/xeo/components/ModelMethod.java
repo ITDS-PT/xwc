@@ -30,7 +30,10 @@ public class ModelMethod extends ViewerMethod {
 	@Override
 	public void initComponent() {
 		super.initComponent();
-		this.setTargetObject( "#{" + getBeanId() + ".XEOObject}" );
+		
+		if( this.targetObject.isDefaultValue() )
+			this.setTargetObject( "#{" + getBeanId() + ".XEOObject}" );
+		
 		if(this.icon.isDefaultValue()) {
 			boObject xeoObject = targetObject.getEvaluatedValue();
 			boDefMethod methodDefinition = xeoObject.getBoDefinition().getBoMethod(targetMethod.getEvaluatedValue());

@@ -51,7 +51,10 @@ public class LookupListToolBar extends ListToolBar {
 	@Override
 	public void initComponent() { 
 		// Render ToolBar Methods
-		this.setTargetList("#{" + getBeanId() + ".dataList}");
+		
+		if( targetList.isDefaultValue() )
+			this.setTargetList("#{" + getBeanId() + ".dataList}");
+		
 		getChildren().add( currentMenuPos++, Menu.getMenuSpacer() );
 		createViewerBeanMethod( 
 				XEOComponentMessages.LOOKUPLISTTB_CONFIRM.toString(), 

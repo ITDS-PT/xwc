@@ -378,8 +378,12 @@ public class EditToolBar extends ToolBar {
 	
 	@Override
 	public void initComponent() {
-		this.setTargetObject("#{" + getBeanId() + ".XEOObject}");
-		this.setOrphanMode("#{" + getBeanId() + ".editInOrphanMode}");
+		if( targetObject.isDefaultValue() )
+			this.setTargetObject("#{" + getBeanId() + ".XEOObject}");
+		
+		if( this.orphanMode.isDefaultValue() )
+			this.setOrphanMode("#{" + getBeanId() + ".editInOrphanMode}");
+		
 		if( getOrphanMode() )
 			initOrphanComponent();
 		else

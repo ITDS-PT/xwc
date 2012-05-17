@@ -162,7 +162,8 @@ public class SplitedLookup extends Attribute {
 	@Override
 	public void initComponent() {
 
-		this.setTargetObject("#{" + getBeanId() + ".XEOObject}");
+		if( this.targetObject.isDefaultValue() )
+			this.setTargetObject("#{" + getBeanId() + ".XEOObject}");
 		
 		boObject targetObject = getTargetObject();
 		String 	 attName	  =  getObjectAttribute();
