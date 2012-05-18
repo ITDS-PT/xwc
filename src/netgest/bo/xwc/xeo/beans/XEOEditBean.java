@@ -904,7 +904,6 @@ public class XEOEditBean extends XEOBaseBean
             
             oViewRoot = oSessionContext.createChildView( lookupViewerName );
             oBaseBean = (XEOEditBean)oViewRoot.getBean( "viewBean" );
-            oBaseBean.setRelationInOrphanMode(false);
             
             oBaseBean.setParentBean( this );
             oBaseBean.setParentBeanId( getId() );
@@ -1144,7 +1143,8 @@ public class XEOEditBean extends XEOBaseBean
         
         // Obtem a bean do objecto a ser editado
         // e associa o objecto do parametro
-        if( oAttDef.getChildIsOrphan( refObj.getName() ) )
+        boolean addInOrphanMode;
+        if( addInOrphanMode = oAttDef.getChildIsOrphan( refObj.getName() ) )
         {
             XEOBaseLookupList   oBaseBean;
             oViewRoot = oSessionContext.createChildView( viewerName );
@@ -1187,10 +1187,9 @@ public class XEOEditBean extends XEOBaseBean
             }
 
             oEditBean = (XEOEditBean)oViewRoot.getBean("viewBean");
-            oEditBean.setRelationInOrphanMode(false);
             oEditBean.setParentBeanId( getId() );
             oEditBean.setParentComponentId( oGrid.getClientId() );
-            
+            oEditBean.setEditInOrphanMode( addInOrphanMode );
             oEditBean.createNew( refObj.getName(), getXEOObject().getBoui() );
             
 //            oBaseBean.getXEOObject().addParent( getXEOObject() );
@@ -1318,7 +1317,7 @@ public class XEOEditBean extends XEOBaseBean
 							);
 						XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 								.getBean("viewBean");
-
+						oBaseBean.setEditInOrphanMode( false );
 						oBaseBean.setParentBeanId( getId() );
 						oBaseBean.setParentComponentId(oGrid.getClientId());
 						oBaseBean.setCurrentObjectKey(String
@@ -1387,10 +1386,13 @@ public class XEOEditBean extends XEOBaseBean
         
         // Obtem a bean do objecto a ser editado
         // e associa o objecto do parametro
+        
+        boolean addInOrphanMode;
+        
         if( oAttDef != null ) {
     		try {
 				if (securityRights.canRead(getEboContext(), oObjectName )) {
-					if (oAttDef.getChildIsOrphan( oObjectName ) ) {
+					if (addInOrphanMode = oAttDef.getChildIsOrphan( oObjectName ) ) {
 						if (oRequestContext.isAjaxRequest()) {
 							// Resubmit the to the command... to save the selected row.
 							oCommand.setValue( oObjectName );
@@ -1419,8 +1421,8 @@ public class XEOEditBean extends XEOBaseBean
 								}
 								oBaseBean.setParentBeanId( getId() );
 								oBaseBean.setParentBean( this );
-								oBaseBean.setRelationInOrphanMode( false );
 								oBaseBean.setParentComponentId( oGrid.getClientId() );
+								oBaseBean.setEditInOrphanMode( addInOrphanMode );
 								
 							} catch (NumberFormatException e) {
 								throw new RuntimeException(e);
@@ -1439,6 +1441,7 @@ public class XEOEditBean extends XEOBaseBean
 						oBaseBean.setParentBeanId( getId() );
 						oBaseBean.setParentBean( this );
 						oBaseBean.setParentComponentId( oGrid.getClientId() );
+						oBaseBean.setEditInOrphanMode( addInOrphanMode );
 					}
 				} else {
 					oRequestContext
