@@ -119,13 +119,13 @@ public class UserPropertiesBean extends XEOEditBean {
 				logger.severe("Could not change the user theme", e);
 			}
 			
-			if (sess.getPerformerIProfileBouiAsString() != profile) {
+			if (!sess.getPerformerIProfileBouiAsString().equals( profile)) {
 				sess.setPerformerIProfileBoui(profile);
 				
 				AttributeHandler languageAtt = user.getAttribute("user_language");
 				EboContext cntxt = this.getEboContext();
 
-				if (languageAtt != null && languageAtt.toString() != "") {
+				if ( languageAtt != null ) {
 					boObjectList list = boObjectList.list(cntxt,
 							"select XeoApplicationLanguage where boui= ?", new Object[]{languageAtt.getValueLong()});
 					list.beforeFirst();
