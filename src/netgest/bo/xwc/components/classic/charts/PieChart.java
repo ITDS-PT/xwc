@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -528,6 +529,9 @@ public class PieChart extends XUIComponentBase implements
 		Map<String,String> labels = getLabelsMap();
 		
 		// Check where the input data is coming from
+		java.sql.Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet srs = null;
 		if (getSql() != null || getBoql() != null) { 
 			try {
 				EboContext ctx = boApplication.currentContext().getEboContext();
@@ -542,13 +546,13 @@ public class PieChart extends XUIComponentBase implements
 					sqlToExecute = getSql();
 
 				Object[] parameters = getSqlParameters();
-				java.sql.Connection conn = ctx.getConnectionData();
-				PreparedStatement pstmt = conn.prepareStatement(sqlToExecute,ResultSet.TYPE_SCROLL_SENSITIVE,
+				conn = ctx.getConnectionData();
+				pstmt = conn.prepareStatement(sqlToExecute,ResultSet.TYPE_SCROLL_SENSITIVE,
 						ResultSet.CONCUR_READ_ONLY);
 				for (int paramIndex = 0; paramIndex < parameters.length ; paramIndex++){
 					pstmt.setObject(paramIndex + 1, parameters[paramIndex]);
 				}
-				ResultSet srs = pstmt.executeQuery();
+				srs = pstmt.executeQuery();
 				int count = 0;
 				while (srs.next()) {
 					if (getResultLimit() > 0) {
@@ -562,6 +566,8 @@ public class PieChart extends XUIComponentBase implements
 				}
 			} catch (Exception e) {
 				logger.warn(e);
+			} finally {
+				closeDatabaseResources( conn, pstmt, srs );
 			}
 		} else { // Fill the values from a
 			setMine = (PieDataSet) getDataSet();
@@ -573,6 +579,29 @@ public class PieChart extends XUIComponentBase implements
 			}
 		}
 		return data;
+	}
+
+	private void closeDatabaseResources( java.sql.Connection conn, PreparedStatement pstmt, ResultSet srs )
+		{
+		
+		if (srs != null)
+			try {
+				srs.close();
+			} catch ( SQLException e ) {
+				e.printStackTrace();
+			}
+		if (pstmt != null)
+			try {
+				pstmt.close();
+			} catch ( SQLException e ) {
+				e.printStackTrace();
+			}
+		if (conn != null)
+			try {
+				conn.close();
+			} catch ( SQLException e ) {
+				e.printStackTrace();
+			}
 	}
 	
 	

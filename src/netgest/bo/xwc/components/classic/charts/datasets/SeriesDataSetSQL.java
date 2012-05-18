@@ -231,8 +231,11 @@ public class SeriesDataSetSQL implements SeriesDataSet {
 		@Override
 		public boolean equals(Object other)
 		{
-			ColumnSeriesPair p = (ColumnSeriesPair) other;
-			return (this.column.equalsIgnoreCase(p.getColumn()) && this.series.equalsIgnoreCase(p.getSeries()));
+			if (other instanceof SeriesDataSetSQL){
+				ColumnSeriesPair p = (ColumnSeriesPair) other;
+				return (this.column.equalsIgnoreCase(p.getColumn()) && this.series.equalsIgnoreCase(p.getSeries()));
+			}
+			return false;
 		}
 
 		@Override
