@@ -43,7 +43,7 @@ public class LookupListToolBar extends ListToolBar {
 	
 	public XEOObjectListConnector getTargetList() {
 		UIComponent parentList = getParent();
-		if (parentList instanceof netgest.bo.xwc.xeo.components.ListToolBar)
+		if (parentList instanceof netgest.bo.xwc.xeo.components.List)
 			return  ((netgest.bo.xwc.xeo.components.List) parentList).getTargetList();
 		return this.targetList.getEvaluatedValue();
 	}
