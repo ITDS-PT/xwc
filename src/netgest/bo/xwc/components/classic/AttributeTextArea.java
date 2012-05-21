@@ -30,11 +30,11 @@ public class AttributeTextArea extends AttributeBase {
     		String height = oAttr.getHeight();
     		
     		if( StringUtils.isEmpty( height ) ) {
-    			height = "100";
+    			height = "200";
     		}
             
     		if( !"auto".equals( height ) ) {
-            	config.add( "height" , oAttr.getHeight() );
+            	config.add( "height" , height );
     		}
     		
     		return config;
