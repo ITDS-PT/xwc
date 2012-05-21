@@ -10,7 +10,7 @@
 		<xvw:rows>
                  <xvw:row>
                      <xvw:cell>
-			<xvw:attributeTextArea readOnly='true' height='260'
+			<xvw:attributeTextArea readOnly='true' height='400'
 				maxLength='9999999' displayValue="#{viewBean.text}"></xvw:attributeTextArea>
 					</xvw:cell>
                  </xvw:row>
