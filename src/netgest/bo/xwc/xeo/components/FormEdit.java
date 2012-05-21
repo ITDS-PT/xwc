@@ -336,14 +336,15 @@ public class FormEdit extends Form {
 			createViewerMessages( position++ );
 		}
 		
+		if ( getShowDifferences() )
+			createShowDifferencesCommand();
+		
 		// Create the window, if the object is to be rendered in a window
 		// Must be the last on because can change the tree structure
 		if ( getRenderWindow() ) {
 			createEditWindow();
 		}
 		
-		if ( getShowDifferences() )
-			createShowDifferencesCommand( position++ );
 		
 		super.initComponent();
 	}
@@ -436,13 +437,13 @@ public class FormEdit extends Form {
 		}
 	}
 	
-	private void createShowDifferencesCommand(int pos){
+	private void createShowDifferencesCommand(){
 		XUICommand cmd = ( XUICommand ) findComponent( getId() + "_showDiffCmd" );
 		if( cmd == null ) {
 			cmd = new XUICommand();
 			cmd.setId( getId() + "_showDiffCmd" );
 			cmd.setActionExpression( createMethodBinding( "#{" + getBeanId() + ".showDifferences}" ) );
-			getChildren().add( pos, cmd );
+			getChildren().add( cmd );
 		}
 	}
 	
