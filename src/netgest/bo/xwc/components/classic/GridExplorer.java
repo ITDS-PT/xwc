@@ -77,6 +77,9 @@ public class GridExplorer extends List {
 	
 	private XUIViewProperty<Boolean> enablePreviewPanel = 
 		new XUIViewProperty<Boolean>("enablePreviewPanel", this, true );
+	
+	private XUIViewProperty<Boolean> enableAdvancedSearch = 
+		new XUIViewProperty<Boolean>("enableAdvancedSearch", this, false );
 
 	private XUIViewProperty<Boolean> enableSaveView = 
 		new XUIViewProperty<Boolean>("enableSaveView", this, true );
@@ -105,7 +108,14 @@ public class GridExplorer extends List {
 	private XUIBindProperty<Boolean> renderViewPort = 
 		new XUIBindProperty<Boolean>("renderViewPort", this, true, Boolean.class );
 	
-
+	public boolean getEnableAdvancedSearch(){
+		return enableAdvancedSearch.getValue();
+	}
+	
+	public void setEnableAdvancedSearch(boolean newValue){
+		this.enableAdvancedSearch.setValue( newValue );
+	}
+	
 	private boolean restoreFiltersState = false;
 	private boolean restoreViewState = false;
 	private XUIBaseProperty<Boolean> isSavedViewOwner = new XUIBaseProperty<Boolean>("isSavedViewOwner", this, true );
@@ -127,6 +137,8 @@ public class GridExplorer extends List {
 	public void setPreviewPanelMode( PreviewPanelMode previewPanelMode ) {
 		this.previewPanelMode.setValue(  previewPanelMode );
 	}
+	
+	
 	
 	public PreviewPanelMode getPreviewPanelMode() {
 		return this.previewPanelMode.getValue();
@@ -675,7 +687,8 @@ public class GridExplorer extends List {
 		tb.getChildren().add( Menu.getMenuSpacer() );
 		tb.getChildren().add( createViewsCombo() );
 		
-		createAdvancedSearchButton( tb );
+		if (getEnableAdvancedSearch())
+			createAdvancedSearchButton( tb );
 		
 		getChildren().add( tb );
 	}
