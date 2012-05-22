@@ -471,8 +471,11 @@ public class GridExplorer extends List {
 			this.setCurrentSavedViewBOUI( currentSavedViewBOUI );
 
 		String advancedFilters = p.getString( "AdvancedFilters" );
+		this.setAdvancedFilters( advancedFilters );
 		if (StringUtils.hasValue( advancedFilters ))
-			this.setAdvancedFilters( advancedFilters );
+			markAdvancedSearchActive();
+		else
+			markAdvancedSearchInactive();
 		
 		if( currentSavedViewBOUI == 0 ) {
 			String currentSavedViewId = p.getString( "CurrentSavedViewId" );
@@ -495,9 +498,8 @@ public class GridExplorer extends List {
 		p.setString("PreviewPanelPosition", this.getPreviewPanelPosition().name() );
 		p.setString("CurrentSavedViewId", this.getCurrentSavedViewId() );
 		String advancedFilters = this.getAdvancedFilters();
-		if (StringUtils.hasValue( advancedFilters )){
-			p.setString( "AdvancedFilters", advancedFilters );
-		}
+		p.setString( "AdvancedFilters", advancedFilters );
+		
 		if( this.getCurrentSavedViewBOUI() != null )
 			p.setLong("CurrentSavedViewBOUI", this.getCurrentSavedViewBOUI() );
 		else
@@ -528,8 +530,6 @@ public class GridExplorer extends List {
 		
 		setAutoReloadData(false);
 
-		Preference expPref = getExplorerUserSatePreference();
-		restoreUserExplorerState( expPref );
 
 		if ( super.getStateProperty("enableGroupBy").isDefaultValue() ) {
 			super.setEnableGroupBy( Boolean.toString( true ) );
@@ -552,6 +552,9 @@ public class GridExplorer extends List {
 		setViewCmd.addActionListener( new SetViewListener() );
 		getChildren().add( setViewCmd );
 		createToolBar();
+		
+		Preference expPref = getExplorerUserSatePreference();
+		restoreUserExplorerState( expPref );
 		
 		this.isNew = true;
 	}
