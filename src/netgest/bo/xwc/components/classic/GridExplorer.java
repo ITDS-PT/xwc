@@ -698,14 +698,18 @@ public class GridExplorer extends List {
 	
 	public void markAdvancedSearchActive(){
 		Menu m = (Menu) this.findComponent( getId() + "_advSearch" );
-		m.setText("<span style=\"font-weight:bold;font-style:italic;\">"+XEOComponentMessages.EXPLORER_TOOLBAR_ADVANCED_SEARCH.toString()+"</span>");
-		((Menu)m.getChild(0)).setDisabled( false );
+		if (m != null){
+			m.setText("<span style=\"font-weight:bold;font-style:italic;\">"+XEOComponentMessages.EXPLORER_TOOLBAR_ADVANCED_SEARCH.toString()+"</span>");
+			((Menu)m.getChild(0)).setDisabled( false );
+		}
 	}
 	
 	public void markAdvancedSearchInactive(){
 		Menu m = (Menu) this.findComponent( getId() + "_advSearch" );
-		m.setText(XEOComponentMessages.EXPLORER_TOOLBAR_ADVANCED_SEARCH.toString());
-		((Menu)m.getChild(0)).setDisabled( true );
+		if (m != null){
+			m.setText(XEOComponentMessages.EXPLORER_TOOLBAR_ADVANCED_SEARCH.toString());
+			((Menu)m.getChild(0)).setDisabled( true );
+		}
 	}
 	
 
