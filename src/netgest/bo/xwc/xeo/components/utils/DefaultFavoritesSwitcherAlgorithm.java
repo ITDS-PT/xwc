@@ -73,9 +73,7 @@ public class DefaultFavoritesSwitcherAlgorithm implements
 					int k = 0;
 					while (!removed && k < maxSizeList){
 						LookupFavorites fav = lst.get(k);
-						if (bouisLookup.containsKey(fav.getBoui()))
-							continue; //We already added this one in a previous iteration, let it be
-						else{
+						if ( !bouisLookup.containsKey(fav.getBoui() ) ){
 							lst.remove(k);
 							lst.add(newFav);
 							removed = true;
