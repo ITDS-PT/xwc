@@ -437,7 +437,7 @@ public class XEOSecurityOPLBean extends XEOEditBean
 		oRequestContext = XUIRequestContext.getCurrentContext();
 		XVWScripts.closeView( oRequestContext.getViewRoot() );
     	XUIViewRoot viewRoot = oRequestContext.getSessionContext().
-    		createView("netgest/bo/xwc/components/viewers/Dummy.xvw");
+    		createView(SystemViewer.DUMMY_VIEWER);
     	
     	oRequestContext.addMessage(
                 "sucessMessage",
