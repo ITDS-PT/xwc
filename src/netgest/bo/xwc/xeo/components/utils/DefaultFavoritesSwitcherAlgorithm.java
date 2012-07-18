@@ -35,7 +35,7 @@ public class DefaultFavoritesSwitcherAlgorithm implements
 	 * 		to remove was already inserted)
 	 * @param maxSize The maximum size of the list
 	 */
-	private void insertElementInList(List<LookupFavorites> lst, long boui, 
+	protected void insertElementInList(List<LookupFavorites> lst, long boui, 
 			long[] listBouis, int maxSizeList){
 		boolean found = false;
 		for (Iterator<LookupFavorites> it = lst.iterator(); it.hasNext(); ){
@@ -92,7 +92,7 @@ public class DefaultFavoritesSwitcherAlgorithm implements
 	 * 
 	 * @param list
 	 */
-	private void updateElementsRatio(List<LookupFavorites> list){
+	protected void updateElementsRatio(List<LookupFavorites> list){
 		
 		for (Iterator<LookupFavorites> it = list.iterator(); it.hasNext(); ){
 			LookupFavorites current = it.next();
@@ -111,7 +111,7 @@ public class DefaultFavoritesSwitcherAlgorithm implements
 	 * 
 	 * @return The ratio to use
 	 */
-	private double calculateRatio(LookupFavorites favorite){
+	protected double calculateRatio(LookupFavorites favorite){
 		int daysSinceUsage = DateUtils.diffInIntDays(favorite.getDateLastUsed(), new Date(System.currentTimeMillis()));
 		daysSinceUsage = Math.abs(daysSinceUsage);
 		if (daysSinceUsage == 0){
