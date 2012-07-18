@@ -9,9 +9,9 @@
 			<xvw:title valueExpression='@{DATABASE_REPORTS}'></xvw:title>
 			<xvw:toolBar>
 				<xvw:menu text="@{CREATE_REPORT}" visible="#{not viewBean.hasReport}"
-					serverAction="#{viewBean.createReport}"></xvw:menu>
+					serverAction="#{viewBean.createReport}" serverActionWaitMode="DIALOG"></xvw:menu>
 				<xvw:menu text="@{NEW_REPORT}" visible="#{viewBean.hasReport}"
-					serverAction="#{viewBean.newReport}"></xvw:menu>
+					serverAction="#{viewBean.newReport}" serverActionWaitMode="DIALOG"></xvw:menu>
 			</xvw:toolBar>
 			<xvw:tabs>
 				<xvw:tab id="package" label="@{PACKAGE_REPORT}">
