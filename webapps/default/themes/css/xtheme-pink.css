@@ -482,7 +482,7 @@ ul.x-tab-strip-bottom{
 }
 
 .x-window-plain .x-window-mc {
-    color: #eeeeee;
+    color: #000000;
     background: #b456a5;
     border-left:1px solid #aa679a;
     border-top:1px solid #aa679a;
@@ -499,7 +499,7 @@ ul.x-tab-strip-bottom{
 }
 
 body.x-body-masked .x-window-mc, body.x-body-masked .x-window-plain .x-window-mc {
-    background-color: #b456a5;
+    background-color: #F8E2F2;
 }
 
 /* Date Picker */
