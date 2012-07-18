@@ -266,21 +266,28 @@ public class ActionButton extends XUICommand
             super.encodeBegin(component);
         }
 
+        
+        public void encodeEnd(ActionButton oActionButton, XUIResponseWriter w, ExtConfig oConfig ) throws IOException {
+        	
+        	// Place holder for the element
+        	w.startElement( DIV, oActionButton );
+        	w.writeAttribute( ID, oActionButton.getClientId(), "id" );
+        	w.endElement( DIV );
+        	
+        	oConfig = renderExtComponent( oActionButton );
+        	oConfig.addJSString( "renderTo", oActionButton.getClientId() );
+        	oConfig.renderExtConfig();
+        	String val = oConfig.renderExtConfig().toString();
+        	w.getScriptContext().add( XUIScriptContext.POSITION_FOOTER, oActionButton.getClientId(),val);
+        	
+        }
+        
         @Override
         public void encodeEnd(XUIComponentBase oRenderComp ) throws IOException {
             ActionButton    oActionButton = (ActionButton)oRenderComp;
             XUIResponseWriter  w = getResponseWriter();
             
-            // Place holder for the element
-            w.startElement( DIV, oActionButton );
-            w.writeAttribute( ID, oActionButton.getClientId(), "id" );
-            w.endElement( DIV );
-
-            ExtConfig oConfig = renderExtComponent( oActionButton );
-            oConfig.addJSString( "renderTo", oActionButton.getClientId() );
-            oConfig.renderExtConfig();
-            String val = oConfig.renderExtConfig().toString();
-            w.getScriptContext().add( XUIScriptContext.POSITION_FOOTER, oActionButton.getClientId(),val);
+            encodeEnd( oActionButton, w, new ExtConfig() );
             
         }
         
@@ -337,4 +344,6 @@ public class ActionButton extends XUICommand
         }
 
     }
+    
+    
 }
