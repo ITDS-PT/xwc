@@ -3,28 +3,15 @@
     <xvw:viewer beanClass='netgest.bo.xwc.components.beans.XEOBaseList' beanId='viewBean' 
     localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
         <xeo:formList>
-			<!-- <xvw:title valueExpression='#{viewBean.title}' />
-			<xvw:toolBar>
-                <xvw:menu target='Tab' text="@{FORM_NEW}" serverAction="#{viewBean.addNew}" />
-			</xvw:toolBar>
-            <xvw:gridPanel
-            	enableGroupBy = 'true'
-                rowSelectionMode="" 
-                dataSource='#{viewBean.dataList}'  
-                onRowDoubleClick='#{viewBean.rowDoubleClick}' 
-                id='users'
-                autoExpandColumn='name'
-            > -->
-            <xeo:list>
+			<xvw:gridExplorer>
                 <xvw:columns>
-                	<!--<xvw:columnAttribute width='10'  label='&nbsp;' hideable='false' sortable='false' groupable='false' searchable='false' dataField='SYS_OBJECT_ICON_16'/>-->
                     <xvw:columnAttribute width='150' dataField='username' align='left'/>
                     <xvw:columnAttribute width='300' dataField='name'/>
                     <xvw:columnAttribute width='80' dataField='user_language' />
+                    <xvw:columnAttribute width='80' dataField='iProfile' />
                     <xvw:columnAttribute width='80' dataField='situacao' />
                 </xvw:columns>
-               </xeo:list>
-           <!--  </xvw:gridPanel> -->
+               </xvw:gridExplorer>
         </xeo:formList>
     </xvw:viewer>
 </xvw:root>
