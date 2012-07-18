@@ -15,7 +15,11 @@ public class XUILocalizedMessage {
 	}
 	
 	public String toString() {
-		return XUIMessagesLocalization.getMessage( bundle, id );
+		try{
+			return XUIMessagesLocalization.getMessage( bundle, id );
+		} catch (Exception e){
+			return "";
+		}
 	}
 
 	public String toString( Locale locale ) {

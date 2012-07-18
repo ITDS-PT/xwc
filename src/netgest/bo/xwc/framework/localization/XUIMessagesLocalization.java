@@ -21,9 +21,13 @@ public class XUIMessagesLocalization {
 	private static UTF8Control control = new UTF8Control();
 	
 	public static String getApplicationLanguage() {
-		boApplication bo = boApplication.currentContext().getApplication();
-		String ret = bo.getApplicationLanguage();
-		return ret;
+		try{
+			boApplication bo = boApplication.currentContext().getApplication();
+			String ret = bo.getApplicationLanguage();
+			return ret;
+		}catch (Exception e){
+			return "";
+		}
 	}
 
 	public static String getUserLanguage() {
@@ -46,7 +50,7 @@ public class XUIMessagesLocalization {
 			return ret;
 		} catch (Exception e )
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return ret;
 	}
