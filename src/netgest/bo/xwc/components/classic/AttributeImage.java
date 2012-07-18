@@ -3,6 +3,7 @@ package netgest.bo.xwc.components.classic;
 import static netgest.bo.xwc.components.HTMLAttr.CELLPADDING;
 import static netgest.bo.xwc.components.HTMLAttr.CELLSPACING;
 import static netgest.bo.xwc.components.HTMLTag.COL;
+import static netgest.bo.xwc.components.HTMLTag.DIV;
 import static netgest.bo.xwc.components.HTMLTag.TABLE;
 import static netgest.bo.xwc.components.HTMLTag.TD;
 import static netgest.bo.xwc.components.HTMLTag.TR;
@@ -264,8 +265,11 @@ public class AttributeImage extends ViewerOutputSecurityBase {
             
             XUIResponseWriter w = getResponseWriter();
             
-            w.startElement( TABLE, oComp );
+            w.startElement( DIV, oComp );	
             w.writeAttribute( HTMLAttr.ID, oComp.getClientId(), null );
+            
+            w.startElement( TABLE, oComp );
+            //w.writeAttribute( HTMLAttr.ID, oComp.getClientId(), null );
             w.writeAttribute( CELLPADDING, "0", null );
             w.writeAttribute( CELLSPACING, "0", null );
             w.writeAttribute( HTMLAttr.STYLE, "table-layout:fixed;width:100%", null ); 
@@ -331,6 +335,7 @@ public class AttributeImage extends ViewerOutputSecurityBase {
             w.endElement( TD );
             w.endElement( TR ); 
             w.endElement( TABLE );
+            w.endElement( DIV );
         	
         }
 
