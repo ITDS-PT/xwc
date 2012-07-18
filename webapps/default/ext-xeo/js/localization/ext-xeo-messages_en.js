@@ -37,7 +37,8 @@ if(ExtXeo.grid.GridView) {
 	    restoreDefsText   : 'Restore Definitions',
 	    selectColsText    : 'Select Columns',
 	    selectCols		  : 'Select columns',
-	    resetDefs	      : 'Reset definitions' 
+	    resetDefs	      : 'Reset definitions',
+	    showGroupToolBar 	: 'Show group toolbar'
 	 });
 }
 

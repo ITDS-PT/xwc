@@ -545,7 +545,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
                 ,{
                     id:'groupToolBar',
                     cls:'xwc-grid-group-toolbar',
-                    text: 'Mostrar agrupamentos',
+                    text: this.showGroupToolBar,
                     checkHandler: this.handleGroupToolbarDisplay,
                     checked: this.grid.toolBarVisible,
                     scope: this
@@ -642,11 +642,12 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     	elem.addClass('xwc-group-toolbar-bg');
     	elem.appendChild(messageInvite.dom);
     	/*
-    	This is added here (.x-panel-body) so that we don't have the problem of the grouptoolbar
-    	adding a new scrollbar to the grid panel, if it's in another place in the
-    	structure it will add a new scrollbar (unless there's space in the window naturally)
+    	This is added here (as a first child of x-grid-header) so that we don't have the problem of the grouptoolbar
+    	hidding the last element in the list (when there is not enough space in the list to show them all)
+    	When in this position the panel accounts for the size of the group toolbar and 
+    	expands the list height accordingly
     	*/
-        this.mainBody.parent('.x-panel-body').insertFirst(elem);
+        this.mainBody.parent('.x-grid3-viewport').child('.x-grid3-header').insertFirst(elem);
         elem.appendChild(this.createTableForDividersAndGroups());
     }
     
