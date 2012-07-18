@@ -20,7 +20,7 @@ public class ExtConfig implements Serializable {
     private String sComponentType;
     private String sVarName;
     
-    Map<String, Object> oConfigOptions = new LinkedHashMap<String, Object>();
+    protected Map<String, Object> oConfigOptions = new LinkedHashMap<String, Object>();
     
     public ExtConfig() {
     }
@@ -183,6 +183,10 @@ public class ExtConfig implements Serializable {
     
 	public void removeConfig(String id){
 		this.oConfigOptions.remove(id);
+	}
+	
+	public Object getConfigValue(String id){
+		return this.oConfigOptions.get( id );
 	}
 	
 	@Override
