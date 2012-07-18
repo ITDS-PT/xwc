@@ -77,7 +77,7 @@ public class FileBrowseBean extends netgest.bo.xwc.xeo.beans.XEOBaseBean {
 	        		"});\n");
         }
 		oRequestContext.setViewRoot(  
-			oRequestContext.getSessionContext().createView( "netgest/bo/xwc/components/viewers/Dummy.xvw" )
+			oRequestContext.getSessionContext().createView( SystemViewer.DUMMY_VIEWER )
 		);
 		
 		oRequestContext.renderResponse();
@@ -91,7 +91,7 @@ public class FileBrowseBean extends netgest.bo.xwc.xeo.beans.XEOBaseBean {
                 "});\n"
         );
 		oRequestContext.setViewRoot(  
-				oRequestContext.getSessionContext().createView( "netgest/bo/xwc/components/viewers/Dummy.xvw" )
+				oRequestContext.getSessionContext().createView( SystemViewer.DUMMY_VIEWER )
 			);
 			
 			oRequestContext.renderResponse();
