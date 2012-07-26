@@ -46,6 +46,9 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         , getGroups : function (){
         	return this.store.groupField;
         }
+        , isGrouped : function () {
+        	return this.store.groupField.length > 0;
+        }
         , groupByColumn : function ( columnId ){
         	this.store.addGroupByWithoutReload( columnId );
         } 
@@ -423,8 +426,8 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
 
         if(!this.startGroup){
 	        this.startGroup = new Ext.XTemplate(
-	            '<div id="{elemId}" class="x-grid-group {cls}">',
-	                '<div id="{elemId}-hd" class="x-grid-group-hd" style="{style}">',
+	            '<div id="{elemId}" value="{groupUniqueId}" class="x-grid-group {cls}">',
+	                '<div id="{elemId}-hd" value="{groupUniqueId}" class="x-grid-group-hd" style="{style}">',
 	            		'<table style="table-layout:auto"><tr><td><div>', this.groupTextTpl ,'</div></td><td>',
 	            			'<SPAN style="margin-left:20px;" id="{elemId}-tb"></span>',
 	            		'</td></tr></table>',
@@ -695,21 +698,22 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     	if(checked)
     	{
     		this.grid.store.addAggregateField('T:' + mi.itemId, mi.itemId, checked);  
-              		
-    		if(this.grid.store.groupField.length	== 0)
-    		{    			
-      		this.grid.store.addGroupBy("/*DUMMY_AGGREGATE*/");
+            if(!this.grid.isGrouped()){    			
+    			this.grid.groupByColumn("/*DUMMY_AGGREGATE*/");
     		}	
       }
       else
     	{
     		this.grid.store.addAggregateField('F:' + mi.itemId, mi.itemId, checked);
     		
-    		if(this.grid.store.groupField.length == 1 && this.grid.store.groupField[0] == "/*DUMMY_AGGREGATE*/" &&  this.grid.store.aggregateFieldsOn.length == 0)
-    		{
+    		if( this.grid.store.groupField.length == 1 
+    				&& this.grid.store.groupField[0] == "/*DUMMY_AGGREGATE*/" 
+    				&&  this.grid.store.aggregateFieldsOn.length == 0)   		{
     			this.grid.store.clearGroupBy();
     		}
+    
       }
+    	this.grid.reload();
     },
     onGroupByClick : function(){
     	this.grid.getGroupDragDropPlugin().createGroup(this.cm.getDataIndex(this.hdCtxIndex));
@@ -748,7 +752,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         this.grid.stopEditing(true);
         var group = Ext.getDom(groupEl);
         var gel = Ext.fly(group);
-        var groupId = groupEl.id;
+        var groupId = gel.getAttributeNS("","value");
         
         var group = this.rootView.getGroupView(groupId);
         groupId = group.groupId;
@@ -759,7 +763,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         this.state[gel.dom.id] = expanded;
         gel[expanded ? 'removeClass' : 'addClass']('x-grid-group-collapsed');
         
-        var eg = this.grid.getStore().getExpandedGroups();;
+        var eg = this.grid.getStore().getExpandedGroups();
         if( expanded ) {
             if( group.parentGroup ) {
             	if(!eg[group.parentGroup.groupId])
@@ -799,7 +803,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     	}
     	else {
     		// Render SubGroup
-    		var gv = this.rootView.getGroupView( gridGroup.groupId );
+    		var gv = this.rootView.getGroupView( gridGroup.groupUniqueId );
     		buf[buf.length] = gv.groupingView.doRender( gridGroup, this.cs, store.getRange(0,50), store, 0, this.colCount, this.stripe);    		
     	}
         
@@ -1114,8 +1118,8 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
 	initTemplates : function() {
 	    if(!this.startGroup){
 	        this.startGroup = new Ext.XTemplate(
-	            '<div id="{elemId}" style="{groupStyle}" class="x-grid-group {cls}">',
-	                '<div id="{elemId}-hd" class="x-grid-group-hd" style="{style}">',
+	            '<div id="{elemId}" value="{groupUniqueId}" style="{groupStyle}" class="x-grid-group {cls}">',
+	                '<div id="{elemId}-hd" value="{groupUniqueId}" class="x-grid-group-hd" style="{style}">',
 	            		'<table style="table-layout:auto"><tr><td><div>', this.groupTextTpl ,'</div></td><td>',
 	            			'<SPAN style="margin-left:20px;" id="{elemId}-tb"></span>',
 	            		'</td></tr></table>',
@@ -1376,7 +1380,8 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
             	
 	            group = new ExtXeo.grid.GridGroup({
 	            	uniqueId : ++ExtXeo.grid.ViewGroup.prototype.uniqueId,
-	            	elemId : gidPrefix + gid,
+	            	groupUniqueId : "GID"+this.uniqueId, 
+	            	elemId : gidPrefix + gid + this.uniqueId,
 	            	groupId : gid,
 	        		rawValue : value,
 	        		cls : 'x-grid-group-collapsed',
@@ -1395,13 +1400,13 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
 	            	}),
 	        		parentGroup : parentGroup
 	            });
-	            this.rows[gid] = group;
-	            this.rowsIndex[i] = gid;
+	            this.rows[group.groupUniqueId] = group;
+	            this.rowsIndex[i] = group.groupUniqueId;
             }
             this.doGroupStart(buf, group, cs, ds, colCount);
             this.doGroupEnd(buf, group, cs, ds, colCount);
             //TODO: Analisar para que � que � necess�rio esta propriedade!
-            r._groupId = gid;
+            r._groupId = group.groupUniqueId;
         }
         return buf.join('');		
 	},
@@ -1453,10 +1458,10 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
         }
         return buf.join("");
     },getGroupView : function( groupId ) {
-    	var gid = this.grid.getId() + "-";
+    	/*var gid = this.grid.getId() + "-";
     	if( groupId.indexOf( gid ) == 0  ) {
     		groupId = groupId.substring( gid.length );
-    	}
+    	}*/
     	return this._getGroupView( groupId );
     },
     _getGroupView : function( groupId ) {
@@ -1517,6 +1522,8 @@ ExtXeo.grid.GridGroup = function( opts ) {
 	this.groupingView = null;
 	this.aggregate = null;
 	this.aggregateDetailAction = null;
+	//Unique Identifier for the group
+	this.groupUniqueId = null;
 	ExtXeo.grid.GridGroup.uniqueId++;
 	Ext.apply( this, opts );
 }
@@ -1790,7 +1797,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
       	this.baseParams['aggregateField'] = field;
     	}    		
     	
-      this.reload();
+      
     },
     applyGrouping : function(alwaysFireChange){
         if(this.groupField.length > 0 ){

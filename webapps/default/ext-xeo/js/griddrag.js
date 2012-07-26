@@ -171,7 +171,7 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
 	 * 
 	 * */
 	, createGroup : function ( columnIdentifier ){
-		
+		this.reset();
 		this.groupDataStoreByColumnAtIndex( columnIdentifier, this.indexOfCurrentDivider );
     	this.addGroupAtIndex( columnIdentifier, this.indexOfCurrentDivider );
     	
