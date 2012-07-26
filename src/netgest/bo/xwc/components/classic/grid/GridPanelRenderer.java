@@ -2,8 +2,8 @@ package netgest.bo.xwc.components.classic.grid;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -20,6 +20,8 @@ import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Tab;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
+import netgest.bo.xwc.components.classic.grid.Aggregate.AggregateAction;
+import netgest.bo.xwc.components.classic.grid.WebRequest.GridParameter;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataGroupConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
@@ -213,15 +215,14 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         }
     }
 	
-	public GridPanelRequestParameters decodeServiceParmeters( GridPanel oGridPanel, HttpServletRequest oRequest ) {
-		
-		String selectedRows 	= oRequest.getParameter( "selectedRows" );
-        String activeRow 		= oRequest.getParameter( "activeRow" );
+	public GridPanelRequestParameters decodeServiceParmeters( GridPanel oGridPanel, WebRequest oRequest ) {
+		String selectedRows 	= oRequest.getParameter( GridParameter.SELECTED_ROWS );
+        String activeRow 		= oRequest.getParameter( GridParameter.ACTIVE_ROW );
         
-        String[] groupBy 		= oRequest.getParameterValues( "groupBy" );
-        String aggregateField 		= oRequest.getParameter( "aggregateField" );
+        String[] groupBy 		= oRequest.getParameterValues( GridParameter.GROUP_BY );
+        String aggregateField 		= oRequest.getParameter( GridParameter.AGGREGATE );
         
-        String groupToolBarVisible = oRequest.getParameter( "toolBarVisible" );
+        String groupToolBarVisible = oRequest.getParameter( GridParameter.TOOLBAR_VISIBLE );
         
         if (groupToolBarVisible != null){
         	Boolean groupToolBarVisibleValue = Boolean.parseBoolean( groupToolBarVisible );
@@ -238,8 +239,8 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         	}
         }
         
-        String 	 groupByLevelS 	= oRequest.getParameter( "groupByLevel" );
-        String[] sParentValues	= oRequest.getParameterValues( "groupByParentValues" );
+        String 	 groupByLevelS 	= oRequest.getParameter( GridParameter.GROUP_BY_LEVEL );
+        String[] sParentValues	= oRequest.getParameterValues( GridParameter.GROUP_BY_PARENT_LEVELS );
         
         
         //Decode parameters received as String into their native data types
@@ -311,8 +312,8 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         }
         
         
-        String 	columnsConfig  = oRequest.getParameter( "columnsConfig" );
-        String 	expandedGroups 	= oRequest.getParameter( "expandedGroups" );
+        String 	columnsConfig  = oRequest.getParameter( GridParameter.COLUMNS_CONFIG );
+        String 	expandedGroups 	= oRequest.getParameter( GridParameter.EXPANDED_GROUPS );
         if( expandedGroups != null ) {
     		oGridPanel.setCurrentExpandedGroups( expandedGroups );
         }
@@ -327,8 +328,8 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         }
         
         // Parameters at requestLevel
-        String sStart = oRequest.getParameter("start");
-        String sLimit = oRequest.getParameter("limit");
+        String sStart = oRequest.getParameter( GridParameter.START );
+        String sLimit = oRequest.getParameter( GridParameter.LIMIT );
         
         int start = Integer.parseInt( sStart!=null&&sStart.length()>0?sStart : "0" );
         int limit = Integer.parseInt( sLimit!=null&&sLimit.length()>0?sLimit : oGridPanel.getPageSize() );
@@ -350,30 +351,19 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 		
         oGridPanel.setCurrentAggregateField( aggregateField );
 				
-        if (oGridPanel != null && 
+        if ( 
         		oGridPanel.getCurrAggregateFieldOpSet() != null &&
         		oGridPanel.getCurrAggregateFieldCheckSet() != null &&
         		oGridPanel.getCurrAggregateFieldSet() != null) {
-			String desc = oGridPanel.getCurrAggregateFieldDescSet() != null ? oGridPanel.getCurrAggregateFieldDescSet() : oGridPanel.getCurrAggregateFieldSet();
 			
-			boolean check = oGridPanel.getCurrAggregateFieldCheckSet().equalsIgnoreCase("T");
-			String op = oGridPanel.getCurrAggregateFieldOpSet();
-			if(op.equalsIgnoreCase("SUM"))
-			{
-				oGridPanel.aggregateSum(check, oGridPanel.getCurrAggregateFieldSet(), desc);
+        	AggregateAction whatAction = AggregateAction.fromString( oGridPanel.getCurrAggregateFieldCheckSet() );
+			if ( whatAction == AggregateAction.ADD_AGGREGATE )
+				oGridPanel.updateAggregateFieldsBean();
+			else if ( whatAction == AggregateAction.REMOVE_AGGREGATE ){
+				oGridPanel.removeAggregateFieldsBean();
 			}
-			else if(op.equalsIgnoreCase("MIN"))
-			{
-				oGridPanel.aggregateMin(check, oGridPanel.getCurrAggregateFieldSet(), desc);
-			}
-			else if(op.equalsIgnoreCase("MAX"))
-			{
-				oGridPanel.aggregateMax(check, oGridPanel.getCurrAggregateFieldSet(), desc);
-			}
-			else if(op.equalsIgnoreCase("AVG"))
-			{
-				oGridPanel.aggregateAvg(check, oGridPanel.getCurrAggregateFieldSet(), desc);
-			}
+        	
+			
 		}
 		
 		// Group by parameters
@@ -390,33 +380,16 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 		reqParam.setStart( start );
 		reqParam.setLimit( limit );
         
-        String sFullText    = oRequest.getParameter("fullText");
+        String sFullText    = oRequest.getParameter(GridParameter.FULL_TEXT);
         oGridPanel.setCurrentFullTextSearch( sFullText );
         
         
         // Sort Terms
-        String rSort 		= oRequest.getParameter("sort");
-        if( rSort != null && rSort.length() > 0 ) {
-        	String sortString = "";
-        	try {
-				JSONArray json = new JSONArray( rSort );
-				for( int i=0; i < json.length(); i++ ) {
-					JSONObject j = json.getJSONObject(i);
-					if( j.has("field") ) {
-						if( i > 0 ) 
-							sortString += ",";
-						
-						sortString += j.getString("field").replaceAll("__", ".") + "|" + (j.has("direction")?j.getString("direction"):"");
-					}
-				}
-				oGridPanel.setCurrentSortTerms( sortString );
-			} catch (JSONException e) {
-				// Igonre Sort JSON errors
-			}
-        }
-        else {
-        	oGridPanel.setCurrentSortTerms(null);
-        }
+        SortTermsDecoder sortDecoder = new SortTermsDecoder( oRequest.getParameter(GridParameter.SORT) );
+        if (sortDecoder.areTermsValid()){
+        	oGridPanel.setCurrentSortTerms( sortDecoder.toGridPanelInternalFormat() );
+        } else
+        	oGridPanel.setCurrentSortTerms( null );
         
         // Column State
         if( columnsConfig != null ) {
@@ -476,15 +449,13 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         }
         
         // Filter terms
-        String sFilters = oRequest.getParameter("filters");
+        String sFilters = oRequest.getParameter(GridParameter.FILTERS);
 		String sServerFilters = oGridPanel.getCurrentFilters();
         if( sFilters != null ) {
 	        try {
 				// Fix something in json filters.
 	        	// BUG... when setting a value to a objecto, client doesn't send that! so, it must be
 	        	// merged with server side.
-	        	
-//	        	System.out.println( "REQ:" + sFilters );
 	    		
 	        	JSONObject jFilters;
 	    		JSONObject serverFilters;
@@ -528,6 +499,11 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         	oGridPanel.saveUserState();
         }
 		return reqParam;
+		
+	}
+	
+	public GridPanelRequestParameters decodeServiceParmeters( GridPanel oGridPanel, HttpServletRequest oRequest ) {
+		return decodeServiceParmeters( oGridPanel, new HttpServletRequestWrapper( oRequest ) );
 	}
 	
 	
