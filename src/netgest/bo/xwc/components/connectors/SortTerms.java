@@ -4,6 +4,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class SortTerms {
 	
 	public static final int SORT_ASC = 1;
@@ -37,6 +40,22 @@ public class SortTerms {
 			return sortTerms.size()==0;
 		}
 		return true;
+	}
+	
+	public String toJson(){
+		Iterator<SortTerm> it = sortTerms.iterator();
+		JSONObject o = new JSONObject();
+		while (it.hasNext()){
+			SortTerm t = it.next();
+			try{
+				o.put( "field", t.getField() );
+				o.put( "direction", t.getDirection() );
+			} catch (JSONException e){
+				//Ignore
+			}
+			
+		}
+		return o.toString();
 	}
 	
 	public static class SortTerm {
