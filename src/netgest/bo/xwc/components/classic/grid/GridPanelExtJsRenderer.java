@@ -136,6 +136,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	                        if( this.oExtToolbar == null ) {
 	                            oExtToolbar = new ExtConfigArray();
 	                        }
+	                        
 	                        oExtToolbar.addChild(
 	                            ((ExtJsRenderer)renderer).getExtJsConfig( (XUIComponentBase)oChildComp )
 	                        );
@@ -419,7 +420,10 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	        	sActionUrl += "&" + sPar;
 	            StringBuilder sb = new StringBuilder(100);
 	            sb.append( "function(){" );
+	            
 	            sb.append(     		"		XVW.downloadFile('" + sActionUrl + "');");
+	            
+	            
 	            sb.append( "}" );
 	            oChild.add( "handler", sb.toString() );
 	        }
@@ -1113,6 +1117,12 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	            			if( filters != null && filters.length() > 0 ) {
 		            			String value = filters.getJSONObject(0).getJSONArray("value").toString();
 		            			oExtFiltersChild.add("value", value );
+	            			} else {
+	            				filters = colFilter.optJSONArray("value");
+	            				if( filters != null && filters.length() > 0 ) {
+	            					String value = filters.getString( 0 );
+			            			oExtFiltersChild.addJSString( "value", value );
+	            				}
 	            			}
 	                    	
 	            			
@@ -1166,17 +1176,16 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		            		case DataFieldTypes.VALUE_BOOLEAN:
 		                    	oExtFiltersChild.addJSString( "type", "boolean" );
 		            			colFilter.put("type", "boolean");
-		            			filters = colFilter.optJSONArray("filters");
-		            			if( filters != null && filters.length() > 0 ) {
-			            			filterValue = filters.getJSONObject(0).getString("value");
-			            			oExtFiltersChild.add("value", filterValue );
+		            			Object booleanFilter = colFilter.opt( "value" );
+		            			if( booleanFilter != null ) {
+			            			oExtFiltersChild.add("value", booleanFilter );
 		            			}
 		                    	break;
 		            		case DataFieldTypes.VALUE_DATETIME:
 		            		case DataFieldTypes.VALUE_DATE:
 		                    	oExtFiltersChild.addJSString( "type", "date" );
 		            			colFilter.put("type", "date");
-		            			filters = colFilter.optJSONArray("filters");
+		            			filters = colFilter.optJSONArray("value");
 		            			if( filters != null && filters.length() > 0 ) {
 		            				ExtConfig values = oExtFiltersChild.addChild("value");
 		            				for( int i=0; i < filters.length(); i++ ) {
@@ -1234,7 +1243,9 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             result = context.getRenderKit().getRenderer(oComp.getFamily(),
                                                         rendererType);
         }            
-        return result;
+        //return result; //FIXME: Coloquei isto aqui porque senão ia tentar renderizar
+        //a toolbat do Grid com a ToolBar Jquery e o GridPanel n está feito para isso.
+        return new ToolBar.XEOHTMLRenderer();
     }
     
     public void addGridScripts( XUIResponseWriter w ) {
