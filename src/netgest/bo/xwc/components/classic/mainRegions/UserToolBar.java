@@ -3,8 +3,8 @@ package netgest.bo.xwc.components.classic.mainRegions;
 import static netgest.bo.xwc.components.localization.ComponentMessages.USER_TOOLBAR_FAVORITES_BTN_LBL;
 import static netgest.bo.xwc.components.localization.ComponentMessages.USER_TOOLBAR_GROUP_BTN_LBL;
 import static netgest.bo.xwc.components.localization.ComponentMessages.USER_TOOLBAR_LOGOUT_BTN_LBL;
-import static netgest.bo.xwc.components.localization.ComponentMessages.USER_TOOLBAR_PROPERTIES_BTN_LBL;
 import static netgest.bo.xwc.components.localization.ComponentMessages.USER_TOOLBAR_PROFILES_GRP_BTN_LBL;
+import static netgest.bo.xwc.components.localization.ComponentMessages.USER_TOOLBAR_PROPERTIES_BTN_LBL;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -285,7 +285,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 		//Check if the user has a set of preferences, if it has
 		//add the Command to open the favorites viewer
 		Menu showUserFavsCmd = (Menu) this
-		.findComponent("showFavoritesCmd");
+		.findComponent("showFavoritesCmd"  +"_" + getId());
 
 		EboContext ctx = boApplication.currentContext().getEboContext();
 		
@@ -296,7 +296,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			if (preferences.exists()){
 				if (showUserFavsCmd == null) {
 					showUserFavsCmd = new Menu();
-					showUserFavsCmd.setId("showFavoritesCmd");
+					showUserFavsCmd.setId("showFavoritesCmd"  +"_" + getId());
 					showUserFavsCmd.setActionExpression(createMethodBinding("#{" + getBeanId() + ".openViewer}"));
 					showUserFavsCmd.setValue("{viewerName:'netgest/bo/xwc/xeo/viewers/UserFavorites.xvw',boui:'"+ctx.getBoSession().getPerformerBoui()+"'}");
 					showUserFavsCmd.setTarget("tab");
@@ -308,10 +308,10 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 		}
 		
 		//CHeck if the History command is present, if not add.
-		Menu showUserHistory = (Menu) this.findComponent("showHistoryCmd");
+		Menu showUserHistory = (Menu) this.findComponent("showHistoryCmd" +"_" + getId());
 		if (showUserHistory == null){
 			showUserHistory = new Menu();
-			showUserHistory.setId("showHistoryCmd");
+			showUserHistory.setId("showHistoryCmd" +"_" + getId());
 			showUserHistory.setActionExpression(createMethodBinding("#{" + getBeanId() + ".openViewer}"));
 			showUserHistory.setValue("{viewerName:'netgest/bo/xwc/xeo/viewers/UserHistory.xvw'}");
 			showUserHistory.setTarget("tab");
@@ -459,7 +459,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 				arrayChildFavorites.addJSString("text", USER_TOOLBAR_FAVORITES_BTN_LBL.toString());
 				
 				XUICommand showUserFavsCmd = (XUICommand) this
-				.findComponent("showFavoritesCmd");
+				.findComponent("showFavoritesCmd" +"_" + getId());
 
 				if (showUserFavsCmd != null) {
 					String comandExecute = XVWScripts.getCommandScript("tab",showUserFavsCmd,2);
@@ -562,7 +562,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 		
 		if (getShowFavorites()){
 			Menu showUserFavsCmd = new Menu();
-			showUserFavsCmd.setId("showFavoritesCmd");
+			showUserFavsCmd.setId("showFavoritesCmd"  +"_" + getId());
 			showUserFavsCmd.setText(USER_TOOLBAR_FAVORITES_BTN_LBL.toString());
 			showUserFavsCmd.setIcon("ext-xeo/icons/favorite.png");
 			showUserFavsCmd.setServerAction("#{" + getBeanId() + ".openViewer}");
