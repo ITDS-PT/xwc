@@ -127,7 +127,7 @@ public class AttributeNumberLookup extends AttributeBase {
                 try {
                     oSubmitedBigDecimal = new BigDecimal( String.valueOf( sSubmitedValue ) );
                     setValue( oSubmitedBigDecimal );
-                    //Since we're overring  the validate, we need to send 
+                    //Since we're overriding  the validate, we need to 
                     //activate the value change listeners
                     if (!compareValue(oldValue, oSubmitedValue))
                     	queueEvent(new XUIValueChangeEvent(this, oldValue, oSubmitedValue));
