@@ -49,9 +49,10 @@ import netgest.bo.xwc.xeo.beans.XEOEditBean;
  * 
  * Truques da classe?
  * 
- * Gera uma função Javascript para invocar o método de pesquisa (por causa do update)
+ * Gera uma função Javascript para invocar o método de pesquisa (por causa do update() precisar de " e de ' e depois tudo ´dentro
+ * de uma string em Java dá asneira)
  * 
- * @author PedroRio
+ * 
  *
  */
 public class AttributeSearchLookup extends AttributeNumberLookup {
