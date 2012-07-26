@@ -28,8 +28,8 @@ import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataListIterator;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.FilterTerms;
-import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
+import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
 import netgest.bo.xwc.components.data.JavaScriptArrayProvider;
 import netgest.bo.xwc.components.model.Column;
@@ -218,7 +218,8 @@ public class GridPanelJSonRenderer {
 	    				parentValues[i] = oParentValues[i];
 	    				break;
 	    			case DataFieldTypes.VALUE_NUMBER:
-	    				if( ((String)oParentValues[i]).length() > 0 )
+	    				
+	    				if( (oParentValues[i]).toString().length() > 0 )
 	    					parentValues[i] = new BigDecimal( oParentValues[i].toString() );
 	    				break;
 	    		}
