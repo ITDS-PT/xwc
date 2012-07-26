@@ -32,14 +32,14 @@ if(ExtXeo.PagingToolbar){
 
 if(ExtXeo.grid.GridView) {
 	  Ext.apply(ExtXeo.grid.GridView.prototype , {
-	    aggregateText   	: 'Resumos',
+	    aggregateText   	: 'Resúmenes',
 	    aggregateSumText    : 'Somat&oacute;rio' ,
 	    aggregateAvgText    : 'M&eacute;dia' ,
 	    aggregateCountText  : 'Total',
 	    restoreDefsText   	: 'Rep&ocirc;r Defini&ccedil;&otilde;es',
-	    selectColsText    	: 'Seleccionar Colunas',
-	    selectCols			: 'Seleccionar colunas',
-	    resetDefs	   		: 'Rep&ocirc;r definiciones',
+	    selectColsText    	: 'Seleccionar columnas',
+	    selectCols			: 'Seleccionar columnas',
+	    resetDefs	   		: 'Restablecer valores predeterminados',
 	    showGroupToolBar 	: 'Mostrar las agrupaciones'
 	 });
 }
