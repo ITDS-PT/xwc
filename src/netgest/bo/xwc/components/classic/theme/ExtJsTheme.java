@@ -12,19 +12,16 @@ import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
-import netgest.bo.system.boLoginBean;
-import netgest.bo.system.boLoginException;
-import netgest.bo.system.boSession;
 import netgest.bo.system.boSessionUser;
 import netgest.bo.utils.XeoUserTheme;
 import netgest.bo.utils.XeoUserThemeFile;
 import netgest.bo.xeomodels.system.Theme;
 import netgest.bo.xeomodels.system.ThemeIncludes;
-import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
 import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
+import netgest.utils.StringUtils;
 
 /**
  * 
@@ -39,24 +36,40 @@ public class ExtJsTheme implements XUITheme {
 	 */
 	public static final Logger logger = Logger.getLogger(ExtJsTheme.class);
 	
-	public ExtJsTheme() {
+	
+	public ExtJsTheme() {	
+	}
+	
+	public ExtJsTheme(String buildVersion) {
+		this.buildVersion = buildVersion;
+	}
+	
+	/**
+	 * The build version
+	 */
+	private String buildVersion = "";
+	
+	/**
+	 * Retrieves the current builder version of XEO
+	 * 
+	 * @return
+	 */
+	protected String getCurrentBuildVersion(){
+		if (StringUtils.isEmpty( buildVersion ))
+			buildVersion = boApplication.getDefaultApplication().getBuildVersion(); 
+		return buildVersion;	
 	}
 
 	public void addStyle(XUIStyleContext styleContext) {
+		
 		styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "extjs_css",
 				composeUrl(getResourceBaseUri() + "resources/css/ext-all.css"));
-		// styleContext.addInclude(XUIStyleContext.POSITION_HEADER,
-		// "extjs_css-gray", composeUrl( getResourceBaseUri() +
-		// "resources/css/xtheme-slate.css" ) );
 		styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "extjs_css1",
 				composeUrl("ext-xeo/css/ext-xeo.css"));
 		styleContext.addInclude(XUIStyleContext.POSITION_HEADER,
 				"ext-xeo-nohtmleditor",
 				composeUrl("ext-xeo/css/ext-xeo-nohtmleditor.css"));
-		// styleContext.addInclude(XUIStyleContext.POSITION_HEADER,
-		// "extjs_css-gray", composeUrl( getResourceBaseUri() +
-		// "resources/css/xtheme-gray.css" ) );
-		// Retrieve all theme files to include
+		
 		Map<String, String> filesToInclude = themeFilesToInclude();
 		Iterator<String> idSet = filesToInclude.keySet().iterator();
 		while (idSet.hasNext()) {
@@ -65,14 +78,6 @@ public class ExtJsTheme implements XUITheme {
 					composeUrl(filesToInclude.get(id)));
 		}
 
-		// if ( r.findComponent( AttributeHtmlEditor.class ) != null ) {
-		// styleContext.addInclude(XUIStyleContext.POSITION_HEADER,
-		// "ext-xeo-htmleditor", composeUrl(
-		// "ext-xeo/css/ext-xeo-htmleditor.css" ) );
-		// }
-		// else {
-
-		// }
 	}
 
 	/**
@@ -81,51 +86,40 @@ public class ExtJsTheme implements XUITheme {
 	 * 
 	 * @return An array with the files to include
 	 */
-	private Map<String, String> themeFilesToInclude() {
+	protected Map<String, String> themeFilesToInclude() {
 		Map<String,String> result = new HashMap<String, String>();
-		if (boApplication.currentContext().getEboContext() != null) {
-			EboContext ctx = boApplication.currentContext().getEboContext();
-			boSessionUser user = ctx.getBoSession().getUser();
-			try {
-				
-				//User has a theme
-				if (user.getThemeFiles().size() > 0 
-						|| ctx.getBoSession().getProperty("theme") != null) { //This case is when there are no files in the theme (default blue)
-					return  user.getThemeFiles();
-				}
-				//Retrieve default theme from runtime
-				result = getDefaultThemeFiles(ctx);
-			} catch (Exception e) {
-				return new HashMap<String, String>(0);
-			}
-		} else{
-			try{
-				boApplication app = boApplication.getDefaultApplication();
-	            boSession session = app.boLogin("SYSUSER", boLoginBean.getSystemKey());
-	            EboContext ctx = app.createContext(session);
-	            result = getDefaultThemeFiles(ctx);
-	            ctx.close();
-	            session.closeSession();
-	            return result;
-			}
-			catch (boRuntimeException e){
-				logger.warn("Could not read the default theme for the application", e);
-			} catch (boLoginException e) {
-				logger.warn("Could not login to the application while trying to read the default theme", e);
-			}
-		}
+		
+		try{
+			if (getEboContext() != null) {
+				EboContext ctx = getEboContext();
+				boSessionUser user = ctx.getBoSession().getUser();
+					//User has a theme
+					if (user.getThemeFiles().size() > 0 
+							|| ctx.getBoSession().getProperty("theme") != null) { //This case is when there are no files in the theme (default blue)
+						return  user.getThemeFiles();
+					}
+					//Retrieve default theme from runtime
+					result = getDefaultThemeFiles(ctx);
+			} 
 
-		//Retrieve from boConfig
-		XeoUserTheme defaultTheme = boApplication.getDefaultApplication()
-				.getApplicationConfig().getDefaultTheme();
-		if (defaultTheme != null) {
-			XeoUserThemeFile[] files = defaultTheme.getFiles();
-			for (XeoUserThemeFile f : files) {
-				result.put(f.getId(), f.getPath());
+			//Retrieve from boConfig
+			XeoUserTheme defaultTheme = boApplication.getDefaultApplication()
+					.getApplicationConfig().getDefaultTheme();
+			if (defaultTheme != null) {
+				XeoUserThemeFile[] files = defaultTheme.getFiles();
+				for (XeoUserThemeFile f : files) {
+					result.put(f.getId(), f.getPath());
+				}
 			}
 		}
+		catch (Exception e ){
+			//Avoid errors just because we can't get theme files, default
+			//will do
+		}
+		
 		return result;
 	}
+	
 	
 	private Map<String,String> getDefaultThemeFiles(EboContext ctx){
 		
@@ -153,171 +147,98 @@ public class ExtJsTheme implements XUITheme {
 		}
 		return result;
 	}
+	
+	protected JavaScriptIncluder createScriptIncluder(XUIScriptContext ctx, String currentBuild){
+		return new JavaScriptIncluder( ctx, currentBuild );
+	}
 
 	public void addScripts(XUIScriptContext scriptContext) {
+		String lang = getApplicationLanguage();
+		
+		if (logger.isFinerEnabled())
+			logger.finer("Using '%s' as language for the User ", lang);
+		
+		// Extjs
+		JavaScriptIncluder scriptIncluder = createScriptIncluder( scriptContext, getCurrentBuildVersion() );
+		
+		scriptIncluder.include( "ext-base", getResourceBaseUri() + "adapter/ext/ext-base.js" );
+		scriptIncluder.include( "ext-all", getResourceBaseUri() + "ext-all-debug.js" );
+		// xwc
+		scriptIncluder.include( "xwc-core", "xwc/js/xwc-core.js" );
+		scriptIncluder.include( "xwc-messages", "xwc/js/localization/xwc-messages_"+ lang + ".js" );
+		
+		// Grid Search
+		scriptIncluder.include( "ext-xeo", "ext-xeo/js/ext-xeo.js" );
+		scriptIncluder.include( "gridDrag", "ext-xeo/js/griddrag.js" );
+		scriptIncluder.include( "xwc-core", "xwc/js/xwc-core.js" );
+		
+		scriptIncluder.include( "ExtXeo.grid", "ext-xeo/js/GridPanel.js" );
+		scriptIncluder.include( "xwc-components", "ext-xeo/js/xwc-components.js" );
+		scriptIncluder.include( "ExtXeo.tabs", "ext-xeo/js/Tabs.js" );
+		scriptIncluder.include( "ExtXeo.TreePanelJCR", "ext-xeo/js/TreePanelJCR.js" );
+		// Grid Filters
+		scriptIncluder.include( "xwc-grid-filter", "extjs/grid/GridFilters.js" );
+		scriptIncluder.include( "xwc-grid-filter-filter", "extjs/grid/filter/Filter.js" );
+		scriptIncluder.include( "xwc-grid-filter-boolean", "extjs/grid/filter/BooleanFilter.js" );
+		scriptIncluder.include( "xwc-grid-filter-date", "extjs/grid/filter/DateFilter.js" );
+		scriptIncluder.include( "xwc-grid-filter-list", "extjs/grid/filter/ListFilter.js" );
+		scriptIncluder.include( "xwc-grid-filter-numeric", "extjs/grid/filter/NumericFilter.js" );
+		scriptIncluder.include( "xwc-grid-filter-string", "extjs/grid/filter/StringFilter.js" );
+		scriptIncluder.include( "xwc-grid-filter-object", "extjs/grid/filter/ObjectFilter.js" );
+		scriptIncluder.include( "xwc-grid-menu-editable", "extjs/grid/menu/EditableItem.js" );
+		scriptIncluder.include( "xwc-grid-menu-rangemenu", "extjs/grid/menu/RangeMenu.js" );
+		// Language files
+		scriptIncluder.include( "ext-all-lang", getResourceBaseUri() + "build/locale/ext-lang-" + lang + "-min.js" );
+		scriptIncluder.include( "ext-xeo-messages", "ext-xeo/js/localization/ext-xeo-messages_" + lang+ ".js" );
+		scriptIncluder.include( "ext-xeo-app", "ext-xeo/js/App.js" );
+		
+		// Utility Scrits
+		scriptIncluder.addHeaderScript( "s.gif", "Ext.BLANK_IMAGE_URL = '" +
+				ExtJsTheme.composeUrl("extjs/resources/images/default/s.gif") + "';" ); 
+		
+		scriptIncluder.addFooterScript( "ExtQuickTips", "if(!window.parent.App)  var App = new Ext.App({});" );
+		scriptIncluder.addFooterScript( "Ext.App", "Ext.onReady( function() {Ext.QuickTips.init();} );" );
+		
+
+	}
+	
+	protected EboContext getEboContext(){
+		return boApplication.currentContext().getEboContext();
+	}
+
+	protected String getApplicationLanguage() {
+		
 		String lang = null;
 		lang = boApplication.getDefaultApplication().getApplicationLanguage();
 
-		if (boApplication.currentContext().getEboContext() != null) {
-			boSessionUser user = boApplication.currentContext().getEboContext()
-					.getBoSession().getUser();
+		EboContext ctx = getEboContext(); 
+		if ( ctx != null) {
+			boSessionUser user = ctx.getBoSession().getUser();
 			try {
 				if (user.getLanguage() != null) {
 					lang = user.getLanguage().toLowerCase();
 					if (lang.length() > 3) {
-						lang = (String) lang.subSequence(0, 2);
+						lang = lang.substring(0, 2);
 					}
 				}
 			} catch (Exception e) {
-				lang = XUIMessagesLocalization.getThreadCurrentLocale()
-						.getLanguage();
-				logger.warn(" Could not retrieve the language, using system language '%s' ",e,lang);
+				if (lang == null){
+					lang = XUIMessagesLocalization.getThreadCurrentLocale()
+							.getLanguage();
+					logger.warn(" Could not retrieve the language, using system language '%s' ",e,lang);
+				}
 			}
 		}
+
+		if (lang == null){
+			lang = XUIMessagesLocalization.getThreadCurrentLocale()
+					.getLanguage();
+		}
+		
 		lang = lang.toLowerCase();
-
-		logger.finer("Using '%s' as language for the User",lang);
-		
-		// Extjs
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-base",
-				composeUrl(getResourceBaseUri() + "adapter/ext/ext-base.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all",
-				composeUrl(getResourceBaseUri() + "ext-all.js"));
-
-		// File[] x = new File(
-		// "C:\\projects_eclipse\\xeo\\xeo_v3_xwc\\webapps\\default\\extjs\\pkgs"
-		// ).listFiles();
-		// scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-		// "ext-allext-dd-debug.js",
-		// composeUrl( getResourceBaseUri() + "pkgs/ext-foundation-debug.js" )
-		// );
-		//
-		// scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-		// "ext-allext-dd-debug1.js",
-		// composeUrl( getResourceBaseUri() + "pkgs/ext-dd-debug.js" ) );
-
-		// for( File y : x ) {
-		// if( y.getName().indexOf("ext-") > -1 &&
-		// y.getName().indexOf("-debug.js") > -1 ) {
-		// scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all"
-		// + y.getName() ,
-		// composeUrl( getResourceBaseUri() + "pkgs/" + y.getName() ) );
-		// }
-		// }
-
-		// for( File y : x ) {
-		// if( y.getName().indexOf("ext-") == -1 &&
-		// y.getName().indexOf("-debug.js") > -1 &&
-		// y.getName().indexOf("foundation") > -1) {
-		// System.out.println( y.getName() );
-		// scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all"
-		// + y.getName() ,
-		// composeUrl( getResourceBaseUri() + "pkgs/" + y.getName() ) );
-		// }
-		// }
-		//
-		// for( File y : x ) {
-		// if( y.getName().indexOf("grid-property") == -1 &&
-		// y.getName().indexOf("editor-debug") == -1 &&
-		// y.getName().indexOf("ext-") == -1 && y.getName().indexOf("-debug.js")
-		// > -1 ) {
-		// System.out.println( y.getName() );
-		// scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-all"
-		// + y.getName() ,
-		// composeUrl( getResourceBaseUri() + "pkgs/" + y.getName() ) );
-		// }
-		// }
-		//
-
-		// xwc
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "xwc-core",
-				composeUrl("xwc/js/xwc-core.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"xwc-messages", composeUrl("xwc/js/localization/xwc-messages_"
-						+ lang + ".js"));
-
-		// Grid Searc
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "ext-xeo",
-				composeUrl("ext-xeo/js/ext-xeo.js"));
-		// scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-		// "ext-xeo1", composeUrl( "ext-xeo/js/SearchField.js" ) );
-		
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"gridDrag", composeUrl("ext-xeo/js/griddrag.js"));
-		
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"ExtXeo.grid", composeUrl("ext-xeo/js/GridPanel.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"xwc-components", composeUrl("ext-xeo/js/xwc-components.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"ExtXeo.tabs", composeUrl("ext-xeo/js/Tabs.js"));
-		
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"ExtXeo.TreePanelJCR", composeUrl("ext-xeo/js/TreePanelJCR.js"));
-
-		// Grid Filters
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"xwc-grid-filter",
-				ExtJsTheme.composeUrl("extjs/grid/GridFilters.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"xwc-grid-filter-filter",
-				ExtJsTheme.composeUrl("extjs/grid/filter/Filter.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"xwc-grid-filter-boolean",
-				ExtJsTheme.composeUrl("extjs/grid/filter/BooleanFilter.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"xwc-grid-filter-date",
-				ExtJsTheme.composeUrl("extjs/grid/filter/DateFilter.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"xwc-grid-filter-list",
-				ExtJsTheme.composeUrl("extjs/grid/filter/ListFilter.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"xwc-grid-filter-numeric",
-				ExtJsTheme.composeUrl("extjs/grid/filter/NumericFilter.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"xwc-grid-filter-string",
-				ExtJsTheme.composeUrl("extjs/grid/filter/StringFilter.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"xwc-grid-filter-object",
-				ExtJsTheme.composeUrl("extjs/grid/filter/ObjectFilter.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"xwc-grid-menu-editable",
-				ExtJsTheme.composeUrl("extjs/grid/menu/EditableItem.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"xwc-grid-menu-rangemenu",
-				ExtJsTheme.composeUrl("extjs/grid/menu/RangeMenu.js"));
-
-		// Language files
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"ext-all-lang", composeUrl(getResourceBaseUri()
-						+ "build/locale/ext-lang-" + lang + "-min.js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"ext-xeo-messages",
-				composeUrl("ext-xeo/js/localization/ext-xeo-messages_" + lang
-						+ ".js"));
-		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER,
-				"ext-xeo-app", composeUrl("ext-xeo/js/App.js"));
-
-		
-		
-		// Utility Scrits
-		XUIRequestContext oRequestContext;
-		oRequestContext = XUIRequestContext.getCurrentContext();
-
-		scriptContext
-				.add(XUIScriptContext.POSITION_HEADER,
-						"s.gif",
-						"Ext.BLANK_IMAGE_URL = '"
-								+ oRequestContext.getResourceUrl(ExtJsTheme
-										.composeUrl("extjs/resources/images/default/s.gif"))
-								+ "';");
-
-		scriptContext.add(XUIScriptContext.POSITION_FOOTER, "ExtQuickTips",
-				"Ext.onReady( function() {Ext.QuickTips.init();} );");
-		scriptContext.add(XUIScriptContext.POSITION_FOOTER, "Ext.App",
-				"if(!window.parent.App)  var App = new Ext.App({});");
-
+		return lang;
 	}
+
 
 	public String getBodyStyle() {
 		return " ext-ie ext-ie7 x-aero";
@@ -337,6 +258,36 @@ public class ExtJsTheme implements XUITheme {
 
 	public String getResourceBaseUri() {
 		return "extjs/";
+	}
+	
+	protected class JavaScriptIncluder{
+		
+		private XUIScriptContext scriptContext;
+		private String builderVersion;
+		
+		public JavaScriptIncluder(XUIScriptContext ctx, String buildVersion){
+			this.scriptContext = ctx;
+			this.builderVersion = buildVersion;
+		}
+		
+		public void include(String id, String url){
+			scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, id,
+					composeUrl(url + "?id=" + builderVersion));
+		}
+		
+		public void includeRegular(String id, String url){
+			scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, id,
+					composeUrl(url));
+		}
+		
+		public void addFooterScript(String id, String script){
+			scriptContext.add(XUIScriptContext.POSITION_FOOTER,id,script);
+		}
+		
+		public void addHeaderScript(String id, String script){
+			scriptContext.add(XUIScriptContext.POSITION_HEADER,id,script);
+		}
+		
 	}
 
 }
