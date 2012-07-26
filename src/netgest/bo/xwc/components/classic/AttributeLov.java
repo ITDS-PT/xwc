@@ -37,7 +37,10 @@ public class AttributeLov extends AttributeBase {
             oInpConfig.addString("triggerAction", "all");
             oInpConfig.addString("forceSelection", "true" );
             if( oAtt.isReadOnly() ) {
-            	oInpConfig.add("triggerAction", "''" ); 
+            	oInpConfig.add("triggerAction", "''" );
+            	oInpConfig.add("readOnly", true );
+            	if (oComp.getValue() == null)
+            		oInpConfig.add("disabled", true );
             }
             oInpConfig.add("store", getLovStore(oAtt) );
             oInpConfig.addString("mode", "local" );
