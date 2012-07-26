@@ -21,6 +21,7 @@ import netgest.bo.security.securityRights;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.grid.GridPanelExtJsRenderer;
@@ -72,24 +73,46 @@ public class GridExplorer extends List {
 		EDIT
 	}
 	
+	/**
+	 * The Position of the Preview Panel ( OFF, LEFT, RIGHT, BOTTOM)
+	 */
+	@Values({"OFF","LEFT","RIGHT","BOTTOM"})
 	private XUIViewProperty<PreviewPanelPosition> previewPanelPosition = 
 		new XUIViewProperty<PreviewPanelPosition>("previewPanelPosition", this, PreviewPanelPosition.OFF );
 	
+	/**
+	 * Whether or not to show the preview panel 
+	 */
 	private XUIViewProperty<Boolean> enablePreviewPanel = 
 		new XUIViewProperty<Boolean>("enablePreviewPanel", this, true );
 	
+	/**
+	 * Whether or not to show the advanced search button
+	 */
 	private XUIViewProperty<Boolean> enableAdvancedSearch = 
 		new XUIViewProperty<Boolean>("enableAdvancedSearch", this, false );
 
+	/**
+	 * Whether or not to show the save view button
+	 */
 	private XUIViewProperty<Boolean> enableSaveView = 
 		new XUIViewProperty<Boolean>("enableSaveView", this, true );
 
+	/**
+	 * Configures the height of the preview panel
+	 */
 	private XUIViewProperty<Integer> previewPanelHeight = 
 		new XUIViewProperty<Integer>("previewPanelHeight", this, 250 );
 
+	/**
+	 * Sets the mode of the preview panel (currently only works in preview)
+	 */
 	private XUIViewProperty<PreviewPanelMode> previewPanelMode = 
 		new XUIViewProperty<PreviewPanelMode>("previewPanelMode", this, PreviewPanelMode.PREVIEW );
 
+	/**
+	 * Configures the preview panel with
+	 */
 	private XUIViewProperty<Integer> previewPanelWidth = 
 		new XUIViewProperty<Integer>("previewPanelWidth", this, 350 );
 	
@@ -99,9 +122,16 @@ public class GridExplorer extends List {
 	private XUIViewStateProperty<Long> currentSavedViewBOUI =
 		new XUIViewStateProperty<Long>("currentSavedViewBOUI", this );
 	
+	/**
+	 * Configures the command to create the preview
+	 */
 	private XUIBaseProperty<String> previewCommand = 
 		new XUIBaseProperty<String>("previewCommand", this);
 	
+	/**
+	 * The identifier of a toolbar in the viewer to merge with the gridexplorer
+	 * toolbar
+	 */
 	private XUIViewStateProperty<String> renderExplorerOnToolBar =
 		new XUIViewStateProperty<String>("renderExplorerOnToolBar", this );
 	
