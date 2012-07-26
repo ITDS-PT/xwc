@@ -282,6 +282,8 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 				if (subClasseDef.getClassType() == boDefHandler.TYPE_CLASS ){
 					rootMenu.setTargetMethod("addNewToBridge");
 					rootMenu.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
+				} else {
+					rootMenu.setTargetMethod("dummy");
 				}
 				
 				if( subClassesDef.size() > 1 ) {
@@ -307,6 +309,8 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 						if (subClasseDef.getClassType() == boDefHandler.TYPE_CLASS ){
 							viewerMethod.setTargetMethod( "addNewToBridge" );
 							viewerMethod.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
+						} else {
+							viewerMethod.setTargetMethod("dummy");
 						}
 						viewerMethod.setValue( subClasseDef.getName() );
 						
