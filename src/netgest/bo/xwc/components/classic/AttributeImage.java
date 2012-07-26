@@ -92,7 +92,7 @@ public class AttributeImage extends ViewerOutputSecurityBase {
 
             oLabel.setInstanceId( getInstanceId() );
 
-            this.getChildren().add( this.oLabel );
+            //this.getChildren().add( this.oLabel );
         }
     }
     
@@ -170,7 +170,8 @@ public class AttributeImage extends ViewerOutputSecurityBase {
         );
 
         // Label
-        setLabel( sBeanExpression +  ".label}" );
+        if (label.isDefaultValue())
+        	setLabel( sBeanExpression +  ".label}" );
 
         // Config
         this.dataType.setValue( 
