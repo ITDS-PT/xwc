@@ -71,6 +71,7 @@ public class AttributeNumber extends AttributeBase {
                     	//clearInvalid();
                     	setValid(true);
                     	setValue( oSubmitedBigDecimal );
+                    	setInvalidText( null );
                     }
                 }
                 catch( NumberFormatException ex ) {
