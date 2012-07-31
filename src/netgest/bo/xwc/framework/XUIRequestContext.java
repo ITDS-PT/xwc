@@ -45,6 +45,13 @@ public class XUIRequestContext {
             return null;
         }
     };
+    
+    /**
+     * For testing purposes only 
+     */
+    protected XUIRequestContext(){
+    	bIsClosed = false;
+    }
 
     protected XUIRequestContext( XUIApplicationContext oApplication ) {
         if( bIsClosed ) throwCloseException();
