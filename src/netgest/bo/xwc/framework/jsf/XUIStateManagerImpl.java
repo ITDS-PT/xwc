@@ -48,8 +48,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPInputStream;
@@ -238,6 +238,7 @@ public class XUIStateManagerImpl extends StateManager {
     	FacesContext context = FacesContext.getCurrentInstance();
     	
         String idInLogicalMap;
+        String idInMap;
 
         int sep = idString.indexOf(NamingContainer.SEPARATOR_CHAR);
         assert(-1 != sep);
@@ -257,8 +258,16 @@ public class XUIStateManagerImpl extends StateManager {
             Map<?,?> logicalMap = (Map<?,?>) externalCtx.getSessionMap()
                   .get(LOGICAL_VIEW_MAP);
             
-            if( logicalMap.containsKey(idInLogicalMap) )
-            	logicalMap.remove( idInLogicalMap );
+            if( logicalMap.containsKey(idInLogicalMap) ) {
+            	idInMap = idString.substring(sep + 1);
+            	Map<?,?> map = (Map<?,?>)logicalMap.get( idInLogicalMap );
+            	if( map.containsKey(  idInMap  ) ) {
+            		map.remove( idInMap );
+            		if( map.size() == 0 ) {
+            			logicalMap.remove( idInLogicalMap );
+            		}
+            	}
+            }
             
         }
         
