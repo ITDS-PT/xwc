@@ -29,7 +29,6 @@ import javax.xml.transform.stream.StreamSource;
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.ejb.boManagerLocal;
-import netgest.bo.framework.XEOServiceLocator;
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.preferences.Preference;
 import netgest.bo.preferences.PreferenceManager;
@@ -269,12 +268,12 @@ public class XEOEditBean extends XEOBaseBean
         EboContext oEboContext = getEboContext();
         try {
         	if( parentBoui != 0 ) {
-	            this.oBoObect =
-	            	XEOServiceLocator.getObjectProvider().createObjectWithParent( oEboContext, sObjectName, parentBoui );
+        		this.oBoObect = 
+    	                boObject.getBoManager().createObjectWithParent( oEboContext, sObjectName, parentBoui );
 	        }
         	else {
 	            this.oBoObect = 
-	                boObject.getBoManager().createObjectWithParent( oEboContext, sObjectName, parentBoui );
+	                boObject.getBoManager().createObject( oEboContext, sObjectName );
         	}
             this.oBoObect.poolSetStateFull();
             this.setCurrentObjectKey( String.valueOf( this.oBoObect.getBoui() ) );
