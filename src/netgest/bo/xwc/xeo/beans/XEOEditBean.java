@@ -29,6 +29,7 @@ import javax.xml.transform.stream.StreamSource;
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.ejb.boManagerLocal;
+import netgest.bo.framework.XEOServiceLocator;
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.preferences.Preference;
 import netgest.bo.preferences.PreferenceManager;
@@ -36,6 +37,7 @@ import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.runtime.boObjectListBuilder;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.boThread;
 import netgest.bo.runtime.bridgeHandler;
@@ -43,6 +45,7 @@ import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
+import netgest.bo.utils.XEOObjectUtils;
 import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.annotations.Visible;
 import netgest.bo.xwc.components.classic.AttributeBase;
@@ -53,6 +56,7 @@ import netgest.bo.xwc.components.classic.MessageBox;
 import netgest.bo.xwc.components.classic.Tab;
 import netgest.bo.xwc.components.classic.Tabs;
 import netgest.bo.xwc.components.classic.Window;
+import netgest.bo.xwc.components.classic.autocomplete.FindAttributesInTemplate;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataListConnector;
@@ -83,6 +87,7 @@ import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+import netgest.utils.StringUtils;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
 
@@ -101,8 +106,25 @@ import org.w3c.dom.NodeList;
  */
 public class XEOEditBean extends XEOBaseBean 
 {
-    
 	
+	
+	
+	
+	
+    
+	public static final String VIEW_BEAN_ERRORS_ID = "viewBean_erros";
+
+
+	public XEOEditBean(){
+		super();
+	}
+	
+	/**
+	 * For testing purposes only
+	 */
+	public XEOEditBean(EboContext ctx){
+		super(ctx);
+	}
 	
     public static final Logger log = Logger.getLogger( XEOEditBean.class.getName() );
     
@@ -134,10 +156,6 @@ public class XEOEditBean extends XEOBaseBean
     /**
      * @return	The current XEO Object associated to this bean
      */
-    
-    
-    
-    
     public boObject getXEOObject() {
       try {
 
@@ -145,7 +163,6 @@ public class XEOEditBean extends XEOBaseBean
 	            oBoObect = boObject.getBoManager().loadObject
 	                ( boApplication.currentContext().getEboContext() , Long.parseLong(String.valueOf( getCurrentObjectKey() )));
 	            
-	         
 	            if( !oBoObect.userReadThis() )
 	            	oBoObect.markAsRead(); 
 	            
@@ -155,7 +172,7 @@ public class XEOEditBean extends XEOBaseBean
 			    		oBoObect.transactionBegins();
 			    		bTransactionStarted = true;
 			    	}
-					Window wnd = (Window)XUIRequestContext.getCurrentContext().getViewRoot().findComponent( Window.class );
+					Window wnd = (Window) getRequestContext().getViewRoot().findComponent( Window.class );
 					if( wnd != null && wnd.getOnClose() == null ) {
 						wnd.setOnClose( "#{"+ getId() +".cancel}" );
 					}
@@ -249,15 +266,15 @@ public class XEOEditBean extends XEOBaseBean
      * @param sObjectName
      */
     public void createNew( String sObjectName, long parentBoui ) {
-        EboContext oEboContext = boApplication.currentContext().getEboContext();
+        EboContext oEboContext = getEboContext();
         try {
         	if( parentBoui != 0 ) {
-	            this.oBoObect = 
-	                boObject.getBoManager().createObjectWithParent( oEboContext, sObjectName, parentBoui );
-        	}
+	            this.oBoObect =
+	            	XEOServiceLocator.getObjectProvider().createObjectWithParent( oEboContext, sObjectName, parentBoui );
+	        }
         	else {
 	            this.oBoObect = 
-	                boObject.getBoManager().createObject( oEboContext, sObjectName );
+	                boObject.getBoManager().createObjectWithParent( oEboContext, sObjectName, parentBoui );
         	}
             this.oBoObect.poolSetStateFull();
             this.setCurrentObjectKey( String.valueOf( this.oBoObect.getBoui() ) );
@@ -266,6 +283,9 @@ public class XEOEditBean extends XEOBaseBean
             throw new RuntimeException(e);
         }
     }
+    
+    
+    
 
 
     /**
@@ -718,10 +738,9 @@ public class XEOEditBean extends XEOBaseBean
     
     @Visible
     public void closeView() {
-    	XUIRequestContext oRequestContext;
-		oRequestContext = XUIRequestContext.getCurrentContext();
+    	XUIRequestContext oRequestContext = getRequestContext();
 		XVWScripts.closeView( oRequestContext.getViewRoot() );
-    	XUIViewRoot viewRoot = oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Dummy.xvw");
+    	XUIViewRoot viewRoot = oRequestContext.getSessionContext().createView(SystemViewer.DUMMY_VIEWER);
     	oRequestContext.setViewRoot( viewRoot );
 		oRequestContext.renderResponse();
     }
@@ -734,7 +753,7 @@ public class XEOEditBean extends XEOBaseBean
     public void destroy()  throws boRuntimeException {
     	try {
     		getXEOObject().destroy(); 
-	        XUIRequestContext.getCurrentContext().addMessage(
+	        getRequestContext().addMessage(
 	                "Bean",
 	                new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, 
 	                    BeansMessages.TITLE_SUCCESS.toString(), 
@@ -745,7 +764,7 @@ public class XEOEditBean extends XEOBaseBean
     		if( e instanceof boRuntimeException ) {
     			boRuntimeException boEx = (boRuntimeException)e;
     			if ( "BO-3022".equals( boEx.getErrorCode() ) ) {
-        		        XUIRequestContext.getCurrentContext().addMessage(
+    				getRequestContext().addMessage(
         		                "Bean",
         		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
         		                    BeansMessages.TITLE_ERROR.toString(), 
@@ -756,7 +775,7 @@ public class XEOEditBean extends XEOBaseBean
     			}
     			else if ("BO-3023".equals( boEx.getErrorCode() ) )
     			{
-        		        XUIRequestContext.getCurrentContext().addMessage(
+    				getRequestContext().addMessage(
             		                "Bean",
             		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
             		                    BeansMessages.TITLE_ERROR.toString(), 
@@ -797,7 +816,7 @@ public class XEOEditBean extends XEOBaseBean
 	    	
     	}
     	else {
-	    	oRequestContext = XUIRequestContext.getCurrentContext();
+	    	oRequestContext = getRequestContext();
 	    	
 	    	try {
 	    		getXEOObject().update();
@@ -835,7 +854,7 @@ public class XEOEditBean extends XEOBaseBean
 	    			}
 	    			else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
 	    				if( boEx.getSrcObject() != getXEOObject() ) {
-	    					oRequestContext.addMessage( "viewBean_erros", new XUIMessage(
+	    					oRequestContext.addMessage( VIEW_BEAN_ERRORS_ID, new XUIMessage(
 	    							XUIMessage.TYPE_ALERT, 
 	    							XUIMessage.SEVERITY_ERROR,
 	    							BeansMessages.ERROR_SAVING_RELATED_OBJECT.toString(),
@@ -870,7 +889,7 @@ public class XEOEditBean extends XEOBaseBean
         XUIViewRoot         oViewRoot;
         Window				oWnd;
 
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         oSessionContext = oRequestContext.getSessionContext();
         
         AttributeBase oAtt = (AttributeBase)getViewRoot().findComponent( sCompId );
@@ -1028,7 +1047,7 @@ public class XEOEditBean extends XEOBaseBean
     public void setOrphanEdit( XEOEditBean oEditBean ) throws boRuntimeException {
         XUIRequestContext   oRequestContext;
         XUIViewRoot         oLastView;
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         oLastView = oRequestContext.getViewRoot();
         boObject currentObject = getXEOObject();
         try {
@@ -1131,15 +1150,6 @@ public class XEOEditBean extends XEOBaseBean
         
         String viewerName = getLookupViewer( bridge, refObj );
         
-//        if( objectName != null ) {
-////        	refObj = boDefHandler.getBoDefinition( objectName );
-//        	if( oAttDef.getChildIsOrphan() ) {
-//        		viewerName = getViewerResolver().getViewer( objectName, XEOViewerResolver.ViewerType.LOOKUP );
-//        	}
-//        	else {
-//        		viewerName = getViewerResolver().getViewer( objectName, XEOViewerResolver.ViewerType.EDIT );
-//        	}
-//        }
         
         // Obtem a bean do objecto a ser editado
         // e associa o objecto do parametro
@@ -1210,7 +1220,7 @@ public class XEOEditBean extends XEOBaseBean
         boDefAttribute  	oAttDef; 
         DataListConnector 	listConnector;
         
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         oSessionContext = oRequestContext.getSessionContext();
         
         oViewRoot		= null;
@@ -1558,7 +1568,7 @@ public class XEOEditBean extends XEOBaseBean
         XUIViewRoot         oLastViewRoot;
         
         
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         oLastViewRoot = oRequestContext.getViewRoot();
         try {
             if( oSelRecs.length > 0 )         
@@ -1600,6 +1610,7 @@ public class XEOEditBean extends XEOBaseBean
                 }
                 
                 oInput.updateModel();
+                //oInput.validateModel();
                 showObjectErrors();
             }
         } finally {
@@ -1615,7 +1626,7 @@ public class XEOEditBean extends XEOBaseBean
      * @param attributeName
      * @param bouis
      */
-    private void updateUserFavorites(String objectName, 
+    protected void updateUserFavorites(String objectName, 
     		String attributeName, long[] bouis){
     	PreferenceManager manager = boApplication.getDefaultApplication().getPreferencesManager();
     	Preference pref = manager.getUserPreference(BridgeLookup.PREFERENCE_PREFIX 
@@ -1667,7 +1678,7 @@ public class XEOEditBean extends XEOBaseBean
         XUIRequestContext   oRequestContext;
         bridgeHandler       oBridgeHandler;
         
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
 
         XUIViewRoot oCurrentView = oRequestContext.getViewRoot();
 
@@ -1722,7 +1733,7 @@ public class XEOEditBean extends XEOBaseBean
     }
     
     public void cleanBridgeLookup() throws boRuntimeException{
-ActionEvent oEvent = getRequestContext().getEvent();
+    	ActionEvent oEvent = getRequestContext().getEvent();
         
         // Get the src of the event
         XUICommand oCommand = (XUICommand)oEvent.getComponent();	
@@ -1805,7 +1816,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
     		}
     		else {
     			if( !silent ) {
-	        		XUIRequestContext.getCurrentContext().addMessage( "validation" , 
+	        		getRequestContext().addMessage( "validation" , 
 	        				new XUIMessage(
         						XUIMessage.TYPE_POPUP_MESSAGE, 
         						XUIMessage.SEVERITY_INFO, 
@@ -1875,10 +1886,8 @@ ActionEvent oEvent = getRequestContext().getEvent();
 	}
 	
 	private void showObjectErrors(boObject oXEOObject) {
-        XUIRequestContext   oRequestContext;
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        XUIRequestContext   oRequestContext = getRequestContext();
         
-		
 		StringBuilder sErros = new StringBuilder();
 		
 		if( oXEOObject.getAttributeErrors() != null ) {
@@ -1905,7 +1914,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
 		}
 
 		if( sErros.length() > 0 ) {
-			oRequestContext.addMessage( "viewBean_erros", new XUIMessage(
+			oRequestContext.addMessage( VIEW_BEAN_ERRORS_ID, new XUIMessage(
 					XUIMessage.TYPE_ALERT, 
 					XUIMessage.SEVERITY_ERROR,
 					BeansMessages.TITLE_ERRORS.toString(),
@@ -2033,7 +2042,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
 	@Visible
 	public void canCloseTab() 
 	{
-		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
+		XUIRequestContext oRequestContext = getRequestContext();
 		XUIViewRoot viewRoot = oRequestContext.getViewRoot();
 		
 		if( getIsChanged() ) 
@@ -2237,8 +2246,8 @@ ActionEvent oEvent = getRequestContext().getEvent();
         XUISessionContext   oSessionContext;
         XUIViewRoot         oViewRoot;
 
-        oRequestContext = XUIRequestContext.getCurrentContext();
-        oSessionContext = oRequestContext.getSessionContext();
+        oRequestContext = getRequestContext();
+        oSessionContext = getSessionContext();
         
         oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/XEOEditProperties.xvw");
         ((XEOEditBean)oViewRoot.getBean("viewBean")).setCurrentObjectKey( Long.toString( getXEOObject().getBoui() ) );
@@ -2409,8 +2418,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
     @Visible
     public void confirm() throws boRuntimeException {
         
-        XUIRequestContext oRequestContext;
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        XUIRequestContext oRequestContext = getRequestContext();
          
     	processValidate(); 
     	if( this.isValid() ) {
@@ -2422,7 +2430,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
     			oWndComp.destroy();
     		}
     		else {
-        		XVWScripts.closeView( oRequestContext.getViewRoot() );
+        		XVWScripts.closeView( oRequestContext.getViewRoot(), oRequestContext.getScriptContext() );
         		oRequestContext.getViewRoot().setRendered( false );
         		oRequestContext.renderResponse();
     		}
@@ -2433,7 +2441,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
 		        oParentViewRoot.syncClientView();
 	        }
 	        
-	        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/components/viewers/Dummy.xvw" ) );
+	        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( SystemViewer.DUMMY_VIEWER ) );
     	}
 
     }
@@ -2446,8 +2454,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
     @Visible
     public void cancel() throws boRuntimeException
     {
-        XUIRequestContext oRequestContext;
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        XUIRequestContext oRequestContext = getRequestContext();
         
         // Rollback object changes
         boObject currentObject = getXEOObject();
@@ -2459,7 +2466,7 @@ ActionEvent oEvent = getRequestContext().getEvent();
         oWndComp.destroy();
 
         this.bTransactionStarted = false;
-        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/components/viewers/Dummy.xvw" ) );
+        oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( SystemViewer.DUMMY_VIEWER ) );
 
     }
     
@@ -2764,5 +2771,79 @@ ActionEvent oEvent = getRequestContext().getEvent();
     	} else {
     		lookupAttribute(lookupId);
     	}
+    }
+    
+    /**
+     * 
+     * Retrieve the results for an autocomplete component
+     * 
+     * @param objectName The name of the XEOModel to search
+     * @param attributeName The name of the attribute to search for
+     * @param filterQuery The filter to apply to the query
+     * @param filter An existing filter to use instead of a query to the XEOModel
+     * @param template The template to return values 
+     * 
+     * @return A JSON array with the values (each value is a JSONObject with key/value properties)
+     */
+    public String getAutoCompleteSearchResult( String objectName, 
+    		String attributeName, String filterQuery, 
+    		String filter, String template){
+    	
+    	JSONArray result = new JSONArray();
+		
+		String boqlQuery = "";
+		
+		if (StringUtils.isEmpty( filterQuery )){
+			StringBuilder boql = new StringBuilder().
+				 append("select ")
+				.append(objectName)
+				.append(" where ")
+				.append(attributeName)
+				.append(" LIKE ?");
+			boqlQuery = boql.toString();
+		} else {
+			StringBuilder boql = new StringBuilder(filterQuery);
+			boql.append( "AND " ).append(attributeName).append(" LIKE ?");
+			boqlQuery = boql.toString();
+		}
+		
+		boObjectList lst = new boObjectListBuilder( getEboContext(), 
+					boqlQuery ).arg( filter + "%" ).pageSize( 15 ).build();
+		
+		if (lst.isEmpty()){
+			//Search EboTextIndex
+			lst.setFullTextSearch( boObjectList.arrangeFulltext( getEboContext(), filter ) );
+			lst.refreshData();
+		} 
+		
+		while (lst.next()){
+			try {
+				boObject current = lst.getObject();
+				JSONObject currentObj = new JSONObject();
+				
+				if (StringUtils.isEmpty( template ))
+					currentObj.put( "value" , current.getTextCARDID().toString());
+				else{
+					FindAttributesInTemplate finder = new FindAttributesInTemplate();
+					List<String> found = finder.findAttributes( template );
+					XEOObjectUtils replacer = new XEOObjectUtils();
+					for (Iterator<String> it = found.iterator(); it.hasNext();){
+						String currentAttribute = it.next();
+						String toReplace = "{" + currentAttribute + "}";
+						String value = replacer.getStringRepresentation( current.getAttribute( currentAttribute ) );
+						template = template.replace( toReplace, value );
+					}
+					currentObj.put( "value" , template );
+				}
+				currentObj.put( "key", String.valueOf( current.getBoui() )  );
+				
+				result.put( currentObj );
+			} catch ( Exception e ) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result.toString();
+		
     }
 }
