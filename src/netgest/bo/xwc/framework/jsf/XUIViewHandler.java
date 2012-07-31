@@ -2,7 +2,6 @@ package netgest.bo.xwc.framework.jsf;
 
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -43,7 +42,6 @@ import netgest.bo.def.boDefHandler;
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.boApplication;
 import netgest.bo.transaction.XTransaction;
-import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
 import netgest.bo.xwc.framework.PackageIAcessor;
@@ -58,6 +56,8 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.bo.xwc.xeo.beans.SystemViewer;
+import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.bo.xwc.xeo.beans.XEOSecurityBaseBean;
 import netgest.utils.StringUtils;
 import netgest.utils.ngtXMLUtils;
@@ -503,6 +503,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	            renderKitId =
 	                context.getApplication().getViewHandler().calculateRenderKitId(
 	                    context);
+	            renderKitId = result.getRenderKitId();
 	            if (log.isDebugEnabled()) {
 	                log.debug(MessageLocalizer.getMessage("RENDERKITID_FOR_THIS_VIEW_AS_DETERMINATED_BY_CALCULTERENDERKIT")+" "
 	                          + renderKitId);
@@ -596,6 +597,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	            
             	} 
                 catch ( Exception ex ) {
+                	ex.printStackTrace();
                     throw new FacesException( XUICoreMessages.VIEWER_CLASS_NOT_FOUND.toString( beanClassName, viewId ) );
                 }
             }
@@ -1110,7 +1112,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 				
             }
             
-        	if( !oViewToRender.getViewId().equals("netgest/bo/xwc/components/viewers/Dummy.xvw") ) {
+        	if( !oViewToRender.getViewId().equals(SystemViewer.DUMMY_VIEWER) ) {
 	            oCompElement = oAjaxXmlResp.createElement( "component" );
 	            oCompElement.setAttribute("id", oViewToRender.getClientId() );
 	            oCompElement.appendChild( oAjaxXmlResp.createCDATASection( sResult ) );
