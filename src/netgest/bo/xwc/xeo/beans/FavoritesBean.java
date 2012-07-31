@@ -228,7 +228,7 @@ public class FavoritesBean extends XEOBaseBean {
 		XUIRequestContext oRequestContext;
 		oRequestContext = XUIRequestContext.getCurrentContext();
 		XVWScripts.closeView( oRequestContext.getViewRoot() );
-    	XUIViewRoot viewRoot = oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Dummy.xvw");
+    	XUIViewRoot viewRoot = oRequestContext.getSessionContext().createView(SystemViewer.DUMMY_VIEWER);
     	oRequestContext.setViewRoot( viewRoot );
 		oRequestContext.renderResponse();
 	}
