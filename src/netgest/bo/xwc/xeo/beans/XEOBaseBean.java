@@ -65,6 +65,10 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 		return viewerResolver;
 	}
 	
+	public XEOBaseBean(EboContext ctx){
+		super(ctx);
+	}
+	
 	public XEOBaseBean() {
         super( boApplication.currentContext().getEboContext() );
     }
@@ -573,8 +577,11 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 		oRequestContext.setViewRoot( oViewRoot );
 		bean.initializeFilters( builder.getFilters() );
 	}
-
 	
+	
+	public void dummy(){
+		//Just to bind
+	}
 	
 }
 
