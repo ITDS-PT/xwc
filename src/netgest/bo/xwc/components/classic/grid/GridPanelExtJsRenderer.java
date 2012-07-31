@@ -93,23 +93,23 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
             if( oChildComp instanceof ActionButton ) {
 
-            if (!oChildComp.isRendered()) {
-                    return;
-            }            
-
-                String rendererType;
-                rendererType = oChildComp.getRendererType();
-                if (rendererType != null) {
-                    Renderer renderer = getRenderer( oChildComp, XUIRequestContext.getCurrentContext().getFacesContext() );
-                    if (renderer != null) {
-                        if( this.oExtButtons == null ) {
-                            oExtButtons = new ExtConfigArray();
-                        }
-                        oExtButtons.addChild(
-                            ((ExtJsRenderer)renderer).getExtJsConfig( (XUIComponentBase)oChildComp )
-                        );
-                    }
-                }
+	            if (!oChildComp.isRendered()) {
+	                    return;
+	            }            
+	
+	                String rendererType;
+	                rendererType = oChildComp.getRendererType();
+	                if (rendererType != null) {
+	                    Renderer renderer = getRenderer( oChildComp, XUIRequestContext.getCurrentContext().getFacesContext() );
+	                    if (renderer != null) {
+	                        if( this.oExtButtons == null ) {
+	                            oExtButtons = new ExtConfigArray();
+	                        }
+	                        oExtButtons.addChild(
+	                            ((ExtJsRenderer)renderer).getExtJsConfig( (XUIComponentBase)oChildComp )
+	                        );
+	                    }
+	                }
             }
             if( oChildComp instanceof ToolBar ) {
                 if (!oChildComp.isRendered()) {
@@ -949,8 +949,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oView.add("aggregateState", result.toString());
         /** END ML - 10-10-2011 **/
         
-        oView.add("onSelColumns", "function() { " + XVWScripts.getCommandScript("self", oGrid.getSelectColumnsCommand(), XVWScripts.WAIT_STATUS_MESSAGE ) + " }" );
-        oView.add("onResetDefaults", "function() { " + XVWScripts.getCommandScript("self", oGrid.getResetDefaultsCommand(), XVWScripts.WAIT_STATUS_MESSAGE ) + " }" );
+        oView.add("onSelColumns", "function() { " + XVWScripts.getCommandScript("self", oGrid.getSelectColumnsCommand(), XVWScripts.WAIT_DIALOG ) + " }" );
+        oView.add("onResetDefaults", "function() { " + XVWScripts.getCommandScript("self", oGrid.getResetDefaultsCommand(), XVWScripts.WAIT_DIALOG ) + " }" );
         //oGridConfig.addJSString("layout", "fit");
         
         if( this.oExtButtons != null ) {
@@ -993,6 +993,9 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             "	" + oGrid.getId() + "_nbar.destroy();\n" +
             "	" + oGrid.getId() + "_nbar = null;\n" +
             "	" + oGrid.getId() + "_filters = null;\n" +
+            " if (oGrid.getTopToolbar()) " + 
+            "	oGrid.getTopToolbar().destroy();\n" +
+            
             "}"
         );
         
@@ -1243,9 +1246,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             result = context.getRenderKit().getRenderer(oComp.getFamily(),
                                                         rendererType);
         }            
-        //return result; //FIXME: Coloquei isto aqui porque senão ia tentar renderizar
-        //a toolbat do Grid com a ToolBar Jquery e o GridPanel n está feito para isso.
-        return new ToolBar.XEOHTMLRenderer();
+        return result;
     }
     
     public void addGridScripts( XUIResponseWriter w ) {
