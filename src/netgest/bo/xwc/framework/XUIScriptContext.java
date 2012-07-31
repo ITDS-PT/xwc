@@ -1,16 +1,13 @@
 package netgest.bo.xwc.framework;
 
 import java.io.IOException;
-
-import java.util.Calendar;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Vector;
-
 
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.framework.jsf.XUIStaticField;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+import netgest.utils.StringUtils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,7 +25,7 @@ public class XUIScriptContext {
     public static final RenderPosition POSITION_INLINE = new RenderPosition( 2, "POSITION_INLINE" );;
     public static final RenderPosition POSITION_FOOTER = new RenderPosition( 3, "POSITION_FOOTER" );;
 
-    public Vector<Fragment> oFragmentsVector = new Vector<Fragment>();
+    protected Vector<Fragment> oFragmentsVector = new Vector<Fragment>();
 
     public void add( RenderPosition oPosition, String sId, CharSequence sCode ) {
         int iIdIdx;
@@ -46,9 +43,9 @@ public class XUIScriptContext {
 
         //oFragmentsVector.set( iIdIdx,new Fragment( TYPE_TEXT, oPosition, sId , sCode ) );
     }
-
-    public void addInclude( RenderPosition oPosition, String sId, String sURL ) {
-        int iIdIdx;
+    
+    private void addInclude(RenderPosition oPosition, String sId, String sURL, String urlAppend){
+    	int iIdIdx;
         assert oPosition != null : MessageLocalizer.getMessage("OPOSITION_CANNOT_BE_NULL");
         assert oPosition != POSITION_INLINE : "Cannot include scripts in POSTION_INLINE";
         assert sId != null: MessageLocalizer.getMessage("SID_CANNOT_BE_NULL");
@@ -57,16 +54,27 @@ public class XUIScriptContext {
         bInlineWritePending = bInlineWritePending || oPosition.getValue() == POSITION_INLINE.getValue();
 
         iIdIdx = getIndexById( sId );
+        if (StringUtils.hasValue( urlAppend )){
+        	sURL = sURL + "?id=" +  urlAppend;
+        }
         if( iIdIdx == -1 )
             oFragmentsVector.add( new Fragment( TYPE_INCLUDE, oPosition, sId, sURL ) );
         else
             oFragmentsVector.set( iIdIdx,new Fragment( TYPE_INCLUDE, oPosition, sId, sURL ) );
+    }
+    
+    
+    public void addSystemInclude(RenderPosition oPosition, String sId, String sURL, String systemId){
+    	addInclude( oPosition, sId, sURL , systemId );
+    }
 
+    public void addInclude( RenderPosition oPosition, String sId, String sURL ) {
+    	addInclude( oPosition, sId, sURL, null );
     }
 
     public void addIncludeBefore( String sBeforeId, RenderPosition oPosition, String sId, String sURL ) {
-        if( sBeforeId != null ) throw new IllegalArgumentException( ExceptionMessage.SBEFOREID_CANNOT_BE_NULL.toString());
-        if( oPosition != null ) throw new IllegalArgumentException(ExceptionMessage.OPOSITION_CANNOT_BE_NULL.toString());
+        if( sBeforeId == null ) throw new IllegalArgumentException( ExceptionMessage.SBEFOREID_CANNOT_BE_NULL.toString());
+        if( oPosition == null ) throw new IllegalArgumentException(ExceptionMessage.OPOSITION_CANNOT_BE_NULL.toString());
         if( sId != null ) throw new IllegalArgumentException(ExceptionMessage.SID_CANNOT_BE_NULL.toString());
 
         // Muda a flag para notificar que existem  inline para ser feito o render
