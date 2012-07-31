@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import javax.faces.component.UIComponent;
 
@@ -15,6 +15,7 @@ import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.ql.QLParser;
 import netgest.bo.ql.boqlParserException;
+import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.Logger;
@@ -56,10 +57,10 @@ import netgest.bo.xwc.framework.jsf.XUIWriterAttributeConst;
 import netgest.bo.xwc.framework.jsf.XUIWriterElementConst;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchAttributeChooser;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchLovValueChooserBean;
-import netgest.bo.xwc.xeo.advancedSearch.OperatorMapLoader;
-import netgest.bo.xwc.xeo.advancedSearch.RowInfo;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchRow.JOIN_OPERATOR;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchRow.VALUE_OPERATOR;
+import netgest.bo.xwc.xeo.advancedSearch.OperatorMapLoader;
+import netgest.bo.xwc.xeo.advancedSearch.RowInfo;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.utils.LovUtils;
 import netgest.utils.MetadataUtils;
@@ -67,6 +68,13 @@ import netgest.utils.StringUtils;
 
 public class AdvancedSearchBean extends XEOBaseBean {
 
+	public AdvancedSearchBean(EboContext ctx){
+		super(ctx);
+	}
+	
+	public AdvancedSearchBean(){
+		super();
+	}
 	
 	private final Logger logger = Logger.getLogger( AdvancedSearchBean.class );
 	
