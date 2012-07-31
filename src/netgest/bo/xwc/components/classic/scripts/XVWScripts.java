@@ -2,8 +2,8 @@ package netgest.bo.xwc.components.classic.scripts;
 
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.Form;
-import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.MessageBox.MessageBoxButtons;
+import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
@@ -278,38 +278,45 @@ public class XVWScripts {
     	return "";
     }
     
-    public static final void closeView( XUIViewRoot oViewRoot ) {
-		// A vista nao tem janela... ou seja deve estar inserida num tab
-		// o ecran inteiro... neste caso corre o script do lado do cliente
-		// para fechar a vista.
-        XUIRequestContext oRequestContext;
-        oRequestContext = XUIRequestContext.getCurrentContext();
-		oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER ,
+    public static final void closeView( XUIViewRoot oViewRoot, XUIScriptContext scriptCtx) {
+    	
+    	// A vista nao tem janela... ou seja deve estar inserida num tab
+    	// o ecran inteiro... neste caso corre o script do lado do cliente
+    	// para fechar a vista.
+    	scriptCtx.add( XUIScriptContext.POSITION_FOOTER ,
 				oViewRoot + "_close",
 				getCloseViewScript( oViewRoot )
 		);
-		oViewRoot.dispose();
+    	oViewRoot.dispose();
     	oViewRoot.setTransient( true );
+    }
+    
+    public static final void closeView( XUIViewRoot oViewRoot ) {
+        XUIRequestContext oRequestContext; 
+        oRequestContext = XUIRequestContext.getCurrentContext();
+		closeView( oViewRoot, oRequestContext.getScriptContext() );
     }
 
     public static final String getCloseViewScript( XUIViewRoot oViewRoot ) {
     	// Check if it's a window
     	StringBuilder sb = new StringBuilder(  );
     	Window oWnd =  (Window)oViewRoot.findComponent( Window.class );
+		
     	if( oWnd != null ) {
+    		
+    		String namingContainerId = oViewRoot.findComponent( XUIForm.class ).getClientId();
+    		String closeScript = "XVW.closeWindow('" + namingContainerId +  "','" + oWnd.getClientId() +"');";
+    		
     		// The is a window, so simply close the window
-    		sb
-    		.append( "Ext.onReady( function() { " )
-	        .append( "if( "+oWnd.getId()+" )")
-	        .append( oWnd.getId() )
-	        .append(  ".destroy();")
-	        .append(    "else if(window.parent.")
-	        .append(oWnd.getId())
-	        .append(") window.parent.")
-	        .append( oWnd.getId())
-	        .append( ".destroy();")
-	        .append(  "});\n");    		
+    		sb.append( "Ext.onReady( function() { " )
+    		.append( "if( "+oWnd.getId()+" ){")
+    			.append(closeScript)
+		    .append(  "}")
+	        .append(   "else if(window.parent.").append(oWnd.getId()).append(") { ")
+	        	.append(closeScript)
+		    .append(  "}});\n");    		
 	       oWnd.destroy();
+	       
     	} 
     	else {
     		// A vista nao tem janela... ou seja deve estar inserida num tab
@@ -320,6 +327,7 @@ public class XVWScripts {
     	return sb.toString();
     }
 
+	
     public static final void setTitle( String sTitle ) {
         XUIRequestContext oRequestContext;
         oRequestContext = XUIRequestContext.getCurrentContext();
