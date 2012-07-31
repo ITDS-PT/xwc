@@ -12,6 +12,7 @@ import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -19,6 +20,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.utils.StringUtils;
 
 /**
  * 
@@ -37,6 +39,8 @@ public class Tabs extends XUIComponentBase
      * Sets the active tab inside the container
      */
     public XUIViewStateProperty<String> activeTab = new XUIViewStateProperty<String>( "activeTab", this );
+    
+    
     /**
      * Sets the type of layout of the container, 
      * can be adjusted to window, to parent and to the form
@@ -55,6 +59,7 @@ public class Tabs extends XUIComponentBase
     public XUIBindProperty<Boolean> renderTabBar = new XUIBindProperty<Boolean>( "renderTabBar", this, true, Boolean.class );
     
     
+    
     public void setRenderTabBar( String renderTabBarExpr ) {
     	this.renderTabBar.setExpressionText( renderTabBarExpr );
     }
@@ -63,9 +68,21 @@ public class Tabs extends XUIComponentBase
     	this.renderTabBar.setValue( renderTabBar );
     }
     
+    
     public boolean getRenderTabBar() {
     	return this.renderTabBar.getEvaluatedValue();
     }
+    
+    private XUIBaseProperty<String> bodyStyle = new XUIBaseProperty<String>( "bodyStyle", this, ""  );
+    
+    public void setBodyStyle(String value){
+    	this.bodyStyle.setValue(value);
+    }
+    
+    public String getBodyStyle(){
+    	return this.bodyStyle.getValue();
+    }
+    
     
     public void setLayout( String layout ) {
     	this.layout.setValue( layout );
@@ -164,7 +181,10 @@ public class Tabs extends XUIComponentBase
                 	w.startElement( HTMLTag.DIV ,oChildTab);
                     w.writeAttribute( HTMLAttr.ID , oChildTab.getClientId(), null);
                     w.writeAttribute( HTMLAttr.CLASS ,"x-panel x-tab-panel-body x-tab-panel-body-top xwc-tab",null);
-            		w.writeAttribute(HTMLAttr.STYLE, "height:" + oTabs.getHeight(), null);
+                    if (StringUtils.hasValue( oTabs.getBodyStyle() ))
+                    	w.writeAttribute(HTMLAttr.STYLE, "height:" + oTabs.getHeight() + ";" + oTabs.getBodyStyle(), null);
+                    else
+                    	w.writeAttribute(HTMLAttr.STYLE, "height:" + oTabs.getHeight(), null);
                     oChildTab.encodeAll();
                     w.endElement(HTMLTag.DIV);
                 }
