@@ -26,6 +26,7 @@ import netgest.bo.runtime.boObjectList;
 import netgest.bo.xwc.components.annotations.ObjectAttribute;
 import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.annotations.Values;
+import netgest.bo.xwc.components.classic.grid.AggregateDecoder;
 import netgest.bo.xwc.components.classic.grid.GridPanelUtilities;
 import netgest.bo.xwc.components.classic.grid.GridTreeSelectorEditBean;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
@@ -64,6 +65,8 @@ import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+
 
 /**
  * 
@@ -759,33 +762,13 @@ public class GridPanel extends ViewerInputSecurityBase {
 	}
 
 	public void setCurrentAggregateField(String aggregateField) {
-		try {
-			if (aggregateField != null) {
-				String[] tokens = aggregateField.split(":");
-				currAggregateFieldCheckSet = tokens[0];
-				currAggregateFieldOpSet = tokens[1];
-				currAggregateFieldSet = tokens[2];
-				currAggregateFieldDescSet = tokens[3];
-
-				currAggregateFieldCheckSet = currAggregateFieldCheckSet != null
-						&& currAggregateFieldCheckSet.length() > 0 ? currAggregateFieldCheckSet
-						: null;
-				currAggregateFieldOpSet = currAggregateFieldOpSet != null
-						&& currAggregateFieldOpSet.length() > 0 ? currAggregateFieldOpSet
-						: null;
-				currAggregateFieldSet = currAggregateFieldSet != null
-						&& currAggregateFieldSet.length() > 0 ? currAggregateFieldSet
-						: null;
-				currAggregateFieldDescSet = currAggregateFieldDescSet != null
-						&& currAggregateFieldDescSet.length() > 0 ? currAggregateFieldDescSet
-						: null;
-			}
-		} catch (Exception e) {
-			currAggregateFieldCheckSet = null;
-			currAggregateFieldOpSet = null;
-			currAggregateFieldSet = null;
-			currAggregateFieldDescSet = null;
-		}
+		
+		AggregateDecoder decoder = new AggregateDecoder( aggregateField );
+		currAggregateFieldCheckSet = decoder.getActionString();
+		currAggregateFieldOpSet = decoder.getOperationString();
+		currAggregateFieldSet = decoder.getField();
+		currAggregateFieldDescSet = decoder.getFieldDescription();
+		
 		
 	}
 	
@@ -1744,7 +1727,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public SortTerms getCurrentSortTerms() {
 		String sSort = this.currentSortTerms.getValue();
 
-		SortTerms st = new SortTerms();;
+		SortTerms st = new SortTerms();
 		if (sSort != null) {
 			String[] sSortFields = sSort.split("\\,");
 			for( String sortField : sSortFields ) {
@@ -1781,40 +1764,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 		setAggregateFieldsFromString(getAggregateData());
 		forceRenderOnClient();
 	}
-
-	public void aggregateSum(boolean check, String fieldId, String fieldDesc) {
-		if (check) {
-			updateAggregateFieldsBean();
-		} else {
-			removeAggregateFieldsBean();
-		}
-	}
-
-	public void aggregateMin(boolean check, String fieldId, String fieldDesc) {
-		if (check) {
-			updateAggregateFieldsBean();
-		} else {
-			removeAggregateFieldsBean();
-		}
-	}
-
-	public void aggregateMax(boolean check, String fieldId, String fieldDesc) {
-		if (check) {
-			updateAggregateFieldsBean();
-		} else {
-			removeAggregateFieldsBean();
-		}
-		;
-	}
-
-	public void aggregateAvg(boolean check, String fieldId, String fieldDesc) {
-		if (check) {
-			updateAggregateFieldsBean();
-		} else {
-			removeAggregateFieldsBean();
-		}
-	}
-
+	
+	
+	
 	public void updateAggregateFieldsBean() {
 		try {
 			if (this.getDataSource() != null
@@ -2345,5 +2297,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 		}
 		return result;
 	}
+
+
+	
 
 }
