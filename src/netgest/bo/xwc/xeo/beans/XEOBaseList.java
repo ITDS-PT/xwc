@@ -26,10 +26,19 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
+.bo.xwc.xeo.localization.BeansMessages;
 
 public class XEOBaseList extends XEOBaseBean {
     
-    boObjectList currentObjectList;
+    protected boObjectList currentObjectList;
+    
+    public XEOBaseList(EboContext ctx){
+    	super(ctx);
+    }
+    
+    public XEOBaseList(){
+    	super();
+    }
     
     public void executeBoql( String boql ) {
         currentObjectList = boObjectList.list( boApplication.currentContext().getEboContext(), boql, 1, 50 );
@@ -55,7 +64,7 @@ public class XEOBaseList extends XEOBaseBean {
         DataRecordConnector oActiveRow;
         XUIRequestContext    oRequestContext;
 
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
 
         oEvent = oRequestContext.getEvent();
         oGridPanel = (GridPanel)oEvent.getComponent().getParent();
@@ -72,9 +81,9 @@ public class XEOBaseList extends XEOBaseBean {
 	        					BeansMessages.SELECTED_OBJECT_NOT_EXISTS.toString() 
 	        			)
 	        	);
-	        	XUIViewRoot viewRoot = oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Dummy.xvw");
+	        	XUIViewRoot viewRoot = oRequestContext.getSessionContext().createView(SystemViewer.DUMMY_VIEWER);
 	        	oRequestContext.setViewRoot( viewRoot );
-	        	XVWScripts.closeView( viewRoot );
+	        	XVWScripts.closeView( viewRoot, oRequestContext.getScriptContext() );
 	        }
 	        else {
 		        boObject sObjectToOpen = boObject.getBoManager().loadObject( boApplication.currentContext().getEboContext(), boui.longValue());
@@ -89,7 +98,7 @@ public class XEOBaseList extends XEOBaseBean {
 		        					"No permission to read" 
 		        			)
 		        	);
-		        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Dummy.xvw") );
+		        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView(SystemViewer.DUMMY_VIEWER) );
 		        	
 		        } else{
 		        	XUIViewRoot oEditViewRoot = oRequestContext.getSessionContext().createView( 
@@ -105,7 +114,7 @@ public class XEOBaseList extends XEOBaseBean {
 	        }
         }
         else {
-        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView("netgest/bo/xwc/components/viewers/Dummy.xvw") );
+        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView(SystemViewer.DUMMY_VIEWER) );
 	        oRequestContext.renderResponse();
         }
     }
@@ -114,7 +123,7 @@ public class XEOBaseList extends XEOBaseBean {
     public void addNew() throws Exception {
         XUIRequestContext    oRequestContext;
         
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         
         if( oRequestContext.isAjaxRequest() ) {
         	
@@ -178,7 +187,7 @@ public class XEOBaseList extends XEOBaseBean {
     
     @Visible
 	public void canCloseTab() {
-		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
+		XUIRequestContext oRequestContext = getRequestContext();
 		XUIViewRoot viewRoot = oRequestContext.getViewRoot();
 		Window xWnd = (Window)viewRoot.findComponent(Window.class);
 		if( xWnd != null ) {
@@ -186,7 +195,7 @@ public class XEOBaseList extends XEOBaseBean {
 				xWnd.getOnClose().invoke( oRequestContext.getELContext(), null);
             }
 		}
-		XVWScripts.closeView( viewRoot );
+		XVWScripts.closeView( viewRoot, oRequestContext.getScriptContext() );
 		oRequestContext.getViewRoot().setRendered( false );
 		oRequestContext.renderResponse();
 	}
