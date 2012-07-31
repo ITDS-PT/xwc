@@ -1,6 +1,7 @@
 package netgest.bo.xwc.components.classic;
 
 import static netgest.bo.xwc.components.HTMLAttr.ID;
+import static netgest.bo.xwc.components.HTMLAttr.STYLE;
 import static netgest.bo.xwc.components.HTMLTag.DIV;
 import static netgest.bo.xwc.components.HTMLTag.TABLE;
 import static netgest.bo.xwc.components.HTMLTag.TR;
@@ -45,6 +46,7 @@ public class CheckGroup extends XUIInput {
 	 */
 	public ExtConfigArray convertChoicesToExtArray(){
 		ExtConfigArray result = new ExtConfigArray();
+		
 		Map<String,String> currChoices = getChoices();
 		Iterator<Entry<String,String>> it = currChoices.entrySet().iterator();
 		while (it.hasNext()){
@@ -70,6 +72,8 @@ public class CheckGroup extends XUIInput {
             XUIResponseWriter  w = getResponseWriter();
             w.startElement( DIV, lovComponent );
             w.writeAttribute( ID, lovComponent.getClientId(), "id" );
+            w.writeAttribute( STYLE, "overflow: auto; height: 220px" );
+            
             writeHiddenInput(w,lovComponent);
             
         }
@@ -130,7 +134,6 @@ public class CheckGroup extends XUIInput {
 			config.add( "loader", "new Ext.tree.TreeLoader" );
 			config.addJSString( "id", component.getId() + "_source" );
 			config.addJSString( "xvwInputId", component.getId() + "_hidden");
-			config.add( "width", 100 );
 			config.add("lines", false);
 			config.addJSString( "bodyStyle", "{border:0}" );
 			config.addJSString( "renderTo", component.getId() + "_sourceDiv" );
@@ -153,6 +156,8 @@ public class CheckGroup extends XUIInput {
 			
 			w.startElement( TABLE );
 				
+			w.startElement( TR );
+			
 				w.startElement( HTMLTag.TD );
 					w.startElement( HTMLTag.DIV );
 						w.writeAttribute( HTMLAttr.ID, component.getId() + "_sourceDiv");
