@@ -18,17 +18,30 @@ public class Layouts {
         		"ExtXeo.layoutMan.register('" + XUIRequestContext.getCurrentContext().getViewRoot().getClientId() + "','" + oComp.getClientId() + "','" + sLayoutType + "');"
         	);
 	}
+	
+	public static final void registerComponent( XUIResponseWriter w, String clientId, String sLayoutType ) {
+		w.getScriptContext().add(
+        		XUIScriptContext.POSITION_FOOTER, 
+        		clientId + "_layoutReg", 
+        		"ExtXeo.layoutMan.register('" + XUIRequestContext.getCurrentContext().getViewRoot().getClientId() + "','" + clientId + "','" + sLayoutType + "');"
+        	);
+	}
+	
+	public static final void registerComponent( XUIScriptContext context, String clientId, String viewId, String sLayoutType  ) {
+        context.add(
+        		XUIScriptContext.POSITION_FOOTER, 
+        		clientId+"_layoutReg", 
+        		"ExtXeo.layoutMan.register('" + viewId + "','" + clientId + "','" + sLayoutType + "');"
+        	);
+	}
 
 	public static final void doLayout( XUIResponseWriter w ) {
 		w.getScriptContext().add(
         		XUIScriptContext.POSITION_FOOTER, 
         		"doLayout_0", 
-//        		"window.setTimeout( '" +
         		"Ext.onReady( function() { " +
         		"ExtXeo.layoutMan.doLayout('" + XUIRequestContext.getCurrentContext().getViewRoot().getClientId() + "');" +
-//        		"window.setTimeout( \\'Ext.onReady( function() { ExtXeo.layoutMan.doLayout(); });\\',1000);" +
         		"});"
-//        		"',10);\n"
         	);
 	}
 }
