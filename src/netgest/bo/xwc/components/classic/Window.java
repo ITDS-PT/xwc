@@ -184,7 +184,8 @@ public class Window extends XUIComponentBase {
     	}
 	}
 
-    public void initComonent(){
+    @Override
+    public void initComponent(){
     	this.setOnBeforeClose("#{" + getBeanId() + ".canCloseTab}");
     }
     
@@ -234,8 +235,8 @@ public class Window extends XUIComponentBase {
         XUIRequestContext oRequestContext; 
         oRequestContext = XUIRequestContext.getCurrentContext();
         
+        //For ExtJS Rendering
         String namingContainerId = findParentComponent(XUIForm.class).getClientId();
-
         oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER, this.getClientId() + "_closeWnd", 
 		      "window.setTimeout( function() { " +
 		      "XVW.closeWindow('" + namingContainerId +  "','" + getClientId() +"');" +
@@ -243,16 +244,11 @@ public class Window extends XUIComponentBase {
         );
         
         
-//        oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER, this.getClientId() + "_closeLookup", 
-//                "Ext.onReady( function() { " +
-//                "if( "+this.getId()+" )" + this.getId() +  ".destroy();" +
-//                "else if(window.parent."+this.getId()+") window.parent." + this.getId() +  ".destroy();" +
-//                "});\n"
-//        );
-//        if( getOnClose() != null ) {
-//        	getOnClose().invoke( getELContext(), null );
-//        }
+       
+        
     }
+    
+    
 
     public static class XEOHTMLRenderer extends XUIRenderer {
         
@@ -386,11 +382,11 @@ public class Window extends XUIComponentBase {
 		        	).append(';');
 	            destroy.append( "var o=document.getElementById('" )
 	            .append( oRequestContext.getViewRoot().getClientId() )
-	            .append( "');" )
-	            .append( "if( o != null ){o.parentNode.removeChild( o )};" );
+	            .append( "'); " )
+	            .append( "if( o != null ){ o.parentNode.removeChild( o )};" );
 	            destroy.append( "}" );
 	            oDestroy.add( "fn", destroy );
-        	}
+        	} 
             
             ExtConfig oResize = oExtListeners.addChild( "'resize'");
             StringBuilder onResizeJS = new StringBuilder();
