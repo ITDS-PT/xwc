@@ -12,7 +12,7 @@ ExtXeo.Messages = {
 };
 
 ExtXeo.GridMessages = {
-		INVITE_MESSAGE 		: 'Arraste o cabeçalho de uma coluna para aqui para agrupar por ela'
+		INVITE_MESSAGE 		: 'Arrastre un encabezado de la columna aquí para agrupar por ella'
 			
 };
 
@@ -59,9 +59,9 @@ if(ExtXeo.grid.GroupingView) {
 	    emptyGroupText : '(Ninguno)',
 	    groupByText    : 'Grupo por este campo',
 	    showGroupsText : 'Mostrar agrupado',
-	    aggregateText  : 'Agregar Valores',
-	    removeGroupText: 'Remover grupos',
-	    loadingMsg	   : 'Una carga...'  	  
+	    aggregateText  : 'Los valores agregados',
+	    removeGroupText: 'Eliminar los grupos',
+	    loadingMsg	   : 'Cargando...'  	  
 	 });
 }	
 
