@@ -583,5 +583,13 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 		//Just to bind
 	}
 	
+	public void canCloseTab(){
+		XUIRequestContext oRequestContext = getRequestContext();
+		XUIViewRoot viewRoot = oRequestContext.getViewRoot();
+		XVWScripts.closeView( viewRoot );
+		oRequestContext.getViewRoot().setRendered( false );
+		oRequestContext.renderResponse();
+	}
+	
 }
 
