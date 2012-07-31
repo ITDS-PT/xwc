@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import netgest.bo.xwc.components.classic.AttributeAutoComplete;
 
 /**
  * 
- * Helper class for the {@link AttributeAutoComplete} component to help find
+ * Helper class for the AttributeAutoComplete component to help find
  * attribute names in a template
  * 
  * @author PedroRio
