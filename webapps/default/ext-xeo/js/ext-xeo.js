@@ -574,6 +574,10 @@ XVW.closeView = function( sId ) {
 					if( oFrames[k].contentWindow == window ) {
 						tabItems.get(i).forceClose = true;
 						tabs.remove( tabItems.get(i) );
+						
+						var forms = document.getElementsByTagName("form");
+						for(var z=0;z<forms.length;z++)
+							XVW.disposeView( forms[z], true );
 						return;
 					}
 				}
@@ -619,6 +623,8 @@ XVW.syncView = function( sFormId, iWaitScreen ) {
 }
 
 XVW.closeWindow = function( sFormId, sWindowId ) {
+	
+	
 	var formWnd = window;
 	var wnd = Ext.ComponentMgr.get( sWindowId );
 	if( wnd == null ) {
@@ -635,6 +641,7 @@ XVW.closeWindow = function( sFormId, sWindowId ) {
 		}
 	}
 	if( wnd ) {
+		ExtXeo.destroyComponents(wnd.body.dom,window);
 		wnd.hide();
 		wnd.destroy();
 	}
@@ -1107,3 +1114,4 @@ Ext.form.ToolBarLabel = Ext.extend(Ext.form.Label,  {
 	    }
 	
 });
+
