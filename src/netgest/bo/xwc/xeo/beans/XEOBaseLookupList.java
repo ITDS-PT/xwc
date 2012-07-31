@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import netgest.bo.runtime.AttributeHandler;
+import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.annotations.Visible;
@@ -13,6 +14,7 @@ import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOBridgeListConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
@@ -48,35 +50,67 @@ public class XEOBaseLookupList extends XEOBaseList {
 		return selectedObject;
 	}
     
+    protected XEOBaseLookupList(EboContext ctx){
+    	super(ctx);
+    }
+    
+    public XEOBaseLookupList(){
+    	super();
+    }
+    
     public void selectObject() {
     	//  Dummy
     }
     
-    private AttributeHandler getHandlerForParentComponent(){
-    	
-    	AttributeHandler result = null;
-		XUIComponentBase base = ( XUIComponentBase ) getParentBean().getViewRoot().findComponent( sParentComponentId );
-		if ( base instanceof AttributeBase ){
-			AttributeBase attribute = ( AttributeBase ) base;
-			XEOObjectAttributeConnector connector = ( XEOObjectAttributeConnector ) attribute.getDataFieldConnector();
-			result = connector.getAttributeHandler();
-		} else if ( base instanceof Bridge ){
-			Bridge bridge = ( Bridge ) base;
-			boObject parent = ( ( XEOBridgeListConnector ) bridge.getDataSource() ).getBridge().getParent();
-			result = parent.getAttribute( bridge.getBridgeName() );
-		}
-		return result;
-    }
+    protected AttributeHandler getHandlerForParentComponent(XEOEditBean parentBean){
+        
+        AttributeHandler result = null;
+        XUIViewRoot rootActual = getRequestContext().getViewRoot();
+        XUIViewRoot rootParent = parentBean.getViewRoot();
+        
+              XUIComponentBase base = ( XUIComponentBase ) parentBean.getViewRoot().findComponent( sParentComponentId );
+              getRequestContext().setViewRoot(rootParent);
+              if ( base instanceof AttributeBase ){
+                    AttributeBase attribute = ( AttributeBase ) base;
+                    XEOObjectAttributeConnector connector = (XEOObjectAttributeConnector) attribute.getDataFieldConnector();
+                    return connector.getAttributeHandler();
+                    
+              } else if ( base instanceof Bridge ){
+                    Bridge bridge = ( Bridge ) base;
+                    boObject parent = ( ( XEOBridgeListConnector ) bridge.getDataSource() ).getBridge().getParent();
+                    result = parent.getAttribute( bridge.getBridgeName() );
+              } else if (base instanceof GridPanel){
+                  GridPanel panel = (GridPanel) base;
+                  DataListConnector connector = panel.getDataSource();
+                  if (connector instanceof XEOBridgeListConnector){
+                        XEOBridgeListConnector bridgeConnector = (XEOBridgeListConnector) connector;
+                        String attributeName = bridgeConnector.getBridge().getAttributeName();
+                        result = (AttributeHandler) bridgeConnector.getBridge().getParent().getAttribute(attributeName);
+                  }
+                  
+              }
+
+              
+              getRequestContext().setViewRoot(rootActual);
+              
+              return result;
+      }
+
     
 	public void setSelectedObject(String selectedObject) {
-		if( !selectedObject.equals( this.selectedObject ) ) {
-			this.selectedObject = selectedObject;
-			if (this.sParentComponentId != null)
-				executeBoql( ((XEOEditBean) getParentBean()).getLookupQuery( getHandlerForParentComponent(), this.selectedObject ) );
-			else
-				executeBoql( ((XEOBaseBean) getParentBean()).getLookupQuery( this.parentAttribute , this.selectedObject ) );
-		}
-	}
+        if( !selectedObject.equals( this.selectedObject ) ) {
+              this.selectedObject = selectedObject;
+              if (this.sParentComponentId != null){
+                    XUIViewRoot actual = getRequestContext().getViewRoot();
+                    XEOEditBean bean = (XEOEditBean) getParentBean();
+                    executeBoql( bean.getLookupQuery( getHandlerForParentComponent(bean), this.selectedObject ) );
+                    getRequestContext().setViewRoot( actual );
+              }
+              else
+                    executeBoql( ((XEOBaseBean) getParentBean()).getLookupQuery( this.parentAttribute , this.selectedObject ) );
+        }
+  }
+
 
     public Map<String, String> getLookupObjects() {
     	return this.lookupObjectsMap;
@@ -154,7 +188,7 @@ public class XEOBaseLookupList extends XEOBaseList {
         
         // Only set the dummy view if is the same
         if( oRequestContext.getViewRoot() == oViewRoot )
-        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( "netgest/bo/xwc/components/viewers/Dummy.xvw" ) );
+        	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createChildView( SystemViewer.DUMMY_VIEWER ) );
 
     }
     @Visible
@@ -164,8 +198,7 @@ public class XEOBaseLookupList extends XEOBaseList {
     @Visible
     public void update() {
 
-    	XUIRequestContext oRequestContext;
-    	oRequestContext = XUIRequestContext.getCurrentContext();
+    	XUIRequestContext oRequestContext = getRequestContext();
         Object oParentBean = getParentView().getBean( sParentParentBeanId );
         
         if( oParentBean != null )
@@ -259,7 +292,7 @@ public class XEOBaseLookupList extends XEOBaseList {
     }
     @Visible
 	public void canCloseTab() {
-		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
+		XUIRequestContext oRequestContext = getRequestContext();
 		XUIViewRoot viewRoot = oRequestContext.getViewRoot();
 		XVWScripts.closeView( viewRoot );
 		oRequestContext.getViewRoot().setRendered( false );
@@ -339,7 +372,7 @@ public class XEOBaseLookupList extends XEOBaseList {
 	 * Finds the xvw:columns Components children in a viewer
 	 *
 	 */
-	private class FindLookupListCols{
+	private static class FindLookupListCols{
 		
 		private List<XUIViewerDefinitionNode> rootElements;
 		
