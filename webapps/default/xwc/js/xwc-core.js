@@ -157,9 +157,28 @@ XVW.AjaxCommand.pFnParseNode = function( oNode, loParNames, loParValues ) {
         	}
             else
             {
-                loParNames[ iCnt ] = oChild.name;
-                loParValues[ iCnt ] = oChild.value;
-                iCnt++;
+            	if (oChild.tagName == 'SELECT'){
+            		loParNames[ iCnt ] = oChild.name;
+            		var children = oChild.children;
+            		var append = "";
+            		var result = "";
+            		for (k = 0 ; k < children.length; k++){
+            			var child = children[k];
+            			if (child.tagName == 'OPTION' ){
+            				if (child.selected){
+		            			result += append;
+		            			result += child.value;
+		            			append = ",";
+	            			}
+            			}
+            		}
+            		loParValues[ iCnt ] = result;
+            		iCnt++;
+            	} else{
+            		loParNames[ iCnt ] = oChild.name;
+            		loParValues[ iCnt ] = oChild.value;
+            		iCnt++;
+            	}
             }
         }
         if( oChild.hasChildNodes() ) {
