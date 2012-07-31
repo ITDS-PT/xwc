@@ -6,6 +6,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import netgest.bo.runtime.EboContext;
 import netgest.bo.xwc.components.annotations.Visible;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
@@ -21,9 +22,13 @@ import org.json.JSONObject;
 
 public class XEOMainBean extends XEOBaseBean {
 
+	protected XEOMainBean(EboContext ctx){
+		super(ctx);
+	}
+	
 	public XEOMainBean() {
 		if( getEboContext() != null ) {
-			XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
+			XUIRequestContext oRequestContext = getRequestContext();
 			oRequestContext.getScriptContext().add( 
 						XUIScriptContext.POSITION_HEADER, 
 						"userName",
@@ -34,10 +39,12 @@ public class XEOMainBean extends XEOBaseBean {
 			boolean xeodmactive = false;
 			HttpServletRequest oServletRequest = (HttpServletRequest)oRequestContext.getRequest();
 			Cookie cookies [] = oServletRequest.getCookies();
-			for( Cookie cookie : cookies ) {
-				if( "xeodmstate".equals( cookie.getName() ) ) {
-					xeodmactive = Boolean.parseBoolean( cookie.getValue() );
-					break;
+			if (cookies != null){
+				for( Cookie cookie : cookies ) {
+					if( "xeodmstate".equals( cookie.getName() ) ) {
+						xeodmactive = Boolean.parseBoolean( cookie.getValue() );
+						break;
+					}
 				}
 			}
 			oRequestContext.getScriptContext().add( 
@@ -56,7 +63,7 @@ public class XEOMainBean extends XEOBaseBean {
         XUIViewRoot         oViewRoot;
         XEOEditBean         oBaseBean;
         
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         oSessionContext = oRequestContext.getSessionContext();
         
         JSONObject o = new JSONObject( 
@@ -89,7 +96,7 @@ public class XEOMainBean extends XEOBaseBean {
         XUIViewRoot         oViewRoot;
         XEOEditBean         oBaseBean;
         
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         oSessionContext = oRequestContext.getSessionContext();
         
         JSONObject o = new JSONObject( 
@@ -122,7 +129,7 @@ public class XEOMainBean extends XEOBaseBean {
         XUIViewRoot         oViewRoot;
         XEOEditBean         oBaseBean;
         
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         oSessionContext = oRequestContext.getSessionContext();
         
         // Obtem a bean do objecto a ser editado
@@ -157,7 +164,7 @@ public class XEOMainBean extends XEOBaseBean {
         XUISessionContext   oSessionContext;
         XUIViewRoot         oViewRoot;
 
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         oSessionContext = oRequestContext.getSessionContext();
      
         oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/components/viewers/UserProperties.xvw");
@@ -178,7 +185,7 @@ public class XEOMainBean extends XEOBaseBean {
         XUIViewRoot         oViewRoot;
         XEOBaseList         oBaseBean;
         
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         oSessionContext = oRequestContext.getSessionContext();
         
         JSONObject o = new JSONObject( 
@@ -216,7 +223,7 @@ public class XEOMainBean extends XEOBaseBean {
         XUISessionContext   oSessionContext;
         XUIViewRoot         oViewRoot;
 
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         oSessionContext = oRequestContext.getSessionContext();
 
         JSONObject o = new JSONObject( 
@@ -236,7 +243,7 @@ public class XEOMainBean extends XEOBaseBean {
     @Visible
     public void openLink() throws IOException {
         XUIRequestContext   oRequestContext;
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
     	String url = (String)((XUICommand)oRequestContext.getEvent().getSource()).getValue();
     	((HttpServletResponse)oRequestContext.getResponse()).sendRedirect( url );
     	oRequestContext.responseComplete();
@@ -246,7 +253,7 @@ public class XEOMainBean extends XEOBaseBean {
     public void logout() {
         try {
 			XUIRequestContext oRequestContext;
-			oRequestContext = XUIRequestContext.getCurrentContext();
+			oRequestContext = getRequestContext();
 			if( !oRequestContext.isAjaxRequest() ) {
 				((HttpServletResponse) oRequestContext.getResponse())
 						.sendRedirect("/LogoutXVW.jsp");
@@ -270,7 +277,7 @@ public class XEOMainBean extends XEOBaseBean {
         //XUISessionContext   oSessionContext;
        // XUIViewRoot         oViewRoot;
 
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         //oSessionContext = oRequestContext.getSessionContext();
         try  {
 	        JSONObject o = new JSONObject( 
