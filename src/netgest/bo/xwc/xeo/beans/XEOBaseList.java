@@ -25,9 +25,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.xeo.localization.BeansMessages;
-.bo.xwc.xeo.localization.BeansMessages;
-
+import netgest.bo.xwc.xeo.localization.BeansMessages; 
 public class XEOBaseList extends XEOBaseBean {
     
     protected boObjectList currentObjectList;
