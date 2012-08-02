@@ -92,7 +92,7 @@ public class AttributeImage extends ViewerOutputSecurityBase {
 
             oLabel.setInstanceId( getInstanceId() );
 
-            //this.getChildren().add( this.oLabel );
+            this.getChildren().add( this.oLabel );
         }
     }
     
