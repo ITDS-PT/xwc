@@ -179,7 +179,7 @@ public class Panel extends ViewerSecurityBase {
         		
         		if (sIcon != null && sIcon.length() > 0 ){
 	        		w.startElement(HTMLTag.IMG, component);
-		            	w.writeAttribute(HTMLAttr.SRC, oPanel.getTitle(), null);
+		            	w.writeAttribute(HTMLAttr.SRC, sIcon, null);
 		            	w.writeAttribute(HTMLAttr.WIDTH, "16", null);
 		            	w.writeAttribute(HTMLAttr.HEIGHT, "16", null);
 		            	w.writeAttribute(HTMLAttr.STYLE, "padding-right:3px", null);
