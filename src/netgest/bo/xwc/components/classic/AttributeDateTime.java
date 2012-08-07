@@ -13,11 +13,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
+
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.framework.XUIBaseProperty;
@@ -197,9 +198,18 @@ public class AttributeDateTime extends AttributeBase {
 	            // To avoid multiple inputs to the same value...
 	            if( oAttrComp.getSubmittedValue() == null ) {
 	                Map<String,String> reqMap = getFacesContext().getExternalContext().getRequestParameterMap();
-	                if( reqMap.containsKey( oAttrComp.getClientId() + "_d" ) ) {
-		                sDate = reqMap.get( oAttrComp.getClientId() + "_d" );                
-		                sTime = reqMap.get( oAttrComp.getClientId() + "_t" );                
+	                
+	                String clientId =  oAttrComp.getClientId();
+	            	// No extjs quando o comopent attribute e inicializado 
+		            // em disabled o name da input no form fica com ext-
+		            // Em principio serao um bug do extjs.
+	            	if( !reqMap.containsKey( oAttrComp.getClientId() ) ) {
+	            		clientId = "ext-" + clientId;
+	            	}
+	                
+	                if( reqMap.containsKey( clientId + "_d" ) ) {
+		                sDate = reqMap.get( clientId + "_d" );                
+		                sTime = reqMap.get( clientId + "_t" );                
 		                
 		                if( sTime != null ) {
 		                    sDate += " " + sTime;
