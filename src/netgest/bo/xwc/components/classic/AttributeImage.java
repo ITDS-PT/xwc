@@ -91,6 +91,9 @@ public class AttributeImage extends ViewerOutputSecurityBase {
             	oLabel.setViewerSecurityPermissions( getValueExpression("viewerSecurityPermissions").getExpressionString() );
 
             oLabel.setInstanceId( getInstanceId() );
+            
+            if (!getRenderLabel()) //Fix for Ajax Requests, get renders children does not work for ajax requests 
+            	oLabel.setRenderComponent( false );
 
             this.getChildren().add( this.oLabel );
         }
@@ -394,13 +397,12 @@ public class AttributeImage extends ViewerOutputSecurityBase {
 		}
 	    @Override
 	    public boolean getRendersChildren() {
-	        return true;
+	    	return true;
 	    }
 
 	    @Override
 	    public void encodeChildren(XUIComponentBase component) throws IOException {
-
-
+	    	
 	    }
     }
 
