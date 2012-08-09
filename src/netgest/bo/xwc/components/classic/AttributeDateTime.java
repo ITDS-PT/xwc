@@ -199,17 +199,21 @@ public class AttributeDateTime extends AttributeBase {
 	            if( oAttrComp.getSubmittedValue() == null ) {
 	                Map<String,String> reqMap = getFacesContext().getExternalContext().getRequestParameterMap();
 	                
-	                String clientId =  oAttrComp.getClientId();
+	                String baseId =  oAttrComp.getClientId();
+	                String dateClientId = baseId + "_d"; //date input
+	                String timeClientId = baseId + "_t"; //time input
+	                
 	            	// No extjs quando o comopent attribute e inicializado 
 		            // em disabled o name da input no form fica com ext-
 		            // Em principio serao um bug do extjs.
-	            	if( !reqMap.containsKey( oAttrComp.getClientId() ) ) {
-	            		clientId = "ext-" + clientId;
+	            	if( !reqMap.containsKey( dateClientId ) ) {
+	            		dateClientId = "ext-" + baseId + "_d";
+	            		timeClientId = "ext-" + baseId + "_t";
 	            	}
 	                
-	                if( reqMap.containsKey( clientId + "_d" ) ) {
-		                sDate = reqMap.get( clientId + "_d" );                
-		                sTime = reqMap.get( clientId + "_t" );                
+	                if( reqMap.containsKey( dateClientId ) ) {
+		                sDate = reqMap.get( dateClientId );                
+		                sTime = reqMap.get( timeClientId );                
 		                
 		                if( sTime != null ) {
 		                    sDate += " " + sTime;
