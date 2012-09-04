@@ -93,6 +93,8 @@ public class GridPanelJSonFiltersBuilder {
 			case BOOLEAN : return value;
 			case OBJECT : return value;
 			case LIST : return value;
+		default :
+			break;
 		}
 		return value;
 	}
