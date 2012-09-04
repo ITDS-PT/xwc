@@ -3,6 +3,8 @@ package netgest.bo.xwc.components.classic.theme;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boBridgeIterator;
@@ -22,6 +24,7 @@ import netgest.bo.xwc.framework.XUIStyleContext;
 import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 import netgest.utils.StringUtils;
+
 
 /**
  * 
@@ -70,13 +73,16 @@ public class ExtJsTheme implements XUITheme {
 				"ext-xeo-nohtmleditor",
 				composeUrl("ext-xeo/css/ext-xeo-nohtmleditor.css"));
 		
-		Map<String, String> filesToInclude = themeFilesToInclude();
-		Iterator<String> idSet = filesToInclude.keySet().iterator();
-		while (idSet.hasNext()) {
-			String id = idSet.next();
-			styleContext.addInclude(XUIStyleContext.POSITION_HEADER, id,
-					composeUrl(filesToInclude.get(id)));
+		Map<String,String> filesToInclude = themeFilesToInclude();
+		Set<Entry<String,String>> files = filesToInclude.entrySet();
+		Iterator<Entry<String,String>> it = files.iterator();
+		while (it.hasNext()){
+			Entry<String,String> current = it.next();
+			styleContext.addInclude(XUIStyleContext.POSITION_HEADER, 
+					current.getKey(),
+					composeUrl(current.getValue()));
 		}
+		
 
 	}
 
@@ -260,7 +266,7 @@ public class ExtJsTheme implements XUITheme {
 		return "extjs/";
 	}
 	
-	protected class JavaScriptIncluder{
+	protected static class JavaScriptIncluder{
 		
 		private XUIScriptContext scriptContext;
 		private String builderVersion;
