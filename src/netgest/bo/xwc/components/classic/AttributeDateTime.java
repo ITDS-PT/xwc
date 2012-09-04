@@ -184,32 +184,40 @@ public class AttributeDateTime extends AttributeBase {
         public boolean getRendersChildren() {
         	return true;
         }
-
-        @Override
-        public void decode(XUIComponentBase component) {
-
-            String sDate;
+        
+        /**
+         * 
+         * Decodes the values submitted for the DateTime component
+         * 
+         * @param component The component
+         * @param reqMap The submitted values
+         */
+        public void decode(AttributeDateTime component, Map<String,String> reqMap){
+        	
+        	String sDate;
             String sTime;
-                
-            AttributeDateTime oAttrComp;
-            oAttrComp = (AttributeDateTime)component;
+            
 
-            if( !oAttrComp.isDisabled() && !oAttrComp.isReadOnly() && oAttrComp.isVisible() ) {
+            if( !component.isDisabled() && !component.isReadOnly() && component.isVisible() ) {
 	            // To avoid multiple inputs to the same value...
-	            if( oAttrComp.getSubmittedValue() == null ) {
-	                Map<String,String> reqMap = getFacesContext().getExternalContext().getRequestParameterMap();
+	            if( component.getSubmittedValue() == null ) {
 	                
-	                String baseId =  oAttrComp.getClientId();
+	                
+	                String baseId =  component.getClientId();
 	                String dateClientId = baseId + "_d"; //date input
 	                String timeClientId = baseId + "_t"; //time input
 	                
-	            	// No extjs quando o comopent attribute e inicializado 
+	            	// No extjs quando o componente attribute e inicializado 
 		            // em disabled o name da input no form fica com ext-
 		            // Em principio serao um bug do extjs.
 	            	if( !reqMap.containsKey( dateClientId ) ) {
 	            		dateClientId = "ext-" + baseId + "_d";
-	            		timeClientId = "ext-" + baseId + "_t";
 	            	}
+	            	
+	            	if (!reqMap.containsKey(timeClientId)) {
+						timeClientId = "ext-" + baseId + "_t";
+					}
+
 	                
 	                if( reqMap.containsKey( dateClientId ) ) {
 		                sDate = reqMap.get( dateClientId );                
@@ -218,11 +226,23 @@ public class AttributeDateTime extends AttributeBase {
 		                if( sTime != null ) {
 		                    sDate += " " + sTime;
 		                }
-		                oAttrComp.setSubmittedValue( sDate );
+		                component.setSubmittedValue( sDate );
 	                }
 	            }
             }
         }
+
+        @Override
+        public void decode(XUIComponentBase component) {
+        	
+        	AttributeDateTime oAttrComp;
+            oAttrComp = (AttributeDateTime)component;
+            Map<String,String> reqMap = getFacesContext().getExternalContext().getRequestParameterMap();
+            
+            decode( oAttrComp, reqMap );
+            
+        }
+            
     }
 
 
