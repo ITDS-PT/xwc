@@ -20,6 +20,8 @@ import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
+import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
+import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.utils.StringUtils;
 
 public class XEOObjectListConnector implements GroupableDataList, AggregableDataList {
@@ -445,6 +447,12 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 				int col = dataSet.findColumn( attributeName );
 				if( col > 0 ) {
 					return new XEOObjectConnector.GenericFieldConnector( attributeName, null, DataFieldTypes.VALUE_CHAR );
+				} else {
+					if ("SYS_CARDID".equalsIgnoreCase( attributeName )){
+						return new GenericFieldConnector( this.oObjectList.getBoDef().getLabel(), "", DataFieldTypes.VALUE_CHAR );
+					} else if ("SYS_ROWNUM".equalsIgnoreCase( attributeName )){
+						return new GenericFieldConnector( ConnectorsMessages.ROW_NUM.toString(), "", DataFieldTypes.VALUE_CHAR );
+					}
 				}
 			}
 			

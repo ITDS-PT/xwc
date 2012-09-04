@@ -12,4 +12,7 @@ public interface ConnectorsMessages {
 
 	public static final XUILocalizedMessage OBJECT_LABEL = 
 		new XUILocalizedMessage( ConnectorsMessages.class.getName(), "OBJECT_LABEL" );
+	
+	public static final XUILocalizedMessage ROW_NUM = 
+			new XUILocalizedMessage( ConnectorsMessages.class.getName(), "ROW_NUM" );
 }
