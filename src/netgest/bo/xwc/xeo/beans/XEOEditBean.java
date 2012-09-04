@@ -1625,7 +1625,7 @@ public class XEOEditBean extends XEOBaseBean
      * @param attributeName
      * @param bouis
      */
-    protected void updateUserFavorites(String objectName, 
+    private void updateUserFavorites(String objectName, 
     		String attributeName, long[] bouis){
     	PreferenceManager manager = boApplication.getDefaultApplication().getPreferencesManager();
     	Preference pref = manager.getUserPreference(BridgeLookup.PREFERENCE_PREFIX 
