@@ -26,7 +26,6 @@ import javax.faces.webapp.FacesServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.xwc.components.HTMLAttr;
-import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.Window;
@@ -119,6 +118,13 @@ public class XUIViewRoot extends UIViewRoot {
 					.getTransactionManager().releaseTransaction(
 							this.getTransactionId());
 		}
+		
+		String viewId = this.getViewState();
+		if( viewId != null ) {
+            XUIStateManagerImpl oStateManagerImpl = (XUIStateManagerImpl)Util.getStateManager( FacesContext.getCurrentInstance() );
+            oStateManagerImpl.closeView( viewId );
+		}
+		
 		setTransient(true);
 	}
 	
@@ -562,7 +568,7 @@ public class XUIViewRoot extends UIViewRoot {
 					w.writeAttribute("id", ((XUIViewRoot) component)
 							.getClientId(), "id");
 
-					// Não sei se é necessário, foi criado a necessidade através
+					// Nï¿½o sei se ï¿½ necessï¿½rio, foi criado a necessidade atravï¿½s
 					if (viewRoot.findComponent(Window.class) != null) {
 						w.writeAttribute(HTMLAttr.CLASS, "x-panel", "");
 					}
@@ -579,7 +585,7 @@ public class XUIViewRoot extends UIViewRoot {
 				w.writeAttribute("id", ((XUIViewRoot) component).getClientId(),
 						"id");
 
-				// Não sei se é necessário, foi criado a necessidade através
+				// Nï¿½o sei se ï¿½ necessï¿½rio, foi criado a necessidade atravï¿½s
 				if (viewRoot.findComponent(Window.class) != null) {
 					w.writeAttribute(HTMLAttr.CLASS, "x-panel", "");
 				}
