@@ -1,7 +1,5 @@
 package netgest.bo.xwc.components.connectors;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -569,12 +567,12 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 			OrderByTerms orderByTerms = new OrderByTerms( orderBy.trim() );
 			OrderByTerm term = orderByTerms.getSortTerm( this.groupAttribute );
 			if( term != null ) {
-				outerSelectOrderBy = "1" + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"");
+				outerSelectOrderBy = term.getExpression() + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"");
 				if( boql.startsWith( "{" ) ) {
-					q.setOrderByPart( "1" + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"") );
+					q.setOrderByPart( term.getExpression() + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"") );
 				}
 				else {
-					q.setOrderByPart( "[1" + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC]":"]") );
+					q.setOrderByPart( "[" + term.getExpression() + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC]":"]") );
 				}
 				q.getOrderByPartParameters().clear();
 			}
