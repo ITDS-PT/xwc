@@ -513,6 +513,21 @@ public class XUIViewRoot extends UIViewRoot {
 				headerW.writeText('\n');
 				headerW.startElement("head", component);
 
+				// <meta http-equiv="X-UA-Compatible" content="chrome=1">
+				headerW.startElement( HtmlTags.META, component);
+				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
+				headerW.writeAttribute("content", "chrome=1", null);
+				headerW.endElement( HtmlTags.META );
+
+				headerW.startElement( HtmlTags.META, component);
+				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
+				headerW.writeAttribute("content", "IE=EmulateIE7", null);
+				headerW.endElement( HtmlTags.META );
+
+				headerW.startElement("meta", component);
+				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
+				headerW.writeAttribute("content", "IE=7", null);
+				
 				headerW.startElement("base", component);
 				HttpServletRequest req = (HttpServletRequest) getRequestContext()
 						.getRequest();
@@ -523,22 +538,6 @@ public class XUIViewRoot extends UIViewRoot {
 								+ req.getServerPort())
 						+ getRequestContext().getResourceUrl("");
 				headerW.writeAttribute("href", link, "href");
-				
-				// <meta http-equiv="X-UA-Compatible" content="chrome=1">
-				headerW.startElement( HtmlTags.META, component);
-				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
-				headerW.writeAttribute("content", "IE=EmulateIE7", null);
-				headerW.endElement( HtmlTags.META );
-
-				headerW.startElement("meta", component);
-				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
-				headerW.writeAttribute("content", "IE=7", null);
-
-				headerW.startElement( HtmlTags.META, component);
-				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
-				headerW.writeAttribute("content", "chrome=1", null);
-				headerW.endElement( HtmlTags.META );
-				
 				
 				// Write Body
 				w.startElement("body", component);
@@ -596,7 +595,6 @@ public class XUIViewRoot extends UIViewRoot {
 				getTheme().addScripts(w.getScriptContext());
 				getTheme().addStyle(w.getStyleContext());
 			}
-
 		}
 
 		@Deprecated
