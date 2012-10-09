@@ -35,14 +35,18 @@ public class XTransactionManager extends boPoolable implements boPoolOwner {
     public XTransaction getTransaction( String id ) {
 
         EboContext      oEboContext = boApplication.currentContext().getEboContext();
-        boMemoryArchive boMemArchive = oEboContext.getApplication().getMemoryArchive();
-        boPoolManager   boPoolMgr    = boMemArchive.getPoolManager();
-        oEboContext.setPreferredPoolObjectOwner( this.poolUniqueId() );
-        
-        XTransaction t = (XTransaction)boPoolMgr.getObject( oEboContext, "XTRANSACTION:ID:" + id );
-        if( t != null )
-        	addTransactionIdToContext( oEboContext , t);
-        return t;
+        if( oEboContext != null ) {
+	        boMemoryArchive boMemArchive = oEboContext.getApplication().getMemoryArchive();
+	        boPoolManager   boPoolMgr    = boMemArchive.getPoolManager();
+	        oEboContext.setPreferredPoolObjectOwner( this.poolUniqueId() );
+	        
+	        XTransaction t = (XTransaction)boPoolMgr.getObject( oEboContext, "XTRANSACTION:ID:" + id );
+	        if( t != null )
+	        	addTransactionIdToContext( oEboContext , t);
+	    
+	        return t;
+        }
+        return null;
     }
     
     private void addTransactionIdToContext( EboContext oContext, XTransaction t ) {
@@ -72,7 +76,7 @@ public class XTransactionManager extends boPoolable implements boPoolOwner {
 	        boPoolManager   boPoolMgr    = boMemArchive.getPoolManager();
 	
 	        XTransaction    oXTransaction = new XTransaction( this );
-	
+//	        oXTransaction.setPoolExpireTime( 2 * 60^2 * 100 );
 	        oEboContext.setPreferredPoolObjectOwner( this.poolUniqueId() );
 	        oXTransaction.setEboContext( oEboContext );
 	        boPoolMgr.putObject( oXTransaction, new Object[] { "XTRANSACTION:ID:" + oXTransaction.getId() });
