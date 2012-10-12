@@ -30,7 +30,7 @@
 		</init-param>
 		<init-param>
 			<param-name>MainPage</param-name>
-			<param-value>Main.xvw</param-value>
+			<param-value>Main_admin.xvw</param-value>
 		</init-param>
 		<init-param>
 			<param-name>ShowUserProfiles</param-name>
