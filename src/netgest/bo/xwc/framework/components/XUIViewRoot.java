@@ -29,7 +29,7 @@ import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.Window;
-import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
+import netgest.bo.xwc.components.classic.theme.JQueryTheme;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -73,7 +73,9 @@ public class XUIViewRoot extends UIViewRoot {
 	public XUIViewRoot() {
 		super();
 		if ("XEOHTML".equals(getRenderKitId()))
-			oTheme = new ExtJsTheme();
+			oTheme = new JQueryTheme();
+		else if ("XEOJQUERY".equals(getRenderKitId()))
+			oTheme = new JQueryTheme();
 		else if ("XEOV2".equals(getRenderKitId())) {
 			try {
 				Class<XUITheme> theme = (Class<XUITheme>) Class
@@ -125,6 +127,7 @@ public class XUIViewRoot extends UIViewRoot {
             oStateManagerImpl.closeView( viewId );
 		}
 		
+		
 		setTransient(true);
 	}
 	
@@ -137,14 +140,20 @@ public class XUIViewRoot extends UIViewRoot {
 		    	requestContext = XUIRequestContext.getCurrentContext();
 		    	
 		    	_renderKit = requestContext.getRequestParameterMap().get("__renderKit");
-		    	if( _renderKit != null ) { 
+		    	/*if( _renderKit != null ) { 
 		    		_renderKit = "XEOXML";
 		    	}
 		    	else {
 		    		_renderKit = "XEOHTML";
+		    	}*/
+		    	if( _renderKit == null ){
+		    		_renderKit = "XEOHTML";
 		    	}
 	    	}
 		}
+		
+		_renderKit = "XEOJQUERY"; 
+		
     	return _renderKit; 
     } 
 	
@@ -595,6 +604,7 @@ public class XUIViewRoot extends UIViewRoot {
 				getTheme().addScripts(w.getScriptContext());
 				getTheme().addStyle(w.getStyleContext());
 			}
+
 		}
 
 		@Deprecated
