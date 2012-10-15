@@ -1604,8 +1604,9 @@ public class XEOEditBean extends XEOBaseBean
                 	AttributeBase att = (AttributeBase) oViewRoot.findComponent( parentCompId );
                 	String boui = oSelRecs[0].getAttribute( "BOUI" ).getValue().toString();
                 	oInput.setValue( boui );
-                	updateUserFavorites(getXEOObject().getName(), att.getObjectAttribute(), 
-                			new long[]{Long.valueOf(boui)});
+                	String objectName = ((XEOObjectAttributeConnector)att.getDataFieldConnector()).getAttributeHandler().getParent().getName();
+                	updateUserFavorites(objectName, att.getObjectAttribute(), new long[]{Long.valueOf(boui)});
+                	
                 }
                 
                 oInput.updateModel();
@@ -2702,6 +2703,7 @@ public class XEOEditBean extends XEOBaseBean
 	    	  
 	    	  AttributeHandler handler = getHandlerFromAttribute(base);
 	    	  boObject sourceObject =  handler.getParent();
+	    	  
 	    	  
 	    	  bean.setAttributeName(objectAtt);
 	    	  bean.setInvokedFromBridge(isBridge);
