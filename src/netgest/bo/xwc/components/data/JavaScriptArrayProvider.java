@@ -24,7 +24,7 @@ public class JavaScriptArrayProvider {
     
     private static final int INITIAL__BUFFER_SIZE = 150;
     
-    private static final char[] EMPTY_FIELD = "''".toCharArray();
+    private static final char[] EMPTY_FIELD = "".toCharArray();
     
     private Iterator<DataRecordConnector> oDataIterator;
     private String[]          sDataFields;
@@ -116,9 +116,9 @@ public class JavaScriptArrayProvider {
             oStringBuilder.append( '{' );
             
             if( rowClass != null ) {
-            	oStringBuilder.append( "__rc:'" );
-    			JavaScriptUtils.safeJavaScriptWrite( oStringBuilder, rowClass.getRowClass( grid, oDataRecord ),'\'');
-                oStringBuilder.append( "'," );
+            	oStringBuilder.append( "\"__rc\":\"" );
+    			JavaScriptUtils.safeJavaScriptWrite( oStringBuilder, rowClass.getRowClass( grid, oDataRecord ),'\"');
+                oStringBuilder.append( "\"," );
         	}
         
             for (int i = 0; i < sDataFields.length; i++) { 
@@ -127,7 +127,7 @@ public class JavaScriptArrayProvider {
                     oStringBuilder.append( ',' );
                 
 
-                oStringBuilder.append('\'').append( sDataFields[i].replaceAll("\\.", "__") ).append('\'');	
+                oStringBuilder.append("\"").append( sDataFields[i].replaceAll("\\.", "__") ).append("\"");	
                 oStringBuilder.append(':');
 
                 oDataField = oDataRecord.getAttribute( sDataFields[i] );
@@ -137,13 +137,13 @@ public class JavaScriptArrayProvider {
                 	try {
 	                	if( columnRenderers != null && columnRenderers.containsKey( sDataFields[i] ) ) {
 	                		oDataFieldValue = columnRenderers.get( sDataFields[i] ).render(  grid, oDataRecord, oDataField );
-	                        oStringBuilder.append( '\'' );
+	                        oStringBuilder.append( "\"" );
 	                        JavaScriptUtils.safeJavaScriptWrite( 
 	                            oStringBuilder, 
 	                            ((String)oDataFieldValue),
-	                            '\''
+	                            '\"'
 	                        );
-	                        oStringBuilder.append( '\'' );
+	                        oStringBuilder.append( "\"" );
 	                	}
 	                	else {
 	                		
@@ -156,13 +156,13 @@ public class JavaScriptArrayProvider {
 	                			sDisplayValue = c.applyRenderTemplate( oDataFieldValue );
 	                        
 		                    if( sDisplayValue != null ) {
-	                            oStringBuilder.append( '\'' );
+	                            oStringBuilder.append( "\"" );
 	                            JavaScriptUtils.safeJavaScriptWrite( 
 	                                oStringBuilder, 
 	                                sDisplayValue,
-	                                '\''
+	                                '\"'
 	                            );
-	                            oStringBuilder.append( '\'' );
+	                            oStringBuilder.append( "\"" );
 		                    }
 		                    else if ( oDataFieldValue != null )
 		                    {
@@ -175,9 +175,9 @@ public class JavaScriptArrayProvider {
 		                        
 		                    	sDisplayValue = oDataField.getDisplayValue(); 
 		                    	if( sDisplayValue != null ) {
-		                            oStringBuilder.append( '\'' );
-		                            JavaScriptUtils.safeJavaScriptWrite( oStringBuilder, sDisplayValue, '\'' );
-		                            oStringBuilder.append( '\'' );
+		                            oStringBuilder.append( "\"" );
+		                            JavaScriptUtils.safeJavaScriptWrite( oStringBuilder, sDisplayValue, '\"' );
+		                            oStringBuilder.append( "\"" );
 		                    	}
 		                    	else {
 			                        oDataFieldType = oDataField.getDataType();
@@ -194,56 +194,58 @@ public class JavaScriptArrayProvider {
 			                                oStringBuilder.append( ((BigDecimal)oDataFieldValue).toString() );
 			                                break;
 			                            case DataFieldTypes.VALUE_DATE:
-			                                oStringBuilder.append('\'');
+			                                oStringBuilder.append("\"");
 			                                DateUtils.formatTimestampToDate( oStringBuilder, (Timestamp)oDataFieldValue );
-			                                oStringBuilder.append('\'');
+			                                oStringBuilder.append("\"");
 			                                break;
 			                            case DataFieldTypes.VALUE_DATETIME:
-			                                oStringBuilder.append('\'');
+			                                oStringBuilder.append("\"");
 			                                DateUtils.formatTimestampToDateTime( oStringBuilder, (Timestamp)oDataFieldValue );
-			                                oStringBuilder.append('\'');
+			                                oStringBuilder.append("\"");
 			                                break;
 			                            case DataFieldTypes.VALUE_CHAR:
 			                            case DataFieldTypes.VALUE_CLOB:
 			                            default:
-			                                oStringBuilder.append( '\'' );
+			                                oStringBuilder.append( "\"" );
 			                                JavaScriptUtils.safeJavaScriptWrite( 
 			                                    oStringBuilder, 
 			                                    (oDataFieldValue.toString()),
-			                                    '\''
+			                                    '\"'
 			                                );
-			                                oStringBuilder.append( '\'' );
+			                                oStringBuilder.append( "\"" );
 			                                break;
 			                               
 			                        }
 		                    	}
 		                    }
 		                    else {
-		                        oStringBuilder.append( EMPTY_FIELD );
+		                    	oStringBuilder.append( "\"" );
+		                        //oStringBuilder.append( EMPTY_FIELD );
+		                        oStringBuilder.append( "\"" );
 		                    }
 	                    }
                 	}
                 	catch( Exception e ) {
                 		e.printStackTrace();
-                    	oStringBuilder.append('\'');
-                        oStringBuilder.append( JavaScriptUtils.safeJavaScriptWrite( e.getMessage(), '\'') );
-                    	oStringBuilder.append('\'');
+                    	oStringBuilder.append("\"");
+                        oStringBuilder.append( JavaScriptUtils.safeJavaScriptWrite( e.getMessage(), '\"') );
+                    	oStringBuilder.append("\"");
                 	}
                 }
                 else {
-                	oStringBuilder.append('\'');
-                    oStringBuilder.append( JavaScriptUtils.safeJavaScriptWrite( ComponentMessages.GRID_INVALID_COLUMN.toString( sDataFields[i] ), '\'') );
-                	oStringBuilder.append('\'');
+                	oStringBuilder.append("\"");
+                    oStringBuilder.append( JavaScriptUtils.safeJavaScriptWrite( ComponentMessages.GRID_INVALID_COLUMN.toString( sDataFields[i] ), '\"') );
+                	oStringBuilder.append("\"");
                     //oStringBuilder.append( EMPTY_FIELD );
                 }
             }
             bFirstRow = false;
 
             oStringBuilder.append( ',' );
-            oStringBuilder.append( "__sRows:" );	
-            oStringBuilder.append('\'');
+            oStringBuilder.append( "\"__sRows\":" );	
+            oStringBuilder.append("\"");
             oStringBuilder.append( selRowNums );
-            oStringBuilder.append('\'');
+            oStringBuilder.append("\"");
             
             
             oStringBuilder.append( '}' );
@@ -310,13 +312,13 @@ public class JavaScriptArrayProvider {
                         
                             case DataFieldTypes.VALUE_CHAR:
                             case DataFieldTypes.VALUE_CLOB:
-                                oStringBuilder.append( '\'' );
+                                oStringBuilder.append( "\"" );
                                 JavaScriptUtils.safeJavaScriptWrite( 
                                     oStringBuilder, 
                                     ((String)oDataFieldValue),
-                                    '\''
+                                    '\"'
                                 );
-                                oStringBuilder.append( '\'' );
+                                oStringBuilder.append( "\"" );
                                 break;
                             case DataFieldTypes.VALUE_NUMBER:
                                 oStringBuilder.append( ((BigDecimal)oDataFieldValue).toString() );
