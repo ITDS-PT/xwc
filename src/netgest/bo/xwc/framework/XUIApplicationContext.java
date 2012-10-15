@@ -179,6 +179,10 @@ public class XUIApplicationContext {
         if( oRenderKit != null ) {
             oRenderKit.addRenderer( XUIViewRoot.class.getName(), XUIViewRoot.class.getName(), new XUIViewRoot.XEOHTMLRenderer() );    
         }
+        oRenderKit = oRenderKits.get( "XEOJQUERY" );
+        if( oRenderKit != null ) {
+            oRenderKit.addRenderer( XUIViewRoot.class.getName(), XUIViewRoot.class.getName(), new XUIViewRoot.XEOHTMLRenderer() );    
+        }
         oRenderKit = oRenderKits.get( "XEOXML" );
         if( oRenderKit != null ) {
             oRenderKit.addRenderer( XUIViewRoot.class.getName(), XUIViewRoot.class.getName(), new XMLViewRootRenderer() );    
