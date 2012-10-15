@@ -15,10 +15,8 @@ import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.system.boApplication;
-import netgest.bo.system.LoggerLevels.LoggerLevel;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
-import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class XEOObjectConnector implements DataRecordConnector, Map<String,Object> {
