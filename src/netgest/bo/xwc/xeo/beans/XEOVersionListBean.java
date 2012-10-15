@@ -3,8 +3,6 @@ package netgest.bo.xwc.xeo.beans;
 import java.io.StringWriter;
 import java.util.Date;
 
-import javax.faces.event.PhaseEvent;
-
 import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
@@ -283,6 +281,7 @@ public class XEOVersionListBean extends XEOEditBean
 	    	}
 	    	
 			w.endDocument();
+			w.close();
 			return writer.toString();
 		
 		 } 
