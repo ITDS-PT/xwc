@@ -103,11 +103,24 @@ public class Tabs extends XUIComponentBase
     public void setActiveTab(String activeTab)
     {
         this.activeTab.setValue( activeTab );
+        int k = 0;
+        for (UIComponent c : getChildren()){
+        	if (c.getId().equals( activeTab )){
+        		activeTabIndex = k;
+        		break;
+        	}
+        	k++;
+        }
     }
 
     public void setActiveTab( Tab activeTab )
     {
-        this.activeTab.setValue( activeTab.getId() );
+    	setActiveTab( activeTab.getId() );
+    }
+    
+    private int activeTabIndex = 0;
+    public int getActiveTabIndex(){
+    	return activeTabIndex;
     }
 
     public String getActiveTab()
@@ -115,10 +128,11 @@ public class Tabs extends XUIComponentBase
         return activeTab.getValue();
     }
    
-    @Override
-	public boolean getRendersChildren()
-    {
-        return true;
+    
+    public void initComponent(){
+    	super.initComponent();
+    	initializeTemplate( "templates/components/tabs.ftl" );
+		
     }
 
     @Override
@@ -328,10 +342,15 @@ public class Tabs extends XUIComponentBase
             w.writeAttribute( "class", "x-tab-panel-bwrap", null );
             
         } 
+        
+        @Override
+        public boolean getRendersChildren() {
+        	return true;
+        }
 
         @Override 
         public void encodeEnd(XUIComponentBase component) throws IOException {
-
+        	
             ResponseWriter w = getResponseWriter();
             w.endElement("div");
             w.endElement("div");

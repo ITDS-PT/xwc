@@ -40,8 +40,9 @@ public class AttributeBase extends ViewerInputSecurityBase {
     /**
      * A connector to keep/retrieve the value of the attribute
      */
-    private XUIBindProperty<DataFieldConnector> dataFieldConnector = new XUIBindProperty<DataFieldConnector>( "dataFieldConnector", this, DataFieldConnector.class );
-
+    protected XUIBindProperty<DataFieldConnector> dataFieldConnector = new XUIBindProperty<DataFieldConnector>( "dataFieldConnector", this, DataFieldConnector.class );
+    
+    
     /**
      * Whether or not the attribute should be rendered as a list of values
      */
@@ -1123,7 +1124,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
 					else
 						setInvalidText( "Valor inválido!" );
 				}
-			}
+			} 
 		}
 	}
 }

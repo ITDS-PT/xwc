@@ -13,6 +13,7 @@ import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
@@ -22,6 +23,7 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.utils.StringUtils;
 
 /**
  * 
@@ -50,7 +52,7 @@ public class ActionButton extends XUICommand
     /**
      * An icon to place with the button
      */
-    private XUIViewStateProperty<String>	image = new XUIViewStateProperty<String>( "image", this, null );
+    private XUIViewStateProperty<String>	image = new XUIViewStateProperty<String>( "image", this, "" );
     
     /**
      * The target where the action will be executed
@@ -77,6 +79,25 @@ public class ActionButton extends XUICommand
     @Values({ "1","2" })
     private XUIViewProperty<Integer>		waitMode = new XUIViewProperty<Integer>( "waitMode" , this, XVWScripts.WAIT_DIALOG );		
     
+    /**
+     * The position
+     */
+    private XUIBaseProperty<String>			iconPosition = new XUIBaseProperty<String>( "iconPosition", this, "left" );
+    
+    public String getIconPosition(){
+    	return iconPosition.getValue();
+    }
+    
+    public void setIconPosition(String iconPos){
+    	this.iconPosition.setValue( iconPos );
+    }
+    
+    @Override
+    public void initComponent() {
+    	super.initComponent();
+    	initializeTemplate( "templates/components/actionButton.ftl" );
+    	
+    }
     
     public ActionButton()
     {
@@ -312,7 +333,8 @@ public class ActionButton extends XUICommand
             oConfig.addJSString( "id", oActionButton.getClientId() + "_b" );
             oConfig.add( "minWidth", oActionButton.getWidth() );
             
-            if (oActionButton.getImage() != null){
+            String image = oActionButton.getImage();
+            if (StringUtils.hasValue( image )){
             	oConfig.addJSString("icon", oActionButton.getImage() );
             	oConfig.addJSString( "cls","x-btn-text-icon");
             }

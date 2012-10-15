@@ -18,6 +18,12 @@ public class AttributeLov extends AttributeBase {
 	public boolean isRenderedOnClient() {
 		return false;
 	}
+    
+    @Override
+    public void initComponent() {
+    	super.initComponent();
+    	initializeTemplate( "templates/components/attributeLov.ftl" );
+    }
 
 	public static class XEOHTMLRenderer extends ExtJsFieldRendeder {
 

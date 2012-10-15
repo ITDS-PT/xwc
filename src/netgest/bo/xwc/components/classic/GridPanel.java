@@ -1340,7 +1340,19 @@ public class GridPanel extends ViewerInputSecurityBase {
 					oColumnsIt = oColumns.getChildren().iterator();
 
 					for (; oColumnsIt.hasNext();) {
-						oRetColumns.add((Column) oColumnsIt.next());
+						UIComponent column = oColumnsIt.next();
+						if (column instanceof Column)
+							oRetColumns.add((Column) column );
+						else{
+							Iterator<UIComponent> itColumnParent = column.getChildren().iterator();
+							for (; itColumnParent.hasNext();) {
+								UIComponent currColumn = itColumnParent.next();
+								if (currColumn instanceof Column){
+									oRetColumns.add((Column) currColumn );
+								}
+							}
+						}
+							
 
 					}
 					oGridColumns = oRetColumns.toArray(new Column[oRetColumns

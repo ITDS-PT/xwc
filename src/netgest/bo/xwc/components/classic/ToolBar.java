@@ -20,6 +20,7 @@ import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.ScriptBuilder;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -28,7 +29,6 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.def.XUIComponentStore;
 import netgest.bo.xwc.framework.def.XUIRendererDefinition;
-import netgest.bo.xwc.xeo.components.ViewerMethod;
 
 
 /**
@@ -60,6 +60,8 @@ public class ToolBar extends ViewerSecurityBase {
      */
     private XUIViewStateBindProperty<Boolean> visible  = new XUIViewStateBindProperty<Boolean>( "visible", this, "true" ,Boolean.class );
 	
+    
+    
     public void setDisabled(String disabled) {
         this.disabled.setExpressionText( disabled );
     }
@@ -76,6 +78,33 @@ public class ToolBar extends ViewerSecurityBase {
         return this.visible.getEvaluatedValue();
     }
     
+    
+    private XUIBaseProperty<String> iconPosition = new XUIBaseProperty<String>( "iconPosition", this, "left" );
+    
+    public void setIconPosition(String position){
+    	this.iconPosition.setValue( position );
+    }
+    
+    public String getPosition(){
+    	return iconPosition.getValue();
+    }
+    
+    public IconPosition getIconPosition(){
+    	return IconPosition.fromString( getPosition() );
+    }
+    
+    public enum IconPosition{
+    	TOP,
+    	LEFT;
+    	
+    	public static IconPosition fromString(String value){
+    		for (IconPosition p : values()){
+    			if (p.name().equalsIgnoreCase( value ))
+    				return p;
+    		}
+    		return LEFT;
+    	}
+    }
     
     public ToolBar()
     {
@@ -116,6 +145,9 @@ public class ToolBar extends ViewerSecurityBase {
 
 		getChildren().clear();
 		getChildren().addAll(finalList);
+		
+		initializeTemplate( "templates/components/toolbar.ftl" );
+		
 		
     }
 

@@ -1,10 +1,15 @@
 package netgest.bo.xwc.components.classic.scripts;
 
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.render.Renderer;
+
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.MessageBox.MessageBoxButtons;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
+import netgest.bo.xwc.components.classic.renderers.ComponentWebResourcesCleanup;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -296,6 +301,17 @@ public class XVWScripts {
         oRequestContext = XUIRequestContext.getCurrentContext();
 		closeView( oViewRoot, oRequestContext.getScriptContext() );
     }
+    
+    protected static Renderer getRenderer(UIComponent oComp, FacesContext context) {
+    	String rendererType = oComp.getRendererType();
+        Renderer result = null;
+        if (rendererType != null) {
+            result = context.getRenderKit().getRenderer(oComp.getFamily(),
+                                                        rendererType);
+        }
+        return result;
+        
+    }
 
     public static final String getCloseViewScript( XUIViewRoot oViewRoot ) {
     	// Check if it's a window
@@ -304,18 +320,24 @@ public class XVWScripts {
 		
     	if( oWnd != null ) {
     		
-    		String namingContainerId = oViewRoot.findComponent( XUIForm.class ).getClientId();
-    		String closeScript = "XVW.closeWindow('" + namingContainerId +  "','" + oWnd.getClientId() +"');";
+    		String closeScript = "";
+    		Renderer windowRenderer = getRenderer( oWnd, oWnd.getRequestContext().getFacesContext() );
+    		if (windowRenderer instanceof ComponentWebResourcesCleanup){
+    			closeScript = ((ComponentWebResourcesCleanup) windowRenderer).getCleanupScript( oWnd ); 
+    		}
+    		sb.append(closeScript);
     		
     		// The is a window, so simply close the window
-    		sb.append( "Ext.onReady( function() { " )
+    		//FIXME: Does not work for JQuery, changed to the destroy of Window
+    		//When that is not the case, we must re-write this
+    		/*sb.append( "Ext.onReady( function() { " )
     		.append( "if( "+oWnd.getId()+" ){")
     			.append(closeScript)
 		    .append(  "}")
 	        .append(   "else if(window.parent.").append(oWnd.getId()).append(") { ")
 	        	.append(closeScript)
-		    .append(  "}});\n");    		
-	       oWnd.destroy();
+		    .append(  "}});\n");*/
+    		
 	       
     	} 
     	else {

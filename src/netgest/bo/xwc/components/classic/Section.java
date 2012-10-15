@@ -56,6 +56,12 @@ public class Section extends ViewerSecurityBase {
     {
         return visible.getEvaluatedValue();
     }
+    
+    @Override
+    public void initComponent() {
+    	super.initComponent();
+    	initializeTemplate( "templates/components/section.ftl" );
+    }
 
 	@Override
 	public boolean isRendered() {

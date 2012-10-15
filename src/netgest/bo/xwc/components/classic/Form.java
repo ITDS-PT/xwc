@@ -23,7 +23,6 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
-import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 
@@ -206,6 +205,7 @@ public class Form extends XUIForm
             }
     
             XUIResponseWriter writer = (XUIResponseWriter)context.getResponseWriter();
+            XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
             
             assert(writer != null);
             String clientId = component.getClientId();
@@ -234,6 +234,30 @@ public class Form extends XUIForm
                 writer.writeAttribute("accept-charset", acceptcharset,
                                       "acceptcharset");
             }
+            
+         // this hidden field will be checked in the decode method to
+         			// determine if this form has been submitted.         
+         			writer.startElement("input", component);
+         			writer.writeAttribute("type", "hidden", "type"); 
+         			writer.writeAttribute("name", clientId,
+         			  "clientId");
+         			writer.writeAttribute("value", clientId, "value");
+         			writer.endElement("input");
+         			
+         			writer.startElement("input", component);
+         			writer.writeAttribute("type", "hidden", "type"); 
+         			writer.writeAttribute("name", "xvw.ajax.submitUrl",
+         			  null );
+         			writer.writeAttribute("value", oRequestContext.getAjaxURL(), "value");
+         			writer.endElement("input");
+
+         			writer.startElement("input", component);
+         			writer.writeAttribute("type", "hidden", "type"); 
+         			writer.writeAttribute("name", "xvw.ajax.resourceUrl",
+         			  null );
+         			writer.writeAttribute("value", oRequestContext.getResourceUrl(""), "value");
+         			writer.endElement("input");
+            
         }
     
     
@@ -242,36 +266,15 @@ public class Form extends XUIForm
               throws IOException {
     
             FacesContext context = getFacesContext();
-            ResponseWriter writer = context.getResponseWriter();
             XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
+            ResponseWriter writer = oRequestContext.getResponseWriter();
 
             String clientId = component.getClientId();
 
             RenderKitUtils.renderPassThruAttributes(writer,
                     component,
                     ATTRIBUTES);
-			// this hidden field will be checked in the decode method to
-			// determine if this form has been submitted.         
-			writer.startElement("input", component);
-			writer.writeAttribute("type", "hidden", "type"); 
-			writer.writeAttribute("name", clientId,
-			  "clientId");
-			writer.writeAttribute("value", clientId, "value");
-			writer.endElement("input");
 			
-			writer.startElement("input", component);
-			writer.writeAttribute("type", "hidden", "type"); 
-			writer.writeAttribute("name", "xvw.ajax.submitUrl",
-			  null );
-			writer.writeAttribute("value", oRequestContext.getAjaxURL(), "value");
-			writer.endElement("input");
-
-			writer.startElement("input", component);
-			writer.writeAttribute("type", "hidden", "type"); 
-			writer.writeAttribute("name", "xvw.ajax.resourceUrl",
-			  null );
-			writer.writeAttribute("value", oRequestContext.getResourceUrl(""), "value");
-			writer.endElement("input");
 
 			
 			if (!writeStateAtEnd) {

@@ -9,9 +9,6 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
@@ -25,6 +22,9 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIInput;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 /**
  * <p>Component to generate different styles of message boxes.</p>
@@ -666,6 +666,8 @@ public class MessageBox extends XUIInput {
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}
+		
+		initializeTemplate( "templates/components/messageBox.ftl" );
 	}
 	
 	/**
@@ -689,6 +691,7 @@ public class MessageBox extends XUIInput {
 				mbConfig.addJSString( "title" , box.getTitle() );
 				mbConfig.addJSString( "msg" , box.getMessage() );
 				mbConfig.addJSString( "id" , box.getClientId() );
+				mbConfig.add( "autoScroll" , true );
 				
 				ExtConfig btnConfig = new ExtConfig();
 				ExtConfig btnTextConfig = new ExtConfig();

@@ -14,6 +14,7 @@ import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
+import netgest.bo.xwc.components.classic.renderers.ComponentWebResourcesCleanup;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIMethodBindProperty;
@@ -31,7 +32,7 @@ import netgest.bo.xwc.framework.components.XUIForm;
  * 
  * A {@link Window} is a component that's used to open a view in a separate window.
  * 
- * @author Jo�o Carreira
+ * @author Joao Carreira
  *
  */
 public class Window extends XUIComponentBase {
@@ -187,6 +188,7 @@ public class Window extends XUIComponentBase {
     @Override
     public void initComponent(){
     	this.setOnBeforeClose("#{" + getBeanId() + ".canCloseTab}");
+    	initializeTemplate( "templates/components/window.ftl" );
     }
     
 	@Override
@@ -230,27 +232,51 @@ public class Window extends XUIComponentBase {
     	destroy();
     }
     
+    protected String getCleanUpScript() {
+    	String rendererType = getRendererType();
+    	FacesContext context = getRequestContext().getFacesContext();
+        Renderer result = null;
+        if (rendererType != null) {
+            result = context.getRenderKit().getRenderer(getFamily(),
+                                                        rendererType);
+            if (result instanceof ComponentWebResourcesCleanup){
+            	String script = ((ComponentWebResourcesCleanup) result).getCleanupScript( this );
+            	return script;
+            }
+        }
+        return "";
+        
+    }
+    
     public void destroy() {
     	
         XUIRequestContext oRequestContext; 
         oRequestContext = XUIRequestContext.getCurrentContext();
         
-        //For ExtJS Rendering
-        String namingContainerId = findParentComponent(XUIForm.class).getClientId();
-        oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER, this.getClientId() + "_closeWnd", 
-		      "window.setTimeout( function() { " +
-		      "XVW.closeWindow('" + namingContainerId +  "','" + getClientId() +"');" +
-		      "},10);\n"
-        );
-        
-        
-       
-        
+        Renderer renderer = getRenderer();
+        if (renderer instanceof ComponentWebResourcesCleanup){
+        	String script = ((ComponentWebResourcesCleanup)renderer).getCleanupScript( this );
+        	oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER, 
+        			this.getClientId() + "_closeWnd",
+        			script);
+        }
+    }
+    
+    public Renderer getRenderer() {
+
+    	FacesContext context = getRequestContext().getFacesContext();
+        String rendererType = getRendererType();
+        Renderer result = null;
+        if (rendererType != null) {
+            result = context.getRenderKit().getRenderer(getFamily(),
+                                                        rendererType);
+        }            
+        return result;
     }
     
     
 
-    public static class XEOHTMLRenderer extends XUIRenderer {
+    public static class XEOHTMLRenderer extends XUIRenderer implements ComponentWebResourcesCleanup {
         
         private ExtConfigArray oItems;
 
@@ -460,5 +486,16 @@ public class Window extends XUIComponentBase {
         public boolean getRendersChildren() {
             return true;
         }
+
+		@Override
+		public String getCleanupScript( XUIComponentBase oWnd ) {
+			
+			String namingContainerId = oWnd.findParentComponent(XUIForm.class).getClientId();
+	        return  
+			      "window.setTimeout( function() { " +
+			      "XVW.closeWindow('" + namingContainerId +  "','" + oWnd.getClientId() +"');" +
+			      "},10);\n";
+			
+		}
     }
 }

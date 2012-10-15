@@ -9,6 +9,7 @@ import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIViewProperty;
@@ -38,9 +39,15 @@ public class Panel extends ViewerSecurityBase {
 	 */
 	private XUIViewStateBindProperty<String> title = new XUIViewStateBindProperty<String>( "title", this, String.class );
 	/**
-	 * The layout of the panel (not in used at the moment)o
+	 * The layout of the panel (not in used at the moment)
 	 */
 	private XUIViewProperty<String> layout = new XUIViewProperty<String>( "layout", this, "" );
+	
+	/**
+	 * Whether the panel is collapsible or nor (defaults to false, not all renderers support this)
+	 */
+	private XUIBaseProperty<Boolean> collapsible = new XUIBaseProperty<Boolean>( "collapsible", this, false );
+	
 	/**
 	 * Whether the panel is visible or not
 	 */
@@ -58,6 +65,12 @@ public class Panel extends ViewerSecurityBase {
     public String getTitle() {
 		return title.getEvaluatedValue();
 	}
+    
+    @Override
+    public void initComponent(){
+    	super.initComponent();
+    	initializeTemplate( "templates/components/panel.ftl" );
+    }
     
     /**
      * Set the title of the panel
@@ -91,6 +104,21 @@ public class Panel extends ViewerSecurityBase {
 		return this.visible.getEvaluatedValue();
 	}
 	
+	public boolean getCollapsible(){
+		return this.collapsible.getValue();
+	}
+	
+	public void setCollapsible(String colapsible){
+		this.collapsible.setValue( Boolean.valueOf( colapsible ) );
+	}
+	
+	public void setCollapsible(boolean colapsible){
+		this.collapsible.setValue( colapsible );
+	}
+	
+	public void setCollapsible(Boolean colapsible){
+		this.collapsible.setValue( colapsible );
+	}
 	
 	/**
 	 * Set the layout type to this panel
