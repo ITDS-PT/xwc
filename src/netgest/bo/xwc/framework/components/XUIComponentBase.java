@@ -17,6 +17,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 import javax.faces.render.RenderKit;
+import javax.faces.render.Renderer;
 import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.xwc.components.HTMLAttr;
@@ -28,7 +29,6 @@ import netgest.bo.xwc.framework.XUIComponentPlugIn;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUISessionContext;
-import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
 import netgest.bo.xwc.framework.properties.XUIProperty;
 import netgest.bo.xwc.framework.properties.XUIPropertyVisibility;
@@ -424,6 +424,8 @@ public abstract class XUIComponentBase extends UIComponentBase
     	if( getRenderComponent() )
     		super.encodeEnd( FacesContext.getCurrentInstance() );
     }
+    
+    
 
     public void encodeChildren(  ) throws IOException
     {
@@ -917,6 +919,10 @@ public abstract class XUIComponentBase extends UIComponentBase
 		}
 	}
 	
+	
+	
+	
+	
 	/**
 	 * 
 	 * Recursively calls the <code>forceRenderOnClient()</code> on all
@@ -937,5 +943,67 @@ public abstract class XUIComponentBase extends UIComponentBase
 		}
 	}
 	
+	
+	///---------------------------------------
+	
+	
+	/**
+	 * The name of the template for this component
+	 */
+	protected XUIBindProperty<String> template =
+			new XUIBindProperty<String>( "template", this, String.class );
+	
+	/**
+	 * Content for the template (specified in a bean)
+	 */
+	private XUIBindProperty<String> templateContent =
+			new XUIBindProperty<String>( "templateContent", this, String.class );
+	
+	/**
+	 * 
+	 * Sets the template for the component
+	 * 
+	 * @param templateNameExpr The template name or expression
+	 */
+	public void setTemplate(String templateNameExpr){
+		this.template.setExpressionText( templateNameExpr );
+	}
+	
+	/**
+	 * 
+	 * Retrieves the template name
+	 * 
+	 * @return The name of the template as a String
+	 */
+	public String getTemplate(){
+		return template.getEvaluatedValue();
+	}
+	
+	
+	/**
+	 * 
+	 * Retrieve the content of an inline template
+	 * 
+	 * @return The template content
+	 */
+	public String getTemplateContent(){
+		return templateContent.getEvaluatedValue();
+	}
+
+	public void setTemplateContent(String contentExpr){
+		this.templateContent.setExpressionText( contentExpr );
+	}
+	
+	public Renderer getComponentRenderer(){
+		return super.getRenderer( getFacesContext() );
+	}
+	
+	protected final void initializeTemplate(String templateName){
+		if (template.isDefaultValue()){
+			template.setExpressionText( templateName );
+		}
+	}
+	
+	///---------------------------------------
 	
 }
