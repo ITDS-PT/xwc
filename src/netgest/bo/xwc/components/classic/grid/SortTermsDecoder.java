@@ -25,31 +25,6 @@ public class SortTermsDecoder {
 	
 	private Map<String,Direction> decodedTerms = new HashMap<String, Direction>(5);
 	
-	public enum Direction{
-		  ASCENDING("ASC")
-		, DESCENDING("DESC")
-		, NONE("");
-		
-		private String name;
-		
-		private Direction(String name){
-			this.name = name;
-		}
-		
-		public String getName(){
-			return this.name;
-		}
-		  
-		public static Direction fromString(String setting){
-			if ("ASC".equalsIgnoreCase( setting ))
-				return ASCENDING;
-			else if ("DESC".equalsIgnoreCase( setting ))
-				return DESCENDING;
-			else
-				return NONE;
-		}
-	}
-	
 	public SortTermsDecoder(String terms) {
 		this.sortTerms = terms;
 		parseTerms();

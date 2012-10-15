@@ -36,6 +36,21 @@ import netgest.bo.xwc.components.model.Column;
 
 public class GridPanelJSonRenderer {
 	
+	public static enum JsonFormat{
+		TOTAL_RECORDS("totalCount");
+		
+		private String name;
+		
+		private JsonFormat(String name){
+			this.name = name;
+		}
+		
+		public String toString(){
+			return name;
+		}
+		
+	}
+	
     public StringBuilder buildDataArray( GridPanel oGrid, DataListConnector oDataSource,Iterator<DataRecordConnector> dataIterator, int start, int limit ) {
     	return buildDataArray( oGrid, oDataSource,dataIterator, start, limit, -1 );
     }
@@ -71,13 +86,13 @@ public class GridPanelJSonRenderer {
         );
         
         StringBuilder s = new StringBuilder(200);
-        s.append( '{' );
+        s.append( "{ \"" );
         s.append( oGrid.getId() ); 
-        s.append( ":" );
+        s.append( "\" :" );
         oJsArrayProvider.getJSONArray( s, oGrid, rowIdentifier, selRows, oGrid.getRowClass(), columnRenderer );
 
-        s.append(",totalCount:").append( rowCount > -1?rowCount:oDataSource.getRecordCount() );
-
+        s.append(",\"totalCount\":\"").append( rowCount > -1?rowCount:oDataSource.getRecordCount() );
+        s.append("\", \"page\" : \"1\" , \"total\" : \"2\" ");
         s.append('}');
         
         return s;
@@ -139,7 +154,7 @@ public class GridPanelJSonRenderer {
 		if( (oDataCon.dataListCapabilities() & DataListConnector.CAP_FULLTEXTSEARCH) > 0 )
 			oGrid.applyFullTextSearch( oDataCon );
 		if( (oDataCon.dataListCapabilities() & DataListConnector.CAP_FILTER) > 0 )
-				oGrid.applyFilters( oDataCon );
+			oGrid.applyFilters( oDataCon );
 		if( (oDataCon.dataListCapabilities() & DataListConnector.CAP_SORT) > 0 )
 			oGrid.applySort( oDataCon );
 		if( (oDataCon.dataListCapabilities() & DataListConnector.CAP_AGGREGABLE) > 0 )

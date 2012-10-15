@@ -13,6 +13,7 @@ import netgest.bo.xwc.components.connectors.FilterTerms;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.model.Column;
+import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.utils.StringUtils;
 
 import org.json.JSONArray;
@@ -293,6 +294,10 @@ public class GridPanelUtilities {
 	 */
 	public FilterTerms createSimpleFilterTerms( String currentFilters ) {
 		FilterTerms terms = null;
+		
+		if (currentFilters == null)
+			return terms;
+		
 		try {
 			JSONObject jFilters = new JSONObject(currentFilters);
 			String[] names = JSONObject.getNames(jFilters);
@@ -458,4 +463,37 @@ public class GridPanelUtilities {
 		
 	}
 
+	
+	public String getExcelDownloadScript(){
+		
+		return getDownloadScript( "excel", gridPanel.getRequestContext() );
+	}
+	
+	
+	
+	private String getDownloadScript(String type, XUIRequestContext context){
+		String sActionUrl = context.getAjaxURL();
+        
+        String sPar = "javax.faces.ViewState=" + context.getViewRoot().getViewState();
+        if( sActionUrl.indexOf("?") == -1 ) {
+        	sActionUrl += "?" + sPar;
+        }
+        else {
+        	sActionUrl += "&" + sPar;
+        }
+        sPar = "xvw.servlet=" + this.gridPanel.getClientId();
+    	sActionUrl += "&" + sPar;
+        sPar = "type=" + type;
+    	sActionUrl += "&" + sPar;
+        StringBuilder sb = new StringBuilder(100);
+        sb.append( "function(){" );
+        	sb.append(     		"		XVW.downloadFile('" + sActionUrl + "');");
+        sb.append( "}" );
+        return sb.toString() ;
+	}
+	
+	public String getPdfDownloadScript(){
+		return getDownloadScript( "pdf", gridPanel.getRequestContext() );
+	}
+	
 }

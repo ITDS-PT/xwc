@@ -100,6 +100,9 @@ public class GridPanelJSonFiltersBuilder {
 	}
 	
 	
+	public void addFilter(String name, ValueType type, JOIN_OPERATOR joinOperator, String valueOperator, Object value){
+		addFilter(name, type, String.valueOf( joinOperator.getCode() ), valueOperator, value);
+	}
 	
 	public void addFilter(String name, ValueType type, String joinOperator, String valueOperator, Object value){
 		try{
@@ -179,6 +182,15 @@ public class GridPanelJSonFiltersBuilder {
 		newFilter.put( "joinOperator", String.valueOf(joinOperator.getCode() ) );
 	}
 	
+	/**
+	 * 
+	 * Serializes the filters to JSON
+	 * 
+	 * @return A JSON string with the filters
+	 */
+	public String serializeJSON(){
+		return filters.toString();
+	}
 	
 	public String toString(){
 		return filters.toString();

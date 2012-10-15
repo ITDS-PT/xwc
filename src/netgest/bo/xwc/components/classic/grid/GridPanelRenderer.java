@@ -98,7 +98,8 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
     
 	public void service(ServletRequest oRequest, ServletResponse oResponse, XUIComponentBase oComp ) throws IOException
     {
-        
+		System.out.println("************** " + oComp.getId());
+        System.out.println("Pedido ao gridPanel " + oComp.getId());
 		
 		GridPanel oGrid;
         GridPanelRequestParameters reqParam;
@@ -215,7 +216,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         }
     }
 	
-	public GridPanelRequestParameters decodeServiceParmeters( GridPanel oGridPanel, WebRequest oRequest ) {
+	public GridPanelRequestParameters decodeServiceParameters( GridPanel oGridPanel, WebRequest oRequest ) {
 		String selectedRows 	= oRequest.getParameter( GridParameter.SELECTED_ROWS );
         String activeRow 		= oRequest.getParameter( GridParameter.ACTIVE_ROW );
         
@@ -503,7 +504,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	}
 	
 	public GridPanelRequestParameters decodeServiceParmeters( GridPanel oGridPanel, HttpServletRequest oRequest ) {
-		return decodeServiceParmeters( oGridPanel, new HttpServletRequestWrapper( oRequest ) );
+		return decodeServiceParameters( oGridPanel, new HttpServletRequestWrapper( oRequest ) );
 	}
 	
 	

@@ -1,5 +1,6 @@
 package netgest.bo.xwc.components.classic.grid;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -18,6 +19,10 @@ public class HttpServletRequestWrapper implements WebRequest {
 		this.request = req;
 	}
 	
+	public HttpServletRequestWrapper(ServletRequest req){
+		this.request = (HttpServletRequest) req;
+	}
+	
 	@Override
 	public String getParameter( String name ) {
 		return request.getParameter( name );
@@ -29,12 +34,12 @@ public class HttpServletRequestWrapper implements WebRequest {
 	}
 
 	@Override
-	public String getParameter( GridParameter param ) {
+	public String getParameter( WebParameter param ) {
 		return request.getParameter( param.getName() );
 	}
 
 	@Override
-	public String[] getParameterValues( GridParameter param ) {
+	public String[] getParameterValues( WebParameter param ) {
 		return request.getParameterValues( param.getName() );
 	}
 

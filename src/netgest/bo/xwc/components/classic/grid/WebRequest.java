@@ -3,7 +3,7 @@ package netgest.bo.xwc.components.classic.grid;
 
 public interface WebRequest {
 
-	public enum GridParameter{
+	public enum GridParameter implements WebParameter {
 		  START("start")
 		, LIMIT("limit")
 		, SELECTED_ROWS("selectedRows")
@@ -33,10 +33,10 @@ public interface WebRequest {
 	
 	public String getParameter( String name );
 	
-	public String getParameter(GridParameter param);
+	public String getParameter(WebParameter param);
 
 	public String[] getParameterValues( String name );
 
-	public String[] getParameterValues( GridParameter param );
+	public String[] getParameterValues( WebParameter param );
 	
 }
