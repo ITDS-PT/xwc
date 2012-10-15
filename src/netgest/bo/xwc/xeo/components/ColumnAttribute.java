@@ -31,7 +31,7 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
      */
     private XUIViewProperty<Boolean> enableCardIdLink = 
     	new XUIViewProperty<Boolean>( "enableCardIdLink", this, false );
-	
+    
     
     public boolean getEnableCardIdLink() {
 		return this.enableCardIdLink.getValue().booleanValue();
@@ -41,6 +41,20 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 		this.enableCardIdLink.setValue(Boolean.valueOf(isCardLinkActive));
 	}
     
+	/**
+	 *  Whether the column is Frozen or not
+	 */
+	private XUIViewProperty<Boolean> frozen = 
+			new XUIViewProperty<Boolean>( "frozen", this, false );
+	
+	public boolean getIsFrozen() {
+		return this.frozen.getValue().booleanValue();
+	}
+	
+	public void setFrozen(String isFrozen){
+		this.frozen.setValue(Boolean.valueOf(isFrozen));
+	}
+	
 	@Override
 	public String getRendererType() {
 		return "columnAttribute";
