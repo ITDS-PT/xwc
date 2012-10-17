@@ -98,9 +98,6 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
     
 	public void service(ServletRequest oRequest, ServletResponse oResponse, XUIComponentBase oComp ) throws IOException
     {
-		System.out.println("************** " + oComp.getId());
-        System.out.println("Pedido ao gridPanel " + oComp.getId());
-		
 		GridPanel oGrid;
         GridPanelRequestParameters reqParam;
 
@@ -110,6 +107,9 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         	return;
 
         String sType = oRequest.getParameter("type");
+        
+        
+        
         if( "pdf".equalsIgnoreCase( sType ) ) {
         	GridPanelPDFRenderer pdfRender = new GridPanelPDFRenderer();
         	pdfRender.render( oRequest , oResponse, oGrid );
@@ -347,7 +347,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 		if (groupToolBarVisible != null)
 			reqParam.setGroupToolBarVisible(Boolean.parseBoolean(groupToolBarVisible));
 		
-		// Sumary Parameter
+		// Summary Parameter
 		reqParam.setAggregateParameter(aggregateField);
 		
         oGridPanel.setCurrentAggregateField( aggregateField );
@@ -506,7 +506,6 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	public GridPanelRequestParameters decodeServiceParmeters( GridPanel oGridPanel, HttpServletRequest oRequest ) {
 		return decodeServiceParameters( oGridPanel, new HttpServletRequestWrapper( oRequest ) );
 	}
-	
 	
 	
 	public static String getExportTitle( GridPanel oGrid ) {
