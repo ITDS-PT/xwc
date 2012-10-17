@@ -126,10 +126,12 @@ public class TemplateLoaderFactory {
 			synchronized ( TemplateLoaderFactory.class ) {
 				if (defaultLoader == null){
 					XUIRequestContext oReqCtx = XUIRequestContext.getCurrentContext();
-			    	ServletContext servletContext = 
-			    		(ServletContext)oReqCtx.getFacesContext().getExternalContext().getContext();
-			    	Configuration cfg = new Configuration();
-			    	defaultLoader = new WebContextTemplateLoader( cfg, servletContext.getRealPath( TEMPLATES_ROOT ) );
+					if (oReqCtx != null){
+				    	ServletContext servletContext = 
+				    		(ServletContext)oReqCtx.getFacesContext().getExternalContext().getContext();
+				    	Configuration cfg = new Configuration();
+				    	defaultLoader = new WebContextTemplateLoader( cfg, servletContext.getRealPath( TEMPLATES_ROOT ) );
+					}
 			    }
 			}
 		}
