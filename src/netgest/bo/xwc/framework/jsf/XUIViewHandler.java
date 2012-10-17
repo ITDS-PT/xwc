@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.Writer;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -55,7 +54,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewBean;
 import netgest.bo.xwc.framework.annotations.XUIWebCommand;
 import netgest.bo.xwc.framework.annotations.XUIWebDefaultCommand;
-import netgest.bo.xwc.framework.annotations.XUIWebParamenter;
+import netgest.bo.xwc.framework.annotations.XUIWebParameter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
@@ -1186,37 +1185,30 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     
     public void processXUIWebAnnotations( XUIViewRoot viewRoot, XUIViewerDefinition viewerDefinition, FacesContext context ) {
     	
-		Map parameters = context.getExternalContext().getRequestParameterMap();
+    	Map<String,String> parameters = context.getExternalContext().getRequestParameterMap();
     	List<String> beanList = viewerDefinition.getViewerBeanIds();
     	
     	// Process XUIWebParameters
-    	for( String x : beanList ) {
-    		Object bean = viewRoot.getBean(x);
+    	for( String beanIdentifier : beanList ) {
+    		Object bean = viewRoot.getBean(beanIdentifier);
     		if( bean != null ) {
-	    		Method[] ms = bean.getClass().getMethods();
-	    		for( Method m : ms ) {
-	    			XUIWebParamenter a = (XUIWebParamenter)m.getAnnotation( XUIWebParamenter.class );
-	    			if( a != null ) {
+    			Method[] beanMethods = bean.getClass().getMethods();
+	    		for( Method m : beanMethods ) {
+	    			XUIWebParameter parameter = (XUIWebParameter)m.getAnnotation( XUIWebParameter.class );
+	    			if( parameter != null ) {
 	    				try {
-	    					String parameterName = a.name();
-	    					String defaultValue  = a.defaultValue();
+	    					String parameterName = parameter.name();
+	    					String defaultValue  = parameter.defaultValue();
 	    					String value = null;
 	    					if( parameters.containsKey( parameterName ) ) {
-	    						value = ((HttpServletRequest)context.getExternalContext().getRequest()).getParameter( parameterName );
+	    						value = parameters.get( parameterName );
 	    					}
 	    					else if (defaultValue != null) {
 	    						value = defaultValue;
 	    					}
-							m.invoke(bean, value );
-						} catch (IllegalArgumentException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (InvocationTargetException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							m.invoke(bean, new XUIPropertyValueDecoder( value ).getDecodedValue() );
+						}  catch (Exception e) {
+							log.warn( "Could not invoke " + m.getName() , e );
 						}
 	    			}
 	    			
@@ -1226,30 +1218,22 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     	
     	boolean commandExecuted = false;
     	// Process XUIWebCommands
-    	for( String x : beanList ) {
-    		Object bean = viewRoot.getBean(x);
+    	for( String beanIdentifier : beanList ) {
+    		Object bean = viewRoot.getBean(beanIdentifier);
     		if( bean != null ) {
 	    		Method[] ms = bean.getClass().getMethods();
 	    		for( Method m : ms ) {
-	    			XUIWebCommand a = (XUIWebCommand)m.getAnnotation( XUIWebCommand.class );
-	    			if( a != null ) {
-	    				if( parameters.containsKey(a.name()) ) {
-	    					if( a.value() == null || a.value().equals( parameters.get( a.name() ) ) ) {
+	    			XUIWebCommand webCommand = (XUIWebCommand)m.getAnnotation( XUIWebCommand.class );
+	    			if( webCommand != null ) {
+	    				if( parameters.containsKey(webCommand.name()) ) {
+	    					if( webCommand.value() == null || webCommand.value().equals( parameters.get( webCommand.name() ) ) ) {
 			    				try {
 			    					commandExecuted = true;
 									m.invoke(bean);
 			    					break;
-								} catch (IllegalArgumentException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (IllegalAccessException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (InvocationTargetException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+								} catch (Exception e) {
+									log.warn( "Could not invoke " + m.getName() , e );
 								}
-	    						
 	    					}
 		    			}
 	    			}
@@ -1260,31 +1244,22 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     	
     	// Process XUIDefaultWebCommands
     	if( !commandExecuted ) {
-	    	for( String x : beanList ) {
-	    		Object bean = viewRoot.getBean(x);
+	    	for( String beanIdentifier : beanList ) {
+	    		Object bean = viewRoot.getBean(beanIdentifier);
 	    		if( bean != null ) {
 		    		Method[] ms = bean.getClass().getMethods();
 		    		for( Method m : ms ) {
-		    			XUIWebDefaultCommand a = (XUIWebDefaultCommand)m.getAnnotation( XUIWebDefaultCommand.class );
-		    			if( a != null ) {
+		    			if (m.isAnnotationPresent( XUIWebDefaultCommand.class )){
 		    				try {
 								m.invoke(bean);
-							} catch (IllegalArgumentException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (IllegalAccessException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (InvocationTargetException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+							} catch (Exception e) {
+								log.warn( "Could not invoke " + m.getName() , e );
 							}
-		    			}
-		    			
 		    		}
 	    		}
 	    	}
     	}
+    }
     }
 
 }
