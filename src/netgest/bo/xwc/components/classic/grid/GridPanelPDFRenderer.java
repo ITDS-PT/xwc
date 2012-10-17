@@ -101,23 +101,25 @@ public class GridPanelPDFRenderer {
 			int iTableWidth = 0;
 			for( int i=0;i < oGridColumns.length; i++ ) {
 				
-				
-				String s = oGridColumns[i].getWidth();
-				try {
-					int iWidth = Integer.parseInt( s );
-					iWidths[i] = (int)(iWidth/1.8);
-					iTableWidth += iWidths[i]; 
-				} catch (Exception e) {
-					// TODO: handle exception
+				Column current = oGridColumns[i];
+				if (!current.isHidden()){
+					String s = oGridColumns[i].getWidth();
+					try {
+						int iWidth = Integer.parseInt( s );
+						iWidths[i] = (int)(iWidth/1.8);
+						iTableWidth += iWidths[i]; 
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+					
+	    			String sLabel = GridPanel.getColumnLabel( oDataSource, oGridColumns[i] );
+	    			sLabel = HTMLEntityDecoder.htmlEntityToChar( sLabel );
+	    			
+					Paragraph p = new Paragraph( sLabel , fontH);
+	    			PdfPCell h1 = new PdfPCell(p);
+	    			h1.setBackgroundColor( Color.LIGHT_GRAY );
+	    			table.addCell(h1);
 				}
-				
-    			String sLabel = GridPanel.getColumnLabel( oDataSource, oGridColumns[i] );
-    			sLabel = HTMLEntityDecoder.htmlEntityToChar( sLabel );
-    			
-				Paragraph p = new Paragraph( sLabel , fontH);
-    			PdfPCell h1 = new PdfPCell(p);
-    			h1.setBackgroundColor( Color.LIGHT_GRAY );
-    			table.addCell(h1);
 			}
 			table.setWidths( iWidths );
 			table.setHeaderRows(1);
