@@ -13,10 +13,10 @@ public class JQueryTheme extends ExtJsTheme {
 	@Override
 	public void addStyle( XUIStyleContext styleContext ) {
 		super.addStyle( styleContext );
-		/*styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "jquery_ui_css",
-				composeUrl(getResourceBaseUriJquery() + "css/anacom/jquery-ui-1.8.20.custom.css"));*/
 		styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "jquery_ui_css",
-				composeUrl(getResourceBaseUriJquery() + "css/smoothness/jquery-ui-1.9.0.custom.css"));
+				composeUrl(getResourceBaseUriJquery() + "css/anacom/jquery-ui-1.8.20.custom.css"));
+		/*styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "jquery_ui_css",
+				composeUrl(getResourceBaseUriJquery() + "css/smoothness/jquery-ui-1.9.0.custom.css"));*/
 		styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "jquery_css_xeo",
 				composeUrl("ext-xeo/css/jquery-xeo.css"));
 		/*styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "jqGrid_css",
