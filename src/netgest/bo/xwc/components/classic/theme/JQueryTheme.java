@@ -13,8 +13,10 @@ public class JQueryTheme extends ExtJsTheme {
 	@Override
 	public void addStyle( XUIStyleContext styleContext ) {
 		super.addStyle( styleContext );
+		/*styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "jquery_ui_css",
+				composeUrl(getResourceBaseUriJquery() + "css/anacom/jquery-ui-1.8.20.custom.css"));*/
 		styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "jquery_ui_css",
-				composeUrl(getResourceBaseUriJquery() + "css/anacom/jquery-ui-1.8.20.custom.css"));
+				composeUrl(getResourceBaseUriJquery() + "css/smoothness/jquery-ui-1.9.0.custom.css"));
 		styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "jquery_css_xeo",
 				composeUrl("ext-xeo/css/jquery-xeo.css"));
 		/*styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "jqGrid_css",
@@ -28,10 +30,21 @@ public class JQueryTheme extends ExtJsTheme {
 	@Override
 	public void addScripts( XUIScriptContext scriptContext ) {
 		super.addScripts( scriptContext );
+		/*scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jquery",
+				composeUrl(getResourceBaseUriJquery() + "js/jquery-1.8.2.min.js"));*/
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jquery",
-				composeUrl(getResourceBaseUriJquery() + "js/jquery-1.7.2.min.js"));
+				composeUrl("//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"));
+		String jQueryFallback = "!window.jQuery && document.write(unescape(\"%3Cscript src='jquery-xeo/js/jquery-1.7.2.min.js' type='text/javascript'%3E%3C/script%3E\"));";
+		scriptContext.add( XUIScriptContext.POSITION_HEADER, "jquery_fallback",jQueryFallback );
+		
+		/*scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jqueryUI",
+				composeUrl(getResourceBaseUriJquery() + "js/jquery-ui-1.8.20.custom.min.js"));*/
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jquery-ui",
-				composeUrl(getResourceBaseUriJquery() + "js/jquery-ui-1.8.20.custom.min.js"));
+				composeUrl("//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"));
+		String jQueryUIFallback = "!window.jQuery.ui && document.write(unescape(\"%3Cscript src='jquery-xeo/js/jquery-ui-1.8.20.custom.min.js' type='text/javascript'%3E%3C/script%3E\"));";
+		scriptContext.add( XUIScriptContext.POSITION_HEADER, "jqueryUI_fallback",jQueryUIFallback );
+		
+		
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jquery-blockui",
 				composeUrl(getResourceBaseUriJquery() + "js/jquery.blockUI.js"));
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jquery-jqGridLocale",
