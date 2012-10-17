@@ -221,10 +221,10 @@ public class XUIViewerBuilder
             {
             	if (!wasSet && !(comp instanceof XUIComponentBase))
             	{
-	            	//Added so that the JSF Components can be binded to beans
+	            	// Added so that the JSF Components can be binded to beans
 	                // Apparently there's something in the JSF platform that makes
 	                // binding automatically and we need to make some adjustments
-	                //in out platform (like setting the property value as a valueExpression)
+	                // in out platform (like setting the property value as a valueExpression)
 	            	FacesContext context = FacesContext.getCurrentInstance();
 	            	ELContext elContext = context.getELContext();
 	            	Application jsfApp = context.getApplication();
