@@ -268,7 +268,10 @@ public class XUIScriptContext {
                 w.startElement("script", null);
                 w.writeAttribute("type","text/javascript", null );
                 w.writeAttribute("id", oFragment.getScriptId(), null );
-                w.writeAttribute("src", oRequestContext.getResourceUrl( oFragment.getContent().toString() ), null );
+                if ( oFragment.isExternal() )
+                	w.writeAttribute("src", oFragment.getContent().toString() , null );
+                else
+                	w.writeAttribute("src", oRequestContext.getResourceUrl( oFragment.getContent().toString() ), null );
                 w.endElement("script");
             }
             else if ( oFragment.getType().getValue() == TYPE_TEXT.getValue() ) {
@@ -356,13 +359,20 @@ public class XUIScriptContext {
         private CharSequence sContent;
         private String sScriptId;
         private boolean allreadyRendered;
+        private boolean isExternal = false;
         
         public Fragment( RenderType iType, RenderPosition iPosition, String sScriptId, CharSequence sContent ) {
             this.sScriptId = sScriptId;
             this.iPosition = iPosition;
             this.iType = iType;
             this.sContent = sContent;
+            if (this.iType == TYPE_INCLUDE && isExternalScript( sContent ))
+            	this.isExternal = true; 
         }
+
+		private boolean isExternalScript( CharSequence sContent ) {
+			return sContent.toString().startsWith( "http" ) || sContent.toString().startsWith( "//" );
+		}
 
         public CharSequence getContent() {
             return sContent;
@@ -386,6 +396,10 @@ public class XUIScriptContext {
         
         public boolean isRendered() {
             return allreadyRendered;
+        }
+        
+        public boolean isExternal(){
+        	return isExternal;
         }
 
     }
