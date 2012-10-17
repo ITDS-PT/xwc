@@ -361,7 +361,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	private boolean forcedReloadData = false;
 	
-	private String currentFullTextSearch;
+	private XUIBaseProperty<String> currentFullTextSearch = new XUIBaseProperty<String>( "currentFullTextSearch", this );
 
 	private XUICommand filterLookupCommand;
 	private XUICommand selectColumnsCommand;
@@ -1759,11 +1759,11 @@ public class GridPanel extends ViewerInputSecurityBase {
 	}
 
 	public String getCurrentFullTextSearch() {
-		return this.currentFullTextSearch;
+		return this.currentFullTextSearch.getValue();
 	}
 
 	public void setCurrentFullTextSearch(String fullTextSearch) {
-		this.currentFullTextSearch = fullTextSearch;
+		this.currentFullTextSearch.setValue( fullTextSearch );
 	}
 
 	public void resetToDefaults() {
