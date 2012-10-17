@@ -428,7 +428,7 @@ public class XUIViewerDefinitonParser
     	XUIViewerDefinitionNode wrapper = new XUIViewerDefinitionNode();
     	wrapper.setRoot( def );
     	wrapper.setParent( parent );
-    	wrapper.setName( "xvw:panel" );
+    	wrapper.setName( "xvw:genericTag" );
     	
     	for (XUIViewerDefinitionNode child : result){
     		wrapper.addChild(child);
