@@ -1,0 +1,471 @@
+/* Panel Component CSS */
+
+	/* Class for the container of the panel */
+	.xwc-panel{
+	    border: solid 1px #9BB5C1;
+	
+	}
+	/* Class for the panel title  */
+	.xwc-panel-title
+	{
+	    cursor:pointer;
+	}
+
+	/* Class for the panel title */
+	.xwc-panel-title div
+	{
+	    padding-top:5px;
+	    padding-left:10px;
+	    background-color:#a2a98c;
+	    color:#FFFFFF;
+	}
+	
+	/* Class applied to the panel content */
+	.xwc-panel-content
+	{
+	    padding: 10px;
+	    border: solid 0px white;
+	}
+
+/** END OF SECTION **/
+			
+/** Section Component CSS */
+
+	/* Applied to the fieldset */
+	.xwc-section{
+		background : white;
+		margin-left:10px;
+		margin-right:10px;
+		padding-top:5px;
+		padding-bottom:5px;
+	}
+	
+	/*  Applied to the legend element inside the fieldset
+	when the label has a value
+	 */
+	.xwc-legend{
+		border-bottom : 0px;
+		display: block;
+		-webkit-padding-start: 2px;
+		-webkit-padding-end: 2px;
+		margin-left:15px;
+		padding-left:5px;
+		padding-right:5px;
+		font-size: 12px;
+		font-style: normal;
+		font-weight: bold;
+		color: black;
+		background:white;
+		
+	}
+			
+	/*  Applied to the legend element inside the fieldset
+	when the label DOES NOT have a value
+	 */	
+	.xwc-legend-empty{
+		border-bottom : 0px;
+		display: block;
+		-webkit-padding-start: 2px;
+		-webkit-padding-end: 2px;
+		margin-left:15px;
+		padding-left:0px;
+		padding-right:0px;
+		font-size: 12px;
+		font-style: normal;
+		font-weight: bold;
+		color: black;
+		background:white;
+	}
+
+/** END OF SECTION **/
+	
+/* Tabs Component CSS */
+	
+	/**
+	*    Tabs Structure 
+	* 	div.xwc-tabs - Containter
+	*		ul.xwc-tab-navbar - NavBar
+	*			li.xwc-tab-label - One for each Tab
+	*				a.xwc-tab-label-link - Link to activate the tab
+	*
+	*	div.xwc-tab-content
+	*	div.xwc-active-tab - Active Tab	
+	*/
+	
+	
+	/* Container for the Tabs Component */
+	div.xwc-tabs {
+		zoom: 1;
+		border-bottom: 1px #ccc solid;
+		border-left: 1px #ccc solid;
+		border-right: 1px #ccc solid;
+		
+	}
+	
+	/* Container for the List of Tabs */
+	ul.xwc-tab-navbar {
+		list-style: none ;
+		position: relative ;
+		padding: 0 ;
+		margin: 0 ;
+	}
+	
+	/**/
+	ul.xwc-tab-navbar li.xwc-tab-label {
+		position: relative ;
+		float: left ;
+		margin: 0 3px -2px 0 ;
+		padding: 0 ;
+		font-size: 85% ;
+	}
+	ul.xwc-tab-navbar li.xwc-tab-label a.xwc-tab-label-link {
+		display: block ;
+		padding: 10px 20px ;
+		background: #f0f0f0 ;
+		border: 1px #fff solid ;
+		border-bottom-color: #ccc ;
+		outline: none ;
+	}
+	ul.xwc-tab-navbar li.xwc-tab-label.ui-tabs-selected a.xwc-tab-label-link {
+		padding: 10px 20px 12px 20px ;
+		background: #fff ;
+		color:orange ;
+		border-bottom-style: none ;
+	}
+	ul.xwc-tab-navbar li.xwc-tab-label.ui-tabs-selected a.xwc-tab-label-link,
+	ul.xwc-tab-navbar li.xwc-tab-label.ui-state-disabled a.xwc-tab-label-link,
+	ul.xwc-tab-navbar li.xwc-tab-label.ui-state-processing a.xwc-tab-label-link {
+		cursor: default ;
+	}
+	
+	ul.xwc-tab-navbar li.xwc-tab-label.ui-state-hover a.xwc-tab-label-link{
+		background: red ;
+	} 
+	
+	ul.xwc-tab-navbar li a,
+	ul.xwc-tab-navbar li.ui-tabs-selected a {
+		cursor: pointer;
+	}
+	
+	div.xwc-tab-content{
+		padding-bottom:20px ;
+	}
+	
+	/* Panel under the Tabs */
+	
+	.ui-tabs .ui-tabs-panel {
+		display: block;
+		clear: both;
+		border: 0px #ccc solid;
+		padding: 10px;
+	}
+	.ui-tabs .ui-tabs-hide {
+		display: none;
+	}	
+	
+	
+/** Flat Tree Panel   */
+
+	/* Each Top Level Group is a UL element */ 
+	div.xwc-flat-treepanel-container  ul.xwc-flat-treepanel-first-level-group { 
+		list-style-type: none; 
+		display: block; 	/* block || none */
+		width: auto; 
+		margin: 0; 
+		padding: 0; 
+		border: 0; 
+		text-align: left;  
+		color: inherit; 
+		background-color : #eeeeee;
+	}
+
+	div.xwc-flat-treepanel-container ul.xwc-flat-treepanel-first-level-group:after { 
+		content: ' '; 
+		display: block; 
+		visibility: hidden; 
+		clear: both; 
+		width: 0; 
+		height: 0; 
+		font-size: 0; 
+		line-height: 0; 
+	} 
+	
+	/* First Level menu items */
+	li.xwc-flat-treepanel-first-level  { 
+		display: block; 
+		width: auto; 
+		background-color: transparent; 
+		margin: 0; 
+		padding: 0; 
+		border-top: 1px solid #7d9117; 
+		border-right: 1px solid #7d9117; 
+		vertical-align: middle; 
+		text-align: left; 
+		color: #ffffff; 
+		margin-bottom: 2px;
+		border : 1px solid #CCCCCC;
+	} 
+	
+	/* Links for the first level menu items */
+	.xwc-flat-treepanel-first-level{
+		border-color: black;
+		
+	}
+	
+	/* Links for the first level menu items */
+	.xwc-flat-treepanel-first-level a { 
+		display: block; 
+		width: auto; 
+		margin: 0; 
+		padding: 8px 5px 10px 10px; 
+		border-top: 0; 
+		font: bold 16px/18px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+		background: #94ab25 url('../../jquery-xeo/css/images/title_processo_bg.png') repeat-x top left; 
+		color: #fff; 
+		text-decoration: none;
+		background: #eeeeee url('../../jquery-xeo/css/images/arrow-right.png') no-repeat right center;
+		padding-left : 20px;
+		color : black;
+		font-size: 85%; 
+	}
+	
+	/** Hovering links in the first menu level*/
+	.xwc-flat-treepanel-first-level a:hover { 
+		background: #94ab25 url('../../jquery-xeo/css/images/title_processo_bg_over.png') repeat-x top left; 
+		color: #fff; 
+		text-decoration: none; 
+	} 
+	
+	/* Menu Option */
+	li.xwc-flat-treepanel-menu-option { 
+		display: block; 
+		width: auto; 
+		background-color: transparent; 
+		margin: 0; 
+		padding: 0; 
+		border-top: 1px solid #ccc; 
+		vertical-align: middle; 
+		text-align: left; 
+		color: #252826; 
+	} 
+	
+	/* Menu Option Link */
+	.xwc-flat-treepanel-menu-option a { 
+		display: block; 
+		width: auto; 
+		margin: 0; 
+		padding: 10px; 
+		border-top: 0; 
+		font: bold 14px/18px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+		background: #F5FFD6 url('../../jquery-xeo/css/images/arrow-right.png') no-repeat 2% 10%;
+		color: #000; 
+		text-decoration: none; 
+	}
+	
+	/* Menu option Link mouse hover */
+	.xwc-flat-treepanel-menu-option a:hover { 
+		background: #ccc url('../../jquery-xeo/css/images/arrow-down.png') no-repeat top right;
+		color: #000; 
+		text-decoration: none; 
+	} 
+	
+	
+	ul.xwc-flat-treepanel-group { 
+		list-style-type: none; 
+		width: auto; 
+		background-color: #f2f2f2; 
+		margin: 0; 
+		padding: 0; 
+		border-left: 0; 
+		border-right: 0; 
+		border-top: 1px solid #ccc; 
+		text-align: left; 
+		color: inherit; 
+	} 
+	
+	/** Second Level menus */
+	li.xwc-flat-treepanel-level2-menu { 
+		display: block; 
+		width: 219px; 
+		height: 25px; 
+		background-color: transparent; 
+		margin: 0; 
+		padding: 7px 0 0 20px; 
+		border-bottom: 1px solid #ccc;
+		vertical-align: middle; 
+		text-align: left; 
+		color: #252826; 
+	} 
+	
+	.xwc-flat-treepanel-level2-menu a { 
+		display: block; 
+		width: auto; 
+		margin: 0; 
+		padding: 0; 
+		border-top: 0; 
+		font: normal 14px/18px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+		background: transparent; 
+		color: #000; 
+		text-decoration: none; 
+	} 
+	
+	
+	.xwc-flat-treepanel-level2-menu a:hover { 
+		background: transparent; 
+		color: #666; 
+		text-decoration: underline; 
+	}
+	
+	
+/** Window Component */
+
+	/* Main Window Container */
+	div.xwc-window.ui-dialog {
+		
+	}
+	
+	/* Title bar*/
+	div.xwc-window div.ui-dialog-titlebar {
+		
+	}
+	
+	/* Title text */
+	div.xwc-window .ui-dialog-title {
+		
+	}
+	
+	/* Close button */
+	div.xwc-window .ui-dialog-titlebar-close {
+		
+	}
+	
+	/* Window Content */
+	div.xwc-window .ui-dialog-content {
+		
+	}
+	
+/** MessageBox Component */
+
+	/** Main Message Box Container */
+	div.xwc-messagebox-window.ui-dialog{
+				
+	}
+	
+	/* Message Box Title bar*/
+	div.xwc-messagebox-window div.ui-dialog-titlebar {
+		
+	}
+
+	/* Message Box Close button */
+	div.xwc-messagebox-window .ui-dialog-titlebar-close {
+		
+	}
+	
+	/** Message Box Content  */
+	div.xwc-messagebox-window div.xwc-messagebox{
+		
+	}
+	
+	/** Message Box Text  */
+	div.xwc-messagebox-window p.xwc-messagebox-text{
+		
+	}	
+	
+	/** Message Box Icons */
+	div.xwc-messagebox-window span.xwc-messagebox-icon{
+			
+	}
+
+	/** Message Box Buttons */
+	div.xwc-messagebox-window .ui-button{
+			
+	}
+	
+	/** Message Box Button Text */
+	div.xwc-messagebox-window .ui-button-text{
+		
+	}
+	
+/** Error Message Component */
+
+	/** Error Message Container */
+	div.xwc-error-message.ui-dialog{
+				
+	}
+	
+	/* Error Message Title bar*/
+	div.xwc-error-message div.ui-dialog-titlebar {
+		
+	}
+
+	/* Error Message  Close button */
+	div.xwc-error-message .ui-dialog-titlebar-close {
+		
+	}
+	
+	/** Error Message Buttons */
+	div.xwc-error-message .ui-button{
+			
+	}
+	
+	/** Error Message Button Text */
+	div.xwc-error-message .ui-button-text{
+		
+	}
+	
+	/** Error Message Text Container */
+	div.xwc-error-message div.xwc-error-message-text{
+		
+	}
+	
+	/** Error Message Text Message */
+	div.xwc-error-message p.xwc-error-message-content{
+		
+	}
+	
+	/** Error Message Text Message */
+	div.xwc-error-message p.xwc-error-message-detail{
+		
+	}
+ 	
+/** Ajax Loading Message*/
+
+	/**Container for the Loading Message */
+	div.blockUI{
+		width:  20%;
+	    top:    30%;
+	    left:   40%;
+	    text-align: center;
+	    background-color: #fff;
+	    border: 1px solid #ddd;
+	    -moz-border-radius: 8px;
+	    -webkit-border-radius: 8px;
+		-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)"; 
+	    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80); 
+	    -moz-opacity:.80;
+	    opacity:.80;
+	    padding: 6px;
+	}
+	
+	/** Inner container for he Loading Message*/
+	#xwc-ajax-loading{
+		
+	}
+	
+	/** Background Loading image*/
+	.xwc-ajax-loading-image{
+		background: transparent url(../../jquery-xeo/images/loading.gif);
+		width: 16px;
+		height: 16px;
+		display : inline-block;
+	}
+	
+	
+	/** Paragraph with the Message */
+	.xwc-ajax-loading-message{
+		font-family : verdana;
+		font-size : 80%;
+		color: #00006B;
+		font-style : italic;
+		display : inline;
+	}
