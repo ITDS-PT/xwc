@@ -10,8 +10,8 @@ import netgest.bo.xwc.xeo.beans.XEOBaseLookupList;
 
 /**
  * 
- * Bean to support choosing a MOdel Instance (or several instances) by reusing a lookup viewer definition
- * but overriding the confirm method to allow seting the value in a different way
+ * Bean to support choosing a Model Instance (or several instances) by reusing a lookup viewer definition
+ * but overriding the confirm method to allow setting the value in a different way
  *
  */
 public class AdvancedSearchLookupBean extends XEOBaseLookupList {
