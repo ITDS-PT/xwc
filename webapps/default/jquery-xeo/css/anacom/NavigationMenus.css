@@ -1,0 +1,1010 @@
+/* MenuTitle properties and values */
+
+h2.MenuTitle { 
+display: none; 
+} 
+
+h3.ExpandMenu { 
+display: inline; 
+} 
+
+/* TopArea properties and values */
+
+div#TopArea { 
+	position: fixed; 
+	display: block; 	/* block || none */
+	z-index: 3; 
+	top: auto; 
+	left: auto; 
+	float: left; 
+	clear: right; 
+	width: 100%; 
+	height: 40px; 
+	background: #333333 url('../images/top_area_bg.png') repeat-x top left; 
+	margin: 0; 
+	padding: 0; 
+	border: 0; 
+	vertical-align: top; 
+	text-align: center; 
+	font: normal 14px/16px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+	color: #ffffff; 
+} 
+
+ul#MenuTop { 
+list-style-type: none; 
+position: relative; 
+top: auto; 
+left: auto; 
+float: left; 
+clear: right; 
+width: auto; 
+height: 40px; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border: 0; 
+text-align: left; 
+color: #ffffff; 
+} 
+
+li.MenuTopOption, li.MenuTopOptionHighlighted { 
+display: inline; 
+float: left; 
+clear: right; 
+width: auto; 
+height: 40px; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border-right: 1px solid #666666;
+vertical-align: middle; 
+text-align: center; 
+color: #ffffff; 
+} 
+
+.MenuTopOption a, .MenuTopOptionHighlighted a { 
+display: block; 
+width: auto; 
+margin: 0; 
+padding: 12px 15px; 
+border-right: 0; 
+/* text-indent: 25px; */
+font: bold 13px/16px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+} 
+
+.MenuTopOption a { 
+background: #666666 url('../images/top_area_bg.png') repeat-x top left; 
+color: #ffffff; 
+text-decoration: none; 
+} 
+
+.MenuTopOptionHighlighted a { 
+background: #666666 url('../images/top_area_bg_over.png') repeat-x top left; 
+color: #dedede; 
+text-decoration: none; 
+} 
+
+.MenuTopOption a:hover, .MenuTopOptionHighlighted a:hover { 
+background: #666666 url('../images/top_area_bg_over.png') repeat-x top left; 
+color: #ffffff; 
+text-decoration: underline; 
+} 
+
+.MenuTopOption a[disabled] { 
+background: #666 url('../images/top_area_bg.png') repeat-x top left; 
+color: #878787; 
+text-decoration: none; 
+cursor: default; 
+} 
+/* SubMenuTop properties and values */
+
+ul#SubMenuTop { 
+list-style-type: none; 
+position: relative; 
+top: auto; 
+left: auto; 
+width: auto; 
+height: 25px; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border: 0; 
+text-align: left; 
+color: inherit; 
+} 
+
+li.SubMenuTopOption, li.SubMenuTopOptionHighlighted { 
+display: inline; 
+float: left; 
+clear: right; 
+width: 15%; 
+height: 25px; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+vertical-align: middle; 
+text-align: center; 
+color: #252826; 
+} 
+
+.SubMenuTopOption a, .SubMenuTopOptionHighlighted a { 
+display: block; 
+width: auto; 
+margin: 0; 
+padding: 7px 0 3px; 
+border: 0; 
+font: bold 12px/15px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+} 
+
+.SubMenuTopOption a { 
+background-color: transparent; 
+color: #252826; 
+text-decoration: none; 
+} 
+
+.SubMenuTopOptionHighlighted a { 
+background-color: transparent; 
+color: #a22101; 
+text-decoration: none; 
+} 
+
+.SubMenuTopOption a:hover, .SubMenuTopOptionHighlighted a:hover { 
+background-color: transparent; 
+color: #a22101; 
+text-decoration: none; 
+} 
+
+/* DropDownMenu properties and values */
+
+div#DropDownMenu { 
+position: absolute; 
+display: block; 
+z-index: 100; 
+top: auto; 
+left: auto; 
+width: auto; 
+background-color: #dedede; /* url('../images/dropdown_menu_options.png') repeat-x top left; */
+margin-top: 0; 
+border-top: 1px solid #ccc; 
+border-right: 1px solid #ccc; 
+border-bottom: 0; 
+border-left: 1px solid #ccc; 
+box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); 
+text-align: left; 
+font: bold 12px/16px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+color: #000; 
+} 
+
+#DropDownMenu a { 
+display: block; 
+width: auto; 
+background-color: #dedede; /* url('../images/dropdown_menu_options.png') repeat-x top left; */
+padding: 8px 10px 8px 0; 
+border-bottom: 1px solid #ccc; 
+border-right: 0; 
+text-indent: 0; 
+color: #000; 
+text-decoration: none; 
+} 
+
+#DropDownMenu a:hover { 
+background-color: #333333; /* url('../images/dropdown_menu_options.png') repeat-x top left; */
+color: #fff; 
+text-decoration: none; 
+} 
+
+/* OptionArea properties and values */
+
+div#OptionArea { 
+float: right; 
+/* width: 100px;  */
+height: 40px; 
+border: 0; 
+background: #333333 url('../images/top_area_bg.png') repeat-x top left;
+margin: 0; 
+padding: 0; 
+vertical-align: top; 
+text-align: center; 
+font: bold 13px/16px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+color: #ffffff; 
+} 
+
+li.MenuOption, li.MenuOptionHighlighted { 
+display: inline; 
+float: left; 
+clear: right; 
+width: auto; 
+height: 40px; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border-left: 1px solid #666666;
+vertical-align: middle; 
+text-align: center; 
+color: #ffffff; 
+} 
+
+.MenuOption a, .MenuOptionHighlighted a { 
+display: block; 
+width: auto; 
+margin: 0; 
+padding: 12px 15px; 
+border-right: 0; 
+/* text-indent: 25px; */
+font: bold 13px/16px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+} 
+
+.MenuOption a { 
+background-color: transparent; 
+color: #ffffff; 
+text-decoration: none; 
+} 
+
+.MenuOptionHighlighted a { 
+background: #666666 url('../images/top_area_bg_over.png') repeat-x top left; 
+color: #cccccc; 
+text-decoration: none; 
+} 
+
+.MenuOption a:hover, .MenuOptionHighlighted a:hover { 
+background: #666666 url('../images/top_area_bg_over.png') repeat-x top left; 
+color: #ffffff; 
+text-decoration: underline; 
+} 
+
+li.User { 
+display: inline; 
+float: left; 
+clear: right; 
+width: auto; 
+height: 16px; 
+background-color: transparent; 
+margin: 0; 
+padding: 12px 15px; 
+border-left: 0;
+vertical-align: middle; 
+text-align: center; 
+color: #fff; 
+} 
+/* DropDownMenu properties and values */
+
+div#DropDownMenu { 
+position: absolute; 
+display: block; 
+z-index: 100; 
+top: auto; 
+left: auto; 
+min-width: 160px; 
+background-color: #dedede; /* url('../images/dropdown_menu_options.png') repeat-x top left; */
+border-top: 1px solid #ccc; 
+border-right: 1px solid #ccc; 
+border-bottom: 0; 
+border-left: 1px solid #ccc; 
+text-align: left; 
+font: bold 12px/16px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+color: #000; 
+} 
+
+#DropDownMenu a { 
+display: block; 
+width: auto; 
+background-color: #dedede; /* url('../images/dropdown_menu_options.png') repeat-x top left; */
+padding: 8px 15px 8px 0; 
+border-bottom: 1px solid #ccc; 
+border-right: 0; 
+text-indent: 8px; 
+color: #000; 
+text-decoration: none; 
+} 
+
+#DropDownMenu a:hover { 
+background-color: #333333; /* url('../images/dropdown_menu_options.png') repeat-x top left; */
+color: #fff; 
+text-decoration: none; 
+} 
+
+img#Icon { 
+float: left; 
+clear: both; 
+margin: -3px 7px 0 0; 
+border: 0; 
+vertical-align: top; 
+text-align: center; 
+} 
+
+img#IconInfo { 
+float: right; 
+clear: both; 
+margin: 0 5px; 
+border: 0; 
+vertical-align: top; 
+text-align: center; 
+} 
+
+img#IconLogout { 
+float: right; 
+clear: left; 
+margin: 2px 5px 0; 
+border: 0; 
+vertical-align: top; 
+text-align: right; 
+} 
+
+/* LeftArea properties and values */
+
+img#IconPlus { 
+float: left; 
+clear: both; 
+margin: 2px 0 10px 10px; 
+border: 0; 
+vertical-align: top; 
+text-align: center; 
+} 
+
+img#IconColapse { 
+margin: 0 -2px 0 0; 
+border: 0; 
+vertical-align: top; 
+text-align: center; 
+} 
+
+div#ExpandMenus { 
+position: relative; 
+display: block; 	/* block || none */
+z-index: 3; 
+top: auto; 
+left: auto; 
+float: left; 
+width: 140px; 
+height: 30px; 
+background-color: transparent; 
+margin: 0; 
+padding: 12px 0 0 0; 
+border: 0; 
+vertical-align: middle; 
+text-align: left; 
+font: bold 16px/24px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+color: #ffffff; 
+}
+
+div#ExpandColapse { 
+position: relative; 
+display: block; 	/* block || none */
+z-index: 3; 
+width: 80px; 
+height: 30px; 
+background-color: transparent; 
+margin-left: 158px; 
+padding: 12px 0 0 0; 
+border: 0; 
+vertical-align: middle; 
+text-align: right; 
+font: bold 16px/24px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+color: #ffffff; 
+}
+
+div#TitleProcessos { 
+position: relative; 
+display: block; 	/* block || none */
+z-index: 3; 
+top: auto; 
+left: auto; 
+min-width: 228px; 
+height: 30px; 
+background: #94ab25 url('../images/title_processo_bg.png') repeat-x top left; 
+margin: 0; 
+padding: 6px 0 0 10px; 
+border: 1px solid #7d9117; 
+vertical-align: middle; 
+text-align: left; 
+font: bold 16px/24px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+color: #ffffff; 
+} 
+
+ul#MenuLeft:after { 
+content: ' '; 
+display: block; 
+visibility: hidden; 
+clear: both; 
+width: 0; 
+height: 0; 
+font-size: 0; 
+line-height: 0; 
+} 
+
+* html ul#MenuLeft { 
+height: 1%; 
+} 
+
+ul#MenuLeft { 
+list-style-type: none; 
+display: block; 	/* block || none */
+width: auto; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border: 0; 
+text-align: left; 
+color: inherit; 
+} 
+
+/* MenusLeft 1º Nivel */
+
+li.MenuLeftOptionApplication, li.MenuLeftOptionApplicationHighlighted { 
+display: block; 
+width: auto; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border-top: 1px solid #7d9117; 
+border-right: 1px solid #7d9117; 
+vertical-align: middle; 
+text-align: left; 
+color: #ffffff; 
+} 
+
+.MenuLeftOptionApplication a, .MenuLeftOptionApplicationHighlighted a { 
+display: block; 
+width: auto; 
+margin: 0; 
+padding: 8px 5px 10px 10px; 
+border-top: 0; 
+/* text-indent: 25px; */
+font: bold 16px/18px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+} 
+
+.MenuLeftOptionApplication a { 
+background: #94ab25 url('../images/title_processo_bg.png') repeat-x top left; 
+color: #fff; 
+text-decoration: none; 
+} 
+
+.MenuLeftOptionApplicationHighlighted a { 
+background: #94ab25 url('../images/title_processo_bg_over.png') repeat-x top left; 
+color: #fff; 
+text-decoration: none; 
+} 
+
+.MenuLeftOptionApplication a:hover, .MenuLeftOptionApplicationHighlighted a:hover { 
+background: #94ab25 url('../images/title_processo_bg_over.png') repeat-x top left; 
+color: #fff; 
+text-decoration: none; 
+} 
+
+/* MenusLeft 2º Nivel */
+
+li.MenuLeftOption, li.MenuLeftOptionHighlighted { 
+display: block; 
+width: auto; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border-top: 1px solid #ccc; 
+vertical-align: middle; 
+text-align: left; 
+color: #252826; 
+} 
+
+.MenuLeftOption a, .MenuLeftOptionHighlighted a { 
+display: block; 
+width: auto; 
+margin: 0; 
+padding: 10px; 
+border-top: 0; 
+/* text-indent: 25px; */
+font: bold 14px/18px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+} 
+
+.MenuLeftOption a { 
+background: #dedede url('../images/arrow-right.png') no-repeat top right;
+color: #000; 
+text-decoration: none; 
+} 
+
+.MenuLeftOptionHighlighted a { 
+background: #dedede url('../images/arrow-down.png') no-repeat top right;
+color: #000; 
+text-decoration: none; 
+} 
+
+.MenuLeftOption a:hover, .MenuLeftOptionHighlighted a:hover { 
+background: #ccc url('../images/arrow-down.png') no-repeat top right;
+color: #000; 
+text-decoration: none; 
+} 
+
+/* SlideDownMenuLeft properties and values */
+
+ul.SlideDownMenuLeftGroup { 
+list-style-type: none; 
+width: auto; 
+background-color: #f2f2f2; 
+margin: 0; 
+padding: 0; 
+border-left: 0; 
+border-right: 0; 
+border-top: 1px solid #ccc; 
+text-align: left; 
+color: inherit; 
+} 
+
+li.SlideDownMenuLeftOption, li.SlideDownMenuLeftOptionHighlighted { 
+display: block; 
+width: 219px; 
+height: 25px; 
+background-color: transparent; 
+margin: 0; 
+padding: 7px 0 0 20px; 
+border-bottom: 1px solid #ccc;
+vertical-align: middle; 
+text-align: left; 
+color: #252826; 
+} 
+
+.SlideDownMenuLeftOption a, .SlideDownMenuLeftOptionHighlighted a { 
+display: block; 
+width: auto; 
+margin: 0; 
+padding: 0; 
+border-top: 0; 
+/* text-indent: 5px; */
+font: normal 14px/18px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+} 
+
+.SlideDownMenuLeftOption a { 
+background: transparent; 
+color: #000; 
+text-decoration: none; 
+} 
+
+.SlideDownMenuLeftOptionHighlighted a { 
+background: transparent; 
+color: #666; 
+text-decoration: underline; 
+} 
+
+.SlideDownMenuLeftOption a:hover, .SlideDownMenuLeftOptionHighlighted a:hover { 
+background: transparent; 
+color: #666; 
+text-decoration: underline; 
+} 
+
+ul#OtherProcess:after { 
+content: ' '; 
+display: block; 
+visibility: hidden; 
+clear: both; 
+width: 0; 
+height: 0; 
+font-size: 0; 
+line-height: 0; 
+} 
+
+* html ul#OtherProcess { 
+height: 1%; 
+} 
+
+ul#OtherProcess { 
+list-style-type: none; 
+display: block; 	/* block || none */
+width: auto; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border: 1px solid #666;  
+text-align: left; 
+color: inherit; 
+} 
+
+/* OtherOption 1º Nivel */
+
+li.OtherProcessOptionApplication, li.OtherProcessOptionApplicationHighlighted { 
+display: block; 
+width: auto; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border: 0; 
+vertical-align: middle; 
+text-align: left; 
+color: #ffffff; 
+} 
+
+.OtherProcessOptionApplication a, .OtherProcessOptionApplicationHighlighted a { 
+display: block; 
+width: auto; 
+margin: 0; 
+padding: 8px 5px 10px 10px; 
+border-top: 0; 
+/* text-indent: 25px; */
+font: bold 16px/18px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+} 
+
+.OtherProcessOptionApplication a { 
+background: #333333 url('../images/arrow-right.png') no-repeat top right;
+color: #fff; 
+text-decoration: none; 
+} 
+
+.OtherProcessOptionApplicationHighlighted a { 
+background: #666666 url('../images/arrow-down.png') no-repeat top right;
+color: #fff; 
+text-decoration: none; 
+} 
+
+.OtherProcessOptionApplication a:hover, .OtherProcessOptionApplicationHighlighted a:hover { 
+background: #666666 url('../images/arrow-down.png') no-repeat top right; 
+color: #fff; 
+text-decoration: none; 
+} 
+
+/* OtherOption 2º Nivel */
+
+li.OtherProcessMenuOption, li.OtherProcessMenuOptionHighlighted { 
+display: block; 
+width: auto; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border-top: 0; 
+vertical-align: middle; 
+text-align: left; 
+color: #252826; 
+} 
+
+.OtherProcessMenuOption a, .OtherProcessMenuOptionHighlighted a { 
+display: block; 
+width: auto; 
+margin: 0; 
+padding: 8px 5px 10px 10px; 
+border-top: 0; 
+/* text-indent: 25px; */
+font: bold 16px/18px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+} 
+
+.OtherProcessMenuOption a { 
+background: #94ab25 url('../images/title_other_processo_bg.png') repeat-x top left; 
+color: #fff; 
+text-decoration: none; 
+} 
+
+.OtherProcessMenuOptionHighlighted a { 
+background: #94ab25 url('../images/title_other_processo_bg_over.png') repeat-x top left; 
+color: #fff; 
+text-decoration: none; 
+} 
+
+.OtherProcessMenuOption a:hover, .OtherProcessMenuOptionHighlighted a:hover { 
+background: #94ab25 url('../images/title_other_processo_bg_over.png') repeat-x top left; 
+color: #fff; 
+text-decoration: none; 
+} 
+
+/* OtherOption 3º Nivel */
+
+li.OtherProcessOption, li.OtherProcessOptionHighlighted { 
+display: block; 
+width: auto; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border-top: 0; 
+vertical-align: middle; 
+text-align: left; 
+color: #252826; 
+} 
+
+.OtherProcessOption a, .OtherProcessOptionHighlighted a { 
+display: block; 
+width: auto; 
+margin: 0; 
+padding: 8px 5px 10px 10px; 
+border-top: 0; 
+/* text-indent: 25px; */
+font: bold 14px/18px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+} 
+
+.OtherProcessOption a { 
+background: #dedede url('../images/other_process_arrow-right.png') no-repeat top right; 
+color: #000; 
+text-decoration: none; 
+} 
+
+.OtherProcessOptionHighlighted a { 
+background: #ccc url('../images/other_process_arrow-down.png') no-repeat top right; 
+color: #000; 
+text-decoration: none; 
+} 
+
+.OtherProcessOption a:hover, .OtherProcessHighlighted a:hover { 
+background: #ccc url('../images/other_process_arrow-down.png') no-repeat top right; 
+color: #000; 
+text-decoration: none; 
+} 
+
+/* SlideDownOtherProcess properties and values */
+
+ul.SlideDownOtherProcessGroup { 
+list-style-type: none; 
+width: auto; 
+background-color: #f2f2f2; 
+margin: 0; 
+padding: 0; 
+border-left: 0; 
+border-right: 0; 
+border-top: 1px solid #ccc; 
+text-align: left; 
+color: inherit; 
+} 
+
+li.SlideDownOtherProcessOption, li.SlideDownOtherProcessOptionHighlighted { 
+display: block; 
+width: 218px; 
+height: 25px; 
+background-color: transparent; 
+margin: 0; 
+padding: 7px 0 0 20px; 
+border-bottom: 1px solid #ccc;
+vertical-align: middle; 
+text-align: left; 
+color: #252826; 
+} 
+
+.SlideDownOtherProcessOption a, .SlideDownOtherProcessOptionHighlighted a { 
+display: block; 
+width: auto; 
+margin: 0; 
+padding: 0; 
+border-top: 0; 
+/* text-indent: 5px; */
+font: normal 14px/18px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+} 
+
+.SlideDownOtherProcessOption a { 
+background: transparent; 
+color: #000; 
+text-decoration: none; 
+} 
+
+.SlideDownOtherProcessOptionHighlighted a { 
+background: transparent; 
+color: #cc0000; 
+text-decoration: none; 
+} 
+
+.SlideDownOtherProcessOption a:hover, .SlideDownOtherProcessOptionHighlighted a:hover { 
+background: transparent; 
+color: #cc0000; 
+text-decoration: none; 
+} 
+
+/* Taxonomias */
+
+.TitleTaxonomias {
+	width: 233px; 
+	height: 38px; 
+	background: #647411 url(../images/title_processo_bg.png) repeat-x top left; 
+	color: white; 
+	font-weight: bold; 
+	/* line-height: 32px; */
+	padding: 3px 0 0 5px; 
+	border: 1px solid #7D9117;
+	font-size: 14px;
+}
+
+.taxonomiasBorder {
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    width: 238px; 
+	overflow: auto;
+}
+
+.taxonomiasMenu {
+    background-color: transparent;
+    margin-left: 10px; 
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.taxonomiasMenu a {
+    background-color: transparent;
+    color: #000000;
+    text-decoration: none;
+	font-size: 14px; 
+	padding: 3px 10px 5px 5px;
+}
+
+.taxonomiasMenu a:hover {
+    background-color: transparent;
+    color: #cc0000;
+    text-decoration: none;
+}
+
+.taxonomiasMenu ul {
+	margin-right: 2px; 
+	padding-left: 0;
+}
+
+.taxonomiasMenu ul ul {
+	margin-left:0px;
+	margin-bottom:-1px; 
+	border-top: 1px solid #ccc;
+}
+
+.taxonomiasMenu li {
+    border-bottom: 1px solid #ccc;
+    line-height: 30px;
+    list-style: none outside none;
+    margin-bottom: 0;
+    margin-top: 0;
+    min-height: 32px;
+    width: 100%;
+}
+
+.taxonomiasMenu ul ul li {
+    border-bottom: 1px solid #ccc;
+    padding-left: 10px;
+    width: auto;
+}
+
+.taxonomiasMenu span {
+    border: 0;
+	color: #000;
+}
+
+/* Menu específico */
+
+div#MenuEspecificoTop {
+	display: block; 
+	width: auto; 
+	position: fixed; 
+	background: #333333 url('../images/bottom_area_bg.png') repeat-x top left;
+	float: left; 
+	clear: right; 
+	left: 650px;  
+	height: 30px; 
+    margin-top: 5px; 
+	top: 40px;
+    padding-bottom: 10px; 
+	border: 0; 
+    text-align: center; 
+    vertical-align: top; 
+    z-index: 3; 
+}
+
+ul#MenuEspecifico { 
+list-style-type: none; 
+position: relative; 
+/* display: inline-block; */ /* esta css substitui a margin-left */
+top: auto; 
+left: auto; 
+width: auto; 
+height: 40px; 
+background-color: transparent; 
+padding: 0; 
+/* border-left: 1px solid #666; */
+text-align: right; 
+color: inherit; 
+} 
+
+li.MenuEspecificoOption, li.MenuEspecificoOptionHighlighted { 
+display: inline; 
+float: left; 
+clear: right; 
+width: auto; 
+height: 40px; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border-right: 1px solid #666666;
+vertical-align: middle; 
+text-align: center; 
+color: #ffffff; 
+} 
+
+.MenuEspecificoOption a, .MenuEspecificoOptionHighlighted a { 
+display: block; 
+width: auto; 
+margin: 0; 
+padding: 12px 15px; 
+border-right: 0; 
+/* text-indent: 25px; */
+font: bold 100%/120% 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+} 
+
+.MenuEspecificoOption a { 
+background-color: transparent; 
+color: #ffffff; 
+text-decoration: none; 
+} 
+
+.MenuEspecificoOptionHighlighted a { 
+background: #666666 url('../images/bottom_area_bg_over.png') repeat-x top left; 
+color: #dedede; 
+text-decoration: none; 
+} 
+
+.MenuEspecificoOption a:hover, .MenuEspecificoOptionHighlighted a:hover { 
+background: #666666 url('../images/bottom_area_bg_over.png') repeat-x top left; 
+color: #ffffff; 
+text-decoration: underline; 
+} 
+
+/* BottomArea properties and values */
+
+div#BottomArea { 
+	display: block; 
+	width: 100%; 
+	position: fixed; 
+	background: #333333 url('../images/top_area_bg.png') repeat-x top left; 
+	float: left; 
+	clear: right; 
+	left: auto; 
+    bottom: 0; 
+	height: 40px; 
+    margin: 0;  
+	border-top: 1px solid #999; 
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); 
+    text-align: center; 
+    vertical-align: top; 
+    z-index: 3; 
+} 
+
+ul#MenuBottom { 
+list-style-type: none; 
+position: relative; 
+display: inline-block; 
+top: auto; 
+left: auto; 
+width: auto; 
+height: 40px; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border-left: 1px solid #666; 
+text-align: right; 
+color: inherit; 
+} 
+
+li.MenuBottomOption, li.MenuBottomOptionHighlighted { 
+display: inline; 
+float: left; 
+clear: right; 
+width: auto; 
+height: 40px; 
+background-color: transparent; 
+margin: 0; 
+padding: 0; 
+border-right: 1px solid #666666;
+vertical-align: middle; 
+text-align: center; 
+color: #ffffff; 
+} 
+
+.MenuBottomOption a, .MenuBottomOptionHighlighted a { 
+display: block; 
+width: auto; 
+margin: 0; 
+padding: 12px 15px; 
+border-right: 0; 
+/* text-indent: 25px; */
+font: bold 13px/16px 'Arial', Helvetica, Trebuchet MS, Sans-serif; 
+} 
+
+.MenuBottomOption a { 
+background-color: transparent; 
+color: #ffffff; 
+text-decoration: none; 
+} 
+
+.MenuBottomOptionHighlighted a { 
+background: #666666 url('../images/top_area_bg_over.png') repeat-x top left; 
+color: #dedede; 
+text-decoration: none; 
+} 
+
+.MenuBottomOption a:hover, .MenuBottomOptionHighlighted a:hover { 
+background: #666666 url('../images/top_area_bg_over.png') repeat-x top left; 
+color: #ffffff; 
+text-decoration: underline; 
+} 
