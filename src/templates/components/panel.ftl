@@ -1,4 +1,4 @@
-<@xvw_script src='jquery-xeo/xwc-panel.js' />
+<@xvw_script src='jquery-xeo/xwc-panel.js' id='xwc-panel' />
 
 <#if !this.renderedOnClient>
 	<div id="${this.clientId}">
