@@ -4,10 +4,12 @@ import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import netgest.bo.data.DataSet;
 import netgest.bo.data.DriverUtils;
@@ -24,7 +26,7 @@ import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConne
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.utils.StringUtils;
 
-public class XEOObjectListConnector implements GroupableDataList, AggregableDataList {
+public class XEOObjectListConnector implements GroupableDataList, AggregableDataList, List {
 
 	boObjectList oObjectList;
 	
@@ -532,5 +534,185 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 		finally {
 			this.oObjectList.setQueryOrderBy( orderBy );
 		}
+	}
+
+	@Override
+	public boolean add(Object arg0) {	
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void add(int arg0, Object arg1) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean addAll(Collection arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean addAll(int arg0, Collection arg1) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void clear() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean contains(Object obj) {
+		Iterator<DataRecordConnector> it=this.iterator();
+		while (it.hasNext())
+		{
+			if (it.next().equals(obj))
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean containsAll(Collection arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object get(int row) {
+		int i=0;
+		Iterator<DataRecordConnector> it=this.iterator();
+		while (it.hasNext())
+		{
+			DataRecordConnector data=it.next();
+			if (i==row)
+				return data;
+			i++; 
+		}
+		return null;
+	}
+
+	@Override
+	public int indexOf(Object obj) {
+		int i=0;
+		Iterator<DataRecordConnector> it=this.iterator();
+		while (it.hasNext())
+		{
+			if (it.next().equals(obj))
+				return i;
+			i++; 
+		}
+		return -1;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return (this.oObjectList.getRecordCount()==0);
+	}
+
+	@Override
+	public int lastIndexOf(Object obj) {
+		int i=0;
+		int lastIndexOf=-1;
+		Iterator<DataRecordConnector> it=this.iterator();
+		while (it.hasNext())
+		{
+			if (it.next().equals(obj))
+				lastIndexOf=i;
+			i++; 
+		}
+		return lastIndexOf;
+	}
+
+	@Override
+	public ListIterator listIterator() {
+		ArrayList<DataRecordConnector> auxArr=new ArrayList<DataRecordConnector>();
+		Iterator<DataRecordConnector> it=this.iterator();
+		while (it.hasNext())
+		{
+			auxArr.add(it.next());
+		}
+		return auxArr.listIterator();
+	}
+
+	@Override
+	public ListIterator listIterator(int row) {
+		int i=0;
+		ArrayList<DataRecordConnector> auxArr=new ArrayList<DataRecordConnector>();
+		Iterator<DataRecordConnector> it=this.iterator();
+		while (it.hasNext())
+		{
+			if (i>=row)
+				auxArr.add(it.next());
+			i++;
+		}
+		return auxArr.listIterator();
+	}
+
+	@Override
+	public boolean remove(Object arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object remove(int arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean removeAll(Collection arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean retainAll(Collection arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object set(int arg0, Object arg1) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int size() {
+		// TODO Auto-generated method stub
+		return this.getRowCount();
+	}
+
+	@Override
+	public List subList(int rowBegin, int rowEnd) {
+		int i=0;
+		ArrayList<DataRecordConnector> auxArr=new ArrayList<DataRecordConnector>();
+		Iterator<DataRecordConnector> it=this.iterator();
+		while (it.hasNext())
+		{
+			if (i>=rowBegin && i<rowEnd)
+				auxArr.add(it.next());
+			i++;
+		}
+		return auxArr;
+	}
+
+	@Override
+	public Object[] toArray() {
+		Object[] toRet=null;
+		int recCount=this.getRowCount();
+		int i = 0;
+		if (recCount>0)
+		{
+			toRet=new Object[recCount];
+			Iterator<DataRecordConnector> it=this.iterator();
+			while (it.hasNext())
+			{
+				toRet[i]=it.next();
+				i++;
+			}
+		}
+		return toRet;
+	}
+
+	@Override
+	public Object[] toArray(Object[] arg0) {
+		throw new UnsupportedOperationException();
 	}
 }
