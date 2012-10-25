@@ -65,6 +65,7 @@ public class Tab extends ViewerCommandSecurityBase
 	public void actionPerformed(ActionEvent event)
     {
         ((Tabs)getParent()).setActiveTab( getId() );
+        ((Tabs)getParent()).forceRenderOnClient();
     }
     
     @Override
