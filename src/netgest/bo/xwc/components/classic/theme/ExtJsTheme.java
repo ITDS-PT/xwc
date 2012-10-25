@@ -166,17 +166,19 @@ public class ExtJsTheme implements XUITheme {
 		
 		// Extjs
 		JavaScriptIncluder scriptIncluder = createScriptIncluder( scriptContext, getCurrentBuildVersion() );
-		
 		scriptIncluder.include( "ext-base", getResourceBaseUri() + "adapter/ext/ext-base.js" );
-		scriptIncluder.include( "ext-all", getResourceBaseUri() + "ext-all.js" );
+		scriptIncluder.include( "ext-all", getResourceBaseUri() + "ext-all-debug.js" );
 		// xwc
+		
 		scriptIncluder.include( "xwc-core", "xwc/js/xwc-core.js" );
 		scriptIncluder.include( "xwc-messages", "xwc/js/localization/xwc-messages_"+ lang + ".js" );
 		
 		// Grid Search
+		
+		
 		scriptIncluder.include( "ext-xeo", "ext-xeo/js/ext-xeo.js" );
 		scriptIncluder.include( "gridDrag", "ext-xeo/js/griddrag.js" );
-		scriptIncluder.include( "xwc-core", "xwc/js/xwc-core.js" );
+		
 		
 		scriptIncluder.include( "ExtXeo.grid", "ext-xeo/js/GridPanel.js" );
 		scriptIncluder.include( "xwc-components", "ext-xeo/js/xwc-components.js" );
@@ -205,7 +207,6 @@ public class ExtJsTheme implements XUITheme {
 		scriptIncluder.addFooterScript( "ExtQuickTips", "if(!window.parent.App)  var App = new Ext.App({});" );
 		scriptIncluder.addFooterScript( "Ext.App", "Ext.onReady( function() {Ext.QuickTips.init();} );" );
 		
-
 	}
 	
 	protected EboContext getEboContext(){
