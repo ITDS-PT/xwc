@@ -29,7 +29,7 @@ import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.Window;
-import netgest.bo.xwc.components.classic.theme.JQueryTheme;
+import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -73,9 +73,9 @@ public class XUIViewRoot extends UIViewRoot {
 	public XUIViewRoot() {
 		super();
 		if ("XEOHTML".equals(getRenderKitId()))
-			oTheme = new JQueryTheme();
+			oTheme = new ExtJsTheme();
 		else if ("XEOJQUERY".equals(getRenderKitId()))
-			oTheme = new JQueryTheme();
+			oTheme = new ExtJsTheme();
 		else if ("XEOV2".equals(getRenderKitId())) {
 			try {
 				Class<XUITheme> theme = (Class<XUITheme>) Class
@@ -152,7 +152,7 @@ public class XUIViewRoot extends UIViewRoot {
 	    	}
 		}
 		
-		_renderKit = "XEOJQUERY"; 
+		//_renderKit = "XEOJQUERY"; 
 		
     	return _renderKit; 
     } 
@@ -258,7 +258,8 @@ public class XUIViewRoot extends UIViewRoot {
 				XUIRequestContext.getCurrentContext().getScriptContext().add(
 						XUIScriptContext.POSITION_HEADER,
 						oForm.getClientId() + "_syncView",
-						"XVW.syncView('" + oForm.getClientId() + "');");
+						"XVW.syncView(encode" +
+						"'" + oForm.getClientId() + "');");
 			}
 		}
 	}
@@ -523,19 +524,22 @@ public class XUIViewRoot extends UIViewRoot {
 				headerW.startElement("head", component);
 
 				// <meta http-equiv="X-UA-Compatible" content="chrome=1">
+				
+				
 				headerW.startElement( HtmlTags.META, component);
 				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
-				headerW.writeAttribute("content", "chrome=1", null);
+				headerW.writeAttribute("content", "IE=EmulateIE7;chrome=IE10", null);
 				headerW.endElement( HtmlTags.META );
-
-				headerW.startElement( HtmlTags.META, component);
+				
+				/*headerW.startElement( HtmlTags.META, component);
 				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
 				headerW.writeAttribute("content", "IE=EmulateIE7", null);
 				headerW.endElement( HtmlTags.META );
 
-				headerW.startElement("meta", component);
+				headerW.startElement(HtmlTags.META, component);
 				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
 				headerW.writeAttribute("content", "IE=7", null);
+				headerW.endElement( HtmlTags.META );*/
 				
 				headerW.startElement("base", component);
 				HttpServletRequest req = (HttpServletRequest) getRequestContext()
