@@ -1,21 +1,29 @@
 package netgest.bo.xwc.framework;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Vector;
 
 import javax.el.ELContext;
+import javax.faces.application.StateManager;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+
+import com.sun.faces.io.FastStringWriter;
+import com.sun.faces.util.Util;
 
 import netgest.bo.transaction.XTransactionManager;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.jsf.XUIViewHandlerImpl;
+import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
 
 
 public class XUIRequestContext {
@@ -208,7 +216,32 @@ public class XUIRequestContext {
     }
 
     public void setViewRoot( XUIViewRoot oViewRoot ) {
-        getFacesContext().setViewRoot( oViewRoot );
+    	FacesContext context = getFacesContext();
+    	UIViewRoot oldView = context.getViewRoot();
+        StateManager stateManager = Util.getStateManager( getFacesContext() );
+        if( !oldView.isTransient() ) {
+        	ResponseWriter oldWriter = context.getResponseWriter();
+        	try {
+        		XUIResponseWriter rw = new XUIResponseWriter(new FastStringWriter(), "text/html", "UTF-8");
+        		context.setResponseWriter(rw);
+				stateManager.writeState(context, stateManager.saveView(context));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+        	finally {
+        		try {
+        			if( oldWriter == null  ) {
+						Field f = context.getClass().getDeclaredField("responseWriter");
+						f.setAccessible(true);
+						f.set( context, oldWriter );
+        			}
+        			else {
+        				context.setResponseWriter( oldWriter );
+        			}
+				} catch (Exception e) { e.printStackTrace(); }
+        	}
+        }
+    	getFacesContext().setViewRoot( oViewRoot );
     }
 
     public void setEvent(XUIActionEvent oEvent) {
