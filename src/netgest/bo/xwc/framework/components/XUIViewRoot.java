@@ -30,6 +30,7 @@ import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
+import netgest.bo.xwc.components.classic.theme.JQueryTheme;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -75,7 +76,7 @@ public class XUIViewRoot extends UIViewRoot {
 		if ("XEOHTML".equals(getRenderKitId()))
 			oTheme = new ExtJsTheme();
 		else if ("XEOJQUERY".equals(getRenderKitId()))
-			oTheme = new ExtJsTheme();
+			oTheme = new JQueryTheme();
 		else if ("XEOV2".equals(getRenderKitId())) {
 			try {
 				Class<XUITheme> theme = (Class<XUITheme>) Class
@@ -258,8 +259,7 @@ public class XUIViewRoot extends UIViewRoot {
 				XUIRequestContext.getCurrentContext().getScriptContext().add(
 						XUIScriptContext.POSITION_HEADER,
 						oForm.getClientId() + "_syncView",
-						"XVW.syncView(encode" +
-						"'" + oForm.getClientId() + "');");
+						"XVW.syncView('" + oForm.getClientId() + "');");
 			}
 		}
 	}
@@ -780,5 +780,7 @@ public class XUIViewRoot extends UIViewRoot {
 		return (new PhaseEvent(context, phaseId, lifecycle));
 
 	}
+	
+	
 
 }
