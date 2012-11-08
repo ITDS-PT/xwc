@@ -1,16 +1,20 @@
 <@xvw_script src='jquery-xeo/xwc-panel.js' id='xwc-panel' />
 
-<#if !this.renderedOnClient>
-	<div id="${this.clientId}">
-		<div id="${this.id}" class='xwc-panel' title='${this.title!}'>	
-			<@xvw_facet />
-		</div>
-	</div>	
-</#if>
+<div id="${this.clientId}">
+	<div id="${this.id}" class='xwc-panel' title='${this.title!}'>	
+		<@xvw_facet />
+	</div>
+</div>	
+
 
 <@xvw_script position='footer'>
 	$(function() {
 		$( '#${this.id}' )
+		<#if this.visible>
+		.show()
+		<#else>
+		.hide()
+		</#if>
 		<#if this.collapsible>
 			.collapsiblePanel(true);
 		<#else>
