@@ -1,4 +1,3 @@
-<#if !this.renderedOnClient>
 	<div id='${this.clientId}'>
 		<select style='width:100%' id='${this.id}' name='${this.clientId}'>
 			<#list this.lovMap?keys as item>
@@ -10,7 +9,6 @@
 			</#list>	
 		</select>
 	</div>
-</#if>
 
 <@xvw_script position='footer'>
 	$("#${this.id}")

@@ -1,10 +1,8 @@
-<#if !this.renderedOnClient>
 	<div id='${this.clientId}'>
 		<button id='${this.id}_btn' class='xwc-actionbutton' style='min-width;${this.width}px'>
 			${this.label}
 		</button>
 	</div>
-</#if>
 
 <@xvw_script position='footer'>
 	 $(function() { 

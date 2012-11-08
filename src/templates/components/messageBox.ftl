@@ -1,4 +1,3 @@
-<#if !this.renderedOnClient>
 
 <#--  Criar variável com o tipo de -->
 
@@ -23,7 +22,6 @@
 		${this.message}
 	</p>	
 </div>
-</#if>	
 
 <#if this.showMessageBox>
 	<@xvw_script position='footer'>
