@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import netgest.bo.data.DriverUtils;
+import netgest.bo.data.sqlserver.SqlServerDriver;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.ejb.boManagerLocal;
 import netgest.bo.runtime.boObject;
@@ -146,7 +147,11 @@ public class GlobalSearchBean extends XEOBaseBean {
 			
 			conn = getEboContext().getConnectionData(); 
 			DriverUtils dbUtils = getEboContext().getDataBaseDriver().getDriverUtils();
-			String name = "O"+boDefHandler.getBoDefinition("Ebo_TextIndex").getBoMasterTable();
+			
+			//if the database is SQLServer the qury has to be done in the table
+			String name = boDefHandler.getBoDefinition("Ebo_TextIndex").getBoMasterTable();
+			if (!(getEboContext().getDataBaseDriver() instanceof SqlServerDriver))
+				name="O"+name;
 			
 			String sql = "select ";
 			if( dbUtils.getQueryLimitStatementPosition() == DriverUtils.QUERY_LIMIT_ON_SELECT_CLAUSE ) {
