@@ -90,15 +90,7 @@ public class XUIViewerDefinitonParser
             	xwvr.setTransient( Boolean.valueOf( isTransient ) );
             }
             
-            NodeList nlist = node.getChildNodes();
-            for (int i = 0; i < nlist.getLength(); i++) 
-            {
-                Node childNode = nlist.item( i );
-                if( childNode.getNodeType() == Node.ELEMENT_NODE )
-                {
-                    xwvr.setRootComponent( parseNode( xwvr, (XMLElement)childNode, null, viewersAlreadyParsed ) );
-                }
-            }
+            xwvr.setRootComponent( parseNode( xwvr, (XMLElement)node, null, viewersAlreadyParsed ) );
             
         }
         catch (Exception e)
@@ -332,8 +324,6 @@ public class XUIViewerDefinitonParser
         return component; 
     }
     
-    ///// TESTING 
-    
     private void setComponentBeanIdPropertyForNonDefaultBean( XUIViewerDefinitionNode component, XUIViewerDefinition viewerDef ){
     	String beanId = component.getProperty("beanId");
     	if ( StringUtils.isEmpty( beanId ) ){
@@ -382,15 +372,16 @@ public class XUIViewerDefinitonParser
     	
     	XUIViewerDefinition included =  this.parse( includeFilePath , parsed );
     	
-    	String rootComponentName = included.getRootComponent().getName();
-    	if (!rootComponentName.contains( "composition" ) )
+    	/*String rootComponentName = included.getRootComponent().getName();
+    	if (!rootComponentName.contains( "composition" ) ){
     		throw new RuntimeException( String.format( "Cannot include a viewer that's not a xvw:composition fragment: %s", includeFilePath ) );
+    	}*/
     	
     	addBeansToViewerDefinition( def , included.getViewerBeans() );
     	addBeanIdsToViewerDefinition( def , included.getViewerBeanIds() );
     	addEventsFromIncludedViewer( def, included );
     	
-    	XUIViewerDefinitionNode wrapper = wrapInclusion( def, included.getRootComponent().getChildren(), parent );
+    	XUIViewerDefinitionNode wrapper = wrapInclusion( def, included.getRootComponent().getChildren().get( 0 ).getChildren(), parent );
     	return wrapper;
     }
     

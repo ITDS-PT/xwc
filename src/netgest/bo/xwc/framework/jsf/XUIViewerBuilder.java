@@ -58,7 +58,9 @@ public class XUIViewerBuilder
     	addBeforeRenderEvents( oViewerDefinition, root );
     	addAfterRenderEvents( oViewerDefinition, root );
     	
-    	buildComponent( oContext, root, root, oViewerDefinition.getRootComponent() );
+    	for (XUIViewerDefinitionNode node : oViewerDefinition.getRootComponent().getChildren()){
+    		buildComponent( oContext, root, root, node );
+    	}
     }
     
     private void addOnCreateViewEvents(XUIViewerDefinition definition, XUIViewRoot root){
@@ -133,7 +135,6 @@ public class XUIViewerBuilder
     
     private void buildComponent( XUIRequestContext oContext, XUIViewRoot root,UIComponent parent, XUIViewerDefinitionNode dcomponent )
     {
-    	
     	UIComponent comp = createComponent( oContext, dcomponent.getName() );
     	comp.setId( dcomponent.getId()==null?root.createUniqueId():dcomponent.getId() );
         
@@ -239,54 +240,17 @@ public class XUIViewerBuilder
 					}
 	            	if (vExpr.isLiteralText())
 	            		setComponentProperty(comp, setterName, value);
-				
 	            	
-	            	
-	            	//comp.setValueExpression(keyName, vExpr);
-	            	
-	            	
-	            	/*
-	            	if (!vExpr.isLiteralText())
-	            		comp.setValueExpression(keyName, vExpr);
-	            	else
-	            		setComponentProperty(comp, setterName, value);
-	            		*/
 	            }
             }
             
             
-            
-            
-            /*
-            try
-            {
-
-            	try {
-            		
-					Method m = comp.getClass().getMethod( setterNameName, new Class[] { String.class } );
-					m.invoke( 	
-							comp, 
-							new Object[] { 
-								dcomponent.getProperty( keyName ) 
-							} 
-						);
-				} catch (NoSuchMethodException e) {
-					Method m = comp.getClass().getMethod( setterNameName, new Class[] { Object.class } );
-					m.invoke( 	
-							comp, 
-							new Object[] { 
-								 
-							} 
-						);
-				}
-            } catch (Exception ex) {
-            }
-            */
         }
         if (dcomponent.getName().equals("f:facet"))
         	parent.getFacets().put(dcomponent.getProperty("name"), comp);
         else
         	parent.getChildren().add( comp );
+        
 
         List<XUIViewerDefinitionNode> children = dcomponent.getChildren();
         Iterator<XUIViewerDefinitionNode> it = children.iterator();
