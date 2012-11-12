@@ -60,6 +60,7 @@ public class LoadViewerBean {
     		//other beans
     	}
     	r.setViewRoot( v );
+    	v.processInitComponents();
     	r.renderResponse();
 	}
 	
