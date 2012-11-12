@@ -953,8 +953,11 @@ public class XEOEditBean extends XEOBaseBean
             if( oWnd != null ) {
             	oWnd.setAnimateTarget( sCompId );
             }
+            
             LookupList lookUp_list=(LookupList)oViewRoot.findComponent(LookupList.class); 
-            if (lookUp_list!=null)
+            if (lookUp_list!=null &&  
+            		boDefAttribute.ATTRIBUTE_OBJECT.equalsIgnoreCase(
+            				oAttHandler.getDefAttribute().getAtributeDeclaredType()))
             	lookUp_list.setRowSelectionMode(GridPanel.SELECTION_ROW);
             
             oBaseBean.setParentBean( this ); 
