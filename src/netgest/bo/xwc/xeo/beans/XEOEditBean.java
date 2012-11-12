@@ -80,6 +80,7 @@ import netgest.bo.xwc.xeo.components.Bridge;
 import netgest.bo.xwc.xeo.components.BridgeLookup;
 import netgest.bo.xwc.xeo.components.BridgeToolBar;
 import netgest.bo.xwc.xeo.components.FormEdit;
+import netgest.bo.xwc.xeo.components.LookupList;
 import netgest.bo.xwc.xeo.components.utils.DefaultFavoritesSwitcherAlgorithm;
 import netgest.bo.xwc.xeo.components.utils.LookupFavorites;
 import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
@@ -952,6 +953,9 @@ public class XEOEditBean extends XEOBaseBean
             if( oWnd != null ) {
             	oWnd.setAnimateTarget( sCompId );
             }
+            LookupList lookUp_list=(LookupList)oViewRoot.findComponent(LookupList.class); 
+            if (lookUp_list!=null)
+            	lookUp_list.setRowSelectionMode(GridPanel.SELECTION_ROW);
             
             oBaseBean.setParentBean( this ); 
             oBaseBean.setParentAttributeName( oAttHandler.getName() );
