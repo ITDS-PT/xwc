@@ -309,7 +309,7 @@ public class AttributeNumberLookup extends AttributeBase {
 	            );
 	        	//this.onTargetOut(); <<--- Por cause do onMouseOver
 	        	oInpConfig.add("onTrigger2Click", "function(){ if(!this.disabled){  " + 
-	            		XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_STATUS_MESSAGE ) +
+	            		XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_DIALOG ) +
 	            		"}}"
 	            );
 	        	
@@ -387,7 +387,7 @@ public class AttributeNumberLookup extends AttributeBase {
 
         public String getClearCode( Form oForm, AttributeBase oAttr ) {
             if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
-	            return "XVW.AjaxCommand( '" + oAttr.getNamingContainerId() +  "','" + oAttr.getId() + "_clear','true');";
+	            return "XVW.AjaxCommand( '" + oAttr.getNamingContainerId() +  "','" + oAttr.getId() + "_clear','1');";
             }
             else {
             	return "Ext.ComponentMgr.get('" + getExtComponentId(oAttr) + "').setValue('');\n" + 

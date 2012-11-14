@@ -217,7 +217,7 @@ public class AttributeFile extends AttributeBase {
 		            oInpConfig.add("onTrigger1Click", "function(){ if(!this.disabled){ " +
 		            		"Ext.ComponentMgr.get('" + getExtComponentId(oAttr) + "').setValue('');\n" + 
 		            		"document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';\n" + 
-		            		XVWScripts.getAjaxCommandScript(oAttr,  XVWScripts.WAIT_STATUS_MESSAGE ) + 
+		            		XVWScripts.getAjaxCommandScript(oAttr,  XVWScripts.WAIT_DIALOG ) + 
 		            		"}}"
 		            );
 	            }
