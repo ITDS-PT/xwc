@@ -1,5 +1,10 @@
 XVW = function() {}
 
+//Retrieve an HTML Element by id
+XVW.get = function (id ) {
+	return document.getElementById(id);
+};
+
 // Send command to server
 XVW.Command = function( sFormId, sActionId, sActionValue, iWaitScreen ) {
     XVW.prv.cmdCntr = 0;
