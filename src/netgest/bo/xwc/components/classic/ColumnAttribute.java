@@ -44,7 +44,7 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
     /**
      * SQL query to execute to retrieve the values of this column
      */
-    private XUIBaseProperty<String>         	sqlExpression  	= 
+    protected XUIBaseProperty<String>         	sqlExpression  	= 
     	new XUIBaseProperty<String>( "sqlExpression", this );
     /**
      * The label to show in the table header column
@@ -497,5 +497,10 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 	 */
 	public void setWrapText(String wrap){
 		this.wrapText.setValue(Boolean.parseBoolean( wrap ));
+	}
+
+	@Override
+	public boolean useValueOnLov() {
+		return true;
 	}
 }

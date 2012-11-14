@@ -1,9 +1,17 @@
 package netgest.bo.xwc.xeo.components;
 
+import netgest.bo.def.boDefAttribute;
+import netgest.bo.def.boDefHandler;
+import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
+import netgest.bo.xwc.components.classic.GridPanel;
+import netgest.bo.xwc.components.connectors.DataFieldMetaData;
+import netgest.bo.xwc.components.connectors.DataListConnector;
+import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.xeo.components.utils.CardIdLinkRenderer;
+import netgest.utils.StringUtils;
 
 
 
@@ -79,4 +87,62 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 		
 	}
 
+	@Override
+	public String getSqlExpression() {
+		if (sqlExpression.isDefaultValue()){
+			GridPanel grid = (GridPanel) getParent().getParent();
+			DataListConnector listConnector = grid.getDataSource();
+			
+			String sqlExpression = null;
+			DataFieldMetaData metadata = listConnector.getAttributeMetaData( getDataField() ); 
+			if (metadata != null && metadata.getIsLov() ){
+				if (listConnector instanceof XEOObjectListConnector){
+					try {
+						boDefHandler handler = ((XEOObjectListConnector) listConnector).getObjectList().getBoDef();
+						boDefAttribute attribute = handler.getAttributeRef( getDataField() );
+						if (attribute != null && StringUtils.hasValue( attribute.getLOVName() ) ){
+								sqlExpression = "(select description from " +
+											" Ebo_LovDetails ld  " +
+											" inner join Ebo_lov$details b on ld.boui = b.child$ " + 
+											" inner join Ebo_Lov l on  b.parent$ = l.boui  " +
+											" where l.name = '"+attribute.getLOVName()+"' and ld.value = "+handler.getBoMasterTable()+"."+attribute.getName()+")";		
+							}
+					} catch ( boRuntimeException e ) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			return sqlExpression;
+		} else
+			return super.getSqlExpression();
+	}
+	
+	private boolean attributeIsLov(){
+		GridPanel grid = (GridPanel) getParent().getParent();
+		DataListConnector listConnector = grid.getDataSource();
+		DataFieldMetaData metadata = listConnector.getAttributeMetaData( getDataField() ); 
+		if (metadata != null && metadata.getIsLov() ){
+			if (listConnector instanceof XEOObjectListConnector){
+				try {
+					boDefHandler handler = ((XEOObjectListConnector) listConnector).getObjectList().getBoDef();
+					boDefAttribute attribute = handler.getAttributeRef( getDataField() );
+					if (attribute != null && StringUtils.hasValue( attribute.getLOVName() ) ){
+						return true;
+					}
+				} catch (boRuntimeException e ){
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean useValueOnLov() {
+		if (attributeIsLov())
+			return false;
+		return super.useValueOnLov();
+	}
+	
 }

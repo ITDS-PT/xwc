@@ -1110,7 +1110,10 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	                    		
 	                    		if( !(desc.length() == 0  && first) ) {
 	                    			ExtConfig c = valuesArray.addChild();
-	                    			c.addJSString("id", String.valueOf( key ));
+	                    			if (col.useValueOnLov())
+	                    				c.addJSString("id", String.valueOf( key ));
+	                    			else
+	                    				c.addJSString("id", desc );
 	                    			c.addJSString("text", desc);
 		                    		first = false;
 	                    		}

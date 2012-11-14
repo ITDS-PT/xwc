@@ -130,6 +130,11 @@ public class GridPanelUtilities {
 			public String applyRenderTemplate( Object value ) {
 				return null;
 			}
+
+			@Override
+			public boolean useValueOnLov() {
+				return true;
+			}
 		};
 	}
 		
