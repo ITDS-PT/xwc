@@ -42,6 +42,7 @@ import netgest.bo.xwc.components.classic.grid.GridPanelJSonFiltersBuilder;
 import netgest.bo.xwc.components.classic.grid.GridPanelJSonFiltersBuilder.Filter;
 import netgest.bo.xwc.components.classic.grid.GridPanelJSonFiltersBuilder.ValueType;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.html.GenericTag;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIActionEvent;
@@ -50,8 +51,6 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.framework.def.XUIViewerDefinition;
-import netgest.bo.xwc.framework.def.XUIViewerDefinitonParser;
 import netgest.bo.xwc.framework.jsf.XUIViewerBuilder;
 import netgest.bo.xwc.framework.jsf.XUIWriterAttributeConst;
 import netgest.bo.xwc.framework.jsf.XUIWriterElementConst;
@@ -372,25 +371,24 @@ public class AdvancedSearchBean extends XEOBaseBean {
         oRequestContext.renderResponse();
 	}
 	
-	
+	@Override
+	public void lookupFilterObject() {
 
-	/**
-	 * Opens the lookup viewer to allow a user to choose an object (or several objects)
-	 */
-	public void doLookup(){
-		
-		XUICommand command = (XUICommand) getRequestContext().getEvent().getSource();
-		GenericLookup lookup = (GenericLookup) command.getParent();
-		String clientId = lookup.getId();
-		
-		XUIRequestContext   oRequestContext;
+        // Cria view
+        XUIRequestContext   oRequestContext;
         XUISessionContext   oSessionContext;
         XUIViewRoot         oViewRoot;
+
         
-        oRequestContext = XUIRequestContext.getCurrentContext();
+        oRequestContext = getRequestContext();
         oSessionContext = oRequestContext.getSessionContext();
-        
-        Integer rowId = this.reverseComponentIds.get( clientId );
+
+    	XUIActionEvent e = oRequestContext.getEvent();
+    	XUICommand cmd = (XUICommand)e.getComponent();
+    	GenericLookup lookup = (GenericLookup) cmd.getParent();
+    	String clientId = lookup.getId();
+    	
+    	Integer rowId = this.reverseComponentIds.get( clientId );
         String id = this.componentIds.get(rowId).getAttributeId();
 		
 		AttributeBase oAtt = ( AttributeBase ) getViewRoot().findComponent( FORM_ID + ":" + id );
@@ -398,55 +396,66 @@ public class AdvancedSearchBean extends XEOBaseBean {
 		boDefHandler objectMetadata = boDefHandler.getBoDefinition( modelName );
 		boDefAttribute      oAttDef     = objectMetadata.getAttributeRef( oAtt.getValue().toString() );
         
-    	String className = oAttDef.getReferencedObjectName(); 
-    	if( "boObject".equals( oAttDef.getReferencedObjectName() ) ) {
-    		String[] objects = oAttDef.getObjectsName();
-    		if( objects != null && objects.length > 0 ) {
-    			className = objects[0];
-    		}
-    	}
+        String sLookupViewer = null;
         
-    	String lookupViewerName = oAtt.getLookupViewer();
-    	if( lookupViewerName == null ) {
-    		lookupViewerName = getViewerResolver().getViewer( className , XEOViewerResolver.ViewerType.LOOKUP );
-    	}
-    	
-        XEOBaseLookupList   oBaseBean;
-        
-        XUIViewerDefinitonParser parser = new XUIViewerDefinitonParser();
-        String newBean = "netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchLookupBean";
-        try{
-	        XUIViewerDefinition viewer = parser.parse( lookupViewerName );
-	        viewer.replaceBean( newBean, XUIViewerDefinitonParser.DEFAULT_BEAN_ID );
-	        
-	        oViewRoot = oSessionContext.createChildView( lookupViewerName, viewer );
-	        
-	        oBaseBean = ( XEOBaseLookupList ) oViewRoot.getBean( "viewBean" );
-	
-	        oBaseBean.setParentParentBeanId( getId() );
-	        oBaseBean.setParentComponentId( this.componentIds.get(rowId).getValueId() );
-	        //if (MetadataUtils.isCollection( oAttDef ))
-	        oBaseBean.setMultiLookup( true );
-	        HashMap<String,String> mapObjects = new HashMap<String, String>();
-	        mapObjects.put( modelName, modelName );
-	        oBaseBean.setLookupObjects( mapObjects );
-	        //Order is important, this must come after setParentComponentId
-	        oBaseBean.setSelectedObject( className );
-	        
-	        String boql = "select "+ className;
-	        oBaseBean.executeBoql( boql );
-	        
-	        oRequestContext.setViewRoot( oViewRoot );
-	        
-	        oRequestContext.renderResponse();
-        }	catch (Exception e){
-        		getRequestContext().addMessage( "AdvancedSearchError", new XUIMessage(
-        				XUIMessage.TYPE_ALERT,
-        				XUIMessage.SEVERITY_ERROR,
-        				"!",
-        				e.getMessage()) );
-        		logger.warn( "Could not show the Lookup for " + modelName , e );
+        if( sLookupViewer == null || sLookupViewer.length() == 0 ) {
+	    	String className = oAttDef.getReferencedObjectName(); 
+	    	if( "boObject".equals( oAttDef.getReferencedObjectName() ) ) {
+	    		String[] objects = oAttDef.getObjectsName();
+	    		if( objects != null && objects.length > 0 ) {
+	    			className = objects[0];
+	    		}
+	    	}
+			sLookupViewer = "viewers/" + className + "/lookup.xvw";
         }
+		
+        oViewRoot = oSessionContext.createChildView( sLookupViewer );
+
+        XEOBaseLookupList   oBaseBean;
+        oBaseBean = (XEOBaseLookupList)oViewRoot.getBean( "viewBean" );
+        
+        
+        Map<String, String> lookupObjs = getLookupObjectsMap( oAttDef );
+        
+        oBaseBean.setParentParentBeanId( "viewBean" );
+        oBaseBean.setParentComponentId( cmd.getClientId() );
+        oBaseBean.setMultiLookup( false );
+        oBaseBean.setFilterLookup( true );
+        oBaseBean.setLookupObjects( lookupObjs );
+        oBaseBean.setParentParentBeanId( "viewBean" );
+        oBaseBean.setParentAttributeName( clientId );
+    	oBaseBean.executeBoql( "select " + lookupObjs.keySet().iterator().next() );
+
+        oRequestContext.setViewRoot( oViewRoot );
+        
+    }
+	
+	@Override
+	public void setLookupFilterResults( XEOBaseLookupList lookupBean, DataRecordConnector[] records ) {
+		XUIViewRoot oRoot = this.getViewRoot();
+    	XUICommand oCmd     = (XUICommand)oRoot.findComponent( ":" + lookupBean.getParentComponentId() );
+    	GenericLookup genericLookup = (GenericLookup) oCmd.getParent();
+    	
+    	List<String> values = new LinkedList<String>();
+    	for (DataRecordConnector c : records){
+    		String boui = c.getAttribute( "BOUI" ).getValue().toString();
+    		values.add( boui );
+    	}
+    	if (records.length > 1)
+    		setLookupValueResultBridge( genericLookup, values );
+    	else
+    		setLookupValueResult( genericLookup, values.get(0) );
+    	
+    	
+    
+		XUIRequestContext.getCurrentContext().setViewRoot( oRoot );
+		oRoot.processInitComponents(); 
+	}
+	/**
+	 * Opens the lookup viewer to allow a user to choose an object (or several objects)
+	 */
+	public void doLookup(){
+		this.lookupFilterObject();
 	}
 
 	
@@ -494,9 +503,8 @@ public class AdvancedSearchBean extends XEOBaseBean {
 	 * @param compId The component where to set the value
 	 * @param value 
 	 */
-	public void setLookupValueResult(String compId, String value){
+	public void setLookupValueResult(GenericLookup genericLookupCmp, String value){
 		XUIViewRoot oViewRoot = getViewRoot();
-        GenericLookup genericLookupCmp  = ( GenericLookup ) getViewRoot().findComponent( FORM_ID + ":" + compId );
         
 		getRequestContext().setViewRoot( oViewRoot );
 		
@@ -510,15 +518,14 @@ public class AdvancedSearchBean extends XEOBaseBean {
 	}
 	
 	/**
-	 * 
+	 * X
 	 * Sets the value of a bridge lookup search (loads the associated labels)
 	 * 
 	 * @param compId The component where to set the value
 	 * @param values The values to set
 	 */
-	public void setLookupValueResultBridge(String compId, List<String> values){
+	public void setLookupValueResultBridge(GenericLookup bridgeLookupCmp, List<String> values){
 		XUIViewRoot oViewRoot = getViewRoot();
-        GenericLookup bridgeLookupCmp  = ( GenericLookup ) getViewRoot().findComponent( FORM_ID + ":" + compId );
         
 		getRequestContext().setViewRoot( oViewRoot );
 		
