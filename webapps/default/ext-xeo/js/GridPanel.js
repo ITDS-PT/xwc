@@ -37,8 +37,13 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         , getGridHeaderId : function () {
         	return 'gridHeader' + this.getGridEl().id;
         }
+        , calculateColumnId : function(columnId){
+        	if (columnId.indexOf("__") > 0)
+        		return columnId.replace("__",".");
+        	return columnId;
+        }
         , getColumnLabel : function ( columnId ){
-        	return this.getColumnModel().getColumnById( columnId ).header;
+        	return this.getColumnModel().getColumnById( this.calculateColumnId(columnId) ).header;
         }
         , getColumnIndex : function ( columnId ){
         	return this.getColumnModel().getIndexById( columnId );
@@ -92,7 +97,7 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         	
         }
         , canGroupColumn : function ( columnId ){
-        	return this.getColumnModel().getColumnById( columnId ).groupable &&
+        	return this.getColumnModel().getColumnById( this.calculateColumnId( columnId) ).groupable &&
         			!this.isGroupByField( columnId );
         }
         , isGroupByField : function ( columnId ){

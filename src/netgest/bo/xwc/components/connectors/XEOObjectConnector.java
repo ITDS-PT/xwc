@@ -391,5 +391,28 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 		else
 			return parent.getAttributeRef(attName);
 	}
+	
+	public static boDefAttribute getAttributeDefinitionFromNameWithDotSeparator(String attName, boDefHandler parent){
+		
+		if ( attName.contains( "." )) {
+				//Split by "."
+				String[] relationAttribute = attName.split( "\\." );
+				int size = relationAttribute.length;
+				boDefAttribute targetAttributeDefinition = null;
+				for (int i = 0 ; i < size ; i++){
+					String parentAtt = relationAttribute[i];
+					if (i+1 < size){
+						String childAtt = relationAttribute[i+1];
+						boDefAttribute defAttRel = parent.getAttributeRef( parentAtt );
+						boDefHandler defModelRel = defAttRel.getReferencedObjectDef();
+						targetAttributeDefinition = defModelRel.getAttributeRef(childAtt);
+						parent = defModelRel;
+					}
+				}
+				return targetAttributeDefinition;
+		}
+		else
+			return parent.getAttributeRef(attName);
+	}
     
 }

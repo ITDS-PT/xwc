@@ -441,6 +441,10 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 				//In the column definition for the attribute boql's dot syntax is used, but internal transformations
 				//use "__" instead of dot syntax, as such the comparison is done against the "__" string. 
 				return new XEOObjectAttributeMetaData(XEOObjectConnector.getAttributeDefinitionFromName(attributeName, this.oObjectList.getBoDef()));
+			} else if ( attributeName.contains("." )) {
+				//In the column definition for the attribute boql's dot syntax is used, but internal transformations
+				//use "__" instead of dot syntax, as such the comparison is done against the "." string. 
+				return new XEOObjectAttributeMetaData(XEOObjectConnector.getAttributeDefinitionFromNameWithDotSeparator( attributeName, this.oObjectList.getBoDef()));
 			}
 			
 			
