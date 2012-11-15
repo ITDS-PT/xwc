@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.servlet.http.HttpServletRequest;
+
 import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
@@ -24,6 +26,12 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
 
 
+/**
+ * 
+ * Supports the User Properties viewer
+ * 
+ *
+ */
 public class UserPropertiesBean extends XEOEditBean {
 	
 	private static Logger logger = Logger.getLogger("netgest.bo.xwc.components.viewers.beans.UserPropertiesBean");
@@ -119,40 +127,36 @@ public class UserPropertiesBean extends XEOEditBean {
 				logger.severe("Could not change the user theme", e);
 			}
 			
-			if (!sess.getPerformerIProfileBouiAsString().equals( profile)) {
+			if (!sess.getPerformerIProfileBouiAsString().equals( profile) ) {
 				sess.setPerformerIProfileBoui(profile);
-				
-				AttributeHandler languageAtt = user.getAttribute("user_language");
-				EboContext cntxt = this.getEboContext();
+			}	
+			
+			AttributeHandler languageAtt = user.getAttribute("user_language");
+			EboContext cntxt = getEboContext();
 
-				if ( languageAtt != null ) {
-					boObjectList list = boObjectList.list(cntxt,
-							"select XeoApplicationLanguage where boui= ?", new Object[]{languageAtt.getValueLong()});
-					list.beforeFirst();
-					boObject languageObj = list.getObject();
-					AttributeHandler codeHandler = languageObj
-							.getAttribute("code");
-					String language = codeHandler.getValueString();
-					bouser.setLanguage(language);
-				} else
-					bouser.setLanguage(boApplication.getDefaultApplication()
-							.getApplicationLanguage());
-
-				save();
-				XUIRequestContext oRequestContext = getRequestContext();
-				oRequestContext
-						.getScriptContext()
-						.add(
-								XUIScriptContext.POSITION_HEADER,
-								"sendToMain",
-								"parent.document.location.href='"
-										+ oRequestContext
-												.getActionUrl(getMainViewer(sess))
-										+ "'");
-				oRequestContext.renderResponse();
-			} else {
-				saveAndClose();
+			if ( languageAtt != null ) {
+				boObjectList list = boObjectList.list(cntxt,
+						"select XeoApplicationLanguage where boui= ?", new Object[]{languageAtt.getValueLong()});
+				list.beforeFirst();
+				boObject languageObj = list.getObject();
+				String language = languageObj.getAttribute("code").getValueString();
+				bouser.setLanguage(language);
+			} else{
+				bouser.setLanguage(boApplication.getDefaultApplication()
+						.getApplicationLanguage());
 			}
+
+			save();
+			XUIRequestContext oRequestContext = getRequestContext();
+			oRequestContext
+					.getScriptContext()
+					.add(
+						XUIScriptContext.POSITION_HEADER,
+						"sendToMain",
+						"parent.document.location.href='"
+								+ oRequestContext
+										.getActionUrl(getMainViewer(sess))
+								+ "'");
 		} catch (boRuntimeException e) {
 			logger.severe("Error setting a new profile", e);
 		}
@@ -182,20 +186,12 @@ public class UserPropertiesBean extends XEOEditBean {
 							"select uiWorkPlace where name='default'");
 					if (proflist.next())
 						workPlace = proflist.getObject();
-					// workPlace =
-					// boObject.getBoManager().loadObject(loginCtx,"uiWorkPlace"
-					// ,"name='default'");
 				} else {
 					boObjectList proflist = boObjectList.list(loginCtx,
 							"SELECT uiWorkPlace WHERE profile=?",
 							new Object[] { boui });
 					if (proflist.next())
 						workPlace = proflist.getObject();
-
-					// workPlace = boObject.getBoManager().loadObject(loginCtx,
-					// "SELECT uiWorkPlace WHERE profile=?",
-					// new Object[] { boui }
-					// );
 				}
 				if (workPlace != null && workPlace.exists()) {
 					mainViewer = workPlace.getAttribute("defaultViewer")
