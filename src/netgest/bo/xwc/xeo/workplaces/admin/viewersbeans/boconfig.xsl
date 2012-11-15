@@ -355,7 +355,6 @@
     </xsl:template>
     
     <xsl:template match="mail">
-        <form name="mail">
             <fieldset>
                 <legend>Mail Configurations</legend>
                 <table class='relations'>
@@ -377,7 +376,6 @@
                     </tr>
                 </table>
             </fieldset>
-        </form>
     </xsl:template>
     
     <xsl:template match="Repositories">
