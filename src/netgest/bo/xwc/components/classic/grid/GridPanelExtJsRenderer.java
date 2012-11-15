@@ -468,8 +468,13 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	            
 	            oSearchField.add("hideTrigger1", false);
 	            
-	            String searchCode =	oGrid.getId() + "_store.baseParams['fullText'] = this.getValue();\n" +
-    								oGrid.getId() + "_store.load();\n";
+	            String searchCode =	
+	            		"var value = this.getValue(); " +
+	            		" if (value && value.length == 1 && value == '%'){" + 
+	            		" value = ''; this.setValue(''); " +
+	            		" } " + 
+	            		oGrid.getId() + "_store.baseParams['fullText'] = value;\n" +
+    					oGrid.getId() + "_store.load();\n";
  
 	            
 	            ExtConfig extCfg = oSearchField.addChild("listeners");
