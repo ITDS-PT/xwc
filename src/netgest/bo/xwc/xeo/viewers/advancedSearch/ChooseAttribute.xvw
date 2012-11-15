@@ -4,7 +4,7 @@
 		beanClass='netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchAttributeChooser' beanId='viewBean'>
 		<xvw:form id='searchTree'>
 			<xvw:window width='400' height='400' >
-			<xvw:title valueExpression="Escolha um attributo"></xvw:title>
+			<xvw:title valueExpression="@{ATTRIBUTE_CHOOSER_CHOOSE}"></xvw:title>
 			<xvw:tabs renderTabBar="false">
 				<xvw:tab>
 					<xvw:treePanel id='tree' root="#{viewBean.rootMenu}" reload="true" hideRoot="true" >

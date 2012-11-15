@@ -166,4 +166,8 @@ public class XEOViewersMessages {
 	
 	public static final XUILocalizedMessage LOV_CHOICE_CONFIRM =
 		new XUILocalizedMessage( XEOViewersMessages.class.getName(), "LOV_CHOICE_CONFIRM" );
+	
+	//Attribute Chooser
+	public static final XUILocalizedMessage ATTRIBUTE_CHOOSER_CHOOSE =
+			new XUILocalizedMessage( XEOViewersMessages.class.getName(), "ATTRIBUTE_CHOOSER_CHOOSE" );
 }		
