@@ -269,6 +269,16 @@ public class AttributeImage extends ViewerOutputSecurityBase {
             
             XUIResponseWriter w = getResponseWriter();
             
+            String labelPos = "";
+            int labelWidth = 0;
+            Rows r = (Rows)oImg.findParentComponent( Rows.class );
+
+            
+            if( r!=null ) {
+            	labelPos 	= r.getLabelPosition();
+            	labelWidth	= r.getLabelWidth();
+            }
+            
             w.startElement( DIV, oComp );	
             w.writeAttribute( HTMLAttr.ID, oComp.getClientId(), null );
             
@@ -276,28 +286,52 @@ public class AttributeImage extends ViewerOutputSecurityBase {
             //w.writeAttribute( HTMLAttr.ID, oComp.getClientId(), null );
             w.writeAttribute( CELLPADDING, "0", null );
             w.writeAttribute( CELLSPACING, "0", null );
-            w.writeAttribute( HTMLAttr.STYLE, "table-layout:fixed;width:100%", null ); 
+            w.writeAttribute( HTMLAttr.STYLE, "table-layout:fixed;width:100%", null );
+            
 
-            w.startElement("COLGROUP", oComp);
-            w.startElement(COL, oComp );
-            w.writeAttribute( HTMLAttr.WIDTH, "100px", null );
-            w.endElement("COL");
-            w.startElement(COL, oComp );
-            w.endElement("COL");
-            w.endElement("COLGROUP");
+            if( !"Top".equalsIgnoreCase( labelPos ) ) 
+            {
+	            w.startElement("COLGROUP", oComp);
+	            if( oImg.getRenderLabel() ){
+		            w.startElement(COL, oComp );
+		            w.writeAttribute( HTMLAttr.WIDTH, labelWidth + "px", null );
+		            w.writeAttribute(HTMLAttr.STYLE, "padding-right:3px", null);
+		            w.writeAttribute(HTMLAttr.ALIGN, labelPos, null); 
+		            w.endElement("COL");
+	            }
 
+	            w.startElement(COL, oComp );
+	            w.endElement("COL");
+	            w.endElement("COLGROUP");
+            } else {
+	            w.startElement("COLGROUP", oComp);
+	            w.startElement(COL, oComp );
+	            w.writeAttribute( HTMLAttr.WIDTH, "100%", null );
+	            w.endElement("COL");
+	            w.endElement("COLGROUP");
+            }
+            
+            
             w.startElement( TR, oComp );
             
-            // Write Label TD
-            w.startElement( TD, oComp );
             if( oImg.getRenderLabel() )
             {
+            	w.startElement( TD, oComp );
+            	w.writeAttribute( HTMLAttr.HEIGHT , "20px", null );
+            	w.writeAttribute(HTMLAttr.ALIGN, labelPos, null);
+            	w.writeAttribute(HTMLAttr.STYLE, "padding-right:3px", null);
                 if( oImg.oLabel != null ) {
                 	oImg.oLabel.encodeAll();    
                 }
+                w.endElement( TD );
             }
-            w.endElement( TD );
-             
+
+            if( "Top".equalsIgnoreCase( labelPos ) ) 
+            {
+                w.endElement( TR );
+                w.startElement( TR, oComp );
+            }
+            
             w.startElement( TD, oComp );
 
             Object oValue = oImg.getValue();
@@ -337,6 +371,7 @@ public class AttributeImage extends ViewerOutputSecurityBase {
 	            w.endElement( HTMLTag.IMG );
             }
             w.endElement( TD );
+            
             w.endElement( TR ); 
             w.endElement( TABLE );
             w.endElement( DIV );
