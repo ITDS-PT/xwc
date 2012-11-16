@@ -280,63 +280,90 @@ public class AttributeBase extends ViewerInputSecurityBase {
         this.dataType.setValue( 
                 createValueExpression( sBeanExpression + ".dataType}", Byte.class ) 
             );
-        this.inputRenderType.setValue( 
-                createValueExpression( sBeanExpression + ".inputRenderType}", Byte.class ) 
-            );
         
-        this.validation.setValue( 
-        		createValueExpression( sBeanExpression + ".validate}", Boolean.class ) 
-            );
-
-        this.onChangeSubmit.setValue( 
-                createValueExpression( sBeanExpression + ".onChangeSubmit}", Boolean.class ) 
-            );
-
-        this.maxLength.setValue(  
-                createValueExpression( sBeanExpression + ".maxLength}", Integer.class ) 
-            );
-
-        this.maxValue.setValue(  
-                createValueExpression( sBeanExpression + ".numberMaxValue}", Double.class ) 
-            );
-
-        this.minValue.setValue(  
-                createValueExpression( sBeanExpression + ".numberMinValue}", Double.class ) 
-            );
+        if (inputRenderType.isDefaultValue()){
+	        this.inputRenderType.setValue( 
+	                createValueExpression( sBeanExpression + ".inputRenderType}", Byte.class ) 
+	            );
+        }
         
-        this.decimalPrecision.setValue( 
-                createValueExpression( sBeanExpression + ".decimalPrecision}", Integer.class ) 
-            );
+        if (validation.isDefaultValue()){
+	        this.validation.setValue( 
+	        		createValueExpression( sBeanExpression + ".validate}", Boolean.class ) 
+	            );
+        }
         
-        this.minDecimalPrecision.setValue( 
-                createValueExpression( sBeanExpression + ".minDecimals}", Integer.class ) 
-            );
+        if (onChangeSubmit.isDefaultValue()){
+	        this.onChangeSubmit.setValue( 
+	                createValueExpression( sBeanExpression + ".onChangeSubmit}", Boolean.class ) 
+	            );
+        }
 
-        this.groupNumber.setValue( 
-                createValueExpression( sBeanExpression + ".numberGrouping}", Boolean.class ) 
-            );
+        if (maxLength.isDefaultValue()){
+	        this.maxLength.setValue(  
+	                createValueExpression( sBeanExpression + ".maxLength}", Integer.class ) 
+	            );
+        }
+        
+        if (maxValue.isDefaultValue()){
+	        this.maxValue.setValue(  
+	                createValueExpression( sBeanExpression + ".numberMaxValue}", Double.class ) 
+	            );
+        }
+
+        if (minValue.isDefaultValue()){
+	        this.minValue.setValue(  
+	                createValueExpression( sBeanExpression + ".numberMinValue}", Double.class ) 
+	            );
+        }
+        
+        if (decimalPrecision.isDefaultValue()){
+	        this.decimalPrecision.setValue( 
+	                createValueExpression( sBeanExpression + ".decimalPrecision}", Integer.class ) 
+	            );
+        }
+        
+        if (minDecimalPrecision.isDefaultValue()){
+	        this.minDecimalPrecision.setValue( 
+	                createValueExpression( sBeanExpression + ".minDecimals}", Integer.class ) 
+	            );
+        }
+
+        if (groupNumber.isDefaultValue()){
+	        this.groupNumber.setValue( 
+	                createValueExpression( sBeanExpression + ".numberGrouping}", Boolean.class ) 
+	            );
+        }
 
         // Label
-
-        this.label.setValue( 
-                createValueExpression( sBeanExpression + ".label}", String.class ) 
-            );
+        if (label.isDefaultValue()){
+	        this.label.setValue( 
+	                createValueExpression( sBeanExpression + ".label}", String.class ) 
+	            );
+        }
 
         // States 
-
-        this.disabled.setValue( 
-                createValueExpression( sBeanExpression + ".disabled}", Boolean.class ) 
-            );
-        this.visible.setValue( 
-                createValueExpression( sBeanExpression + ".visible}", Boolean.class ) 
-            );
-        this.modelRequired.setValue( 
-                createValueExpression( sBeanExpression + ".required}", Boolean.class ) 
-            );
-        this.recommended.setValue( 
-                createValueExpression( sBeanExpression + ".recomended}", Boolean.class ) 
-            );
-
+        if (disabled.isDefaultValue()){
+	        this.disabled.setValue( 
+	                createValueExpression( sBeanExpression + ".disabled}", Boolean.class ) 
+	            );
+        }
+        if (visible.isDefaultValue()){
+	        this.visible.setValue( 
+	                createValueExpression( sBeanExpression + ".visible}", Boolean.class ) 
+	            );
+        }
+        if (modelRequired.isDefaultValue()){
+	        this.modelRequired.setValue( 
+	                createValueExpression( sBeanExpression + ".required}", Boolean.class ) 
+	            );
+        }
+        if (recommended.isDefaultValue()){
+	        this.recommended.setValue( 
+	                createValueExpression( sBeanExpression + ".recomended}", Boolean.class ) 
+	            );
+        }
+        
         this.setSecurityPermissions( sBeanExpression + ".securityPermissions}" );
         
         // Dependeces
@@ -344,10 +371,13 @@ public class AttributeBase extends ViewerInputSecurityBase {
                 createValueExpression( sBeanExpression + ".dependences}", String[].class ) 
             );
         
-        // Lovs 
+        // Lovs
+        if (isLov.isDefaultValue()){
         this.isLov.setValue( 
                 createValueExpression( sBeanExpression + ".isLov}", Boolean.class ) 
             );
+        }
+        
         this.isLovEditable.setValue( 
                 createValueExpression( sBeanExpression + ".isLovEditable}", Boolean.class ) 
             );
@@ -358,7 +388,9 @@ public class AttributeBase extends ViewerInputSecurityBase {
                 createValueExpression( sBeanExpression + "}", DataFieldConnector.class ) 
             );
         
-        this.displayValue.setExpressionText(sBeanExpression + ".displayValue}" );
+        if (displayValue.isDefaultValue()){
+        	this.displayValue.setExpressionText(sBeanExpression + ".displayValue}" );
+        }
         
     }
     
