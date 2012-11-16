@@ -2,9 +2,9 @@ package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
 
-import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 /**
@@ -14,15 +14,16 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  * 
  * Can have children of any type
  * 
- * @author João Carreira
+ * @author Joï¿½o Carreira
  *
  */
 public class Cell extends XUIComponentBase
 {
 	
-	private XUIBaseProperty<Integer> colSpan = new XUIBaseProperty<Integer>("colSpan", this, 0 );
+	private XUIViewProperty<Integer> colSpan = new XUIViewProperty<Integer>("colSpan", this, 0 );
 	
-	protected void setColSpan( int colSpan ) {
+	
+	public void setColSpan( int colSpan ) {
 		this.colSpan.setValue( colSpan );
 	}
 	
@@ -32,13 +33,11 @@ public class Cell extends XUIComponentBase
 	
 	@Override
 	public void restoreState(Object oState) {
-		// TODO Auto-generated method stub
 		super.restoreState(oState);
 	}
 	
 	@Override
 	public boolean wasStateChanged() {
-		// TODO Auto-generated method stub
 		return super.wasStateChanged();
 	}
 
