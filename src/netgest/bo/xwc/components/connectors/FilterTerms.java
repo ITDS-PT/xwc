@@ -107,7 +107,7 @@ public class FilterTerms {
 			
 		}
 		public String getDataField() {
-			return dataField;
+			return dataField.replace( "__", "." );
 		}
 
 		public Object getValue() {

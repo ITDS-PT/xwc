@@ -38,8 +38,10 @@ public class GridPanelUtilities {
 	 * @return
 	 */
 	protected Column getColumn( String name ){
-		if (gridPanel != null)
+		if (gridPanel != null){
+			name = name.replaceAll( "__", "." );
 			return gridPanel.getColumn( name );
+		}
 		return new Column() {
 			
 			@Override
