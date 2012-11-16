@@ -16,7 +16,7 @@ xmlns:xeo="http://www.netgest.net/xeo/xeo">
 			
 		</style>	
 			<xvw:toolBar>
-				<xvw:menu text='@{change}' serverAction="#{viewBean.updateUser}"> </xvw:menu> 
+				<xvw:menu text='@{change}' serverAction="#{viewBean.updateUser}" serverActionWaitMode="DIALOG"> </xvw:menu> 
 				
 			</xvw:toolBar>
 			<xvw:window width="400" height="300">
