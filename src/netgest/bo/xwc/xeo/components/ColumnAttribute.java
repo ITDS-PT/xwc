@@ -119,19 +119,21 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 	}
 	
 	private boolean attributeIsLov(){
-		GridPanel grid = (GridPanel) getParent().getParent();
-		DataListConnector listConnector = grid.getDataSource();
-		DataFieldMetaData metadata = listConnector.getAttributeMetaData( getDataField() ); 
-		if (metadata != null && metadata.getIsLov() ){
-			if (listConnector instanceof XEOObjectListConnector){
-				try {
-					boDefHandler handler = ((XEOObjectListConnector) listConnector).getObjectList().getBoDef();
-					boDefAttribute attribute = handler.getAttributeRef( getDataField() );
-					if (attribute != null && StringUtils.hasValue( attribute.getLOVName() ) ){
-						return true;
+		GridPanel grid = (GridPanel) findParentComponent( GridPanel.class );
+		if (grid != null){
+			DataListConnector listConnector = grid.getDataSource();
+			DataFieldMetaData metadata = listConnector.getAttributeMetaData( getDataField() ); 
+			if (metadata != null && metadata.getIsLov() ){
+				if (listConnector instanceof XEOObjectListConnector){
+					try {
+						boDefHandler handler = ((XEOObjectListConnector) listConnector).getObjectList().getBoDef();
+						boDefAttribute attribute = handler.getAttributeRef( getDataField() );
+						if (attribute != null && StringUtils.hasValue( attribute.getLOVName() ) ){
+							return true;
+						}
+					} catch (boRuntimeException e ){
+						e.printStackTrace();
 					}
-				} catch (boRuntimeException e ){
-					e.printStackTrace();
 				}
 			}
 		}
