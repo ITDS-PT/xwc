@@ -2224,9 +2224,13 @@ public class GridPanel extends ViewerInputSecurityBase {
 					}
 					else {
 						Object colValue = dataRecordConnector.getAttribute(column).getValue();
-						if( colValue == null ) {
+						if( colValue == null) {
 							addLine = false;
+						} 
+						if (colValue == val){
+							addLine = true;
 						}
+						
 					}
 				}
 				if (addLine) {

@@ -233,9 +233,10 @@ public class GridPanelJSonRenderer {
 	    				parentValues[i] = oParentValues[i];
 	    				break;
 	    			case DataFieldTypes.VALUE_NUMBER:
-	    				
-	    				if( (oParentValues[i]).toString().length() > 0 )
-	    					parentValues[i] = new BigDecimal( oParentValues[i].toString() );
+	    				if (oParentValues[i] != null){
+		    				if( (oParentValues[i]).toString().length() > 0 )
+		    					parentValues[i] = new BigDecimal( oParentValues[i].toString() );
+		    			}
 	    				break;
 	    		}
 	    	}
@@ -276,26 +277,6 @@ public class GridPanelJSonRenderer {
         	
         	return oStrBldr;
             
-    		/*
-    		DataListConnector groupDetails = 
-        		((GroupableDataList)c).getGroupDetails(
-        				groupBy,
-        				reqParam.getParentValues(),
-        				groupBy[groupBy.length-1],
-        				reqParam.getPage(), 
-        				reqParam.getPageSize()
-        			);
-
-    		GridPanelJSonRenderer jsonRenderer = new GridPanelJSonRenderer();
-            StringBuilder oStrBldr = jsonRenderer.buildDataArray( 
-            		oGrid, 
-            		groupDetails, 
-            		groupDetails.iterator(), 
-            		0, 
-            		reqParam.getPageSize() 
-            	);
-            oResponse.getWriter().print( oStrBldr );
-            */
     	}
     	else {
             Iterator<DataRecordConnector> dataIterator;
@@ -319,18 +300,6 @@ public class GridPanelJSonRenderer {
     		String grouByLevelField = reqParam.getGroupBy()[ reqParam.getGroupByLevel() ];
     		
     		DataGroupConnector groupConnector = getGroups(reqParam, dataIterator );
-    		
-    		
-    		/*
-    		
-        	DataGroupConnector groupConnector = ((GroupableDataList)c).getGroups(
-        		reqParam.getGroupBy(),
-        		reqParam.getParentValues(),
-        		reqParam.getGroupBy()[ reqParam.getGroupByLevel() ],
-        		reqParam.getPage(), 
-        		reqParam.getPageSize() 
-        	);
-        	*/
     		
     		
     		Iterator<DataRecordConnector> dataListIterator = groupConnector.iterator();
