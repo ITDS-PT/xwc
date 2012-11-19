@@ -2717,6 +2717,7 @@ public class XEOEditBean extends XEOBaseBean
 	    	  bean.setObjectName(sourceObject.getName());
 	    	  bean.setParentComponentId(bridgeId);
 	    	  bean.setMultiSelect(multiSelect);
+	    	  bean.setParentObject(getXEOObject().getBoui());
     	  
 	    	  LookupFavorites.eliminateDeletedObjectsFromPreference(sourceObject, objectAtt);
     	  

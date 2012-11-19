@@ -1,12 +1,15 @@
 package netgest.bo.xwc.xeo.beans;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.PhaseEvent;
 
 import netgest.bo.data.DataRow;
+import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.runtime.boObjectListBuilder;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -74,13 +77,14 @@ public class BridgeLookupBean extends XEOBaseBean {
 	 */
 	public DataListConnector getDataSource() throws boRuntimeException{
 		
-		
 		XUIComponentBase oComp = (XUIComponentBase)getParentView().findComponent(parentComponentId);
 		long[] bouis = null;
 		//Bouis are usally retrieved from the preference, but  user can override it
 		boolean retrieveBouisFromDefaultSource = true;
+		String attributeName = "";
 		if (oComp instanceof AttributeBase){
 			List<Long> listOfBouiWithFavorites = ((AttributeBase) oComp).getListFavorites();
+			attributeName = ((AttributeBase) oComp).getObjectAttribute();
 			if (listOfBouiWithFavorites != null){
 				bouis = new long[listOfBouiWithFavorites.size()];
 				int n = 0;
@@ -91,6 +95,7 @@ public class BridgeLookupBean extends XEOBaseBean {
 			
 		} else if (oComp instanceof Bridge){
 			List<Long> listOfBouiWithFavorites = ((Bridge) oComp).getListFavorites();
+			attributeName = ((Bridge) oComp).getObjectAttribute();
 			if (listOfBouiWithFavorites != null){
 				bouis = new long[listOfBouiWithFavorites.size()];
 				int n = 0;
@@ -102,8 +107,11 @@ public class BridgeLookupBean extends XEOBaseBean {
 		
 		if (retrieveBouisFromDefaultSource){
 			String objectName = getObjectName();
-			bouis = LookupFavorites.getBouisFromPreference(objectName, 
+			bouis = LookupFavorites.getBouisFromPreference( objectName, 
 					getAttributeName(), getEboContext(),true, 10);
+			
+			bouis = checkFavoritesAgainstFilters( bouis, attributeName );
+			
 		}	
 		
 		if( bouis.length > 0 ) {
@@ -130,6 +138,28 @@ public class BridgeLookupBean extends XEOBaseBean {
 			return new XEOObjectListConnector( list );
 		}
 		
+	}
+
+	private long[] checkFavoritesAgainstFilters( long[] bouis, String attributeName ) throws boRuntimeException {
+		List<Long> checkedBouis = new ArrayList<Long>();
+		boObject object = boObject.getBoManager().loadObject( getEboContext(), boui );
+		String query = object.getAttribute( attributeName ).getFilterBOQL_query();
+		boObjectList list = new boObjectListBuilder( getEboContext(), query ).build();
+		list.beforeFirst();
+		
+		for (long curr : bouis){
+			if (list.haveBoui( curr )){
+				checkedBouis.add( Long.valueOf( curr ) );
+			}
+		}
+		
+		bouis = new long[checkedBouis.size()];
+		int k = 0;
+		for (Long current : checkedBouis){
+			bouis[k] = current.longValue();
+			k++;
+		}
+		return bouis;
 	}
 	
 	
@@ -274,6 +304,16 @@ public class BridgeLookupBean extends XEOBaseBean {
 	
 	public void setParentComponentId(String comp){
 		this.parentComponentId = comp;
+	}
+	
+	private long boui;
+
+	public void setParentObject( long boui ) {
+		this.boui = boui;
+	}
+	
+	public long getParentObject(){
+		return boui;
 	}
 }
 
