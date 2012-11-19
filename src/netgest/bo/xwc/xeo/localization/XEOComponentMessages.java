@@ -26,6 +26,12 @@ public interface XEOComponentMessages {
 	public static final XUILocalizedMessage BRIDGETB_FAVORITE_TTIP = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "BRIDGETB_FAVORITE_TTIP" );
 	
+	public static final XUILocalizedMessage BRIDGETB_ORDERWARNMSG = 
+			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "BRIDGETB_ORDERWARNMSG" );
+	
+	public static final XUILocalizedMessage BRIDGETB_ORDERWARNTITLE = 
+			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "BRIDGETB_ORDERWARNTITLE" );
+	
 	//Tooltip when minimum occurs are set in the bridge
 	public static final XUILocalizedMessage BRIDGETB_ADD_MINIMUM = 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "BRIDGETB_ADD_MINIMUM" );

@@ -1,10 +1,13 @@
 package netgest.bo.xwc.xeo.components;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ActionListener;
 
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
@@ -14,12 +17,21 @@ import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
+import netgest.bo.xwc.components.connectors.DataRecordConnector;
+import netgest.bo.xwc.components.connectors.XEOBridgeListConnector;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIMessage;
+import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
+import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
+import netgest.utils.StringUtils;
 
 /**
  * 
@@ -72,6 +84,14 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		new XUIViewBindProperty<Boolean>( "renderFavoritesBtn", this, false, Boolean.class );
 
 	
+	/**
+	 * Whether or nor the default reorder buttons should be rendered or not
+	 */
+	
+	private XUIStateBindProperty<Boolean>  renderOrderBridgeBtn    = 
+			new XUIStateBindProperty<Boolean>( "renderOrderBridgeBtn", this, "false", Boolean.class );
+
+	
 	public boolean getRenderAddBtn() {
 		return renderAddBtn.getEvaluatedValue();
 	}
@@ -102,6 +122,14 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 	
 	public void setRenderFavoritesBtn(String favBtnExpr){
 		this.renderFavoritesBtn.setExpressionText(favBtnExpr);
+	}
+	
+	public boolean getRenderOrderBridgeBtn() {
+		return renderOrderBridgeBtn.getEvaluatedValue();
+	}
+
+	public void setRenderOrderBridgeBtn(String expression ) {
+		this.renderOrderBridgeBtn.setExpressionText( expression );
 	}
 	
 	@Deprecated
@@ -137,8 +165,195 @@ public class BridgeToolBar extends ToolBarMenuPositions {
     	}
     	return this.bridgeName.getEvaluatedValue();
     }
+    
+   public static class OrderBrigeUpActionListener implements ActionListener {
+        public void processAction(ActionEvent event) {
+            try {
+            	BridgeToolBar bridgeToolbar=(BridgeToolBar)((XUICommand)event.getSource()).getParent();
+            	if (bridgeToolbar.isOriginalQuery())
+            		bridgeToolbar.orderUpBridge();
+            	else
+            		bridgeToolbar.getRequestContext().addMessage( bridgeToolbar.getClientId(), 
+                    		new XUIMessage(
+                                XUIMessage.TYPE_ALERT,
+                                XUIMessage.SEVERITY_WARNING,
+                                XEOComponentMessages.BRIDGETB_ORDERWARNTITLE.toString(),
+                                XEOComponentMessages.BRIDGETB_ORDERWARNMSG.toString()
+                           )
+			        );
+			} catch (boRuntimeException e) {
+				 throw new RuntimeException(e);
+			}
+        }
+    }
+   
+   public static class OrderBrigeDownActionListener implements ActionListener {
+       public void processAction(ActionEvent event) {
+           try {
+        	   BridgeToolBar bridgeToolbar=(BridgeToolBar)((XUICommand)event.getSource()).getParent();
+        	   if (bridgeToolbar.isOriginalQuery())
+        		   bridgeToolbar.orderDownBridge();
+        	   else
+        		   bridgeToolbar.getRequestContext().addMessage( bridgeToolbar.getClientId(), 
+                   		new XUIMessage(
+                               XUIMessage.TYPE_ALERT,
+                               XUIMessage.SEVERITY_WARNING,
+                               XEOComponentMessages.BRIDGETB_ORDERWARNTITLE.toString(),
+                               XEOComponentMessages.BRIDGETB_ORDERWARNMSG.toString()
+                          )
+			        );
+			} catch (boRuntimeException e) {
+				 throw new RuntimeException(e);
+			}
+       }
+   }
 	
 	
+    private void orderUpBridge() throws boRuntimeException {
+        
+	    XEOEditBean oXEOEditBean;
+        oXEOEditBean = (XEOEditBean)getRequestContext().getViewRoot().getBean( getBeanId() );
+ 
+        GridPanel oGrid = (GridPanel)this.findParentComponent(GridPanel.class);
+        
+        bridgeHandler oBridgeHandler  = ((XEOBridgeListConnector)oGrid.getDataSource()).getBridge();
+        
+        DataRecordConnector[] oSelectedRows = oGrid.getSelectedRows();
+                
+        if (oSelectedRows!=null && oSelectedRows.length>0)
+        {
+	        int[] arrayRowIndexes = new int[oSelectedRows.length];
+	                
+	        for (int i = 0; i < oSelectedRows.length; i++) 
+	        {
+	        	long rowBoui = ((BigDecimal)oSelectedRows[i].getAttribute("BOUI").getValue()).longValue();
+	        	
+	        	oBridgeHandler.beforeFirst();
+	            
+	            while (oBridgeHandler.next())
+	            {
+	                if (oBridgeHandler.getObject().getBoui() == rowBoui )
+	                {
+	                	arrayRowIndexes[i] = oBridgeHandler.getRow();
+	                    break;
+	                }                 
+	            }
+	        }
+	        
+	        Arrays.sort(arrayRowIndexes);
+	        String script = new String();
+	        for(int index=0; index < arrayRowIndexes.length ; index++)
+	        {            
+	            if(arrayRowIndexes[index] > 0 && arrayRowIndexes[index] -1 > 0)
+	            {
+	                oBridgeHandler.beforeFirst();
+	            	while (oBridgeHandler.next())
+	                {
+	                    if (oBridgeHandler.getRow() == arrayRowIndexes[index] )
+	                    {                  	
+	                        oBridgeHandler.moveRowTo(arrayRowIndexes[index]-1);
+	                                                
+	                        script = script + "indexesArray[" + index + "] = " + (arrayRowIndexes[index]-2) + ";";
+	                        break;
+	                    }                 
+	                }
+	            }
+	            else
+	            {
+	            	 script = script + "indexesArray[" + index + "] = " + (arrayRowIndexes[index]-1) + ";";
+	            }
+	        }
+	        
+	        if(oXEOEditBean.getXEOObject() != null)
+	        {
+	        	oXEOEditBean.getXEOObject().setChanged(true);
+	        }
+	        
+	        getRequestContext().getScriptContext().add(  
+					XUIScriptContext.POSITION_HEADER,
+					"autoSelectRowsUp",
+					"window.setTimeout(function(){var grid = Ext.getCmp('" + oGrid.getClientId() + "');" +
+					" if(grid != null) { var indexesArray = new Array(); " + script + " grid.getSelectionModel().selectRows(indexesArray);}},400);"
+			); 
+        }
+    }
+    
+    
+    /**
+     * @throws boRuntimeException
+     */
+    public void orderDownBridge() throws boRuntimeException {
+        
+    	XEOEditBean oXEOEditBean;
+        oXEOEditBean = (XEOEditBean)getRequestContext().getViewRoot().getBean( getBeanId() );
+ 
+        GridPanel oGrid = (GridPanel)this.findParentComponent(GridPanel.class);
+        bridgeHandler oBridgeHandler  = ((XEOBridgeListConnector)oGrid.getDataSource()).getBridge();
+        
+        int rowCount = oBridgeHandler.getRowCount();
+        
+        DataRecordConnector[] oSelectedRows = oGrid.getSelectedRows();
+        
+        if (oSelectedRows!=null && oSelectedRows.length>0)
+        {
+        
+	        int[] arrayRowIndexes = new int[oSelectedRows.length];
+	        
+	        for (int i = 0; i < oSelectedRows.length; i++) 
+	        {
+	        	long rowBoui = ((BigDecimal)oSelectedRows[i].getAttribute("BOUI").getValue()).longValue();
+	        	
+	        	oBridgeHandler.beforeFirst();
+	            
+	            while (oBridgeHandler.next())
+	            {
+	                if (oBridgeHandler.getObject().getBoui() == rowBoui )
+	                {
+	                	arrayRowIndexes[i] = oBridgeHandler.getRow();
+	                    break;
+	                }                 
+	            }
+	        }
+	        
+	        Arrays.sort(arrayRowIndexes);
+	        String script = new String();
+	        for(int index=arrayRowIndexes.length-1; index >= 0 ; index--)
+	        {            
+	            if(arrayRowIndexes[index] > 0 && arrayRowIndexes[index] + 1 <= rowCount)
+	            {
+	                oBridgeHandler.beforeFirst();
+	            	while (oBridgeHandler.next())
+	                {
+	                    if (oBridgeHandler.getRow() == arrayRowIndexes[index] )
+	                    {                  	
+	                        oBridgeHandler.moveRowTo(arrayRowIndexes[index]+1);
+	                        
+	                        script = "indexesArray[" + index + "] = " + (arrayRowIndexes[index]) + ";" + script;
+	                        break;
+	                    }                 
+	                }
+	            }
+	            else
+	            {
+	            	 script = "indexesArray[" + index + "] = " + (arrayRowIndexes[index]-1) + ";" + script;
+	            }
+	        }
+	        
+	        if(oXEOEditBean.getXEOObject() != null)
+	        {
+	        	oXEOEditBean.getXEOObject().setChanged(true);
+	        }
+	                
+	        getRequestContext().getScriptContext().add(  
+					XUIScriptContext.POSITION_HEADER,
+					"autoSelectRowsDown",
+					"window.setTimeout(function(){var grid = Ext.getCmp('" + oGrid.getClientId() + "');" +
+					" if(grid != null) { var indexesArray = new Array(); " + script + " grid.getSelectionModel().selectRows(indexesArray);}},400);"
+			);  
+        }
+        
+    }
+    
 	@Override
 	public void initComponent() {
 		
@@ -170,6 +385,18 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		
 		Menu menu;
 		List<UIComponent> children = getChildren();
+		
+		menu = createOrderButton(  "orderUpBridge", 
+				XEOComponentMessages.BRIDGETB_MOVEUP.toString(),
+				"ext-xeo/images/menus/orderUp-bridge.png", 
+				getParent().getClientId( getFacesContext() ), 
+				new OrderBrigeUpActionListener(), "self");
+		
+		menu = createOrderButton(  "orderDownBridge", 
+				XEOComponentMessages.BRIDGETB_MOVEDOWN.toString(),
+				"ext-xeo/images/menus/orderDown-bridge.png", 
+				getParent().getClientId( getFacesContext() ), 
+				new OrderBrigeDownActionListener(), "self");
 		
 		menu = addAddMenu();
 		if( menu != null ) {
@@ -244,6 +471,21 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeRemoveEnabled(targetBridge) );
 				}
 			}
+			else if (comp instanceof Menu)
+			{
+				Menu menu =(Menu)comp;
+				if( menu.getId()!=null && menu.getId().endsWith("orderUpBridge") ) {
+					separatorRendered = getRenderOrderBridgeBtn();
+					menu.setVisible( Boolean.toString( separatorRendered ) );
+					menu.setDisabled( false );
+				}
+				else if( menu.getId()!=null && menu.getId().endsWith("orderDownBridge") ) {
+					
+					separatorRendered = getRenderOrderBridgeBtn();
+					menu.setVisible( Boolean.toString( separatorRendered ) );
+					menu.setDisabled( false );
+				}
+			}
 			else if ( isMySeparator && comp instanceof Menu ) {
 				if( "-".equals( ((Menu) comp).getText() ) ) {
 					((Menu) comp).setVisible( Boolean.toString( separatorRendered ) );
@@ -256,6 +498,25 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		//setRendered( renderToolBar );
 		
 	}
+	
+	public boolean isOriginalQuery()
+	{
+		boolean toRet=true;
+		Bridge bridge=(Bridge)this.findParentComponent(Bridge.class);
+		if (!StringUtils.isEmpty(bridge.getCurrAggregateFieldCheckSet()) || 
+				!StringUtils.isEmpty(bridge.getCurrAggregateFieldDescSet()) ||
+				!StringUtils.isEmpty(bridge.getCurrAggregateFieldOpSet()) ||
+				!StringUtils.isEmpty(bridge.getCurrAggregateFieldSet()) ||
+				bridge.getCurrentFilterTerms()!=null ||
+				!StringUtils.isEmpty(bridge.getCurrentFullTextSearch()) ||
+				bridge.getCurrentSortTerms()!=null ||
+				!StringUtils.isEmpty(bridge.getGroupBy())
+				)
+			toRet=false;
+		
+		return toRet;
+	}
+	
 	
 	private Menu addCreateNew() {
 		BridgeMethod rootMenu;
@@ -508,8 +769,23 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		toolBarOpt.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 		toolBarOpt.setValue( findParentComponent(GridPanel.class).getClientId() );
 		getChildren().add( currentMenuPos++, toolBarOpt );
-		
 		return toolBarOpt;
 	}
-
+	
+	private Menu createOrderButton( String id, String toolTip, String icon, String value, ActionListener action, String target ) {
+		Menu menu;
+		menu = new Menu();
+		menu.setId( getId() + "_" + id );
+		
+		if( target != null ) {
+			menu.setTarget( target );
+		}
+		menu.setValue( value );
+		menu.addActionListener(action);
+		menu.setToolTip(toolTip);
+		menu.setIcon( icon );
+		menu.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
+		getChildren().add( currentMenuPos++, menu );
+		return menu;
+	}
 }

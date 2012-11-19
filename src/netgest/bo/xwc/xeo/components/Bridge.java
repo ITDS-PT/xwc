@@ -1,5 +1,6 @@
 package netgest.bo.xwc.xeo.components;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -9,6 +10,11 @@ import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
+import netgest.bo.xwc.components.connectors.DataListConnector;
+import netgest.bo.xwc.components.connectors.DataRecordConnector;
+import netgest.bo.xwc.components.connectors.FilterTerms;
+import netgest.bo.xwc.components.connectors.SortTerms;
+import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
@@ -46,6 +52,12 @@ public class Bridge extends GridPanel {
 		new XUIViewBindProperty<Boolean>("renderToolBar", this, true, Boolean.class);
 	
 	/**
+	 * Whether or not bridge ordering is activ
+	 */
+	private XUIViewBindProperty<Boolean> enableBridgeReorder = 
+		new XUIViewBindProperty<Boolean>("enableBridgeReorder", this, false, Boolean.class);
+	
+	/**
      * Retrieves the list of bouis to show for the favorites
      */
     private XUIViewStateBindProperty<List<Long>> listFavorites = 
@@ -76,6 +88,14 @@ public class Bridge extends GridPanel {
 
 	public void setRenderToolBar(String renderEditToolbarExpr ) {
 		this.renderToolBar.setExpressionText( renderEditToolbarExpr );
+	}
+	
+	public boolean getEnableBridgeReorder() {
+		return enableBridgeReorder.getEvaluatedValue();
+	}
+
+	public void setEnableBridgeReorder(String enableBridgeReorder) {
+		this.enableBridgeReorder.setExpressionText(enableBridgeReorder);
 	}
 	
 	@Override
@@ -155,6 +175,7 @@ public class Bridge extends GridPanel {
 		bridgeToolbar.setId( getId() + "_bridgeToolbar" );
 		bridgeToolbar.setTargetObject( this.targetObject.getExpressionString() );
 		bridgeToolbar.setBridgeName( getBridgeName() );
+		bridgeToolbar.setRenderOrderBridgeBtn( new Boolean(getEnableBridgeReorder()).toString() );
         getChildren().add( bridgeToolbar );        
 		return bridgeToolbar;
 		
