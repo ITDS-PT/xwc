@@ -339,7 +339,9 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
         StringBuilder sb = new StringBuilder();
         
-        boolean clearSelections = oGrid.getClearSelections();
+        //Clears selections by demand or when the Grid is grouped, because groups start collapsed
+        boolean clearSelections = oGrid.getClearSelections() || 
+        			(netgest.utils.StringUtils.hasValue( oGrid.getGroupBy() ) && oGrid.getEnableGroupBy() );
         
         if( GridPanel.SELECTION_CELL.equals( oGrid.getRowSelectionMode() ) ) {
         	DataRecordConnector d = oGrid.getActiveRow();
@@ -347,6 +349,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		        oLoadParams.add("callback", 
 		        		"function(){" +
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
+			    			oGrid.getId() + "_selm.clearSelections();" +
 			    			oGrid.getId() + "_selm.selectRow(" + (d.getRowIndex()-1) + ");" + 
 			    			oGrid.getId() + "_selm.resumeEvents();"
 		    			+ "}"
@@ -373,6 +376,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		        oLoadParams.add("callback", 
 		        		"function(){" +
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
+			    			oGrid.getId() + "_selm.clearSelections();" +
 			    			oGrid.getId() + "_selm.selectRows(" + sb + ");" + 
 			    			oGrid.getId() + "_selm.resumeEvents();"
 		    			+ "}"
@@ -610,7 +614,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         		"	" +
         		"	var x;" +
         		"	x=document.getElementById('" + oGrid.getClientId() + "_srs');\n" +
-        		"	if( x ) this.baseParams.selectedRows = x.value;\n" +
+        		"	if( x ) this.baseParams.selectedRows = x.value; \n" +
         		"	x=document.getElementById('" + oGrid.getClientId() + "_act');\n" +
         		"	if( x ) this.baseParams.activeRow = x.value;\n" +
         		"}" );
