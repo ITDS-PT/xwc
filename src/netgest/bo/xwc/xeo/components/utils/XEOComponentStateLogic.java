@@ -62,6 +62,14 @@ public class XEOComponentStateLogic {
 		}
 	}
 
+	public static final boolean isBridgeOrderEnabled( bridgeHandler bridgeHandler ) {
+		try {
+			return bridgeHandler.disableWhen() || !bridgeHandler.getParent().isEnabled;
+		} catch (boRuntimeException e) {
+			throw new RuntimeException( e );
+		}
+	}
+	
 	public static final boolean isBridgeNewEnabled( bridgeHandler bridgeHandler ) {
 		try {
 			return bridgeHandler.disableWhen() || !bridgeHandler.getParent().isEnabled;

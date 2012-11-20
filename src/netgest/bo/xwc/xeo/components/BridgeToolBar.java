@@ -477,13 +477,13 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 				if( menu.getId()!=null && menu.getId().endsWith("orderUpBridge") ) {
 					separatorRendered = getRenderOrderBridgeBtn();
 					menu.setVisible( Boolean.toString( separatorRendered ) );
-					menu.setDisabled( false );
+					menu.setDisabled( XEOComponentStateLogic.isBridgeOrderEnabled(targetBridge) );
 				}
 				else if( menu.getId()!=null && menu.getId().endsWith("orderDownBridge") ) {
 					
 					separatorRendered = getRenderOrderBridgeBtn();
 					menu.setVisible( Boolean.toString( separatorRendered ) );
-					menu.setDisabled( false );
+					menu.setDisabled( XEOComponentStateLogic.isBridgeOrderEnabled(targetBridge)  );
 				}
 			}
 			else if ( isMySeparator && comp instanceof Menu ) {
