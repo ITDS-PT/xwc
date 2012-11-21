@@ -26,9 +26,16 @@ import netgest.bo.xwc.framework.PackageIAcessor;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIComponentPlugIn;
+import netgest.bo.xwc.framework.XUIDefaultPropertiesHandler;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUISessionContext;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
+import netgest.bo.xwc.framework.XUIViewProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateProperty;
+import netgest.bo.xwc.framework.jsf.XUIPropertySetter;
 import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
 import netgest.bo.xwc.framework.properties.XUIProperty;
 import netgest.bo.xwc.framework.properties.XUIPropertyVisibility;
@@ -271,9 +278,9 @@ public abstract class XUIComponentBase extends UIComponentBase
     			
     	}
     	return oRet;
-    }
-    
-    private XUIComponentBase findComponent(UIComponent current, Class<?> cType )
+    }	
+	
+	private XUIComponentBase findComponent(UIComponent current, Class<?> cType )
 	{
 		XUIComponentBase oComp = null;
 		if (current != null)
@@ -304,7 +311,78 @@ public abstract class XUIComponentBase extends UIComponentBase
 		
 	}
     
-    
+    @Override
+	public UIComponent findComponent(String expr) {
+		
+		UIComponent oComp=super.findComponent(expr);
+		
+		//Try Other Way
+		//Problem with container
+		if (oComp==null)
+		{
+			UIComponent base = this;
+			if (expr.charAt(0) == NamingContainer.SEPARATOR_CHAR) {
+	            // Absolute searches start at the root of the tree
+	            while (base.getParent() != null) {
+	                base = base.getParent();
+	            }
+	            // Treat remainder of the expression as relative
+	            expr = expr.substring(1);
+	        } else {
+	            // Relative expressions start at the closest NamingContainer or root
+	            while (base.getParent() != null) {
+	                if (base instanceof NamingContainer) {
+	                    break;
+	                }
+	                base = base.getParent();
+	            }
+	        }
+			
+			// Evaluate the search expression (now guaranteed to be relative)
+	        String[] segments = expr.split(String.valueOf(NamingContainer.SEPARATOR_CHAR));
+	        for (int i = 0, length = (segments.length - 1);
+	             i < segments.length;
+	             i++, length--) {
+	        	if (base!=null)
+	        		oComp = findComponent(base, segments[i], (i == 0));
+	            // the first element of the expression may match base.id
+	            // (vs. a child if of base)
+	            /*if (i == 0 && oComp == null &&
+	                 segments[i].equals(base.getId())) {
+	            	oComp = base;
+	            }*/
+	            if (oComp != null && (!(oComp instanceof NamingContainer)) && length > 0) {
+	                throw new IllegalArgumentException(segments[i]);
+	            }
+	            base = oComp;
+	        }
+		}
+		
+		return oComp;
+	}
+
+	private static UIComponent findComponent(UIComponent base, String id,
+			boolean checkId) {
+		if (id.equals(base.getId())) {
+			return base;
+		}
+		// Search through our facets and children
+		UIComponent result = null;
+		for (Iterator i = base.getFacetsAndChildren(); i.hasNext();) {
+			UIComponent kid = (UIComponent) i.next();	
+				if ( id.equals(kid.getId())) {
+					result = kid;
+					break;
+				}
+				result = findComponent(kid, id, true);
+				if (result != null) {
+					break;
+				}
+		}
+		return (result);
+
+	}
+	
     public Object saveState() 
     {   
         // Save the state of all the properties of the object
@@ -601,6 +679,24 @@ public abstract class XUIComponentBase extends UIComponentBase
         }
         return null;
     }
+     
+    
+    public void applyPropertyDefaultValue(String name,String value) {	    	
+    	if (value!=null)
+    		XUIPropertySetter.setProperty(this, name, value);
+    }
+            
+    private void applyPropertiesDefaultValues() {
+    	Set<Entry<String, XUIBaseProperty<?>>>  props = getStateProperties();		
+		
+    	for( Entry<String,XUIBaseProperty<?>> s : props ) {
+			XUIBaseProperty<?> p = s.getValue();
+			
+			if (p.isDefaultValue())
+				applyPropertyDefaultValue(p.getName(),
+						XUIDefaultPropertiesHandler.getPropertyValue(p.getName(), this));
+		}    	
+    }
     
     public void initComponent() {
     }
@@ -611,7 +707,10 @@ public abstract class XUIComponentBase extends UIComponentBase
     	XUIComponentBase component = this;
     	
     	if( !wasInitComponentProcessed ) {
-        	XUIComponentPlugIn plugIn = getPlugIn();
+    		if ( XUIDefaultPropertiesHandler.existPropertiesForComponent(this) )
+    			applyPropertiesDefaultValues();
+        	
+    		XUIComponentPlugIn plugIn = getPlugIn();
     		
         	if( plugIn != null ) {
         		plugIn.setComponent( this );
