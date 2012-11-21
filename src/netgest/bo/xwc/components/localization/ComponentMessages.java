@@ -164,6 +164,18 @@ public interface ComponentMessages {
 	public static final XUILocalizedMessage LOV_CHOSEN = 
 		new XUILocalizedMessage(ComponentMessages.class.getName(), "LOV_CHOSEN");
 	
+	public static final XUILocalizedMessage XUIMESSAGE_WARNING = 
+			new XUILocalizedMessage(ComponentMessages.class.getName(), "XUIMESSAGE_WARNING");
+	
+	public static final XUILocalizedMessage XUIMESSAGE_ERROR = 
+			new XUILocalizedMessage(ComponentMessages.class.getName(), "XUIMESSAGE_ERROR");
+	
+	public static final XUILocalizedMessage XUIMESSAGE_CRITICAL = 
+			new XUILocalizedMessage(ComponentMessages.class.getName(), "XUIMESSAGE_CRITICAL");
+	
+	public static final XUILocalizedMessage XUIMESSAGE_INFO = 
+			new XUILocalizedMessage(ComponentMessages.class.getName(), "XUIMESSAGE_INFO");
+	
 	
 	
 		

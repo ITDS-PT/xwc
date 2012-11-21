@@ -76,6 +76,8 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.messages.XUIMessageSender;
+import netgest.bo.xwc.framework.messages.XUIPopupMessageFactory;
 import netgest.bo.xwc.xeo.components.Bridge;
 import netgest.bo.xwc.xeo.components.BridgeLookup;
 import netgest.bo.xwc.xeo.components.BridgeToolBar;
@@ -764,24 +766,13 @@ public class XEOEditBean extends XEOBaseBean
     		if( e instanceof boRuntimeException ) {
     			boRuntimeException boEx = (boRuntimeException)e;
     			if ( "BO-3022".equals( boEx.getErrorCode() ) ) {
-    				getRequestContext().addMessage(
-        		                "Bean",
-        		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
-        		                    BeansMessages.TITLE_ERROR.toString(), 
-        		                    BeansMessages.DATA_CHANGED_BY_OTHER_USER.toString() 
-        		                )
-        		            );
-        		        setValid(false);
+    				XUIMessageSender.alertError( BeansMessages.DATA_CHANGED_BY_OTHER_USER );
+    				setValid(false);
     			}
     			else if ("BO-3023".equals( boEx.getErrorCode() ) )
     			{
-    				getRequestContext().addMessage(
-            		                "Bean",
-            		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_INFO, 
-            		                    BeansMessages.TITLE_ERROR.toString(), 
-            		                BeansMessages.REMOVE_FAILED_REFERENCED_BY_OBJECTS.toString()
-            		                )            		            );        		        
-        		        setValid(false);
+    				XUIMessageSender.alertError( BeansMessages.REMOVE_FAILED_REFERENCED_BY_OBJECTS );
+    				setValid(false);
     			    
     			}
     			else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
@@ -817,10 +808,10 @@ public class XEOEditBean extends XEOBaseBean
     	}
     	else {
 	    	oRequestContext = getRequestContext();
-	    	
+	    	boObject obj = getXEOObject();
 	    	try {
-	    		getXEOObject().update();
-	    		getXEOObject().setChanged( false );
+	    		obj.update();
+	    		obj.setChanged( false );
 	    		oRequestContext.addMessage(
 		                "Bean",
 		                new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, 
@@ -828,39 +819,44 @@ public class XEOEditBean extends XEOBaseBean
 		                    BeansMessages.BEAN_SAVE_SUCESS.toString() 
 		                )
 		            );
+	    		
 	    	} catch ( Exception e ) {
 	    		if( e instanceof boRuntimeException ) {
 	    			boRuntimeException boEx = (boRuntimeException)e;
 	    			if ( "BO-3022".equals( boEx.getErrorCode() ) ) {
-	    		        XUIRequestContext.getCurrentContext().addMessage(
-	    		                "Bean",
-	    		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
-	    		                    BeansMessages.TITLE_ERROR.toString(), 
-	    		                    BeansMessages.DATA_CHANGED_BY_OTHER_USER.toString() 
-	    		                )
-	    		            );
+	    				XUIMessageSender.alertError(BeansMessages.DATA_CHANGED_BY_OTHER_USER );
 	    		        setValid(false);
 	    			}
 	    			else if ("BO-3054".equals( boEx.getErrorCode() ) )
 	    			{
-	        		        XUIRequestContext.getCurrentContext().addMessage(
-	            		                "Bean",
-	            		                new XUIMessage(XUIMessage.TYPE_ALERT, XUIMessage.SEVERITY_ERROR, 
-	            		                    BeansMessages.TITLE_ERROR.toString(), 
-	            		                BeansMessages.UPDATE_FAILED_KEY_VIOLATED.toString()
-	            		                )            		            );        
+	    					if ( boEx.getAttributeNames().isEmpty() ){
+	    						XUIMessageSender.alertError(BeansMessages.UPDATE_FAILED_KEY_VIOLATED );
+	    					} else {
+	    						List<String> attributeNames = boEx.getAttributeNames();
+	    						String parameter = "";
+	    						String toAdd = ", ";
+	    						for (Iterator<String> it = attributeNames.iterator() ;  it.hasNext() ; ){
+	    							String name = it.next();
+	    							boDefAttribute attribute = obj.getBoDefinition().getAttributeRef( name );
+	    							parameter += attribute.getLabel();
+	    							if (it.hasNext()){
+	    								parameter += toAdd;
+	    							}
+	    						}
+	    						if (attributeNames.size() == 1){
+	    							XUIMessageSender.alertError( BeansMessages.UPDATE_FAILED_KEY_VIOLATED_FOR_FIELD.toString( parameter ) );
+	    						} else {
+	    							XUIMessageSender.alertError( BeansMessages.UPDATE_FAILED_KEY_VIOLATED_FOR_FIELDS.toString( parameter ) );
+	    						}
+	    					}
 	        		        setValid(false);	        		        
 	    			    
 	    			}
 	    			else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
 	    				if( boEx.getSrcObject() != getXEOObject() ) {
-	    					oRequestContext.addMessage( VIEW_BEAN_ERRORS_ID, new XUIMessage(
-	    							XUIMessage.TYPE_ALERT, 
-	    							XUIMessage.SEVERITY_ERROR,
-	    							BeansMessages.ERROR_SAVING_RELATED_OBJECT.toString(),
-	    							boEx.getMessage()
-	    						)	    					
-	    					);
+	    					XUIMessageSender.alertError( 
+	    							BeansMessages.ERROR_SAVING_RELATED_OBJECT.toString(), 
+	    							boEx.getMessage() );
 	    					showObjectErrors(boEx.getSrcObject());
 	    				}
 	    				else {
@@ -1340,6 +1336,7 @@ public class XEOEditBean extends XEOBaseBean
 								.valueOf(lCurrentBoui));
 					}
 				} else {
+					
 					oRequestContext
 							.addMessage(
 									"error_edit_bridge",
@@ -1823,14 +1820,13 @@ public class XEOEditBean extends XEOBaseBean
     		}
     		else {
     			if( !silent ) {
-	        		getRequestContext().addMessage( "validation" , 
-	        				new XUIMessage(
-        						XUIMessage.TYPE_POPUP_MESSAGE, 
-        						XUIMessage.SEVERITY_INFO, 
-        						BeansMessages.VALID_SUCCESS_TITLE.toString(),
-        						BeansMessages.VALID_SUCCESS.toString()
-	        				)
+	        		getRequestContext().addMessage( "validation" ,
+	        				XUIPopupMessageFactory.createInfo( 
+	        						BeansMessages.VALID_SUCCESS_TITLE,
+	        						BeansMessages.VALID_SUCCESS ) 
 	        		);
+	        				
+	        		
     			}
     			setValid(true);
     		}
