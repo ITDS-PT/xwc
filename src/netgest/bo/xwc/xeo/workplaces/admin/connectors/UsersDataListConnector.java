@@ -7,7 +7,6 @@ import java.util.Map;
 
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boSession;
-import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
 
 
