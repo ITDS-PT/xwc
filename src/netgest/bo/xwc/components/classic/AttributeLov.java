@@ -1,19 +1,58 @@
 package netgest.bo.xwc.components.classic;
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.faces.context.FacesContext;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 /*
  * This component renders a combobox base on a Map
  */
 public class AttributeLov extends AttributeBase {
 
+	@Override
+	public void validate( FacesContext context ) {
+		
+		
+		Object      oSubmitedValue = getSubmittedValue();
+	    String      sSubmitedValue = null;
+	    BigDecimal  oSubmitedBigDecimal;
+		
+	    Object oldValue = getValue();
+        
+        if( oSubmitedValue != null )
+        {
+            sSubmitedValue = (String)oSubmitedValue;     
+            if( sSubmitedValue.length() > 0 )
+            {
+            	//If Lov is a numeric field must convert to BigDecimal
+                if (DataFieldTypes.VALUE_NUMBER == getDataFieldConnector().getDataType()){
+            		oSubmitedBigDecimal = new BigDecimal( String.valueOf( sSubmitedValue ) );
+            		setValue( oSubmitedBigDecimal );
+        		} else
+        			setValue( sSubmitedValue );
+                //Since we're overriding  the validate, we need to 
+                //activate the value change listeners
+                if (!compareValue(oldValue, oSubmitedValue))
+                	queueEvent(new XUIValueChangeEvent(this, oldValue, oSubmitedValue));
+            }
+            else {
+                setValue( null );
+            }
+        }
+		
+	}
+	
+	
     @Override
 	public boolean isRenderedOnClient() {
 		return false;
