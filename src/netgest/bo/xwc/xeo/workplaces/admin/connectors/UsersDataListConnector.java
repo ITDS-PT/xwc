@@ -7,6 +7,7 @@ import java.util.Map;
 
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boSession;
+import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
 
 
@@ -20,6 +21,7 @@ public class UsersDataListConnector extends GenericDataListConnector {
 		this.createColumn("USER", MainAdminBeanMessages.USER_NAME.toString());
 		this.createColumn("CLIENT_NAME",MainAdminBeanMessages.CLIENT_NAME.toString());
 		this.createColumn("CREATED_TIME",MainAdminBeanMessages.CREATED_TIME.toString());
+		this.createColumn("LAST_ACTIVITY",MainAdminBeanMessages.LAST_ACTIVITY.toString());
 		this.createColumn("USERNAME","Username");
 	}
 
