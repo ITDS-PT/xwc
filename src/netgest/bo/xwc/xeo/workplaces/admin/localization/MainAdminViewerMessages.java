@@ -42,6 +42,12 @@ public class MainAdminViewerMessages {
 	//sessions
 	public static final XUILocalizedMessage SESSIONS = 
 		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "SESSIONS" );
+	public static final XUILocalizedMessage SESSIONS_TABSESS = 
+			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "SESSIONS_TABSESS" );
+	public static final XUILocalizedMessage SESSIONS_TABUSERS = 
+			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "SESSIONS_TABUSERS" );
+	public static final XUILocalizedMessage SESSIONS_TOTALUSERS = 
+			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "SESSIONS_TOTALUSERS" );
 	//boQL
 	public static final XUILocalizedMessage RUN_QUERY = 
 		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "RUN_QUERY" );

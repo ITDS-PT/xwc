@@ -4,9 +4,11 @@
 		beanId="viewBean"
 		localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
 		<xvw:form id="form">
+			<xvw:tabs>
+			<xvw:tab label="@{SESSIONS_TABSESS}">
 			<xvw:title valueExpression='@{SESSIONS}'></xvw:title>
 			<xvw:gridPanel rowSelectionMode="SELECTION_ROW"
-				DataSource="#{viewBean.sessions}">
+				DataSource="#{viewBean.sessions}" enableColumnFilter="false" >
 				<xvw:columns>
 					<xvw:columnAttribute width="40" dataField="USER" />
 					<xvw:columnAttribute width="40" dataField="CLIENT_NAME" />
@@ -15,6 +17,22 @@
 					<xvw:columnAttribute width="25" dataField="ACTIVE" />
 				</xvw:columns>
 			</xvw:gridPanel>
+			</xvw:tab>
+			<xvw:tab label="@{SESSIONS_TABUSERS}">
+			<xvw:section  label="#{viewBean.totalUsers}"  >				
+			<xvw:gridPanel rowSelectionMode="SELECTION_ROW"
+				DataSource="#{viewBean.users}" enableColumnFilter="false" height="300">
+				<xvw:columns>
+					<xvw:columnAttribute width="40" dataField="USER" />
+					<xvw:columnAttribute width="40" dataField="CLIENT_NAME" />
+					<xvw:columnAttribute width="40" dataField="CREATED_TIME" />
+					<xvw:columnAttribute width="40" dataField="LAST_ACTIVITY" />
+					<xvw:columnAttribute width="25" dataField="ACTIVE" />
+				</xvw:columns>
+			</xvw:gridPanel>
+			</xvw:section>
+			</xvw:tab>
+			</xvw:tabs>
 		</xvw:form>
 	</xvw:viewer>
 </xvw:root>
