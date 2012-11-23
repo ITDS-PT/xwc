@@ -20,8 +20,7 @@ public class UsersDataListConnector extends GenericDataListConnector {
 		this.createColumn("USER", MainAdminBeanMessages.USER_NAME.toString());
 		this.createColumn("CLIENT_NAME",MainAdminBeanMessages.CLIENT_NAME.toString());
 		this.createColumn("CREATED_TIME",MainAdminBeanMessages.CREATED_TIME.toString());
-		this.createColumn("LAST_ACTIVITY",MainAdminBeanMessages.LAST_ACTIVITY.toString());
-		this.createColumn("ACTIVE",MainAdminBeanMessages.ACTIVE.toString());
+		this.createColumn("USERNAME","Username");
 	}
 
 	@Override
@@ -39,7 +38,7 @@ public class UsersDataListConnector extends GenericDataListConnector {
 				continue;
 			
 			//Only Active on the last 20 minutes
-			String username=sessionsActive[i].getUser().getName();
+			String username= sessionsActive[i].getUser().getUserName();
 			if (lastActivity_User.containsKey( username))
 			{
 				long existentTime=lastActivity_User.get(username);
@@ -61,11 +60,11 @@ public class UsersDataListConnector extends GenericDataListConnector {
 			{
 				this.createRow();
 				
-				this.createRowAttribute("USER", username);
+				this.createRowAttribute("USER",  sessionsActive[i].getUser().getName());
 				this.createRowAttribute("CLIENT_NAME", sessionsActive[i].getClientName());
 				this.createRowAttribute("CREATED_TIME", dateFormat.format(sessionsActive[i].getCreatedTime()));
 				this.createRowAttribute("LAST_ACTIVITY", dateFormat.format(sessionsActive[i].getLastActivity()));
-				this.createRowAttribute("ACTIVE", "Yes");
+				this.createRowAttribute("USERNAME", sessionsActive[i].getUser().getUserName());
 			}
 		}
 	}
@@ -77,7 +76,7 @@ public class UsersDataListConnector extends GenericDataListConnector {
 		while (eRows.hasNext())
 		{
 			Map<String, Object> cRow=eRows.next();
-			String existUser=(String)cRow.get("USER");
+			String existUser=(String)cRow.get("USERNAME");
 			if (user.equals(existUser))
 			{
 				eRows.remove();
