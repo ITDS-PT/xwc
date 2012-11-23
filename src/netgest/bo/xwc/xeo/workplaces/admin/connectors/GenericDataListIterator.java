@@ -9,9 +9,11 @@ import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class GenericDataListIterator implements DataListIterator {
 	Iterator<Map<String, Object>> iterator;
-
+	private Map<String,GenericDataFieldMetaData> cols=null;
+	
 	public GenericDataListIterator(GenericDataListConnector genericDataListConnector) {
 		this.iterator = genericDataListConnector.getRows().iterator();
+		this.cols = genericDataListConnector.cols;
 	}
 
 	@Override
@@ -28,7 +30,7 @@ public class GenericDataListIterator implements DataListIterator {
 	@Override
 	public DataRecordConnector next() {
 		try {
-			return new GenericDataRecordConnector(iterator.next());
+			return new GenericDataRecordConnector(iterator.next(),cols);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

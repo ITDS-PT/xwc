@@ -12,15 +12,28 @@ import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConne
 
 public class GenericDataRecordConnector implements DataRecordConnector, Map<String,Object> {
 	Map<String, Object> atts;
-
+	Map<String,GenericDataFieldMetaData> cols=null;
+	
 	public GenericDataRecordConnector(Map<String, Object> atts) {
 		this.atts = atts;
+	}
+	
+	public GenericDataRecordConnector(Map<String, Object> atts,
+			Map<String,GenericDataFieldMetaData> cols) {
+		this.atts = atts;
+		this.cols = cols;
 	}
 
 	@Override
 	public DataFieldConnector getAttribute(String colKey) {
-		// TODO only works for text
-		return new GenericFieldConnector(colKey,(String) this.atts.get(colKey),DataFieldTypes.VALUE_CHAR );
+		byte dataType=DataFieldTypes.VALUE_CHAR;
+		if (this.cols!=null)
+		{	
+			GenericDataFieldMetaData colmdata=this.cols.get(colKey);
+			if (colmdata!=null)
+				dataType=colmdata.getDataType();
+		}
+		return new GenericFieldConnector(colKey,(String) this.atts.get(colKey),dataType );
 	}
 
 	@Override

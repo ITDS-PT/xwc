@@ -17,11 +17,25 @@ public class GenericDataFieldMetaData implements DataFieldMetaData {
 		this.label = label;
 	}
 	
+	public GenericDataFieldMetaData(String label,byte dataType) {
+		super();
+		this.label = label;
+		this.dataType = dataType;
+	}
+	
 	public GenericDataFieldMetaData(String label, Integer colWidth) {
 		super();
 		this.label = label;
 		this.colWidth = colWidth;
 	}
+
+	public GenericDataFieldMetaData(String label, Integer colWidth, byte dataType) {
+		super();
+		this.label = label;
+		this.colWidth = colWidth;
+		this.dataType = dataType;
+	}
+
 	
 	public Integer getColWidth() {
 		return colWidth;
@@ -43,8 +57,8 @@ public class GenericDataFieldMetaData implements DataFieldMetaData {
 	}
 
 	@Override
-	public byte getInputRenderType() {
-		 return this.inputRenderType;
+	public byte getInputRenderType() {  
+        return this.inputRenderType;
 	}
 
 	@Override

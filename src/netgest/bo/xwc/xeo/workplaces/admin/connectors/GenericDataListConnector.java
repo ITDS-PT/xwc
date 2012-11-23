@@ -10,7 +10,6 @@ import java.util.Map;
 import netgest.bo.runtime.boObjectList.SqlField;
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
-import netgest.bo.xwc.components.connectors.DataGroupConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataListIterator;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
@@ -36,6 +35,14 @@ public class GenericDataListConnector implements DataListConnector {
 		this.cols.put(key, new GenericDataFieldMetaData(label,width));
 	}
 
+	public void createColumn(String key, String label, byte dataType) {
+		this.cols.put(key, new GenericDataFieldMetaData(label,dataType));
+	}
+	
+	public void createColumn(String key, String label, Integer width,byte dataType) {
+		this.cols.put(key, new GenericDataFieldMetaData(label,width,dataType));
+	}
+	
 	public void createRow() {
 		this.currentRow = new HashMap<String, Object>();
 		this.rows.add(this.currentRow);
