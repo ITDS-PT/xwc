@@ -92,8 +92,17 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
                     } 
                 }
                 return true;
+            } else {
+            	//We may have a case of a BigDecimal being compared to a String, but they
+            	//represent the same value, so we must account for that
+            	String value1 = oValue1.toString();
+            	String value2 = oValue2.toString();
+            	
+            	if ( value1.equals( value2 ) )
+            		return true;
+            	else
+            		return false;
             }
-            return false;
         }
         
         return true;
