@@ -181,7 +181,6 @@ public class XUIDefaultPropertiesHandler {
 			}
 			catch (Exception e)
 			{
-				LOGGER.severe("ERROR OCCURED IN PARSING COMPONENT DEFAULT PROP FILE", e);
 				fileExists = false;
 			}
 			finally
