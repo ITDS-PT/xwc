@@ -2143,7 +2143,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 									: sDisplayValue.toUpperCase();
 							
 							
-							if (filterTerm.getOperator() == FilterTerms.OPERATOR_CONTAINS) {
+							if (filterTerm.getOperator() == FilterTerms.OPERATOR_CONTAINS  ||
+									//AC Behaviour of like is the same of contains in Strings
+									filterTerm.getOperator() == FilterTerms.OPERATOR_LIKE) {
 								if (!sColumnValue.contains(sVal)) {
 									addLine = false;
 								}
