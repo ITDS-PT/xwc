@@ -238,4 +238,17 @@ public class MainAdminViewerMessages {
 	public static final XUILocalizedMessage LIST_OF_VALUES = 
 		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "LIST_OF_VALUES");
 	
+	public static final XUILocalizedMessage THREADS_COLUMN_NAME = 
+			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "THREADS_COLUMN_NAME");
+	
+	public static final XUILocalizedMessage THREADS_COLUMN_CLASSNAME = 
+			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "THREADS_COLUMN_CLASSNAME");
+	
+	public static final XUILocalizedMessage THREADS_COLUMN_INTERVAL = 
+			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "THREADS_COLUMN_INTERVAL");
+	
+	public static final XUILocalizedMessage THREADS_COLUMN_ACTIVE = 
+			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "THREADS_COLUMN_ACTIVE");
+	
+	
 }

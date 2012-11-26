@@ -8,6 +8,7 @@
 			<xvw:tabs renderTabBar='false'>
 				<xvw:tab>
 					<xvw:rows>
+					 
 						<xvw:row>
 							<xvw:cell>
 								<xvw:panel>
@@ -31,14 +32,18 @@
 						<xvw:row>
 							<xvw:cell>
 								<xvw:gridPanel layout='' title='Background Threads'
-									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.threads}">
-									<xvw:columns plugIn="#{viewBean.threadsColPlugIn}" />
-									<xvw:gridNavBar showExportToExcel="false"
-										showExportToPDF="false">
+									 rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.threads}">
+									<xvw:columns>
+										<xvw:columnAttribute dataField='NAME' label='@{THREADS_COLUMN_NAME}'></xvw:columnAttribute>
+										<xvw:columnAttribute dataField='CLASS_EJB_NAME' label='@{THREADS_COLUMN_CLASSNAME}'></xvw:columnAttribute>
+										<xvw:columnAttribute dataField='INTERVAL' label='@{THREADS_COLUMN_INTERVAL}'></xvw:columnAttribute>
+										<xvw:columnAttribute dataField='ACTIVE' label='@{THREADS_COLUMN_ACTIVE}'></xvw:columnAttribute>
+									</xvw:columns>
+									<xvw:gridNavBar showExportToExcel="false" showExportToPDF="false">
 									</xvw:gridNavBar>
 								</xvw:gridPanel>
 							</xvw:cell>
-							<xvw:cell>
+							 <xvw:cell>
 								<xvw:gridPanel layout='' title='@{SESSIONS}'
 									pageSize="12" rowSelectionMode="SELECTION_ROW" dataSource="#{viewBean.sessions}">
 									<xvw:columns>
@@ -52,7 +57,7 @@
 										showExportToPDF="false">
 									</xvw:gridNavBar>
 								</xvw:gridPanel>
-							</xvw:cell>
+							</xvw:cell>  
 						</xvw:row>
 						<xvw:row>
 							<xvw:cell>
@@ -119,7 +124,7 @@
 									</xvw:gridNavBar>
 								</xvw:gridPanel>
 							</xvw:cell>
-						</xvw:row>
+						</xvw:row>  
 					</xvw:rows>
 				</xvw:tab>
 			</xvw:tabs>
