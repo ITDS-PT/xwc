@@ -1,4 +1,4 @@
-package netgest.bo.xwc.xeo.workplaces.admin.connectors;
+package netgest.bo.xwc.components.connectors.generic;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -10,12 +10,6 @@ import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
 
-
-/**
- * @author acruz
- * Use netgest.bo.xwc.components.connectors.generic.GenericDataListIterator instead
- */
-@Deprecated
 public class GenericDataRecordConnector implements DataRecordConnector, Map<String,Object> {
 	Map<String, Object> atts;
 	Map<String,GenericDataFieldMetaData> cols=null;

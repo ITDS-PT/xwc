@@ -1,17 +1,10 @@
-package netgest.bo.xwc.xeo.workplaces.admin.connectors;
+package netgest.bo.xwc.components.connectors.generic;
 
 import java.util.Map;
 
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 
-/**
- * @author acruz
- * Use netgest.bo.xwc.components.connectors.generic.GenericDataFieldMetaData instead
- */
-
-
-@Deprecated
 public class GenericDataFieldMetaData implements DataFieldMetaData {
 	private Integer colWidth;
 	private String label; 

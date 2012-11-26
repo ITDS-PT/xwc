@@ -1,4 +1,4 @@
-package netgest.bo.xwc.xeo.workplaces.admin.connectors;
+package netgest.bo.xwc.components.connectors.generic;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -7,13 +7,6 @@ import netgest.bo.xwc.components.connectors.DataListIterator;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
-
-
-/**
- * @author acruz
- * Use netgest.bo.xwc.components.connectors.generic.GenericDataListIterator instead
- */
-@Deprecated
 public class GenericDataListIterator implements DataListIterator {
 	Iterator<Map<String, Object>> iterator;
 	private Map<String,GenericDataFieldMetaData> cols=null;

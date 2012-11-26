@@ -1,4 +1,4 @@
-package netgest.bo.xwc.xeo.workplaces.admin.connectors;
+package netgest.bo.xwc.components.connectors.generic;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,13 +18,6 @@ import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.framework.XUIComponentPlugIn;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
-
-
-/**
- * @author acruz
- * Use netgest.bo.xwc.components.connectors.generic.GenericDataListConnector instead
- */
-@Deprecated
 public class GenericDataListConnector implements DataListConnector {
 
 	protected LinkedHashMap<String,GenericDataFieldMetaData> cols = new LinkedHashMap<String, GenericDataFieldMetaData>();
