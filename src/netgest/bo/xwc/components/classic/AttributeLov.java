@@ -9,6 +9,7 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
@@ -35,10 +36,16 @@ public class AttributeLov extends AttributeBase {
             if( sSubmitedValue.length() > 0 )
             {
             	//If Lov is a numeric field must convert to BigDecimal
-                if (DataFieldTypes.VALUE_NUMBER == getDataFieldConnector().getDataType()){
-            		oSubmitedBigDecimal = new BigDecimal( String.valueOf( sSubmitedValue ) );
-            		setValue( oSubmitedBigDecimal );
-        		} else
+            	DataFieldConnector connector = getDataFieldConnector();
+            	if (connector != null){
+	                if (DataFieldTypes.VALUE_NUMBER == connector.getDataType()){
+	            		oSubmitedBigDecimal = new BigDecimal( String.valueOf( sSubmitedValue ) );
+	            		setValue( oSubmitedBigDecimal );
+	        		}
+	                else
+	        			setValue( sSubmitedValue );
+                } 
+                else
         			setValue( sSubmitedValue );
                 //Since we're overriding  the validate, we need to 
                 //activate the value change listeners
