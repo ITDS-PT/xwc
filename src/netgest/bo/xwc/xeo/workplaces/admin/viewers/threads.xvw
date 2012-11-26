@@ -6,8 +6,8 @@
 		<xvw:form id="form">
 			<xvw:title valueExpression='Background Threads'></xvw:title>
 			<xvw:toolBar>
-				<xvw:menu text="@{START_AGENTS}" serverAction="#{viewBean.startAgents}"></xvw:menu>
-				<xvw:menu text="@{SUSPEND_AGENTS}" serverAction="#{viewBean.suspendAgents}"></xvw:menu>
+				<xvw:menu text="@{START_AGENTS}" serverAction="#{viewBean.startAgents}" serverActionWaitMode="DIALOG"></xvw:menu>
+				<xvw:menu text="@{SUSPEND_AGENTS}" serverAction="#{viewBean.suspendAgents}" serverActionWaitMode="DIALOG"></xvw:menu>
 			</xvw:toolBar>
 			<xvw:gridPanel title="#{viewBean.title}" DataSource="#{viewBean.threads}"
 				rowSelectionMode="SELECTION_ROW">
