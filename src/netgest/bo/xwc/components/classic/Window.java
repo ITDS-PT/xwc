@@ -381,7 +381,7 @@ public class Window extends XUIComponentBase {
 	                StringBuilder onclose = new StringBuilder();
 	                onclose.append( "function(a1){" ); 
 	            	onclose.append(  
-	            			XVWScripts.getAjaxCommandScript( closeCmd , XVWScripts.WAIT_STATUS_MESSAGE )
+	            			XVWScripts.getAjaxCommandScript( closeCmd , XVWScripts.WAIT_DIALOG )
 	            	).append(';');
 	                onclose.append( "}" );
 	                oClose.add( "fn", onclose );
@@ -393,7 +393,7 @@ public class Window extends XUIComponentBase {
                 onclose.append( "function(a1){" ); 
             	XUICommand closeCmd = (XUICommand)oWnd.findComponent( oWnd.getId() + "_bclosecmd" );
             	onclose.append(  
-            			XVWScripts.getAjaxCommandScript( closeCmd , XVWScripts.WAIT_STATUS_MESSAGE )
+            			XVWScripts.getAjaxCommandScript( closeCmd , XVWScripts.WAIT_DIALOG )
             	).append(';');
                 onclose.append( "return false; }" );
                 oClose.add( "fn", onclose );
@@ -404,7 +404,7 @@ public class Window extends XUIComponentBase {
 	            ExtConfig oDestroy = oExtListeners.addChild( "'destroy'");
 	            StringBuilder destroy = new StringBuilder( "function() {");
 		        	destroy.append(  
-		        			XVWScripts.getAjaxCommandScript( closeCmd , XVWScripts.WAIT_STATUS_MESSAGE )
+		        			XVWScripts.getAjaxCommandScript( closeCmd , XVWScripts.WAIT_DIALOG )
 		        	).append(';');
 	            destroy.append( "var o=document.getElementById('" )
 	            .append( oRequestContext.getViewRoot().getClientId() )
