@@ -1159,4 +1159,10 @@ public class AttributeBase extends ViewerInputSecurityBase {
 			} 
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return getObjectAttribute() + " " + getId();
+	}
+	
 }
