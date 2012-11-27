@@ -284,7 +284,7 @@ public class TreePanel extends XUIComponentBase implements ExtJSRegionRenderer {
         
         public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
 
-        	response.setContentType( "text/plain" );
+        	response.setContentType( "text/plain;charset=utf-8" );
         	
         	PrintWriter w = response.getWriter();
         	
