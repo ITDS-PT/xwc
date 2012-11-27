@@ -37,6 +37,7 @@ import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.FilterTerms;
+import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
@@ -1895,8 +1896,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	public void restoreUserState() {
 		Preference preference = getUserSatePreference();
-		restoreUserViewState( preference );
-		restoreUserFilterState( preference );
+		DataListConnector connector = getDataSource();
+		restoreUserViewState( preference, connector );
+		restoreUserFilterState( preference, connector );
 		restoreUserExpandedGroupsState( preference );
 		restoreGroupToolBarVisiblity( preference );
 	}
@@ -1926,18 +1928,37 @@ public class GridPanel extends ViewerInputSecurityBase {
 		}
 	}
 	
-	public void restoreUserViewState( Preference preference ) {
+	public void restoreUserViewState( Preference preference, DataListConnector connector ) {
+		
 		String columnsConfig = preference.getString("columnsConfig");
 		if( columnsConfig != null ) {
 			this.setCurrentColumnsConfig( columnsConfig );
 		}
 		
 		if( getEnableGroupBy() ) {
-			this.setGroupBy( preference.getString("groupBy") );
+			String groupBy = preference.getString("groupBy");
+			if ( getColumn( groupBy ) != null ){
+				if (connector.getAttributeMetaData( groupBy ) != null)
+					this.setGroupBy( groupBy );
+			}
 		}
 		
 		if( getEnableColumnSort() ) {
-			this.setCurrentSortTerms( preference.getString("sortTerms") );
+			setCurrentSortTerms( preference.getString("sortTerms") );
+			SortTerms terms = getCurrentSortTerms();
+			if (terms != null){
+				Iterator<SortTerm> it = terms.iterator();
+				boolean removeTerms = false;
+				while (it.hasNext()){
+					SortTerm t = it.next();
+					String field = t.getField();
+					if ( getColumn( field ) == null || connector.getAttributeMetaData( field ) == null){
+						removeTerms = true;
+					}
+				}
+				if (removeTerms)
+					setCurrentSortTerms( null );
+			}
 		}
 
 		/** ML: 07-10-2011 **/
@@ -1959,10 +1980,25 @@ public class GridPanel extends ViewerInputSecurityBase {
 		preference.setString("currentFilters" , currentFilters );
 	}
 	
-	public void restoreUserFilterState( Preference preference ) {
+	public void restoreUserFilterState( Preference preference, DataListConnector connector ) {
 		String filters = preference.getString("currentFilters");
 		if( filters != null ) {
 			setCurrentFilters( filters );
+			FilterTerms terms = getCurrentFilterTerms();
+			boolean removeFilter = false;
+			if (terms != null){
+				Iterator<FilterJoin> it = terms.iterator();
+				while (it.hasNext()){
+					FilterJoin join = it.next();
+					String field =  join.getTerm().getDataField();
+					if ( getColumn( field ) == null || connector.getAttributeMetaData( field ) == null){
+						removeFilter = true;
+					}
+				}
+			}
+			
+			if (removeFilter)
+				setCurrentFilters( null );
 		}
 	}
 

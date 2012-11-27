@@ -237,21 +237,6 @@ public class GridExplorer extends List {
 		return this.currentSavedViewId.getValue();
 	}
 
-	@Override
-	public void restoreUserFilterState(Preference preference) {
-//		Long savedBoui = getCurrentSavedViewBOUI();
-//		if( this.restoreFiltersState || savedBoui == null || savedBoui == 0 ) {
-			super.restoreUserFilterState(preference);
-//		}
-	}
-
-	@Override
-	public void restoreUserViewState(Preference preference) {
-//		Long savedBoui = getCurrentSavedViewBOUI();
-//		if( this.restoreViewState || savedBoui == null || savedBoui == 0 ) {
-			super.restoreUserViewState(preference);
-//		}
-	}
 	
 	
 	public void setCurrentSavedViewBOUI( Long boui ) {
