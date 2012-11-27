@@ -46,7 +46,7 @@
 					</xvw:toolBar>
 					</div>
 			</xvw:topRegion>
-			<xvw:leftRegion width='170' title='Menu' layout="fit" renderComponent="false">
+			<xvw:leftRegion width='170' title='&lt;img id="extxeo-refresh-counters-img" onclick="XVW.MenuCounter.updateCounters(true);" style="cursor:pointer;position:relative;top:0px;width:16px;height:16px" align="right" src="extjs/resources/images/default/grid/refresh.gif"&gt;Menu' layout="fit" renderComponent="false">
 
 					<xvw:treePanel id='tree' renderComponent="true">
 						<xvw:menu id='home' icon='ext-xeo/admin/home.gif'
