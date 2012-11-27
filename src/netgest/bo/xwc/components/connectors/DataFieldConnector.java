@@ -17,6 +17,8 @@ public interface DataFieldConnector extends DataFieldMetaData {
     public boolean 	getRecomended();
     
     public boolean 	validate(); 
+    
+    public boolean  isValid();
 
     public String 	getInvalidMessage(); 
     

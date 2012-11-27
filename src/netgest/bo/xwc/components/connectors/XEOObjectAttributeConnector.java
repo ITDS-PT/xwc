@@ -31,7 +31,6 @@ import netgest.bo.security.securityRights;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.utils.XEOQLModifier;
-import netgest.bo.xep.Xep;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
@@ -551,6 +550,11 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
     public AttributeHandler getAttributeHandler() {
         return oAttHandler;
     }
+
+	@Override
+	public boolean isValid() {
+		return oAttHandler.isValid();
+	}
 
 }
 

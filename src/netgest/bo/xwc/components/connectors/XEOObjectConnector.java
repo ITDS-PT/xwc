@@ -352,6 +352,11 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 			// TODO Auto-generated method stub
 			return false;
 		}
+
+		@Override
+		public boolean isValid() {
+			return true;
+		}
     	
     }
 

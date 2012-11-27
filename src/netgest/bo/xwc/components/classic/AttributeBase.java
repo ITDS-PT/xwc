@@ -293,6 +293,12 @@ public class AttributeBase extends ViewerInputSecurityBase {
 	            );
         }
         
+        if (isValidAttribute.isDefaultValue()){
+	        this.isValidAttribute.setValue( 
+	        		createValueExpression( sBeanExpression + ".valid}", Boolean.class ) 
+	            );
+        }
+        
         if (onChangeSubmit.isDefaultValue()){
 	        this.onChangeSubmit.setValue( 
 	                createValueExpression( sBeanExpression + ".onChangeSubmit}", Boolean.class ) 
@@ -407,7 +413,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
     
     /**
      * 
-     * Returns the the valud of the property validation
+     * Returns the the value of the property valid
      * 
      * @return True if the component is valid and false otherwise
      */
@@ -1137,27 +1143,29 @@ public class AttributeBase extends ViewerInputSecurityBase {
         }
 	}
 	
+	private void validateAttribute(){
+		this.validation.getEvaluatedValue();
+	}
+	
 	@Override
 	public void validateModel() {
 		setModelValid( true );
-		setIsValid((Boolean)this.validation.getEvaluatedValue().booleanValue());
-		String invalidText = getInvalidText();
-		if( isValidAttribute != null ) {
-			if( !getIsValid() ) {
-				setModelValid( false );
-				if( this.dataFieldConnector.getValue() != null) {
-					String sMsg = this.dataFieldConnector.getEvaluatedValue().getInvalidMessage();
-					if( sMsg != null && sMsg.length() > 0 ) {
-						setInvalidText(sMsg);
-					}
-				} else {
-					if (invalidText != null && invalidText.length() > 0)
-						setInvalidText(invalidText);
-					else
-						setInvalidText( "Valor inválido!" );
+		validateAttribute();
+		if( !getIsValid() ) {
+			setModelValid( false );
+			if( this.dataFieldConnector.getValue() != null) {
+				String sMsg = this.dataFieldConnector.getEvaluatedValue().getInvalidMessage();
+				if( sMsg != null && sMsg.length() > 0 ) {
+					setInvalidText(sMsg);
 				}
-			} 
-		}
+			} else {
+				String invalidText = getInvalidText();
+				if (invalidText != null && invalidText.length() > 0)
+					setInvalidText(invalidText);
+				else
+					setInvalidText( "Valor inválido!" );
+			}
+		} 
 	}
 	
 	@Override

@@ -1610,11 +1610,11 @@ public class XEOEditBean extends XEOBaseBean
                 	oInput.setValue( boui );
                 	String objectName = ((XEOObjectAttributeConnector)att.getDataFieldConnector()).getAttributeHandler().getParent().getName();
                 	updateUserFavorites(objectName, att.getObjectAttribute(), new long[]{Long.valueOf(boui)});
-                	
                 }
                 
+                
                 oInput.updateModel();
-                //oInput.validateModel();
+                oInput.validateModel();
                 showObjectErrors();
             }
         } finally {
@@ -1900,10 +1900,12 @@ public class XEOEditBean extends XEOBaseBean
 				String sLabel 	= att.getDefAttribute().getLabel();
 				String sMessage = att.getErrorMessage();
 	
-				if( sMessage.indexOf('[') > -1  )  
-					sMessage = sMessage.substring(0,sMessage.indexOf('['));
-				
-				sErros.append( sLabel ).append(" - ").append( sMessage ).append("<br>");
+				if (StringUtils.hasValue( sMessage )){
+					if( sMessage.indexOf('[') > -1  )  
+						sMessage = sMessage.substring(0,sMessage.indexOf('['));
+					
+					sErros.append( sLabel ).append(" - ").append( sMessage ).append("<br>");
+				}
 			}
 		}
 		

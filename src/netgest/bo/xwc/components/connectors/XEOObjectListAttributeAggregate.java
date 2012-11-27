@@ -114,14 +114,18 @@ public class XEOObjectListAttributeAggregate implements DataFieldConnector {
 
 	@Override
 	public String getInvalidMessage() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean validate() {
-		// TODO Auto-generated method stub
+		
 		return false;
+	}
+
+	@Override
+	public boolean isValid() {
+		return true;
 	}
 
 }

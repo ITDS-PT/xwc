@@ -675,6 +675,11 @@ public class GridPanelJSonRenderer {
 		public double getNumberMinValue() {
 			return mapEntryData.fieldConnector.getNumberMinValue();
 		}
+
+		@Override
+		public boolean isValid() {
+			return true;
+		}
 	}
 	
 	private class GroupMapData {

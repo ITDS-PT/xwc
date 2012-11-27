@@ -164,5 +164,10 @@ public class XEOObjectListGroupAttribute extends XEOObjectAttributeMetaData impl
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public boolean isValid() {
+		return true;
+	}
 	
 }
