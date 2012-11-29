@@ -30,11 +30,6 @@ import netgest.bo.xwc.framework.XUIDefaultPropertiesHandler;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUISessionContext;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
-import netgest.bo.xwc.framework.XUIViewBindProperty;
-import netgest.bo.xwc.framework.XUIViewProperty;
-import netgest.bo.xwc.framework.XUIViewStateBindProperty;
-import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.jsf.XUIPropertySetter;
 import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
 import netgest.bo.xwc.framework.properties.XUIProperty;
@@ -973,6 +968,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 	
 	public void resetRenderedOnClient() {
 		this.isRenderedOnClient.setValue( false );
+		this._isRenderedOnClient = false;
 		List<UIComponent> children = getChildren();
 		for( UIComponent child : children ) 
 		{
