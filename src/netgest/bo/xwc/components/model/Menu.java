@@ -26,7 +26,6 @@ import netgest.bo.xwc.xeo.components.EditToolBar;
 import netgest.bo.xwc.xeo.components.ListToolBar;
 import netgest.bo.xwc.xeo.components.LookupListToolBar;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -174,7 +173,8 @@ public class Menu extends ViewerCommandSecurityBase {
     	if( value != null ) {
     		return XVWServerActionWaitMode.valueOf( value );
     	}
-    	return null;
+    	return XVWServerActionWaitMode.DIALOG;
+    	
     }
     
     public void setRoles( String sExpression ) {
