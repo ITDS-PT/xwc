@@ -311,7 +311,9 @@ public class GridPanelUtilities {
 			if (names != null) {
 	
 				for (String name : names) {
-	
+					if (getColumn( name ) == null)
+						continue;
+					
 					JSONObject jsonColDef = jFilters.getJSONObject( name );
 					String submitedType = jsonColDef.getString("type");
 	
