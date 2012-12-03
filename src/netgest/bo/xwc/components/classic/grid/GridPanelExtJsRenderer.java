@@ -709,7 +709,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         }
         return oSelModelConfig;
     }
-
+    
     public ExtConfig buildGrid( GridPanel oGrid ) {
         final Column[] oGridColumns;
         ExtConfig oGridConfig;
@@ -1071,6 +1071,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 			j = new JSONObject( v );
         
             Column[] cols = oGrid.getColumns();
+            DataListConnector connector = oGrid.getDataSource();
             for( Column col : cols ) {
 
             	JSONObject colFilter = j.optJSONObject( col.getDataField() );
@@ -1084,11 +1085,10 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             	
             	DataFieldMetaData metaData = null;
             	
-            	
-            	if( oGrid.getDataSource() == null ) {
+            	if( connector == null ) {
             		throw new RuntimeException( ComponentMessages.GRID_DATASOURCE_IS_NULL.toString() );
             	}
-				metaData = oGrid.getDataSource().getAttributeMetaData( col.getDataField() );
+				metaData = connector.getAttributeMetaData( col.getDataField() );
 				
 				String dataField = col.getDataField();
 
