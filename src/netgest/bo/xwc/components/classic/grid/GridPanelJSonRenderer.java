@@ -92,7 +92,7 @@ public class GridPanelJSonRenderer {
         oJsArrayProvider.getJSONArray( s, oGrid, rowIdentifier, selRows, oGrid.getRowClass(), columnRenderer );
 
         s.append(",\"totalCount\":\"").append( rowCount > -1?rowCount:oDataSource.getRecordCount() );
-        s.append("\", \"page\" : \"1\" , \"total\" : \"2\" ");
+        s.append("\"");
         s.append('}');
         
         return s;
