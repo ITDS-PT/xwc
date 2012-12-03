@@ -11,6 +11,7 @@ import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.xeo.components.utils.CardIdLinkRenderer;
+import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
 import netgest.utils.StringUtils;
 
 
@@ -32,7 +33,23 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
     		this.cardIdCommand = cmd;
     		getChildren().add( cmd );
 		}
+		
+		
+		if (attributeIsLov()){
+			GridPanel grid = (GridPanel) findParentComponent( GridPanel.class );
+			if (grid != null){
+				DataListConnector listConnector = grid.getDataSource();
+				DataFieldMetaData metadata = listConnector.getAttributeMetaData( getDataField() ); 
+				if (metadata != null && metadata.getIsLov() ){
+					String label = metadata.getLabel();
+					setLabel( label );
+				}
+			}
+			setDataField( new LovColumnNameExtractor( getDataField() ).prefixColumnName() );
+		}
 	}
+	
+	
 	
 	/**
      * Whether to enable cardid links on this column or not
@@ -94,12 +111,13 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 			DataListConnector listConnector = grid.getDataSource();
 			
 			String sqlExpression = null;
-			DataFieldMetaData metadata = listConnector.getAttributeMetaData( getDataField() ); 
+			String dataField = extractLovName( getDataField() );
+			DataFieldMetaData metadata = listConnector.getAttributeMetaData( dataField ); 
 			if (metadata != null && metadata.getIsLov() ){
 				if (listConnector instanceof XEOObjectListConnector){
 					try {
 						boDefHandler handler = ((XEOObjectListConnector) listConnector).getObjectList().getBoDef();
-						boDefAttribute attribute = handler.getAttributeRef( getDataField() );
+						boDefAttribute attribute = handler.getAttributeRef( dataField );
 						if (attribute != null && StringUtils.hasValue( attribute.getLOVName() ) ){
 								sqlExpression = "(select description from " +
 											" Ebo_LovDetails ld  " +
@@ -118,6 +136,11 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 			return super.getSqlExpression();
 	}
 	
+	private String extractLovName(String dataField){
+		LovColumnNameExtractor extractor = new LovColumnNameExtractor( dataField );
+		return extractor.extractName();
+	}
+	
 	private boolean attributeIsLov(){
 		GridPanel grid = (GridPanel) findParentComponent( GridPanel.class );
 		if (grid != null){
@@ -127,7 +150,7 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 				if (listConnector instanceof XEOObjectListConnector){
 					try {
 						boDefHandler handler = ((XEOObjectListConnector) listConnector).getObjectList().getBoDef();
-						boDefAttribute attribute = handler.getAttributeRef( getDataField() );
+						boDefAttribute attribute = handler.getAttributeRef( extractLovName( getDataField() ) );
 						if (attribute != null && StringUtils.hasValue( attribute.getLOVName() ) ){
 							return true;
 						}

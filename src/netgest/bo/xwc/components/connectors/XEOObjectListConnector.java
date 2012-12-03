@@ -24,6 +24,7 @@ import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
+import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
 import netgest.utils.StringUtils;
 
 public class XEOObjectListConnector implements GroupableDataList, AggregableDataList, List {
@@ -429,12 +430,7 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 	public DataFieldMetaData getAttributeMetaData( String attributeName ) {
 		try {
 			boDefAttribute oAtt = this.oObjectList.getBoDef().getAttributeRef( attributeName );
-			/*
-			if( oAtt == null ) {
-				boDefHandler bridgeObjectDef = oAtt.getReferencedObjectDef();
-				oAtt = bridgeObjectDef.getAttributeRef( attributeName );
-			}
-			*/
+			
 			if( oAtt != null ) {
 				return new XEOObjectAttributeMetaData( oAtt );
 			} else if ( attributeName.contains("__" )) {
@@ -445,6 +441,13 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 				//In the column definition for the attribute boql's dot syntax is used, but internal transformations
 				//use "__" instead of dot syntax, as such the comparison is done against the "." string. 
 				return new XEOObjectAttributeMetaData(XEOObjectConnector.getAttributeDefinitionFromNameWithDotSeparator( attributeName, this.oObjectList.getBoDef()));
+			} else if ( LovColumnNameExtractor.isXeoLovColumn( attributeName) ) {
+				LovColumnNameExtractor extractor = new LovColumnNameExtractor( attributeName );
+				attributeName = extractor.extractName();
+				oAtt = this.oObjectList.getBoDef().getAttributeRef( attributeName );
+				if( oAtt != null ) {
+					return new XEOObjectAttributeMetaData( oAtt );
+				}
 			}
 			
 			
