@@ -26,15 +26,12 @@ public class XEOObjectListGroupIterator implements DataListIterator, Iterator<Da
 	}
 
 	public DataRecordConnector next() {
-		// TODO Auto-generated method stub
 		currentPos++;
 		return new XEOObjectListGroupDataRecord( currentPos, this.parent );
 		
 	}
 
 	public void remove() {
-		// TODO Auto-generated method stub
-
 	}
 
 }

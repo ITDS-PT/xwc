@@ -155,13 +155,11 @@ public class XEOObjectListGroupAttribute extends XEOObjectAttributeMetaData impl
 
 	@Override
 	public String getInvalidMessage() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean validate() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
