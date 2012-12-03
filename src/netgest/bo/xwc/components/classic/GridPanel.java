@@ -652,6 +652,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 	@Override
 	public void preRender() {
 		
+		//Reload the DataSource
+		hasDataSourceBeenEvaluated = false;
+		
 		if( this.onRowDoubleClick.getValue() != null ) {
 			XUICommand oRowDblClickComp = (XUICommand) this.findComponent(getId()
 					+ "_rowDblClick");
@@ -1181,17 +1184,30 @@ public class GridPanel extends ViewerInputSecurityBase {
 	}
 	
 	/**
+	 * Flag to signal if the DataSource should be recalculated or not 
+	 */
+	private boolean hasDataSourceBeenEvaluated = false;
+	
+	/**
+	 * Holds the DataListConnector for caching purposes
+	 */
+	private DataListConnector connector = null;
+	/**
 	 * Return the current {@link DataListConnector} width this GridPanel is bind.
 	 * @return {@link DataListConnector}
 	 */
 	public DataListConnector getDataSource() {
 		try {
-			if (dataSource.getValue() != null) {
-				DataListConnector ret = dataSource.getEvaluatedValue();
-				if( ret != null ) {
-					return ret;
+			if (!hasDataSourceBeenEvaluated || connector == null){
+				if (dataSource.getValue() != null) {
+					connector = dataSource.getEvaluatedValue();
+					if( connector != null ) {
+						hasDataSourceBeenEvaluated = true;
+						return connector;
+					}
 				}
-			}
+			} else
+				return connector;
 		} catch (Exception e) {
 			throw new RuntimeException(ComponentMessages.GRID_DATASOURCE_ERROR
 					.toString(dataSource.getExpressionString()), e);
@@ -1503,13 +1519,13 @@ public class GridPanel extends ViewerInputSecurityBase {
 		DataRecordConnector oCurrentRecord;
 
 		List<DataRecordConnector> oRetSelectRows = new ArrayList<DataRecordConnector>();
-
+		DataListConnector connector = getDataSource();
 		if (this.getSelectedRowsIdentifiers() != null) {
 			sUniqueIdentifier = getRowUniqueIdentifier();
 
 			for (int i = 0; i < sSelectedRowsUniqueIdentifiers.length; i++) {
 				sUniqueIdentifier = sSelectedRowsUniqueIdentifiers[i];
-				oCurrentRecord = getDataSource().findByUniqueIdentifier(
+				oCurrentRecord = connector.findByUniqueIdentifier(
 						sUniqueIdentifier);
 				if (oCurrentRecord != null) {
 					oRetSelectRows.add(oCurrentRecord);
