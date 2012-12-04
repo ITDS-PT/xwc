@@ -16,6 +16,7 @@ import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.JQueryBuilder;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 
 public class AttributeNumberRenderer extends JQueryBaseRenderer {
 
@@ -29,7 +30,7 @@ public class AttributeNumberRenderer extends JQueryBaseRenderer {
 			addComponentScript( component );
 		}
 		
-		if (activeComponent.wasStateChanged())
+		if (activeComponent.wasStateChanged() == StateChanged.FOR_RENDER)
 			addComponentScript( component );
     }
 

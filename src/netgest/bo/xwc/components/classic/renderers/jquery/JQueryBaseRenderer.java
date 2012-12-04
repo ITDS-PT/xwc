@@ -4,6 +4,7 @@ import netgest.bo.xwc.components.classic.renderers.jquery.generators.JQueryBuild
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 
 public class JQueryBaseRenderer extends XUIRenderer {
 
@@ -34,7 +35,7 @@ public class JQueryBaseRenderer extends XUIRenderer {
 	 * @return True if the component should be updated 
 	 */
 	protected boolean shouldUpdate(XUIComponentBase component){
-		return !component.isRenderedOnClient() || component.wasStateChanged();
+		return !component.isRenderedOnClient() || component.wasStateChanged() == StateChanged.FOR_RENDER;
 	}
 	
 	/**

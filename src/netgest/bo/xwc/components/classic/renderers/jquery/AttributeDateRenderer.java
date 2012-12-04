@@ -17,6 +17,7 @@ import netgest.bo.xwc.components.classic.renderers.jquery.generators.WidgetFacto
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.WidgetFactory.JQuery;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 
 public class AttributeDateRenderer extends JQueryBaseRenderer {
 	
@@ -30,7 +31,7 @@ public class AttributeDateRenderer extends JQueryBaseRenderer {
 			addComponentScript( component );
 		}
 		
-		if (dateComponent.wasStateChanged())
+		if (dateComponent.wasStateChanged() == StateChanged.FOR_RENDER)
 			addComponentScript( component );
     }
 
@@ -39,7 +40,7 @@ public class AttributeDateRenderer extends JQueryBaseRenderer {
 		JQueryWidget widget = WidgetFactory.createWidget( JQuery.DATE_PICKER );
 		widget.selectorById( component.getId() ).createAndStartOptions();
 		widget.addOption( "showOn", "both" );
-		widget.addOption( "buttonImage", "images/calendar.gif" );
+		//widget.addOption( "buttonImage", "images/calendar.gif" );
 		widget.endOptions();
 		widget.setInputValue( date.getDisplayValue() );
 		
