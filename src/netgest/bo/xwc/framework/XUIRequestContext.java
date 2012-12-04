@@ -2,6 +2,7 @@ package netgest.bo.xwc.framework;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,19 +17,22 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import com.sun.faces.io.FastStringWriter;
-import com.sun.faces.util.Util;
-
 import netgest.bo.transaction.XTransactionManager;
+import netgest.bo.xwc.components.template.base.NavigationHandler;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.jsf.XUIViewHandlerImpl;
-import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
+
+import com.sun.faces.io.FastStringWriter;
+import com.sun.faces.util.Util;
 
 
 public class XUIRequestContext {
 
-
+	/**
+	 * Map to hold all changed views during the request and save them at the end
+	 */
+	private Map<String,XUIViewRoot> changedViews = new HashMap<String, XUIViewRoot>();
     private XUIApplicationContext   oApplication;
     private Boolean                 bIsAjax;
     private boolean                 bIsClosed;
@@ -79,6 +83,10 @@ public class XUIRequestContext {
         return oScriptContext;
     }
 
+    public NavigationHandler getNagivationHandler(){
+    	return null;
+    }
+    
     public XUIStyleContext getStyleContext() {
         if( oStyleContext == null ) {
             oStyleContext = new XUIStyleContext();
@@ -151,8 +159,24 @@ public class XUIRequestContext {
     	}
     	return false;
     }
+    
+    public void close(FacesContext context){
+    	if (changedViews != null){
+	    	for (XUIViewRoot currentView : changedViews.values() ){
+	    		try{
+	    			serializeViewRoot( currentView, context );
+	    		} catch (Throwable e){
+	    			e.printStackTrace( );
+	    		} 
+	    	}
+    	}
+    }
+    	
 
     public void release() {
+    	
+    	this.changedViews.clear();
+    	
         try {
         	this.oTransactionManager.release();
         }
@@ -216,9 +240,16 @@ public class XUIRequestContext {
     }
 
     public void setViewRoot( XUIViewRoot oViewRoot ) {
-    	FacesContext context = getFacesContext();
-    	UIViewRoot oldView = context.getViewRoot();
-        StateManager stateManager = Util.getStateManager( getFacesContext() );
+    	if (!oViewRoot.isTransient())
+    		changedViews.put( oViewRoot.getViewId(), oViewRoot );
+    	getFacesContext().setViewRoot( oViewRoot );
+    }
+    
+    
+	private void serializeViewRoot(UIViewRoot root, FacesContext context) {
+		
+    	UIViewRoot oldView = root;
+        StateManager stateManager = Util.getStateManager( context );
         if( !oldView.isTransient() ) {
         	ResponseWriter oldWriter = context.getResponseWriter();
         	try {
@@ -241,8 +272,7 @@ public class XUIRequestContext {
 				} catch (Exception e) { e.printStackTrace(); }
         	}
         }
-    	getFacesContext().setViewRoot( oViewRoot );
-    }
+	}
 
     public void setEvent(XUIActionEvent oEvent) {
         this.oEvent = oEvent;
