@@ -81,9 +81,6 @@ public class AjaxText extends XUIComponentBase {
 		return this.updateTime.getEvaluatedValue();
 	}
 	
-	public boolean wasStateChanged() {
-		return super.wasStateChanged();
-	};
 		
 	
 	@Override

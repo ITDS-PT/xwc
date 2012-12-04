@@ -145,8 +145,10 @@ public class TreePanel extends XUIComponentBase implements ExtJSRegionRenderer {
 	}
 	
 	@Override
-	public boolean wasStateChanged() {
-		return super.wasStateChanged() || localReload;
+	public StateChanged wasStateChanged() {
+		return (super.wasStateChanged() == StateChanged.FOR_RENDER	|| localReload) 
+				? StateChanged.FOR_RENDER 
+				: StateChanged.NONE;
 	}
 	
 	/**

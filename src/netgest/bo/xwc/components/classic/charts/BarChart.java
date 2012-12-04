@@ -179,10 +179,6 @@ public class BarChart extends XUIComponentBase  implements netgest.bo.xwc.compon
 	private XUIBindProperty<Object[]> sqlParameters = new XUIBindProperty<Object[]>(
 			"sqlParameters", this, Object[].class);
 	
-	public boolean wasStateChanged() 
-	{
-		return super.wasStateChanged();
-	};
 		
 	@Override
 	public void initComponent() {

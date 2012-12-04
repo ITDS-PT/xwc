@@ -563,8 +563,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * Return if the component need's the rerendered of refreshed on the client side
 	 */
 	@Override
-	public boolean wasStateChanged() {
-		return this.updateClientView;
+	public StateChanged wasStateChanged() {
+		return this.updateClientView ? StateChanged.FOR_RENDER : StateChanged.NONE;
 	}
 	
 	/**
@@ -574,7 +574,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * @return true - if the grid only refresh data between server requests
 	 */
 	public boolean getOnlyRefreshData() {
-		return !super.wasStateChanged();
+		return super.wasStateChanged() != StateChanged.NONE;
 	}
 	
 	/**

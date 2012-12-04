@@ -37,6 +37,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUITheme;
+import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl;
 
 import com.lowagie.text.html.HtmlTags;
@@ -236,7 +237,8 @@ public class XUIViewRoot extends UIViewRoot {
 			bChanged = false;
 			oKid = oKids.get(i);
 			if (oKid instanceof XUIComponentBase) {
-				if (((XUIComponentBase) oKid).wasStateChanged()) {
+				StateChanged change = ((XUIComponentBase) oKid).wasStateChanged();
+				if (change == StateChanged.FOR_RENDER || change == StateChanged.FOR_UPDATE) {
 					oRenderList.add((XUIComponentBase) oKid);
 					bChanged = true;
 				}

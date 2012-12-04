@@ -144,11 +144,6 @@ public class Panel extends ViewerSecurityBase {
 		return super.isRendered();
 	}
 	
-	@Override
-	public boolean wasStateChanged() {
-		// TODO Auto-generated method stub
-		return super.wasStateChanged();
-	}
 	
 	public String getIcon(){
 		return icon.getValue();

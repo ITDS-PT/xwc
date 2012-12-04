@@ -10,7 +10,6 @@ import javax.faces.context.FacesContext;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
-import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.ScriptBuilder;
@@ -79,10 +78,6 @@ public class AttributeDate extends AttributeBase {
         }
     }
 
-    @Override
-    public boolean wasStateChanged() {
-        return super.wasStateChanged();
-    }
 
     public static class XEOHTMLRenderer extends ExtJsFieldRendeder {
     	

@@ -78,12 +78,14 @@ public class ErrorMessages extends XUIComponentBase {
 	}
 
     @Override
-    public boolean wasStateChanged() {
+    public StateChanged wasStateChanged() {
         boolean bRet;
         bRet = getRequestContext().getMessages().hasNext();
         bRet = bRet || getFacesContext().getMessages().hasNext(); 
         bRet = bRet || lastRequestWasChanged.getValue();
-        return bRet;
+        if (bRet)
+        	return StateChanged.FOR_RENDER;
+        return StateChanged.NONE;
     }
     
     public boolean haveMessagesToRender()

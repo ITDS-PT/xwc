@@ -36,10 +36,6 @@ public class Cell extends XUIComponentBase
 		super.restoreState(oState);
 	}
 	
-	@Override
-	public boolean wasStateChanged() {
-		return super.wasStateChanged();
-	}
 
     public static final class XEOHTMLRenderer extends XUIRenderer {
 

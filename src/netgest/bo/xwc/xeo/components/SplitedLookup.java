@@ -9,7 +9,6 @@ import static netgest.bo.xwc.components.HTMLTag.TR;
 
 import java.io.IOException;
 
-import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ValueChangeEvent;
@@ -154,10 +153,6 @@ public class SplitedLookup extends Attribute {
 		return (AttributeBase)findComponent( getId() + "_lk" );
 	}
 	
-	@Override
-	public boolean wasStateChanged() {
-		return super.wasStateChanged();
-	}
 	
 	@Override
 	public void initComponent() {

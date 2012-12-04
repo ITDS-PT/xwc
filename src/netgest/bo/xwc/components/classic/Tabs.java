@@ -12,6 +12,7 @@ import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.navigation.NavigatableComponent;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -33,7 +34,7 @@ import netgest.utils.StringUtils;
  * @author jcarreira
  *
  */
-public class Tabs extends XUIComponentBase
+public class Tabs extends XUIComponentBase implements NavigatableComponent
 {
     /**
      * Sets the active tab inside the container
@@ -106,7 +107,7 @@ public class Tabs extends XUIComponentBase
         int k = 0;
         for (UIComponent c : getChildren()){
         	if (c.getId().equals( activeTab )){
-        		activeTabIndex = k;
+        		activeTabIndex.setValue( Integer.valueOf( k ) );
         		break;
         	}
         	k++;
@@ -118,9 +119,10 @@ public class Tabs extends XUIComponentBase
     	setActiveTab( activeTab.getId() );
     }
     
-    private int activeTabIndex = 0;
+    private XUIViewStateProperty<Integer> activeTabIndex = 
+    		new XUIViewStateProperty<Integer>( "activeTabIndex", this, 0 );
     public int getActiveTabIndex(){
-    	return activeTabIndex;
+    	return activeTabIndex.getValue();
     }
 
     public String getActiveTab()
@@ -149,14 +151,16 @@ public class Tabs extends XUIComponentBase
 	}
 
 	@Override
-    public boolean wasStateChanged() {
-        boolean bStateChanged = super.wasStateChanged();
-        if( !bStateChanged ) {
+    public StateChanged wasStateChanged() {
+        StateChanged bStateChanged = super.wasStateChanged();
+        if( bStateChanged  == StateChanged.NONE ) {
             Iterator<UIComponent> oChildsIt = this.getChildren().iterator();
-            while( !bStateChanged && oChildsIt.hasNext() ) {
+            while( bStateChanged == StateChanged.NONE && oChildsIt.hasNext() ) {
                 Tab oChildTab = (Tab)oChildsIt.next();
-                bStateChanged = oChildTab.label.wasChanged();
-                bStateChanged = bStateChanged || oChildTab.visible.wasChanged();
+                if (oChildTab.label.wasChanged())
+                	bStateChanged = StateChanged.FOR_RENDER;
+                if (oChildTab.visible.wasChanged())
+                	bStateChanged = StateChanged.FOR_RENDER;
             }
         }
         return bStateChanged;
@@ -356,5 +360,26 @@ public class Tabs extends XUIComponentBase
             w.endElement("div");
         }
     }
+
+	@Override
+	public boolean getHasParentNavigator() {
+		boolean value = findParentComponent( Tabs.class ) != null; 
+		return value;
+	}
+	
+	@Override
+	public int getHierarchyLevel() {
+		XUIComponentBase tabs = (XUIComponentBase) findParentComponent( Tabs.class );
+		return 1 + getHierarchyLevel( tabs );
+	}
+	
+	private int getHierarchyLevel(XUIComponentBase component){
+		if (component == null) return 0;
+		XUIComponentBase tabs = component.findParentComponent( Tabs.class );
+		return 1 + getHierarchyLevel( tabs );
+		
+	}
+	
+	
 
 }

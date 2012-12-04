@@ -62,6 +62,14 @@ public class Section extends ViewerSecurityBase {
     	super.initComponent();
     	initializeTemplate( "templates/components/section.ftl" );
     }
+    
+    @Override
+    public void resetRenderedOnClient() {
+    	if (wasStateChanged() == StateChanged.FOR_RENDER)
+    		super.resetRenderedOnClient(true);
+    	else
+    		super.resetRenderedOnClient();
+    }
 
 	@Override
 	public boolean isRendered() {

@@ -22,6 +22,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.Bridge;
 import netgest.bo.xwc.xeo.components.utils.LookupFavorites;
+import netgest.utils.StringUtils;
 
 /**
  * 
@@ -144,6 +145,10 @@ public class BridgeLookupBean extends XEOBaseBean {
 		List<Long> checkedBouis = new ArrayList<Long>();
 		boObject object = boObject.getBoManager().loadObject( getEboContext(), boui );
 		String query = object.getAttribute( attributeName ).getFilterBOQL_query();
+		
+		if (StringUtils.isEmpty( query ))
+			return bouis;
+		
 		boObjectList list = new boObjectListBuilder( getEboContext(), query ).build();
 		list.beforeFirst();
 		

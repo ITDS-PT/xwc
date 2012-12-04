@@ -58,16 +58,16 @@ public class Title extends XUIOutput {
     }
     
     @Override
-    public boolean wasStateChanged() {
-        if( !super.wasStateChanged() ) {
+    public StateChanged wasStateChanged() {
+        if( super.wasStateChanged() == StateChanged.NONE ) {
             if (!XUIStateProperty.compareValues( this.renderedValue.getValue(), getValue() )) {
-                return true;
+                return StateChanged.FOR_RENDER;
             }
         }
         else {
-            return true;
+            return StateChanged.FOR_RENDER;
         }
-        return false;    
+        return StateChanged.FOR_RENDER;    
     }
 
     @Override

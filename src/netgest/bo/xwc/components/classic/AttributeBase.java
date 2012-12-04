@@ -996,8 +996,8 @@ public class AttributeBase extends ViewerInputSecurityBase {
      * Check's if the component need's to be rerendered on the client side after a postback in Ajax
      */
     @Override
-    public boolean wasStateChanged() {
-        if( !super.wasStateChanged() ) {
+    public StateChanged wasStateChanged() {
+        if( super.wasStateChanged() == StateChanged.NONE ) {
         	Object value;
         	ValueExpression ve = getValueExpression("value");
         	if (ve != null) {
@@ -1013,13 +1013,13 @@ public class AttributeBase extends ViewerInputSecurityBase {
         	}
         	
             if (!XUIStateProperty.compareValues( this.renderedValue.getValue(), value )) {
-                return true;
+                return StateChanged.FOR_UPDATE;
             }
         }
         else {
-            return true;
+            return StateChanged.FOR_UPDATE;
         }
-        return false;
+        return StateChanged.NONE;
     }
     
     /**

@@ -190,10 +190,6 @@ public class PieChart extends XUIComponentBase implements
 		return this.usesDefaultColors;
 	}
 	
-	public boolean wasStateChanged() {
-		//return true;
-		return super.wasStateChanged();
-	};
 
 	@Override
 	public void initComponent() {

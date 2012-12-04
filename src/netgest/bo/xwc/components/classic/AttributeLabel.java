@@ -73,10 +73,10 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 	}
 	
 	@Override
-	public boolean wasStateChanged() {
+	public StateChanged wasStateChanged() {
 		
-		boolean ret = super.wasStateChanged();
-		if( ret ) {
+		StateChanged ret = super.wasStateChanged();
+		if( ret == StateChanged.NONE ) {
 			ret = super.wasStateChanged();
 		}
 		

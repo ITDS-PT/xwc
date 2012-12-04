@@ -191,10 +191,6 @@ public class Window extends XUIComponentBase {
     	initializeTemplate( "templates/components/window.ftl" );
     }
     
-	@Override
-    public boolean wasStateChanged() {
-        return super.wasStateChanged();
-    }
 
     public void setTitle( String title) {
         this.title.setValue( title );

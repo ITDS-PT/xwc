@@ -161,27 +161,27 @@ public class ToolBar extends ViewerSecurityBase {
 
 
     @Override
-    public boolean wasStateChanged() {
-        if( super.wasStateChanged() ) {
-            return true;
+    public StateChanged wasStateChanged() {
+        if( super.wasStateChanged() == StateChanged.FOR_RENDER ) {
+            return StateChanged.FOR_RENDER;
         }
         return wasStateChangedOnChilds( this );
     }
     
-    private boolean wasStateChangedOnChilds( UIComponent oCompBase ) {
+    private StateChanged wasStateChangedOnChilds( UIComponent oCompBase ) {
         UIComponent kid;
-        boolean ret = false;
+        StateChanged ret = StateChanged.NONE;
         List<UIComponent> kids = oCompBase.getChildren();
         for (int i = 0; i < kids.size(); i++) {
             kid = kids.get( i );
             if( kid instanceof XUIComponentBase ) {
-                if( ((XUIComponentBase)kid).wasStateChanged() ) {
-                    ret = true;
+                if( ((XUIComponentBase)kid).wasStateChanged() == StateChanged.FOR_RENDER ) {
+                    ret = StateChanged.FOR_RENDER;
                     break;
                 }
             }
             ret = wasStateChangedOnChilds( kid );
-            if( ret ) {
+            if( ret == StateChanged.FOR_RENDER ) {
             	break;
             }
         }
@@ -243,7 +243,7 @@ public class ToolBar extends ViewerSecurityBase {
             	if (currChild instanceof Menu){
 	                Menu oMenuChild = (Menu)currChild;
 	                if( oMenuChild.isRendered() ) {
-	                	if( oMenuChild.wasStateChanged() ) {
+	                	if( oMenuChild.wasStateChanged() == StateChanged.FOR_RENDER ) {
 	                    	sb.startBlock();
 	                    	generateUpdateScript(sb, oMenuChild );
 	                    	sb.endBlock();
@@ -264,7 +264,7 @@ public class ToolBar extends ViewerSecurityBase {
             while( childs.hasNext() ) {
                 Menu oMenuChild = (Menu)childs.next();
                 if( oMenuChild.isRendered() ) {
-	            	if( oMenuChild.wasStateChanged() ) {
+	            	if( oMenuChild.wasStateChanged() == StateChanged.FOR_RENDER ) {
 	                	sb.startBlock();
 	                	generateUpdateScript(sb, oMenuChild );
 	                	sb.endBlock();

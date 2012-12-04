@@ -124,8 +124,8 @@ public class AttributeDateTime extends AttributeBase {
     }
 
     @Override
-    public boolean wasStateChanged() {
-    	return false;
+    public StateChanged wasStateChanged() {
+    	return StateChanged.NONE;
     }
     
     @Override

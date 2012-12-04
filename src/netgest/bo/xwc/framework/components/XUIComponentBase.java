@@ -128,12 +128,19 @@ public abstract class XUIComponentBase extends UIComponentBase
     	return true;
     }
     
-    public boolean wasStateChanged() {
+    public enum StateChanged {
+    	NONE,
+    	FOR_RENDER,
+    	FOR_UPDATE;
+    	
+    }
+    
+    public StateChanged wasStateChanged() {
         
         // If not a post back to this component, assume state changed
         // to force render of the component
         if( !isPostBack() || !isRenderedOnClient() ) {
-            return true;
+            return StateChanged.FOR_RENDER;
         }
         
         Iterator<Entry<String,XUIBaseProperty<?>>> oStatePropertiesIterator = getStateProperties().iterator();
@@ -142,14 +149,11 @@ public abstract class XUIComponentBase extends UIComponentBase
                 XUIBaseProperty<?> oStateProperty;
                 oStateProperty = oStatePropertiesIterator.next().getValue();
                 if( oStateProperty.wasChanged() ) {
-//                	System.out.println( 
-//                			this.getClass().getName() + " - " + oStateProperty.getName()  
-//                	);
-                    return true;
+                    return StateChanged.FOR_RENDER;
                 }
             }
         }
-        return false;
+        return StateChanged.NONE;
     }
     
     public void processStateChanged( List<XUIComponentBase> oRenderList ) {
@@ -175,10 +179,11 @@ public abstract class XUIComponentBase extends UIComponentBase
 	            	
 	            	if( plugIn != null &&  plugIn.wasStateChanged() ) {
 	                    oRenderList.add( (XUIComponentBase)oKid );
-	                    bChanged = true;                    
 	            	}
 	            	else {
-		                if( ((XUIComponentBase)oKid).wasStateChanged() ) {
+	            		StateChanged change = ((XUIComponentBase)oKid).wasStateChanged(); 
+		                if( (change == StateChanged.FOR_RENDER
+		                		|| change == StateChanged.FOR_UPDATE)) {
 		                    oRenderList.add( (XUIComponentBase)oKid );
 		                    bChanged = true;                    
 		                }
@@ -966,17 +971,39 @@ public abstract class XUIComponentBase extends UIComponentBase
 		return this.destroyOnClient;
 	}
 	
-	public void resetRenderedOnClient() {
-		this.isRenderedOnClient.setValue( false );
-		this._isRenderedOnClient = false;
+	
+	boolean renderForUpdate = false;
+	
+	public void markRenderForUpdate(){
+		renderForUpdate = true;
+	}
+	
+	public boolean isRenderForUpdate(){
+		return renderForUpdate;
+	}
+	
+	protected void resetRenderOnClientChildren(boolean force){
 		List<UIComponent> children = getChildren();
 		for( UIComponent child : children ) 
 		{
 			if( child instanceof XUIComponentBase ) {
-				((XUIComponentBase)child).resetRenderedOnClient();
+				((XUIComponentBase)child).resetRenderedOnClient( force );
 			}
 			else
-				recursiveResetRenderedOnClient(child);
+				recursiveResetRenderedOnClient(child, force);
+		}
+		
+	}
+	
+	public void resetRenderedOnClient(){
+		resetRenderedOnClient( false );
+	}
+	
+	public void resetRenderedOnClient(boolean forceReset) {
+		if (wasStateChanged() == StateChanged.FOR_RENDER || forceReset) {
+			this.isRenderedOnClient.setValue( false );
+			this._isRenderedOnClient = false;
+			resetRenderOnClientChildren(forceReset);
 		}
 	}
 	
@@ -987,7 +1014,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 	 * 
 	 * @param oComponent The component to process
 	 */
-	private void recursiveResetRenderedOnClient(UIComponent oComponent)
+	private void recursiveResetRenderedOnClient(UIComponent oComponent, boolean force)
 	{
 		List<UIComponent> children = oComponent.getChildren();
 		for( UIComponent child : children ) 
@@ -996,7 +1023,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 				((XUIComponentBase)child).resetRenderedOnClient();
 			}
 			else
-				recursiveResetRenderedOnClient(child);
+				recursiveResetRenderedOnClient(child, force);
 		}
 	}
 	

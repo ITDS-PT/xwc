@@ -94,8 +94,8 @@ public class AttributeSearchLookup extends AttributeNumberLookup {
 	}
 	
 	@Override
-	public boolean wasStateChanged(){
-		return true;
+	public StateChanged wasStateChanged(){
+		return StateChanged.FOR_RENDER;
 	}
 	
 	@Override

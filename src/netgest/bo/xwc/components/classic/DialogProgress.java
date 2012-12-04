@@ -123,8 +123,8 @@ public class DialogProgress extends XUIComponentBase {
 	}
 
 	@Override
-	public boolean wasStateChanged() {
-		return true;
+	public StateChanged wasStateChanged() {
+		return StateChanged.FOR_RENDER;
 	}
 
 	public static class XEOHTMLRenderer extends XUIRenderer {

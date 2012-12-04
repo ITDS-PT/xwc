@@ -15,10 +15,6 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class AttributeText extends AttributeBase {
 	
-	@Override
-	public boolean wasStateChanged() {
-		return super.wasStateChanged();
-	}
 	
 	@Override
 	public void validateModel() {

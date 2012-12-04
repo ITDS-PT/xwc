@@ -598,8 +598,6 @@ public class GridExplorer extends List {
 			}
 		}
 		
-		boolean stateChaged = super.wasStateChanged();
-		//System.out.println( stateChaged );
 	}
 	
 	public ToolBar getToolBar() {

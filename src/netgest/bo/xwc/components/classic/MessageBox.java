@@ -525,8 +525,8 @@ public class MessageBox extends XUIInput {
 	 * @see netgest.bo.xwc.framework.components.XUIComponentBase#wasStateChanged()
 	 */
 	@Override
-	public boolean wasStateChanged() {
-		return getShowMessageBox();
+	public StateChanged wasStateChanged() {
+		return getShowMessageBox() ? StateChanged.FOR_RENDER : StateChanged.NONE;
 	}
 
 	/* (non-Javadoc)
