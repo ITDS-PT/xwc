@@ -46,9 +46,7 @@ public class CollapsiblePanel extends AbstractPanel{
 		return this.icon.getValue();
 	}
 	
-	public boolean wasStateChanged() {
-		return super.wasStateChanged();
-	};
+	
 		
 	@Override
 	public void initComponent() {

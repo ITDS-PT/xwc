@@ -65,9 +65,6 @@ public class TabPanel extends XUIComponentBase implements ExtJSRegionRenderer{
 		this.tabWidth.setExpressionText(tabWidthExpr);
 	}
 	
-	public boolean wasStateChanged() {
-		return super.wasStateChanged();
-	};
 		
 	@Override
 	public void initComponent() {

@@ -85,9 +85,6 @@ public class RightRegion extends BaseRegion  {
 		this.layout.setExpressionText(layoutExpr);
 	}
 
-	public boolean wasStateChanged() {
-		return super.wasStateChanged();
-	};
 		
 	@Override
 	public void initComponent() {

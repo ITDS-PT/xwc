@@ -21,9 +21,6 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class TopRegion extends ExtremeRegion implements ExtJSRegionRenderer {
 
-	public boolean wasStateChanged() {
-		return super.wasStateChanged();
-	};
 		
 	@Override
 	public void initComponent() {
