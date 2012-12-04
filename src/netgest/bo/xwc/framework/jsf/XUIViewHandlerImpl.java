@@ -180,8 +180,18 @@ public class XUIViewHandlerImpl extends ViewHandler {
         }
 
         response.flushBuffer();
+        
+        closeModifiedViews( context );
 
     }
+
+
+	private void closeModifiedViews( FacesContext context ) {
+		XUIRequestContext req = XUIRequestContext.getCurrentContext();
+        if (req != null){
+        	req.close( context );
+        }
+	}
 
     /**
      * <p>This is a separate method to account for handling the content
@@ -608,8 +618,8 @@ public class XUIViewHandlerImpl extends ViewHandler {
 
     public String getActionURL(FacesContext context, String viewId) {
     	
-    	// Este método está ser overwrited por XUIViewHandler
-    	// Qualquer alteração não é afectada.
+    	// Este mï¿½todo estï¿½ ser overwrited por XUIViewHandler
+    	// Qualquer alteraï¿½ï¿½o nï¿½o ï¿½ afectada.
     	return null;
 //    	
 //        if (context == null) {
