@@ -18,7 +18,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.transaction.XTransactionManager;
-import netgest.bo.xwc.components.template.base.NavigationHandler;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.jsf.XUIViewHandlerImpl;
@@ -83,10 +82,6 @@ public class XUIRequestContext {
         return oScriptContext;
     }
 
-    public NavigationHandler getNagivationHandler(){
-    	return null;
-    }
-    
     public XUIStyleContext getStyleContext() {
         if( oStyleContext == null ) {
             oStyleContext = new XUIStyleContext();
