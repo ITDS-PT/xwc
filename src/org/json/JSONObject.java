@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 
+import netgest.bo.xwc.components.classic.grid.jquery.Unescape;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 /**
@@ -1233,6 +1234,31 @@ public class JSONObject {
                 sb.append(quote(o.toString()));
                 sb.append(':');
                 sb.append(valueToString(this.map.get(o)));
+            }
+            sb.append('}');
+            return sb.toString();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    public String toStringWithFunctions() {
+        try {
+            Iterator     keys = keys();
+            StringBuffer sb = new StringBuffer("{");
+
+            while (keys.hasNext()) {
+                if (sb.length() > 1) {
+                    sb.append(',');
+                }
+                Object o = keys.next();
+                sb.append(quote(o.toString()));
+                sb.append(':');
+                Object value = this.map.get(o);
+                if (!(value instanceof Unescape ))
+                	sb.append(valueToString(value));
+                else
+                	sb.append(value.toString());
             }
             sb.append('}');
             return sb.toString();

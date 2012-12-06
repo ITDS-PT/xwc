@@ -8,6 +8,7 @@ import static netgest.bo.xwc.components.HTMLTag.INPUT;
 import static netgest.bo.xwc.components.HTMLTag.TABLE;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +23,7 @@ import netgest.bo.xwc.components.classic.grid.GridPanelJqueryRenderer.GridOption
 import netgest.bo.xwc.components.classic.grid.GridPanelJqueryRenderer.GridOptionsBuilder.ColumnModelBuilder.EditOptions;
 import netgest.bo.xwc.components.classic.grid.GridPanelJqueryRenderer.GridOptionsBuilder.GroupingViewBuilder;
 import netgest.bo.xwc.components.classic.grid.jquery.GridPanelParametersDecoder;
+import netgest.bo.xwc.components.classic.grid.jquery.JSFunction;
 import netgest.bo.xwc.components.classic.renderers.jquery.JQueryBaseRenderer;
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.JQueryWidget;
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.WidgetFactory;
@@ -33,6 +35,7 @@ import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.GroupableDataList;
 import netgest.bo.xwc.components.data.JavaScriptArrayProvider;
 import netgest.bo.xwc.components.model.Column;
+import netgest.bo.xwc.components.template.util.CustomTemplateRenderer;
 import netgest.bo.xwc.components.util.ComponentRenderUtils;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -283,6 +286,7 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 			.shrinkToFit( false )
 			.columnReordering( true )
 			.rowNum( Integer.parseInt( grid.getPageSize() ) )
+			.pageEvent( grid )
 			//.loadError()
 			.sortName( "BOUI" )
 			.pagerId( grid );
@@ -295,10 +299,9 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		buildJsonReader(grid, b);
 		
 		String options = b.build();
+		
 		StringBuilder gridDefinition = new StringBuilder(options.length() + 100);
 		gridDefinition.append("jQuery('#").append(grid.getId()).append("').jqGrid(").append(options).append(");");
-		
-		
 		
 		return gridDefinition.toString();
 	}
@@ -616,6 +619,13 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 			
 		}
 		
+		public GridOptionsBuilder pageEvent(GridPanel grid) {
+			Map<String,Object> ctx = new HashMap<String, Object>();
+			ctx.put( "this", grid );
+			addOption( "onPaging", new JSFunction( CustomTemplateRenderer.processTemplateFile( "templates/components/grid/gridBackButton.ftl", ctx ) ) );
+			return this;
+		}
+
 		private void addOption(String key, Object value){
 			try{
 				this.options.put( key, value );
@@ -726,7 +736,7 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		}
 		
 		public String build(){
-			return this.options.toString();
+			return this.options.toStringWithFunctions();
 		}
 		
 		public class GroupingViewBuilder{
