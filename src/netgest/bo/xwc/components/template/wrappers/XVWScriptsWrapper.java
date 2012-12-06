@@ -13,6 +13,10 @@ public class XVWScriptsWrapper {
 		return XVWScripts.getAjaxCommandScript( component, XVWScripts.WAIT_DIALOG );
 	}
 	
+	public String getFormId(XUIComponentBase component){
+		return component.getNamingContainerId();
+	}
+	
 	
 	
 }
