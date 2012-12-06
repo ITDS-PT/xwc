@@ -166,8 +166,8 @@ public class ExtJsTheme implements XUITheme {
 		
 		// Extjs
 		JavaScriptIncluder scriptIncluder = createScriptIncluder( scriptContext, getCurrentBuildVersion() );
-		scriptIncluder.include( "ext-base", getResourceBaseUri() + "adapter/ext/ext-base.js" );
-		scriptIncluder.include( "ext-all", getResourceBaseUri() + "ext-all.js" );
+		scriptIncluder.includeRegular( "ext-base", getResourceBaseUri() + "adapter/ext/ext-base.js" );
+		scriptIncluder.includeRegular( "ext-all", getResourceBaseUri() + "ext-all.js" );
 		// xwc
 		
 		scriptIncluder.include( "xwc-core", "xwc/js/xwc-core.js" );
@@ -207,6 +207,10 @@ public class ExtJsTheme implements XUITheme {
 		scriptIncluder.addFooterScript( "ExtQuickTips", "if(!window.parent.App)  var App = new Ext.App({});" );
 		scriptIncluder.addFooterScript( "Ext.App", "Ext.onReady( function() {Ext.QuickTips.init();} );" );
 		
+	}
+	
+	public String getResourceBaseUriJquery() {
+		return "jquery-xeo/";
 	}
 	
 	protected EboContext getEboContext(){
