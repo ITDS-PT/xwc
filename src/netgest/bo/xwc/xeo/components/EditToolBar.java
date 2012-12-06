@@ -481,7 +481,7 @@ public class EditToolBar extends ToolBar {
 			getChildren().add( pos++,createExportMenu());
 		}
 		
-		//if (getRenderObjectMethodBtns()){
+		if (getRenderObjectMethodBtns()){
 			boDefMethod[] methods = xeoObject.getToolbarMethods();
 			for( boDefMethod m : methods ) {
 				if( !staticMethods.contains( m.getName() ) ) {
@@ -490,7 +490,7 @@ public class EditToolBar extends ToolBar {
 					m1.setVisible( renderObjectMethodBtns.getExpressionString() );
 				}
 			}
-		//}
+		}
 		
 		if (getRenderFavoritesBtn()){
 			getChildren().add( pos++, Menu.getMenuFill() );
@@ -656,6 +656,17 @@ public class EditToolBar extends ToolBar {
 				}
 			}
 		}
+		
+		//Add the information Menus
+		if (	getRenderDependenciesBtn()  
+			|| 	getRenderDependentsBtn() 
+			|| 	getRenderListVersionBtn()
+			||  (getTargetObject().getBoDefinition().implementsSecurityRowObjects() && getRenderOplBtn())
+			||  getRenderInformationMenu()){
+					getChildren().add( Menu.getMenuSpacer( ) );
+					getChildren().add( createInformationMenu());
+				}
+		
 		super.initComponent();
 	}
 	
