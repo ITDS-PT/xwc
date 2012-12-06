@@ -135,7 +135,7 @@ public class BridgeLookupBean extends XEOBaseBean {
 			}
 		}
 		else {
-			boObjectList list = boObjectList.list(getEboContext(),"select iXeoUser where 0=1");
+			boObjectList list = boObjectList.list(getEboContext(),"select iXEOUser where 0=1");
 			return new XEOObjectListConnector( list );
 		}
 		
