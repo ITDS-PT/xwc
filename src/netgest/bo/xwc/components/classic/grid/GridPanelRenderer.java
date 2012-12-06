@@ -43,18 +43,23 @@ import org.json.JSONObject;
 
 public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet {
     
-	GridPanelExtJsRenderer extRenderer;
+	ThreadLocal<GridPanelExtJsRenderer> extRenderer = new ThreadLocal<GridPanelExtJsRenderer>() {
+		@Override
+		protected GridPanelExtJsRenderer initialValue() {
+			return new GridPanelExtJsRenderer();
+		}
+	};
 	
     @Override
     public void encodeBegin(XUIComponentBase component) throws IOException {
         super.encodeBegin(component);
-        extRenderer = new GridPanelExtJsRenderer();
-    	extRenderer.encodeBegin( component );
+        //extRenderer = new GridPanelExtJsRenderer();
+    	extRenderer.get().encodeBegin( component );
     }
 
     @Override
     public void encodeEnd(XUIComponentBase oComp) throws IOException {
-    	extRenderer.encodeEnd( oComp );
+    	extRenderer.get().encodeEnd( oComp );
     	super.encodeEnd( oComp );
     }
 
@@ -85,14 +90,11 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 
     @Override
     public void encodeChildren(XUIComponentBase oComp) throws IOException {
-    	this.extRenderer.encodeChildren( oComp );
+    	this.extRenderer.get().encodeChildren( oComp );
     }
     
 	public ExtConfig getExtJsConfig(XUIComponentBase comp) throws IOException {
-		if( this.extRenderer == null ) 
-			this.extRenderer = new GridPanelExtJsRenderer();
-		
-		return this.extRenderer.extEncodeAll( comp );
+		return this.extRenderer.get().extEncodeAll( comp );
 	}
     
     
