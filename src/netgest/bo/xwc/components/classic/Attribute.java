@@ -235,16 +235,14 @@ public class Attribute extends AttributeBase
         	oAttr.setBeanId( getBeanId() );
         }
     	
+        if( getBeanProperty() != null )
+            oAttr.setBeanProperty( getBeanProperty() );
+    	
         if( getObjectAttribute() != null ) {
         	oAttr.setObjectAttribute( getObjectAttribute() );
         }
     	
-        
-        
         // Set attribute properties
-        if( getBeanProperty() != null )
-            oAttr.setBeanProperty( getBeanProperty() );
-        
         if( getValueExpression("maxLength") != null )
             oAttr.setMaxLength( getValueExpression("maxLength").getExpressionString() );
 
