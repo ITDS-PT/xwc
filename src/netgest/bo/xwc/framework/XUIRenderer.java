@@ -1,17 +1,18 @@
 package netgest.bo.xwc.framework;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
 
-import java.util.Map;
-
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.render.Renderer;
 import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.convert.ConverterException;
+import javax.faces.render.Renderer;
 
-import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 
 public class XUIRenderer extends Renderer
 {
@@ -167,6 +168,102 @@ public class XUIRenderer extends Renderer
 
     }
     
+    
+    public boolean isRenderForUpdate(XUIComponentBase component){
+    	return component.wasStateChanged() == StateChanged.FOR_UPDATE;
+	}
+    
+    public StateChanged wasStateChanged(XUIComponentBase component, List<XUIBaseProperty<?>> updateProperties) {
+        
+        //If not a post back to this component, assume state changed
+        // to force render of the component
+        if( !component.isPostBack() || !component.isRenderedOnClient() ) {
+            return StateChanged.FOR_RENDER;
+        }
+        
+        StateChanged changed = StateChanged.NONE;
+        Iterator<Entry<String,XUIBaseProperty<?>>> oStatePropertiesIterator = component.getStateProperties().iterator();
+        if( oStatePropertiesIterator != null ) {
+            while( oStatePropertiesIterator.hasNext() ) {
+                XUIBaseProperty<?> oStateProperty;
+                oStateProperty = oStatePropertiesIterator.next().getValue();
+                if (!updateProperties.contains( oStateProperty )){
+	                if( oStateProperty.wasChanged() ) {
+	                    changed = StateChanged.FOR_RENDER;
+	                }
+                } else {
+                	if( oStateProperty.wasChanged() ) {
+                		if (changed != StateChanged.FOR_RENDER)
+                			changed =  StateChanged.FOR_UPDATE;
+	                }
+                }
+            }
+        }
+        return changed;
+    }
+    
+    public void processStateChanged( XUIComponentBase component, List<XUIComponentBase> oRenderList ) {
+        boolean bChanged;
+        UIComponent oKid;
+        
+        if( component.isRenderedOnClient() != component.getRenderComponent() ) {
+        	oRenderList.add( component );
+        	return;
+        }
+        
+        if( component.getRenderComponent() ) {
+	        List<UIComponent> oKids = component.getChildren();
+	        for (int i = 0; i < oKids.size(); i++) {
+	            
+	        	bChanged = false;
+	            
+	            oKid = oKids.get( i );
+	            
+	            if( oKid instanceof XUIComponentBase ) {
+	            	
+	            	XUIComponentPlugIn plugIn = component.getPlugIn();
+	            	
+	            	if( plugIn != null &&  plugIn.wasStateChanged() ) {
+	                    oRenderList.add( (XUIComponentBase)oKid );
+	            	}
+	            	else {
+	            		StateChanged change = ((XUIComponentBase)oKid).wasStateChanged(); 
+		                if( (change == StateChanged.FOR_RENDER
+		                		|| change == StateChanged.FOR_UPDATE)) {
+		                    oRenderList.add( (XUIComponentBase)oKid );
+		                    bChanged = true;                    
+		                }
+		                if( !bChanged ) {
+		                    ((XUIComponentBase)oKid).processStateChanged( oRenderList );    
+		                }
+	            	}
+	            }
+	            else
+	            	recursiveProcessStateChanged(oKid, oRenderList);
+	        }
+        }
+    }
+    
+    /**
+     * 
+     * Recursively calls the <code>processStateChanged</code> 
+     * 
+     * @param oComponent The component to process
+     * @param oRenderList The list of components whose state was changed
+     */
+    private void recursiveProcessStateChanged(UIComponent oComponent, List<XUIComponentBase> oRenderList)
+    {
+    	Iterator<UIComponent> kids = oComponent.getFacetsAndChildren();
+        while (kids.hasNext()) {
+            UIComponent kid = kids.next();
+            if( kid instanceof XUIComponentBase ) {
+                ((XUIComponentBase)kid).processStateChanged(oRenderList);
+            }
+            else
+            	recursiveProcessStateChanged(kid, oRenderList);
+        }
+    }
+    
     public String composeUrlWithWebContext( String resourcePath ) {
         StringBuffer retUrl;
         FacesContext context;
@@ -205,5 +302,20 @@ public class XUIRenderer extends Renderer
             return ( value == null || value.length() == 0 );
         }
     }
+
+	/**
+	 * 
+	 * Method called when the component needs to change visually, but not do an entire re-render.
+	 * Typically, use this method to send Javascript updates to a rendered component
+	 * 
+	 * @param component The component to encode changes
+	 * @param propertiesWithChangedState The list of properties that changed state
+	 * 
+	 * @throws IOException If something went wrong writing to the output stream
+	 */
+	public void encodeComponentChanges(XUIComponentBase component, List<XUIBaseProperty<?>> propertiesWithChangedState) throws IOException {
+		component.setDestroyOnClient( true );
+		component.encodeAll();
+	}
 
 }    

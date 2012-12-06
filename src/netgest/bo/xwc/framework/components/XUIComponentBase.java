@@ -2,6 +2,7 @@ package netgest.bo.xwc.framework.components;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIComponentPlugIn;
 import netgest.bo.xwc.framework.XUIDefaultPropertiesHandler;
+import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUISessionContext;
@@ -43,7 +45,9 @@ import com.sun.faces.io.FastStringWriter;
 
 public abstract class XUIComponentBase extends UIComponentBase 
 {
-    @XUIProperty( label="Render Component" )
+    private static final int UPDATED_PROPERTIES_INITIAL_SIZE = 0;
+
+	@XUIProperty( label="Render Component" )
 	XUIBindProperty<Boolean> 			renderComponent = new XUIBindProperty<Boolean>( "renderComponent", this, Boolean.class );
 
     @XUIProperty( label="PlugIn" )
@@ -135,88 +139,31 @@ public abstract class XUIComponentBase extends UIComponentBase
     	
     }
     
+    private List<XUIBaseProperty<?>> updatedProperties 
+    	= new ArrayList<XUIBaseProperty<?>>( UPDATED_PROPERTIES_INITIAL_SIZE ) ;
+    
+    private StateChanged changed = null;
+    
     public StateChanged wasStateChanged() {
-        
-        // If not a post back to this component, assume state changed
-        // to force render of the component
-        if( !isPostBack() || !isRenderedOnClient() ) {
-            return StateChanged.FOR_RENDER;
-        }
-        
-        Iterator<Entry<String,XUIBaseProperty<?>>> oStatePropertiesIterator = getStateProperties().iterator();
-        if( oStatePropertiesIterator != null ) {
-            while( oStatePropertiesIterator.hasNext() ) {
-                XUIBaseProperty<?> oStateProperty;
-                oStateProperty = oStatePropertiesIterator.next().getValue();
-                if( oStateProperty.wasChanged() ) {
-                    return StateChanged.FOR_RENDER;
-                }
-            }
-        }
-        return StateChanged.NONE;
+    	if (changed == null){
+	    	XUIRenderer renderer = (XUIRenderer ) getRenderer( getFacesContext() );
+	    	if (renderer != null)
+	    		changed = renderer.wasStateChanged( this, updatedProperties );
+	    	else
+	    		changed = StateChanged.NONE;
+    	}
+    	return changed;
     }
+    
+    
     
     public void processStateChanged( List<XUIComponentBase> oRenderList ) {
-        boolean bChanged;
-        UIComponent oKid;
-        
-        if( _isRenderedOnClient != getRenderComponent() ) {
-        	oRenderList.add( this );
-        	return;
-        }
-        
-        if( getRenderComponent() ) {
-	        List<UIComponent> oKids = this.getChildren();
-	        for (int i = 0; i < oKids.size(); i++) {
-	            
-	        	bChanged = false;
-	            
-	            oKid = oKids.get( i );
-	            
-	            if( oKid instanceof XUIComponentBase ) {
-	            	
-	            	XUIComponentPlugIn plugIn = getPlugIn();
-	            	
-	            	if( plugIn != null &&  plugIn.wasStateChanged() ) {
-	                    oRenderList.add( (XUIComponentBase)oKid );
-	            	}
-	            	else {
-	            		StateChanged change = ((XUIComponentBase)oKid).wasStateChanged(); 
-		                if( (change == StateChanged.FOR_RENDER
-		                		|| change == StateChanged.FOR_UPDATE)) {
-		                    oRenderList.add( (XUIComponentBase)oKid );
-		                    bChanged = true;                    
-		                }
-		                if( !bChanged ) {
-		                    ((XUIComponentBase)oKid).processStateChanged( oRenderList );    
-		                }
-	            	}
-	            }
-	            else
-	            	recursiveProcessStateChanged(oKid, oRenderList);
-	        }
-        }
+    	XUIRenderer renderer = (XUIRenderer ) getRenderer( getFacesContext() );
+    	if (renderer != null)
+    		renderer.processStateChanged( this, oRenderList );
+    	
     }
     
-    /**
-     * 
-     * Recursively calls the <code>processStateChanged</code> 
-     * 
-     * @param oComponent The component to process
-     * @param oRenderList The list of components whose state was changed
-     */
-    private void recursiveProcessStateChanged(UIComponent oComponent, List<XUIComponentBase> oRenderList)
-    {
-    	Iterator<UIComponent> kids = oComponent.getFacetsAndChildren();
-        while (kids.hasNext()) {
-            UIComponent kid = kids.next();
-            if( kid instanceof XUIComponentBase ) {
-                ((XUIComponentBase)kid).processStateChanged(oRenderList);
-            }
-            else
-            	recursiveProcessStateChanged(kid, oRenderList);
-        }
-    }
     
     public Set<Entry<String,XUIBaseProperty<?>>> getStateProperties() {
         if( oStatePropertyMap != null ) {
@@ -601,7 +548,11 @@ public abstract class XUIComponentBase extends UIComponentBase
 	
 	        	if( getRenderComponent() ) {
 	        		this.isRenderedOnClient.setValue( true );
-	        		super.encodeAll( context );
+	        		this._isRenderedOnClient = true;
+	        		if (!isRenderForUpdate())
+	        			super.encodeAll( context );
+	        		else
+	        			encodeUpdate(context, updatedProperties);
 	        	}
 	        	else {
 	        		this.isRenderedOnClient.setValue( false );
@@ -637,6 +588,20 @@ public abstract class XUIComponentBase extends UIComponentBase
         		encodePlaceHolder( (XUIResponseWriter)context.getResponseWriter() );
         	}
     	}
+    }
+    
+    public void encodeUpdate(FacesContext context, List<XUIBaseProperty<?>> updatedProperties) throws IOException {
+    	String rendererType = getRendererType();
+        if (rendererType != null) {
+            Renderer renderer = this.getRenderer(context);
+            if (renderer != null) {
+            	if (renderer instanceof XUIRenderer){
+            	setDestroyOnClient( false );
+                ((XUIRenderer)renderer).encodeComponentChanges( this, updatedProperties );
+            	}
+            } 
+        } else 
+        	encodeAll(context);
     }
     
     public void encodePlaceHolder( XUIResponseWriter w ) throws IOException {
@@ -769,7 +734,7 @@ public abstract class XUIComponentBase extends UIComponentBase
     }
 
     public void preRender() {
-        
+        changed = null;
     }
     
     public final void processPreRender() {
@@ -979,7 +944,11 @@ public abstract class XUIComponentBase extends UIComponentBase
 	}
 	
 	public boolean isRenderForUpdate(){
-		return renderForUpdate;
+		XUIRenderer renderer = (XUIRenderer ) getRenderer( getFacesContext() );
+    	if (renderer != null)
+    		return renderer.isRenderForUpdate(this);
+    	else
+    		return false;
 	}
 	
 	protected void resetRenderOnClientChildren(boolean force){

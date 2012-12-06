@@ -44,9 +44,9 @@ public class TabsRenderer extends TemplateRenderer {
             		w.writeAttribute( ID, "#"+oChildTab.getId() );
             		w.writeAttribute( CLASS, "xwc-active-tab" );
             		
-	            	if( oTabs.isRenderedOnClient() ) {
+	            	//if( oTabs.isRenderedOnClient() ) {
 	            		oChildTab.forceRenderOnClient();
-	            	}
+	            	//}
             	
             	oChildTab.encodeAll();
             	

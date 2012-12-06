@@ -4,14 +4,23 @@ import static netgest.bo.xwc.components.HTMLAttr.ID;
 import static netgest.bo.xwc.components.HTMLTag.DIV;
 
 import java.io.IOException;
+import java.util.List;
 
+import javax.el.ELException;
+import javax.el.ValueExpression;
+import javax.faces.FacesException;
+
+import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.ScriptBuilder;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 
 public abstract class ExtJsBaseRenderer extends XUIRenderer implements ExtJsRenderer {
 
@@ -21,25 +30,67 @@ public abstract class ExtJsBaseRenderer extends XUIRenderer implements ExtJsRend
 		return "ext-" + oComp.getClientId();
 	}
 	
+	@Override
+	public void encodeComponentChanges( XUIComponentBase oComp, List<XUIBaseProperty<?>> propertiesWithChangedState )
+			throws IOException {
+		
+		// Write Scripts
+    	encodeComponentScript( oComp );
+		
+	}
+	
+	
+	 @Override
+	    public StateChanged wasStateChanged(XUIComponentBase component, List<XUIBaseProperty<?>> changedProperties) {
+		 
+		 	XUIBaseProperty<?> readOnly = component.getStateProperty( "readOnly" );
+		 	if (readOnly != null){
+		 			if (readOnly.wasChanged())
+		 				return StateChanged.FOR_RENDER; 
+		 	}
+		 
+		 	AttributeBase base = ( AttributeBase ) component;
+	        if( super.wasStateChanged(component, changedProperties) == StateChanged.NONE ) {
+	        	Object value;
+	        	ValueExpression ve = component.getValueExpression("value");
+	        	if (ve != null) {
+	        	    try {
+	        			value = (ve.getValue(getFacesContext().getELContext()));
+	        		}
+	    		    catch (ELException e) {
+	        			throw new FacesException(e);
+	    		    }
+	        	}
+	        	else {
+	        		value = base.getValue();
+	        	}
+	        	
+	            if (!XUIStateProperty.compareValues( base.getRenderedValue(), value )) {
+	                return StateChanged.FOR_UPDATE;
+	            }
+	        }
+	        else {
+	            return StateChanged.FOR_UPDATE;
+	        }
+	        return StateChanged.NONE;
+	    }
+	    
+	
     public void encodeEnd(XUIComponentBase oComp) throws IOException {
     	
     	// Write the field
-    	if( !oComp.isRenderedOnClient() || reRenderField( oComp ) ) {
-    		oComp.setDestroyOnClient( true );
-        	// Create a place holder for the field!
-        	encodePlaceHolder( oComp );
+		oComp.setDestroyOnClient( true );
+    	// Create a place holder for the field!
+    	encodePlaceHolder( oComp );
 
-        	if( oComp instanceof SecurableComponent ) {
-        		if (!((SecurableComponent)oComp).getEffectivePermission(SecurityPermissions.READ) ) {
-        			return;
-        		}
-        	}
-        	// If the user cannot read the field... only render of the place holder
-        	encodeExtJs( oComp );
+    	if( oComp instanceof SecurableComponent ) {
+    		if (!((SecurableComponent)oComp).getEffectivePermission(SecurityPermissions.READ) ) {
+    			return;
+    		}
     	}
-    	else {
-    		oComp.setDestroyOnClient( false );
-    	}
+    	// If the user cannot read the field... only render of the place holder
+    	encodeExtJs( oComp );
+    	
     	
     	// Write Scripts
     	encodeComponentScript( oComp );

@@ -116,21 +116,6 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
         
         return !compareValues( this.savedValue , oNewValue );
         
-//        if( oValue instanceof ValueExpression ) {
-//            try {
-//                
-//                Object oNewValue = ((ValueExpression)oValue).getValue( XUIRequestContext.getCurrentContext().getELContext() );
-////                if( lastEvalValue == null ) {
-////                	return false;
-////                }
-//                return !compareValues( lastEvalValue, oNewValue );
-//
-//            }
-//            catch( Exception e )
-//            {}
-//        }
-//        return this.bWasChanged;
-        
     }
     
     public void setChanged( boolean changed ) {

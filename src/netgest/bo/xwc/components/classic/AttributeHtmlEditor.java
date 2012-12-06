@@ -5,6 +5,7 @@ import static netgest.bo.xwc.components.HTMLTag.DIV;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +23,7 @@ import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRendererServlet;
@@ -90,71 +92,112 @@ public class AttributeHtmlEditor extends AttributeBase {
 			XUIRendererServlet {
 
 		@Override
+		public StateChanged wasStateChanged( XUIComponentBase component, List<XUIBaseProperty<?>> updateProperties ) {
+			updateProperties.add( component.getStateProperty( "disabled" ) );
+			updateProperties.add( component.getStateProperty( "visible" ) );
+			updateProperties.add( component.getStateProperty( "readOnly" ) );
+			return super.wasStateChanged( component, updateProperties );
+		}
+		
+		
+		@Override
+		public void encodeComponentChanges( XUIComponentBase component,
+				List<XUIBaseProperty<?>> propertiesWithChangedState ) throws IOException {
+			
+			AttributeHtmlEditor oHtmlComp = (AttributeHtmlEditor) component;
+			
+			StringBuilder script = new StringBuilder(200);
+			script.append("var c=Ext.getCmp('");
+			script.append(component.getClientId());
+			script.append("_editor');\n");
+			script.append("if(c) { c.setValue('");
+			script.append(JavaScriptUtils.safeJavaScriptWrite( oHtmlComp.getDisplayValue(), '\''));
+			script.append("');\n");
+			
+			for (XUIBaseProperty<?> prop : propertiesWithChangedState){
+				if ("disabled".equalsIgnoreCase( prop.getName() ) ){
+					script.append( "c.setReadOnly(" );
+					script.append( prop.getValue() );
+					script.append( ");" );
+				}
+				else if ("readOnly".equalsIgnoreCase( prop.getName() ) ){
+					script.append( "c.setReadOnly(" );
+					script.append( prop.getValue() );
+					script.append( ");" );
+				}
+				else if ("visible".equalsIgnoreCase( prop.getName() ) ){
+					script.append( "c.setVisible(" );
+					script.append( prop.getValue() );
+					script.append( ");" );
+				}
+			}
+			
+			script.append("}\n");
+			
+			getRequestContext().getScriptContext()
+				.add(XUIScriptContext.POSITION_FOOTER , 
+					component.getClientId() + "_updHtml",
+					script.toString() 
+			);
+			
+		}
+		
+		@Override
 		public void encodeEnd(XUIComponentBase oComp) throws IOException {
 
 			XUIResponseWriter w = getResponseWriter();
 			AttributeHtmlEditor oHtmlComp = (AttributeHtmlEditor) oComp;
 
-			if (!oComp.isRenderedOnClient()) {
-				w.getStyleContext().addInclude(
-						XUIScriptContext.POSITION_HEADER,
-						"ext-xeo-nohtmleditor",
-						"ext-xeo/css/ext-xeo-htmleditor.css");
+			
+			w.getStyleContext().addInclude(
+					XUIScriptContext.POSITION_HEADER,
+					"ext-xeo-nohtmleditor",
+					"ext-xeo/css/ext-xeo-htmleditor.css");
 
-				// Place holder for the component
-				if (oHtmlComp.isDisabled() || oHtmlComp.isReadOnly()) {
+			// Place holder for the component
+			if (oHtmlComp.isDisabled() || oHtmlComp.isReadOnly()) {
 
-					String sActionUrl = getRequestContext().getActionUrl();
-					// 'javax.faces.ViewState'
-					String sViewState = getRequestContext().getViewRoot()
-							.getViewState();
-					// xvw.servlet
-					String sServletId = oComp.getClientId();
+				String sActionUrl = getRequestContext().getActionUrl();
+				// 'javax.faces.ViewState'
+				String sViewState = getRequestContext().getViewRoot()
+						.getViewState();
+				// xvw.servlet
+				String sServletId = oComp.getClientId();
 
-					if (sActionUrl.indexOf('?') != -1) {
-						sActionUrl += "&";
-					} else {
-						sActionUrl += "?";
-					}
-					sActionUrl += "javax.faces.ViewState=" + sViewState;
-					sActionUrl += "&xvw.servlet=" + sServletId;
-
-					w.startElement(HTMLTag.IFRAME, oComp);
-					w.writeAttribute(ID, oComp.getClientId(), null);
-					w.writeAttribute(HTMLAttr.CLASS,
-							"x-form-text x-form-field", null);
-					w.writeAttribute(HTMLAttr.STYLE, "width:99%;height:"
-							+ oHtmlComp.getHeight() + "px", null);
-					w.writeAttribute(HTMLAttr.FRAMEBORDER, "0", null);
-					w.writeAttribute(HTMLAttr.SCROLLING, "1", null);
-
-					w.writeAttribute(HTMLAttr.SRC, sActionUrl, null);
-
-					w.endElement(HTMLTag.IFRAME);
+				if (sActionUrl.indexOf('?') != -1) {
+					sActionUrl += "&";
 				} else {
-					w.startElement(DIV, oComp);
-					w.writeAttribute(ID, oComp.getClientId(), null);
+					sActionUrl += "?";
+				}
+				sActionUrl += "javax.faces.ViewState=" + sViewState;
+				sActionUrl += "&xvw.servlet=" + sServletId;
 
-					w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER,
-							oComp.getId(), renderExtJs(oComp));
-					w.endElement(DIV);
-				}
-				if ("auto".equals(oHtmlComp.getHeight())) {
-					Layouts.registerComponent(w, oComp,
-							Layouts.LAYOUT_FIT_PARENT);
-				}
+				w.startElement(HTMLTag.IFRAME, oComp);
+				w.writeAttribute(ID, oComp.getClientId(), null);
+				w.writeAttribute(HTMLAttr.CLASS,
+						"x-form-text x-form-field", null);
+				w.writeAttribute(HTMLAttr.STYLE, "width:99%;height:"
+						+ oHtmlComp.getHeight() + "px", null);
+				w.writeAttribute(HTMLAttr.FRAMEBORDER, "0", null);
+				w.writeAttribute(HTMLAttr.SCROLLING, "1", null);
+
+				w.writeAttribute(HTMLAttr.SRC, sActionUrl, null);
+
+				w.endElement(HTMLTag.IFRAME);
+			} else {
+				w.startElement(DIV, oComp);
+				w.writeAttribute(ID, oComp.getClientId(), null);
+
+				w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER,
+						oComp.getId(), renderExtJs(oComp));
+				w.endElement(DIV);
 			}
-			else {
-				getRequestContext().getScriptContext()
-					.add( 
-						XUIScriptContext.POSITION_FOOTER , 
-						oComp.getClientId() + "_upd11111",
-						"var c=Ext.getCmp('"+oComp.getClientId() + "_editor');\n" +
-						"if(c) c.setValue('" + 
-						JavaScriptUtils.safeJavaScriptWrite( oHtmlComp.getDisplayValue(), '\'') + 
-						"');\n"
-					);
+			if ("auto".equals(oHtmlComp.getHeight())) {
+				Layouts.registerComponent(w, oComp,
+						Layouts.LAYOUT_FIT_PARENT);
 			}
+			
+			
 		}
 
 		public String renderExtJs(XUIComponentBase oComp) {
@@ -202,15 +245,17 @@ public class AttributeHtmlEditor extends AttributeBase {
             if( oHtmlComp.isDisabled() ) 
                 oHtmlCfg.add( "disabled" ,  true );
             
-            if( oHtmlComp.isVisible() )
-                oHtmlCfg.add( "visible" ,  false );
+            oHtmlCfg.add( "hidden" ,  !oHtmlComp.isVisible() );
+            
 			
 			handleAdvancedEditorPlugins(oHtmlComp, oHtmlCfg, sOut);
 
 			sOut.append("Ext.onReady( function() {");
 			sOut.append("try { \n");
-			oHtmlCfg.renderExtConfig(sOut);
+				oHtmlCfg.renderExtConfig(sOut);
 			sOut.append("} catch(e){} \n");
+			if (!oHtmlComp.isVisible())
+				sOut.append("Ext.get('"+oComp.getClientId()+"').hide();");
 			sOut.append("});\n");
 
 			return sOut.toString();

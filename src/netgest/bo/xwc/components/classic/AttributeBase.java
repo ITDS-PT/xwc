@@ -4,9 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.el.ELException;
 import javax.el.ValueExpression;
-import javax.faces.FacesException;
 import javax.faces.el.MethodBinding;
 
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -149,6 +147,10 @@ public class AttributeBase extends ViewerInputSecurityBase {
     protected XUIBaseProperty<Object> renderedValue     = 
     	new XUIBaseProperty<Object>( "renderedValue", this, Object.class );
 
+    public Object getRenderedValue(){
+    	return renderedValue.getValue();
+    }
+    
     /**
      * Whether or not the component is disabled
      */
@@ -992,35 +994,6 @@ public class AttributeBase extends ViewerInputSecurityBase {
     }
     
     
-    /**
-     * Check's if the component need's to be rerendered on the client side after a postback in Ajax
-     */
-    @Override
-    public StateChanged wasStateChanged() {
-        if( super.wasStateChanged() == StateChanged.NONE ) {
-        	Object value;
-        	ValueExpression ve = getValueExpression("value");
-        	if (ve != null) {
-        	    try {
-        			value = (ve.getValue(getFacesContext().getELContext()));
-        		}
-    		    catch (ELException e) {
-        			throw new FacesException(e);
-    		    }
-        	}
-        	else {
-        		value = getValue();
-        	}
-        	
-            if (!XUIStateProperty.compareValues( this.renderedValue.getValue(), value )) {
-                return StateChanged.FOR_UPDATE;
-            }
-        }
-        else {
-            return StateChanged.FOR_UPDATE;
-        }
-        return StateChanged.NONE;
-    }
     
     /**
      * Get the value {@link ValueExpression} associated with this component

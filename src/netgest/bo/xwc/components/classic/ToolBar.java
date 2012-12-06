@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.faces.component.UIComponent;
 
@@ -161,34 +163,6 @@ public class ToolBar extends ViewerSecurityBase {
 
 
     @Override
-    public StateChanged wasStateChanged() {
-        if( super.wasStateChanged() == StateChanged.FOR_RENDER ) {
-            return StateChanged.FOR_RENDER;
-        }
-        return wasStateChangedOnChilds( this );
-    }
-    
-    private StateChanged wasStateChangedOnChilds( UIComponent oCompBase ) {
-        UIComponent kid;
-        StateChanged ret = StateChanged.NONE;
-        List<UIComponent> kids = oCompBase.getChildren();
-        for (int i = 0; i < kids.size(); i++) {
-            kid = kids.get( i );
-            if( kid instanceof XUIComponentBase ) {
-                if( ((XUIComponentBase)kid).wasStateChanged() == StateChanged.FOR_RENDER ) {
-                    ret = StateChanged.FOR_RENDER;
-                    break;
-                }
-            }
-            ret = wasStateChangedOnChilds( kid );
-            if( ret == StateChanged.FOR_RENDER ) {
-            	break;
-            }
-        }
-        return ret;
-    }
-    
-    @Override
     public void restoreState(Object oState) {
     	super.restoreState(oState);
     }
@@ -203,35 +177,93 @@ public class ToolBar extends ViewerSecurityBase {
 
     public static class XEOHTMLRenderer extends XUIRenderer implements ExtJsRenderer {
 
+    	public boolean menuWasChanged(Menu menu){
+    		Set<Entry<String,XUIBaseProperty<?>>> props = menu.getStateProperties();
+    		Iterator<Entry<String,XUIBaseProperty<?>>> it = props.iterator();
+    		while (it.hasNext()){
+    			Entry<String,XUIBaseProperty<?>> entry = it.next();
+    			if (entry.getValue().wasChanged())
+    				return true;
+    		}
+    		return false;
+    	}
+    	
+    	@Override
+    	public StateChanged wasStateChanged( XUIComponentBase component, List<XUIBaseProperty<?>> updateProperties ) {
+    		updateProperties.add( component.getStateProperty( "disabled" ) );
+    		updateProperties.add( component.getStateProperty( "visible" ) );
+    		StateChanged changed = super.wasStateChanged( component, updateProperties );
+    		
+    		Iterator<UIComponent> childs =  component.getChildren().iterator();
+            while( childs.hasNext() ) {
+            	UIComponent currChild = childs.next();
+            	if (currChild instanceof Menu){
+	                Menu oMenuChild = (Menu)currChild;
+	                if( oMenuChild.isRendered() ) {
+	                	if( menuWasChanged( oMenuChild ) ) {
+	                		if (changed != StateChanged.FOR_RENDER)
+	                			changed = StateChanged.FOR_UPDATE;
+	                		if (oMenuChild.getChildCount() > 0)
+	                			recursiveWasStateChangedForChildren( oMenuChild, changed );
+	                	}
+	                }
+                }
+            }
+            return changed;
+    	}
+    	
+    	private void recursiveWasStateChangedForChildren(Menu m, StateChanged changed){
+    		Iterator<UIComponent> childs =  m.getChildren().iterator();
+            while( childs.hasNext() ) {
+            	UIComponent currChild = childs.next();
+            	if (currChild instanceof Menu){
+	                Menu oMenuChild = (Menu)currChild;
+	                if( oMenuChild.isRendered() ) {
+	                	if( menuWasChanged( oMenuChild ) ) {
+	                		if (changed != StateChanged.FOR_RENDER)
+	                			changed = StateChanged.FOR_UPDATE;
+	                		if (oMenuChild.getChildCount() > 0)
+	                			recursiveWasStateChangedForChildren( oMenuChild, changed );
+	                	}
+	                	
+	                }
+                }
+            }
+    	}
+    	
+    	@Override
+    	public void encodeComponentChanges( XUIComponentBase component,
+    			List<XUIBaseProperty<?>> propertiesWithChangedState ) throws IOException {
+
+    		// update menu options
+			ScriptBuilder sb = new ScriptBuilder();
+        	generateToolBarUpdateScript( sb, (ToolBar) component );
+        	ScriptBuilder sb2 = ToolBar.XEOHTMLRenderer.updateMenuItems( (ToolBar) component );
+        	sb.w( sb2 );
+            if( sb.length() > 0 ) {
+            	getResponseWriter().getScriptContext().add( 
+            			XUIScriptContext.POSITION_FOOTER, 
+            			((ToolBar)component).getClientId(), 
+            			sb.toString()
+            	);
+            }
+    		
+    	}
+    	
         @Override
         public void encodeBegin(XUIComponentBase component) throws IOException {
             XUIResponseWriter w = getResponseWriter();
 
-    		if( !component.isRenderedOnClient() ) {
-    			w.startElement( HTMLTag.DIV, component );
-    			w.writeAttribute( HTMLAttr.ID, component.getClientId(), null );
+    		w.startElement( HTMLTag.DIV, component );
+			w.writeAttribute( HTMLAttr.ID, component.getClientId(), null );
+		
+    		ExtConfig toolBar = renderExtJs( component );
+    		toolBar.addJSString( "renderTo", component.getClientId() );
+    		w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, 
+    				"toolbar:"+component.getId(),
+    				toolBar.renderExtConfig()
+    		);
     		
-	    		ExtConfig toolBar = renderExtJs( component );
-	    		toolBar.addJSString( "renderTo", component.getClientId() );
-	    		w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, 
-	    				"toolbar:"+component.getId(),
-	    				toolBar.renderExtConfig()
-	    		);
-    		}
-    		else {
-    			// update menu options
-    			ScriptBuilder sb = new ScriptBuilder();
-            	generateToolBarUpdateScript( sb, (ToolBar) component );
-            	ScriptBuilder sb2 = ToolBar.XEOHTMLRenderer.updateMenuItems( (ToolBar) component );
-            	sb.w( sb2 );
-                if( sb.length() > 0 ) {
-                	getResponseWriter().getScriptContext().add( 
-                			XUIScriptContext.POSITION_FOOTER, 
-                			((ToolBar)component).getClientId(), 
-                			sb.toString()
-                	);
-                }
-    		}
 
         }
         
@@ -243,11 +275,9 @@ public class ToolBar extends ViewerSecurityBase {
             	if (currChild instanceof Menu){
 	                Menu oMenuChild = (Menu)currChild;
 	                if( oMenuChild.isRendered() ) {
-	                	if( oMenuChild.wasStateChanged() == StateChanged.FOR_RENDER ) {
-	                    	sb.startBlock();
-	                    	generateUpdateScript(sb, oMenuChild );
-	                    	sb.endBlock();
-	                	}
+                		sb.startBlock();
+                    	generateUpdateScript(sb, oMenuChild );
+                    	sb.endBlock();
 	                	if( oMenuChild.getChildCount() > 0 ) {
 	                		updateChildMenuItems(sb, oMenuChild);
 	                	}
@@ -326,10 +356,9 @@ public class ToolBar extends ViewerSecurityBase {
         @Override
         public void encodeEnd(XUIComponentBase component) throws IOException {
     		super.encodeEnd(component);
-    		if( !component.isRenderedOnClient() ) {
-	    		XUIResponseWriter w = getResponseWriter();
-	    		w.endElement("div");
-    		}
+			XUIResponseWriter w = getResponseWriter();
+    		w.endElement("div");
+    		
         }
 
         public ExtConfig renderExtJs( XUIComponentBase component ) {

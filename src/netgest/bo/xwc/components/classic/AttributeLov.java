@@ -60,10 +60,7 @@ public class AttributeLov extends AttributeBase {
 	}
 	
 	
-    @Override
-	public boolean isRenderedOnClient() {
-		return false;
-	}
+    
     
     @Override
     public void initComponent() {

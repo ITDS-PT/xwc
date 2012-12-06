@@ -1,11 +1,13 @@
 package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
+import java.util.List;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsBaseRenderer;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
@@ -72,19 +74,16 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 		this.recommended.setExpressionText( recommendedExpression );
 	}
 	
-	@Override
-	public StateChanged wasStateChanged() {
-		
-		StateChanged ret = super.wasStateChanged();
-		if( ret == StateChanged.NONE ) {
-			ret = super.wasStateChanged();
-		}
-		
-		return ret;
-	}
+	
 
 	public static class XEOHTMLRenderer extends ExtJsBaseRenderer {
 
+		@Override
+		public StateChanged wasStateChanged( XUIComponentBase component, List<XUIBaseProperty<?>> changedProperties ) {
+			return StateChanged.FOR_UPDATE;
+		}
+		
+		
 		@Override
 		public String getExtComponentType( XUIComponentBase oComp ) {
 			return "Ext.form.Label";
