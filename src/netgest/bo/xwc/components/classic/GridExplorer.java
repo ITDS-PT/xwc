@@ -1149,7 +1149,12 @@ public class GridExplorer extends List {
 	
 	public static class XEOHTMLRenderer extends XUIRenderer implements XUIRendererServlet {
 		
-		GridPanelExtJsRenderer 	gridRenderer = new GridPanelExtJsRenderer();
+		ThreadLocal<GridPanelExtJsRenderer> 	gridRenderer = new ThreadLocal<GridPanelExtJsRenderer>() {
+			@Override
+			protected GridPanelExtJsRenderer initialValue() {
+				return new GridPanelExtJsRenderer();
+			}
+		};
 		GridPanelRenderer 		render = new GridPanelRenderer();
 		
 		private static final String decodePositionToRegion( PreviewPanelPosition p ) {
@@ -1169,7 +1174,7 @@ public class GridExplorer extends List {
 		public void encodeBegin(XUIComponentBase component) throws IOException {
 			//component.forceRenderOnClient();
 			if( !((GridExplorer)component).getRenderViewPort() ) {
-				gridRenderer.encodeBegin(component);
+				gridRenderer.get().encodeBegin(component);
 			}
 		}
 		
@@ -1182,7 +1187,7 @@ public class GridExplorer extends List {
 		@Override
 		public void encodeChildren(XUIComponentBase component) throws IOException {
 			if( !((GridExplorer)component).getRenderViewPort() ) {
-				gridRenderer.encodeChildren( component );
+				gridRenderer.get().encodeChildren( component );
 			}
 		}
 		
@@ -1191,7 +1196,7 @@ public class GridExplorer extends List {
 		public void encodeEnd(XUIComponentBase component) throws IOException {
 			GridExplorer exp = ((GridExplorer)component);
 			if( !exp.getRenderViewPort() ) {
-				gridRenderer.encodeEnd(component);
+				gridRenderer.get().encodeEnd(component);
 				
 			}
 			else {
@@ -1229,7 +1234,7 @@ public class GridExplorer extends List {
 				config.addJSString( "id", exp.getId() + "_vp" );
 				
 				ExtConfigArray items = config.addChildArray("items");
-				items.add( gridRenderer.extEncodeAll(component) );
+				items.add( gridRenderer.get().extEncodeAll(component) );
 				
 				PreviewPanelMode previewMode = exp.getPreviewPanelMode();
 				if( exp.getEnablePreviewPanel() && exp.getPreviewPanelPosition() != PreviewPanelPosition.OFF ) {  
@@ -1346,7 +1351,7 @@ public class GridExplorer extends List {
 		public void decode(XUIComponentBase component) {
 			super.decode(component);
 			render.decode( component );
-			gridRenderer.decode( component );
+			gridRenderer.get().decode( component );
 		}
 		
 	}
