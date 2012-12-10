@@ -79,7 +79,7 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
     }
     
     public void addValidator( ExtConfig inpConfig ) {
-    	inpConfig.add( "validator", "function() { return this._xwcvalid; }" );
+    	inpConfig.add( "validator", "function() { if(typeof(this._xwcvalid) != 'undefined'){var r=this._xwcvalid;this._xwcvalid=true; return r;}else{return true;} }" );
     }
 	
     public ExtConfig getExtJsFieldListeners( AttributeBase oAtt ) {
