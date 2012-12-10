@@ -268,7 +268,14 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        		dataType = dataSource.getAttributeMetaData(groupByColumn).getDataType();	        
 	        	switch (dataType){
 	        		case DataFieldTypes.VALUE_CHAR: serviceParameterValues.add(sParent); break;
-	        		case DataFieldTypes.VALUE_NUMBER: serviceParameterValues.add(StringUtils.hasValue( sParent ) ? new BigDecimal(sParent) : null); break;
+	        		case DataFieldTypes.VALUE_NUMBER:
+	        			Column c = oGridPanel.getColumn( groupByColumn );
+	        			if (c.useValueOnLov())
+	        				serviceParameterValues.add(StringUtils.hasValue( sParent ) ? new BigDecimal(sParent) : null);
+	        			else{ //Special situation for Lov columns that are numeric columns
+	        				serviceParameterValues.add(sParent);
+	        			}
+	        			break;
 	        		case DataFieldTypes.VALUE_DATE:
 	        			Date result = boConvertUtils.convertToDate(sParent, null);
 	        			if (result != null){
