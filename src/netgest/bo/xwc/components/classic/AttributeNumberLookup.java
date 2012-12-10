@@ -387,7 +387,7 @@ public class AttributeNumberLookup extends AttributeBase {
 
         public String getClearCode( Form oForm, AttributeBase oAttr ) {
             if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
-	            return "XVW.AjaxCommand( '" + oAttr.getNamingContainerId() +  "','" + oAttr.getId() + "_clear','1');";
+	            return "XVW.AjaxCommand( '" + oAttr.getNamingContainerId() +  "','" + oAttr.getId() + "_clear','true');";
             }
             else {
             	return "Ext.ComponentMgr.get('" + getExtComponentId(oAttr) + "').setValue('');\n" + 
