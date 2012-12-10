@@ -163,6 +163,8 @@ public class Tabs extends XUIComponentBase implements NavigatableComponent
                 	bStateChanged = StateChanged.FOR_RENDER;
             }
         }
+        if (StateChanged.FOR_RENDER == bStateChanged)
+        	setDestroyOnClient( true );
         return bStateChanged;
     }
 
