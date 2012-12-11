@@ -572,7 +572,10 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 					q.setOrderByPart( term.getExpression() + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"") );
 				}
 				else {
-					q.setOrderByPart( "[" + term.getExpression() + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC]":"]") );
+					if ( createSubSelect )
+						q.setOrderByPart( "" );
+					else
+						q.setOrderByPart( "[" + term.getExpression() + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC]":"]") );
 				}
 				q.getOrderByPartParameters().clear();
 			}
@@ -652,13 +655,15 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 				fieldsOnSubSelect += agregateExp+ " as aggregate";	
 						
 				newsql = "SELECT \"GROUP\".\"" + dummyGroupBy + "\", count(*) as count " + fieldsOnSubSelect + " FROM (" + newsql + ") \"GROUP\"" +
-				 " GROUP BY \"" + dummyGroupBy +"\"" + 
-				 (outerSelectOrderBy!=null?" ORDER BY " + outerSelectOrderBy:"");				
+				 " GROUP BY \"" + dummyGroupBy +"\""
+				+ (outerSelectOrderBy!=null?" ORDER BY " + outerSelectOrderBy:"");
+				;
 				
 			} else {
 				newsql = "SELECT \"GROUP\".\"" + dummyGroupBy + "\", count(*) as count,'none' as aggregate FROM (" + newsql + ") \"GROUP\"" +
-				 " GROUP BY \"" + dummyGroupBy +"\"" + 
-				 (outerSelectOrderBy!=null?" ORDER BY " + outerSelectOrderBy:"");
+				 " GROUP BY \"" + dummyGroupBy +"\"" 
+			+  (outerSelectOrderBy!=null?" ORDER BY " + outerSelectOrderBy:"");
+				 ;
 			}
 			// END ML - Summary Fields
 			/*
