@@ -252,6 +252,13 @@ public class AttributeNumberLookup extends AttributeBase {
             ExtConfig oInpConfig = super.getExtJsFieldConfig(oComp);
 
 			boolean enableCardIdLink = oAttr.getEnableCardIdLink();
+			boolean readOnly		 = oAttr.isReadOnly();
+			boolean disabled		 = oAttr.isDisabled();
+            if ( enableCardIdLink && disabled ){
+            	disabled =  false;
+            	readOnly = true;
+            }
+			
 			sFormId = oComp.getNamingContainerId();
             oForm   = (Form)oComp.findComponent( sFormId );
 
@@ -263,11 +270,6 @@ public class AttributeNumberLookup extends AttributeBase {
             
             if( enableCardIdLink ) {
             	oInpConfig.addJSString("ctCls", "xeoObjectLink" );
-            }
-            
-            if (enableCardIdLink && oAttr.isDisabled()){
-            	oAttr.setDisabled("false");
-            	oAttr.setReadOnly("true");
             }
             
             
@@ -287,13 +289,10 @@ public class AttributeNumberLookup extends AttributeBase {
             
             
             
-            if( oAttr.isReadOnly() || !oAttr.getEffectivePermission(SecurityPermissions.WRITE)) {
+            if( readOnly || !oAttr.getEffectivePermission(SecurityPermissions.WRITE)) {
             	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
 	            oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
-	            if (enableCardIdLink)
-	            	oAttr.setReadOnly("true");
-	            else
-	            	oAttr.setDisabled("true");
+	       
             }
             else {
 	        	if ( !oAttr.getEffectivePermission(SecurityPermissions.DELETE))
@@ -328,11 +327,17 @@ public class AttributeNumberLookup extends AttributeBase {
             String              sFormId;
             Form                oForm;
 			
+			boolean enableCardIdLink = oAttr.getEnableCardIdLink();
+			boolean readOnly		 = oAttr.isReadOnly();
+			boolean disabled		 = oAttr.isDisabled();
+            if ( enableCardIdLink && disabled ){
+            	readOnly = true;
+            }
+            
             sFormId = oAttr.getNamingContainerId();
             oForm   = (Form)oAttr.findComponent( sFormId );
 			
 			AttributeNumberLookup oAttLk = (AttributeNumberLookup)oAttr;
-			boolean enableCardIdLink = oAttr.getEnableCardIdLink();
 
             ExtConfig oInpLsnr = super.getExtJsFieldListeners(oAttr);
             if( enableCardIdLink ) {
@@ -344,7 +349,7 @@ public class AttributeNumberLookup extends AttributeBase {
             }
             
             
-            if( !oAttr.isDisabled() && !oAttr.isReadOnly() ) {
+            if( !disabled && !readOnly ) {
 	            oInpLsnr.add("'keydown'", "function(f,e){ " +
 	            		"if(e.getKey()==13) {" +
 	            			XVWScripts.getAjaxCommandScript( oAttLk.getLookupCommand(),XVWScripts.WAIT_STATUS_MESSAGE ) +
@@ -366,8 +371,17 @@ public class AttributeNumberLookup extends AttributeBase {
 		
 		@Override
 		public ScriptBuilder getEndComponentScript(AttributeBase oComp) {
+			
+			AttributeNumberLookup oAttr = (AttributeNumberLookup)oComp;
 			ScriptBuilder sb = super.getEndComponentScript(oComp, false, true );
 			String sJsValue = String.valueOf( oComp.getValue() );
+			
+			boolean enableCardIdLink = oAttr.getEnableCardIdLink();
+			boolean disabled		 = oAttr.isDisabled();
+            if ( enableCardIdLink && disabled ){
+            	disabled =  false;
+            }
+			
 			if( oComp.isRenderedOnClient() ) {
 	        	if( "null".equals( sJsValue ) ) {
 	        		sJsValue = "NaN";
@@ -378,8 +392,7 @@ public class AttributeNumberLookup extends AttributeBase {
         	if( oComp.getStateProperty("visible").wasChanged() )
         		sb.w("c.setVisible(").writeValue( oComp.isVisible() ).w(")").endStatement();
         		
-        	if( oComp.getStateProperty("disabled").wasChanged() )
-        		sb.w("c.setDisabled(").writeValue( oComp.isDisabled() ).w(")").endStatement();
+    		sb.w("c.setDisabled(").writeValue( disabled ).w(")").endStatement();
 			
 			sb.endBlock();
 			return sb;
