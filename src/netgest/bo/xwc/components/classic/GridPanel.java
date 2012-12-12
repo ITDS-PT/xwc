@@ -587,18 +587,6 @@ public class GridPanel extends ViewerInputSecurityBase {
 		setRendered(true);
 	}
 
-	private boolean notForce = true;
-	
-	@Override
-	public void forceRenderOnClient() {
-		super.forceRenderOnClient();
-	}
-	
-	@Override
-	public boolean isRenderedOnClient() {
-		return super.isRenderedOnClient();
-	}
-	
 	/**
 	 * Return if the component is to be rendered on client
 	 */
