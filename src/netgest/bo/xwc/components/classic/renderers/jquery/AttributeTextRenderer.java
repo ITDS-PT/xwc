@@ -30,7 +30,7 @@ public class AttributeTextRenderer extends JQueryBaseRenderer {
 			addComponentScript( component );
 		}
 		
-		if (activeComponent.wasStateChanged() == StateChanged.FOR_RENDER)
+		if (activeComponent.wasStateChanged2() == StateChanged.FOR_RENDER)
 			addComponentScript( component );
     }
 

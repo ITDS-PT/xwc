@@ -52,8 +52,8 @@ public class TreePanelToolBar extends ViewerSecurityBase {
 
 
     @Override
-    public StateChanged wasStateChanged() {
-        if( super.wasStateChanged() == StateChanged.FOR_RENDER ) {
+    public StateChanged wasStateChanged2() {
+        if( super.wasStateChanged2() == StateChanged.FOR_RENDER ) {
             return StateChanged.FOR_RENDER;
         }
         return wasStateChangedOnChilds( this );
@@ -66,7 +66,7 @@ public class TreePanelToolBar extends ViewerSecurityBase {
         for (int i = 0; i < kids.size(); i++) {
             kid = kids.get( i );
             if( kid instanceof XUIComponentBase ) {
-                if( ((XUIComponentBase)kid).wasStateChanged() == StateChanged.FOR_RENDER ) {
+                if( ((XUIComponentBase)kid).wasStateChanged2() == StateChanged.FOR_RENDER ) {
                     ret = StateChanged.FOR_RENDER;
                     break;
                 }

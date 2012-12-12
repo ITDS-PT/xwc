@@ -151,8 +151,8 @@ public class Tabs extends XUIComponentBase implements NavigatableComponent
 	}
 
 	@Override
-    public StateChanged wasStateChanged() {
-        StateChanged bStateChanged = super.wasStateChanged();
+    public StateChanged wasStateChanged2() {
+        StateChanged bStateChanged = super.wasStateChanged2();
         if( bStateChanged  == StateChanged.NONE ) {
             Iterator<UIComponent> oChildsIt = this.getChildren().iterator();
             while( bStateChanged == StateChanged.NONE && oChildsIt.hasNext() ) {
@@ -207,6 +207,8 @@ public class Tabs extends XUIComponentBase implements NavigatableComponent
                     	w.writeAttribute(HTMLAttr.STYLE, "height:" + oTabs.getHeight(), null);
                     oChildTab.encodeAll();
                     w.endElement(HTMLTag.DIV);
+                } else {
+                	oChildTab.resetRenderedOnClient( );
                 }
             }
         }

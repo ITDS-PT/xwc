@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -36,6 +37,7 @@ import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.ScriptBuilder;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -239,6 +241,19 @@ public class AttributeNumberLookup extends AttributeBase {
 						initHoverBehaviorForFavorites);*/
             }
             
+		}
+		
+		@Override
+		public StateChanged wasStateChanged( XUIComponentBase component, List<XUIBaseProperty<?>> changedProperties ) {
+			StateChanged state = super.wasStateChanged( component, changedProperties );
+			if (state == StateChanged.FOR_UPDATE){
+				if (component.getStateProperty( "disabled" ).wasChanged()){
+					if (((AttributeNumberLookup) component).getEnableCardIdLink() ){
+						state = StateChanged.FOR_RENDER;
+					}
+				}
+			}
+			return state;
 		}
 		
 		@Override

@@ -144,7 +144,16 @@ public abstract class XUIComponentBase extends UIComponentBase
     
     private StateChanged changed = null;
     
-    public StateChanged wasStateChanged() {
+    public void setStateChange(StateChanged newState){
+    	changed = newState;
+    }
+    
+    @Deprecated
+    public boolean wasStateChanged(){
+    	return wasStateChanged2() == StateChanged.FOR_RENDER;
+    }
+    
+    public StateChanged wasStateChanged2() {
     	if (changed == null){
 	    	XUIRenderer renderer = (XUIRenderer ) getRenderer( getFacesContext() );
 	    	if (renderer != null)
@@ -547,12 +556,12 @@ public abstract class XUIComponentBase extends UIComponentBase
 	            newWriter.startDocument();
 	
 	        	if( getRenderComponent() ) {
-	        		this.isRenderedOnClient.setValue( true );
-	        		this._isRenderedOnClient = true;
 	        		if (!isRenderForUpdate())
 	        			super.encodeAll( context );
 	        		else
 	        			encodeUpdate(context, updatedProperties);
+	        		this._isRenderedOnClient = true;
+	        		this.isRenderedOnClient.setValue( true );
 	        	}
 	        	else {
 	        		this.isRenderedOnClient.setValue( false );
@@ -581,6 +590,7 @@ public abstract class XUIComponentBase extends UIComponentBase
     	else {
         	if( getRenderComponent() ) {
         		this.isRenderedOnClient.setValue( true );
+        		this._isRenderedOnClient = true;
         		super.encodeAll( context );
         	}
         	else {
@@ -951,50 +961,25 @@ public abstract class XUIComponentBase extends UIComponentBase
     		return false;
 	}
 	
-	protected void resetRenderOnClientChildren(boolean force){
-		List<UIComponent> children = getChildren();
+	private static void resetRenderOnClientChildren(UIComponent component){
+		if (component instanceof XUIComponentBase){
+			((XUIComponentBase)component).isRenderedOnClient.setValue( false );
+			((XUIComponentBase)component)._isRenderedOnClient = false;
+		}
+		List<UIComponent> children = component.getChildren();
 		for( UIComponent child : children ) 
 		{
-			if( child instanceof XUIComponentBase ) {
-				((XUIComponentBase)child).resetRenderedOnClient( force );
-			}
-			else
-				recursiveResetRenderedOnClient(child, force);
+			resetRenderOnClientChildren( child );
 		}
-		
-	}
+	} 
 	
 	public void resetRenderedOnClient(){
-		resetRenderedOnClient( false );
-	}
-	
-	public void resetRenderedOnClient(boolean forceReset) {
-		if (wasStateChanged() == StateChanged.FOR_RENDER || forceReset) {
-			this.isRenderedOnClient.setValue( false );
-			this._isRenderedOnClient = false;
-			resetRenderOnClientChildren(forceReset);
+		if (wasStateChanged2() == StateChanged.FOR_RENDER) {
+			resetRenderOnClientChildren(this);
 		}
 	}
 	
-	/**
-	 * 
-	 * Recursively calls the <code>resetRenderedOnClient()</code> method
-	 * on all children
-	 * 
-	 * @param oComponent The component to process
-	 */
-	private void recursiveResetRenderedOnClient(UIComponent oComponent, boolean force)
-	{
-		List<UIComponent> children = oComponent.getChildren();
-		for( UIComponent child : children ) 
-		{
-			if( child instanceof XUIComponentBase ) {
-				((XUIComponentBase)child).resetRenderedOnClient();
-			}
-			else
-				recursiveResetRenderedOnClient(child, force);
-		}
-	}
+	
 	
 	public void forceRenderOnClient() {
 		this.setDestroyOnClient(true);

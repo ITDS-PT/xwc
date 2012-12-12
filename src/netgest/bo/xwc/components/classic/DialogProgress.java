@@ -123,7 +123,7 @@ public class DialogProgress extends XUIComponentBase {
 	}
 
 	@Override
-	public StateChanged wasStateChanged() {
+	public StateChanged wasStateChanged2() {
 		return StateChanged.FOR_RENDER;
 	}
 

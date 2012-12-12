@@ -294,7 +294,7 @@ public class ToolBar extends ViewerSecurityBase {
             while( childs.hasNext() ) {
                 Menu oMenuChild = (Menu)childs.next();
                 if( oMenuChild.isRendered() ) {
-	            	if( oMenuChild.wasStateChanged() == StateChanged.FOR_RENDER ) {
+	            	if( oMenuChild.wasStateChanged2() == StateChanged.FOR_RENDER ) {
 	                	sb.startBlock();
 	                	generateUpdateScript(sb, oMenuChild );
 	                	sb.endBlock();

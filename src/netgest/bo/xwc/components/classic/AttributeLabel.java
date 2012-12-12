@@ -137,27 +137,37 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 		public ScriptBuilder getEndComponentScript(XUIComponentBase oComp) {
 			
 			ScriptBuilder s = null;
+			boolean addScript = false;	
 			
 			if( oComp.isRenderedOnClient() ) {
+				
 				AttributeLabel oAttrLabel = (AttributeLabel)oComp;
-	
 				s = new ScriptBuilder();
 				s.startBlock();
 				super.writeExtContextVar(s, oComp);
 			
-				if( oComp.getStateProperty("text").wasChanged() )
+				if( oComp.getStateProperty("text").wasChanged() ){
 					s.w( "c.setText('" ).writeValue( oAttrLabel.getText() ).l("');");
+					addScript = true;
+				}
 
-				if( oComp.getStateProperty("visible").wasChanged() )
+				if( oComp.getStateProperty("visible").wasChanged() ){
 					s.w( "c.setVisible(" ).writeValue( oAttrLabel.isVisible() ).l(");");
+					addScript = true;
+				}
 					
 				if( oComp.getStateProperty("recommended").wasChanged() || oComp.getStateProperty("modelRequired").wasChanged() ) {
 					s.s( "c.removeClass('xwc-form-recommended')");
 					s.s( "c.removeClass('xwc-form-required')");
 					s.w( "c.addClass('").w( getComponentClass(oAttrLabel) ).s("')");
+					addScript = true;
 				}
 				s.endBlock();
 			}
+			
+			if (!addScript)
+				s = null;
+			
 			return s;
 			
 		}

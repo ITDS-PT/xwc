@@ -170,8 +170,10 @@ public class XUIRenderer extends Renderer
     
     
     public boolean isRenderForUpdate(XUIComponentBase component){
-    	return component.wasStateChanged() == StateChanged.FOR_UPDATE;
+    	return component.wasStateChanged2() == StateChanged.FOR_UPDATE;
 	}
+    
+    
     
     public StateChanged wasStateChanged(XUIComponentBase component, List<XUIBaseProperty<?>> updateProperties) {
         
@@ -227,11 +229,19 @@ public class XUIRenderer extends Renderer
 	                    oRenderList.add( (XUIComponentBase)oKid );
 	            	}
 	            	else {
-	            		StateChanged change = ((XUIComponentBase)oKid).wasStateChanged(); 
-		                if( (change == StateChanged.FOR_RENDER
-		                		|| change == StateChanged.FOR_UPDATE)) {
-		                    oRenderList.add( (XUIComponentBase)oKid );
-		                    bChanged = true;                    
+	            		@SuppressWarnings( "deprecation" )
+						boolean oldStateChange = ( ( XUIComponentBase ) oKid ).wasStateChanged();
+	            		if (oldStateChange){ //Backward compatibility with components overriding old wasStateChange
+	            			oRenderList.add( (XUIComponentBase)oKid );
+		                    bChanged = true;
+		                    ( ( XUIComponentBase ) oKid ).setStateChange( StateChanged.FOR_RENDER );
+	            		} else {
+		            		StateChanged change = ((XUIComponentBase)oKid).wasStateChanged2(); 
+			                if( (change == StateChanged.FOR_RENDER
+			                		|| change == StateChanged.FOR_UPDATE)) {
+			                    oRenderList.add( (XUIComponentBase)oKid );
+			                    bChanged = true;                    
+			                } 
 		                }
 		                if( !bChanged ) {
 		                    ((XUIComponentBase)oKid).processStateChanged( oRenderList );    

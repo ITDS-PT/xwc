@@ -538,7 +538,8 @@ public class EditToolBar extends ToolBar {
 
 	public void preOrphanRender() {
 		boObject xeoObject = getTargetObject();
-		boolean isVisible;
+		boolean isVisible = isVisible();
+		boolean isDisabled = isDisabled();
 		for( int i=0; i < getChildren().size(); i++ ) {
 			UIComponent comp = getChild( i );
 			if( comp instanceof ModelMethod ) {
@@ -549,8 +550,9 @@ public class EditToolBar extends ToolBar {
 							isVisible 
 					)
 				);
+				
 				meth.setDisabled( 
-					Boolean.toString( XEOComponentStateLogic.isMethodDisabled(xeoObject, meth.getTargetMethod()) )
+					Boolean.toString( XEOComponentStateLogic.isMethodDisabled(xeoObject, meth.getTargetMethod()) && isDisabled )
 				);
 			}
 			else if( comp instanceof ViewerMethod ) {
@@ -567,7 +569,14 @@ public class EditToolBar extends ToolBar {
 							)
 					);
 				}
+			} 
+			else if( comp instanceof Menu ) {
+				Menu meth = (Menu)comp;
+				isVisible = isVisible();
+				meth.setVisible(  Boolean.toString( isVisible  ) );
+				meth.setDisabled( Boolean.toString( isDisabled ) );
 			}
+			
 		}
 	}
 	

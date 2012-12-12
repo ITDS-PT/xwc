@@ -237,7 +237,7 @@ public class XUIViewRoot extends UIViewRoot {
 			bChanged = false;
 			oKid = oKids.get(i);
 			if (oKid instanceof XUIComponentBase) {
-				StateChanged change = ((XUIComponentBase) oKid).wasStateChanged();
+				StateChanged change = ((XUIComponentBase) oKid).wasStateChanged2();
 				if (change == StateChanged.FOR_RENDER || change == StateChanged.FOR_UPDATE) {
 					oRenderList.add((XUIComponentBase) oKid);
 					bChanged = true;

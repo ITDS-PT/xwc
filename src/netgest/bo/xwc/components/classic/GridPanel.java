@@ -563,7 +563,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * Return if the component need's the rerendered of refreshed on the client side
 	 */
 	@Override
-	public StateChanged wasStateChanged() {
+	public StateChanged wasStateChanged2() {
 		return this.updateClientView ? StateChanged.FOR_RENDER : StateChanged.NONE;
 	}
 	
@@ -574,7 +574,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * @return true - if the grid only refresh data between server requests
 	 */
 	public boolean getOnlyRefreshData() {
-		return super.wasStateChanged() != StateChanged.NONE;
+		return super.wasStateChanged2() != StateChanged.NONE;
 	}
 	
 	/**
@@ -585,6 +585,18 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public void restoreState(Object state) {
 		super.restoreState(state);
 		setRendered(true);
+	}
+
+	private boolean notForce = true;
+	
+	@Override
+	public void forceRenderOnClient() {
+		super.forceRenderOnClient();
+	}
+	
+	@Override
+	public boolean isRenderedOnClient() {
+		return super.isRenderedOnClient();
 	}
 	
 	/**
@@ -1538,7 +1550,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	/**
 	 * When set to true the defaul, the grid reload the the data after a server request.
-	 * When false the method reloadData must be called to force the data be refreshed
+	 * When false the method reloadData must be called to notForce the data be refreshed
 	 * 
 	 * @param elexpression a {@link ValueExpression} return a boolean value
 	 */
@@ -1548,7 +1560,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	/**
 	 * When set to true the defaul, the grid reload the the data after a server request.
-	 * When false the method reloadData must be called to force the data be refreshed
+	 * When false the method reloadData must be called to notForce the data be refreshed
 	 * 
 	 * @param autoReload true / false
 	 */
@@ -1652,7 +1664,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	}
 	
 	/**
-	 * Return if the columns are in force fit mode to the width of the GridPanel
+	 * Return if the columns are in notForce fit mode to the width of the GridPanel
 	 * @return true/false
 	 */
 	public boolean getForceColumnsFitWidth() {

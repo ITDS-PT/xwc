@@ -357,7 +357,7 @@ public class Attribute extends AttributeBase
     }
 
     @Override
-    public StateChanged wasStateChanged() {
+    public StateChanged wasStateChanged2() {
         return StateChanged.NONE;
     }
 

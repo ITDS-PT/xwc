@@ -59,7 +59,11 @@ public class AttributeLov extends AttributeBase {
 		
 	}
 	
-	
+	@Override
+	@Deprecated
+	public boolean wasStateChanged() {
+		return true;
+	}
     
     
     @Override
@@ -74,6 +78,7 @@ public class AttributeLov extends AttributeBase {
     	public String getExtComponentType( XUIComponentBase oComp ) {
     		return "Ext.form.ComboBox";
     	}
+    	
     	
     	@Override
         public ExtConfig getExtJsFieldConfig( AttributeBase oComp ) {
@@ -128,13 +133,9 @@ public class AttributeLov extends AttributeBase {
     		
     		ScriptBuilder s = new ScriptBuilder(); 
     		
-    		Map<Object,String> map = oComp.getLovMap();
     		
     		String jsValue = JavaScriptUtils.writeValue( oComp.getValue() );
 
-    		if( jsValue.length() == 0 && map != null && map.size() > 0 ) {
-    			jsValue = JavaScriptUtils.writeValue( map.keySet().iterator().next() );
-    		}
     		if( oComp.isRenderedOnClient() ) {
         		s.startBlock();
         		writeExtContextVar(s, oComp);

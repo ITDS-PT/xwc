@@ -23,7 +23,7 @@ public class BridgeMethod extends ViewerMethod {
 		return false;
 	}
 	
-	public StateChanged wasStateChanged(){
+	public StateChanged wasStateChanged2(){
 		//Had to do this to force it to re-render
 		return StateChanged.FOR_RENDER;
 	}

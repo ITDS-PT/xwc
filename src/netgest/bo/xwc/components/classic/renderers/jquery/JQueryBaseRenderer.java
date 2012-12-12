@@ -35,7 +35,7 @@ public class JQueryBaseRenderer extends XUIRenderer {
 	 * @return True if the component should be updated 
 	 */
 	protected boolean shouldUpdate(XUIComponentBase component){
-		return !component.isRenderedOnClient() || component.wasStateChanged() == StateChanged.FOR_RENDER;
+		return !component.isRenderedOnClient() || component.wasStateChanged2() == StateChanged.FOR_RENDER;
 	}
 	
 	/**

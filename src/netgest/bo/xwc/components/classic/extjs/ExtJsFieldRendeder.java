@@ -164,7 +164,7 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
         		s.w("if(c.setReadOnly) c.setReadOnly(").w( !oComp.isReadOnly() ).w(")").endStatement();
         	
         	
-    	}
+    }
         boolean valid = oComp.getIsValid();
         if (!valid){
         	String invalidText = oComp.getInvalidText();
@@ -186,7 +186,7 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
     }
     
     public void writeExtContextVar( ScriptBuilder s, AttributeBase oAttr ) {
-    	s.w( "var c = " ).w( "Ext.ComponentMgr.get('" ).w( getExtComponentId( oAttr ) ).w( "')" ).endStatement();
+    	s.w( "var c = " ).w( "Ext.getCmp('" ).w( getExtComponentId( oAttr ) ).w( "')" ).endStatement();
     }
     
 

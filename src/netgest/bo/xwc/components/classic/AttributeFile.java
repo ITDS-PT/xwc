@@ -147,17 +147,7 @@ public class AttributeFile extends AttributeBase {
     public static class XEOHTMLRenderer extends ExtJsFieldRendeder implements XUIRendererServlet {
 
     	
-    	@Override
-		public void encodeEnd(XUIComponentBase oComp) throws IOException {
-    		
-    		if( oComp.getStateProperty("readOnly").wasChanged() ) {
-    			oComp.setDestroyOnClient( true );
-    			oComp.setRenderedOnClient( false );
-    		}
-    		
-			super.encodeEnd(oComp);
-		}
-
+    	
 		@Override
     	public String getExtComponentType( XUIComponentBase oComp ) {
     		
@@ -204,6 +194,7 @@ public class AttributeFile extends AttributeBase {
             oInpConfig.add("hideTrigger1", false);
             oInpConfig.addJSString("cls", "xwc-att-file" );
             oInpConfig.addJSString("ctCls", "xeoObjectLink" );
+            oInpConfig.add( "disabled" , oAttFile.isDisabled() );
             
             oInpConfig.add("maxLength", "500" );
             

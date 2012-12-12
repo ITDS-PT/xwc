@@ -78,7 +78,7 @@ public class ErrorMessages extends XUIComponentBase {
 	}
 
     @Override
-    public StateChanged wasStateChanged() {
+    public StateChanged wasStateChanged2() {
         boolean bRet;
         bRet = getRequestContext().getMessages().hasNext();
         bRet = bRet || getFacesContext().getMessages().hasNext(); 

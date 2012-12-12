@@ -31,7 +31,7 @@ public class AttributeDateRenderer extends JQueryBaseRenderer {
 			addComponentScript( component );
 		}
 		
-		if (dateComponent.wasStateChanged() == StateChanged.FOR_RENDER)
+		if (dateComponent.wasStateChanged2() == StateChanged.FOR_RENDER)
 			addComponentScript( component );
     }
 

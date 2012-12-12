@@ -174,6 +174,6 @@ public abstract class ExtJsBaseRenderer extends XUIRenderer implements ExtJsRend
     }
     
     public void writeExtContextVar( ScriptBuilder s, XUIComponentBase oAttr ) {
-    	s.w( "var c = " ).w( "Ext.ComponentMgr.get('" ).w( getExtComponentId( oAttr ) ).w( "')" ).endStatement();
+    	s.w( "var c = " ).w( "Ext.getCmp('" ).w( getExtComponentId( oAttr ) ).w( "')" ).endStatement();
     }
 }
