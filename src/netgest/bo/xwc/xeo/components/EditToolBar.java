@@ -552,7 +552,7 @@ public class EditToolBar extends ToolBar {
 				);
 				
 				meth.setDisabled( 
-					Boolean.toString( XEOComponentStateLogic.isMethodDisabled(xeoObject, meth.getTargetMethod()) && isDisabled )
+					Boolean.toString( XEOComponentStateLogic.isMethodDisabled(xeoObject, meth.getTargetMethod()) || isDisabled )
 				);
 			}
 			else if( comp instanceof ViewerMethod ) {
@@ -570,12 +570,6 @@ public class EditToolBar extends ToolBar {
 					);
 				}
 			} 
-			else if( comp instanceof Menu ) {
-				Menu meth = (Menu)comp;
-				isVisible = isVisible();
-				meth.setVisible(  Boolean.toString( isVisible  ) );
-				meth.setDisabled( Boolean.toString( isDisabled ) );
-			}
 			
 		}
 	}
