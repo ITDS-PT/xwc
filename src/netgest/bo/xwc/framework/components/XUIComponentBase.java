@@ -589,9 +589,9 @@ public abstract class XUIComponentBase extends UIComponentBase
     	}
     	else {
         	if( getRenderComponent() ) {
+        		super.encodeAll( context );
         		this.isRenderedOnClient.setValue( true );
         		this._isRenderedOnClient = true;
-        		super.encodeAll( context );
         	}
         	else {
         		this.isRenderedOnClient.setValue( false );
