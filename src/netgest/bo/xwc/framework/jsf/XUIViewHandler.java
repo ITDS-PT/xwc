@@ -51,6 +51,7 @@ import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUIViewBean;
 import netgest.bo.xwc.framework.annotations.XUIWebCommand;
 import netgest.bo.xwc.framework.annotations.XUIWebDefaultCommand;
@@ -294,10 +295,12 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     public UIViewRoot restoreView(FacesContext context, String viewId ) {
         return restoreView( context, viewId, null );
     }
+    
     public UIViewRoot restoreView(FacesContext context, String viewId, Object savedId ) {
+    	
+    	XUIRequestContext requestContext = XUIRequestContext.getCurrentContext();
+    	
         ExternalContext extContext = context.getExternalContext();
-
-        
         if( viewId.startsWith("/") ) {
         	viewId = viewId.substring(1);
         }
@@ -370,7 +373,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             String sTransactionId = viewRoot.getTransactionId();
             
             if( sTransactionId != null ) {
-                XTransaction oTransaction = XUIRequestContext.getCurrentContext().getTransactionManager().getTransaction( sTransactionId );
+                XTransaction oTransaction = requestContext.getTransactionManager().getTransaction( sTransactionId );
                 if( oTransaction != null ) {
                 	oTransaction.activate();
                 }
@@ -386,6 +389,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             
             
         }
+        
+        requestContext.setAttribute( XUISessionContext.RESTORED_VIEWS_PREFIX + viewRoot.getViewState(), viewRoot );
+        
         return viewRoot;
     }
 

@@ -309,14 +309,14 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
         	FacesContext context = FacesContext.getCurrentInstance();
             ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
             MethodExpression m = oExFactory.createMethodExpression( 
-            		context.getELContext(), 
+            		component.getELContext(), 
             		"#{" + beanId + "." + method + "}", 
             		String.class,
             		QUERY_ARGUMENTS                    		
             		
             );
     		sql = ( String ) m.invoke(
-    					context.getELContext() , 
+    				component.getELContext() , 
     					new Object[] {
     						objectName,
     						attributeName,

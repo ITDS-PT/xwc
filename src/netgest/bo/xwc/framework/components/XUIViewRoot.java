@@ -2,11 +2,13 @@ package netgest.bo.xwc.framework.components;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.el.ELContext;
 import javax.el.MethodExpression;
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
@@ -31,6 +33,7 @@ import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
 import netgest.bo.xwc.components.classic.theme.JQueryTheme;
+import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -38,6 +41,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
+import netgest.bo.xwc.framework.jsf.XUIPhaseEvent;
 import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl;
 
 import com.lowagie.text.html.HtmlTags;
@@ -73,7 +77,6 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 
 	public XUIViewRoot() {
-		super();
 		if ("XEOHTML".equals(getRenderKitId()))
 			oTheme = new ExtJsTheme();
 		else if ("XEOJQUERY".equals(getRenderKitId()))
@@ -103,9 +106,29 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 
 	public void addBean(String sBeanName, Object oBean) {
-		this.sBeanIds += "|" + sBeanName;
+		if( this.sBeanIds != null && this.sBeanIds.length() > 0 ) {
+			this.sBeanIds += "|";
+		}
+		this.sBeanIds += sBeanName;
 		XUIRequestContext.getCurrentContext().getSessionContext().setAttribute(
 				getBeanPrefix() + sBeanName, oBean);
+	}
+	
+	public String[] getBeanIds() {
+		
+		if( this.sBeanIds == null )
+			return null;
+		
+		return this.sBeanIds.split("\\|");
+		
+	}
+	
+	public Map<String,Object> getViewBeans() {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		for( String beanId : getBeanIds() ) {
+			map.put( beanId , getBean( beanId ) );
+		}
+		return map;
 	}
 
 	public void dispose() {
@@ -154,7 +177,7 @@ public class XUIViewRoot extends UIViewRoot {
 	    	}
 		}
 		
-		//_renderKit = "XEOJQUERY"; 
+		_renderKit = "XEOJQUERY"; 
 		
     	return _renderKit; 
     } 
@@ -266,7 +289,7 @@ public class XUIViewRoot extends UIViewRoot {
 		}
 	}
 
-	public XUIComponentBase findComponent(Class cType) {
+	public XUIComponentBase findComponent(Class<?> cType) {
 		List<UIComponent> list;
 		XUIComponentBase oComp;
 
@@ -295,7 +318,7 @@ public class XUIViewRoot extends UIViewRoot {
 		return oComp;
 	}
 	
-	private XUIComponentBase findComponent(UIComponent current, Class cType )
+	private XUIComponentBase findComponent(UIComponent current, Class<?> cType )
 	{
 		XUIComponentBase oComp = null;
 		if (current != null)
@@ -364,7 +387,7 @@ public class XUIViewRoot extends UIViewRoot {
 
 	public void processInitComponents() {
 		// Process all facets and children of this component
-		Iterator kids = getFacetsAndChildren();
+		Iterator<UIComponent> kids = getFacetsAndChildren();
 		while (kids.hasNext()) {
 			UIComponent kid = (UIComponent) kids.next();
 			if (kid instanceof UIComponent) {
@@ -377,7 +400,7 @@ public class XUIViewRoot extends UIViewRoot {
 
 	public void processValidateModel() {
 		// Process all facets and children of this component
-		Iterator kids = getFacetsAndChildren();
+		Iterator<UIComponent> kids = getFacetsAndChildren();
 		while (kids.hasNext()) {
 			UIComponent kid = (UIComponent) kids.next();
 			if (kid instanceof XUIComponentBase) {
@@ -388,7 +411,7 @@ public class XUIViewRoot extends UIViewRoot {
 
 	public void processPreRender() {
 		// Process all facets and children of this component
-		Iterator kids = getFacetsAndChildren();
+		Iterator<UIComponent> kids = getFacetsAndChildren();
 		while (kids.hasNext()) {
 			UIComponent kid = (UIComponent) kids.next();
 			if (kid instanceof UIComponent) {
@@ -720,48 +743,56 @@ public class XUIViewRoot extends UIViewRoot {
 		boolean hasPhaseMethodExpression = (isBefore && (null != getBeforePhaseListener()))
 				|| (!isBefore && (null != getAfterPhaseListener()));
 		MethodExpression expression = isBefore ? getBeforePhaseListener() : getAfterPhaseListener();
-
-		if (hasPhaseMethodExpression) {
-			try {
-				expression.invoke(context.getELContext(),
-						new Object[] { event });
-				skipPhase = context.getResponseComplete()
-						|| context.getRenderResponse();
-			} catch (Exception e) {
-				// PENDING(edburns): log this
-			}
-		}
 		
-		List<PhaseListener> phaseListeners;
-		
+		XUIRequestContext.getCurrentContext().setPhaseEvent( new XUIPhaseEvent(this, event ) );
 		try {
-			if( phaseListenersField == null ) {
-				phaseListenersField = UIViewRoot.class.getDeclaredField("phaseListeners");
-				phaseListenersField.setAccessible( true );
+
+			if (hasPhaseMethodExpression) {
+				try {
+					expression.invoke(getELContext(),
+							new Object[] { event });
+					skipPhase = context.getResponseComplete()
+							|| context.getRenderResponse();
+				} catch (Exception e) {
+					// PENDING(edburns): log this
+				}
 			}
-			phaseListeners = (List<PhaseListener>)phaseListenersField.get( this );
-		} catch (Exception e1) {
-			throw new RuntimeException(e1);
-		}
-		
-		if (null != phaseListeners) {
 			
-			for (PhaseListener curFacesListener : phaseListeners ) {
-				PhaseListener curListener = (PhaseListener)curFacesListener;
-				if (phaseId == curListener.getPhaseId()
-						|| PhaseId.ANY_PHASE == curListener.getPhaseId()) {
-					try {
-						if (isBefore) {
-							curListener.beforePhase(event);
-						} else {
-							curListener.afterPhase(event);
+			List<PhaseListener> phaseListeners;
+			
+			try {
+				if( phaseListenersField == null ) {
+					phaseListenersField = UIViewRoot.class.getDeclaredField("phaseListeners");
+					phaseListenersField.setAccessible( true );
+				}
+				phaseListeners = (List<PhaseListener>)phaseListenersField.get( this );
+			} catch (Exception e1) {
+				throw new RuntimeException(e1);
+			}
+			
+			if (null != phaseListeners) {
+				
+				for (PhaseListener curFacesListener : phaseListeners ) {
+					PhaseListener curListener = (PhaseListener)curFacesListener;
+					if (phaseId == curListener.getPhaseId()
+							|| PhaseId.ANY_PHASE == curListener.getPhaseId()) {
+						try {
+							if (isBefore) {
+								curListener.beforePhase(event);
+							} else {
+								curListener.afterPhase(event);
+							}
+							skipPhase = context.getResponseComplete();
+						} catch (Exception e) {
+							// PENDING(edburns): log this
 						}
-						skipPhase = context.getResponseComplete();
-					} catch (Exception e) {
-						// PENDING(edburns): log this
 					}
 				}
 			}
+		}
+		finally {
+			XUIRequestContext.getCurrentContext()
+				.setPhaseEvent(null);
 		}
 	}
 	
@@ -782,7 +813,33 @@ public class XUIViewRoot extends UIViewRoot {
 		return (new PhaseEvent(context, phaseId, lifecycle));
 
 	}
+
+	public ELContext getELContext() {
+        return new XUIELContextWrapper( getFacesContext().getELContext() , this );
+    }
+
+    
+    @Override
+    public void processApplication(FacesContext context) {
+    	
+    	processApplicationOnChildViews(context, this.getFacetsAndChildren() );
+    	
+    	super.processApplication(context);
+    }
 	
-	
+    private void processApplicationOnChildViews( FacesContext context, Iterator<UIComponent> components ) {
+		for( ; components.hasNext(); ) {
+			
+			UIComponent child = components.next();
+			
+	    	if( child instanceof UIViewRoot ) {
+	    		((UIViewRoot)child).processApplication( context );
+	    	}
+	    	else {
+    			processApplicationOnChildViews( context, child.getFacetsAndChildren() );
+	    	}
+    	}
+    }
+    
 
 }

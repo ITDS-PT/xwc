@@ -7,7 +7,7 @@
                 <xvw:columns>
                     <xvw:columnAttribute width='150' dataField='username' align='left'/>
                     <xvw:columnAttribute width='300' dataField='name'/>
-                    <xvw:columnAttribute width='80' dataField='user_language' />
+                    <xvw:editableColumnAttribute width='80' dataField='name' objectAttribute='name' />
                     <xvw:columnAttribute width='80' dataField='iProfile' />
                     <xvw:columnAttribute width='80' dataField='situacao' />
                 </xvw:columns>

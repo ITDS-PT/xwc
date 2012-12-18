@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import netgest.bo.transaction.XTransactionManager;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
+import netgest.bo.xwc.framework.jsf.XUIPhaseEvent;
 import netgest.bo.xwc.framework.jsf.XUIViewHandlerImpl;
 
 import com.sun.faces.io.FastStringWriter;
@@ -46,6 +47,7 @@ public class XUIRequestContext {
     private XTransactionManager     oTransactionManager;
 
     private XUIActionEvent          oEvent;
+    private XUIPhaseEvent			oPhaseEvent;
 
     private LinkedHashMap<String, XUIMessage> oMessages;
 
@@ -275,6 +277,14 @@ public class XUIRequestContext {
 
     public XUIActionEvent getEvent() {
         return oEvent;
+    }
+
+    public void setPhaseEvent(XUIPhaseEvent oPhaseEvent) {
+        this.oPhaseEvent = oPhaseEvent;
+    }
+
+    public XUIPhaseEvent getPhaseEvent() {
+        return oPhaseEvent;
     }
 
     public void renderResponse() {

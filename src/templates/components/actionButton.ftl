@@ -8,7 +8,7 @@
 	 $(function() { 
 	 
 	 	<#-- Add The Javascript to create the button -->
-	 	$( '#${this.id}_btn' ).button().click( function () { ${XVWScripts.getAjaxCommand(this)}; return false; })
+	 	$( '#${this.id}_btn' ).button().click( function () { ${XVWScripts.getCommand(this.target, this)}; return false; })
 	 		<#if this.disabled>
 	 			.attr('disabled', 'disabled') 
 	 		<#else>	

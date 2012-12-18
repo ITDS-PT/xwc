@@ -25,6 +25,8 @@
             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.ToolBar$XEOHTMLRenderer</xwc:render>
 
             <xwc:render for='attribute'>netgest.bo.xwc.components.classic.Attribute$XEOHTMLRenderer</xwc:render>
+            
+            
             <xwc:render for='attributeText'>netgest.bo.xwc.components.classic.AttributeText$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeTextArea'>netgest.bo.xwc.components.classic.AttributeTextArea$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeLabel'>netgest.bo.xwc.components.classic.AttributeLabel$XEOHTMLRenderer</xwc:render>
@@ -107,6 +109,9 @@
 			<xwc:render for='lineChart'>netgest.bo.xwc.components.classic.charts.LineChart$XEOHTMLRenderer</xwc:render>
 	
             <xwc:render for='attribute'>netgest.bo.xwc.components.classic.Attribute$XEOHTMLRenderer</xwc:render>
+            
+            <xwc:render for='editableColumnAttribute'>netgest.bo.xwc.components.classic.grid.EditableColumnAttribute$XEOHTMLRenderer</xwc:render>
+            
             <xwc:render for='attributeText'>netgest.bo.xwc.components.classic.AttributeText$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeTextArea'>netgest.bo.xwc.components.classic.AttributeTextArea$XEOHTMLRenderer</xwc:render>
             <xwc:render for='attributeLabel'>netgest.bo.xwc.components.classic.AttributeLabel$XEOHTMLRenderer</xwc:render>
@@ -182,6 +187,9 @@
             <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.renderers.jquery.ErrorMessagesRenderer</xwc:render>
             <xwc:render for="form">netgest.bo.xwc.components.classic.Form$XEOHTMLRenderer</xwc:render>
             <xwc:render for='panel'>netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
+            
+			<xwc:render for='templateInclude'>netgest.bo.xwc.components.classic.TemplateInclude$XEOHTMLRenderer</xwc:render>            
+            
             <!-- <xwc:render for='panel'>netgest.bo.xwc.components.classic.renderers.jquery.PanelRenderer</xwc:render>-->
             
 			<xwc:render for='advancedPanel'>netgest.bo.xwc.components.classic.AdvancedPanel$XEOHTMLRenderer</xwc:render>
@@ -704,6 +712,11 @@
             <xwc:description>Attribute</xwc:description>
         </xwc:component>
 
+        <xwc:component name='editableColumnAttribute'>
+            <xwc:className>netgest.bo.xwc.components.classic.grid.EditableColumnAttribute</xwc:className>
+            <xwc:description>EditableColumnAttribute</xwc:description>
+        </xwc:component>
+
         <xwc:component name='requestAction'>
             <xwc:className>netgest.bo.xwc.components.model.RequestAction</xwc:className>
             <xwc:description>Attribute</xwc:description>
@@ -827,6 +840,10 @@
             <xwc:description>Flat Tree Panel</xwc:description>
         </xwc:component>
         
+        <xwc:component name='templateInclude'>
+            <xwc:className>netgest.bo.xwc.components.classic.TemplateInclude</xwc:className>
+            <xwc:description>Include for templates</xwc:description>
+        </xwc:component>
 
     </xwc:components>
     
@@ -975,9 +992,6 @@
             <xwc:description>Renders a UIComponent that represents a single column of data within a parent UIData component.</xwc:description>
         </xwc:component>
         
-        
-        
-        
     </xwc:components>
     
     <!-- ********************** XEO Components *************************** -->
@@ -1098,10 +1112,12 @@
             <xwc:className>netgest.bo.xwc.xeo.components.SplitedLookup</xwc:className>
             <xwc:description>A lookup component that allows searching by a given key</xwc:description>
         </xwc:component>
+        
         <xwc:component name='menuCounter'>
             <xwc:className>netgest.bo.xwc.xeo.components.MenuCounter</xwc:className>
             <xwc:description>An outlook style menu counter (think unread messages)</xwc:description>
         </xwc:component>
+        
     </xwc:components>
     
 </xwc:config>

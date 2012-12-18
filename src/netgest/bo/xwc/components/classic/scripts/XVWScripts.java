@@ -357,7 +357,7 @@ public class XVWScripts {
         oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_HEADER, 
         		"SetTitle",
         		"XVW.setTitle('" + 
-        		JavaScriptUtils.safeJavaScriptWrite( sTitle, '\'') +
+        				JavaScriptUtils.safeJavaScriptWrite( sTitle, '\'') +
         		"');"
         	);
     }

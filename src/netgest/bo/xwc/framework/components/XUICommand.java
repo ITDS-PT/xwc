@@ -164,7 +164,7 @@ public class XUICommand extends XUIComponentBase implements ActionSource2 {
         ValueExpression ve = getValueExpression("immediate");
         if (ve != null) {
             try {
-                return (Boolean.TRUE.equals(ve.getValue(getFacesContext().getELContext())));
+                return (Boolean.TRUE.equals(ve.getValue(getELContext())));
             } catch (ELException e) {
                 throw new FacesException(e);
             }
@@ -194,7 +194,7 @@ public class XUICommand extends XUIComponentBase implements ActionSource2 {
         ValueExpression ve = getValueExpression("value");
         if (ve != null) {
             try {
-                return (ve.getValue(getFacesContext().getELContext()));
+                return (ve.getValue(getELContext()));
             } catch (ELException e) {
                 throw new FacesException(e);
             }

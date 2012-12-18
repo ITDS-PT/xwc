@@ -2,25 +2,41 @@ package netgest.bo.xwc.framework;
 
 import javax.el.ELContext;
 import javax.el.ValueExpression;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
 
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class XUIBindProperty<V> extends XUIBaseProperty<Object> {
     
-    @SuppressWarnings("unchecked")
-	private Class              cValueType    = null;
+	private 			Class<?>        cValueType    = null;
+    private transient 	UIViewRoot   viewContainer = null;
     
-    public XUIBindProperty( String sPropertyName, XUIComponentBase oComponent, Class cValueType ) {
+    public UIViewRoot getViewContainer() {
+    	if( this.viewContainer == null ) {
+    		UIComponent parent = this.getComponent().getParent();
+    		while( parent != null ) {
+	    		if( parent instanceof UIViewRoot ) {
+	    			this.viewContainer  = (UIViewRoot)parent;
+	    			break;
+	    		}
+	    		parent = parent.getParent();
+    		}
+    	}
+    	return this.viewContainer;
+    }
+    
+    public XUIBindProperty( String sPropertyName, XUIComponentBase oComponent, Class<?> cValueType ) {
         super( sPropertyName, oComponent );
         this.cValueType = cValueType;
     }
 
-    public XUIBindProperty( String sPropertyName, XUIComponentBase oComponent, Class cValueType, String sExpressionString ) {
+    public XUIBindProperty( String sPropertyName, XUIComponentBase oComponent, Class<?> cValueType, String sExpressionString ) {
         super( sPropertyName, oComponent, sExpressionString==null?null:oComponent.createValueExpression( sExpressionString, cValueType ) );
         this.cValueType = cValueType;
     }
 
-    public XUIBindProperty( String sPropertyName, XUIComponentBase oComponent, V oDefaultValue, Class cValueType ) {
+    public XUIBindProperty( String sPropertyName, XUIComponentBase oComponent, V oDefaultValue, Class<?> cValueType ) {
         super( sPropertyName, oComponent, oDefaultValue );
         this.cValueType = cValueType;
     }
@@ -96,7 +112,6 @@ public class XUIBindProperty<V> extends XUIBaseProperty<Object> {
 	            else {
 	            	ELContext elCtx = getComponent().getELContext();
 	                oRetValue = (V)oValExpr.getValue( elCtx );
-	                
 	            }
         	}
         	else {
@@ -124,7 +139,6 @@ public class XUIBindProperty<V> extends XUIBaseProperty<Object> {
         }
         return oRetValue;
     }
-
     
     public boolean isLiteralText() {
         Object oValue = getValue();

@@ -167,7 +167,7 @@ public class ExtJsTheme implements XUITheme {
 		// Extjs
 		JavaScriptIncluder scriptIncluder = createScriptIncluder( scriptContext, getCurrentBuildVersion() );
 		scriptIncluder.includeRegular( "ext-base", getResourceBaseUri() + "adapter/ext/ext-base.js" );
-		scriptIncluder.includeRegular( "ext-all", getResourceBaseUri() + "ext-all.js" );
+		scriptIncluder.includeRegular( "ext-all", getResourceBaseUri() + "ext-all-debug.js" );
 		// xwc
 		
 		scriptIncluder.include( "xwc-core", "xwc/js/xwc-core.js" );

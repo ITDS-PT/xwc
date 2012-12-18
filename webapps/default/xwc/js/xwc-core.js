@@ -359,30 +359,31 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         // View Element may be obsolet because it may be overwritten when applying outerHTML.
         // Refresh the element reference.
         oViewDiv = document.getElementById( sViewId );
+        
+        var oViewForms = oViewDiv.getElementsByTagName( 'form' );
 
-        var oStateNodes = oVStateNodeList.item(nl2).getElementsByTagName( 'input' );
-        for( var i=0; i < oStateNodes.length; i++ ) {
-            var oStateNode = oStateNodes.item(i);
-            var oStateId = oStateNode.getAttribute("id");
-            var sStateVal = oStateNode.getAttribute("value");
-            
-            //var oStateDNode = document.getElementById( oStateId );
-            var oStateDNode = XVW.getViewInputById( sViewId, oStateId );
-            if( oStateDNode != null ) {
-                oStateDNode.value = sStateVal;
-            }
-            else {
-                oStateDNode = document.createElement( "input" );
-                oStateDNode.type = 'hidden';
-                oStateDNode.id = oStateId;
-                oStateDNode.name = oStateId;
-                oStateDNode.value = sStateVal;
-                var oVwForm = oViewDiv.getElementsByTagName("form");
-                try {
-                	oVwForm[ 0 ].appendChild( oStateDNode );
-                } catch(e) {}
-            }
-        }            
+        for( var z=0; z < oViewForms.length; z++ ) {
+	        var oStateNodes = oVStateNodeList.item(nl2).getElementsByTagName( 'input' );
+	        for( var i=0; i < oStateNodes.length; i++ ) {
+	            var oStateNode = oStateNodes.item(i);
+	            var oStateId = oStateNode.getAttribute("id");
+	            var sStateVal = oStateNode.getAttribute("value");
+	            
+	            //var oStateDNode = document.getElementById( oStateId );
+	            var oStateDNode = XVW.getViewInputById( oViewForms[z], oStateId );
+	            if( oStateDNode != null ) {
+	                oStateDNode.value = sStateVal;
+	            }
+	            else {
+	                oStateDNode = document.createElement( "input" );
+	                oStateDNode.type = 'hidden';
+	                oStateDNode.id = oStateId;
+	                oStateDNode.name = oStateId;
+	                oStateDNode.value = sStateVal;
+                	oViewForms[z].appendChild( oStateDNode );
+	            }
+	        }
+        }
     }        
 
     // Handle footer Scripts - Run footer scripts

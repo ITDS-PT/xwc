@@ -111,7 +111,7 @@ public class XUIForm extends XUICommand implements NamingContainer {
 	ValueExpression ve = getValueExpression("prependId");
 	if (ve != null) {
 	    try {
-		return (Boolean.TRUE.equals(ve.getValue(getFacesContext().getELContext())));
+		return (Boolean.TRUE.equals(ve.getValue(getELContext())));
 	    }
 	    catch (ELException e) {
 		throw new FacesException(e);
