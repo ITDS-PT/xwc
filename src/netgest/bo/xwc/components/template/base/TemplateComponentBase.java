@@ -32,7 +32,7 @@ public class TemplateComponentBase extends XUIComponentBase {
 	 * 
 	 * @param templateNameExpr The template name or expression
 	 */
-	public void setTemplate(String templateNameExpr){
+	public void setTemplateForSearch(String templateNameExpr){
 		this.template.setExpressionText( templateNameExpr );
 	}
 	
@@ -42,7 +42,7 @@ public class TemplateComponentBase extends XUIComponentBase {
 	 * 
 	 * @return The name of the template as a String
 	 */
-	public String getTemplate(){
+	public String getTemplateForSearch(){
 		return template.getEvaluatedValue();
 	}
 	

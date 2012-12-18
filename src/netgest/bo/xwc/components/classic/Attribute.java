@@ -179,6 +179,7 @@ public class Attribute extends AttributeBase
                         		sRet = "attributeNumberLookup";
                         	else
                         		sRet = "attributeSearchLookup";
+                        	sRet = "attributeAutoComplete";
                             break;
                     }
                     break;
@@ -317,11 +318,16 @@ public class Attribute extends AttributeBase
         if( getValueExpression("displayValue") != null )
             oAttr.setDisplayValue( getValueExpression("displayValue").getExpressionString() );
         
+        if( getValueExpression("lookupQuery") != null )
+            oAttr.setLookupQuery( getValueExpression("lookupQuery").getExpressionString() );
+        
         XUIMethodBindingValueChangeListener[] valueChangeListener  = 
         	(XUIMethodBindingValueChangeListener[]) getFacesListeners( XUIMethodBindingValueChangeListener.class );
         for (int i = 0; i < valueChangeListener.length; i++) {
 			oAttr.addValueChangeListener( valueChangeListener[i] );
 		}
+        
+        oAttr.initSpecificSettings();
         
     }
      
@@ -457,7 +463,8 @@ public class Attribute extends AttributeBase
             }
             
             w.startElement( TR, oComp );
-
+            w.writeAttribute(HTMLAttr.STYLE, "width:100%");
+            
             if( "1".equals( oAttr.getRenderLabel() ) )
             {
             	w.startElement( TD, oComp );

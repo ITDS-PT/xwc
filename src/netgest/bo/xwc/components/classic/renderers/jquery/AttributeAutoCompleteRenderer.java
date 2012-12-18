@@ -95,8 +95,8 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 					.addOption( "formId" , component.findParentComponent( XUIForm.class ).getClientId() )
 					.addOption( "componentId" , component.getOpenCommand().getClientId() )
 					.addOption( "enableCardIdLink" , component.getEnableCardIdLink() )
-					.addOption( "height" , 5);
-					//.addOption( "width", "100%" );
+					.addOption( "height" , 5)
+					.addOption( "width", "100%" );
 					if (component.isUsable())
 						widget.addOption("maxitems", component.getMaxItems());
 					else
@@ -109,7 +109,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 						widget.addOption("searchType", "character");
 					}
 					
-					String template = component.getTemplate();
+					String template = component.getTemplateForSearch();
 					if (StringUtils.hasValue( template )){
 						widget.addOption("template", template);
 					}
@@ -201,7 +201,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 		w.startElement( DIV );
 			w.writeAttribute( ID, component.getClientId() );
 			
-			String tableStyle = "table-layout:fixed;height:21px;margin:0px 0xp 0px 0px; padding:0px 0px 0px 0px;";
+			String tableStyle = "table-layout:fixed;height:21px;margin:0px 0xp 0px 0px; padding:0px 0px 0px 0px;width:100%";
 			
 			w.startElement( TABLE );
 	        	w.writeAttribute( CELLPADDING, "0", null );
@@ -277,9 +277,9 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 	private void setupIncludes( XUIComponentBase component ) {
 		if (!component.isRenderedOnClient()){
 			
-			includeHeaderScript( component.getClientId() + "_js", 
+			includeHeaderScript( "autoComplete_js", 
 					"ext-xeo/autocomplete/jquery.fcbkcomplete.js" );
-			includeHeaderCss( component.getClientId() + "_css", 
+			includeHeaderCss( "autoComplete_css", 
 			"ext-xeo/autocomplete/style.css" );
 		}
 	}
@@ -290,18 +290,9 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 	
 	
 	public JSONArray retrieveFilteredListValue( AttributeAutoComplete component,  String beanId, String method,  String filter ){
-		final Class<?>[] QUERY_ARGUMENTS = { String.class, String.class, String.class, String.class, String.class };
-		String filterQuery = null;
-		String objectName = null;
-		String attributeName = component.getAttributeName();
-		if (component.getDataFieldConnector() instanceof XEOObjectAttributeConnector){
-			AttributeHandler handler = ((XEOObjectAttributeConnector) component.getDataFieldConnector()).getAttributeHandler();
-			if (StringUtils.hasValue( handler.getFilterBOQL_query() ))
-				filterQuery = handler.getFilterBOQL_query();
-			objectName = handler.getDefAttribute().getReferencedObjectName();
-		} else{
-			objectName = component.getObjectName();
-		}
+		final Class<?>[] QUERY_ARGUMENTS = { String.class, String.class, String.class };
+		
+		String query = component.getLookupQuery();
 		
 		JSONArray result = new JSONArray();
 		try {
@@ -318,11 +309,9 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
     		sql = ( String ) m.invoke(
     				component.getELContext() , 
     					new Object[] {
-    						objectName,
-    						attributeName,
-    						filterQuery,
+    						query,
     						filter,
-    						component.getTemplate()
+    						component.getTemplateForSearch()
     					} 
     			);
     		return new JSONArray( sql );

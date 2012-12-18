@@ -32,35 +32,44 @@
 	<classpathentry kind="lib" path="project_lib/sigar.jar"/>
 	<classpathentry kind="lib" path="project_lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="project_lib/EarnstonePerf.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/xeo_v3_core"/>
 	<classpathentry kind="lib" path="project_lib/iText-2.1.7.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/xmlparserv2.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/base_lib/j2ee/ejb.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/base_lib/j2ee/activation.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/base_lib/j2ee/adk.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/base_lib/j2ee/jms.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/base_lib/j2ee/jndi.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/base_lib/j2ee/jta.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/base_lib/j2ee/mail.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/base_lib/j2ee/ojsp.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/base_lib/j2ee/servlet.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/base_lib/j2ee/soap.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/AppXTender.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/bcmail-jdk14-125.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/bcpg-jdk14-125.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/bcprov-jdk14-125.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/bsh-2.0b1.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/ConvertImagesStub.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/cos.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/java_sql_interfaces_1_6.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/jcr-1.0.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/JimiProClasses.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/ojdbc14.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/regex4j.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/timerservice.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/WordWriter-v2-License.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/WordWriter-v2.5.2.jar"/>
-	<classpathentry kind="lib" path="/xeo_v3_core/project_lib/xeoWin32Client.jar"/>
+	<classpathentry kind="src" path=".apt_generated">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/xeo/base_lib/j2ee/activation.jar"/>
+	<classpathentry kind="lib" path="/xeo/base_lib/j2ee/adk.jar"/>
+	<classpathentry kind="lib" path="/xeo/base_lib/j2ee/ejb.jar"/>
+	<classpathentry kind="lib" path="/xeo/base_lib/j2ee/jms.jar"/>
+	<classpathentry kind="lib" path="/xeo/base_lib/j2ee/jndi.jar"/>
+	<classpathentry kind="lib" path="/xeo/base_lib/j2ee/jta.jar"/>
+	<classpathentry kind="lib" path="/xeo/base_lib/j2ee/mail.jar"/>
+	<classpathentry kind="lib" path="/xeo/base_lib/j2ee/ojsp.jar"/>
+	<classpathentry kind="lib" path="/xeo/base_lib/j2ee/servlet.jar"/>
+	<classpathentry kind="lib" path="/xeo/base_lib/j2ee/soap.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/AppXTender.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/bcmail-jdk14-125.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/bcpg-jdk14-125.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/bcprov-jdk14-125.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/bsh-2.0b1.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/ConvertImagesStub.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/cos.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/java_sql_interfaces_1_6.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/jcr-1.0.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/JimiProClasses.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/mysql-connector-java-5.1.18-bin.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/ojdbc14.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/postgresql-9.1-901.jdbc4.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/regex4j.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/sqljdbc4.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/timerservice.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/WordWriter-v2-License.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/WordWriter-v2.5.2.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/xeoWin32Client.jar"/>
+	<classpathentry kind="lib" path="/xeo/project_lib/xmlparserv2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/xeo"/>
+	<classpathentry kind="lib" path="project_lib/freemarker.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

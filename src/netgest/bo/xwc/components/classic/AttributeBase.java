@@ -243,12 +243,22 @@ public class AttributeBase extends ViewerInputSecurityBase {
     	new XUIViewStateBindProperty<Boolean>( "enableFullTextSearch", this, "false",Boolean.class );
     
     /**
+     * Lookup query string for Lookups
+     */
+    private XUIBindProperty<String> lookupQuery = 
+        	new XUIBindProperty<String>( "lookupQuery", this, String.class );
+    
+    /**
      * Initialize the component
      */
     @Override
     public void initComponent() {
         super.initComponent();
         //  Perform init per component
+    }
+    
+    public void initSpecificSettings(){
+    	
     }
 
     /**
@@ -429,6 +439,14 @@ public class AttributeBase extends ViewerInputSecurityBase {
     
     public void setIsValid(Boolean val){
     	this.isValidAttribute.setValue(val);
+    }
+    
+    public String getLookupQuery(){
+    	return lookupQuery.getEvaluatedValue();
+    }
+    
+    public void setLookupQuery(String queryExpr){
+    	lookupQuery.setExpressionText(queryExpr);
     }
     
     /**

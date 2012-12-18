@@ -2792,30 +2792,23 @@ public class XEOEditBean extends XEOBaseBean
      * 
      * @return A JSON array with the values (each value is a JSONObject with key/value properties)
      */
-    public String getAutoCompleteSearchResult( String objectName, 
-    		String attributeName, String filterQuery, 
+    public String getAutoCompleteSearchResult( String query, 
     		String filter, String template){
     	
     	JSONArray result = new JSONArray();
 		
 		String boqlQuery = "";
 		
-		if (StringUtils.isEmpty( filterQuery )){
-			StringBuilder boql = new StringBuilder().
-				 append("select ")
-				.append(objectName)
-				.append(" where ")
-				.append(attributeName)
-				.append(" LIKE ?");
-			boqlQuery = boql.toString();
-		} else {
-			StringBuilder boql = new StringBuilder(filterQuery);
-			boql.append( "AND " ).append(attributeName).append(" LIKE ?");
-			boqlQuery = boql.toString();
+		boqlQuery = query;
+		int count = org.apache.commons.lang.StringUtils.countMatches(boqlQuery, "?");
+		
+		boObjectListBuilder builder = new boObjectListBuilder( getEboContext(), 
+				boqlQuery ).pageSize( 15 );
+		for (int k = 0 ; k < count ; k++){
+			builder.arg(filter + "%");
 		}
 		
-		boObjectList lst = new boObjectListBuilder( getEboContext(), 
-					boqlQuery ).arg( filter + "%" ).pageSize( 15 ).build();
+		boObjectList lst = builder.build();
 		
 		if (lst.isEmpty()){
 			//Search EboTextIndex

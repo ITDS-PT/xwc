@@ -47,23 +47,23 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 	}
 	
 	/**
-	 * Whether or not to use character based search (each character triggers a search on the server)
+	 * The template used to display results
 	 */
-	private XUIBindProperty<String> template = 
-		new XUIBindProperty<String>( "template", this, String.class );
+	private XUIBindProperty<String> templateForSearch = 
+		new XUIBindProperty<String>( "templateForSearch", this, String.class );
 	
-	public String getTemplate() {
-		return template.getEvaluatedValue();
+	public String getTemplateForSearch() {
+		return templateForSearch.getEvaluatedValue();
 	}
 	
-	public void setTemplate( String templateExpr ) {
-		this.template.setExpressionText( templateExpr );
+	public void setTemplateForSearch( String templateExpr ) {
+		this.templateForSearch.setExpressionText( templateExpr );
 	}
 	
 	/**
 	 * The method to retrieve the list of values from (defaults to getLookupResults(String filter)
 	 */
-	private XUIBindProperty<String> lookupMethod = new XUIBindProperty<String>( "lookupMethod", this, String.class, "autoCompleteSearchResult" );
+	private XUIBindProperty<String> lookupMethod = new XUIBindProperty<String>( "lookupMethod", this, String.class, "getAutoCompleteSearchResult" );
 
 	public String getLookupMethod() {
 		return lookupMethod.getEvaluatedValue();
@@ -74,28 +74,13 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 	}
 	
 	
-	private XUIBaseProperty<String> objectName = 
-		new XUIBaseProperty<String>( "objectName", this );
 	
-	public String getObjectName() {
-		return objectName.getValue();
-	}
-
-	public void setObjectName( String objectName ) {
-		this.objectName.setValue( objectName );
-	}
-
-	private XUIBaseProperty<String> attributeName = 
-		new XUIBaseProperty<String>( "attributeName", this );
-
-	public String getAttributeName() {
-		return attributeName.getValue();
-	}
-
-	public void setAttributeName( String attributeName ) {
-		this.attributeName.setValue( attributeName );
-	}
 	
+	@Override
+	public void initSpecificSettings() {
+		if (maxItems.isDefaultValue())
+			maxItems.setValue(10);
+	}
 	
 	/**
 	 * The maximum number of items that can be added to the attribute
