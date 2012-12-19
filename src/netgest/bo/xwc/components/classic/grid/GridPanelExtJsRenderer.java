@@ -351,8 +351,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
 			    			oGrid.getId() + "_selm.clearSelections();" +
 			    			oGrid.getId() + "_selm.selectRow(" + (d.getRowIndex()-1) + ");" + 
-			    			oGrid.getId() + "_selm.resumeEvents();"
-		    			+ "}"
+			    			oGrid.getId() + "_selm.resumeEvents();" +
+			    			"try{ExtXeo.grid.rowSelectionHndlr(" + oGrid.getId() + "_selm," +
+			    			"'" + oGrid.getClientId() +"_srs','" + oGrid.getRowUniqueIdentifier() + "'" +
+			    			")}catch(e){}" +
+		    			"}" 
 		        );
         	}
         }
@@ -378,8 +381,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
 			    			oGrid.getId() + "_selm.clearSelections();" +
 			    			oGrid.getId() + "_selm.selectRows(" + sb + ");" + 
-			    			oGrid.getId() + "_selm.resumeEvents();"
-		    			+ "}"
+			    			oGrid.getId() + "_selm.resumeEvents();" +
+			    			"try{ExtXeo.grid.rowSelectionHndlr(" + oGrid.getId() + "_selm," +
+			    			"'" + oGrid.getClientId() +"_srs','" + oGrid.getRowUniqueIdentifier() + "'" +
+			    			")}catch(e){}" +
+		    			"}"
 		        );
 	    	}
         }
