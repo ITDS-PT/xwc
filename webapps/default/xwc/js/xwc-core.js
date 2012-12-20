@@ -5,6 +5,66 @@ XVW.get = function (id ) {
 	return document.getElementById(id);
 };
 
+/**
+ * 
+ * Properties related to Ajax Requests
+ * */
+XVW.ajax = function () {}
+/**
+ * Whether an ajax request can be made
+ * */
+XVW.ajax.canMakeAjaxRequest = true;
+/**
+ * The number of attempts made for ajax request 
+ * */
+XVW.ajax.ajaxRequestCounter = 0;
+/**
+ * The maximum number of attempts
+ * */
+XVW.ajax.maxAjaxRequest = 10;
+/**
+ * Wait period before attempting another Ajax Request (in miliseconds)
+ * */
+XVW.ajax.ajaxRequestWaitPeriod = 300;
+
+/**
+ *  Increments the attempts counter
+ * */
+XVW.ajax.incrementAjaxCounter = function(){
+	XVW.ajax.ajaxRequestCounter++;
+}
+/**
+ * Clear the ajax attempts counter
+ * */
+XVW.ajax.clearAjaxCounter = function(){
+	XVW.ajax.ajaxRequestCounter = 0;
+}
+/**
+ * Returns whether or not we're in conditions to issue a new Ajax Request
+ * */
+XVW.ajax.canAjaxRequest = function(){
+	return XVW.ajax.ajaxRequestCounter < XVW.ajax.maxAjaxRequest && XVW.ajax.canMakeAjaxRequest;
+}
+/**
+ * Block new ajax requests until a response has arrived
+ * */
+XVW.ajax.blockAjaxRequests = function(){
+	XVW.ajax.canMakeAjaxRequest = false;
+}
+/**
+ * Queue an AjaxRequest for later submission
+ * */
+XVW.ajax.queueAjaxRequest = function( ajaxRequest ){
+	window.setTimeout( ajaxRequest , XVW.ajax.ajaxRequestWaitPeriod );
+}
+/**
+ * Enable Ajax Requests
+ * */
+XVW.ajax.enableAjaxRequests = function(){
+	XVW.ajax.canMakeAjaxRequest = true;
+	XVW.ajax.clearAjaxCounter();	
+}
+
 // Send command to server
 XVW.Command = function( sFormId, sActionId, sActionValue, iWaitScreen ) {
     XVW.prv.cmdCntr = 0;
@@ -23,7 +83,15 @@ XVW.AjaxRenderComp = function( sFormId, sCompId, bSubmitValues ) {
 // Send Command via Ajax
 XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubmitValues, renderOnElement ) {
 	
-	//XVW.Command(sFormId, sActionId, sActionValue, iWaitScreen );
+	if (!XVW.ajax.canAjaxRequest()){
+		XVW.ajax.incrementAjaxCounter();
+		XVW.ajax.queueAjaxRequest( function () {
+				XVW.AjaxCommand(sFormId, sActionId, sActionValue, iWaitScreen, bSubmitValues, renderOnElement) 
+		} );
+		return;
+	}
+	
+	XVW.ajax.blockAjaxRequests();
 	
     if( bSubmitValues == undefined ) {
         bSubmitValues = true;
@@ -121,6 +189,9 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
             	window.top.location.href = oXmlReq.getResponseHeader('login-url');
             } else {
                 XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText )
+            }
+            if (!XVW.ajax.canAjaxRequest()){
+            	XVW.ajax.enableAjaxRequests();
             }
         }
     }
@@ -223,6 +294,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
     var sViewId     = oDocElm.getAttribute("viewId");
     var bIsPostBack = "true" == oDocElm.getAttribute("isPostBack");
     var oViewDiv    = null;
+    
     
     oViewDiv = document.getElementById( sViewId );
     if( !bIsPostBack && oViewDiv == null ) {
@@ -421,10 +493,8 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         	}
         }
 
-    //window.setTimeout( function() { alert( (new Date()) - init ) },1);
     
-    // Performance analisis
-    //window.setTimeout( function() { alert ( (window.ts2-window.ts) + "-" + ((new Date())-window.ts2) ) }, 50 );
+    XVW.ajax.enableAjaxRequests();
 }
 
 XVW.addScriptInclude = function( oScriptId, xsrc ) {
