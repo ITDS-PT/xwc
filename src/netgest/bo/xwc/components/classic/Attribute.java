@@ -69,7 +69,7 @@ public class Attribute extends AttributeBase
     
 	@Override
 	public void initComponent() {
-        // per component initializations.
+        super.initComponent();
         createChildComponents();
     }
 
