@@ -4,7 +4,7 @@
 			<#list this.children as tab>
 				<li class='xwc-tab-label' >
 					<a href='#${tab.id}' id='${tab.id}_link' class='xwc-tab-label-link'>
-						${tab.label}
+						${tab.label!}
 					</a>
 				</li>
 			</#list>
