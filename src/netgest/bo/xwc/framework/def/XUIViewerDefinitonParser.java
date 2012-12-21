@@ -40,7 +40,7 @@ public class XUIViewerDefinitonParser
 	public static final String DEFAULT_BEAN_ID = "viewBean";
     private static NSResolver ns = new GenericResolver();
     private static HashMap<String, XUIViewerDefinition> viewCache = new HashMap<String, XUIViewerDefinition>();
-    
+    private static final String EMPTY = "";
     
     public XUIViewerDefinitonParser(){
     	
@@ -50,13 +50,12 @@ public class XUIViewerDefinitonParser
     	return parse(inputStream, new HashSet<String>());
     }
     
-    public XUIViewerDefinition parse( InputStream inputStream, Set<String> viewersAlreadyParsed ) {
-        XUIViewerDefinition xwvr;
+    public XUIViewerDefinition parse( InputStream inputStream, Set<String> viewersAlreadyParsed, String viewerName ) {
+    	XUIViewerDefinition xwvr;
         try
         {
             XMLElement node;
             XMLDocument xmldoc;
-
             xmldoc = ngtXMLUtils.loadXML( inputStream );
 
             node = (XMLElement)xmldoc.selectSingleNode("/xvw:root/xvw:viewer", ns);
@@ -95,11 +94,15 @@ public class XUIViewerDefinitonParser
         }
         catch (Exception e)
         {
-            throw new RuntimeException( e );                
+        	throw new RuntimeException( "Viewer " + viewerName + " "  +  e );
         }
         finally {
         }
         return xwvr;
+    }
+    
+    public XUIViewerDefinition parse( InputStream inputStream, Set<String> viewersAlreadyParsed ) {
+        return parse( inputStream , viewersAlreadyParsed , EMPTY );
     }
     
     private void parseBeanClasses(XUIViewerDefinition vdef, String beanClasses){
@@ -142,7 +145,7 @@ public class XUIViewerDefinitonParser
             if( is != null )
             {
             	try {
-            		xwvr = parse( is , viewersParsed );
+            		xwvr = parse( is , viewersParsed, viewerName );
             		viewCache.put( viewerName, xwvr );
             	} finally {
             		if( is != null )
