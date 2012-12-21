@@ -87,6 +87,16 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		addScriptFooter( "gridPanelRender_" + grid.getId() + "_btns", addNavBarButtons );
 		
 	}
+	
+	@Override
+	public void encodeChildren( XUIComponentBase oComp ) throws IOException {
+		
+	}
+	
+	@Override
+    public boolean getRendersChildren() {
+        return true;
+    }
 
 
 	private void createFullTextSearchMarkup( GridPanel grid, XUIResponseWriter w ) throws IOException  {
