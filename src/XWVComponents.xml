@@ -232,7 +232,9 @@
 
             <xwc:render for='mainLayout'>netgest.bo.xwc.components.classic.MainLayout$XEOHTMLRenderer</xwc:render>
             
-            <xwc:render for='gridPanel'>netgest.bo.xwc.components.classic.grid.GridPanelJqueryRenderer</xwc:render>
+            <xwc:render for='gridPanel' family='gridPanel'>netgest.bo.xwc.components.classic.grid.GridPanelRenderer</xwc:render>
+            <xwc:render for='simpleGrid' family='gridPanel'>netgest.bo.xwc.components.classic.grid.GridPanelJqueryRenderer</xwc:render>
+            
             <xwc:render for='treeShuttle'>netgest.bo.xwc.components.classic.TreeShuttle$XEOHTMLRenderer</xwc:render>
             <xwc:render for='window'>netgest.bo.xwc.components.template.renderers.WindowRenderer</xwc:render>
             <!-- <xwc:render for='window'>netgest.bo.xwc.components.classic.renderers.jquery.WindowRenderer</xwc:render>-->

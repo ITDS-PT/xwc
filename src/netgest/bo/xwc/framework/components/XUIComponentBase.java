@@ -37,6 +37,7 @@ import netgest.bo.xwc.framework.jsf.XUIPropertySetter;
 import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
 import netgest.bo.xwc.framework.properties.XUIProperty;
 import netgest.bo.xwc.framework.properties.XUIPropertyVisibility;
+import netgest.utils.StringUtils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -334,8 +335,8 @@ public abstract class XUIComponentBase extends UIComponentBase
 		}
 		// Search through our facets and children
 		UIComponent result = null;
-		for (Iterator i = base.getFacetsAndChildren(); i.hasNext();) {
-			UIComponent kid = (UIComponent) i.next();	
+		for (Iterator<UIComponent> i = base.getFacetsAndChildren(); i.hasNext();) {
+			UIComponent kid =  i.next();	
 				if ( id.equals(kid.getId())) {
 					result = kid;
 					break;
@@ -496,15 +497,48 @@ public abstract class XUIComponentBase extends UIComponentBase
     @Override
     public String getRendererType() 
     {
-        String sRenderType = getClass().getName();
-        sRenderType = sRenderType.substring( sRenderType.lastIndexOf( "." ) + 1 );
-        sRenderType = sRenderType.substring(0,1).toLowerCase() + sRenderType.substring(1);
-        return sRenderType;
+    	String sRenderType = xeoRenderer.getValue();
+    	if (StringUtils.isEmpty(sRenderType)){
+    		if (rendererType == null){
+	        sRenderType = calculateRendererType();
+    		}
+        }
+    	return sRenderType;
+    }
+    
+    /**
+     *  Renderer to use
+     */
+    private XUIBaseProperty<String> xeoRenderer = new XUIBaseProperty<String>("xeoRenderer", this);
+    
+    public void setXeoRenderer(String type){
+    	xeoRenderer.setValue(type);
+    }
+    
+    String rendererType = null; 
+
+    /*
+     * Overridden to be used to allow multiple renderes for the same
+     * component, returns the "rendererType" value 
+     * 
+     * @see javax.faces.component.UIComponent#getFamily()
+     */
+    @Override
+    public String getFamily() {
+    	if (rendererType == null){
+    		rendererType = calculateRendererType();
+    	}
+    	return rendererType;
     }
 
-    public String getFamily() {
-        return getRendererType();
-    }
+	private String calculateRendererType() {
+		String value = getClass().getName();
+		value = value.substring( value.lastIndexOf( "." ) + 1 );
+		value = value.substring(0,1).toLowerCase() + value.substring(1);
+		return value;
+	}
+    
+    
 
     @Override
     public Object saveState(FacesContext context) 
