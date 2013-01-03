@@ -4,7 +4,7 @@
 <@xvw_script position='footer'>
 	$(function() {
 		<#list this.children as menu>
-    		$( '#${menu.id}_btn' ).button()
+    		$( '#${menu.id!}_btn' ).button()
 				.show()
 				<#if menu.disabled>
 		 			.attr('disabled', 'disabled')
@@ -25,15 +25,15 @@
 			 	</#if>
 			 	
 			 	<#-- Draw the icons -->	
-				 <#if (menu.icon?length > 0) > 
-		 			$( '#${menu.id}_btn' )
+				<#if (menu.icon?length > 0) > 
+		 			$( '#${menu.id!}_btn' )
 						.children('.ui-button-text')
 						<#if this.iconPosition == 'left'> 
-							.prepend( '<img src="${menu.icon}" style="display:inline;padding:2px;vertical-align:middle" />');   
+							.prepend( '<img src="${menu.icon!}" style="display:inline;padding:2px;vertical-align:middle" />');   
 						<#else>	
-							.prepend( '<img src="${menu.icon}" style="display:block;padding:2px;vertical-align:middle;margin-left:auto; margin-right:auto" />');  
+							.prepend( '<img src="${menu.icon!}" style="display:block;padding:2px;vertical-align:middle;margin-left:auto; margin-right:auto" />');  
 						</#if> 
-		 		</#if>	
+		 		</#if> 	
 				
 		</#list>
 	});
@@ -44,7 +44,7 @@
 <div id='${this.clientId}'>
 	<div id='${this.id}' class='ui-widget-header ui-corner-all xwc-toolbar'>
 		<#list this.children as menu>
-    		<button id='${menu.id}_btn' class='xwc-toolbar-button'>
+    		<button id='${menu.id!}_btn' class='xwc-toolbar-button'>
     			<span>${menu.text}</span>
     		</button>
 		</#list>
