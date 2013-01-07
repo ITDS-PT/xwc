@@ -58,6 +58,7 @@ import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.autocomplete.FindAttributesInTemplate;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOBridgeListConnector;
@@ -2792,57 +2793,35 @@ public class XEOEditBean extends XEOBaseBean
      * 
      * @return A JSON array with the values (each value is a JSONObject with key/value properties)
      */
-    public String getAutoCompleteSearchResult( String query, 
-    		String filter, String template){
+    public String getAutoCompleteSearchResult( String filter , AttributeBase component){
     	
     	JSONArray result = new JSONArray();
-		
-		String boqlQuery = "";
-		
-		boqlQuery = query;
-		int count = org.apache.commons.lang.StringUtils.countMatches(boqlQuery, "?");
-		
-		boObjectListBuilder builder = new boObjectListBuilder( getEboContext(), 
-				boqlQuery ).pageSize( 15 );
-		for (int k = 0 ; k < count ; k++){
-			builder.arg(filter + "%");
-		}
-		
-		boObjectList lst = builder.build();
-		
-		if (lst.isEmpty()){
-			//Search EboTextIndex
-			lst.setFullTextSearch( boObjectList.arrangeFulltext( getEboContext(), filter ) );
-			lst.refreshData();
-		} 
-		
-		while (lst.next()){
-			try {
-				boObject current = lst.getObject();
-				JSONObject currentObj = new JSONObject();
-				
-				if (StringUtils.isEmpty( template ))
-					currentObj.put( "value" , current.getTextCARDID().toString());
-				else{
-					FindAttributesInTemplate finder = new FindAttributesInTemplate();
-					List<String> found = finder.findAttributes( template );
-					XEOObjectUtils replacer = new XEOObjectUtils();
-					for (Iterator<String> it = found.iterator(); it.hasNext();){
-						String currentAttribute = it.next();
-						String toReplace = "{" + currentAttribute + "}";
-						String value = replacer.getStringRepresentation( current.getAttribute( currentAttribute ) );
-						template = template.replace( toReplace, value );
-					}
-					currentObj.put( "value" , template );
-				}
-				currentObj.put( "key", String.valueOf( current.getBoui() )  );
-				
-				result.put( currentObj );
-			} catch ( Exception e ) {
-				e.printStackTrace();
-			}
-		}
-		
+    	
+    	DataFieldConnector genericConnector = component.getDataFieldConnector( );
+    	String targetObjectName = "";
+    	String attribute = component.getObjectAttribute( );
+    	if (genericConnector instanceof XEOObjectAttributeConnector){
+    		XEOObjectAttributeConnector attributeConector = (XEOObjectAttributeConnector) genericConnector;
+    		boDefAttribute attributeDefinition = attributeConector.getBoDefAttribute( );
+    		targetObjectName = attributeDefinition.getReferencedObjectName( );
+    		String fullText = getEboContext().getDataBaseDriver().getDriverUtils().getFullTextSearchWhere( "text" , filter );
+    		boObjectList list = boObjectList.list( getEboContext( ) , "select " + targetObjectName + " " );
+    		list.setFullTextSearch( fullText );
+    		try {
+	    		list.beforeFirst( );
+	    		while (list.next()){
+	    				boObject current = list.getObject();
+	    				JSONObject currentObj = new JSONObject();
+	    				
+	    				currentObj.put( "value" , current.getTextCARDID().toString());
+	    				currentObj.put( "key", String.valueOf( current.getBoui() )  );
+	    				
+	    				result.put( currentObj );
+	    		}
+    		} catch ( Exception e ) {
+    			log.warn( "Could not retrieve results for attribute %s of type %s", e, attribute, targetObjectName );
+    		}
+    	}
 		return result.toString();
 		
     }

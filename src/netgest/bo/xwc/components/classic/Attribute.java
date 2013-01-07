@@ -20,6 +20,7 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIMethodBindingValueChangeListener;
+import netgest.utils.StringUtils;
 
 /**
  * This components renders a label and the input component for a {@link DataFieldConnector}
@@ -61,7 +62,7 @@ public class Attribute extends AttributeBase
     /**
      * The input type for the field
      */
-    @Values({"attributeText","attributeBoolean","attributeNumber","attributeDate","attributeTime","attributeDateTime","attributeHtmlEditor","attributeLov","bridgeLookup"})
+    @Values({"attributeText","attributeBoolean","attributeNumber","attributeDate","attributeTime","attributeDateTime","attributeHtmlEditor","attributeLov","bridgeLookup","attributeAutoComplete"})
     private XUIViewStateBindProperty<String> inputType   = new XUIViewStateBindProperty<String>( "inputType", this,"", String.class );
 
 
@@ -179,7 +180,7 @@ public class Attribute extends AttributeBase
                         		sRet = "attributeNumberLookup";
                         	else
                         		sRet = "attributeSearchLookup";
-                        	sRet = "attributeAutoComplete";
+                        	//sRet = "attributeAutoComplete";
                             break;
                     }
                     break;
@@ -318,8 +319,8 @@ public class Attribute extends AttributeBase
         if( getValueExpression("displayValue") != null )
             oAttr.setDisplayValue( getValueExpression("displayValue").getExpressionString() );
         
-        if( getValueExpression("lookupQuery") != null )
-            oAttr.setLookupQuery( getValueExpression("lookupQuery").getExpressionString() );
+        if (StringUtils.hasValue( lookupResults.getExpressionString( ) ) )
+            oAttr.setLookupResults( lookupResults.getExpressionString( ) );
         
         XUIMethodBindingValueChangeListener[] valueChangeListener  = 
         	(XUIMethodBindingValueChangeListener[]) getFacesListeners( XUIMethodBindingValueChangeListener.class );

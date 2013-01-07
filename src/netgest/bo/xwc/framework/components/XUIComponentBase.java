@@ -43,6 +43,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.sun.faces.io.FastStringWriter;
+import com.sun.xml.internal.ws.addressing.WsaServerTube;
 
 
 public abstract class XUIComponentBase extends UIComponentBase 
@@ -377,8 +378,9 @@ public abstract class XUIComponentBase extends UIComponentBase
 	        else {
 	            oStateProperyState = EMPTY_OBJECT_ARRAY;
 	        }
+	        
 	        // Call super to allow him to save her state;
-	        return new Object[] { super.saveState( getFacesContext() ), oStateProperyState };
+	        return new Object[] { super.saveState( getFacesContext() ), oStateProperyState, wasRendererTypeSet };
     	}
     	return null;
     }
@@ -394,6 +396,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 	        // Restore all the properties
 	        super.restoreState( getFacesContext(), oMyState[0] );
 	        oPropertiesState = (Object[])oMyState[1];
+	        wasRendererTypeSet = (Boolean) ( oMyState[2] );
 	        
 	        if( this.oStatePropertyMap != null )
 	        {
@@ -497,25 +500,24 @@ public abstract class XUIComponentBase extends UIComponentBase
     @Override
     public String getRendererType() 
     {
-    	String sRenderType = xeoRenderer.getValue();
-    	if (StringUtils.isEmpty(sRenderType)){
-    		if (rendererType == null){
-	        sRenderType = calculateRendererType();
-    		}
-        }
-    	return sRenderType;
+    	if (rendererType.isDefaultValue( ) || StringUtils.isEmpty( rendererType.getValue() ) ){
+    		return calculateRendererType( );
+    	} else 
+    		return rendererType.getValue( );
     }
     
     /**
      *  Renderer to use
      */
-    private XUIBaseProperty<String> xeoRenderer = new XUIBaseProperty<String>("xeoRenderer", this);
+    protected XUIBaseProperty<String> rendererType = new XUIBaseProperty<String>("rendererType", this);
+   
+    private Boolean wasRendererTypeSet = Boolean.FALSE;
     
-    public void setXeoRenderer(String type){
-    	xeoRenderer.setValue(type);
+    public void setRendererType(String type){
+    	wasRendererTypeSet = Boolean.TRUE;
+    	rendererType.setValue(type);
     }
     
-    String rendererType = null; 
 
     /*
      * Overridden to be used to allow multiple renderes for the same
@@ -525,17 +527,19 @@ public abstract class XUIComponentBase extends UIComponentBase
      */
     @Override
     public String getFamily() {
-    	if (rendererType == null){
-    		rendererType = calculateRendererType();
-    	}
-    	return rendererType;
+    	if (rendererType.isDefaultValue( ) && !wasRendererTypeSet)
+    		return getRendererType( );
+    	return calculateRendererType( );
     }
 
+    private String rendererTypeCache = null;
 	private String calculateRendererType() {
-		String value = getClass().getName();
-		value = value.substring( value.lastIndexOf( "." ) + 1 );
-		value = value.substring(0,1).toLowerCase() + value.substring(1);
-		return value;
+		if (rendererTypeCache == null){
+			String value = getClass().getName();
+			value = value.substring( value.lastIndexOf( "." ) + 1 );
+			rendererTypeCache = value.substring(0,1).toLowerCase() + value.substring(1);
+		}
+		return rendererTypeCache;
 	}
     
     
@@ -691,6 +695,11 @@ public abstract class XUIComponentBase extends UIComponentBase
     public MethodExpression createMethodBinding( String sMethodExpression, Class<?> oReturnValue ) {
         ExpressionFactory oExFactory = getFacesContext().getApplication().getExpressionFactory();
         return oExFactory.createMethodExpression( getELContext(), sMethodExpression, null, DUMMY_CLASS_ARRAY );
+    }
+    
+    public MethodExpression createMethodBinding( String sMethodExpression, Class<?>[] types ) {
+        ExpressionFactory oExFactory = getFacesContext().getApplication().getExpressionFactory();
+        return oExFactory.createMethodExpression( getELContext(), sMethodExpression, null, types );
     }
 
     protected UIComponent getNamingContainer() {

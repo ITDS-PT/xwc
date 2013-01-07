@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import javax.el.ExpressionFactory;
-import javax.el.MethodExpression;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -46,8 +44,6 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.utils.StringUtils;
-
-import org.json.JSONArray;
 
 
 public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements XUIRendererServlet {
@@ -109,11 +105,6 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 						widget.addOption("searchType", "character");
 					}
 					
-					String template = component.getTemplateForSearch();
-					if (StringUtils.hasValue( template )){
-						widget.addOption("template", template);
-					}
-			
 					String typeText = component.getTypeMessage();
 					if (StringUtils.hasValue( typeText ))
 						widget.addOption( "complete_text", typeText);
@@ -276,7 +267,6 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 
 	private void setupIncludes( XUIComponentBase component ) {
 		if (!component.isRenderedOnClient()){
-			
 			includeHeaderScript( "autoComplete_js", 
 					"ext-xeo/autocomplete/jquery.fcbkcomplete.js" );
 			includeHeaderCss( "autoComplete_css", 
@@ -287,40 +277,6 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 	@Override
 	public void encodeEnd(XUIComponentBase component) throws IOException { }
 	
-	
-	
-	public JSONArray retrieveFilteredListValue( AttributeAutoComplete component,  String beanId, String method,  String filter ){
-		final Class<?>[] QUERY_ARGUMENTS = { String.class, String.class, String.class };
-		
-		String query = component.getLookupQuery();
-		
-		JSONArray result = new JSONArray();
-		try {
-			String sql = ""; 
-        	FacesContext context = FacesContext.getCurrentInstance();
-            ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
-            MethodExpression m = oExFactory.createMethodExpression( 
-            		component.getELContext(), 
-            		"#{" + beanId + "." + method + "}", 
-            		String.class,
-            		QUERY_ARGUMENTS                    		
-            		
-            );
-    		sql = ( String ) m.invoke(
-    				component.getELContext() , 
-    					new Object[] {
-    						query,
-    						filter,
-    						component.getTemplateForSearch()
-    					} 
-    			);
-    		return new JSONArray( sql );
-		}
-		catch ( Exception e ) {
-    		e.printStackTrace();
-		}
-		return result;
-	}
 
 	@Override
 	public void service( ServletRequest oRequest, ServletResponse oResponse, XUIComponentBase oComp )
@@ -330,8 +286,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 		
 		//The FBCK script sends a tag attribute in the request
 		String filter = oRequest.getParameter( "tag" );
-		String result = retrieveFilteredListValue( auto, auto.getBeanId(), auto.getLookupMethod(),  filter ).toString();
-		System.out.println( result );
+		String result = auto.getLookupResults ( filter );
 		OutputStream os = oResponse.getOutputStream();
 		os.write( result.getBytes() );
 		

@@ -10,6 +10,7 @@ import javax.faces.el.MethodBinding;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
@@ -243,10 +244,13 @@ public class AttributeBase extends ViewerInputSecurityBase {
     	new XUIViewStateBindProperty<Boolean>( "enableFullTextSearch", this, "false",Boolean.class );
     
     /**
-     * Lookup query string for Lookups
+     * Associates to a method that returns the list of results for a lookup
+     * Must return a JSONArray containing a set of JSONObjects each with two entries:
+     * key and value. Key is the BOUI of the object retrieved and value is the value to present to the user 
+     * ( can have HTML )
      */
-    private XUIBindProperty<String> lookupQuery = 
-        	new XUIBindProperty<String>( "lookupQuery", this, String.class );
+    XUIMethodBindProperty lookupResults = 
+        	new XUIMethodBindProperty( "lookupResults", this  );
     
     /**
      * Initialize the component
@@ -255,6 +259,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
     public void initComponent() {
         super.initComponent();
         //  Perform init per component
+        
     }
     
     public void initSpecificSettings(){
@@ -410,6 +415,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
         	this.displayValue.setExpressionText(sBeanExpression + ".displayValue}" );
         }
         
+        
     }
     
     /**
@@ -441,12 +447,18 @@ public class AttributeBase extends ViewerInputSecurityBase {
     	this.isValidAttribute.setValue(val);
     }
     
-    public String getLookupQuery(){
-    	return lookupQuery.getEvaluatedValue();
+    public String getLookupResults(){
+    	return lookupResults.getExpressionString();
     }
     
-    public void setLookupQuery(String queryExpr){
-    	lookupQuery.setExpressionText(queryExpr);
+    public void setLookupResults(String queryExpr){
+    	lookupResults.setExpressionText(queryExpr);
+    	lookupResults.setValue(createMethodBinding(queryExpr, String.class));
+    }
+    
+    public String getLookupResults(String filter){
+    	lookupResults.invoke(new Object[]{ filter, this });
+		return (String) lookupResults.getReturnValue();
     }
     
     /**

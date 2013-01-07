@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 
 import javax.faces.context.FacesContext;
 
+import netgest.bo.def.boDefAttribute;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
-import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMessage;
@@ -34,8 +34,21 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
     	return null;
 	}
 	
+	@Override
+	public void initComponent() {
+		super.initComponent( );
+		if (lookupResults.isDefaultValue( ) ){
+        	lookupResults.setExpressionText( "#{" + getBeanId( ) + ".getAutoCompleteSearchResult}", new Class<?>[]{String.class, AttributeBase.class} );
+        }
+	}
+	
 	public void setSearchType( String newValueExpr ) {
 		searchType.setValue( newValueExpr );
+	}
+	
+	@Override
+	public void setLookupResults(String queryExpr) {
+		lookupResults.setExpressionText( queryExpr , new Class<?>[]{String.class, AttributeBase.class} );
 	}
 	
 	public XUICommand getLookupCommand(){
@@ -46,40 +59,26 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 		return super.getOpenCommand();
 	}
 	
-	/**
-	 * The template used to display results
-	 */
-	private XUIBindProperty<String> templateForSearch = 
-		new XUIBindProperty<String>( "templateForSearch", this, String.class );
-	
-	public String getTemplateForSearch() {
-		return templateForSearch.getEvaluatedValue();
-	}
-	
-	public void setTemplateForSearch( String templateExpr ) {
-		this.templateForSearch.setExpressionText( templateExpr );
-	}
-	
-	/**
-	 * The method to retrieve the list of values from (defaults to getLookupResults(String filter)
-	 */
-	private XUIBindProperty<String> lookupMethod = new XUIBindProperty<String>( "lookupMethod", this, String.class, "getAutoCompleteSearchResult" );
-
-	public String getLookupMethod() {
-		return lookupMethod.getEvaluatedValue();
-	}
-
-	public void setLookupMethod( String lookupMethod ) {
-		this.lookupMethod.setExpressionText( lookupMethod );
-	}
-	
-	
-	
-	
 	@Override
 	public void initSpecificSettings() {
-		if (maxItems.isDefaultValue())
-			maxItems.setValue(10);
+		if (maxItems.isDefaultValue()){
+			if ( isXEOEnabled() ){
+					XEOObjectAttributeConnector connector = (XEOObjectAttributeConnector) getDataFieldConnector( );
+					boDefAttribute attributeMetadata = connector.getBoDefAttribute( );
+					if (boDefAttribute.ATTRIBUTE_OBJECT.equals( attributeMetadata.getAtributeDeclaredType( ) ) ){
+						maxItems.setValue( 1 );
+					}
+					else if ( boDefAttribute.ATTRIBUTE_OBJECTCOLLECTION.equals( attributeMetadata.getAtributeDeclaredType( ) ) ){
+						if (attributeMetadata.getMaxOccurs() < Integer.MAX_VALUE){
+							maxItems.setValue( attributeMetadata.getMaxOccurs() );
+						} else {
+							maxItems.setValue( Integer.MAX_VALUE );
+						}
+					}
+			} else {
+				maxItems.setValue(10);
+			}
+		}
 	}
 	
 	/**
