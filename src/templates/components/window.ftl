@@ -25,7 +25,9 @@
 	 				  	}
 	 				 }).parent( ).addClass('xwc-window')
 	 				  ;
-	 			}); 
+	 			});
+	 			
+	 			ExtXeo.layoutMan.doLayout('${this.requestContext.viewRoot.clientId}'); 
 </@xvw_script>
 
 <#--
