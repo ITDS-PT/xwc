@@ -94,13 +94,13 @@ public class XUIELResolver extends ELResolver {
         }
 
         // Resolve Viewer Beans
-        /*
+        //FIXME: Descomentei isto por cause do getLovMap do XEOObjectAttributeConnector e da martelada que lá está
         oResult = oRequestContext.getViewRoot().getBean( sProperty );
         if( oResult != null ) {
-            eLContext.setPropertyResolved( true );
+            elContext.setPropertyResolved( true );
             return oResult;
         }
-        */
+        
         
         // Resolve Bean in Session
         oResult = oRequestContext.getSessionContext().getBean( sProperty );
