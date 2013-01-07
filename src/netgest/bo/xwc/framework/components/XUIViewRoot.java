@@ -69,11 +69,20 @@ public class XUIViewRoot extends UIViewRoot {
 	private String	_renderKit = null;
 
 	private static Lifecycle lifecycle;
+	private String[] localizationClasses;
 
 	private boolean wasInitComponentsProcessed = false;
 
 	public void setOwnsTransaction(boolean owns) {
 		this.bOwnsTransaction = owns;
+	}
+	
+	public String[] getLocalizationClasses(){
+		return localizationClasses;
+	}
+	
+	public void setLocalizationClasses(String[] localizations){
+		this.localizationClasses = localizations;
 	}
 
 	public XUIViewRoot() {
@@ -172,7 +181,7 @@ public class XUIViewRoot extends UIViewRoot {
 		    		_renderKit = "XEOHTML";
 		    	}*/
 		    	if( _renderKit == null ){
-		    		_renderKit = "XEOHTML";
+		    		_renderKit = "XEOHTML"; 
 		    	}
 	    	}
 		}
@@ -204,7 +213,7 @@ public class XUIViewRoot extends UIViewRoot {
 		Object[] oMyState;
 
 		oSuperState = super.saveState(context);
-		oMyState = new Object[7];
+		oMyState = new Object[8];
 
 		oMyState[0] = sInstanceId;
 		oMyState[1] = sParentViewState;
@@ -214,6 +223,7 @@ public class XUIViewRoot extends UIViewRoot {
 		oMyState[5] = sStateId;
 
 		oMyState[6] = oSuperState;
+		oMyState[7] = localizationClasses;
 
 		return oMyState;
 	}
@@ -232,6 +242,7 @@ public class XUIViewRoot extends UIViewRoot {
 		sBeanIds = (String) oMyState[4];
 		sStateId = (String) oMyState[5];
 		super.restoreState(context, oMyState[6]);
+		localizationClasses = (String[]) oMyState[7];
 	}
 
 	public boolean wasStateChanged() {

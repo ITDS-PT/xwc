@@ -29,7 +29,9 @@ public class XUIViewerBuilder
 //    private static final Log log = LogFactory.getLog(netgest.bo.xwc.framework.jsf.XUIViewerBuilder.class);
     
     public void buildView( XUIRequestContext oContext, XUIViewerDefinition oViewerDefinition, XUIViewRoot oUIViewRoot  )    {
-        buildComponentTree( oContext, oViewerDefinition, oUIViewRoot );
+        oUIViewRoot.setLocalizationClasses( oViewerDefinition.getLocalizationClasses( ) );
+    	buildComponentTree( oContext, oViewerDefinition, oUIViewRoot );
+        
     }
     
     

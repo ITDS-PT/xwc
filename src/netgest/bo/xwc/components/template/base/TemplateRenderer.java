@@ -12,6 +12,7 @@ import netgest.bo.xwc.components.template.directives.HeaderWriterDirectiveProces
 import netgest.bo.xwc.components.template.directives.JavaScriptDirectiveProcessor;
 import netgest.bo.xwc.components.template.javascript.XwcScriptContext;
 import netgest.bo.xwc.components.template.loader.TemplateLoaderFactory;
+import netgest.bo.xwc.components.template.wrappers.LocalizationWrapper;
 import netgest.bo.xwc.components.template.wrappers.XVWScriptsWrapper;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -21,13 +22,21 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.utils.StringUtils;
 import freemarker.core.ParseException;
 import freemarker.template.Template;
+/**
+ * 
+ * Rendered for template based components
+ * Reserved template keywords : all from the {@link ProcessorDirectives} enum and "XVWScripts", "bundles", "this"
+ * 
+ *
+ */
 public class TemplateRenderer extends XUIRenderer {
 
 	enum ProcessorDirectives{
 		SCRIPT("xvw_script"),
 		CSS("xvw_css"),
 		CHILDREN("xvw_facet"),
-		HEADER("xvw_header");
+		HEADER("xvw_header")
+		;
 		
 		private String name;
 		
@@ -85,11 +94,12 @@ public class TemplateRenderer extends XUIRenderer {
 		XVWScriptsWrapper wrapper = new XVWScriptsWrapper();
 		//Put them in the context
 		Map<String,Object> context = new HashMap<String, Object>();
-		context.put(ProcessorDirectives.SCRIPT.getName(), script);
-		context.put(ProcessorDirectives.CSS.getName(), css);
-		context.put(ProcessorDirectives.CHILDREN.getName(), children);
-		context.put(ProcessorDirectives.HEADER.getName(), header);
-		context.put("XVWScripts", wrapper);
+		context.put( ProcessorDirectives.SCRIPT.getName(), script );
+		context.put( ProcessorDirectives.CSS.getName(), css );
+		context.put( ProcessorDirectives.CHILDREN.getName(), children );
+		context.put( ProcessorDirectives.HEADER.getName(), header );
+		context.put( "bundles", new LocalizationWrapper( getRequestContext( ).getViewRoot( ).getLocalizationClasses( ) ) );
+		context.put( "XVWScripts", wrapper);
 		
 		//Export the component
 		context.put( "this", component );
