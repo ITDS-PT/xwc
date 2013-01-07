@@ -110,6 +110,7 @@ public class ToolBar extends ViewerSecurityBase {
     
     public ToolBar()
     {
+    	
     }
     
     @Override
@@ -135,11 +136,6 @@ public class ToolBar extends ViewerSecurityBase {
 			}
 			if (curr instanceof AttributeBase || curr instanceof AttributeLabel)
 				((XUIComponentBase)curr).setRenderComponent(false);
-			/*if (curr instanceof Menu){
-				Menu m = (Menu) curr;
-				if (isDisabled())
-					m.setDisabled(true);
-			}*/
 			
 			if (addRegularMenu)
 				finalList.add(curr);
@@ -150,7 +146,14 @@ public class ToolBar extends ViewerSecurityBase {
 		
 		initializeTemplate( "templates/components/toolbar.ftl" );
 		
+		if (rendererType.isDefaultValue( ))
+			rendererType.setValue( "toolBar" );
 		
+    }
+    
+    @Override
+    public String getFamily() {
+    	return "toolBar";
     }
 
     @Override

@@ -102,7 +102,6 @@ public class ActionButton extends XUICommand
     public ActionButton()
     {
         super.setValue("Button");
-        setRendererType( null );
     }
     
     /**

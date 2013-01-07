@@ -137,8 +137,6 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
     public XUIInput() {
 
         super();
-        setRendererType("javax.faces.Text");
-
     }
 
     // -------------------------------------------------------------- Properties

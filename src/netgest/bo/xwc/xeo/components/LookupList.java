@@ -25,10 +25,7 @@ public class LookupList extends List {
 	private XUIBindProperty<Boolean> isBoObjectLookup = 
 		new XUIBindProperty<Boolean>("isBoObjectLookup", this, Boolean.class);
 	
-	@Override
-	public String getRendererType() {
-		return "gridPanel";
-	}
+	
 	
 	public void setIsBoObjectLookup(String boObjExpr){
 		this.isBoObjectLookup.setExpressionText(boObjExpr);

@@ -73,7 +73,6 @@ public class XUIOutput extends XUIComponentBase
     public XUIOutput() {
 
         super();
-        setRendererType("javax.faces.Text");
 
     }
 

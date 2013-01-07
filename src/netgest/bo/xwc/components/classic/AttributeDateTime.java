@@ -58,11 +58,11 @@ public class AttributeDateTime extends AttributeBase {
     	
     }
     
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void propagateProperties( AttributeBase attDate ) {
     	Set<Entry<String, XUIBaseProperty<?>>> properties = getStateProperties();
     	for( Entry<String,XUIBaseProperty<?>> entry : properties ) {
-    		XUIBaseProperty prop = attDate.getStateProperty( entry.getKey() );
+			XUIBaseProperty prop = attDate.getStateProperty( entry.getKey() );
     		if( prop != null ) {
     			prop.setValue( entry.getValue().getValue() );
     		}

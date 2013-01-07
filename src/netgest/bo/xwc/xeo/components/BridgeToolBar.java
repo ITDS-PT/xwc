@@ -145,10 +145,6 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		return this.targetObject.getEvaluatedValue();
 	}
 	
-	@Override
-	public String getRendererType() {
-		return "toolBar";
-	}
 
     public void setBridgeName(String sExpressionText ) {
         this.bridgeName.setExpressionText( sExpressionText );

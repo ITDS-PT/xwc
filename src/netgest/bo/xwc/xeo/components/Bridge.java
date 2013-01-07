@@ -64,6 +64,11 @@ public class Bridge extends GridPanel {
     	new XUIViewStateBindProperty<List<Long>>( "listFavorites", this, List.class);
     
     
+    public Bridge(){
+    	super();
+    	
+    }
+    
     /**
      * 
      * Retrieves a list of bouis to show as favorites
@@ -98,10 +103,6 @@ public class Bridge extends GridPanel {
 		this.enableBridgeReorder.setExpressionText(enableBridgeReorder);
 	}
 	
-	@Override
-	public String getRendererType() {
-		return "gridPanel";
-	}
 	
 	public void setTargetObject( String sExprText ) {
 		this.targetObject.setExpressionText( sExprText );

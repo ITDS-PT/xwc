@@ -1258,11 +1258,13 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             result = context.getRenderKit().getRenderer(oComp.getFamily(),
                                                         rendererType);
         }            
-        if (result != null)
-        	return result;
+        
+        if (oComp instanceof ToolBar)
+        	return new ToolBar.XEOHTMLRenderer();
+        
+        return result;
         //Coloquei isto aqui porque senão ia tentar renderizar
         //a toolbar do Grid com a ToolBar Jquery e o GridPanel n está feito para isso.
-        return new ToolBar.XEOHTMLRenderer();
     }
     
     public void addGridScripts( XUIResponseWriter w ) {

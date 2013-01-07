@@ -71,7 +71,6 @@ public class XUICommand extends XUIComponentBase implements ActionSource2 {
     public XUICommand() 
     {
         super();
-        setRendererType("javax.faces.Button");
     }
 
 

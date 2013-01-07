@@ -56,11 +56,6 @@ import netgest.utils.StringUtils;
 public class GridExplorer extends List {
 	
 	
-	@Override
-	public String getRendererType() {
-		return "gridExplorer";
-	}
-	
 	public static enum PreviewPanelPosition {
 		LEFT,
 		RIGHT,

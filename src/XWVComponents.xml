@@ -237,9 +237,11 @@
             
             <xwc:render for='treeShuttle'>netgest.bo.xwc.components.classic.TreeShuttle$XEOHTMLRenderer</xwc:render>
             <xwc:render for='window'>netgest.bo.xwc.components.template.renderers.WindowRenderer</xwc:render>
+            <xwc:render for='viewerWindow'>netgest.bo.xwc.components.template.renderers.WindowRenderer</xwc:render>
             <!-- <xwc:render for='window'>netgest.bo.xwc.components.classic.renderers.jquery.WindowRenderer</xwc:render>-->
 			<xwc:render for='HTMLFileBrowse'>netgest.bo.xwc.components.classic.HTMLFileBrowse$XEOHTMLRenderer</xwc:render>
 			<xwc:render for='title'>netgest.bo.xwc.components.classic.Title$XEOHTMLRenderer</xwc:render>
+			<xwc:render for='viewerTitle'>netgest.bo.xwc.components.classic.Title$XEOHTMLRenderer</xwc:render>
 			
             <xwc:render for='treePanel'>netgest.bo.xwc.components.classic.TreePanel$XEOHTMLRenderer</xwc:render>
 
@@ -303,7 +305,7 @@
       		<xwc:render for="xeoList">netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
 			<xwc:render for="xeoObject">netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
 			<xwc:render for="xeoLov">netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
-      	</xwc:renderKit>
+		</xwc:renderKit>
         
         
         <xwc:renderKit name="XEOHTML" componentNamespace="xeo" >
@@ -312,8 +314,7 @@
       		<xwc:render for="formEdit">netgest.bo.xwc.xeo.components.FormEdit$XEOHTMLRenderer</xwc:render>
       		<xwc:render for="bridgeLookup">netgest.bo.xwc.xeo.components.BridgeLookup$XEOHTMLRenderer</xwc:render>
       		<xwc:render for='attributeSearchLookup'>netgest.bo.xwc.xeo.components.AttributeSearchLookup$XEOHTMLRenderer</xwc:render>
-      		<!-- <xwc:render for="bridge">netgest.bo.xwc.xeo.components.Bridge$XEOHTMLRenderer</xwc:render> -->
-        </xwc:renderKit>
+		</xwc:renderKit>
 
         <!-- *********** JSF RENDERKITS ********************** -->
         <xwc:renderKit name="XEOHTML" componentNamespace="h">
@@ -446,11 +447,6 @@
             <xwc:className>netgest.bo.xwc.xeo.components.AttributeObjectLookup</xwc:className>
             <xwc:description>Represents a sub window of a XEO Model Viewer</xwc:description>
 		</xwc:component>
-    
-<!-- 		<xwc:component name="button_pb">
-			<xwc:className>netgest.bo.xwc.components.html.Button_pb</xwc:className>
-			<xwc:description>Botão de ligação ao PowerBuilder</xwc:description>
-		</xwc:component> -->
     
 		<!-- HTML Components -->
         <xwc:component name='buttonHtml'>

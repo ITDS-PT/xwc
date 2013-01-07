@@ -76,7 +76,7 @@ public class List extends GridPanel {
 	
 	@Override
 	public String getRendererType() {
-		return "gridPanel";
+		return super.getRendererType( );
 	}
 	
 	@Override

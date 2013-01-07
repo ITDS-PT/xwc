@@ -206,10 +206,6 @@ public class EditToolBar extends ToolBar {
 		this.renderCancelBtn.setExpressionText( expression );
 	}
 	
-	@Override
-	public String getRendererType() {
-		return "toolBar";
-	}
 	
 	public boolean getRenderUpdateBtn() {
 		return renderUpdateBtn.getEvaluatedValue();

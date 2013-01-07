@@ -189,6 +189,9 @@ public class Window extends XUIComponentBase {
     public void initComponent(){
     	this.setOnBeforeClose("#{" + getBeanId() + ".canCloseTab}");
     	initializeTemplate( "templates/components/window.ftl" );
+    	if (rendererType.isDefaultValue( )){
+    		rendererType.setValue( "window" );
+    	}
     }
     
 
@@ -256,6 +259,11 @@ public class Window extends XUIComponentBase {
         			this.getClientId() + "_closeWnd",
         			script);
         }
+    }
+    
+    @Override
+    public String getFamily() {
+    	return "window";
     }
     
     public Renderer getRenderer() {

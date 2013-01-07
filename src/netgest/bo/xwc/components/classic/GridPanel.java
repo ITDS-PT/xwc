@@ -429,6 +429,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 		return clearSelections;
 	}
 	
+	@Override
+	public String getFamily() {
+		return "gridPanel";
+	}
 	
 	/**
 	 * Flag to tell the grid panel to maintain row selections between page
@@ -632,6 +636,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 			restoreUserState();
 		}
 		
+		if ( rendererType.isDefaultValue( ) )
+			rendererType.setValue( "gridPanel" );
+		
 	}
 
     public void setServerActionWaitMode( String waitModeName ) {
@@ -645,6 +652,11 @@ public class GridPanel extends ViewerInputSecurityBase {
     	}
     	return XVWServerActionWaitMode.NONE;
     }	
+    
+    public GridPanel() {
+		super();
+		
+	}
 	
 	/**
 	 * Process a preRender Actions
