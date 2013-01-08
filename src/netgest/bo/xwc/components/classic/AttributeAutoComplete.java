@@ -154,7 +154,7 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
             if( sSubmitedValue.length() > 0 )
             {
                 try {
-                	//FIXME: Esta validação não faz nada de momento, foi só para 
+                	//Esta validacao nao faz nada de momento, foi so para 
                 	//que não estoirasse com os bouis separados por virgula quando é mais do que um valor
                     //oSubmitedBigDecimal = new BigDecimal( String.valueOf( sSubmitedValue ) );
                     setValue( oSubmitedValue );
