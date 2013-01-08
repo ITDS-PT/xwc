@@ -3,7 +3,23 @@
 /* TextboxList sample CSS */
 
 /*ul.holder { margin: 0; border: 1px solid #999; overflow: hidden; height: auto !important; height: 1%; padding: 4px 5px 0; }*/
-ul.holder { margin: 0; border: 1px solid #999; overflow: hidden; height: auto !important; height: 1%; padding: 0px 0px 0; background-color:white }
+ul.holder { 
+	margin: 0; border: 1px solid #999; overflow: hidden;  
+	padding: 0px 0px 0; 
+	background-color:white;
+	height : 20px !important;
+	border: 1px solid #B5B8C8 !important;
+	background: white url(../../extjs/images/default/form/text-bg.gif) repeat-x 0 0; 
+}
+
+input.maininput{
+	background: white url(../../extjs/images/default/form/text-bg.gif) repeat-x 0 0;
+}
+
+span .search-lookup-trigger{
+	border-left: 1px solid #B5B8C8 !important;
+	border-bottom: 1px solid #B5B8C8 !important;
+}
 
 *:first-child+html ul.holder { padding-bottom: 2px; } * html ul.holder { padding-bottom: 2px; } /* ie7 and below */
 
@@ -17,7 +33,7 @@ ul.holder li.bit-box { -moz-border-radius: 6px; -webkit-border-radius: 6px; bord
 ul.holder li.bit-box-focus { border-color: #598BEC; background: #598BEC; color: #fff; }
 ul.holder li.bit-input input { width: auto; overflow:visible; margin: 0; border: 0px; outline: 0; padding: 3px 0px 2px; } /* no left/right padding here please */
 /* ul.holder li.bit-input input.smallinput { width: 20px; } */
-/* FIXME:  Martelada para lidar com transparência? Com o background talvez já não seja preciso */ 
+/* FIXME:  Martelada para lidar com transparecia? Com o background talvez ja nao seja preciso */ 
 ul.holder li.bit-input input.smallinput { width: 20px; filter: alpha(opacity=0); opacity: 0.0; }
 
 
