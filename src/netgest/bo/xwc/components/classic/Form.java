@@ -94,6 +94,11 @@ public class Form extends XUIForm
     	super.initComponent();
     }
     
+    @Override
+    public String getFamily() {
+    	return "form";
+    }
+    
     public void buildComponentDependences( UIComponent oComponent ) {
         Iterator<UIComponent> oChildsIterator;
         UIComponent           oKid;

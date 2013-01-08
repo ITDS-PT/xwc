@@ -96,10 +96,6 @@ public class FormEdit extends Form {
 	private XUIBindProperty<Boolean> nonOrphanFullScreen = 
 		new XUIBindProperty<Boolean>("nonOrphanFullScreen", this, false, Boolean.class);
 	
-	@Override
-	public String getRendererType() {
-		return "formEdit";
-	}
 	
 	public boolean getOrphanMode() {
 		return this.orphanMode.getEvaluatedValue();
@@ -345,6 +341,9 @@ public class FormEdit extends Form {
 			createEditWindow();
 		}
 		
+		if (rendererType.isDefaultValue( )){
+			rendererType.setValue( "form" );
+		}
 		
 		super.initComponent();
 	}

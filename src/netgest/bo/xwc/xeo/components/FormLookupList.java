@@ -1,5 +1,6 @@
 package netgest.bo.xwc.xeo.components;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -95,10 +96,6 @@ public class FormLookupList extends Form {
 		this.windowWidth.setValue( windowWidth );
 	}
 	
-	@Override
-	public String getRendererType() {
-		return "form";
-	}
 	
 	@Override
 	public void initComponent() {
@@ -138,6 +135,10 @@ public class FormLookupList extends Form {
 			setBeanIdOnChildren((XUIComponentBase)child, getBeanId());
 		}
 		
+		if (rendererType.isDefaultValue( )){
+			rendererType.setValue( "form" );
+		}
+		
 	}
 	
 	private void setBeanIdOnChildren(XUIComponentBase comp, String beanId){
@@ -171,6 +172,9 @@ public class FormLookupList extends Form {
 		wnd.getChildren().addAll( getChildren() );
 		getChildren().clear();
 		getChildren().add( wnd );
+		
+		
+		
 	}
 	
 	
