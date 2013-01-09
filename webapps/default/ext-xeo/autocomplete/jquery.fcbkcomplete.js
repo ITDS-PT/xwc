@@ -136,11 +136,11 @@
 
       //FIXME: Adicionei estes hooks aqui
       function disable(){
-    	  $('#' + elemid + "_input").attr('disabled', 'disabled');
+    	  $(XVW.get(elemid + "_input")).attr('disabled', 'disabled');
       }
       
       function enable(){
-    	  $('#' + elemid + "_input").removeAttr('disabled');
+    	  $(XVW.get(elemid + "_input")).removeAttr('disabled');
       }
       
       function getCardIdLinkCall(){
@@ -170,7 +170,7 @@
           return false;
         });
         if (!preadded) {
-          $("#" + elemid + "_annoninput").remove();
+          $(XVW.get(elemid + "_annoninput")).remove();
           addInput(focusme);
           var _item = $('<option value="'+xssDisplay(value, 1)+'" id="opt_'+id+'" class="selected" selected="selected">'+xssDisplay(title)+'</option>');
           element.append(_item);
@@ -384,7 +384,7 @@
       }
 
       function bindEvents() {
-        var maininput = $("#" + elemid + "_annoninput").children(".maininput");
+        var maininput = $(XVW.get(elemid + "_annoninput")).children(".maininput");
         bindFeedEvent();
         
         feed.children("li").unbind("mousedown").mousedown( function() {

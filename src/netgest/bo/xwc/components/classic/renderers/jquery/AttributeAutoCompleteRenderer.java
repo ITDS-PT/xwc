@@ -83,7 +83,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 		if (shouldUpdate( component )){
 			
 			widget
-			.componentSelectorById( component.getId() + "_complete" )
+			.componentSelectorById( getComponentId( component ) )
 			.createAndStartOptions()
 			.addOption( "json_url", 
 					ComponentRenderUtils.getServletURL( getContext(), component.getClientId() ) )
@@ -122,7 +122,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 				updater.hide();
 			
 			JQueryBuilder status = new JQueryBuilder();
-			status.selectorById( component.getId() + "_complete" );
+			status.selectorById( getComponentId( component ) );
 			if (component.isUsable())
 				status.command( "trigger(\"enable\")" );
 			else
@@ -181,12 +181,16 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 						append = ",";
 				}
 				result.append("]");
-				builder.componentSelectorById( component.getId() + "_complete" ).openTrigger().addItem( result.toString() ).endTrigger();
+				builder.componentSelectorById( getComponentId( component ) ).openTrigger().addItem( result.toString() ).endTrigger();
 				addScriptFooter( component.getId() + "_update", builder.build() );
 			}
 		} catch ( boRuntimeException e ) {
 			e.printStackTrace();
 		}
+	}
+	
+	public String getComponentId(AttributeAutoComplete comp){
+		return comp.getClientId() + "_input";
 	}
 
 	public void createMarkup( AttributeAutoComplete component, XUIResponseWriter w ) throws IOException {
@@ -224,7 +228,12 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 						w.writeAttribute( ID, component.getId() + "_column" );
 						w.writeAttribute( STYLE, "width:100%" );
 						w.startElement( DIV);
-		            		w.writeAttribute( ID, component.getId() + "_complete", null);
+		            		w.writeAttribute( ID, component.getClientId() + "_div", null);
+		            		w.startElement( SELECT );
+			    				w.writeAttribute( NAME, component.getClientId( ) + "_input" );
+			    				w.writeAttribute( STYLE, "display:none" );
+			    				w.writeAttribute( ID, component.getClientId( ) + "_input" );
+		    			w.endElement( SELECT );
 		            	w.endElement( DIV );	
 					w.endElement( TD );
 					w.startElement( TD );
@@ -254,11 +263,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 			w.endElement( TABLE );
 			
 			
-			w.startElement( SELECT );
-				w.writeAttribute( NAME, component.getId() + "_input" );
-				w.writeAttribute( STYLE, "display:none" );
-				w.writeAttribute( ID, component.getId() );
-			w.endElement( SELECT );
+			
 			
 		w.endElement( DIV );
 		
@@ -303,7 +308,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
     }
 	
 	public void decodeValue(AttributeAutoComplete component, Map<String,String> parameters){
-		String value = parameters.get( component.getClientId() + "_input" );
+		String value = parameters.get( component.getClientId() + "_input[]" );
 		if( "NaN".equals( value ) ) {
 			component.setSubmittedValue( "" );
 		}

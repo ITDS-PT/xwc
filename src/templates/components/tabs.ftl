@@ -19,12 +19,13 @@
 
 
 <@xvw_script position='footer'>
-	 $(function() { 
-	 	$( '#${this.id}' ).tabs().tabs("option","selected",${this.activeTabIndex});
+	  $(function() { 
+	 	$( XVW.get('${this.id}') ).tabs().tabs("option","selected",${this.activeTabIndex});
 		 	<#list this.children as tab>
 		 	$("#${tab.id}_link").click(function() {
 	  			${XVWScripts.getAjaxCommand(tab)};
 	  		});
-		 	</#list>	
-});
+		 	</#list>
+		 	 	
+}); 
 </@xvw_script>
