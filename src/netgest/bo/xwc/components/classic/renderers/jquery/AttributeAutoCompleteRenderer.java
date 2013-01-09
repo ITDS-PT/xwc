@@ -91,6 +91,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 					.addOption( "formId" , component.findParentComponent( XUIForm.class ).getClientId() )
 					.addOption( "componentId" , component.getOpenCommand().getClientId() )
 					.addOption( "enableCardIdLink" , component.getEnableCardIdLink() )
+					.addOption( "input_name" , component.getClientId( ) +"_input" )
 					.addOption( "height" , 5)
 					.addOption( "width", "100%" );
 					if (component.isUsable())
@@ -302,7 +303,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
     }
 	
 	public void decodeValue(AttributeAutoComplete component, Map<String,String> parameters){
-		String value = parameters.get( component.getId() + "_input[]" );
+		String value = parameters.get( component.getClientId() + "_input" );
 		if( "NaN".equals( value ) ) {
 			component.setSubmittedValue( "" );
 		}
