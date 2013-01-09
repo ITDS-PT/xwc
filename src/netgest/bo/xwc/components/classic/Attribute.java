@@ -317,6 +317,9 @@ public class Attribute extends AttributeBase
         if( getValueExpression("displayValue") != null )
             oAttr.setDisplayValue( getValueExpression("displayValue").getExpressionString() );
         
+        if( getValueExpression("dataFieldConnector") != null )
+            oAttr.dataFieldConnector.setExpressionText( getValueExpression("dataFieldConnector").getExpressionString() );
+        
         XUIMethodBindingValueChangeListener[] valueChangeListener  = 
         	(XUIMethodBindingValueChangeListener[]) getFacesListeners( XUIMethodBindingValueChangeListener.class );
         for (int i = 0; i < valueChangeListener.length; i++) {
