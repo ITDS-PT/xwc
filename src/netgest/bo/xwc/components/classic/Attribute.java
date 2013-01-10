@@ -9,6 +9,8 @@ import static netgest.bo.xwc.components.HTMLTag.TR;
 
 import java.io.IOException;
 
+import javax.faces.component.UIComponent;
+
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -90,47 +92,58 @@ public class Attribute extends AttributeBase
     
     public void createChildComponents() {
         
-    	AttributeLabel      oLabel = null;
-    	AttributeBase       oInput = null;
-    	
-    	
-        String sComponentType;
+    	String sComponentType;
         if( isLov() ) {
             sComponentType = "attributeLov";
         }
         else {
             sComponentType = getInputComponentType();    
         }
-
-        if( sComponentType != null ) {
-	        if( oLabel == null && "1".equals( getRenderLabel() ) ) {
-	
-	            oLabel = new AttributeLabel();
-	            oLabel.setId( getId() +  "_l" );
-	            oLabel.setText( getLabel() );
-	
-	            propagateLabelProperties( oLabel );
+        
+        createLabelComponent( );
+	    createInputComponent( sComponentType );
 	            
-	            this.getChildren().add( oLabel );
-	            
-	        }
-	        
-	        if( oInput == null ) {
-	            XUIRequestContext oRequestContext = getRequestContext();
-	            
-	            oInput = (AttributeBase)oRequestContext.getApplicationContext().getViewerBuilder()
-	                                    .createComponent( oRequestContext, sComponentType );
-	            
-	            oInput.setId( getId() + "_i" );
-	            
-	            propagateInputProperties( oInput );
-	            
-	            this.getChildren().add( oInput );
-	            
-	            
-	        }
-        }
+	    
     }
+
+	private void createLabelComponent() {
+		if( "1".equals( getRenderLabel() ) ) {
+			
+			AttributeLabel oLabel = null;
+			UIComponent labelFacet = getFacet( "label" );
+			if (labelFacet != null){
+				oLabel = (AttributeLabel) labelFacet.getChildren( ).get( 0 );
+			} else {
+				oLabel = new AttributeLabel();
+				oLabel.setText( getLabel() );
+			}
+			
+		    oLabel.setId( getId() +  "_l" );
+
+		    propagateLabelProperties( oLabel );
+		    
+		    this.getChildren().add( oLabel );
+		    
+		}
+	}
+
+	private void createInputComponent( String sComponentType) {
+		UIComponent inputFacet = getFacet( "input" );
+		AttributeBase oInput = null;
+		XUIRequestContext oRequestContext = getRequestContext();
+		if (inputFacet != null){
+			oInput = (AttributeBase) inputFacet.getChildren( ).get( 0 );
+		} else {
+		    oInput = (AttributeBase)oRequestContext.getApplicationContext().getViewerBuilder()
+                            .createComponent( oRequestContext, sComponentType );
+		}
+		
+		oInput.setId( getId() + "_i" );
+		
+		propagateInputProperties( oInput );
+		
+		this.getChildren().add( oInput );
+	}
     
     
     private String getInputComponentType(  ) {
@@ -180,7 +193,6 @@ public class Attribute extends AttributeBase
                         		sRet = "attributeNumberLookup";
                         	else
                         		sRet = "attributeSearchLookup";
-                        	//sRet = "attributeAutoComplete";
                             break;
                     }
                     break;
