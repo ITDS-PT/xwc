@@ -18,6 +18,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import netgest.bo.xwc.components.classic.GridPanel;
+import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.grid.GridPanelJSonRenderer.JsonFormat;
 import netgest.bo.xwc.components.classic.grid.GridPanelJqueryRenderer.GridOptionsBuilder.ColumnModelBuilder;
 import netgest.bo.xwc.components.classic.grid.GridPanelJqueryRenderer.GridOptionsBuilder.ColumnModelBuilder.EditOptions;
@@ -58,6 +59,8 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		GridPanel grid = (GridPanel) component;
 		XUIResponseWriter w = getResponseWriter();
 		encodeBegin( grid, w );
+		
+		//Layouts.registerComponent( w , grid , Layouts.LAYOUT_FORM_LAYOUT );
 	}
 	
 	
@@ -292,9 +295,11 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 			.dataUrl( ComponentRenderUtils.getCompleteServletURL( grid.getRequestContext(), grid.getClientId() ) )
 			.title( grid.getTitle() )
 			.height( 250 )
-			.width( 700 )
-			.shrinkToFit( false )
+			//.width( 700 )
+			.autoWidth( true )
+			.shrinkToFit( true )
 			.columnReordering( true )
+			.onDoubleClick("")
 			.rowNum( Integer.parseInt( grid.getPageSize() ) )
 			.pageEvent( grid )
 			//.loadError()
@@ -629,6 +634,11 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 			
 		}
 		
+		public GridOptionsBuilder onDoubleClick(String string) {
+			//addNo
+			return this;
+		}
+
 		public GridOptionsBuilder pageEvent(GridPanel grid) {
 			Map<String,Object> ctx = new HashMap<String, Object>();
 			ctx.put( "this", grid );
@@ -680,8 +690,13 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 			return this;
 		}
 		
+		public GridOptionsBuilder autoWidth(boolean autoWidth){
+			addOption( "autowidth", autoWidth );
+			return this;
+		}
+		
 		public GridOptionsBuilder width(int width){
-			addOption( "width", width );
+			//addOption( "width", "100%" );
 			return this;
 		}
 		
