@@ -92,8 +92,16 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 					.addOption( "componentId" , component.getOpenCommand().getClientId() )
 					.addOption( "enableCardIdLink" , component.getEnableCardIdLink() )
 					.addOption( "input_name" , component.getClientId( ) +"_input" )
-					.addOption( "height" , 5)
-					.addOption( "width", "100%" );
+					.addOption( "input_min_size" , component.getMinSearchChars( ) )
+					.addOption( "initialTextClass" , component.getInitialTextClass( ) )
+					.addOption( "resultTextClass" , component.getResultTextClass( ) )
+					.addOption( "selectedElementClass" , component.getSelectedElementClass( ) )
+					.addOption( "delay" , component.getSearchDelay( ) )
+					.addOption( "height" , 5 )
+					.addOption( "width", "100%" )
+					.addOption( "firstselected", true );
+			
+			
 					if (component.isUsable())
 						widget.addOption("maxitems", component.getMaxItems());
 					else
@@ -228,7 +236,8 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 						w.writeAttribute( ID, component.getId() + "_column" );
 						w.writeAttribute( STYLE, "width:100%" );
 						w.startElement( DIV);
-		            		w.writeAttribute( ID, component.getClientId() + "_div", null);
+		            		w.writeAttribute( ID, component.getClientId() + "_div");
+		            		w.writeAttribute( CLASS, "xwc-attribute-autoComplete");
 		            		w.startElement( SELECT );
 			    				w.writeAttribute( NAME, component.getClientId( ) + "_input" );
 			    				w.writeAttribute( STYLE, "display:none" );

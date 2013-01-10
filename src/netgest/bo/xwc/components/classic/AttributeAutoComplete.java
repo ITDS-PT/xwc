@@ -21,10 +21,11 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 	}
 	
 	/**
-	 * Whether or not to use character based search (each character triggers a search on the server)
+	 * Search type - word or character based
+	 * default is character based
 	 */
 	private XUIBaseProperty<String> searchType = 
-		new XUIBaseProperty<String>( "searchType", this, SearchType.WORD.toString() );
+		new XUIBaseProperty<String>( "searchType", this, SearchType.CHARACTER.toString() );
 	
 	public SearchType getSearchType() {
 		String value = this.searchType.getValue();
@@ -34,17 +35,12 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
     	return null;
 	}
 	
-	@Override
-	public void initComponent() {
-		super.initComponent( );
-		if (lookupResults.isDefaultValue( ) ){
-        	lookupResults.setExpressionText( "#{" + getBeanId( ) + ".getAutoCompleteSearchResult}", new Class<?>[]{String.class, AttributeBase.class} );
-        }
-	}
 	
 	public void setSearchType( String newValueExpr ) {
 		searchType.setValue( newValueExpr );
 	}
+	
+	
 	
 	@Override
 	public void setLookupResults(String queryExpr) {
@@ -98,7 +94,7 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 	/**
 	 * Message to show when the user selected the input to start typing
 	 */
-	private XUIBindProperty<String> typeMessage = 
+	 XUIBindProperty<String> typeMessage = 
 		new XUIBindProperty<String>( "typeMessage", this, String.class );
 	
 	public String getTypeMessage(){
@@ -107,6 +103,90 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 	
 	public void setTypeMessage(String typeHelpExpr){
 		this.typeMessage.setExpressionText( typeHelpExpr );
+	}
+	
+	/**
+	 * Minimal number of characters required for searching
+	 * Default value is 3 chars
+	 */
+	 XUIBaseProperty<Integer> minSearchChars = 
+		new XUIBaseProperty<Integer>( "minSearchChars", this, Integer.valueOf(3) );
+	
+	public Integer getMinSearchChars(){
+		//The component uses < instted of <= to decide the number of characters
+		return minSearchChars.getValue( ) - 1;
+	}
+	
+	public void setMinSearchChars(Integer value){
+		minSearchChars.setValue(value);
+	}
+	
+	/**
+	 * CSS class to apply to element with the "Search Here" message
+	 * default class is "xwc-initial-text"
+	 */
+	 XUIBaseProperty< String > initialTextClass = new XUIBaseProperty< String >( "initialTextClass" ,
+			this, "" );
+
+	public String getInitialTextClass() {
+		return initialTextClass.getValue( );
+	}
+
+	public void setInitialTextClass(String value) {
+		initialTextClass.setValue( value );
+	}
+	
+	/**
+	 * CSS class to apply to elements in the search result
+	 * default class is "xwc-lookup-element"
+	 */
+	XUIBaseProperty< String > resultTextClass = new XUIBaseProperty< String >( "resultTextClass" ,
+			this, "" );
+
+	public String getResultTextClass() {
+		return resultTextClass.getValue( );
+	}
+
+	public void setResultTextClass(String value) {
+		resultTextClass.setValue( value );
+	}
+	
+	/**
+	 * Class applied to selected elements 
+	 * Default is "xwc-selected-element"
+	 */
+	XUIBaseProperty<String> selectedElementClass = 
+			new XUIBaseProperty<String>( "selectedElementClass" , this, "" );
+
+	public String getSelectedElementClass() {
+		return selectedElementClass.getValue( );
+	}
+
+	public void setSelectedElementClass(String value) {
+		selectedElementClass.setValue( value );
+	}
+	
+	/**
+	 * Delay between ajax requests (bigger delay, lower server time request) - in miliseconds
+	 * Default value is 350 ms
+	 */
+	XUIBaseProperty< Integer > searchDelay = new XUIBaseProperty< Integer >( "searchDelay" ,
+			this, 350 );
+
+	public Integer getSearchDelay() {
+		return searchDelay.getValue( );
+	}
+
+	public void setSearchDelay(Integer value) {
+		searchDelay.setValue( value );
+	}
+	
+	@Override
+	public void initComponent() {
+		super.initComponent( );
+		if (lookupResults.isDefaultValue( ) ){
+			lookupResults.setExpressionText( "#{" + getBeanId( ) + ".getAutoCompleteSearchResult}", new Class<?>[]{String.class, AttributeBase.class} );
+		}
 	}
 	
 	/**

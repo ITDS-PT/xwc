@@ -30,6 +30,16 @@
  * input_min_size   - minimum size of the input element (default: 1)
  * input_name       - value of the input element's 'name'-attribute (no 'name'-attribute set if empty)
  * select_all_text  - text for select all link
+ * 
+ * Added by XEO
+ * enableCardIdLink - Whether to show a link with each element added to open the element
+ * searchType		- Whether to search by character or by entire word
+ * initialTextClass	- User CSS class to apply to element with the "Complete Text" property
+ * resultTextClass	- User CSS class to apply to each element in a result set
+ * selectedItemClass- User CSS class to apply to selected elements in the lookup
+ * defaultTextClass : Default CSS class to apply to element with the "Complete Text" property (xwc-initial-text')
+ * defaultResultTextClass : Default User CSS class to apply to each element in a result set (xwc-lookup-element)
+ * defaultElementClass : Default User CSS class to apply to selected elements in the lookup (xwc-selected-element)
  */
 
 (function( $, undefined ) {
@@ -53,10 +63,10 @@
           element.after(holder);
         }
         
-        complete = $('<div class="facebook-auto">').width(options.width);
+        complete = $('<div class="facebook-auto">').width("80%");
         if (options.complete_text != "") {
         	var completeText = options.complete_text;
-        	complete.append('<div class="default">' + completeText +  '</div>');
+        	complete.append('<div class="default '+ options.initialTextClass + ' ' + options.defaultTextClass +'">' + completeText +  '</div>');
         	if (options.select_all_text) {
         		complete.children('.default').append($('<a href="" class="select_all_items">' + options.select_all_text + '</a>').click(function(){$(element).trigger('selectAll'); return false;}));
         	}
@@ -152,7 +162,7 @@
         if (!maxItems()) {
           return false;
         }
-        var liclass = "bit-box" + (locked ? " locked": "");
+        var liclass = "bit-box" + (locked ? " locked": "") + " " +  options.selectedItemClass + ' ' + options.defaultElementClass;
         var id = randomId();
         var txt = document.createTextNode(xssDisplay(title));
         var aclose = $('<a class="closebutton" href="#"></a>');
@@ -206,7 +216,7 @@
       }
 
       function addInput(focusme) {
-        var li = $('<li class="bit-input" id="'+elemid + '_annoninput">');
+        var li = $('<li class="bit-input " id="'+elemid + '_annoninput">');
         var input = $('<input type="text" class="maininput" size="' + options.input_min_size + '" autocomplete="off" id="'+ elemid +'_input">');
         if (options.input_tabindex > 0) input.attr("tabindex", options.input_tabindex);
         if (options.input_name != "") input.attr("name", options.input_name);
@@ -326,9 +336,9 @@
             		    template = template.replace( "$" + key +"$" ,val); 
             	  });
             	  template = template.replace("$value$",xssDisplay(itemIllumination(object.value, etext)));
-            	 content += '<li rel="' + object.key + '" display="'+object.value+'">' + template + '</li>';
+            	 content += '<li class="'+options.resultTextClass +' ' + options.defaultResultTextClass + '" rel="' + object.key + '" display="'+object.value+'">' + template + '</li>';
               } else {
-            	  content += '<li rel="' + object.key + '" display="'+object.value+'">' + xssDisplay(itemIllumination(object.value, etext)) + '</li>';
+            	  content += '<li class="'+options.resultTextClass+' ' + options.defaultResultTextClass +'" rel="' + object.key + '" display="'+object.value+'">' + xssDisplay(itemIllumination(object.value, etext)) + '</li>';
               }
               counter++;
               maximum--;
@@ -580,7 +590,14 @@
         template: '',
         formId : '',
         componentId : '',
-        enableCardIdLink : false
+        enableCardIdLink : false,
+        initialTextClass : '' ,
+        resultTextClass : '' ,
+        selectedItemClass : '',
+    	defaultTextClass : 'xwc-initial-text' ,
+        defaultResultTextClass : 'xwc-lookup-element' ,
+        defaultElementClass : 'xwc-selected-element'	
+        
       },
       opt);
 
