@@ -96,7 +96,7 @@
           addItem(data.title, data.value, 0, 0, 0);
         });
         
-        //FIXME: Adicionei estes bindings
+        //Adicionei estes bindings
         $(element).bind("enable", function(event, data) {
             enable();
         });
@@ -104,7 +104,7 @@
         $(element).bind("disable", function(event, data) {
             disable();
         });
-        //FIXME: Adicionei estes bindings
+        //Adicionei estes bindings
         
         //public method to remove item
         $(element).bind("removeItem", function(event, data) {
@@ -134,7 +134,7 @@
         
       }
 
-      //FIXME: Adicionei estes hooks aqui
+      //Adicionei estes hooks aqui
       function disable(){
     	  $(XVW.get(elemid + "_input")).attr('disabled', 'disabled');
       }
@@ -146,8 +146,7 @@
       function getCardIdLinkCall(){
     	  return 'XVW.AjaxCommand( "' + options.formId +  '","' + options.componentId + '","' + options.componentId + '","1")';
       }
-      
-      //FIXME: Adicionei estes hooks aqui
+      //Adicionei estes hooks aqui
       
       function addItem(title, value, preadded, locked, focusme) {
         if (!maxItems()) {
@@ -178,6 +177,8 @@
             funCall(options.onselect, _item);
           }
           element.change();
+          if (!maxItems())
+        	  disable();
         }
         holder.children("li.bit-box.deleted").removeClass("deleted");
         clear_feed(1);
@@ -185,7 +186,7 @@
       }
 
       function removeItem(item) {
-        if (!item.hasClass('locked')) {
+    	if (!item.hasClass('locked')) {
           item.fadeOut("fast");
           var id = item.attr('id');
           if (options.onremove) {
@@ -200,6 +201,7 @@
           item.remove();
           element.change();
           deleting = 0;
+          enable();
         }
       }
 
