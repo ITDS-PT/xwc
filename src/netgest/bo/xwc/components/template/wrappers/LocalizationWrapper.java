@@ -15,7 +15,7 @@ public class LocalizationWrapper {
 		if (defaultBundles == null)
 			throw new RuntimeException( "Cannot retrieve " + message + " when there're no default bundles " );
 		for (String bundle : defaultBundles){
-			String result = XUIMessagesLocalization.getMessage( bundle, message );
+			String result = XUIMessagesLocalization.getMessageOptional( bundle, message );
 			if (StringUtils.hasValue( result )) return result;
 		}
 		return "";

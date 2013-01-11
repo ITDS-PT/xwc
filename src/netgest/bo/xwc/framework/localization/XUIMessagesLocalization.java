@@ -85,8 +85,17 @@ public class XUIMessagesLocalization {
 		return getMessage(locale, bundle, key, (Object[]) null);
 	}
 
+	private enum HandleMissingResource{
+		RETURN_NULL,
+		RETURN_MESSAGE
+	}
+	
 	public static String getMessage(Locale locale, String bundle, String key,
 			Object... args) {
+		return getMessage(locale,bundle,key,HandleMissingResource.RETURN_MESSAGE, args);
+	}
+	public static String getMessage(Locale locale, String bundle, String key, HandleMissingResource missingResource,
+			Object... args ) {
 		// ///////
 		String lang = locale.getLanguage();
 		if (!lang.equalsIgnoreCase(getUserLanguage())) {
@@ -140,6 +149,9 @@ public class XUIMessagesLocalization {
 		} catch (java.util.MissingResourceException e) {
 		}
 		if (localizedMessage == null) {
+			if (missingResource == HandleMissingResource.RETURN_NULL)
+				return null;
+			
 			localizedMessage = bundle + "_" + locale.getLanguage() + "[" + key
 					+ "]";
 
@@ -156,6 +168,18 @@ public class XUIMessagesLocalization {
 			}
 		}
 		return localizedMessage;
+	}
+	
+	/**
+	 * 
+	 * Attemps to retrieve the message if it exits, if it does not exist return null
+	 * 
+	 * @param bundle
+	 * @param id
+	 * @return
+	 */
+	public static String getMessageOptional(String bundle, String id) {
+		return getMessage(getThreadCurrentLocale(), bundle, id, HandleMissingResource.RETURN_NULL, (Object[]) null);
 	}
 
 	public static String getMessage(String bundle, String id) {

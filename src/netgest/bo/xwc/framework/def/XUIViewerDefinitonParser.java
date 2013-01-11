@@ -81,7 +81,11 @@ public class XUIViewerDefinitonParser
             String localizationClasses = node.getAttribute( "localizationClasses" );
             
             if( localizationClasses != null && localizationClasses.length() > 0 ) {
-            	xwvr.setLocalizationClasses( localizationClasses.split(",") );
+            	String[] classes = localizationClasses.split(",");
+            	for (int i = 0; i < classes.length; i++ ){
+            		classes[i] = classes[i].trim();
+            	}
+            	xwvr.setLocalizationClasses( classes );
             }
             
             String isTransient = node.getAttribute("transient");
