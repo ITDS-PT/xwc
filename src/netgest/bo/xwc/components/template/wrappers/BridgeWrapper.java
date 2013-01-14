@@ -11,7 +11,7 @@ import freemarker.template.TemplateModelIterator;
  * Wraps a bridge handler so that it can be used inside a FTL template
  *
  */
-public class BridgeWrapper implements TemplateCollectionModel {
+public class BridgeWrapper implements TemplateCollectionModel, XeoWrapper {
 
 	private bridgeHandler handler;
 	

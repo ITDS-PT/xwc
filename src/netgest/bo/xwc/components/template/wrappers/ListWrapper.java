@@ -9,7 +9,7 @@ import freemarker.template.TemplateModelIterator;
  * Wraps a {@link boObjectList} so that it can be used in a FTL Template
  *
  */
-public class ListWrapper implements TemplateCollectionModel {
+public class ListWrapper implements TemplateCollectionModel, XeoWrapper {
 
 	private boObjectList list;
 	
