@@ -1,8 +1,8 @@
 <div id='${this.clientId}'>
 	<fieldset id='${this.id}' class='ui-widget ui-widget-content xwc-section'>
-		<#if (this.label?length > 0)> 
+		<#if (this.label??)> 
 		<legend style='ui-widget-header ui-corner-all xwc-legend'>
-			${this.label}
+			${this.label!""}
 		</legend>
 		<#else>
 		<legend class='ui-widget-header ui-corner-all xwc-legend-empty' />

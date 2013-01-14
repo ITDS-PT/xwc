@@ -12,11 +12,13 @@
 		 			.removeAttr('disabled')	
 			 	</#if>
 			 	
-			 	<#if menu.actionExpression??>
+			 	.click(function() { ${XVWScripts.getAjaxCommand(menu)} ;  return false; })
+			 	<#-- Como detectar que existe um commando naquele menu -->
+			 	<#-- <#if menu.actionExpression??>
 			 		.click(function() { ${XVWScripts.getAjaxCommand(menu)} ;  return false; })
 			 	<#else>
 			 		.click(function() { return false; })
-			 	</#if> 
+			 	</#if>  -->
 			 	
 			 	<#if menu.visible>
 		 			.show();
@@ -25,7 +27,7 @@
 			 	</#if>
 			 	
 			 	<#-- Draw the icons -->	
-			 	<#if menu.con?? > 
+			 	<#if menu.icon?? > 
 		 			$( '#${menu.id!}_btn' )
 						.children('.ui-button-text')
 						<#if this.iconPosition == 'left'> 
