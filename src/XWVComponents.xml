@@ -820,20 +820,7 @@
             <xwc:description>Generic Template Component, allowing to use any template inside a view</xwc:description>
         </xwc:component>
         
-        <xwc:component name='xeoList'>
-            <xwc:className>netgest.bo.xwc.components.template.xeo.XeoList</xwc:className>
-            <xwc:description>List of XEO Objects</xwc:description>
-        </xwc:component>
         
-        <xwc:component name='xeoObject'>
-            <xwc:className>netgest.bo.xwc.components.template.xeo.XeoObject</xwc:className>
-            <xwc:description>A single XEO Objects</xwc:description>
-        </xwc:component>
-        
-        <xwc:component name='xeoLov'>
-            <xwc:className>netgest.bo.xwc.components.template.xeo.XeoLov</xwc:className>
-            <xwc:description>A XEO Lov</xwc:description>
-        </xwc:component>
         
         <xwc:component name="flatTreePanel">
             <xwc:className>netgest.bo.xwc.components.classic.FlatTreePanel</xwc:className>
@@ -1116,6 +1103,21 @@
         <xwc:component name='menuCounter'>
             <xwc:className>netgest.bo.xwc.xeo.components.MenuCounter</xwc:className>
             <xwc:description>An outlook style menu counter (think unread messages)</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name='xeoList'>
+            <xwc:className>netgest.bo.xwc.components.template.xeo.XeoList</xwc:className>
+            <xwc:description>List of XEO Objects</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name='xeoObject'>
+            <xwc:className>netgest.bo.xwc.components.template.xeo.XeoObject</xwc:className>
+            <xwc:description>A single XEO Objects</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name='xeoLov'>
+            <xwc:className>netgest.bo.xwc.components.template.xeo.XeoLov</xwc:className>
+            <xwc:description>A XEO Lov</xwc:description>
         </xwc:component>
         
     </xwc:components>
