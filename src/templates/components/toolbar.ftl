@@ -25,7 +25,7 @@
 			 	</#if>
 			 	
 			 	<#-- Draw the icons -->	
-				<#if (menu.icon?length > 0) > 
+			 	<#if menu.con?? > 
 		 			$( '#${menu.id!}_btn' )
 						.children('.ui-button-text')
 						<#if this.iconPosition == 'left'> 
@@ -45,7 +45,7 @@
 	<div id='${this.id}' class='ui-widget-header ui-corner-all xwc-toolbar'>
 		<#list this.children as menu>
     		<button id='${menu.id!}_btn' class='xwc-toolbar-button'>
-    			<span>${menu.text}</span>
+    			<span>${menu.text!}</span>
     		</button>
 		</#list>
 	</div>	
