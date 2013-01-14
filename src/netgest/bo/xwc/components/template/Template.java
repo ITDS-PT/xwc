@@ -8,6 +8,8 @@ import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
+import freemarker.template.SimpleHash;
+
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 /**
@@ -32,12 +34,13 @@ public class Template extends XUIComponentBase {
 
 			FacesContext context = FacesContext.getCurrentInstance();
 			ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
-			ValueExpression expression = oExFactory.createValueExpression( getELContext(), value, String.class );
+			ValueExpression expression = oExFactory.createValueExpression( getELContext(), value, Object.class );
 			if ( expression.isLiteralText() )
 				this.properties.put( propName, value );
 			else {
 				try {
-					this.properties.put( propName, expression.getValue( getELContext() ) );
+					Object evaluatedValue = expression.getValue( getELContext() );
+					this.properties.put( propName,  evaluatedValue );
 				} catch ( Exception e ) {
 					e.printStackTrace();
 					throw new RuntimeException( "Could not evaluate the expression " + value + " " + e.getMessage() );
