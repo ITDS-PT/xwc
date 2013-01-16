@@ -40,7 +40,7 @@ import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
-import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
+import netgest.bo.xwc.components.connectors.helper.MultiPurposeFieldConnector;
 import netgest.utils.StringUtils;
 
 /**
@@ -522,10 +522,10 @@ public class SQLDataListConnector implements DataListConnector {
 			SQLDataFieldMetaData sqlmdata=iColumns.next();
 			
 			
-			GenericFieldConnector field=null;
+			MultiPurposeFieldConnector field=null;
 			try {
-				field = new GenericFieldConnector(sqlmdata.getLabel().toLowerCase(), 
-						rs.getString(colIndex), sqlmdata.getDataType());
+				field = new MultiPurposeFieldConnector(sqlmdata.getLabel().toLowerCase(), 
+						rs.getObject(colIndex), sqlmdata.getDataType());
 			} catch (SQLException e) {
 			}			
 			

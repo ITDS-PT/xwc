@@ -8,7 +8,7 @@ import java.util.Set;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
-import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
+import netgest.bo.xwc.components.connectors.helper.MultiPurposeFieldConnector;
 
 public class GenericDataRecordConnector implements DataRecordConnector, Map<String,Object> {
 	Map<String, Object> atts;
@@ -33,7 +33,7 @@ public class GenericDataRecordConnector implements DataRecordConnector, Map<Stri
 			if (colmdata!=null)
 				dataType=colmdata.getDataType();
 		}
-		return new GenericFieldConnector(colKey,(String) this.atts.get(colKey),dataType );
+		return new MultiPurposeFieldConnector(colKey,this.atts.get(colKey),dataType );
 	}
 
 	@Override
