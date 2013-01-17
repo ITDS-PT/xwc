@@ -32,22 +32,15 @@ public class JQueryTheme extends ExtJsTheme {
 		super.addScripts( scriptContext );
 		
 		
-//		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jquery",
-//				composeUrl("//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"));
-		
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jquery",
-				composeUrl(".xeodeploy/"+getResourceBaseUriJquery() + "js/jquery-1.7.2.min.js"));
-		
-//		String jQueryFallback = "!window.jQuery && document.write(unescape(\"%3Cscript src='jquery-xeo/js/jquery-1.7.2.min.js' type='text/javascript'%3E%3C/script%3E\"));";
-//		scriptContext.add( XUIScriptContext.POSITION_HEADER, "jquery_fallback",jQueryFallback );
-		
-//		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jquery-ui",
-//				composeUrl("//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"));
-//		String jQueryUIFallback = "!window.jQuery.ui && document.write(unescape(\"%3Cscript src='jquery-xeo/js/jquery-ui-1.8.20.custom.min.js' type='text/javascript'%3E%3C/script%3E\"));";
-//		scriptContext.add( XUIScriptContext.POSITION_HEADER, "jqueryUI_fallback",jQueryUIFallback );
+				composeUrl("//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"));
+		String jQueryFallback = "!window.jQuery && document.write(unescape(\"%3Cscript src='jquery-xeo/js/jquery-1.7.2.min.js' type='text/javascript'%3E%3C/script%3E\"));";
+		scriptContext.add( XUIScriptContext.POSITION_HEADER, "jquery_fallback",jQueryFallback );
 		
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jquery-ui",
-				composeUrl(".xeodeploy/"+getResourceBaseUriJquery() + "js/jquery-ui-1.8.20.custom.min.js"));
+				composeUrl("//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"));
+		String jQueryUIFallback = "!window.jQuery.ui && document.write(unescape(\"%3Cscript src='jquery-xeo/js/jquery-ui-1.8.20.custom.min.js' type='text/javascript'%3E%3C/script%3E\"));";
+		scriptContext.add( XUIScriptContext.POSITION_HEADER, "jqueryUI_fallback",jQueryUIFallback );
 		
 		
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jquery-blockui",
