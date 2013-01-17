@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,10 +48,10 @@ public class XUIViewerDefinitonParser
     }
     
     public XUIViewerDefinition parse( InputStream inputStream ) {
-    	return parse(inputStream, new HashSet<String>());
+    	return parse(inputStream, new IncludeCounter());
     }
     
-    public XUIViewerDefinition parse( InputStream inputStream, Set<String> viewersAlreadyParsed, String viewerName ) {
+    public XUIViewerDefinition parse( InputStream inputStream, IncludeCounter counter, String viewerName ) {
     	XUIViewerDefinition xwvr;
         try
         {
@@ -63,6 +64,11 @@ public class XUIViewerDefinitonParser
 
             parseBeanClasses( xwvr, node.getAttribute( "beanClass" ) );
             parseBeanIds( xwvr, node.getAttribute( "beanId" ) );
+            List<String> beanIds = xwvr.getViewerBeanIds( );
+            for (String beanId : beanIds){
+            	if (counter.wasBeanIdFound( beanId ))
+            		throw new RuntimeException( String.format("Duplicate bean id %s in viewer %s", beanId, viewerName ) );
+            }
             
             xwvr.setRenderKitId( node.getAttribute( "renderKitId" ) ); 
 
@@ -93,7 +99,9 @@ public class XUIViewerDefinitonParser
             	xwvr.setTransient( Boolean.valueOf( isTransient ) );
             }
             
-            xwvr.setRootComponent( parseNode( xwvr, (XMLElement)node, null, viewersAlreadyParsed ) );
+            counter.parsed( viewerName , xwvr.getViewerBeanIds( ) );
+            
+            xwvr.setRootComponent( parseNode( xwvr, (XMLElement)node, null, counter ) );
             
         }
         catch (Exception e)
@@ -105,8 +113,8 @@ public class XUIViewerDefinitonParser
         return xwvr;
     }
     
-    public XUIViewerDefinition parse( InputStream inputStream, Set<String> viewersAlreadyParsed ) {
-        return parse( inputStream , viewersAlreadyParsed , EMPTY );
+    public XUIViewerDefinition parse( InputStream inputStream, IncludeCounter counter ) {
+        return parse( inputStream , counter , EMPTY );
     }
     
     private void parseBeanClasses(XUIViewerDefinition vdef, String beanClasses){
@@ -125,7 +133,7 @@ public class XUIViewerDefinitonParser
     }
     
     public XUIViewerDefinition parse( String viewerName ){
-    	return parse( viewerName, new HashSet<String>() );
+    	return parse( viewerName, new IncludeCounter( ) );
     }
     
     /**
@@ -137,7 +145,7 @@ public class XUIViewerDefinitonParser
      * 
      * @return The viewer definition
      */
-    public XUIViewerDefinition parse( String viewerName, Set<String> viewersParsed ) 
+    public XUIViewerDefinition parse( String viewerName, IncludeCounter counter ) 
     {
         XUIViewerDefinition xwvr;
         
@@ -149,7 +157,7 @@ public class XUIViewerDefinitonParser
             if( is != null )
             {
             	try {
-            		xwvr = parse( is , viewersParsed, viewerName );
+            		xwvr = parse( is , counter, viewerName );
             		viewCache.put( viewerName, xwvr );
             	} finally {
             		if( is != null )
@@ -177,8 +185,8 @@ public class XUIViewerDefinitonParser
      * @param viewerName The viewer name
      * @return
      */
-    private boolean wasViewerAlreadyParsed(String viewerName, Set<String> parsed){
-    	return parsed.contains( viewerName );
+    private boolean wasViewerAlreadyParsed(String viewerName, IncludeCounter counter){
+    	return counter.wasViewerParsed( viewerName );
     }
 
     public InputStream resolveViewer( String viewerName ) {
@@ -263,17 +271,17 @@ public class XUIViewerDefinitonParser
     }
     
     public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, XUIViewerDefinitionNode parent ){
-    	return parseNode(root, node, parent, new HashSet<String>());
+    	return parseNode(root, node, parent, new IncludeCounter());
     }
     
-    public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, XUIViewerDefinitionNode parent, Set<String> alreadyParsedViewers )
+    public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, XUIViewerDefinitionNode parent, IncludeCounter counter )
     {
         XUIViewerDefinitionNode component = new XUIViewerDefinitionNode();
         component.setRoot( root );
         component.setParent( parent );
         
         if ( isIncludeComponent( node ) ){
-        	return replaceIncludeContent( root, node, parent, alreadyParsedViewers );
+        	return replaceIncludeContent( root, node, parent, counter );
         }
         
         if( node.getNodeName().indexOf(':') == -1 )
@@ -318,7 +326,7 @@ public class XUIViewerDefinitonParser
             Node cnode = nlist.item( i );
             if( cnode.getNodeType() == Node.ELEMENT_NODE )
             {
-                component.addChild( parseNode( root, (XMLElement)nlist.item( i ), component, alreadyParsedViewers ) );
+                component.addChild( parseNode( root, (XMLElement)nlist.item( i ), component, counter ) );
             } 
             else if ( cnode.getNodeType() == Node.TEXT_NODE ) 
             {
@@ -357,7 +365,8 @@ public class XUIViewerDefinitonParser
     	return node.getNodeName().equalsIgnoreCase("xvw:include");
     }
     
-    private XUIViewerDefinitionNode replaceIncludeContent( XUIViewerDefinition def,  XMLElement node, XUIViewerDefinitionNode parent, Set<String> parsed ){
+    private XUIViewerDefinitionNode replaceIncludeContent( XUIViewerDefinition def,  XMLElement node, XUIViewerDefinitionNode parent, 
+    		IncludeCounter parsedCounter ){
     	
     	String includeFilePath = node.getAttribute( "src" );
     	
@@ -373,16 +382,14 @@ public class XUIViewerDefinitonParser
         }
         
     	
-    	if (wasViewerAlreadyParsed(includeFilePath, parsed))
+    	if (wasViewerAlreadyParsed(includeFilePath, parsedCounter))
     		throw new RuntimeException( String.format("Cyclic reference: %s was already processed", includeFilePath ) );
-    	parsed.add( includeFilePath );
     	
-    	XUIViewerDefinition included =  this.parse( includeFilePath , parsed );
     	
-    	/*String rootComponentName = included.getRootComponent().getName();
-    	if (!rootComponentName.contains( "composition" ) ){
-    		throw new RuntimeException( String.format( "Cannot include a viewer that's not a xvw:composition fragment: %s", includeFilePath ) );
-    	}*/
+    	XUIViewerDefinition included =  this.parse( includeFilePath , parsedCounter );
+    	
+    	parsedCounter.parsed( includeFilePath, included.getViewerBeanIds( ) );
+    	
     	
     	addBeansToViewerDefinition( def , included.getViewerBeans() );
     	addBeanIdsToViewerDefinition( def , included.getViewerBeanIds() );
@@ -490,6 +497,36 @@ public class XUIViewerDefinitonParser
 
 
 	public void replaceBean( String newBean ) {
+		
+	}
+	
+	private static class IncludeCounter{
+		
+		private Map<String,List<String>> parsed;
+		
+		public IncludeCounter(){
+			parsed = new HashMap< String , List<String> >( );
+		}
+		
+		public void parsed(String viewer, List<String> beanIds){
+			parsed.put( viewer , beanIds );
+		}
+		
+		public boolean wasViewerParsed(String viewer){
+			return parsed.containsKey( viewer );
+		}
+		
+		public boolean wasBeanIdFound(String beanIdToCheck){
+			Iterator<List<String>> it = parsed.values( ).iterator( );
+			while (it.hasNext()){
+				List<String> current = it.next();
+				for (String beanId : current){
+					if (beanId.equals( beanIdToCheck ))
+						return true;
+				}
+			}
+			return false;
+		}
 		
 	}
     
