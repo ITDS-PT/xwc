@@ -23,7 +23,7 @@
 	 	$( XVW.get('${this.id}') ).tabs().tabs("option","selected",${this.activeTabIndex});
 		 	<#list this.children as tab>
 		 	$("#${tab.id}_link").click(function() {
-	  			${XVWScripts.getAjaxCommand(tab)};
+	  			${xvw.js.ajaxCommand(tab)};
 	  		});
 		 	</#list>
 		 	 	

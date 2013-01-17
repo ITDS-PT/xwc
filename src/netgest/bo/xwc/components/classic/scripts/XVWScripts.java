@@ -17,6 +17,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.utils.StringUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,9 +90,30 @@ public class XVWScripts {
             "XVW.Command( '" + oComponent.findParentComponent(XUIForm.class).getClientId() +  "','" + oComponent.getClientId() + "','" + oComponent.getId() + "','"+iWaitMode+"')";
     }
     
+    public static final String getCommandScript( String containerId, String commandId) {
+        return 
+            "XVW.Command( '" + containerId +  "','" + commandId + "','" + commandId + "','"+WAIT_DIALOG+"')";
+    }
+    
+    public static final String getCommandScript( String containerId, String commandId, String value) {
+        return 
+            "XVW.Command( '" + containerId +  "','" + commandId + "','" + value + "','"+WAIT_DIALOG+"')";
+    }
+    
     public static final String getCommandScript( XUIComponentBase oComponent, String sValue, int iWaitMode ) {
         return 
             "XVW.Command( '" + oComponent.findParentComponent(XUIForm.class).getClientId() +  "','" + oComponent.getClientId() + "','" + sValue + "', '"+ iWaitMode +"')";
+    }
+    
+    public static final String getAjaxCommandScript( String containerId, String compId , String value ) {
+    	assert compId != null : MessageLocalizer.getMessage("THE_COMPONENT_IS_NULL");
+    	assert containerId != null : MessageLocalizer.getMessage("CANNOT_FIND_A_NAMING_CONTAINER_FOR_THE_COMPONENT"); 
+    	
+    	if (StringUtils.isEmpty( value ))
+    		value = compId;
+    	
+        return 
+            "XVW.AjaxCommand( '" + containerId +  "','" + compId + "','" + value + "','"+WAIT_DIALOG+"')";
     }
      
     public static final String getAjaxCommandScript( XUIComponentBase oComponent, int iWaitMode ) {
@@ -210,6 +232,32 @@ public class XVWScripts {
 	        	
     	return command;
     }
+    
+    public static final String getOpenCommandWindow(  String formId, String windowId, String sActionValue )    {
+        String sFrameName = "Frame_" + windowId;
+      
+    	String width = "500";
+    	String height = "500";
+    	String title = "";
+    	
+    	String command = 
+	    	"XVW.OpenCommandWindow( " +
+	        "'" + sFrameName + "'," +
+	        "'" + formId + "'," +
+	        "'" + windowId + "'" +
+	        
+	        (sActionValue == null?",'',":
+	        	",'" 
+	        	+ JavaScriptUtils.writeValue( sActionValue ) + "'," ) +
+	        	
+	        "'" + width +  "'," +
+	        "'" + height + "'," +
+	        "'" + title + "'" +
+	        ");"
+	        ;
+	        	
+    	return command;
+    }
    
 
     public static final String getOpenCommandBlankWindow(  XUIComponentBase oComponent, String sActionValue )    {
@@ -264,6 +312,24 @@ public class XVWScripts {
             ");";
     }
     
+    public static final String getOpenCommandTab(  String targetName, String tabId, String formId,  String sActionValue, String sTabTitle, boolean closeableTab, boolean alwaysNewTab )    {
+    	String sFrameName =  targetName!=null?targetName:"Frame_" + tabId;
+    	if (alwaysNewTab){
+    		sFrameName = "new Date().valueOf()";
+    	}else{
+    		sFrameName = "'" + sFrameName + "'"; 
+    	}
+        return 
+            "XVW.openCommandTab( " +
+            sFrameName+"," +
+            "'" + formId + "'," +
+            "'" + tabId + "'," +
+            "'" + JavaScriptUtils.writeValue( sActionValue ) + "'," +
+            (sTabTitle!=null? "'" + JavaScriptUtils.writeValue( sTabTitle ) + "'" : null ) + ","
+            + closeableTab +
+            ");";
+    }
+    
     public static final String getCommandDownloadFrame(  XUIComponentBase oComponent, String sActionValue )    {
         String sFrameName = "Frame_" + oComponent.getId();
         return 
@@ -281,6 +347,10 @@ public class XVWScripts {
     		return "XVW.syncView('" + form.getClientId() + "');";
     	}
     	return "";
+    }
+    
+    public static final String getSyncClientViewScript( String formId ) {
+    	return "XVW.syncView('" + formId + "');";
     }
     
     public static final void closeView( XUIViewRoot oViewRoot, XUIScriptContext scriptCtx) {

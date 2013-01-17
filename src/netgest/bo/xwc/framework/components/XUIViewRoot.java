@@ -2,6 +2,7 @@ package netgest.bo.xwc.framework.components;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -104,12 +105,12 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 		}
 	}
+	
 
 	public Object getBean(String sBeanName) {
-		return XUIRequestContext.getCurrentContext().getSessionContext()
-				.getAttribute(getBeanPrefix() + sBeanName);
+		return new ViewRootBeanFinder().getBean( this , sBeanName ); 
 	}
-
+	
 	public String getBeanUniqueId(String sBeanName) {
 		return getBeanPrefix() + sBeanName;
 	}
@@ -130,6 +131,46 @@ public class XUIViewRoot extends UIViewRoot {
 		
 		return this.sBeanIds.split("\\|");
 		
+	}
+	
+	String[] beanIds = null;
+	
+	/**
+	 * 
+	 * Retrieves the bean identifiers from the current view and child views
+	 * 
+	 * @return
+	 */
+	public String[] getAllBeanIds(){
+		if (beanIds == null){
+			String[] selfIds = getBeanIds( );
+			List<String> list = new ArrayList< String >( );
+			findChildBeanIds( this , list );
+			
+			for (String id :selfIds){
+				list.add(id);
+			}
+			
+			beanIds = list.toArray(new String[list.size()]);
+		}
+		return beanIds;
+	}
+	
+	void findChildBeanIds(UIComponent component, List<String> ids){
+		List<UIComponent> children = component.getChildren( );
+		if (!children.isEmpty( ))
+		{
+			for (UIComponent comp : children){
+				if (comp instanceof XUIViewRoot){
+					String[] beanIds = ((XUIViewRoot) comp).getAllBeanIds( );
+					for (String b : beanIds){
+						ids.add( b );
+					}
+				} else {
+					findChildBeanIds( comp , ids ); 
+				}
+			}
+		}
 	}
 	
 	public Map<String,Object> getViewBeans() {
@@ -203,7 +244,7 @@ public class XUIViewRoot extends UIViewRoot {
 		return oTheme;
 	}
 
-	private final String getBeanPrefix() {
+	 final String getBeanPrefix() {
 		return getViewId() + ":" + sInstanceId + ":";
 	}
 

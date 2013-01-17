@@ -3,21 +3,26 @@ package netgest.bo.xwc.components.template.base;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.faces.component.UIComponent;
 
 import netgest.bo.xwc.components.template.css.XwcCssContext;
 import netgest.bo.xwc.components.template.directives.ChildDirectiveProcessor;
 import netgest.bo.xwc.components.template.directives.CssDirectiveProcessor;
 import netgest.bo.xwc.components.template.directives.HeaderWriterDirectiveProcessor;
 import netgest.bo.xwc.components.template.directives.JavaScriptDirectiveProcessor;
+import netgest.bo.xwc.components.template.directives.XUICommandDirectiveProcessor;
+import netgest.bo.xwc.components.template.directives.XUIInputDirectiveProcessor;
 import netgest.bo.xwc.components.template.javascript.XwcScriptContext;
 import netgest.bo.xwc.components.template.loader.TemplateLoaderFactory;
-import netgest.bo.xwc.components.template.wrappers.LocalizationWrapper;
-import netgest.bo.xwc.components.template.wrappers.XVWScriptsWrapper;
+import netgest.bo.xwc.components.template.resolver.TemplateContextVariables;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
+import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.utils.StringUtils;
 import freemarker.core.ParseException;
@@ -35,7 +40,9 @@ public class TemplateRenderer extends XUIRenderer {
 		SCRIPT("xvw_script"),
 		CSS("xvw_css"),
 		CHILDREN("xvw_facet"),
-		HEADER("xvw_header")
+		HEADER("xvw_header"),
+		COMMAND("XUICommand"),
+		INPUT("XUIInput")
 		;
 		
 		private String name;
@@ -91,18 +98,23 @@ public class TemplateRenderer extends XUIRenderer {
 		ChildDirectiveProcessor children = new ChildDirectiveProcessor( component );
 		HeaderWriterDirectiveProcessor header = 
 				new HeaderWriterDirectiveProcessor( getHeaderWriter() );
-		XVWScriptsWrapper wrapper = new XVWScriptsWrapper();
 		//Put them in the context
-		Map<String,Object> context = new HashMap<String, Object>();
+		Map<String,Object> context =  new HashMap< String , Object >();
 		context.put( ProcessorDirectives.SCRIPT.getName(), script );
 		context.put( ProcessorDirectives.CSS.getName(), css );
 		context.put( ProcessorDirectives.CHILDREN.getName(), children );
 		context.put( ProcessorDirectives.HEADER.getName(), header );
-		context.put( "bundles", new LocalizationWrapper( getRequestContext( ).getViewRoot( ).getLocalizationClasses( ) ) );
-		context.put( "XVWScripts", wrapper);
+		context.put( ProcessorDirectives.COMMAND.getName(), new XUICommandDirectiveProcessor( ) );
+		context.put( ProcessorDirectives.INPUT.getName(), new XUIInputDirectiveProcessor( ) );
+		List<UIComponent> childrenComps = component.getChildren( );
+		for (UIComponent child : childrenComps){
+			if (child instanceof XUICommand)
+				context.put( child.getId( ), child );
+		}
 		
 		//Export the component
 		context.put( "this", component );
+		context.put( "xvw", new TemplateContextVariables( getRequestContext( ) ));
 		try {
 			p.process(context, getResponseWriter());
 		} catch ( Exception e ) {
