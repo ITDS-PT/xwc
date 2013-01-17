@@ -302,15 +302,19 @@ ExtXeo.layoutMan.doLayout = function( sViewId ) {
 	}
 }
 
+
+
+
 ExtXeo.layoutMan.doLayout1 = function( sViewId )
 {
 	var compArray = ExtXeo.layoutMan.comp[ sViewId ];
 	var sId;
-	var oLayouts = new Array(
+	/*var oLayouts = new Array(
 			['fit-window',ExtXeo.layoutMan.doFitWindow],
 			['fit-parent',ExtXeo.layoutMan.doFitParent],
 			['form',ExtXeo.layoutMan.doForm]
-	);
+	);*/
+	var oLayouts = ExtXeo.layoutMan.managers;
 	
 	for( sId in compArray )	{
 		var oElem = document.getElementById( sId );
@@ -321,12 +325,14 @@ ExtXeo.layoutMan.doLayout1 = function( sViewId )
 
 	var fnLMan;
 	for ( var i = 0; i < oLayouts.length; i++) {
-		fnLMan = oLayouts[i][1];
 		for( sId in compArray )	{
 			if( compArray[ sId ] == oLayouts[i][0] ) {
-				var oElem = document.getElementById( sId );
-				if( oElem != null ) {
-					fnLMan( oElem );
+				for (var k = 0 ; k < oLayouts[i].length ; k++ ){
+					fnLMan = oLayouts[i][1][k];
+					var oElem = document.getElementById( sId );
+					if( oElem != null ) {
+						fnLMan( oElem );
+					}
 				}
 			}
 		}
@@ -503,6 +509,20 @@ ExtXeo.layoutMan.doForm = function( oElem )
 		var oc = oElem.childNodes;
 		for ( var i = 0; i < oc.length; i++) {
 			ExtXeo.layoutMan.doForm( oc[i] );
+		}
+	}
+}
+
+ExtXeo.layoutMan.managers = 
+	new Array(	['fit-window',[ExtXeo.layoutMan.doFitWindow]],
+				['fit-parent',[ExtXeo.layoutMan.doFitParent]],
+				['form',[ExtXeo.layoutMan.doForm]]);
+
+ExtXeo.layoutMan.registerManager = function (id, funct){
+	for (var i = 0 ; i < ExtXeo.layoutMan.managers.length ; i++){
+		var index = ExtXeo.layoutMan.managers[i];
+		if (index[0] == id){
+			ExtXeo.layoutMan.managers[i][1].push(funct);
 		}
 	}
 }
