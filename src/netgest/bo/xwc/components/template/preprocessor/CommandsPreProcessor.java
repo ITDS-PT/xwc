@@ -81,7 +81,6 @@ public class CommandsPreProcessor {
 				        XUIInput in = new XUIInput( );
 				        
 					}
-					System.out.println(o.getSource( ));
 				}
 				
 			}
