@@ -1,6 +1,6 @@
 package netgest.bo.xwc.framework.components;
 
-import java.util.List;
+import java.util.Iterator;
 
 import javax.faces.component.UIComponent;
 
@@ -21,8 +21,9 @@ public class ViewRootBeanFinder {
 	
 
 	private void findBean(UIComponent comp, String name){
-		List<UIComponent> lst = comp.getChildren( );
-		for (UIComponent component : lst){
+		Iterator<UIComponent> lst = comp.getFacetsAndChildren();
+		while (lst.hasNext()){
+		UIComponent component = lst.next();
 			if (component instanceof XUIViewRoot){
 				bean = ((XUIViewRoot) component).getBean( name );
 				if (bean == null){
@@ -33,6 +34,7 @@ public class ViewRootBeanFinder {
 				findBean(component,name);
 			}
 		}
+		
 	}
 	
 }
