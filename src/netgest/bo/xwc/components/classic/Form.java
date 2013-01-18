@@ -43,6 +43,9 @@ public class Form extends XUIForm
 	private XUIViewStateProperty<String> 	encType 			= 
 		new XUIViewStateProperty<String>("encType", this, null );
 	
+	private XUIBindProperty<String> 	cssClass 			= 
+			new XUIBindProperty<String>("cssClass", this, String.class, "" );
+	
 	private XUIBindProperty<Byte> 		securityPermissions = 
 		new XUIBindProperty<Byte>("securityPermissions", this, Byte.class, "#{viewBean.securityPermissions}" );
 
@@ -74,7 +77,14 @@ public class Form extends XUIForm
 	public void setEncType(String encType) {
 		this.encType.setValue( encType );
 	}
+	
+	public String getCssClass(){
+		return cssClass.getEvaluatedValue();
+	}
 
+	public void setCssClass(String cssExpr){
+		cssClass.setExpressionText( cssExpr );
+	}
 	private HashMap<String, Boolean> oComponentDependeces;
 
     @Override
@@ -222,6 +232,7 @@ public class Form extends XUIForm
             writer.writeAttribute("id", clientId, "clientId");
             writer.writeAttribute("name", clientId, "name");
             writer.writeAttribute("method", "post", null);
+            writer.writeAttribute("method", "post", null);
             
             if( oForm.getEncType() != null ) {
                 writer.writeAttribute("enctype", oForm.getEncType(), "encType");
@@ -229,10 +240,11 @@ public class Form extends XUIForm
             
             writer.writeAttribute("action", getActionStr(context), null);
             String styleClass =
-                  (String) component.getAttributes().get("styleClass");
+                  (String) oForm.getCssClass( );
             if (styleClass != null) {
-                writer.writeAttribute("class", styleClass, "styleClass");
+                writer.writeAttribute("class", styleClass);
             }
+            
             String acceptcharset = (String)
                   component.getAttributes().get("acceptcharset");
             if (acceptcharset != null) {
