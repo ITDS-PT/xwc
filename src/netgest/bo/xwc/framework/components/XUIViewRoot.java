@@ -166,8 +166,8 @@ public class XUIViewRoot extends UIViewRoot {
 					for (String b : beanIds){
 						ids.add( b );
 					}
-				} else {
-					findChildBeanIds( comp , ids ); 
+				} 
+				findChildBeanIds( comp , ids ); 
 				}
 			}
 		}
