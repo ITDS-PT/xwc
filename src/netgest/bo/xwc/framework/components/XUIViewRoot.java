@@ -142,7 +142,7 @@ public class XUIViewRoot extends UIViewRoot {
 	 * @return
 	 */
 	public String[] getAllBeanIds(){
-		if (beanIds == null){
+		//if (beanIds == null){
 			String[] selfIds = getBeanIds( );
 			List<String> list = new ArrayList< String >( );
 			findChildBeanIds( this , list );
@@ -152,15 +152,15 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 			
 			beanIds = list.toArray(new String[list.size()]);
-		}
+		//}
 		return beanIds;
 	}
 	
 	void findChildBeanIds(UIComponent component, List<String> ids){
-		List<UIComponent> children = component.getChildren( );
-		if (!children.isEmpty( ))
-		{
-			for (UIComponent comp : children){
+		Iterator<UIComponent> children = component.getFacetsAndChildren();
+		
+		while (children.hasNext()){
+			UIComponent comp = children.next();
 				if (comp instanceof XUIViewRoot){
 					String[] beanIds = ((XUIViewRoot) comp).getAllBeanIds( );
 					for (String b : beanIds){
@@ -168,7 +168,6 @@ public class XUIViewRoot extends UIViewRoot {
 					}
 				} 
 				findChildBeanIds( comp , ids ); 
-				}
 		}
 	}
 	
