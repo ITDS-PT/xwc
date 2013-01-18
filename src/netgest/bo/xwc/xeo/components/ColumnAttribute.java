@@ -121,9 +121,9 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 						if (attribute != null && StringUtils.hasValue( attribute.getLOVName() ) ){
 								sqlExpression = "(select description from " +
 											" Ebo_LovDetails ld  " +
-											" inner join Ebo_lov$details b on ld.boui = b.child$ " + 
+											" inner join Ebo_Lov$details b on ld.boui = b.child$ " + 
 											" inner join Ebo_Lov l on  b.parent$ = l.boui  " +
-											" where l.name = '"+attribute.getLOVName()+"' and ld.value = "+handler.getBoMasterTable()+"."+attribute.getName()+")";		
+											" where l.name = '"+attribute.getLOVName()+"' and ld.value = cast("+handler.getBoMasterTable()+"."+attribute.getName()+" as char))";		
 							}
 					} catch ( boRuntimeException e ) {
 						e.printStackTrace();
