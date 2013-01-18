@@ -806,8 +806,8 @@ Ext.apply(Ext.form.ComboBox.prototype, {
 
 */
 
-//Disable back
-window.history.forward(1);
+// Disable back
+// window.history.forward(1);
 
 XVW.MenuCounter = {
 	counterRefreshId : 0,
