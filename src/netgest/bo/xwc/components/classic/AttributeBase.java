@@ -248,8 +248,12 @@ public class AttributeBase extends ViewerInputSecurityBase {
     @Override
     public void initComponent() {
         super.initComponent();
+        setAttributeProperties( );
         
-        String beanProperty = getBeanProperty();
+    }
+
+	protected void setAttributeProperties() {
+		String beanProperty = getBeanProperty();
     	String sBeanExpression = "";
     	String sObjectAttribute = getObjectAttribute();
     	if (beanProperty.startsWith("viewBean.")) //Backward compatibility
@@ -389,8 +393,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
 	        	this.displayValue.setExpressionText(sBeanExpression + ".displayValue}" );
 	        }
     	}
-        
-    }
+	}
 
     /**
      * Bind this component to a XEO Attribute using a {@linkplain DataFieldConnector}.<br>
