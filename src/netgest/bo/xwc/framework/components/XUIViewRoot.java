@@ -169,7 +169,6 @@ public class XUIViewRoot extends UIViewRoot {
 				} 
 				findChildBeanIds( comp , ids ); 
 				}
-			}
 		}
 	}
 	
