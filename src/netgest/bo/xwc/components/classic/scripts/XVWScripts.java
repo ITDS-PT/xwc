@@ -31,19 +31,36 @@ public class XVWScripts {
     public static final int ALERT_ICON_ERROR = 2;
     public static final int ALERT_ICON_WARNING = 3;
     
+    public enum ValueType{
+    	LITERAL,
+    	VAR;
+    	
+    	public static ValueType fromString(String value){
+    		for (ValueType current : values( )){
+    			if (current.name( ).equalsIgnoreCase( value ))
+    				return current;
+    		}
+    		return LITERAL;
+    	}
+    }
+    
     public static final String getCommandScript( String target, XUIComponentBase oComponent, int iWaitMode ) { 
-    	return getCommandScript( target, null,oComponent, null, iWaitMode );
+    	return getCommandScript( target, null,oComponent, null, iWaitMode, ValueType.LITERAL );
+    }
+    
+    public static final String getCommandScript( String target, XUIComponentBase oComponent, int iWaitMode , ValueType type) { 
+    	return getCommandScript( target, null,oComponent, null, iWaitMode, type );
     }
 
     public static final String getCommandScript( String target, String targetName, XUIComponentBase oComponent, int iWaitMode ) { 
-    	return getCommandScript( target, targetName,oComponent, null, iWaitMode );
+    	return getCommandScript( target, targetName,oComponent, null, iWaitMode, ValueType.LITERAL );
     }
 
     public static final String getCommandScript( String target, XUIComponentBase oComponent, String actionValue , int iWaitMode ) {
-    	return getCommandScript(target, null,oComponent, actionValue ,iWaitMode);
+    	return getCommandScript(target, null,oComponent, actionValue ,iWaitMode, ValueType.LITERAL);
     }
     public static final String getCommandScript( String target, String targetName, XUIComponentBase oComponent, 
-    		String actionValue , int iWaitMode ) 
+    		String actionValue , int iWaitMode, ValueType type ) 
     {
     	
     	if( "blank".equalsIgnoreCase( target ) ) 
@@ -129,10 +146,17 @@ public class XVWScripts {
     }
 
     public static final String getAjaxCommandScript( XUIComponentBase oComponent, String sValue, int iWaitMode ) {
-        return 
-            "XVW.AjaxCommand( '" + oComponent.findParentComponent(XUIForm.class).getClientId() +  "','" + oComponent.getClientId() + "','" + sValue + "', '"+ iWaitMode +"')";
+        return getAjaxCommandScript( oComponent , sValue , iWaitMode, ValueType.LITERAL );
     }
-
+    
+    public static final String getAjaxCommandScript( XUIComponentBase oComponent, String sValue, int iWaitMode, ValueType type ) {
+        if (type == ValueType.LITERAL )
+            return "XVW.AjaxCommand( '" + oComponent.findParentComponent(XUIForm.class).getClientId() +  "','" + oComponent.getClientId() + "','" + sValue + "', '"+ iWaitMode +"')";
+        else
+        	return "XVW.AjaxCommand( '" + oComponent.findParentComponent(XUIForm.class).getClientId() +  "','" + oComponent.getClientId() + "'," + sValue + ", '"+ iWaitMode +"')"; 
+    }
+    
+    
     public static final String getAjaxUpdateValuesScript( XUIComponentBase oComponent, int iWaitMode ) {
         return 
             "XVW.AjaxCommand( '" + oComponent.findParentComponent(XUIForm.class).getClientId() +  "', null, null, '"+ iWaitMode +"')";
