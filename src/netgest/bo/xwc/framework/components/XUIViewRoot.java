@@ -680,8 +680,8 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 
 			if (renderScripts() && getTheme() != null ) {
-				getTheme().addScripts(w.getScriptContext());
 				getTheme().addStyle(w.getStyleContext());
+				getTheme().addScripts(w.getScriptContext());
 			}
 
 		}
@@ -710,10 +710,10 @@ public class XUIViewRoot extends UIViewRoot {
 
 			if (renderScripts()) {
 
-				w.getScriptContext().render(headerW, w, footerW);
 				w.getStyleContext().render(headerW, w, footerW);
-				oRequestContext.getScriptContext().render(headerW, w, footerW);
+				w.getScriptContext().render(headerW, w, footerW);
 				oRequestContext.getStyleContext().render(headerW, w, footerW);
+				oRequestContext.getScriptContext().render(headerW, w, footerW);
 			}
 			
 			if (renderHead() ) {
