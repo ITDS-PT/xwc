@@ -9,16 +9,7 @@ import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.swing.tree.TreeNode;
 
-import org.apache.fop.fo.RecursiveCharIterator;
-
-import freemarker.core.TemplateElement;
-import freemarker.core.TemplateObject;
-import freemarker.template.SimpleHash;
-import freemarker.template.TemplateDirectiveModel;
-
-import netgest.bo.xwc.components.template.loader.TemplateLoaderFactory;
 import netgest.bo.xwc.components.template.preprocessor.CommandsPreProcessor;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 

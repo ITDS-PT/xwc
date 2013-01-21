@@ -12,6 +12,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import netgest.bo.xwc.components.template.Template;
+import netgest.bo.xwc.components.template.TemplateCommand;
+import netgest.bo.xwc.components.template.TemplateInput;
 import netgest.bo.xwc.components.template.loader.TemplateLoaderFactory;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIInput;
@@ -68,7 +70,7 @@ public class CommandsPreProcessor {
 				        String id = m.getAttribute( "id" );
 				        String commandExpression = m.getAttribute("serverAction");
 				        commandExpression =commandExpression.replace( "!" , "#" );
-				        XUICommand cmd = new XUICommand( );
+				        XUICommand cmd = new TemplateCommand( );
 				        cmd.setId( id );
 				        cmd.setActionExpression( component.createMethodBinding(commandExpression) );
 				        result.add( cmd );
@@ -76,10 +78,12 @@ public class CommandsPreProcessor {
 						source = source.replace( "@" , "" );
 				        Element m = parseElement( source );
 				        String name = m.getAttribute( "name" );
-				        String commandExpression = m.getAttribute("value");
+				        String commandExpression = m.getAttribute("valueExpression");
 				        commandExpression =commandExpression.replace( "!" , "#" );
-				        XUIInput in = new XUIInput( );
-				        
+				        XUIInput in = new TemplateInput();
+				        in.setId(name);
+				        in.setValueExpression( "value" , component.createValueExpression( commandExpression , String.class ) );
+				        result.add( in );
 					}
 				}
 				

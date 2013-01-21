@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.faces.component.UIComponent;
 
+import netgest.bo.xwc.components.template.TemplateCommand;
+import netgest.bo.xwc.components.template.TemplateInput;
 import netgest.bo.xwc.components.template.css.XwcCssContext;
 import netgest.bo.xwc.components.template.directives.ChildDirectiveProcessor;
 import netgest.bo.xwc.components.template.directives.CssDirectiveProcessor;
@@ -24,6 +26,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.utils.StringUtils;
 import freemarker.core.ParseException;
 import freemarker.template.Template;
@@ -108,7 +111,7 @@ public class TemplateRenderer extends XUIRenderer {
 		context.put( ProcessorDirectives.INPUT.getName(), new XUIInputDirectiveProcessor( ) );
 		List<UIComponent> childrenComps = component.getChildren( );
 		for (UIComponent child : childrenComps){
-			if (child instanceof XUICommand)
+			if (child instanceof TemplateCommand || child instanceof TemplateInput)
 				context.put( child.getId( ), child );
 		}
 		
