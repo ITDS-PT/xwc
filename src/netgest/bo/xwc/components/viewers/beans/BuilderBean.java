@@ -10,6 +10,7 @@ import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts.Queue;
 import netgest.bo.xwc.components.localization.ViewersMessages;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -189,7 +190,7 @@ public class BuilderBean {
 			requestContext.getScriptContext().add( 
 					XUIScriptContext.POSITION_FOOTER, 
 					"builder_cmd", 
-					XVWScripts.getAjaxCommandScript( hiddenCommand, XVWScripts.WAIT_STATUS_MESSAGE )
+					XVWScripts.getAjaxCommandScript( hiddenCommand, XVWScripts.WAIT_STATUS_MESSAGE, Queue.DONT_QUEUE_DOMMAND )
 				);
 			
 			
@@ -198,7 +199,7 @@ public class BuilderBean {
 					XUIScriptContext.POSITION_FOOTER, 
 					"builder_upd1",
 					"window.setTimeout( function() { " +
-	                XVWScripts.getAjaxCommandScript( updateCommand ,  XVWScripts.WAIT_STATUS_MESSAGE ) +
+	                XVWScripts.getAjaxCommandScript( updateCommand ,  XVWScripts.WAIT_STATUS_MESSAGE, Queue.DONT_QUEUE_DOMMAND ) +
 					"}, 100 );"
 				);
 			

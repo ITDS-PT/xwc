@@ -149,7 +149,7 @@ public class DialogProgress extends XUIComponentBase {
 					sb.append( "if( "+svarName+".getDialog().title=='" + JavaScriptUtils.safeJavaScriptWrite(dialog.getTitle(), '\'') +"') window." ).append( clientid ).append( ".hide();" );
 					sb.append( svarName ).append( "=null" );
 				}
-			} else if( !dialog.wasRendered.getValue() ) {
+			} else if( !dialog.wasRendered.getValue()  ) {
 				String s = dialog.getProgressText();
 				if( s == null || s.length() == 0 ) s = " ";
 				
@@ -169,7 +169,9 @@ public class DialogProgress extends XUIComponentBase {
 				w.getScriptContext().add(  
 						XUIScriptContext.POSITION_FOOTER, 
 						dialog.actionCmd.getId(), 
-						XVWScripts.getAjaxCommandScript( dialog.actionCmd , XVWScripts.WAIT_STATUS_MESSAGE  )
+						//XVWScripts.getAjaxCommandScript( dialog.actionCmd , XVWScripts.WAIT_STATUS_MESSAGE  )
+						  "XVW.AjaxCommand( '" + dialog.actionCmd.findParentComponent( XUIForm.class ).getClientId( ) 
+						  +  "','" + dialog.actionCmd.getClientId() + "','" + dialog.actionCmd.getClientId() + "','1',true,null, false)"
 					);
 			}
 			else {
@@ -185,7 +187,7 @@ public class DialogProgress extends XUIComponentBase {
     			XUIRequestContext.getCurrentContext().getScriptContext().add(
     					XUIScriptContext.POSITION_FOOTER, 
     					dialog.getClientId() + "_syncView", 
-    	                "window.setTimeout( \"XVW.syncView('" + dialog.findParentComponent(XUIForm.class).getClientId() + "');\", " + dialog.getUpdateInterval() * 1000 + " );"
+    	                "window.setTimeout( \"XVW.syncView('" + dialog.findParentComponent(XUIForm.class).getClientId() + "',0,false);\", " + dialog.getUpdateInterval() * 1000 + " );"
     				);
 			}
 			w.getScriptContext().add( XUIScriptContext.POSITION_FOOTER , dialog.getClientId(), sb );

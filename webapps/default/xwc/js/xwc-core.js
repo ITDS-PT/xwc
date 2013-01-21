@@ -81,9 +81,13 @@ XVW.AjaxRenderComp = function( sFormId, sCompId, bSubmitValues ) {
 }
 
 // Send Command via Ajax
-XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubmitValues, renderOnElement ) {
+XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubmitValues, renderOnElement, queue ) {
 	
-	if (!XVW.ajax.canAjaxRequest()){
+	if (queue === undefined)
+		queue = true;
+	
+	if (!XVW.ajax.canAjaxRequest() && queue){
+		console.log(sFormId + " queued");
 		XVW.ajax.incrementAjaxCounter();
 		XVW.ajax.queueAjaxRequest( function () {
 				XVW.AjaxCommand(sFormId, sActionId, sActionValue, iWaitScreen, bSubmitValues, renderOnElement) 
@@ -91,7 +95,8 @@ XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubm
 		return;
 	}
 	
-	XVW.ajax.blockAjaxRequests();
+	if (queue)
+		XVW.ajax.blockAjaxRequests();
 	
     if( bSubmitValues == undefined ) {
         bSubmitValues = true;
@@ -555,8 +560,8 @@ XVW.keepAlive = function( oForm ) {
 	}
 }
 
-XVW.syncView = function( sFormId, iWaitScreen ) {
-    XVW.AjaxCommand( sFormId, null, null, iWaitScreen, false );
+XVW.syncView = function( sFormId, iWaitScreen, queue ) {
+    XVW.AjaxCommand( sFormId, null, null, iWaitScreen, false, null, queue );
 }
 
 XVW.prv = function() {}
