@@ -680,8 +680,8 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 
 			if (renderScripts() && getTheme() != null ) {
-				getTheme().addScripts(w.getScriptContext());
 				getTheme().addStyle(w.getStyleContext());
+				getTheme().addScripts(w.getScriptContext());
 			}
 
 		}
