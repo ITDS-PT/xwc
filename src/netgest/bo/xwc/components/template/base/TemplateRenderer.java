@@ -2,7 +2,7 @@ package netgest.bo.xwc.components.template.base;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,9 +24,7 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
-import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.utils.StringUtils;
 import freemarker.core.ParseException;
 import freemarker.template.Template;
@@ -102,9 +100,9 @@ public class TemplateRenderer extends XUIRenderer {
 		HeaderWriterDirectiveProcessor header = 
 				new HeaderWriterDirectiveProcessor( getHeaderWriter() );
 		//Put them in the context
-		Map<String,Object> context =  new HashMap< String , Object >();
-		context.put( ProcessorDirectives.SCRIPT.getName(), script );
+		Map<String,Object> context =  new LinkedHashMap< String , Object >();
 		context.put( ProcessorDirectives.CSS.getName(), css );
+		context.put( ProcessorDirectives.SCRIPT.getName(), script );
 		context.put( ProcessorDirectives.CHILDREN.getName(), children );
 		context.put( ProcessorDirectives.HEADER.getName(), header );
 		context.put( ProcessorDirectives.COMMAND.getName(), new XUICommandDirectiveProcessor( ) );
