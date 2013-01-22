@@ -83,6 +83,8 @@ public class XUIViewRoot extends UIViewRoot {
 		List<String> list = new ArrayList< String >( );
 		findChildLocalizationClasses( this , list );
 		
+		if (localizationClasses == null)
+			return new String[0];
 		for (String id :selfIds){
 			list.add(id);
 		}
