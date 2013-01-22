@@ -79,7 +79,15 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 	
 	public String[] getLocalizationClasses(){
-		return localizationClasses;
+		String[] selfIds = localizationClasses;
+		List<String> list = new ArrayList< String >( );
+		findChildLocalizationClasses( this , list );
+		
+		for (String id :selfIds){
+			list.add(id);
+		}
+		
+		return list.toArray(new String[list.size()]);
 	}
 	
 	public void setLocalizationClasses(String[] localizations){
@@ -168,6 +176,21 @@ public class XUIViewRoot extends UIViewRoot {
 					}
 				} 
 				findChildBeanIds( comp , ids ); 
+		}
+	}
+	
+	void findChildLocalizationClasses(UIComponent component, List<String> localizations){
+		Iterator<UIComponent> children = component.getFacetsAndChildren();
+		
+		while (children.hasNext()){
+			UIComponent comp = children.next();
+				if (comp instanceof XUIViewRoot){
+					String[] beanIds = ((XUIViewRoot) comp).getLocalizationClasses( );
+					for (String b : beanIds){
+						localizations.add( b );
+					}
+				} 
+				findChildLocalizationClasses( comp , localizations ); 
 		}
 	}
 	
