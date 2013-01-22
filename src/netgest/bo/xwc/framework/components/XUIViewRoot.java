@@ -79,7 +79,7 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 	
 	public String[] getLocalizationClasses(){
-		String[] selfIds = localizationClasses;
+		/*String[] selfIds = localizationClasses;
 		List<String> list = new ArrayList< String >( );
 		findChildLocalizationClasses( this , list );
 		
@@ -87,9 +87,9 @@ public class XUIViewRoot extends UIViewRoot {
 			return new String[0];
 		for (String id :selfIds){
 			list.add(id);
-		}
-		
-		return list.toArray(new String[list.size()]);
+		}*/
+		return localizationClasses;
+		//return list.toArray(new String[list.size()]);
 	}
 	
 	public void setLocalizationClasses(String[] localizations){

@@ -25,6 +25,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.utils.StringUtils;
 import freemarker.core.ParseException;
 import freemarker.template.Template;
@@ -112,15 +113,25 @@ public class TemplateRenderer extends XUIRenderer {
 			if (child instanceof TemplateCommand || child instanceof TemplateInput)
 				context.put( child.getId( ), child );
 		}
-		
+		XUIViewRoot view = getRoot(component);
+		if (view == null)
+			view = getRequestContext( ).getViewRoot( );
 		//Export the component
 		context.put( "this", component );
-		context.put( "xvw", new TemplateContextVariables( getRequestContext( ) ));
+		context.put( "xvw", new TemplateContextVariables( view ));
 		try {
 			p.process(context, getResponseWriter());
 		} catch ( Exception e ) {
 			reportErrorProcessingTemplate( component, e );
 		}
+	}
+	
+	XUIViewRoot getRoot(UIComponent component){
+		while ((component = component.getParent( )) != null ){
+				if (component instanceof XUIViewRoot)
+					return (XUIViewRoot)component;
+		}
+		return null;
 	}
 
 

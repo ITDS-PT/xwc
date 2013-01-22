@@ -7,20 +7,20 @@ import java.util.Set;
 
 import netgest.bo.xwc.components.template.wrappers.LocalizationWrapper;
 import netgest.bo.xwc.components.template.wrappers.XVWScriptsWrapper;
-import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 public class TemplateContextVariables implements Map<String,Object> {
 
 	private Map<String,Object> map = new HashMap< String , Object >();
 	
-	public TemplateContextVariables(XUIRequestContext requestContext){
-		String[] beanIds = requestContext.getViewRoot( ).getAllBeanIds( );
+	public TemplateContextVariables(XUIViewRoot requestView){
+		String[] beanIds = requestView.getAllBeanIds( );
 		Map<String,Object> beans = new HashMap< String , Object >( );
 		for (String beanId : beanIds){
-			beans.put(beanId,requestContext.getViewRoot( ).getBean( beanId ));
+			beans.put(beanId,requestView.getBean( beanId ));
 		}
 		map.put( "beans", beans);
-		map.put( "bundles", new LocalizationWrapper( requestContext.getViewRoot( ).getLocalizationClasses( ) ) );
+		map.put( "bundles", new LocalizationWrapper( requestView.getLocalizationClasses( ) ) );
 		map.put( "js", new XVWScriptsWrapper( ));
 	}
 	
