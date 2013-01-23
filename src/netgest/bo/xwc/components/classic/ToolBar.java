@@ -182,8 +182,9 @@ public class ToolBar extends ViewerSecurityBase {
     		Iterator<Entry<String,XUIBaseProperty<?>>> it = props.iterator();
     		while (it.hasNext()){
     			Entry<String,XUIBaseProperty<?>> entry = it.next();
-    			if (entry.getValue().wasChanged())
+    			if (entry.getValue().wasChanged()){
     				return true;
+    			}
     		}
     		return false;
     	}
@@ -270,20 +271,24 @@ public class ToolBar extends ViewerSecurityBase {
         public static final ScriptBuilder updateMenuItems( ToolBar toolBar ) {
             Iterator<UIComponent> childs =  toolBar.getChildren().iterator();
         	ScriptBuilder sb = new ScriptBuilder();
+        	sb.w( " window.setTimeout( function(){ " );
             while( childs.hasNext() ) {
             	UIComponent currChild = childs.next();
             	if (currChild instanceof Menu){
 	                Menu oMenuChild = (Menu)currChild;
 	                if( oMenuChild.isRendered() ) {
                 		sb.startBlock();
-                    	generateUpdateScript(sb, oMenuChild );
-                    	sb.endBlock();
-	                	if( oMenuChild.getChildCount() > 0 ) {
-	                		updateChildMenuItems(sb, oMenuChild);
-	                	}
+                		
+                    		generateUpdateScript(sb, oMenuChild );
+		                	if( oMenuChild.getChildCount() > 0 ) {
+		                		updateChildMenuItems(sb, oMenuChild);
+		                	}
+	                	
+	                	sb.endBlock();
 	                }
                 }
             }
+            sb.w("  },0);");
             return sb;
         }
 
@@ -296,7 +301,9 @@ public class ToolBar extends ViewerSecurityBase {
                 if( oMenuChild.isRendered() ) {
 	            	if( oMenuChild.wasStateChanged2() == StateChanged.FOR_RENDER ) {
 	                	sb.startBlock();
+	                	//sb.w( " window.setTimeout( function(){ " );
 	                	generateUpdateScript(sb, oMenuChild );
+	                	//sb.w(" },0);");
 	                	sb.endBlock();
 	            	}
                 }
@@ -340,8 +347,9 @@ public class ToolBar extends ViewerSecurityBase {
         	} else{
         		sb.w( "m.setDisabled(").w( oMenuChild.isDisabled() ).l( ");" );
         	}
+        	//sb.w("console.log(m)");
         	if (oMenuChild.wasTextChanged())
-        		sb.w( "m.setText('").w( oMenuChild.getText() ).l( "');" );
+        		sb.w( "if (m.setText) {m.setText('").w( oMenuChild.getText() ).l( "'); }" );
         	
         	
         	sb.w("};");
