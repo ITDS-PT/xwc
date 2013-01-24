@@ -87,7 +87,6 @@ XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubm
 		queue = true;
 	
 	if (!XVW.ajax.canAjaxRequest() && queue){
-		console.log(sFormId + " queued");
 		XVW.ajax.incrementAjaxCounter();
 		XVW.ajax.queueAjaxRequest( function () {
 				XVW.AjaxCommand(sFormId, sActionId, sActionValue, iWaitScreen, bSubmitValues, renderOnElement) 
