@@ -20,11 +20,13 @@ import netgest.bo.xwc.components.template.directives.XUIInputDirectiveProcessor;
 import netgest.bo.xwc.components.template.javascript.XwcScriptContext;
 import netgest.bo.xwc.components.template.loader.TemplateLoaderFactory;
 import netgest.bo.xwc.components.template.resolver.TemplateContextVariables;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.utils.StringUtils;
 import freemarker.core.ParseException;
@@ -134,6 +136,15 @@ public class TemplateRenderer extends XUIRenderer {
 		return null;
 	}
 
+	@Override
+	public StateChanged wasStateChanged(XUIComponentBase component,
+			List< XUIBaseProperty< ? >> updateProperties) {
+		netgest.bo.xwc.components.template.Template template = (netgest.bo.xwc.components.template.Template) component;
+		if (template.getReRender( ))
+			return StateChanged.FOR_RENDER;
+		
+		return super.wasStateChanged( component , updateProperties );
+	}
 
 	private void reportErrorProcessingTemplate( XUIComponentBase base, Exception e ) throws IOException {
 		String content = base.getTemplateContent();
