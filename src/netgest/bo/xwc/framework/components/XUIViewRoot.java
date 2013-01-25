@@ -2,6 +2,7 @@ package netgest.bo.xwc.framework.components;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -78,7 +79,17 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 	
 	public String[] getLocalizationClasses(){
+		/*String[] selfIds = localizationClasses;
+		List<String> list = new ArrayList< String >( );
+		findChildLocalizationClasses( this , list );
+		
+		if (localizationClasses == null)
+			return new String[0];
+		for (String id :selfIds){
+			list.add(id);
+		}*/
 		return localizationClasses;
+		//return list.toArray(new String[list.size()]);
 	}
 	
 	public void setLocalizationClasses(String[] localizations){
@@ -104,12 +115,12 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 		}
 	}
+	
 
 	public Object getBean(String sBeanName) {
-		return XUIRequestContext.getCurrentContext().getSessionContext()
-				.getAttribute(getBeanPrefix() + sBeanName);
+		return new ViewRootBeanFinder().getBean( this , sBeanName ); 
 	}
-
+	
 	public String getBeanUniqueId(String sBeanName) {
 		return getBeanPrefix() + sBeanName;
 	}
@@ -130,6 +141,59 @@ public class XUIViewRoot extends UIViewRoot {
 		
 		return this.sBeanIds.split("\\|");
 		
+	}
+	
+	String[] beanIds = null;
+	
+	/**
+	 * 
+	 * Retrieves the bean identifiers from the current view and child views
+	 * 
+	 * @return
+	 */
+	public String[] getAllBeanIds(){
+		//if (beanIds == null){
+			String[] selfIds = getBeanIds( );
+			List<String> list = new ArrayList< String >( );
+			findChildBeanIds( this , list );
+			
+			for (String id :selfIds){
+				list.add(id);
+			}
+			
+			beanIds = list.toArray(new String[list.size()]);
+		//}
+		return beanIds;
+	}
+	
+	void findChildBeanIds(UIComponent component, List<String> ids){
+		Iterator<UIComponent> children = component.getFacetsAndChildren();
+		
+		while (children.hasNext()){
+			UIComponent comp = children.next();
+				if (comp instanceof XUIViewRoot){
+					String[] beanIds = ((XUIViewRoot) comp).getAllBeanIds( );
+					for (String b : beanIds){
+						ids.add( b );
+					}
+				} 
+				findChildBeanIds( comp , ids ); 
+		}
+	}
+	
+	void findChildLocalizationClasses(UIComponent component, List<String> localizations){
+		Iterator<UIComponent> children = component.getFacetsAndChildren();
+		
+		while (children.hasNext()){
+			UIComponent comp = children.next();
+				if (comp instanceof XUIViewRoot){
+					String[] beanIds = ((XUIViewRoot) comp).getLocalizationClasses( );
+					for (String b : beanIds){
+						localizations.add( b );
+					}
+				} 
+				findChildLocalizationClasses( comp , localizations ); 
+		}
 	}
 	
 	public Map<String,Object> getViewBeans() {
@@ -203,7 +267,7 @@ public class XUIViewRoot extends UIViewRoot {
 		return oTheme;
 	}
 
-	private final String getBeanPrefix() {
+	 final String getBeanPrefix() {
 		return getViewId() + ":" + sInstanceId + ":";
 	}
 
@@ -641,8 +705,8 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 
 			if (renderScripts() && getTheme() != null ) {
-				getTheme().addScripts(w.getScriptContext());
 				getTheme().addStyle(w.getStyleContext());
+				getTheme().addScripts(w.getScriptContext());
 			}
 
 		}
@@ -671,10 +735,10 @@ public class XUIViewRoot extends UIViewRoot {
 
 			if (renderScripts()) {
 
-				w.getScriptContext().render(headerW, w, footerW);
 				w.getStyleContext().render(headerW, w, footerW);
-				oRequestContext.getScriptContext().render(headerW, w, footerW);
+				w.getScriptContext().render(headerW, w, footerW);
 				oRequestContext.getStyleContext().render(headerW, w, footerW);
+				oRequestContext.getScriptContext().render(headerW, w, footerW);
 			}
 			
 			if (renderHead() ) {

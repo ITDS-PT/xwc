@@ -27,8 +27,8 @@ import netgest.bo.xwc.framework.PackageIAcessor;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIComponentPlugIn;
-import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIDefaultPropertiesHandler;
+import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -43,7 +43,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.sun.faces.io.FastStringWriter;
-import com.sun.xml.internal.ws.addressing.WsaServerTube;
 
 
 public abstract class XUIComponentBase extends UIComponentBase 

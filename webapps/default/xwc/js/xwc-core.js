@@ -239,6 +239,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         
         // Render the viewer in certain area
         if( renderOnElement ) {
+        	XVW.beforeApplyHtml(renderOnElement,true);
         	renderOnElement.appendChild( oViewDiv );
         } else {
         	document.body.appendChild( oViewDiv );
@@ -370,7 +371,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
 	            var sStateVal = oStateNode.getAttribute("value");
 	            
 	            //var oStateDNode = document.getElementById( oStateId );
-	            var oStateDNode = XVW.getViewInputById( oViewForms[z], oStateId );
+	            var oStateDNode = XVW.getViewInputById( oViewForms[z].id, oStateId );
 	            if( oStateDNode != null ) {
 	                oStateDNode.value = sStateVal;
 	            }

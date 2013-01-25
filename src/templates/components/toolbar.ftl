@@ -12,10 +12,10 @@
 		 			.removeAttr('disabled')	
 			 	</#if>
 			 	
-			 	.click(function() { ${XVWScripts.getAjaxCommand(menu)} ;  return false; })
+			 	.click(function() { ${xvw.js.ajaxCommand(menu)} ;  return false; })
 			 	<#-- Como detectar que existe um commando naquele menu -->
 			 	<#-- <#if menu.actionExpression??>
-			 		.click(function() { ${XVWScripts.getAjaxCommand(menu)} ;  return false; })
+			 		.click(function() { ${xvw.js.ajaxCommand(menu)} ;  return false; })
 			 	<#else>
 			 		.click(function() { return false; })
 			 	</#if>  -->
