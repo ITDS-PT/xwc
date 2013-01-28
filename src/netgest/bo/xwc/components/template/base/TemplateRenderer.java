@@ -139,10 +139,6 @@ public class TemplateRenderer extends XUIRenderer {
 	@Override
 	public StateChanged wasStateChanged(XUIComponentBase component,
 			List< XUIBaseProperty< ? >> updateProperties) {
-		netgest.bo.xwc.components.template.Template template = (netgest.bo.xwc.components.template.Template) component;
-		if (template.getReRender( ))
-			return StateChanged.FOR_RENDER;
-		
 		return super.wasStateChanged( component , updateProperties );
 	}
 
