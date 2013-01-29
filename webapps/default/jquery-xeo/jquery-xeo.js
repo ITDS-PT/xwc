@@ -107,17 +107,21 @@ XVW.grid.onSelectRow = function( rowId , status, e , grid){
 XVW.grid.resize = function (elem){
 	var newElem = jQuery(XVW.get(elem.id + "_table")); 
 	if (newElem){
-		if (newElem.jqGrid){
-			var width = $(window).width() - newElem.offset().left;
-			elemWidth = newElem.width();
-			if (width > 0 && elemWidth > 0){
-				width = width - 30; //Factor that makes things look good (I'm missing some offset of something, instead of the
-				//magical 30)
-				var difference = (elemWidth - width) / elemWidth;
-				difference = Math.abs(difference.toFixed(2));
-				if (difference > 0.05 ){
-					newElem.jqGrid("setGridWidth", width);
+		if (newElem.jqGrid && newElem.is("table")){
+			try{
+				var width = $(window).width() - newElem.offset().left;
+				elemWidth = newElem.width();
+				if (width > 0 && elemWidth > 0){
+					width = width - 30; //Factor that makes things look good (I'm missing some offset of something, instead of the
+					//magical 30)
+					var difference = (elemWidth - width) / elemWidth;
+					difference = Math.abs(difference.toFixed(2));
+					if (difference > 0.05 ){
+						newElem.jqGrid("setGridWidth", width);
+					}
 				}
+			} catch (e){
+				//Should not abort processing
 			}
 		}
 	}
@@ -126,4 +130,8 @@ XVW.grid.resize = function (elem){
 
 ExtXeo.layoutMan.registerManager('fit-parent',XVW.grid.resize);
 
+//Override Ext-JS Version
+XVW.openCommandTab = function( sFrameName, sFormId, sActionId, sActionValue, sTabTitle, bClosable ) {
+	XVW.openViewOnElement(sFormId, sActionId, sActionValue, sActionValue);
+}
 

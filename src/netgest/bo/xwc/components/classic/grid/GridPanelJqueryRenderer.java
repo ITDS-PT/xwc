@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.component.UIComponent;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -27,7 +28,6 @@ import netgest.bo.xwc.components.classic.grid.GridPanelJqueryRenderer.GridOption
 import netgest.bo.xwc.components.classic.grid.jquery.GridPanelParametersDecoder;
 import netgest.bo.xwc.components.classic.grid.jquery.JSFunction;
 import netgest.bo.xwc.components.classic.renderers.jquery.JQueryBaseRenderer;
-import netgest.bo.xwc.components.classic.renderers.jquery.generators.JQueryBuilder;
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.JQueryWidget;
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.WidgetFactory;
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.WidgetFactory.JQuery;
@@ -45,6 +45,7 @@ import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.ColumnAttribute;
 import netgest.utils.StringUtils;
 
@@ -513,12 +514,12 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 	
 	public void decode(GridPanel grid, Map<String,String> requestParameters){
 		String sGridSelectedIds = null;
-		sGridSelectedIds = requestParameters.get( grid.getClientId() +"_srs" );
+		sGridSelectedIds = requestParameters.get( getGridId( grid ) +"_srs" );
         if( sGridSelectedIds != null && sGridSelectedIds.length() > 0 ){
         	grid.setSelectedRowsByIdentifier( sGridSelectedIds.split("\\|") );
         }
         
-        sGridSelectedIds = requestParameters.get( grid.getClientId() +"_act" );
+        sGridSelectedIds = requestParameters.get( getGridId( grid ) +"_act" );
         if( sGridSelectedIds != null && sGridSelectedIds.length() > 0 ){
         	grid.setActiveRowByIdentifier( sGridSelectedIds );
         }
@@ -681,14 +682,26 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		public GridOptionsBuilder onDoubleClick(GridPanel grid) {
 			
 			XUICommand oRowDblClickComp = (XUICommand)grid.findComponent( grid.getId() + "_rowDblClick" );
+			UIComponent root = grid.getParent();
+			String viewId = null;
+			while ( root != null){
+				if (root instanceof XUIViewRoot){
+					viewId = ((XUIViewRoot) root).getClientId( );
+					break;
+				}
+				root = root.getParent();
+			}
+			
 			
 			addOption( "ondblClickRow" , new JSFunction("function(rowId, iRow, iCol, e){ "+
-					XVWScripts.getCommandScript( 
+					/*XVWScripts.getCommandScript( 
                     		grid.getRowDblClickTarget( ) ,
                     		"edit_" ,
                     		oRowDblClickComp , 
                     		XVWScripts.WAIT_STATUS_MESSAGE) + "} "
-                    		));
+                    		)*/
+                    	XVWScripts.getOpenCommandTab( oRowDblClickComp , viewId ) + "}"	
+			));
 			return this;
 		}
 		

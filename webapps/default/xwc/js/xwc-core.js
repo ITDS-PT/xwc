@@ -239,8 +239,13 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         
         // Render the viewer in certain area
         if( renderOnElement ) {
-        	XVW.beforeApplyHtml(renderOnElement,true);
-        	renderOnElement.appendChild( oViewDiv );
+        	var parent = renderOnElement.parentNode;
+        	if (parent != null){
+	        	XVW.beforeApplyHtml( renderOnElement , true );
+	        	parent.removeChild( renderOnElement );
+	        	//renderOnElement.appendChild( oViewDiv );
+	        	parent.appendChild( oViewDiv );
+        	}
         } else {
         	document.body.appendChild( oViewDiv );
     	}

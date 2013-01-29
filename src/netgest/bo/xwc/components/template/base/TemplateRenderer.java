@@ -73,7 +73,7 @@ public class TemplateRenderer extends XUIRenderer {
 	}
 	
 	public XUIScriptContext getScriptContext(){
-		return getRequestContext().getScriptContext();
+		return getResponseWriter().getScriptContext();
 	}
 	
 	@Override
@@ -136,11 +136,6 @@ public class TemplateRenderer extends XUIRenderer {
 		return null;
 	}
 
-	@Override
-	public StateChanged wasStateChanged(XUIComponentBase component,
-			List< XUIBaseProperty< ? >> updateProperties) {
-		return super.wasStateChanged( component , updateProperties );
-	}
 
 	private void reportErrorProcessingTemplate( XUIComponentBase base, Exception e ) throws IOException {
 		String content = base.getTemplateContent();
