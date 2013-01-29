@@ -187,7 +187,9 @@
 		 	<xwc:render for='ajaxText'>netgest.bo.xwc.components.classic.AjaxText$XEOHTMLRenderer</xwc:render>
             <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.renderers.jquery.ErrorMessagesRenderer</xwc:render>
             <xwc:render for="form">netgest.bo.xwc.components.classic.Form$XEOHTMLRenderer</xwc:render>
-            <xwc:render for='panel'>netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
+            <xwc:render for='panel' family='panel'>netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
+            <xwc:render for='extpanel' family='panel'>netgest.bo.xwc.components.classic.Panel$XEOHTMLRenderer</xwc:render>
+            
             
 			<xwc:render for='templateInclude'>netgest.bo.xwc.components.classic.TemplateInclude$XEOHTMLRenderer</xwc:render>            
             
@@ -196,7 +198,8 @@
 			<xwc:render for='advancedPanel'>netgest.bo.xwc.components.classic.AdvancedPanel$XEOHTMLRenderer</xwc:render>
 			<xwc:render for='gridExplorer'>netgest.bo.xwc.components.classic.GridExplorer$XEOHTMLRenderer</xwc:render>
 			
-            <xwc:render for='tabs'>netgest.bo.xwc.components.template.renderers.TabsRenderer</xwc:render>
+			<xwc:render for='exttabs' family='tabs'>netgest.bo.xwc.components.classic.Tabs$XEOHTMLRenderer</xwc:render>
+            <xwc:render for='tabs' family='tabs'>netgest.bo.xwc.components.template.renderers.TabsRenderer</xwc:render>
             <xwc:render for='tab'>netgest.bo.xwc.components.classic.Tab$XEOHTMLRenderer</xwc:render>
             <xwc:render for='section'>netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
             <!-- <xwc:render for='section'>netgest.bo.xwc.components.classic.renderers.jquery.SectionRenderer</xwc:render>-->
