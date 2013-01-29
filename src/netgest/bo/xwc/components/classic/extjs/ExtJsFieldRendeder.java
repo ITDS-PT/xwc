@@ -83,11 +83,9 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
     }
 	
     public ExtConfig getExtJsFieldListeners( AttributeBase oAtt ) {
-    	String				sFormId;
         Form                oForm;
         
-        sFormId = oAtt.getNamingContainerId();
-        oForm   = (Form)oAtt.findComponent( sFormId );
+        oForm   = (Form)oAtt.findParentComponent( Form.class );
 
         ExtConfig listeners = new ExtConfig();
         if( oForm.haveDependents( oAtt.getObjectAttribute() ) || oAtt.isOnChangeSubmit()  ) {
