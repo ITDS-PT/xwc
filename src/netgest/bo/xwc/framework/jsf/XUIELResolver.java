@@ -10,14 +10,11 @@ import java.util.Map;
 import javax.el.ELContext;
 import javax.el.ELResolver;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIComponentBase;
 
 import netgest.bo.xwc.framework.XUIActionEvent;
 import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
-
-import com.sun.el.lang.EvaluationContext;
 
 public class XUIELResolver extends ELResolver {
 
@@ -54,7 +51,7 @@ public class XUIELResolver extends ELResolver {
         
         // JBOSS use a diferent implementation on EvaluationContext
         try {
-        	Method m = elContext.getClass().getMethod( "getELContext" , null );
+        	Method m = elContext.getClass().getMethod( "getELContext");
         	elContextc =  (ELContext)m.invoke( elContext );
         	
         }
