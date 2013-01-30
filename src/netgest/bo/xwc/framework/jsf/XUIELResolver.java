@@ -1,6 +1,7 @@
 package netgest.bo.xwc.framework.jsf;
 
 import java.beans.FeatureDescriptor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,13 +50,18 @@ public class XUIELResolver extends ELResolver {
         
         
         XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
+        ELContext elContextc = null;
+        
+        // JBOSS use a diferent implementation on EvaluationContext
+        try {
+        	Method m = elContext.getClass().getMethod( "getELContext" , null );
+        	elContextc =  (ELContext)m.invoke( elContext );
+        	
+        }
+        catch( Throwable a ) {};
         
         // Resolve properties from Component context
-        if( elContext instanceof EvaluationContext ) {
-        	
-        	EvaluationContext elContextb = (EvaluationContext)elContext;
-        	ELContext elContextc = ((EvaluationContext) elContextb).getELContext();
-        	
+        if( elContextc != null ) {
 	        if( elContextc instanceof XUIELContextWrapper ) {
 	        	UIComponent contextCurrent = context.get( );
 	        	if (contextCurrent == null)
