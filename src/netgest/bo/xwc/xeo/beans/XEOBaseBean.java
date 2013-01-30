@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -110,8 +111,33 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 		
 		if( this.sViewStateId.equals( oRequestContext.getViewRoot().getViewState() ) )
 			return oRequestContext.getViewRoot();
-		return XUIRequestContext.getCurrentContext().getSessionContext().getView( sViewStateId );
+		
+		XUIViewRoot root = findRecursiveRoot( oRequestContext.getViewRoot() );
+		return root;
+		
+		//return XUIRequestContext.getCurrentContext().getSessionContext().getView( sViewStateId );
 	}
+    
+    private XUIViewRoot findRecursiveRoot(UIComponent component){
+    	XUIViewRoot root = null; 
+    	for (UIComponent child : component.getChildren()){
+    		if (child instanceof XUIViewRoot){
+    			XUIViewRoot view = (XUIViewRoot) child;
+    			if (sViewStateId.equals( view.getViewState( ))){
+    				root = (XUIViewRoot)child;
+    			} else {
+    				root = findRecursiveRoot( child );
+    				if (root != null)
+    					return root;
+    			}
+    		} else {
+    			root = findRecursiveRoot( child );
+    			if (root != null)
+    				return root;
+    		}
+    	}
+    	return root;
+    }
 
 	public void setViewRoot( String viewRootStateId ) {
 		this.sViewStateId = viewRootStateId;

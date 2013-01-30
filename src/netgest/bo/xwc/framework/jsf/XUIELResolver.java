@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.el.ELContext;
 import javax.el.ELResolver;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIComponentBase;
 
 import netgest.bo.xwc.framework.XUIActionEvent;
 import netgest.bo.xwc.framework.XUIELContextWrapper;
@@ -19,6 +20,12 @@ import com.sun.el.lang.EvaluationContext;
 
 public class XUIELResolver extends ELResolver {
 
+	private static ThreadLocal< UIComponent > context = new ThreadLocal< UIComponent >( );
+	
+	public static void setContext(UIComponent current){
+		context.set( current );
+	}
+	
 	@Override
     public Class<?> getCommonPropertyType(ELContext eLContext, Object object) {
         return null;
@@ -50,7 +57,10 @@ public class XUIELResolver extends ELResolver {
         	ELContext elContextc = ((EvaluationContext) elContextb).getELContext();
         	
 	        if( elContextc instanceof XUIELContextWrapper ) {
-		        List<Map<String,Object>> localVars = buildLocalVarsMap( ((XUIELContextWrapper)elContextc).getContextComponent() );
+	        	UIComponent contextCurrent = context.get( );
+	        	if (contextCurrent == null)
+	        		contextCurrent = ((XUIELContextWrapper)elContextc).getContextComponent();
+		        List<Map<String,Object>> localVars = buildLocalVarsMap( contextCurrent );
 		        if( localVars != null ) {
 			        for( int i=0; i < localVars.size(); i++ ) {
 			        	if( localVars.get(i).containsKey( sProperty ) ) {

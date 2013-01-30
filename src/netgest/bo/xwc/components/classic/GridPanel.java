@@ -61,6 +61,8 @@ import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.properties.XUIProperty;
+import netgest.bo.xwc.framework.properties.XUIPropertyVisibility;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 import org.json.JSONArray;
@@ -2380,7 +2382,17 @@ public class GridPanel extends ViewerInputSecurityBase {
 		return result;
 	}
 
-
+@Override
+@XUIProperty(name = "id", label = "Component Id", visibility = XUIPropertyVisibility.DOCUMENTATION)
+public void setId(String id) {
+	super.setId( id );
+}
 	
+
+@Override
+public String getClientId() {
+	// TODO Auto-generated method stub
+	return super.getClientId( );
+}
 
 }

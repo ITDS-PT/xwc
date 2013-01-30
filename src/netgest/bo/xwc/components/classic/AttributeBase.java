@@ -14,6 +14,7 @@ import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+import netgest.bo.xwc.framework.jsf.XUIELResolver;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 /**
  * This component is not usable in the viewers,
@@ -924,17 +925,23 @@ public class AttributeBase extends ViewerInputSecurityBase {
      * @return  Map<Object,String> with the lov Map
      */
     public Map<Object, String> getLovMap() {
-    	if( this.lovMap.getValue() != null && this.lovMap.isLiteral() ) {
-        	Map<Object, String> oRetLovMap = new LinkedHashMap<Object, String>();
-            String[] values = this.lovMap.getExpressionString().split(";");
-            for( String lovValue : values  ) {
-            	oRetLovMap.put( lovValue , lovValue);
-            }
-        }
-        else if( this.lovMap.getValue() != null ) {
-             return this.lovMap.getEvaluatedValue();
-        }
+    	
     	final Map<Object, String> oRetLovMap = new LinkedHashMap<Object, String>();
+    	try{
+    		XUIELResolver.setContext( this );
+    		if( this.lovMap.getValue() != null && this.lovMap.isLiteral() ) {
+	        	String[] values = this.lovMap.getExpressionString().split(";");
+	            for( String lovValue : values  ) {
+	            	oRetLovMap.put( lovValue , lovValue);
+	            }
+	        }
+	        else if( this.lovMap.getValue() != null ) {
+	             return this.lovMap.getEvaluatedValue();
+	        }
+	    	
+    	} finally{
+    		XUIELResolver.setContext( null );
+    	}
     	return oRetLovMap;
     }
     
