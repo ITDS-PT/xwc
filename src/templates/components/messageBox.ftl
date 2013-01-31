@@ -32,7 +32,7 @@
 	 		,'buttons' : 
 	 			{
 	 			<#list this.children as menu>
-	 				'${menu.text}' : function() { ${xvw.js.getAjaxCommand(menu)}; $(this).dialog('destroy');}
+	 				'${menu.text}' : function() { ${xvw.js.ajaxCommand(menu)}; $(this).dialog('destroy');}
 	 				<#if menu_has_next>
 	 				,
 	 				</#if> 	
