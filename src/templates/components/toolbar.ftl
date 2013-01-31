@@ -4,6 +4,7 @@
 <@xvw_script position='footer'>
 	$(function() {
 		<#list this.children as menu>
+		<#if (menu.text!?length > 1) || (menu.icon!?length > 1)>
     		$( '#${menu.id!}_btn' ).button()
 				.show()
 				<#if menu.disabled>
@@ -36,7 +37,7 @@
 							.prepend( '<img src="${menu.icon!}" style="display:block;padding:2px;vertical-align:middle;margin-left:auto; margin-right:auto" />');  
 						</#if> 
 		 		</#if> 	
-				
+		</#if>		
 		</#list>
 	});
 </@xvw_script>
@@ -46,9 +47,11 @@
 <div id='${this.clientId}'>
 	<div id='${this.id}' class='ui-widget-header ui-corner-all xwc-toolbar'>
 		<#list this.children as menu>
+			<#if (menu.text!?length > 1) || (menu.icon!?length > 1)>
     		<button id='${menu.id!}_btn' class='xwc-toolbar-button'>
     			<span>${menu.text!}</span>
     		</button>
+    		</#if>
 		</#list>
 	</div>	
 </div>
@@ -58,6 +61,7 @@
 	<@xvw_script position='footer'>
 	$(function() {
 		<#list this.children as menu>
+			<#if (menu.text!?length > 1) || (menu.icon!?length > 1)>
     		$( '#${menu.id}_btn' ).button()
 				<#if menu.disabled>
 		 			.attr('disabled', 'disabled')
@@ -69,9 +73,7 @@
 		 		<#else>
 		 			.hide();	
 			 	</#if>
-			 	
-			 	
-			 	
+			 </#if>	
 		</#list>
 	});
 	

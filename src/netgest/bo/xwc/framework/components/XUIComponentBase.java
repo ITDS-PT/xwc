@@ -209,6 +209,16 @@ public abstract class XUIComponentBase extends UIComponentBase
     	return (XUIComponentBase)oParentComp;
     }
     
+    public UIComponent findParent( Class<?> cType ) {
+    	UIComponent oParentComp;
+    	
+    	oParentComp = getParent();
+    	while( oParentComp != null && !cType.isInstance( oParentComp ) ) {
+    		oParentComp = oParentComp.getParent();
+    	}
+    	return oParentComp;
+    }
+    
     public XUIComponentBase findComponent( Class<?> cType ) {
     	
     	assert cType != null;
@@ -899,7 +909,7 @@ public abstract class XUIComponentBase extends UIComponentBase
      */
     private void recursiveProcessValidateModel(UIComponent oComponent)
     {
-    	Iterator<UIComponent> kids = getFacetsAndChildren();
+    	Iterator<UIComponent> kids = oComponent.getFacetsAndChildren();
         while (kids.hasNext()) {
             UIComponent kid = (UIComponent) kids.next();
             if( kid instanceof XUIComponentBase ) {
@@ -1065,9 +1075,10 @@ public abstract class XUIComponentBase extends UIComponentBase
 	 */
 	private void recursiveForceRenderOnClient(UIComponent oComponent)
 	{
-		List<UIComponent> children = oComponent.getChildren();
-		for( UIComponent child : children ) 
+		Iterator<UIComponent> children = oComponent.getFacetsAndChildren();
+		while (children.hasNext()) 
 		{
+			UIComponent child = children.next();
 			if( child instanceof XUIComponentBase ) {
 				((XUIComponentBase)child).forceRenderOnClient();
 			}

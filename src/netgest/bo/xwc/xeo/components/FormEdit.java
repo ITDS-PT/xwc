@@ -31,7 +31,7 @@ public class FormEdit extends Form {
 	 *  
 	 */
 	private XUIViewBindProperty<boObject> targetObject = 
-		new XUIViewBindProperty<boObject>("targetObject", this, boObject.class, "#{viewBean.XEOObject}" );
+		new XUIViewBindProperty<boObject>("targetObject", this, boObject.class );
 	
 	/**
 	 * Whether or not the default {@link EditToolBar} is rendered
@@ -87,7 +87,7 @@ public class FormEdit extends Form {
 	 *  this form should be edited in orphan mode.
 	 */
 	private XUIBindProperty<Boolean> orphanMode = 
-		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class, "#{viewBean.editInOrphanMode}" );
+		new XUIBindProperty<Boolean>("orphanMode", this, Boolean.class );
 
 	
 	/**
@@ -318,6 +318,14 @@ public class FormEdit extends Form {
 	public void initComponent() {
 		int position = 0;
 		
+		if (targetObject.isDefaultValue( )){
+			targetObject.setExpressionText( "#{"+getBeanId( )+".XEOObject}" );
+		}
+		if (orphanMode.isDefaultValue( )){
+			orphanMode.setExpressionText( "#{"+getBeanId( )+".editInOrphanMode}" );
+		}
+		
+		
 		// Create the default toolbar for the object
 		if( getRenderViewerTitle() ) {
 			createViewerTitle( position++ );
@@ -390,7 +398,7 @@ public class FormEdit extends Form {
 			box.setTitle(XEOViewersMessages.FORMEDIT_REMOVE_CONFIRM_TITLE.toString());
 			box.setMessage(XEOViewersMessages.FORMEDIT_REMOVE_CONFIRM_MESSAGE.toString());
 			box.setId(getId() + "_removeAlertBox");
-			box.setActions("['#{viewBean.remove}','#{viewBean.dummy}']");
+			box.setActions("['#{"+getBeanId( )+".remove}','#{"+getBeanId( )+".dummy}']");
 			getChildren().add( pos++, box );
 		}
 	}

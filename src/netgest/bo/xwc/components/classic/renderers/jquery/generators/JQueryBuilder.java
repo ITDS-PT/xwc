@@ -1,7 +1,5 @@
 package netgest.bo.xwc.components.classic.renderers.jquery.generators;
 
-import org.apache.commons.lang.StringUtils;
-
 import netgest.bo.xwc.components.classic.renderers.jquery.JQueryScriptBuilder;
 
 public class JQueryBuilder extends JQueryScriptBuilder {

@@ -1,5 +1,5 @@
 	<div id='${this.clientId}'>
-		<button id='${this.id}_btn' class='xwc-actionbutton' style='min-width;${this.width}px'>
+		<button id='${this.clientId}_btn' class='xwc-actionbutton' style='min-width;${this.width}px'>
 			${this.label}
 		</button>
 	</div>
@@ -8,7 +8,7 @@
 	 $(function() { 
 	 
 	 	<#-- Add The Javascript to create the button -->
-	 	$( '#${this.id}_btn' ).button().click( function () { ${xvw.js.ajaxCommand(this)}; return false; })
+	 	$( XVW.get('${this.clientId}_btn') ).button().click( function () { ${xvw.js.ajaxCommand(this)}; return false; })
 	 		<#if this.disabled>
 	 			.attr('disabled', 'disabled') 
 	 		<#else>	
@@ -23,7 +23,7 @@
 	 	
 	 	<#-- Render the Button ICON --> 
 	 	<#if (this.image?length > 0) && (!this.renderedOnClient )>
-	 			$( '#${this.id}_btn' )
+	 			$( XVW.get('${this.clientId}_btn') )
 					.children('.ui-button-text')
 					<#if this.iconPosition == 'left'> 
 						.prepend( '<img src="${this.image}" style="display:inline;padding:2px;vertical-align:middle" />');   

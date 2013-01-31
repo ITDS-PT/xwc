@@ -436,13 +436,15 @@ public class XUIViewRoot extends UIViewRoot {
 	public void setParentView(XUIViewRoot oViewRoot) {
 		setParentViewState(oViewRoot.getViewState());
 	}
+	
+	
 
 	public XUIViewRoot getParentView() {
 		if (sParentViewState != null && oParentView == null) {
 			oParentView = XUIRequestContext.getCurrentContext()
 					.getSessionContext().getView(sParentViewState);
-			oParentView.sStateId = sParentViewState;
-		}
+				oParentView.sStateId = sParentViewState;
+			}
 		return oParentView;
 	}
 

@@ -112,4 +112,8 @@ public class GenericTag extends XUIComponentBase {
 		
 	}
 	
+	@Override
+	public String toString() {
+		return getProperties( ).get("__tagName");
+	}
 }

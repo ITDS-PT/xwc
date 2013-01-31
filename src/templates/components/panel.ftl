@@ -22,4 +22,3 @@
 	});
 </@xvw_script>
 
-<#-- $( XVW.get('mainContent:demoEdit:v211_j_id5')).show().collapsiblePanel(false); -->
