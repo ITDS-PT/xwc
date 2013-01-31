@@ -125,7 +125,7 @@ public class XEOBaseList extends XEOBaseBean {
         oRequestContext = getRequestContext();
         XUICommand command = (XUICommand) oRequestContext.getEvent( ).getComponent( );
         String argument = (String) command.getCommandArgument( );
-        if ("null".equals( argument )){
+        if ("null".equals( argument ) || command.getClientId().equals( argument ) ){
         	argument = null;
         }
         
