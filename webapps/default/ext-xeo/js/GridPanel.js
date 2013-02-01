@@ -1477,10 +1477,12 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
 	        	// Prevent infinit recursive calls.. just to debug
 	        	if( this.rows[ this.rowsIndex[i] ].groupingView != this ) {
 	        		if( this.rows[ this.rowsIndex[i] ].groupingView ) {
-			        	gv = this.rows[ this.rowsIndex[i] ].groupingView.getGroupView( groupId );
-			        	if( gv ) {
-			        		break;
-			        	}
+	        			if (this.rows[this.rowsIndex[i]].groupId == groupId){
+	        				gv = this.rows[ this.rowsIndex[i]];
+	        				if( gv ) {
+				        		break;
+				        	}
+	        			}
 	        		}
 	        	}
 	        }
@@ -2388,7 +2390,7 @@ ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentif
 				}
 	        }
 	        catch(err)
-	        {console.log(err);}
+	        {}
        	}
        	
        	//Update Counter
