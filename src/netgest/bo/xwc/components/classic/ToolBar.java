@@ -135,11 +135,6 @@ public class ToolBar extends ViewerSecurityBase {
 			}
 			if (curr instanceof AttributeBase || curr instanceof AttributeLabel)
 				((XUIComponentBase)curr).setRenderComponent(false);
-			/*if (curr instanceof Menu){
-				Menu m = (Menu) curr;
-				if (isDisabled())
-					m.setDisabled(true);
-			}*/
 			
 			if (addRegularMenu)
 				finalList.add(curr);
@@ -330,7 +325,7 @@ public class ToolBar extends ViewerSecurityBase {
 	        		sb.w( "m.setDisabled(").w( toolBar.isDisabled() ).l( ");" );
 	        	sb.w("};");
         	}
-        } 
+        }
         
         public static final void generateUpdateScript( ScriptBuilder sb, Menu oMenuChild ) {
         	sb.w( "var m=Ext.getCmp('ext-").writeValue( oMenuChild.getClientId() ).l("'); if (m) {" );
@@ -347,8 +342,8 @@ public class ToolBar extends ViewerSecurityBase {
         	} else{
         		sb.w( "m.setDisabled(").w( oMenuChild.isDisabled() ).l( ");" );
         	}
-        	//sb.w("console.log(m)");
-        	if (oMenuChild.wasTextChanged())
+        	
+        	if (oMenuChild.wasTextChanged() && !oMenuChild.isSpacer())
         		sb.w( "if (m.setText) {m.setText('").w( oMenuChild.getText() ).l( "'); }" );
         	
         	
@@ -434,32 +429,38 @@ public class ToolBar extends ViewerSecurityBase {
                     }
                     //We may have other things, like form fields
 					else {
-                    	XUIRequestContext req = XUIRequestContext.getCurrentContext();
-                    	XUIComponentStore compStore = req.getApplicationContext().getComponentStore();
-                    	Map<String,XUIRendererDefinition> def = compStore.getMapOfRenderKit("XEOHTML");
-                    	XUIRendererDefinition definition = def.get(currentItem.getFamily()+":"+currentItem.getRendererType());
-                    	if (definition != null){ //For this to be null we probably have a component
-                    		//without a renderer class, like an instance of IToolBarGroup
-                    	String className = definition.getClassName();
-                    		try {
-    							//Instantiate the class and render the component
-    							//to a string (remove the renderTo property, because
-    							//it does not apply in this situation and totally screws up rendering)
-    	                		Object newInstance = Class.forName(className).newInstance();
-    	                		if (newInstance instanceof ExtJsRenderer)
-    	                		{
-    	                			ExtJsRenderer render = (ExtJsRenderer) newInstance;
-    								ExtConfig config = render.getExtJsConfig((XUIComponentBase)currentItem);
-    								if (currentItem instanceof AttributeBase)
-    									config.add("width", ((AttributeBase)currentItem).getWidth());
-    								config.removeConfig("renderTo");
-    								config.removeConfig("validator");
-    								oItemsCfg.addChild(config);
-    							}
-    						}  catch (Exception e) {
-    							e.printStackTrace();
-    						}
-    					}
+						if (currentItem instanceof XUIComponentBase){
+							XUIComponentBase currentComponent = (XUIComponentBase) currentItem;
+							StateChanged state = currentComponent.wasStateChanged2(); 
+							if (state == StateChanged.FOR_RENDER || state == StateChanged.FOR_UPDATE){
+		                    	XUIRequestContext req = XUIRequestContext.getCurrentContext();
+		                    	XUIComponentStore compStore = req.getApplicationContext().getComponentStore();
+		                    	Map<String,XUIRendererDefinition> def = compStore.getMapOfRenderKit("XEOHTML");
+		                    	XUIRendererDefinition definition = def.get(currentItem.getFamily()+":"+currentItem.getRendererType());
+		                    	if (definition != null){ //For this to be null we probably have a component
+		                    		//without a renderer class, like an instance of IToolBarGroup
+		                    		String className = definition.getClassName();
+		                    		try {
+		    							//Instantiate the class and render the component
+		    							//to a string (remove the renderTo property, because
+		    							//it does not apply in this situation and totally screws up rendering)
+		    	                		Object newInstance = Class.forName(className).newInstance();
+		    	                		if (newInstance instanceof ExtJsRenderer)
+		    	                		{
+		    	                			ExtJsRenderer render = (ExtJsRenderer) newInstance;
+		    								ExtConfig config = render.getExtJsConfig((XUIComponentBase)currentItem);
+		    								if (currentItem instanceof AttributeBase)
+		    									config.add("width", ((AttributeBase)currentItem).getWidth());
+		    								config.removeConfig("renderTo");
+		    								config.removeConfig("validator");
+		    								oItemsCfg.addChild(config);
+		    							}
+		    						}  catch (Exception e) {
+		    							e.printStackTrace();
+		    						}
+		    					}
+							}
+						}
                     }
                 }
                 return oToolBarCfg;

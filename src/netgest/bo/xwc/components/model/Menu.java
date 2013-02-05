@@ -150,6 +150,10 @@ public class Menu extends ViewerCommandSecurityBase {
     	return new Menu("-");
     }
     
+    public boolean isSpacer(){
+    	return "-".equals( getText() );
+    }
+    
     public static final Menu getMenuFill(){
     	return new Menu("->");
     }
