@@ -29,6 +29,7 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts.ValueType;
 import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
@@ -47,6 +48,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
@@ -1025,14 +1027,18 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	
             String dblTarget = oGrid.getRowDblClickTarget();
             
+            String viewId = ((XUIViewRoot)oGrid.findParent( XUIViewRoot.class )).getClientId();
+            
             oGridListeners.addChild("'rowdblclick'")
             .add(
                     "fn","function(){" + 
                     XVWScripts.getCommandScript( 
-                    		dblTarget,
-                    		targetName,
-                    		oRowDblClickComp, 
-                    		"self".equals( dblTarget )?oGrid.getServerActionWaitMode().ordinal():XVWScripts.WAIT_STATUS_MESSAGE
+                    		dblTarget
+                    		,targetName
+                    		,oRowDblClickComp
+                    		,viewId
+                    		,"self".equals( dblTarget )?oGrid.getServerActionWaitMode().ordinal():XVWScripts.WAIT_STATUS_MESSAGE
+                    		,ValueType.LITERAL
                     	) 
                     +"}"
             );
