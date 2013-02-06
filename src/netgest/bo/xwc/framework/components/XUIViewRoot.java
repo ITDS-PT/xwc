@@ -32,8 +32,6 @@ import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.Window;
-import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
-import netgest.bo.xwc.components.classic.theme.JQueryTheme;
 import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -97,23 +95,16 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 
 	public XUIViewRoot() {
-		if ("XEOHTML".equals(getRenderKitId()))
-			oTheme = new ExtJsTheme();
-		else if ("XEOJQUERY".equals(getRenderKitId()))
-			oTheme = new JQueryTheme();
-		else if ("XEOV2".equals(getRenderKitId())) {
 			try {
-				Class<XUITheme> theme = (Class<XUITheme>) Class
-						.forName("xeo.viewers.theme.XEOV2Theme");
-				oTheme = theme.newInstance();
+				Class<?> themeClass = Class.forName( getRenderKitClass() );
+				oTheme = (XUITheme) themeClass.newInstance();
 			} catch (ClassNotFoundException e) {
-				throw new RuntimeException(e);
+				throw new RuntimeException(String.format("Class %s for renderKit %s not found",getRenderKitClass(), getRenderKitId()), e);
 			} catch (InstantiationException e) {
-				throw new RuntimeException(e);
+				throw new RuntimeException(String.format("Class %s for renderKit %s could not be instatiated",getRenderKitClass(), getRenderKitId()), e);
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
-		}
 	}
 	
 
@@ -229,29 +220,29 @@ public class XUIViewRoot extends UIViewRoot {
 		setTransient(true);
 	}
 	
+	/**
+	 * Retrieves the Theme class name associated with the current renderkit
+	 * (must be an instance of XUITheme)
+	 * 
+	 * @return The name of the class
+	 */
+	private String getRenderKitClass(){
+		return XUIRequestContext.getCurrentContext().getXUIApplicationConfig().getThemeForRenderKit( getRenderKitId() );
+	}
+	
 	@Override
 	public String getRenderKitId() {
 		if( _renderKit == null ) {
 	    	_renderKit = super.getRenderKitId();
 	    	if( _renderKit == null || "HTML_BASIC".equals( _renderKit ) ) {
-		    	XUIRequestContext requestContext;
-		    	requestContext = XUIRequestContext.getCurrentContext();
+		    	XUIRequestContext requestContext = XUIRequestContext.getCurrentContext();
 		    	
 		    	_renderKit = requestContext.getRequestParameterMap().get("__renderKit");
-		    	/*if( _renderKit != null ) { 
-		    		_renderKit = "XEOXML";
-		    	}
-		    	else {
-		    		_renderKit = "XEOHTML";
-		    	}*/
-		    	if( _renderKit == null ){
-		    		_renderKit = "XEOHTML"; 
+		    	if( _renderKit == null ){ 
+		    		_renderKit = requestContext.getXUIApplicationConfig().getDefaultRenderKitId(); 
 		    	}
 	    	}
 		}
-		
-		_renderKit = "XEOJQUERY"; 
-		
     	return _renderKit; 
     } 
 	

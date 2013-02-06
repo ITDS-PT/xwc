@@ -13,6 +13,8 @@ import javax.faces.render.Renderer;
 
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.Logger;
+import netgest.bo.system.boApplication;
+import netgest.bo.system.boApplicationConfig;
 import netgest.bo.xwc.components.classic.renderers.XMLViewRootRenderer;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIComponentDefinition;
@@ -34,6 +36,7 @@ public class XUIApplicationContext {
 
     private XUIViewerBuilder oViewerBuilder;
     private XUIViewerDefinitonParser oViewerParser;
+    private XUIApplicationConfig oXUIConfig;
     
     protected void initApplication() {
 
@@ -54,6 +57,9 @@ public class XUIApplicationContext {
         // Create the viewer Parser
         oViewerParser = new XUIViewerDefinitonParser();
         oViewerBuilder = new XUIViewerBuilder();
+        
+        //Load Config Parameters
+        oXUIConfig = new XUIApplicationConfig( boApplication.getDefaultApplication().getApplicationConfig() );
         
     }
     
@@ -189,5 +195,8 @@ public class XUIApplicationContext {
         }
     }
     
-
+    public XUIApplicationConfig getXUIApplicationConfig(){
+    	return oXUIConfig;
+    }
+    
 }
