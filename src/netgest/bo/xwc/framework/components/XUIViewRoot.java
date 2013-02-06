@@ -351,6 +351,7 @@ public class XUIViewRoot extends UIViewRoot {
 						XUIScriptContext.POSITION_HEADER,
 						oForm.getClientId() + "_syncView",
 						"XVW.syncView('" + oForm.getClientId() + "');");
+				break;
 			}
 		}
 	}
