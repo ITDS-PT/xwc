@@ -20,13 +20,11 @@ import netgest.bo.xwc.components.template.directives.XUIInputDirectiveProcessor;
 import netgest.bo.xwc.components.template.javascript.XwcScriptContext;
 import netgest.bo.xwc.components.template.loader.TemplateLoaderFactory;
 import netgest.bo.xwc.components.template.resolver.TemplateContextVariables;
-import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.utils.StringUtils;
 import freemarker.core.ParseException;
@@ -174,6 +172,20 @@ public class TemplateRenderer extends XUIRenderer {
 	public void encodeChildren( XUIComponentBase component ) throws IOException {
 		//Do nothing on purpose, child encoding should be done through the
 		//templateEncodeChildren(XUIComponentBase component) method
+	}
+	
+	/* (non-Javadoc)
+	 * @see netgest.bo.xwc.framework.XUIRenderer#encodeComponentChanges(netgest.bo.xwc.framework.components.XUIComponentBase, java.util.List)
+	 * 
+	 * Template components don't have a separate template for update/fullrender, as such 
+	 * the distinction will have to be made at the template level, by using the isRenderedOnClient
+	 * property
+	 * 
+	 */
+	@Override
+	public void encodeComponentChanges(XUIComponentBase component, 
+			java.util.List<netgest.bo.xwc.framework.XUIBaseProperty<?>> propertiesWithChangedState) throws IOException {
+		encodeBegin( component );
 	}
 	
 	/**

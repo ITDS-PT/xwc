@@ -208,7 +208,7 @@
             <xwc:render for='cell'>netgest.bo.xwc.components.classic.Cell$XEOHTMLRenderer</xwc:render>
             <xwc:render for='actionButton'>netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
             <!-- <xwc:render for='actionButton'>netgest.bo.xwc.components.classic.renderers.jquery.ActionButtonRenderer</xwc:render> -->
-            <xwc:render for='toolBar'>netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
+            <xwc:render for='toolBar'>netgest.bo.xwc.components.template.renderers.ToolBarRenderer</xwc:render>
             <!-- <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.renderers.jquery.ToolbarRenderer</xwc:render>-->
 
 			<xwc:render for='pieChart'>netgest.bo.xwc.components.classic.charts.PieChart$XEOHTMLRenderer</xwc:render>

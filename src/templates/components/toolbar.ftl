@@ -7,7 +7,7 @@
 		<#if (menu.text!?length > 1) || (menu.icon!?length > 1)>
     		$( '#${menu.id!}_btn' ).button()
 				.show()
-				<#if menu.disabled>
+				<#if menu.disabled || this.disabled>
 		 			.attr('disabled', 'disabled')
 		 		<#else>
 		 			.removeAttr('disabled')	
@@ -21,7 +21,7 @@
 			 		.click(function() { return false; })
 			 	</#if>  -->
 			 	
-			 	<#if menu.visible>
+			 	<#if menu.visible && this.visible>
 		 			.show();
 		 		<#else>
 		 			.hide();	
@@ -63,12 +63,12 @@
 		<#list this.children as menu>
 			<#if (menu.text!?length > 1) || (menu.icon!?length > 1)>
     		$( '#${menu.id}_btn' ).button()
-				<#if menu.disabled>
+				<#if menu.disabled || this.disabled>
 		 			.attr('disabled', 'disabled')
 		 		<#else>
 		 			.removeAttr('disabled')	
 			 	</#if>
-				<#if menu.visible>
+				<#if menu.visible && this.visible>
 		 			.show();
 		 		<#else>
 		 			.hide();	
