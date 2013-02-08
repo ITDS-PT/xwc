@@ -6,6 +6,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import netgest.bo.runtime.boObject;
+import netgest.bo.xwc.components.classic.ErrorMessages;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.MessageBox;
 import netgest.bo.xwc.components.classic.Panel;
@@ -399,7 +400,7 @@ public class FormEdit extends Form {
 			box.setMessage(XEOViewersMessages.FORMEDIT_REMOVE_CONFIRM_MESSAGE.toString());
 			box.setId(getId() + "_removeAlertBox");
 			box.setActions("['#{"+getBeanId( )+".remove}','#{"+getBeanId( )+".dummy}']");
-			getChildren().add( pos++, box );
+			getChildren().add( box );
 		}
 	}
 
