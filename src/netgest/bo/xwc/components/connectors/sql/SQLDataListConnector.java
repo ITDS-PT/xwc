@@ -1,5 +1,7 @@
 package netgest.bo.xwc.components.connectors.sql;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,12 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import netgest.bo.data.DriverUtils;
-import netgest.bo.data.mysql.MysqlUtils;
-import netgest.bo.data.oracle.OracleUtils;
-import netgest.bo.data.postgre.PostGreUtils;
-import netgest.bo.data.sqlserver.SqlServerUtils;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList.SqlField;
 import netgest.bo.system.Logger;
@@ -409,16 +406,35 @@ public class SQLDataListConnector implements DataListConnector {
 				} catch (SQLException e) {
 		
 				}
-				if (dbName.indexOf("ORACLE")>-1)
-					dutl = new OracleUtils(null);
-				else if (dbName.indexOf("POSTGRE")>-1)
-					dutl = new PostGreUtils(null);
-				else if (dbName.indexOf("MYSQL")>-1)
-					dutl = new MysqlUtils(null);
-				else if (dbName.indexOf("SQL SERVER")>-1)
-					dutl = new SqlServerUtils(null);
-				else //Default to Oracle
-					dutl = new OracleUtils(null);
+				try {	
+					String classname="netgest.bo.data.oracle.OracleUtils";
+					
+					if (dbName.indexOf("ORACLE")>-1)	
+						classname="netgest.bo.data.oracle.OracleUtils";
+					else if (dbName.indexOf("POSTGRE")>-1)
+						classname="netgest.bo.data.oracle.PostGreUtils";
+					else if (dbName.indexOf("MYSQL")>-1)
+						classname="netgest.bo.data.oracle.MysqlUtils";						
+					else if (dbName.indexOf("SQL SERVER")>-1)
+						classname="netgest.bo.data.oracle.SqlServerUtils";					
+					
+					Constructor<?> driverCons = Class.forName( classname ).getConstructor( new Class[] { String.class } );
+					dutl = (DriverUtils)driverCons.newInstance(new Object[] { null });
+				} catch (InstantiationException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				} catch (IllegalAccessException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				} catch (ClassNotFoundException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				} catch (SecurityException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				} catch (NoSuchMethodException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				} catch (IllegalArgumentException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				} catch (InvocationTargetException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				}
 	
 			}
 		}
