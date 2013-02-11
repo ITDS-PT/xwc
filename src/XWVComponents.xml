@@ -298,6 +298,9 @@
 			<xwc:render for="flatTreePanel">netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
 			<!-- TEMPLATE COMPONENTS -->
 			
+			<xwc:render for="header">netgest.bo.xwc.components.classic.Header$XEOHTMLRenderer</xwc:render>
+			<xwc:render for="footer">netgest.bo.xwc.components.classic.Footer$XEOHTMLRenderer</xwc:render>
+			
         </xwc:renderKit>
         
         <xwc:renderKit name="XEOJQUERY" componentNamespace="xeo" >
@@ -834,6 +837,17 @@
             <xwc:className>netgest.bo.xwc.components.classic.TemplateInclude</xwc:className>
             <xwc:description>Include for templates</xwc:description>
         </xwc:component>
+        
+        <xwc:component name='header'>
+            <xwc:className>netgest.bo.xwc.components.classic.Header</xwc:className>
+            <xwc:description>Componet to write in the Header of the response</xwc:description>
+        </xwc:component>
+        
+         <xwc:component name='footer'>
+            <xwc:className>netgest.bo.xwc.components.classic.Footer</xwc:className>
+            <xwc:description>Componet to write in the Footer of the response</xwc:description>
+        </xwc:component>
+        
 
     </xwc:components>
     
