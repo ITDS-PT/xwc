@@ -577,10 +577,18 @@ public class XUIViewRoot extends UIViewRoot {
 				.isPortletRequest());
 	}
 
+	public static final boolean renderHead(XUIViewRoot root ) {
+		return renderHead() && root.getParent() == null;
+	}
+	
 	public static final boolean renderScripts() {
 		XUIRequestContext oRequestContext = XUIRequestContext
 				.getCurrentContext();
 		return !(oRequestContext.isAjaxRequest());
+	}
+	
+	public static final boolean renderScripts(XUIViewRoot root) {
+		return renderScripts() && root.getParent() == null;
 	}
 
 	public static class XEOHTMLRenderer extends XUIRenderer {
@@ -593,7 +601,7 @@ public class XUIViewRoot extends UIViewRoot {
 
 			XUIViewRoot viewRoot = (XUIViewRoot) component;
 
-			if (renderHead() ) {
+			if (renderHead(viewRoot) ) {
 
 				// Add Scripts and Style
 				XUIResponseWriter headerW = getResponseWriter()
@@ -698,7 +706,7 @@ public class XUIViewRoot extends UIViewRoot {
 				w.writeAttribute("style", "width:100%;height:100%", null);
 			}
 
-			if (renderScripts() && getTheme() != null ) {
+			if (renderScripts(viewRoot) && getTheme() != null ) {
 				getTheme().addStyle(w.getStyleContext());
 				getTheme().addScripts(w.getScriptContext());
 			}
@@ -709,7 +717,7 @@ public class XUIViewRoot extends UIViewRoot {
 		public void encodeEnd(FacesContext context, UIComponent component)
 				throws IOException {
 			XUIRequestContext oRequestContext;
-			
+			XUIViewRoot viewRoot = (XUIViewRoot) component;
 			oRequestContext = XUIRequestContext.getCurrentContext();
 			XUIResponseWriter w = getResponseWriter();
 			
@@ -727,7 +735,7 @@ public class XUIViewRoot extends UIViewRoot {
 			XUIResponseWriter footerW = getResponseWriter().getFooterWriter();
 			XUIResponseWriter headerW = getResponseWriter().getHeaderWriter();
 
-			if (renderScripts()) {
+			if (renderScripts(viewRoot)) {
 
 				w.getStyleContext().render(headerW, w, footerW);
 				w.getScriptContext().render(headerW, w, footerW);
@@ -735,7 +743,7 @@ public class XUIViewRoot extends UIViewRoot {
 				oRequestContext.getScriptContext().render(headerW, w, footerW);
 			}
 			
-			if (renderHead() ) {
+			if (renderHead(viewRoot) ) {
 				// Write footer Elements
 				if ( getTheme() != null && getTheme().getHtmlStyle() != null) {
 					w.writeAttribute("style", getTheme().getHtmlStyle(),
@@ -910,5 +918,9 @@ public class XUIViewRoot extends UIViewRoot {
     	}
     }
     
-
+	@Override
+	public String toString() {
+		return getViewId() + " " + getViewState() + " " + getBeanIds();
+	}
+    
 }
