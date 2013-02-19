@@ -349,7 +349,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
                     }
                 }
                 else if( oCompNode.text ) {
-            		if( oCompNode.text != "" ) {
+            		if( oCompNode.text.length > 0) {
                     	oCompDNode.outerHTML = oCompNode.text;
             		}
                 }
