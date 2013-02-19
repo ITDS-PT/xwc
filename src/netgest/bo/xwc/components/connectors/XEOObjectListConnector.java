@@ -84,6 +84,10 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 		return oObjectList;
 	}
     
+    public void setObjectList(boObjectList oObjectList) {
+		this.oObjectList=oObjectList;
+	}
+    
 	public XEOObjectListConnector( boObjectList oBoObjectList ) {
         this.oObjectList = oBoObjectList;
     }
