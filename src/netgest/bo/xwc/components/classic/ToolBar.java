@@ -279,7 +279,9 @@ public class ToolBar extends ViewerSecurityBase {
 	                Menu oMenuChild = (Menu)currChild;
 	                if( oMenuChild.isRendered() ) {
                 		sb.startBlock();
+                		sb.w( "try{" );
                     	generateUpdateScript(sb, oMenuChild );
+                    	sb.w("} catch (e) {}");
                     	sb.endBlock();
 	                	if( oMenuChild.getChildCount() > 0 ) {
 	                		updateChildMenuItems(sb, oMenuChild);
@@ -299,7 +301,9 @@ public class ToolBar extends ViewerSecurityBase {
                 if( oMenuChild.isRendered() ) {
 	            	if( oMenuChild.wasStateChanged2() == StateChanged.FOR_RENDER ) {
 	                	sb.startBlock();
+	                	sb.w( "try{" );
 	                	generateUpdateScript(sb, oMenuChild );
+	                	sb.w("} catch (e) {}");
 	                	sb.endBlock();
 	            	}
                 }
