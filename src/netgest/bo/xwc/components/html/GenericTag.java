@@ -8,6 +8,7 @@ import java.util.Set;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.utils.StringUtils;
 
 public class GenericTag extends XUIComponentBase {
 
@@ -64,6 +65,28 @@ public class GenericTag extends XUIComponentBase {
 		}
 		return saveObj;
 	}
+	
+	public String serialize(){
+		StringBuilder b = new StringBuilder(200);
+		String tagName = properties.get("__tagName");
+		b.append( "<" + tagName );
+		if( tagName != null ) {
+			Set<String> props = properties.keySet();
+			for( String propName : props ) {
+				if( !propName.equals( "__tagName" ) ) {
+					b.append( " " + propName+"='"+properties.get( propName )+"' " );
+				}
+			}
+		}
+		b.append(" >");
+		if (StringUtils.hasValue( textContent) )
+			b.append(textContent);
+		
+		b.append( "</" + tagName + ">");
+		
+		return b.toString();
+	}
+	
 
 	public static class XEOHTMLRenderer extends XUIRenderer {
 
@@ -112,4 +135,8 @@ public class GenericTag extends XUIComponentBase {
 		
 	}
 	
+	@Override
+	public String toString() {
+		return getProperties( ).get("__tagName");
+	}
 }

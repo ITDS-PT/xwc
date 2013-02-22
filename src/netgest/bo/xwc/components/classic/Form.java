@@ -47,7 +47,7 @@ public class Form extends XUIForm
 			new XUIBindProperty<String>("cssClass", this, String.class, "" );
 	
 	private XUIBindProperty<Byte> 		securityPermissions = 
-		new XUIBindProperty<Byte>("securityPermissions", this, Byte.class, "#{viewBean.securityPermissions}" );
+		new XUIBindProperty<Byte>("securityPermissions", this, Byte.class );
 
 	
 	public void setSecurityPermissions( String sExpressionString ) {
@@ -55,8 +55,8 @@ public class Form extends XUIForm
 	}
 	
 	public byte getSecurityPermissions() {
-		// Quando n�o existe bean associada ao viewer ignora seguran�as.
-		// N�o existe outra maneira j� que o propriedade � sempre resolvida atrav�s da class
+		// Quando nao existe bean associada ao viewer ignora segurancas.
+		// Nao existe outra maneira ja que a propriedade e sempre resolvida atraves da class
 		// ScopedAttributeELResolver 
 		
 		if( getRequestContext().getViewRoot().getBean( getBeanId() ) != null ) {
@@ -102,6 +102,9 @@ public class Form extends XUIForm
     @Override
     public void initComponent(){
     	super.initComponent();
+    	if (securityPermissions.isDefaultValue( )){
+    		securityPermissions.setExpressionText( "#{"+getBeanId( )+".securityPermissions}");
+    	}
     }
     
     @Override
@@ -231,7 +234,6 @@ public class Form extends XUIForm
 
             writer.writeAttribute("id", clientId, "clientId");
             writer.writeAttribute("name", clientId, "name");
-            writer.writeAttribute("method", "post", null);
             writer.writeAttribute("method", "post", null);
             
             if( oForm.getEncType() != null ) {

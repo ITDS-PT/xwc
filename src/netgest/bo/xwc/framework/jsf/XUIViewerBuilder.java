@@ -98,7 +98,7 @@ public class XUIViewerBuilder
     	if ( hasEvents( events ) ){
     		for ( String phaseEvent : events ){
     			if ( !isEmpty( phaseEvent ) ){
-    				System.out.println("Adding "  + phaseEvent + "/" + phaseId);
+    				
 	    			root.addPhaseListener(
 	    					new XUIMethodExpressionPhaseListener(
 	    							createEventMethodExpression( phaseEvent ) , 

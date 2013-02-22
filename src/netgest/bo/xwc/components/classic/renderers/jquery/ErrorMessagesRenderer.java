@@ -129,11 +129,11 @@ public class ErrorMessagesRenderer extends JQueryBaseRenderer {
 				w.writeAttribute( CLASS, "xwc-error-message-content" );
 				w.write( oXuiMessage.getMessage() );
 			w.endElement( P );	
-			
-			w.startElement( P );
-				w.writeAttribute( CLASS, "xwc-error-message-detail" );
-				w.write( oXuiMessage.getDetail() );
-			w.endElement( P );	
+//			No one is setting the detail, don't render for now			
+//			w.startElement( P );
+//				w.writeAttribute( CLASS, "xwc-error-message-detail" );
+//				w.write( oXuiMessage.getDetail() );
+//			w.endElement( P );	
 		w.endElement( DIV );
 		
 		String messageId = oErrorMessagesComp.getClientId() + "_a";
@@ -144,7 +144,7 @@ public class ErrorMessagesRenderer extends JQueryBaseRenderer {
 			.addOption( "title", oXuiMessage.getTitle() )
 			.addOption( "modal", true )
 			.addNonLiteral( "buttons", getOkButtonScript() )
-			.addNonLiteral( "beforeClose", getCloseScript( getIdForJquerySelector( messageId ) ) )
+			.addNonLiteral( "beforeClose", getCloseScript(  getIdForJquerySelector( messageId ) ) )
 			.endOptions();
 		dialog.command( "parent( )").addClass( "xwc-error-message" );
 		
@@ -224,7 +224,7 @@ public class ErrorMessagesRenderer extends JQueryBaseRenderer {
 	private String getCloseScript( String messageId ) {
 			StringBuilder b = new StringBuilder();
 			b.append("function(event, ui) {");
-			b.append(" $(this).dialog('destroy').remove(); $('#"+messageId+"').remove()");
+			b.append(" $(this).dialog('destroy').remove(); $(XVW.get('"+messageId+"')).remove()");
 			b.append("}");
 			return b.toString();
 	}

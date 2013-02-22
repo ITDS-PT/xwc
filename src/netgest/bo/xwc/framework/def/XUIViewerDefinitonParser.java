@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
 
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 
@@ -29,6 +31,7 @@ import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.NSResolver;
 import oracle.xml.parser.v2.XMLDocument;
 import oracle.xml.parser.v2.XMLElement;
+import oracle.xml.parser.v2.XSLException;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -44,8 +47,8 @@ public class XUIViewerDefinitonParser
     private static final String EMPTY = "";
     
     public XUIViewerDefinitonParser(){
-    	
     }
+    
     
     public XUIViewerDefinition parse( InputStream inputStream ) {
     	return parse(inputStream, new IncludeCounter());
@@ -60,8 +63,20 @@ public class XUIViewerDefinitonParser
             xmldoc = ngtXMLUtils.loadXML( inputStream );
 
             node = (XMLElement)xmldoc.selectSingleNode("/xvw:root/xvw:viewer", ns);
-            xwvr = new XUIViewerDefinition();
+            
+            XMLElement element = (XMLElement) node;
+            
+            Map<String,XMLElement> defines = new HashMap< String , XMLElement >();
+            
+            //Deal with a Composition 
+            XMLElement potentialComposition = findPotentialCompositionElement( element );
+            if ( isPageComposition( potentialComposition ) ){
+            	defines = findDefineElements( potentialComposition );
+            	String templateToParse = potentialComposition.getAttribute( "template" );
+            	node = reloadViewerFromTemplate( templateToParse );
+            }
 
+            xwvr = new XUIViewerDefinition();
             parseBeanClasses( xwvr, node.getAttribute( "beanClass" ) );
             parseBeanIds( xwvr, node.getAttribute( "beanId" ) );
             List<String> beanIds = xwvr.getViewerBeanIds( );
@@ -101,7 +116,7 @@ public class XUIViewerDefinitonParser
             
             counter.parsed( viewerName , xwvr.getViewerBeanIds( ) );
             
-            xwvr.setRootComponent( parseNode( xwvr, (XMLElement)node, null, counter ) );
+            xwvr.setRootComponent( parseNode( xwvr, (XMLElement)node, null, counter, defines ) );
             
         }
         catch (Exception e)
@@ -112,8 +127,40 @@ public class XUIViewerDefinitonParser
         }
         return xwvr;
     }
+
+
+	protected XMLElement findPotentialCompositionElement(XMLElement element) {
+		return (XMLElement) element.getChildNodes().item( 0 );
+	}
+
+
+	protected boolean isPageComposition(XMLElement potentialComposition) {
+		return "xvw:composition".equalsIgnoreCase( potentialComposition.getNodeName() );
+	}
+
+
+	protected XMLElement reloadViewerFromTemplate(String templateToParse)
+			throws XSLException {
+		XMLElement node;
+		XMLDocument xmldoc;
+		xmldoc =  ngtXMLUtils.loadXML( resolveViewer( templateToParse ) );
+		node = (XMLElement)xmldoc.selectSingleNode( "/xvw:root/xvw:viewer" , ns);
+		return node;
+	}
     
-    public XUIViewerDefinition parse( InputStream inputStream, IncludeCounter counter ) {
+    private Map< String , XMLElement > findDefineElements(XMLElement element) {
+    	Map<String,XMLElement> result = new HashMap< String , XMLElement >();
+    	NodeList children = element.getChildNodes();
+    	for (int k = 0 ; k < children.getLength(); k++){
+    		XMLElement child = (XMLElement) children.item( k );
+    		if ("xvw:define".equals(child.getNodeName())){
+    			result.put( child.getAttribute( "name" ) , child );
+    		}
+    	}
+    	return result;
+	}
+
+	public XUIViewerDefinition parse( InputStream inputStream, IncludeCounter counter ) {
         return parse( inputStream , counter , EMPTY );
     }
     
@@ -128,7 +175,8 @@ public class XUIViewerDefinitonParser
     private void parseBeanIds( XUIViewerDefinition vdef, String beanIds ){
     	String[] beanIdentifiers = beanIds.split( "," );
     	for (String beanId : beanIdentifiers){
-    		vdef.addViewerBeanId( beanId );
+    		if (StringUtils.hasValue( beanId ))
+    			vdef.addViewerBeanId( beanId );
     	}
     }
     
@@ -271,17 +319,26 @@ public class XUIViewerDefinitonParser
     }
     
     public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, XUIViewerDefinitionNode parent ){
-    	return parseNode(root, node, parent, new IncludeCounter());
+    	return parseNode(root, node, parent, new IncludeCounter(), new HashMap<String,XMLElement>());
     }
     
-    public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, XUIViewerDefinitionNode parent, IncludeCounter counter )
+    public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, 
+    		XUIViewerDefinitionNode parent, IncludeCounter counter, Map<String,XMLElement> defines )
     {
         XUIViewerDefinitionNode component = new XUIViewerDefinitionNode();
         component.setRoot( root );
         component.setParent( parent );
         
         if ( isIncludeComponent( node ) ){
-        	return replaceIncludeContent( root, node, parent, counter );
+        	return replaceIncludeContent( root, node, parent, counter, defines );
+        } else if (isInsertComponent( node ) ){
+        	String name = node.getAttribute( "name" );
+        	if (defines.containsKey( name )){
+    			XMLElement element = defines.get( name );
+    			return replaceInsertContent(root, element, parent, defines);
+    		} else {
+    			return replaceIncludeContent( root, node, parent, counter, defines );
+    		}
         }
         
         if( node.getNodeName().indexOf(':') == -1 )
@@ -326,7 +383,7 @@ public class XUIViewerDefinitonParser
             Node cnode = nlist.item( i );
             if( cnode.getNodeType() == Node.ELEMENT_NODE )
             {
-                component.addChild( parseNode( root, (XMLElement)nlist.item( i ), component, counter ) );
+                component.addChild( parseNode( root, (XMLElement)nlist.item( i ), component, counter, defines ) );
             } 
             else if ( cnode.getNodeType() == Node.TEXT_NODE ) 
             {
@@ -339,7 +396,24 @@ public class XUIViewerDefinitonParser
         return component; 
     }
     
-    private void setComponentBeanIdPropertyForNonDefaultBean( XUIViewerDefinitionNode component, XUIViewerDefinition viewerDef ){
+    private XUIViewerDefinitionNode replaceInsertContent(
+			XUIViewerDefinition root, XMLElement element,
+			XUIViewerDefinitionNode parent, Map< String , XMLElement > defines) {
+    	
+    	List<XUIViewerDefinitionNode> nodes = new ArrayList< XUIViewerDefinitionNode >();
+    	NodeList children = element.getChildNodes();
+    	for (int k = 0 ; k < children.getLength(); k++){
+    		Node child = children.item( k );
+    		nodes.add( parseNode( root , (XMLElement) child , parent ) );
+    	}
+		return wrapInclusion( root , nodes , parent );
+	}
+
+	private boolean isInsertComponent(XMLElement node) {
+		return "xvw:insert".equalsIgnoreCase( node.getNodeName() );
+	}
+
+	private void setComponentBeanIdPropertyForNonDefaultBean( XUIViewerDefinitionNode component, XUIViewerDefinition viewerDef ){
     	String beanId = component.getProperty("beanId");
     	if ( StringUtils.isEmpty( beanId ) ){
     		if ( viewerHasOneBeanIdentifier( viewerDef ) ) {
@@ -362,13 +436,14 @@ public class XUIViewerDefinitonParser
     	 && !StringUtils.isEmpty(def.getViewerBeanIds().get(0));
     }
     private boolean isIncludeComponent( XMLElement node ){
-    	return node.getNodeName().equalsIgnoreCase("xvw:include");
+    	return "xvw:include".equalsIgnoreCase( node.getNodeName());
     }
     
     private XUIViewerDefinitionNode replaceIncludeContent( XUIViewerDefinition def,  XMLElement node, XUIViewerDefinitionNode parent, 
-    		IncludeCounter parsedCounter ){
+    		IncludeCounter parsedCounter, Map<String,XMLElement> defines ){
     	
     	String includeFilePath = node.getAttribute( "src" );
+    	
     	
     	FacesContext context = FacesContext.getCurrentInstance();
     	

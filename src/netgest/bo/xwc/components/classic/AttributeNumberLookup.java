@@ -43,6 +43,7 @@ import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
@@ -95,8 +96,9 @@ public class AttributeNumberLookup extends AttributeBase {
 
     private void doLookup() {
         try {
+        	XUIViewRoot root = (XUIViewRoot) findParent( XUIViewRoot.class );
             XEOEditBean oXEOEditBean;
-            oXEOEditBean = (XEOEditBean)getRequestContext().getViewRoot().getBean( getBeanId() );
+            oXEOEditBean = (XEOEditBean) root.getBean( getBeanId() );
             oXEOEditBean.lookupAttribute( this.getClientId() );
         } catch (boRuntimeException e) {
             throw new RuntimeException(e);

@@ -26,6 +26,7 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.localization.BeansMessages; 
+import netgest.utils.StringUtils;
 public class XEOBaseList extends XEOBaseBean {
     
     protected boObjectList currentObjectList;
@@ -122,13 +123,18 @@ public class XEOBaseList extends XEOBaseBean {
         XUIRequestContext    oRequestContext;
         
         oRequestContext = getRequestContext();
+        XUICommand command = (XUICommand) oRequestContext.getEvent( ).getComponent( );
+        String argument = (String) command.getCommandArgument( );
+        if ("null".equals( argument ) || command.getClientId().equals( argument ) ){
+        	argument = null;
+        }
         
-        if( oRequestContext.isAjaxRequest() ) {
-        	
+        if( oRequestContext.isAjaxRequest() && StringUtils.isEmpty( argument )) {
+        	XUIViewRoot root = (XUIViewRoot) command.findParent( XUIViewRoot.class );
         	XUIComponentBase oCommand = oRequestContext.getEvent().getComponent();
         	String frameId = "addNew_"+System.currentTimeMillis();
 			oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER , "addNew",
-        			XVWScripts.getOpenCommandTab( frameId, oCommand , "", null)
+        			XVWScripts.getOpenCommandTab( frameId, oCommand , root.getClientId() , null)
         	);
         }
         else {

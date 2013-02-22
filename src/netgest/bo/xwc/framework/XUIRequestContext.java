@@ -346,5 +346,11 @@ public class XUIRequestContext {
     public UIViewRoot getRenderedViewer() {
     	return this.oRenderedViewer;
     }
+    
+    public XUIApplicationConfig getXUIApplicationConfig(){
+    	return oApplication.getXUIApplicationConfig();
+    }
+
+	
 }
 

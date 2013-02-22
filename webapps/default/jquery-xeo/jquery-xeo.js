@@ -22,7 +22,7 @@ XVW.closeWindowJquery = function (sComponentId, sViewId){
 
 
 XVW.Wait = function( iWaitMode ) {
-	$.blockUI.defaults.css = {}; //Should be placed somewhere else
+	$.blockUI.defaults.overlayCSS = {backgroundColor:"transparent", opacity : 0}; //Should be placed somewhere else
 	$.blockUI({ message: '<div id="xwc-ajax-loading"><span class="xwc-ajax-loading-image" /><p class="xwc-ajax-loading-message"> ' + ExtXeo.Messages.SENDING_DATA + '</p></div>' });
 }
 

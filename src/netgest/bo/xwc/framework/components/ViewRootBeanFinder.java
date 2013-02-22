@@ -14,7 +14,7 @@ public class ViewRootBeanFinder {
 		bean = XUIRequestContext.getCurrentContext().getSessionContext()
 				.getAttribute(root.getBeanPrefix() + sBeanName);
 		if (bean == null){
-			//findBean(root,sBeanName);
+			findBean(root,sBeanName);
 		}
 		return bean; 
 	}

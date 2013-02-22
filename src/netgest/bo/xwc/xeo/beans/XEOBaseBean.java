@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -99,9 +100,9 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 
     public XUIViewRoot getParentView()
     {
-        XUIRequestContext oRequestContext;
-        oRequestContext = XUIRequestContext.getCurrentContext();
-        return oRequestContext.getViewRoot().getParentView();
+        //XUIRequestContext oRequestContext;
+        //oRequestContext = XUIRequestContext.getCurrentContext();
+        return getViewRoot().getParentView();
     }
     
     public XUIViewRoot getViewRoot() {
@@ -109,18 +110,25 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 		
 		oRequestContext = XUIRequestContext.getCurrentContext();
 		
+		//Check if view is the same as the context
 		if( this.sViewStateId.equals( oRequestContext.getViewRoot().getViewState() ) )
 			return oRequestContext.getViewRoot();
-		
+		//If not check recursively in that view 
 		XUIViewRoot root = findRecursiveRoot( oRequestContext.getViewRoot() );
+		if (root == null){
+			//If the view was replaced in the context, try to load the view
+			root = oRequestContext.getSessionContext( ).getView( sViewStateId );
+		}
 		return root;
 		
-		//return XUIRequestContext.getCurrentContext().getSessionContext().getView( sViewStateId );
+		
 	}
     
     private XUIViewRoot findRecursiveRoot(UIComponent component){
-    	XUIViewRoot root = null; 
-    	for (UIComponent child : component.getChildren()){
+    	XUIViewRoot root = null;
+    	Iterator<UIComponent> it = component.getFacetsAndChildren();
+    	while (it.hasNext()){
+    		UIComponent child = it.next();
     		if (child instanceof XUIViewRoot){
     			XUIViewRoot view = (XUIViewRoot) child;
     			if (sViewStateId.equals( view.getViewState( ))){

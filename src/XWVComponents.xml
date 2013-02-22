@@ -208,7 +208,7 @@
             <xwc:render for='cell'>netgest.bo.xwc.components.classic.Cell$XEOHTMLRenderer</xwc:render>
             <xwc:render for='actionButton'>netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
             <!-- <xwc:render for='actionButton'>netgest.bo.xwc.components.classic.renderers.jquery.ActionButtonRenderer</xwc:render> -->
-            <xwc:render for='toolBar'>netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
+            <xwc:render for='toolBar'>netgest.bo.xwc.components.template.renderers.ToolBarRenderer</xwc:render>
             <!-- <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.renderers.jquery.ToolbarRenderer</xwc:render>-->
 
 			<xwc:render for='pieChart'>netgest.bo.xwc.components.classic.charts.PieChart$XEOHTMLRenderer</xwc:render>
@@ -296,7 +296,12 @@
 			<!-- TEMPLATE COMPONENTS -->
 			<xwc:render for="template">netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
 			<xwc:render for="flatTreePanel">netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
-			<!-- TEMPLATE COMPONENTS -->
+			<!-- TEMPLATE COMPONENTS -->			
+			
+			<xwc:render for="header">netgest.bo.xwc.components.classic.Header$XEOHTMLRenderer</xwc:render>
+			<xwc:render for="footer">netgest.bo.xwc.components.classic.Footer$XEOHTMLRenderer</xwc:render>
+			
+			<xwc:render for="fileUpload">netgest.bo.xwc.components.template.renderers.FileUploadRenderer</xwc:render>
 			
         </xwc:renderKit>
         
@@ -307,8 +312,11 @@
       		<xwc:render for="bridgeLookup">netgest.bo.xwc.xeo.components.BridgeLookup$XEOHTMLRenderer</xwc:render>
       		<xwc:render for='attributeSearchLookup'>netgest.bo.xwc.xeo.components.AttributeSearchLookup$XEOHTMLRenderer</xwc:render>
       		<xwc:render for='attributeAutoComplete'>netgest.bo.xwc.components.classic.renderers.jquery.AttributeAutoCompleteRenderer</xwc:render>
-      		<xwc:render for="xeoList">netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
-			<xwc:render for="xeoObject">netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
+      		<xwc:render for="xeolist">netgest.bo.xwc.components.template.xeo.PaginatedList$ListRenderer</xwc:render>
+      		<xwc:render for="sqllist">netgest.bo.xwc.components.template.xeo.PaginatedList$ListRenderer</xwc:render>
+			<xwc:render for="xeoobject">netgest.bo.xwc.components.template.xeo.Xeoobject$XEOObjectRenderer</xwc:render>
+			<xwc:render for="genericlist">netgest.bo.xwc.components.template.xeo.Genericlist$ListRenderer</xwc:render>
+            <xwc:render for="arraylist">netgest.bo.xwc.components.template.xeo.Arraylist$ListRenderer</xwc:render>
 			<xwc:render for="xeoLov">netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
 		</xwc:renderKit>
         
@@ -319,6 +327,12 @@
       		<xwc:render for="formEdit">netgest.bo.xwc.xeo.components.FormEdit$XEOHTMLRenderer</xwc:render>
       		<xwc:render for="bridgeLookup">netgest.bo.xwc.xeo.components.BridgeLookup$XEOHTMLRenderer</xwc:render>
       		<xwc:render for='attributeSearchLookup'>netgest.bo.xwc.xeo.components.AttributeSearchLookup$XEOHTMLRenderer</xwc:render>
+      		<xwc:render for="xeolist">netgest.bo.xwc.components.template.xeo.PaginatedList$ListRenderer</xwc:render>
+      		<xwc:render for="sqllist">netgest.bo.xwc.components.template.xeo.PaginatedList$ListRenderer</xwc:render>
+			<xwc:render for="xeoobject">netgest.bo.xwc.components.template.xeo.Xeoobject$XEOObjectRenderer</xwc:render>
+			<xwc:render for="genericlist">netgest.bo.xwc.components.template.xeo.Genericlist$ListRenderer</xwc:render>
+            <xwc:render for="arraylist">netgest.bo.xwc.components.template.xeo.Arraylist$ListRenderer</xwc:render>
+			<xwc:render for="xeoLov">netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
 		</xwc:renderKit>
 
         <!-- *********** JSF RENDERKITS ********************** -->
@@ -834,6 +848,22 @@
             <xwc:className>netgest.bo.xwc.components.classic.TemplateInclude</xwc:className>
             <xwc:description>Include for templates</xwc:description>
         </xwc:component>
+        
+        <xwc:component name='header'>
+            <xwc:className>netgest.bo.xwc.components.classic.Header</xwc:className>
+            <xwc:description>Component to write in the Header of the response</xwc:description>
+        </xwc:component>
+        
+         <xwc:component name='footer'>
+            <xwc:className>netgest.bo.xwc.components.classic.Footer</xwc:className>
+            <xwc:description>Component to write in the Footer of the response</xwc:description>
+        </xwc:component>
+        
+
+		 <xwc:component name='fileUpload'>
+            <xwc:className>netgest.bo.xwc.components.classic.FileUpload</xwc:className>
+            <xwc:description>File Upload Component (Upload progress, Multiple Files, etc..)</xwc:description>
+        </xwc:component>
 
     </xwc:components>
     
@@ -1108,14 +1138,29 @@
             <xwc:description>An outlook style menu counter (think unread messages)</xwc:description>
         </xwc:component>
         
-        <xwc:component name='xeoList'>
-            <xwc:className>netgest.bo.xwc.components.template.xeo.XeoList</xwc:className>
-            <xwc:description>List of XEO Objects</xwc:description>
+        <xwc:component name="xeolist">
+            <xwc:className>netgest.bo.xwc.components.template.xeo.Xeolist</xwc:className>
+            <xwc:description>List of xeo objects using an html template</xwc:description>
         </xwc:component>
         
-        <xwc:component name='xeoObject'>
-            <xwc:className>netgest.bo.xwc.components.template.xeo.XeoObject</xwc:className>
-            <xwc:description>A single XEO Objects</xwc:description>
+        <xwc:component name="sqllist">
+            <xwc:className>netgest.bo.xwc.components.template.xeo.Sqllist</xwc:className>
+            <xwc:description>List of sql query using an html template</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="genericlist">
+            <xwc:className>netgest.bo.xwc.components.template.xeo.Genericlist</xwc:className>
+            <xwc:description>List of generic connector using an html template</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="arraylist">        
+            <xwc:className>netgest.bo.xwc.components.template.xeo.Arraylist</xwc:className>
+            <xwc:description>List of an Array List using an html template</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name="xeoobject">
+            <xwc:className>netgest.bo.xwc.components.template.xeo.Xeoobject</xwc:className>
+            <xwc:description>Html Template of a Xeo object</xwc:description>
         </xwc:component>
         
         <xwc:component name='xeoLov'>

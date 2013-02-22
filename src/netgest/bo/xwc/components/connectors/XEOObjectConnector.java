@@ -24,6 +24,7 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 	private static final Logger log = Logger.getLogger( XEOObjectConnector.class.getName() );
     
     private long lBoObjectBoui;
+    private boObject currObject=null;
     private int	 rowIndex; 
     
     /**
@@ -57,13 +58,19 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
         this.lBoObjectBoui = lBoObjectBoui;
     }
     
+    public XEOObjectConnector( boObject currObject, int rowIndex ) 
+    {
+    	this.rowIndex = rowIndex;
+        this.currObject = currObject;
+    }
+    
     public byte getSecurityPermissions() {
 		return SecurityPermissions.FULL_CONTROL;
 	}
 
 	public boObject getXEOObject() {
-        boObject oBoObject = null;
-        if( lBoObjectBoui != 0 ) {
+        boObject oBoObject = this.currObject;
+        if( lBoObjectBoui != 0 && this.currObject==null) {
 	        EboContext oEboContext = boApplication.currentContext().getEboContext();
 	        try {
 	        	

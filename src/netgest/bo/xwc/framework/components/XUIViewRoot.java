@@ -32,8 +32,6 @@ import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.Window;
-import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
-import netgest.bo.xwc.components.classic.theme.JQueryTheme;
 import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -97,23 +95,16 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 
 	public XUIViewRoot() {
-		if ("XEOHTML".equals(getRenderKitId()))
-			oTheme = new ExtJsTheme();
-		else if ("XEOJQUERY".equals(getRenderKitId()))
-			oTheme = new JQueryTheme();
-		else if ("XEOV2".equals(getRenderKitId())) {
 			try {
-				Class<XUITheme> theme = (Class<XUITheme>) Class
-						.forName("xeo.viewers.theme.XEOV2Theme");
-				oTheme = theme.newInstance();
+				Class<?> themeClass = Class.forName( getRenderKitClass() );
+				oTheme = (XUITheme) themeClass.newInstance();
 			} catch (ClassNotFoundException e) {
-				throw new RuntimeException(e);
+				throw new RuntimeException(String.format("Class %s for renderKit %s not found",getRenderKitClass(), getRenderKitId()), e);
 			} catch (InstantiationException e) {
-				throw new RuntimeException(e);
+				throw new RuntimeException(String.format("Class %s for renderKit %s could not be instatiated",getRenderKitClass(), getRenderKitId()), e);
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
-		}
 	}
 	
 
@@ -229,29 +220,29 @@ public class XUIViewRoot extends UIViewRoot {
 		setTransient(true);
 	}
 	
+	/**
+	 * Retrieves the Theme class name associated with the current renderkit
+	 * (must be an instance of XUITheme)
+	 * 
+	 * @return The name of the class
+	 */
+	private String getRenderKitClass(){
+		return XUIRequestContext.getCurrentContext().getXUIApplicationConfig().getThemeForRenderKit( getRenderKitId() );
+	}
+	
 	@Override
 	public String getRenderKitId() {
 		if( _renderKit == null ) {
 	    	_renderKit = super.getRenderKitId();
 	    	if( _renderKit == null || "HTML_BASIC".equals( _renderKit ) ) {
-		    	XUIRequestContext requestContext;
-		    	requestContext = XUIRequestContext.getCurrentContext();
+		    	XUIRequestContext requestContext = XUIRequestContext.getCurrentContext();
 		    	
 		    	_renderKit = requestContext.getRequestParameterMap().get("__renderKit");
-		    	/*if( _renderKit != null ) { 
-		    		_renderKit = "XEOXML";
-		    	}
-		    	else {
-		    		_renderKit = "XEOHTML";
-		    	}*/
-		    	if( _renderKit == null ){
-		    		_renderKit = "XEOHTML"; 
+		    	if( _renderKit == null ){ 
+		    		_renderKit = requestContext.getXUIApplicationConfig().getDefaultRenderKitId(); 
 		    	}
 	    	}
 		}
-		
-		_renderKit = "XEOJQUERY"; 
-		
     	return _renderKit; 
     } 
 	
@@ -360,6 +351,7 @@ public class XUIViewRoot extends UIViewRoot {
 						XUIScriptContext.POSITION_HEADER,
 						oForm.getClientId() + "_syncView",
 						"XVW.syncView('" + oForm.getClientId() + "');");
+				break;
 			}
 		}
 	}
@@ -436,13 +428,15 @@ public class XUIViewRoot extends UIViewRoot {
 	public void setParentView(XUIViewRoot oViewRoot) {
 		setParentViewState(oViewRoot.getViewState());
 	}
+	
+	
 
 	public XUIViewRoot getParentView() {
 		if (sParentViewState != null && oParentView == null) {
 			oParentView = XUIRequestContext.getCurrentContext()
 					.getSessionContext().getView(sParentViewState);
-			oParentView.sStateId = sParentViewState;
-		}
+				oParentView.sStateId = sParentViewState;
+			}
 		return oParentView;
 	}
 
@@ -583,10 +577,18 @@ public class XUIViewRoot extends UIViewRoot {
 				.isPortletRequest());
 	}
 
+	public static final boolean renderHead(XUIViewRoot root ) {
+		return renderHead() && root.getParent() == null;
+	}
+	
 	public static final boolean renderScripts() {
 		XUIRequestContext oRequestContext = XUIRequestContext
 				.getCurrentContext();
 		return !(oRequestContext.isAjaxRequest());
+	}
+	
+	public static final boolean renderScripts(XUIViewRoot root) {
+		return renderScripts() && root.getParent() == null;
 	}
 
 	public static class XEOHTMLRenderer extends XUIRenderer {
@@ -599,7 +601,7 @@ public class XUIViewRoot extends UIViewRoot {
 
 			XUIViewRoot viewRoot = (XUIViewRoot) component;
 
-			if (renderHead() ) {
+			if (renderHead(viewRoot) ) {
 
 				// Add Scripts and Style
 				XUIResponseWriter headerW = getResponseWriter()
@@ -704,7 +706,7 @@ public class XUIViewRoot extends UIViewRoot {
 				w.writeAttribute("style", "width:100%;height:100%", null);
 			}
 
-			if (renderScripts() && getTheme() != null ) {
+			if (renderScripts(viewRoot) && getTheme() != null ) {
 				getTheme().addStyle(w.getStyleContext());
 				getTheme().addScripts(w.getScriptContext());
 			}
@@ -715,7 +717,7 @@ public class XUIViewRoot extends UIViewRoot {
 		public void encodeEnd(FacesContext context, UIComponent component)
 				throws IOException {
 			XUIRequestContext oRequestContext;
-			
+			XUIViewRoot viewRoot = (XUIViewRoot) component;
 			oRequestContext = XUIRequestContext.getCurrentContext();
 			XUIResponseWriter w = getResponseWriter();
 			
@@ -733,7 +735,7 @@ public class XUIViewRoot extends UIViewRoot {
 			XUIResponseWriter footerW = getResponseWriter().getFooterWriter();
 			XUIResponseWriter headerW = getResponseWriter().getHeaderWriter();
 
-			if (renderScripts()) {
+			if (renderScripts(viewRoot)) {
 
 				w.getStyleContext().render(headerW, w, footerW);
 				w.getScriptContext().render(headerW, w, footerW);
@@ -741,7 +743,7 @@ public class XUIViewRoot extends UIViewRoot {
 				oRequestContext.getScriptContext().render(headerW, w, footerW);
 			}
 			
-			if (renderHead() ) {
+			if (renderHead(viewRoot) ) {
 				// Write footer Elements
 				if ( getTheme() != null && getTheme().getHtmlStyle() != null) {
 					w.writeAttribute("style", getTheme().getHtmlStyle(),
@@ -916,5 +918,9 @@ public class XUIViewRoot extends UIViewRoot {
     	}
     }
     
-
+	@Override
+	public String toString() {
+		return getViewId() + " " + getViewState() + " " + getBeanIds();
+	}
+    
 }
