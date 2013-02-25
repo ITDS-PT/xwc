@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -25,6 +26,7 @@ import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
+import netgest.io.FSiFile;
 import netgest.io.iFile;
 
 public class FileUploadRenderer extends TemplateRenderer implements XUIRendererServlet{
@@ -41,13 +43,16 @@ public class FileUploadRenderer extends TemplateRenderer implements XUIRendererS
 		HttpServletResponse response = (HttpServletResponse) oResponse;
 		
 		if ( isDownload( request.getParameter( "download" ) ) ){
-			String fileName = request.getParameter( "fileName" );
-			if (netgest.utils.StringUtils.hasValue( fileName )){
-				iFile file = uploader.getFile( fileName );
-				sendFileToUser( file , response );
+			if ( !uploader.isDisabled() ){
+				String fileName = request.getParameter( "fileName" );
+				if (netgest.utils.StringUtils.hasValue( fileName )){
+					String decodedFilename = URLDecoder.decode( fileName , "UTF-8" );
+					iFile file = uploader.getFile( decodedFilename );
+					sendFileToUser( file , response );
+				}
 			}
 		} else {
-			//is Upload
+			
 			File tmpDir = new File(getTempDir());
 			ReceiveFile file = new ReceiveFile(tmpDir, tmpDir);
 			File uploadedile = file.process( request , response , request.getSession().getServletContext() );
@@ -76,8 +81,6 @@ public class FileUploadRenderer extends TemplateRenderer implements XUIRendererS
 			
 		}
 		
-	
-		
 		
 	}
 	
@@ -91,6 +94,7 @@ public class FileUploadRenderer extends TemplateRenderer implements XUIRendererS
 
 	protected void setFileInComponent(FileUpload uploader, File uploadedile) {
 		uploader.setValue( uploadedile );
+		uploader.addFile( new FSiFile( uploadedile ) );
 		uploader.updateModel();
 	}
 	
@@ -99,6 +103,7 @@ public class FileUploadRenderer extends TemplateRenderer implements XUIRendererS
 			List< XUIBaseProperty< ? >> updateProperties) {
 		updateProperties.add( component.getStateProperty( "visible" ) );
 		updateProperties.add( component.getStateProperty( "disabled" ) );
+		updateProperties.add( component.getStateProperty( "readOnly" ) );
 		return super.wasStateChanged( component , updateProperties );
 	}
 
@@ -115,8 +120,7 @@ public class FileUploadRenderer extends TemplateRenderer implements XUIRendererS
 		        OutputStream so = resp.getOutputStream(); 
 		
 		        resp.setContentType(mimetype);
-		    	//resp.setContentLength(xfsize);
-		        
+		    	
 		        int rb=0; 
 		        InputStream is= null;
 		        try { 
@@ -129,7 +133,7 @@ public class FileUploadRenderer extends TemplateRenderer implements XUIRendererS
 		        } 
 		        catch (Exception e) 
 		        {
-		        	
+		        	e.printStackTrace();
 		        }
 		        finally
 		        {

@@ -122,7 +122,7 @@ public class XUIServlet extends HttpServlet
             } 
             else if( oRequest.getContentType() != null && oRequest.getContentType().startsWith( "multipart/form-data" )  )
             {
-                facesServlet.service( new XUIMultiPartRequestWrapper( oRequest ), servletResponse );
+                facesServlet.service( oRequest , servletResponse );
             }
             else { 
                 facesServlet.service( servletRequest, servletResponse );

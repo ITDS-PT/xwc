@@ -402,7 +402,12 @@ public class XUIScriptContext {
         	return isExternal;
         }
 
+        @Override
+        public String toString() {
+        	return getScriptId() + " " + getPosition() + " " + getContent();
+        }
     }
+    
     
     protected static final class RenderPosition extends XUIStaticField {
         public RenderPosition( int iValue, String sName ) {

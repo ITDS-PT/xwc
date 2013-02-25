@@ -15,6 +15,7 @@ public class XUIMultiPartRequestWrapper extends HttpServletRequestWrapper{
 	
 	private com.oreilly.servlet.MultipartRequest oMultiPartRequest;
 	private Hashtable<String,String[]> parameterMap = new Hashtable<String,String[]>();
+	private java.io.File tmpdir = null;
 	
 	public XUIMultiPartRequestWrapper( HttpServletRequest oRequest ) {
 		super( oRequest );
@@ -28,14 +29,13 @@ public class XUIMultiPartRequestWrapper extends HttpServletRequestWrapper{
         {
            tmpFolder =  tmpFolder + File.separator + System.currentTimeMillis();
         }
-        java.io.File tmpdir = new java.io.File(tmpFolder);
+        tmpdir = new java.io.File(tmpFolder);
         if(!tmpdir.exists()) 
         {
             tmpdir.mkdirs();
         }
 
 		try {
-			
 			oMultiPartRequest = new com.oreilly.servlet.MultipartRequest( oRequest, tmpdir.getAbsolutePath(), 64 * 1024 * 1024, "utf-8" );
 			
 			Enumeration oEnum = oMultiPartRequest.getParameterNames();
@@ -89,9 +89,15 @@ public class XUIMultiPartRequestWrapper extends HttpServletRequestWrapper{
 	public File getFile( String sName ) {
 		return oMultiPartRequest.getFile( sName );
 	}
+	
+	public File getFileDir(){
+		return tmpdir;
+	}
 
 	public Enumeration<String> getFileNames() {
 		return (Enumeration<String>)oMultiPartRequest.getFileNames();
 	}
+	
+	
 	
 }

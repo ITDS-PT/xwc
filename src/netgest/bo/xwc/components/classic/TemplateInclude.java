@@ -24,6 +24,10 @@ public class TemplateInclude extends XUIComponentBase implements NamingContainer
 	public void setView( String view ) {
 		this.view.setExpressionText(view);
 	}
+	
+	public XUIViewRoot getViewRoot(){
+		return viewRoot;
+	}
 
 	@Override
 	public void initComponent() {

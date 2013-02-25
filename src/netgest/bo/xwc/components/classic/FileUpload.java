@@ -9,6 +9,7 @@ import netgest.bo.xwc.components.classic.fileuploader.FileUploaderApi;
 import netgest.bo.xwc.components.classic.fileuploader.UploadValidation;
 import netgest.bo.xwc.components.classic.fileuploader.XeoObjectAttributeAdapter;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.util.ComponentRenderUtils;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -20,6 +21,9 @@ import netgest.io.iFile;
 
 public class FileUpload extends AttributeBase {
 	
+	/**
+	 * Command that removes a file
+	 */
 	private XUICommand removeCommand;
 	
 	/**
@@ -94,19 +98,31 @@ public class FileUpload extends AttributeBase {
 	}
 	
 	/**
-	 * Where to keep the files uploded
+	 * Where to keep the uploaded files
 	 */
 	private XUIBindProperty< FileUploaderApi > files = 
 			new XUIBindProperty< FileUploaderApi >( "files" , this , FileUploaderApi.class );
 	
 	private FileUploaderApi api = null;
 	
+	/**
+	 * 
+	 * Retrieves the file api implementation
+	 * 
+	 * @return The file api implementation
+	 */
 	FileUploaderApi getFilesAPI() {
 		if (api == null){
 			api = files.getEvaluatedValue();
 		} return api;
 	}
 	
+	/**
+	 * 
+	 * Retrieves the list of filenames in the component
+	 * 
+	 * @return A list of filenames (not including "path" related information)
+	 */
 	public String[] getFilenames(){
 		return getFilesAPI().getFilenames();
 	}
@@ -119,18 +135,42 @@ public class FileUpload extends AttributeBase {
 		this.files.setValue( fileApi );
 	}
 	
+	/**
+	 * 
+	 * Adds a new file to the component
+	 * 
+	 * @param file The file to add
+	 */
 	public void addFile(iFile file){
 		getFilesAPI().addFile( file );
 	}
 	
+	/**
+	 * Removes a file given its name/id
+	 * 
+	 * @param filename The name/id of the file to remove
+	 */
 	public void removeFile(String filename){
 		getFilesAPI().removeFile( filename );
 	}
 	
+	/**
+	 * 
+	 * Retrieve a file given its identifier
+	 * 
+	 * @param filename The name of the file
+	 * 
+	 * @return The file
+	 */
 	public iFile getFile(String filename){
 		return getFilesAPI().getFile( filename );
 	}
 	
+	/**
+	 * Retrieve the file count
+	 * 
+	 * @return
+	 */
 	public long getFileCount(){
 		return getFilesAPI().getFileCount();
 	}
@@ -156,6 +196,12 @@ public class FileUpload extends AttributeBase {
 		validExtensions.setValue( values );
 	}
 	
+	/**
+	 * 
+	 * Serializes the list of valid extensions as a JSONArray
+	 * 
+	 * @return A string with the list of 
+	 */
 	public String getValidExtensionsSerialized(){
 		String[] values = getValidExtensions();
 		JSONArray extensions = new JSONArray();
@@ -172,16 +218,7 @@ public class FileUpload extends AttributeBase {
 		super.initComponent();
 		initializeTemplate( "templates/components/fileUpload.ftl" );
 		
-		addCss( "fu_css" , "fineuploader.css" );
-    	addScript( "fu_util" , "util.js" );
-    	addScript( "fu_upbasic" , "uploader.basic.js" );
-    	addScript( "fu_up" , "uploader.js" );
-    	addScript( "fu_button" , "button.js" );
-    	addScript( "fu_dnd" , "dnd.js" );
-    	addScript( "fu_hbase" , "handler.base.js" );
-    	addScript( "fu_hform" , "handler.form.js" );
-    	addScript( "fu_hxhr" , "handler.xhr.js" );
-    	addScript( "fu_jqplug" , "jquery-plugin.js" );
+		includeJavascripts();
     	
     	if (getDataFieldConnector() != null && files.isDefaultValue()){
     		//Talvez devesse ficar noutro lado para não ter
@@ -189,13 +226,43 @@ public class FileUpload extends AttributeBase {
     		setFiles( new XeoObjectAttributeAdapter( (XEOObjectAttributeConnector)getDataFieldConnector() ) );
     	}
     	
-    	if (findComponent( getClientId() + "_rmCmd" ) == null){
+    	initDefaultMessages();
+    	createRemoveFileCommand();
+    	
+	}
+
+	protected void includeJavascripts() {
+		addCss( "fu_css" , "fineuploader.css" );
+    	addScript( "fu_util" , "util.js" );
+    	addScript( "fu_upbasic" , "uploader.basic.js" );
+    	addScript( "fu_xwcupload" , "xwc-upload.js" );
+    	addScript( "fu_button" , "button.js" );
+    	addScript( "fu_dnd" , "dnd.js" );
+    	addScript( "fu_hbase" , "handler.base.js" );
+    	addScript( "fu_hform" , "handler.form.js" );
+    	addScript( "fu_hxhr" , "handler.xhr.js" );
+	}
+
+	protected void createRemoveFileCommand() {
+		if (findComponent( getClientId() + "_rmCmd" ) == null){
 	    	removeCommand = new XUICommand();
 	    	removeCommand.setId( getId() + "_rmCmd" );
 	    	removeCommand.addActionListener(new RemoveActionListener());
 	        getChildren().add( removeCommand );
     	}
-    	
+	}
+
+	protected void initDefaultMessages() {
+		if (startMessage.isDefaultValue())
+    		startMessage.setValue( ComponentMessages.UPLOAD_START_MESSAGE.toString() );
+    	if (savingMessage.isDefaultValue())
+    		savingMessage.setValue( ComponentMessages.UPLOAD_SAVING_MESSAGE.toString() );
+    	if (uploadFailed.isDefaultValue())
+    		uploadFailed.setValue( ComponentMessages.UPLOAD_FAILED_MESSAGE.toString() );
+    	if (sendingMessage.isDefaultValue())
+    		sendingMessage.setValue( ComponentMessages.UPLOAD_SENDING_MESSAGE.toString() );
+    	if (progressMessage.isDefaultValue())	
+    		progressMessage.setValue( ComponentMessages.UPLOAD_PROGRESS_MESSAGE.toString() );
 	}
 	
 	public static class RemoveActionListener implements ActionListener {
@@ -264,6 +331,106 @@ public class FileUpload extends AttributeBase {
     public boolean isDisabledChanged(){
     	return getStateProperty( "disabled" ).wasChanged();
     }
-	//@Valid File Extensions
+    
+    public boolean isReadOnlyChanged(){
+    	return getStateProperty( "readOnly" ).wasChanged();
+    }
+    
+    public String getSizeError(){
+    	return ComponentMessages.UPLOAD_SIZE_ERROR.toString();
+    }
+    
+    public String getMinSizeError(){
+    	return ComponentMessages.UPLOAD_MIN_SIZE_ERROR.toString();
+    }
+    
+    public String getTypeError(){
+    	return ComponentMessages.UPLOAD_TYPE_ERROR.toString();
+    }
+    
+    public String getNoFilesError(){
+    	return ComponentMessages.UPLOAD_NO_FILES_ERROR.toString();
+    }
+    
+    public String getOnLeaveError(){
+    	return ComponentMessages.UPLOAD_ON_LEAVE_ERROR.toString();
+    }
+    
+    public String getEmptyError(){
+    	return ComponentMessages.UPLOAD_EMPTY_ERROR.toString();
+    }
+    
+    /**
+     * Message to use when starting the upload
+     */
+    XUIBindProperty< String > startMessage = 
+    		new XUIBindProperty<String>( "startMessage" , this, String.class );
+
+	public String getStartMessage() {
+		return startMessage.getEvaluatedValue();
+	}
+
+	public void setStartMessage(String newValExpr) {
+		startMessage.setExpressionText( newValExpr );
+	}
 	
+	/**
+	 * Message to write when saving a file, can use {file} expression, that will be replaced
+	 * with the filename
+	 */
+	XUIBindProperty< String > savingMessage = new XUIBindProperty< String >(
+			"savingMessage" , this, String.class );
+
+	public String getSavingMessage() {
+		return savingMessage.getEvaluatedValue();
+	}
+
+	public void setSavingMessage(String newValExpr) {
+		savingMessage.setExpressionText( newValExpr );
+	}
+	
+	/**
+	 * Message when the upload fails
+	 */
+	XUIBindProperty< String > uploadFailed = new XUIBindProperty< String >(
+			"uploadFailed" , this , String.class );
+
+	public String getUploadFailed() {
+		return uploadFailed.getEvaluatedValue();
+	}
+
+	public void setUploadFailed(String newValExpr) {
+		uploadFailed.setExpressionText( newValExpr );
+	}
+	
+	
+	/**
+	 * Message to display when starting to send a file
+	 */
+	XUIBindProperty< String > sendingMessage = new XUIBindProperty< String >(
+			"sendingMessage" , this , String.class );
+
+	public String getSendingMessage() {
+		return sendingMessage.getEvaluatedValue();
+	}
+
+	public void setSendingMessage(String newValExpr) {
+		sendingMessage.setExpressionText( newValExpr );
+	}
+    
+    /**
+     * Message used when displaying the progress of a file
+     * Can use the {progress} and {total} expressions to build the message
+     * total is displayed in Megabytes
+     */
+    XUIBindProperty< String > progressMessage = new XUIBindProperty< String >(
+			"progressMessage" , this , String.class );
+
+	public String getprogressMessage() {
+		return progressMessage.getEvaluatedValue();
+	}
+
+	public void setprogressMessage(String newValExpr) {
+		progressMessage.setExpressionText( newValExpr );
+	}
 }
