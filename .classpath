@@ -71,7 +71,6 @@
 	<classpathentry kind="lib" path="/xeo/project_lib/xmlparserv2.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xeo"/>
 	<classpathentry kind="lib" path="project_lib/freemarker.jar"/>
-	<classpathentry kind="lib" path="/AMS/project_lib/commons-fileupload-1.2.2.jar"/>
 	<classpathentry kind="lib" path="project_lib/commons-fileupload-1.2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
