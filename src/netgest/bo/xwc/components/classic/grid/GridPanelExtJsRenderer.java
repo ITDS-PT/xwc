@@ -90,8 +90,10 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oChildIterator = oComp.getChildren().iterator();
         while( oChildIterator.hasNext() ) {
             oChildComp = oChildIterator.next();
-
-            if( oChildComp instanceof ActionButton ) {
+            if (oChildComp instanceof GridNavBar){
+            	//Do nothing, cannot render a GridNavBar
+            }
+            else if( oChildComp instanceof ActionButton ) {
 
 	            if (!oChildComp.isRendered()) {
 	                    return;
@@ -111,7 +113,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	                    }
 	                }
             }
-            if( oChildComp instanceof ToolBar ) {
+            else if ( oChildComp instanceof ToolBar) {
                 if (!oChildComp.isRendered()) {
                     return;
                 }
