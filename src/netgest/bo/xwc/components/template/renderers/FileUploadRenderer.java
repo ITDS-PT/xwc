@@ -93,8 +93,8 @@ public class FileUploadRenderer extends TemplateRenderer implements XUIRendererS
 	}
 
 	protected void setFileInComponent(FileUpload uploader, File uploadedile) {
-		uploader.setValue( uploadedile );
 		uploader.addFile( new FSiFile( uploadedile ) );
+		uploader.setValue( uploadedile );
 		uploader.updateModel();
 	}
 	
@@ -144,7 +144,7 @@ public class FileUploadRenderer extends TemplateRenderer implements XUIRendererS
 				//Send the file to user
 			}
 	        catch (IOException e ){
-	        	logger.warn( "Error Reading File" , e );
+	        	logger.warn( "Error Reading File %s" , e, file.getName() );
 	        }
 		}
 		

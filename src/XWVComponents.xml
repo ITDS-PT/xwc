@@ -318,6 +318,7 @@
 			<xwc:render for="genericlist">netgest.bo.xwc.components.template.xeo.Genericlist$ListRenderer</xwc:render>
             <xwc:render for="arraylist">netgest.bo.xwc.components.template.xeo.Arraylist$ListRenderer</xwc:render>
 			<xwc:render for="xeoLov">netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
+			<xwc:render for="bridgeUpload">netgest.bo.xwc.components.template.renderers.BridgeUploadRenderer</xwc:render>
 		</xwc:renderKit>
         
         
@@ -1166,6 +1167,11 @@
         <xwc:component name='xeoLov'>
             <xwc:className>netgest.bo.xwc.components.template.xeo.XeoLov</xwc:className>
             <xwc:description>A XEO Lov</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name='bridgeUpload'>
+            <xwc:className>netgest.bo.xwc.components.classic.fileuploader.BridgeUpload</xwc:className>
+            <xwc:description>FileUpload component that uses a bridge as a container</xwc:description>
         </xwc:component>
         
     </xwc:components>

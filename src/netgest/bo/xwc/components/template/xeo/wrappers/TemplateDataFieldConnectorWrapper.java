@@ -37,7 +37,6 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 	public static String SYSCARDID = "syscardid";
 	public static String SYSCARDIDIMG = "syscardidimg";
 	public static String FILE = "file";
-	public static String TYPE = "type";
 	
 	public TemplateDataFieldConnectorWrapper(DataRecordConnector record,DataFieldConnector field){
 		this.record = record;
@@ -63,8 +62,6 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 			else if (name.toLowerCase().equals(SYSCARDID) ||
 					name.toLowerCase().equals(SYSCARDIDIMG))
 				return getCardId(name);
-			else if (name.toLowerCase().equals(TYPE))
-				return getObjectType(name);
 			else if (name.toLowerCase().equals(FILE))
 				return getFileLink(name);
 			else
@@ -85,7 +82,11 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 				==boDefAttribute.ATTRIBUTE_BINARYDATA)
 		{
 			XEOObjectConnector objectconnector = (XEOObjectConnector)record;
-			String link="file/";				
+			String link="file/";
+			
+	/*		if (!StringUtils.isEmpty(PortalApplication
+					.currentPortalContext().getCurrentPortal().getId()))
+				link+=PortalApplication.currentPortalContext().getCurrentPortal().getId()+"/"; */
 			
 			link+=objectconnector.getXEOObject().getName()+"/";
 			link+=objectconnector.getXEOObject().getBoui()+"/";
@@ -93,7 +94,7 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 
 			Object value=field.getValue();
 			if (value==null)
-		 		return new SimpleScalar("");
+				return new SimpleScalar("");
 			else {
 				String file=(String)value;
 				link+=file.substring(file.lastIndexOf("/")+1,file.length());
@@ -128,21 +129,6 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 			return null;
 	}
 	
-	private TemplateModel getObjectType(String name) {
-		XEOObjectAttributeConnector attconnector = (XEOObjectAttributeConnector)field;
-		if (attconnector.getBoDefAttribute().getAtributeDeclaredType()
-				==boDefAttribute.ATTRIBUTE_OBJECT)
-		{
-			Object value=field.getValue();
-			if (value==null)
-				return new SimpleScalar("");
-			BigDecimal boui = (BigDecimal)value;
-			XEOObjectConnector xeoobject = new XEOObjectConnector(boui.longValue(), 0);			
-			return new SimpleScalar(xeoobject.getXEOObject().getName());
-		}
-		else
-			return null;
-	}
 	
 	private TemplateModel getValueForFields(String name) {		
 		Object value = field.getValue();	

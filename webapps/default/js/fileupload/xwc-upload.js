@@ -39,12 +39,14 @@ qq.FineUploaderXEO = function(o){
 	  , savingMessage : "Saving {file}"
 	  , uploadFailed : "Upload Failed"
 	  , sendingMessage : "Sending"
-	  , progressMessage : "{progress}% of {total} MB"	  
+	  , progressMessage : "{progress}% of {filename} ({total} MB) "	  
     }, true);
 
     // overwrite options with user supplied
     qq.extend(this._options, o, true);
     this._wrapCallbacks();
+    
+    this._dnd = this._setupDragAndDrop();
     
 };
 
@@ -53,10 +55,6 @@ qq.extend(qq.FineUploaderXEO.prototype, qq.FineUploaderBasic.prototype);
 
 qq.extend(qq.FineUploaderXEO.prototype, {
 	
-    clearStoredFiles: function() {
-        qq.FineUploaderBasic.prototype.clearStoredFiles.apply(this, arguments);
-    }
-
 	, _onSubmit : function (id , fileName){
 		qq.FineUploaderBasic.prototype._onSubmit.apply(this, arguments);
 		this.hideAttach(this.getAttatchElem());
@@ -67,8 +65,7 @@ qq.extend(qq.FineUploaderXEO.prototype, {
 	, _onUpload: function(id, fileName) {
 		qq.FineUploaderBasic.prototype._onUpload.apply(this, arguments);
 		var messages = this.getMessagesElem();
-		if (window.FileReader){
-			//this.message(this.getMessagesElem(),'');
+		if (this.isProgressSuported()){
 			this.createProgressBar(id,'<progress value="0" max="100" style="display:inline"></progress><span>'+
       		this._options.sendingMessage + '</span>');
 		}
@@ -78,13 +75,13 @@ qq.extend(qq.FineUploaderXEO.prototype, {
 	
 	, _onProgress: function(id, fileName, loaded, total) {
 		qq.FineUploaderBasic.prototype._onProgress.apply(this, arguments);
-		console.log("Progress " + id + " " + fileName);
 		var messages = XVW.get('A'+id);
 	      if (loaded < total) {
 	      	progress = Math.round(loaded / total * 100);
 	      	total = Math.round(total / 1024 / 1024);
 	      	message = this._options.progressMessage.replace('{progress}',progress);
 	      	message = message.replace('{total}',total);
+	      	message = message.replace('{filename}',fileName);
 	        this.progress(id, progress , message);
 	      } else {
 	    	var saving = this._options.savingMessage;
@@ -95,21 +92,26 @@ qq.extend(qq.FineUploaderXEO.prototype, {
 	 
 	, _onComplete: function(id, fileName, responseJSON) {
 		qq.FineUploaderBasic.prototype._onComplete.apply(this, arguments);
-		console.log("Complete " +  id + " " + fileName);
 		 var button = this.getAttatchElem();
 		 var messages = this.getMessagesElem();
 		 var errors = this.getErrorsElem();
 		 var files = this.getFilesElem();
 	     this.restoreAttach(button);
 	      if (responseJSON.success) {
-	        this.removeProgressContainer(id);
 	        this.createLink(this,  files ,this._options.request.endpoint+'&download=download&fileName='+encodeURIComponent(fileName),fileName,this._options.formId,this._options.clientId + '_rmCmd');
-	        this.clearMessages();
+	        if (this.isProgressSuported()){
+	        	this.removeProgressContainer(id);
+	        	this.clearMessages(id);
+	        } else {
+	        	this.clearAllMessages();
+	        }
 	        this.clearErrorMessages(errors);
 	        this.addFile();
-	        /*if (this.getFileCount() >= this._options.maxFiles){
-	        	this.hideAttach(this.getAttatchElem());
-	        }*/
+	        if (this.isNumberOfFilesLimited()){
+		        if (this.getFileCount() >= this._options.maxFiles){
+		        	this.hideAttach(this.getAttatchElem());
+		        }
+	        }
 	      } else {
 	      	this.errorMessage(errors,this._options.uploadFailed);
 	      }
@@ -124,6 +126,7 @@ qq.extend(qq.FineUploaderXEO.prototype, {
     }
 
 	, isDisabled : function() {return this._options.disabled }	
+	
 	, disable : function (){
 		this._options.disabled = true;
 		this.getWrapperElem().className = 'disabled';
@@ -165,18 +168,24 @@ qq.extend(qq.FineUploaderXEO.prototype, {
     , isReadOnly : function () { 
     	return this._options.readOnly; 
     }
-    , addFile : function (){ 
-    	this._options.fileCount = (this._options.fileCount + 1)
+    , setFileCount : function (count){ 
+    	this._options.fileCount = count;
+    	if (this.getFileCount() < this._options.maxFiles){
+    		this.restoreAttach(this.getAttatchElem());
+    	} else {
+    		this.hideAttach(this.getAttatchElem());
+    	}
+    }
+    , isNumberOfFilesLimited : function () {
+    	return this._options.maxFiles > 0;
     }
     , getFileCount : function() {
     	return this._options.fileCount;
     }
-    , removeFile : function (file){
-    	if (this.getFileCount() > 0 ){
-    		this._options.fileCount = (this._options.fileCount + 1);
-    	}
-    } 
-	, getClientId : function (){
+    , addFile : function (){
+    	this._options.fileCount = this._options.fileCount + 1;
+    }
+    , getClientId : function (){
 		return this._options.clientId;
 	}
 	, getMessagesElem : function (){
@@ -205,6 +214,10 @@ qq.extend(qq.FineUploaderXEO.prototype, {
 	
 	, restoreAttach : function(attach){
 		attach.style.display = '';
+	}
+	
+	, isProgressSuported : function () {
+		return (window.FileReader !== undefined);
 	}
 	
 	, message : function(messagesContainer, message, hideTimeout){
@@ -247,7 +260,7 @@ qq.extend(qq.FineUploaderXEO.prototype, {
 		if (window.addEventListener){
 			link.addEventListener('click',function(){
 				if (!uploadCmp.isDisabled()){
-					XVW.downloadFile('"'+linkToFile+'"');
+					XVW.downloadFile(linkToFile);
 				}
 				else 
 					return false;
@@ -255,7 +268,7 @@ qq.extend(qq.FineUploaderXEO.prototype, {
 		} else if (window.attachEvent){
 			link.attachEvent('onclick',function(){
 				if (!uploadCmp.isDisabled()){
-					XVW.downloadFile('"'+linkToFile+'"');
+					XVW.downloadFile(linkToFile);
 				}
 				else 
 					return false;
@@ -324,7 +337,12 @@ qq.extend(qq.FineUploaderXEO.prototype, {
 
 	    }	
 	}
-	, clearMessages : function(){
+	, clearMessages : function(id){
+		var messagesContainer = XVW.get('A'+ id);
+		messagesContainer.innerHTML = "";
+	}
+	
+	, clearAllMessages : function(){
 		var messagesContainer = this.getMessagesElem();
 		messagesContainer.innerHTML = "";
 	}
@@ -349,5 +367,57 @@ qq.extend(qq.FineUploaderXEO.prototype, {
 		var elem = XVW.get('A'+id);
 		elem.innerHTML = message;
 	}
+	
+	, _setupDragAndDrop: function() {
+        var self = this,
+            dropProcessingEl = this._find(this._element, 'dropProcessing'), //Ver o que é o find
+            dnd, preventSelectFiles, defaultDropAreaEl;
+
+        preventSelectFiles = function(event) {
+            event.preventDefault();
+        };
+
+        if (!this._options.dragAndDrop.disableDefaultDropzone) {
+            defaultDropAreaEl = this._find(this._options.element, 'drop');
+        }
+
+        dnd = new qq.DragAndDrop({
+            dropArea: defaultDropAreaEl,
+            extraDropzones: this._options.dragAndDrop.extraDropzones,
+            hideDropzones: this._options.dragAndDrop.hideDropzones,
+            multiple: this._options.multiple,
+            classes: {
+                dropActive: this._options.classes.dropActive
+            },
+            callbacks: {
+                dropProcessing: function(isProcessing, files) {
+                    var input = self._button.getInput();
+
+                    if (isProcessing) {
+                        qq(dropProcessingEl).css({display: 'block'});
+                        qq(input).attach('click', preventSelectFiles);
+                    }
+                    else {
+                        qq(dropProcessingEl).hide();
+                        qq(input).detach('click', preventSelectFiles);
+                    }
+
+                    if (files) {
+                        self.addFiles(files);
+                    }
+                },
+                error: function(code, filename) {
+                    self._error(code, filename);
+                },
+                log: function(message, level) {
+                    self.log(message, level);
+                }
+            }
+        });
+
+        dnd.setup();
+
+        return dnd;
+    }
 
 });

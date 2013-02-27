@@ -29,7 +29,7 @@ public class FileUpload extends AttributeBase {
 	/**
 	 * Class that will validate the File Uploads
 	 */
-	private XUIBindProperty< UploadValidation > validationUpload 
+	protected XUIBindProperty< UploadValidation > validationUpload 
 		= new XUIBindProperty< UploadValidation >( "validationUpload" , this , UploadValidation.class );
 	
 	public void setValidationUpload(String validationExpr) {
@@ -43,22 +43,26 @@ public class FileUpload extends AttributeBase {
 	/**
 	 * Maximum Number of Files allowed for upload (defaults to one)
 	 */
-	private XUIBaseProperty< Integer > maxFiles = 
-			new XUIBaseProperty< Integer >( "maxFiles" , this, Integer.valueOf( 1 ) );
+	protected XUIBaseProperty< Integer > maxFiles = 
+			new XUIBaseProperty< Integer >( "maxFiles" , this );
 	
 	public Integer getMaxFiles() {
+		if (maxFiles.isDefaultValue())
+			return Integer.valueOf( 1 );
 		return maxFiles.getValue();
 	}
 	
-	public void setMaxFiles(Integer maxFiles) {
+	public void setMaxFiles(int maxFiles) {
 		this.maxFiles.setValue( maxFiles );
 	}
+	
+	
 	
 	/**
 	 * Maximum file size for upload in megabytes (defaults to 5 Megabytes)
 	 * 0.5 is a valid option
 	 */
-	private XUIBindProperty<Integer> maxFileSize = new
+	protected XUIBindProperty<Integer> maxFileSize = new
 		XUIBindProperty< Integer >( "maxFileSize" , this, Integer.class, "5" );
 	
 	public String getMaxFileSize() {
@@ -78,7 +82,7 @@ public class FileUpload extends AttributeBase {
 	 * Value is given in megabytes
 	 * 
 	 */
-	private XUIBindProperty<Integer> minFileSize = new
+	protected XUIBindProperty<Integer> minFileSize = new
 		XUIBindProperty< Integer >( "minFileSize" , this, Integer.class );
 	
 	public String getMinFileSize() {
@@ -100,7 +104,7 @@ public class FileUpload extends AttributeBase {
 	/**
 	 * Where to keep the uploaded files
 	 */
-	private XUIBindProperty< FileUploaderApi > files = 
+	protected XUIBindProperty< FileUploaderApi > files = 
 			new XUIBindProperty< FileUploaderApi >( "files" , this , FileUploaderApi.class );
 	
 	private FileUploaderApi api = null;
@@ -111,7 +115,7 @@ public class FileUpload extends AttributeBase {
 	 * 
 	 * @return The file api implementation
 	 */
-	FileUploaderApi getFilesAPI() {
+	protected FileUploaderApi getFilesAPI() {
 		if (api == null){
 			api = files.getEvaluatedValue();
 		} return api;
@@ -143,6 +147,7 @@ public class FileUpload extends AttributeBase {
 	 */
 	public void addFile(iFile file){
 		getFilesAPI().addFile( file );
+		
 	}
 	
 	/**
@@ -181,7 +186,7 @@ public class FileUpload extends AttributeBase {
 	 * support this. IE9 supports but since it's used in IE7 standards mode it
 	 * does not work
 	 */
-	private XUIBindProperty< String[] > validExtensions = 
+	protected XUIBindProperty< String[] > validExtensions = 
 			new XUIBindProperty< String[] >( "validExtensions" , this , String.class );
 			
 	public String[] getValidExtensions(){
@@ -221,8 +226,7 @@ public class FileUpload extends AttributeBase {
 		includeJavascripts();
     	
     	if (getDataFieldConnector() != null && files.isDefaultValue()){
-    		//Talvez devesse ficar noutro lado para não ter
-    		//a referência directa
+    		//Talvez devesse ficar noutro lado para não ter a referência directa
     		setFiles( new XeoObjectAttributeAdapter( (XEOObjectAttributeConnector)getDataFieldConnector() ) );
     	}
     	
@@ -276,6 +280,9 @@ public class FileUpload extends AttributeBase {
 	            if (!file.isDisabled() && file.isVisible()){
 		            if (file.getFile( filename ) != null){
 		            	file.removeFile( filename );
+		            	//Not the best wat, we should make somechange to a state property
+		            	//so that the component would re-render but now we're not doing any
+		            	file.forceRenderOnClient();
 		            }
 	            } else {
 	            	new XUIMessageBuilder(file.getRequestContext()).message( "Upload Disabled" ).send();
@@ -287,7 +294,7 @@ public class FileUpload extends AttributeBase {
 	/**
 	 * Whether or not the component accepts multiple files
 	 */
-	private XUIBaseProperty<Boolean> multiple = new XUIBaseProperty< Boolean >( "multiple" , this, Boolean.FALSE );
+	protected XUIBaseProperty<Boolean> multiple = new XUIBaseProperty< Boolean >( "multiple" , this, Boolean.FALSE );
 	
 	public Boolean getMultiple() {
 		return multiple.getValue();

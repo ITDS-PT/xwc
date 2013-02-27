@@ -86,8 +86,12 @@
 	  	  , uploadFailed : '${this.uploadFailed}'
 	  	  , sendingMessage : '${this.sendingMessage}'
 	  	  , progressMessage : '${this.progressMessage}'
+	  	  , currentFiles : ${this.fileCount}
 		  , request: {
-	        endpoint: '${this.servletUrl}'
+	        	endpoint: '${this.servletUrl}'
+	        	,params: {
+				   'xwc-upload': 'true'
+		   		}
 		  	}
 		  , classes : {
 			  buttonHover : 'x-form-trigger-hover'
@@ -111,10 +115,11 @@
 	  })
 	
 	 XVW.uploadManager.registerUpload('${this.clientId}', uploader);
+	 XVW.uploadManager.get('${this.clientId}').setFileCount(${this.fileCount});
 	 
 	 <#-- Create Existing files -->
 	 <#list this.filenames as file>
-		uploader.createLink(uploader,  uploader.getFilesElem() ,${this.servletUrl}+'&download=download&fileName='+encodeURIComponent('${file}'),'${file}','${this.formId}',${this.clientId} + '_rmCmd');
+		uploader.createLink(uploader,  uploader.getFilesElem() ,'${this.servletUrl}&download=download&fileName='+encodeURIComponent('${file}'),'${file}','${this.formId}','${this.clientId}_rmCmd');
 	 </#list>
 	 <#if !this.visible>
 		XVW.uploadManager.get('${this.clientId}').hide();
@@ -129,7 +134,6 @@
 	 
 	 
 	</@xvw_script>
-
 <#else>
 	<@xvw_script position='FOOTER'>
 		<#if this.visibleChanged>
@@ -153,5 +157,6 @@
 				XVW.uploadManager.get('${this.clientId}').enable();
 			</#if>
 		</#if>	
+			XVW.uploadManager.get('${this.clientId}').setFileCount(${this.fileCount});
 	</@xvw_script>
 </#if>

@@ -26,6 +26,7 @@ import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
+import netgest.utils.StringUtils;
 
 public class XUIServlet extends HttpServlet
 {
@@ -120,9 +121,9 @@ public class XUIServlet extends HttpServlet
                 isAjax = true;
                 facesServlet.service( new XUIAjaxRequestWrapper( oRequest ), servletResponse );
             } 
-            else if( oRequest.getContentType() != null && oRequest.getContentType().startsWith( "multipart/form-data" )  )
+            else if( oRequest.getContentType() != null && oRequest.getContentType().startsWith( "multipart/form-data" ) && StringUtils.isEmpty( oRequest.getParameter( "xwc-upload" ))  )
             {
-                facesServlet.service( oRequest , servletResponse );
+                facesServlet.service( new XUIMultiPartRequestWrapper( oRequest ) , servletResponse );
             }
             else { 
                 facesServlet.service( servletRequest, servletResponse );

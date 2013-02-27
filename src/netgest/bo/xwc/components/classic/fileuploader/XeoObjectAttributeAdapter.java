@@ -4,13 +4,27 @@ import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.io.iFile;
 
+/**
+ * Adapts the {@link XEOObjectAttributeConnector} class to be able to serve
+ * as a {@link FileUploaderApi} 
+ *
+ */
 public class XeoObjectAttributeAdapter implements FileUploaderApi {
 	
+	private static final Logger logger = Logger.getLogger( XeoObjectAttributeAdapter.class );
+	
+	/**
+	 * Identifier of the object to load
+	 */
 	private long boui;
+	/**
+	 * The name of the attribute keeping the binary content
+	 */
 	private String attributeName;
 	
 	public XeoObjectAttributeAdapter(XEOObjectAttributeConnector con){
@@ -28,7 +42,7 @@ public class XeoObjectAttributeAdapter implements FileUploaderApi {
 		try{
 			getAttributeHandler().setValueiFile( null );
 		} catch (boRuntimeException e){
-			e.printStackTrace();
+			logger.warn( "Could not remove file %s from %d in attribute %s" , e , filename, boui,  attributeName );
 		}
 	}
 
@@ -37,7 +51,7 @@ public class XeoObjectAttributeAdapter implements FileUploaderApi {
 		try{
 			getAttributeHandler().setValueiFile( file );
 		} catch (boRuntimeException e){
-			e.printStackTrace();
+			logger.warn( "Could not add file %s from %d in attribute %s" , e , file.getName(), boui,  attributeName );
 		}
 	}
 
@@ -49,7 +63,7 @@ public class XeoObjectAttributeAdapter implements FileUploaderApi {
 			if (file != null)
 				return file;
 		} catch ( boRuntimeException e ) {
-			e.printStackTrace();
+			logger.warn( "Could not get file %s from %d in attribute %s" , e , filename, boui,  attributeName );
 		}
 		return null;
 	}
@@ -71,7 +85,7 @@ public class XeoObjectAttributeAdapter implements FileUploaderApi {
 			if (file != null)
 				return new String[]{file.getName()};
 		} catch ( boRuntimeException e ) {
-			e.printStackTrace();
+			logger.warn( "Problem getting files from from %d in attribute %s" , e , boui,  attributeName );
 		} 
 		return new String[0];
 	}

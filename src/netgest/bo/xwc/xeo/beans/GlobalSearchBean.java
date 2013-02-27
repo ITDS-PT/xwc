@@ -189,15 +189,21 @@ public class GlobalSearchBean extends XEOBaseBean {
 			ExtConfig store = getStoreSkeleton();
 			ExtConfigArray data = store.addChildArray("data");
 			int k = 0;
+			long currentBoui = 0;
 			while (rs.next()){
-				ExtConfigArray line = new ExtConfigArray();
-				boObject current = objectManager.loadObject(getEboContext(),rs.getLong("ui$"));
-				k++;
-				line.addString(current.getCARDID().toString());
-				line.addString(rs.getString("uiclass"));
-				line.addString(String.valueOf(rs.getLong("ui$")));
-				line.addString(rs.getString("SYS_DTCREATE"));
-				data.add(line.renderExtConfig());
+				try{
+					ExtConfigArray line = new ExtConfigArray();
+					currentBoui = rs.getLong("ui$");
+					boObject current = objectManager.loadObject(getEboContext(),currentBoui);
+					k++;
+					line.addString(current.getCARDID().toString());
+					line.addString(rs.getString("uiclass"));
+					line.addString(String.valueOf(rs.getLong("ui$")));
+					line.addString(rs.getString("SYS_DTCREATE"));
+					data.add(line.renderExtConfig());
+				} catch (Exception e){
+					logger.warn( "Could not load object %d" , e, currentBoui );
+				}
 			}
 			
 			if (k > 0)

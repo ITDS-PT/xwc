@@ -1,30 +1,34 @@
 XVW.upload = {}
 
-XVW.upload.hideAttach = function( attach ){
+/*XVW.upload.hideAttach = function( attach ){
 	attach.style.display = 'none';
-};
+};*/
 
-XVW.upload.restoreAttach = function(attach){
+/*XVW.upload.restoreAttach = function(attach){
 	attach.style.display = '';
-};
+};*/
 
-XVW.upload.message = function(messagesContainer, message, hideTimeout){
+/*XVW.upload.message = function(messagesContainer, message, hideTimeout){
 	messagesContainer.innerHTML = message;
 	var messages = messagesContainer;
 	if (hideTimeout){
 		var time = parseInt(hideTimeout);
 		window.setTimeout(function(){ messages.innerHTML = ''; },time);
 	}
-};
+};*/
 
-XVW.upload.progress = function(messagesContainer , newValue, message ){
+/*XVW.upload.progress = function(messagesContainer , newValue, message ){
 	var progresses = messagesContainer.getElementsByTagName( 'progress' );
-	progresses[0].value = newValue;
+	for (var z = 0 ; z < progresses.length ; z++){
+		progresses[z].value = newValue;
+	}
 	var span = messagesContainer.getElementsByTagName( 'span' );
-	span[0].innerHTML = message;
-};
+	for (var k = 0 ; k < progresses.length ; k++){
+		span[k].innerHTML = message;
+	}
+};*/
 
-XVW.upload.errorMessage = function(errorContainer, message){
+/*XVW.upload.errorMessage = function(errorContainer, message){
 	errorContainer.innerHTML = message;
 };
 
@@ -38,11 +42,29 @@ XVW.upload.changeContent = function(fileContainer, content){
 };
 
 
-XVW.upload.createLink = function(fileContainer, linkToFile, fileName, formId, cmdId){
+XVW.upload.createLink = function( uploadCmp, fileContainer, linkToFile, fileName, formId, cmdId){
 	
 	var link = document.createElement('a');
-	link.href = linkToFile;
+	link.href = 'javascript:void(0)';
 	link.innerHTML = fileName;
+	if (window.addEventListener){
+		link.addEventListener('click',function(){
+			if (!uploadCmp.isDisabled()){
+				XVW.downloadFile('"'+linkToFile+'"');
+			}
+			else 
+				return false;
+		});
+	} else if (window.attachEvent){
+		link.attachEvent('onclick',function(){
+			if (!uploadCmp.isDisabled()){
+				XVW.downloadFile('"'+linkToFile+'"');
+			}
+			else 
+				return false;
+		});
+	}
+	
 	var remove = document.createElement('img');
 	remove.src = "ext-xeo/icons/icon-delete.png";
 	remove.className = 'remove';
@@ -50,11 +72,19 @@ XVW.upload.createLink = function(fileContainer, linkToFile, fileName, formId, cm
 	remove.height = 16;
 	if (window.addEventListener){
 		remove.addEventListener('click',function(){
-			XVW.AjaxCommand(formId, cmdId, fileName, 1);
+			console.log(uploadCmp);
+			if (!uploadCmp.isDisabled())
+				XVW.AjaxCommand(formId, cmdId, fileName, 1);
+			else 
+				return false;
 		});
 	} else if (window.attachEvent){
 		remove.attachEvent('onclick',function(){
-			XVW.AjaxCommand(formId, cmdId, fileName, 1);
+			if (!uploadCmp.isDisabled())
+				XVW.AjaxCommand(formId, cmdId, fileName, 1);
+			else
+				return false;
+			
 		});
 	}
 	
@@ -100,5 +130,5 @@ XVW.upload.purge = function(elem){
 
 XVW.upload.cleanMessages = function(messagesContainer){
 	messagesContainer.innerHTML = "";
-};
+};*/
 

@@ -344,3 +344,9 @@ div.xwc-attribute-autoComplete ul.holder li.xwc-selected-element{
 	margin-top:2px;
 	margin-left:2px;
 }
+
+/* Chrome25 Bug fix, 100% width causes issues with the date picket, replaced with a fixed value width*/
+table.x-date-inner {
+   width:200px !important;
+}
+

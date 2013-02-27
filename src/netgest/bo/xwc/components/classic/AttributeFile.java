@@ -28,14 +28,12 @@ import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
-import netgest.bo.xwc.components.util.ComponentRenderUtils;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.xeodm.XEODMBuilder;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -65,30 +63,10 @@ public class AttributeFile extends AttributeBase {
         return this.suportsMetadata.getEvaluatedValue();
     }
     
-    public void addScript(String id, String url){
-    	getRequestContext().getScriptContext().addInclude( 
-    			XUIScriptContext.POSITION_HEADER , id , "js/fileupload/" + url );
-    }
-    
-    public void addCss(String id, String url){
-    	getRequestContext().getStyleContext().addInclude( 
-    			XUIScriptContext.POSITION_HEADER , id , "js/fileupload/" + url );
-    }
-    
     @Override
 	public void preRender() {
     	
     	super.preRender();
-    	addCss( "fu_css" , "fineuploader.css" );
-    	addScript( "fu_util" , "util.js" );
-    	addScript( "fu_upbasic" , "uploader.basic.js" );
-    	addScript( "fu_up" , "uploader.js" );
-    	addScript( "fu_button" , "button.js" );
-    	addScript( "fu_dnd" , "dnd.js" );
-    	addScript( "fu_hbase" , "handler.base.js" );
-    	addScript( "fu_hform" , "handler.form.js" );
-    	addScript( "fu_hxhr" , "handler.xhr.js" );
-    	addScript( "fu_jqplug" , "jquery-plugin.js" );
     	
         // component initializations.
         if( getChildCount() == 0 ) {
@@ -194,7 +172,6 @@ public class AttributeFile extends AttributeBase {
             w.writeAttribute(HTMLAttr.ID, oAtt.getClientId() + "_ci", null);
             
             w.endElement(HTMLTag.INPUT);
-            
     		
     	}
     	
@@ -242,8 +219,11 @@ public class AttributeFile extends AttributeBase {
 		            		"}}"
 		            );
 	            }
-	            //oInpConfig.add("onTrigger2Click", "function(){ $('#fine-uploader-basic').trigger('click'); }" 
-	            //);
+	            oInpConfig.add("onTrigger2Click", "function(){if(!this.disabled){ " +
+	            		XVWScripts.getOpenCommandWindow( oAttFile.getLookupCommand(), 
+	            				oAttFile.getLookupCommand() + "_" + System.currentTimeMillis(), "{width:400, height:250}" ) +
+	            		"}}"
+	            );
             
             
             return oInpConfig;
