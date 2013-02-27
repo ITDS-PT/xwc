@@ -523,11 +523,7 @@ public class ToolBar extends ViewerSecurityBase {
         public void encodeSubMenuJS( ToolBar tool, ExtConfig oMenu, Menu oSubMenu ) {
             ExtConfigArray  oSubChildCfg;
 
-            //sOut.write(" new Ext.menu.Menu({ "); sOut.write("\n");
             oMenu.setComponentType( "Ext.menu.Menu" );
-            //sOut.write(" id: '" + oSubMenu.getClientId() + "'"); sOut.write(",\n");
-            //oMenu.addJSString("id", oSubMenu.getClientId() );
-            //sOut.write(" items: [ "); sOut.write("\n");
             oSubChildCfg = oMenu.addChildArray( "items" );
             
             Iterator<UIComponent> oSubChildren = oSubMenu.getChildren().iterator();
