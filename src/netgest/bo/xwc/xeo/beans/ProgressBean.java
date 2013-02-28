@@ -1,12 +1,16 @@
 package netgest.bo.xwc.xeo.beans;
 
+import javax.el.ELContext;
 import javax.el.MethodExpression;
+import javax.faces.component.UIComponentBase;
+
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 import netgest.bo.transaction.XTransaction;
 import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProgressBean.
  */
@@ -200,9 +204,11 @@ public class ProgressBean {
 			XTransaction oTransaction = requestContext.getTransactionManager().getTransaction( parentView.getTransactionId() );
 			oTransaction.activate();
 			
+			ELContext context = parentView.getELContext();
 			MethodExpression m = requestContext.getEvent().getComponent().createMethodBinding( this.targetAction );
 			requestContext.setViewRoot( parentView );
-			m.invoke( requestContext.getELContext(), null );
+			
+			m.invoke( context, null );
 		}
 		finally {
 			finished = true;
