@@ -316,6 +316,11 @@ mean "drop here */
 	top:5px;
 }
 
+/* Chrome25 Bug fix, 100% width causes issues with the date picket, replaced with a fixed value width*/
+table.x-date-inner {
+   width:200px !important;
+}
+
 /**
 * Override the ExtMask (Modal Windows no longer appear to be modal
 * but ajax request are much nicer)
