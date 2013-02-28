@@ -230,11 +230,20 @@ public class AttributeHtmlEditor extends AttributeBase {
             // ExtJs Workaround, Prevent lock of the editable content
             // When chaging tab, the content can't be editable any more. 
             // Bug in ExtJs must call toggleSourceEdit twice to the function work.
-            listeners.add("render ", "function(editor) {\n" +
+            listeners.add("render", "function(editor) {\n" +
             		"editor.toggleSourceEdit(true);" +
             		"editor.toggleSourceEdit(true);" +
             		"editor.toggleSourceEdit(false);" +
             		"editor.toggleSourceEdit(false);" +
+            		"}\n");
+            //Really weird ExtJS or IE (probably) Bug? 
+            //In IE, if we swtich to a tab while having
+            //focus on the editor, fields become "non-editable"
+            //Cant understand why, I couldn't find any javascript/css
+            //that makes them this way. Anyway, workaround for Bug 502
+            listeners.add("beforeDestroy", "function(editor) {\n" +
+            		" editor.toggleSourceEdit(true);" +
+            		" editor.toggleSourceEdit(true); " +
             		"}\n");
             
             String fontFamilies = oHtmlComp.getFontFamilies();
@@ -253,7 +262,7 @@ public class AttributeHtmlEditor extends AttributeBase {
 			sOut.append("Ext.onReady( function() {");
 			sOut.append("try { \n");
 				oHtmlCfg.renderExtConfig(sOut);
-			sOut.append("} catch(e){} \n");
+			sOut.append("} catch(e){ debugger; alert(e); } \n");
 			if (!oHtmlComp.isVisible())
 				sOut.append("Ext.get('"+oComp.getClientId()+"').hide();");
 			sOut.append("});\n");
