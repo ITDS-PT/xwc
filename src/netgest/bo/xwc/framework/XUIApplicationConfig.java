@@ -5,10 +5,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import netgest.bo.system.Logger;
 import netgest.bo.system.boApplicationConfig;
 import netgest.bo.system.config.RenderKit;
 import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
 import netgest.bo.xwc.components.classic.theme.JQueryTheme;
+import netgest.bo.xwc.components.classic.theme.NullTheme;
 import netgest.utils.StringUtils;
 
 public class XUIApplicationConfig {
@@ -16,6 +18,7 @@ public class XUIApplicationConfig {
 	private Map<String,String> renderKits = new HashMap< String, String >();
 	private static final String DEFAULT_RENDER_KIT_ID = "XEOHTML";
 	private String defaultApplicationRenderKit = null;
+	private static final Logger logger = Logger.getLogger( XUIApplicationConfig.class );
 	
 	public XUIApplicationConfig(boApplicationConfig boConfig){
 		initDefaults();
@@ -32,14 +35,17 @@ public class XUIApplicationConfig {
 	private void initDefaults() {
 		renderKits.put( "XEOHTML" , ExtJsTheme.class.getName() );
 		renderKits.put( "XEOJQUERY" , JQueryTheme.class.getName() );
-		renderKits.put( "XEOXML" , "" );
-		renderKits.put( "XEOV2" , "" );
+		renderKits.put( "XEOXML" , NullTheme.class.getName() );
+		renderKits.put( "XEOV2" , NullTheme.class.getName() );
 	}
 	
 	public String getThemeForRenderKit(String renderKitId){
 		if (renderKits.containsKey( renderKitId )){
 			return renderKits.get( renderKitId );
-		} else throw new RuntimeException( String.format( "RenderKitClass not found for id (%s)", renderKitId) );
+		} else {
+			logger.config( "Could not find Theme for RenderKit %s, returning NullTheme", renderKitId );
+			return NullTheme.class.getName();
+		}
 	}
 	
 	public boolean hasThemeClass(String renderKitId){

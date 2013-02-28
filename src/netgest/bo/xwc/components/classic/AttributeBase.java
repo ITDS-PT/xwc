@@ -259,13 +259,157 @@ public class AttributeBase extends ViewerInputSecurityBase {
     @Override
     public void initComponent() {
         super.initComponent();
-        //  Perform init per component
+        setAttributeProperties( );
+        
         
     }
     
     public void initSpecificSettings(){
     	
     }
+
+	protected void setAttributeProperties() {
+		String beanProperty = getBeanProperty();
+    	String sBeanExpression = "";
+    	String sObjectAttribute = getObjectAttribute();
+    	if (beanProperty.startsWith("viewBean.")) //Backward compatibility
+    		sBeanExpression = "#{" + getBeanProperty() + "." + sObjectAttribute;
+    	else
+    		sBeanExpression = "#{" + getBeanId() + "." + getBeanProperty() + "." + sObjectAttribute;
+        
+    	if (sObjectAttribute != null){
+	        this.dataFieldConnector.setExpressionText( sBeanExpression + "}" );
+	        
+	        this.objectAttribute.setValue( sObjectAttribute );
+	
+	        // Value
+	        this.setValueExpression(
+	            "value", createValueExpression( sBeanExpression +  ".value}", Object.class ) 
+	        );
+	
+	        // Config
+	        this.dataType.setValue( 
+	                createValueExpression( sBeanExpression + ".dataType}", Byte.class ) 
+	            );
+	        
+	        if (inputRenderType.isDefaultValue()){
+		        this.inputRenderType.setValue( 
+		                createValueExpression( sBeanExpression + ".inputRenderType}", Byte.class ) 
+		            );
+	        }
+	        
+	        if (validation.isDefaultValue()){
+		        this.validation.setValue( 
+		        		createValueExpression( sBeanExpression + ".validate}", Boolean.class ) 
+		            );
+	        }
+	        
+	        if (isValidAttribute.isDefaultValue()){
+		        this.isValidAttribute.setValue( 
+		        		createValueExpression( sBeanExpression + ".valid}", Boolean.class ) 
+		            );
+	        }
+	        
+	        if (onChangeSubmit.isDefaultValue()){
+		        this.onChangeSubmit.setValue( 
+		                createValueExpression( sBeanExpression + ".onChangeSubmit}", Boolean.class ) 
+		            );
+	        }
+	
+	        if (maxLength.isDefaultValue()){
+		        this.maxLength.setValue(  
+		                createValueExpression( sBeanExpression + ".maxLength}", Integer.class ) 
+		            );
+	        }
+	        
+	        if (maxValue.isDefaultValue()){
+		        this.maxValue.setValue(  
+		                createValueExpression( sBeanExpression + ".numberMaxValue}", Double.class ) 
+		            );
+	        }
+	
+	        if (minValue.isDefaultValue()){
+		        this.minValue.setValue(  
+		                createValueExpression( sBeanExpression + ".numberMinValue}", Double.class ) 
+		            );
+	        }
+	        
+	        if (decimalPrecision.isDefaultValue()){
+		        this.decimalPrecision.setValue( 
+		                createValueExpression( sBeanExpression + ".decimalPrecision}", Integer.class ) 
+		            );
+	        }
+	        
+	        if (minDecimalPrecision.isDefaultValue()){
+		        this.minDecimalPrecision.setValue( 
+		                createValueExpression( sBeanExpression + ".minDecimals}", Integer.class ) 
+		            );
+	        }
+	
+	        if (groupNumber.isDefaultValue()){
+		        this.groupNumber.setValue( 
+		                createValueExpression( sBeanExpression + ".numberGrouping}", Boolean.class ) 
+		            );
+	        }
+	
+	        // Label
+	        if (label.isDefaultValue()){
+		        this.label.setValue( 
+		                createValueExpression( sBeanExpression + ".label}", String.class ) 
+		            );
+	        }
+	
+	        // States 
+	        if (disabled.isDefaultValue()){
+		        this.disabled.setValue( 
+		                createValueExpression( sBeanExpression + ".disabled}", Boolean.class ) 
+		            );
+	        }
+	        if (visible.isDefaultValue()){
+		        this.visible.setValue( 
+		                createValueExpression( sBeanExpression + ".visible}", Boolean.class ) 
+		            );
+	        }
+	        if (modelRequired.isDefaultValue()){
+		        this.modelRequired.setValue( 
+		                createValueExpression( sBeanExpression + ".required}", Boolean.class ) 
+		            );
+	        }
+	        if (recommended.isDefaultValue()){
+		        this.recommended.setValue( 
+		                createValueExpression( sBeanExpression + ".recomended}", Boolean.class ) 
+		            );
+	        }
+	        
+	        this.setSecurityPermissions( sBeanExpression + ".securityPermissions}" );
+	        
+	        // Dependeces
+	        this.dependences.setValue( 
+	                createValueExpression( sBeanExpression + ".dependences}", String[].class ) 
+	            );
+	        
+	        // Lovs
+	        if (isLov.isDefaultValue()){
+	        this.isLov.setValue( 
+	                createValueExpression( sBeanExpression + ".isLov}", Boolean.class ) 
+	            );
+	        }
+	        
+	        this.isLovEditable.setValue( 
+	                createValueExpression( sBeanExpression + ".isLovEditable}", Boolean.class ) 
+	            );
+	
+	        this.lovMap.setExpressionText( sBeanExpression + ".lovMap}" );
+	
+	        this.dataFieldConnector.setValue( 
+	                createValueExpression( sBeanExpression + "}", DataFieldConnector.class ) 
+	            );
+	        
+	        if (displayValue.isDefaultValue()){
+	        	this.displayValue.setExpressionText(sBeanExpression + ".displayValue}" );
+	        }
+    	}
+	}
 
     /**
      * Bind this component to a XEO Attribute using a {@linkplain DataFieldConnector}.<br>
@@ -278,143 +422,9 @@ public class AttributeBase extends ViewerInputSecurityBase {
      */
     public void setObjectAttribute(String sObjectAttribute) {
     	
-    	String beanProperty = getBeanProperty();
-    	String sBeanExpression = "";
-    	if (beanProperty.startsWith("viewBean.")) //Backward compatibility
-    		sBeanExpression = "#{" + getBeanProperty() + "." + sObjectAttribute;
-    	else
-    		sBeanExpression = "#{" + getBeanId() + "." + getBeanProperty() + "." + sObjectAttribute;
-        
-        this.dataFieldConnector.setExpressionText( sBeanExpression + "}" );
-        
-        this.objectAttribute.setValue( sObjectAttribute );
-
-        // Value
-        this.setValueExpression(
-            "value", createValueExpression( sBeanExpression +  ".value}", Object.class ) 
-        );
-
-        // Config
-        this.dataType.setValue( 
-                createValueExpression( sBeanExpression + ".dataType}", Byte.class ) 
-            );
-        
-        if (inputRenderType.isDefaultValue()){
-	        this.inputRenderType.setValue( 
-	                createValueExpression( sBeanExpression + ".inputRenderType}", Byte.class ) 
-	            );
-        }
-        
-        if (validation.isDefaultValue()){
-	        this.validation.setValue( 
-	        		createValueExpression( sBeanExpression + ".validate}", Boolean.class ) 
-	            );
-        }
-        
-        if (isValidAttribute.isDefaultValue()){
-	        this.isValidAttribute.setValue( 
-	        		createValueExpression( sBeanExpression + ".valid}", Boolean.class ) 
-	            );
-        }
-        
-        if (onChangeSubmit.isDefaultValue()){
-	        this.onChangeSubmit.setValue( 
-	                createValueExpression( sBeanExpression + ".onChangeSubmit}", Boolean.class ) 
-	            );
-        }
-
-        if (maxLength.isDefaultValue()){
-	        this.maxLength.setValue(  
-	                createValueExpression( sBeanExpression + ".maxLength}", Integer.class ) 
-	            );
-        }
-        
-        if (maxValue.isDefaultValue()){
-	        this.maxValue.setValue(  
-	                createValueExpression( sBeanExpression + ".numberMaxValue}", Double.class ) 
-	            );
-        }
-
-        if (minValue.isDefaultValue()){
-	        this.minValue.setValue(  
-	                createValueExpression( sBeanExpression + ".numberMinValue}", Double.class ) 
-	            );
-        }
-        
-        if (decimalPrecision.isDefaultValue()){
-	        this.decimalPrecision.setValue( 
-	                createValueExpression( sBeanExpression + ".decimalPrecision}", Integer.class ) 
-	            );
-        }
-        
-        if (minDecimalPrecision.isDefaultValue()){
-	        this.minDecimalPrecision.setValue( 
-	                createValueExpression( sBeanExpression + ".minDecimals}", Integer.class ) 
-	            );
-        }
-
-        if (groupNumber.isDefaultValue()){
-	        this.groupNumber.setValue( 
-	                createValueExpression( sBeanExpression + ".numberGrouping}", Boolean.class ) 
-	            );
-        }
-
-        // Label
-        if (label.isDefaultValue()){
-	        this.label.setValue( 
-	                createValueExpression( sBeanExpression + ".label}", String.class ) 
-	            );
-        }
-
-        // States 
-        if (disabled.isDefaultValue()){
-	        this.disabled.setValue( 
-	                createValueExpression( sBeanExpression + ".disabled}", Boolean.class ) 
-	            );
-        }
-        if (visible.isDefaultValue()){
-	        this.visible.setValue( 
-	                createValueExpression( sBeanExpression + ".visible}", Boolean.class ) 
-	            );
-        }
-        if (modelRequired.isDefaultValue()){
-	        this.modelRequired.setValue( 
-	                createValueExpression( sBeanExpression + ".required}", Boolean.class ) 
-	            );
-        }
-        if (recommended.isDefaultValue()){
-	        this.recommended.setValue( 
-	                createValueExpression( sBeanExpression + ".recomended}", Boolean.class ) 
-	            );
-        }
-        
-        this.setSecurityPermissions( sBeanExpression + ".securityPermissions}" );
-        
-        // Dependeces
-        this.dependences.setValue( 
-                createValueExpression( sBeanExpression + ".dependences}", String[].class ) 
-            );
-        
-        // Lovs
-        if (isLov.isDefaultValue()){
-        this.isLov.setValue( 
-                createValueExpression( sBeanExpression + ".isLov}", Boolean.class ) 
-            );
-        }
-        
-        this.isLovEditable.setValue( 
-                createValueExpression( sBeanExpression + ".isLovEditable}", Boolean.class ) 
-            );
-
-        this.lovMap.setExpressionText( sBeanExpression + ".lovMap}" );
-
-        this.dataFieldConnector.setValue( 
-                createValueExpression( sBeanExpression + "}", DataFieldConnector.class ) 
-            );
-        
-        if (displayValue.isDefaultValue()){
-        	this.displayValue.setExpressionText(sBeanExpression + ".displayValue}" );
-        }
+    	objectAttribute.setValue(sObjectAttribute);
+    	
+    	
         
         
     }
@@ -1071,8 +1081,8 @@ public class AttributeBase extends ViewerInputSecurityBase {
     public void setBeanProperty(String beanProperty) {
         this.beanProperty.setValue( beanProperty ); 
         
-        if( getObjectAttribute() != null )
-            setObjectAttribute( getObjectAttribute() );
+        /*if( getObjectAttribute() != null )
+            setObjectAttribute( getObjectAttribute() );*/
         
     }
     

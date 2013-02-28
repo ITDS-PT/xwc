@@ -189,6 +189,8 @@ public class MainAdminViewerMessages {
 		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "BACKGROUND_THREADS" );
 	public static final XUILocalizedMessage SCHEDULES = 
 		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "SCHEDULES" );
+	public static final XUILocalizedMessage SCHEDULES_EXECUTE_NOW = 
+			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "SCHEDULES_EXECUTE_NOW" );
 	public static final XUILocalizedMessage BOCONFIG = 
 		new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "BOCONFIG" );
 	public static final XUILocalizedMessage LOVS = 

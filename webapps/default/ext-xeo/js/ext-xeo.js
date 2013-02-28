@@ -649,25 +649,31 @@ XVW.syncView = function( sFormId, iWaitScreen ) {
 XVW.closeWindow = function( sFormId, sWindowId ) {
 	
 	
-	var formWnd = window;
-	var wnd = Ext.ComponentMgr.get( sWindowId );
-	if( wnd == null ) {
-		formWnd = window.parent;
-		if( formWnd && formWnd.Ext ) {
-			wnd = formWnd.Ext.ComponentMgr.get( sWindowId );
+	try{
+		var formWnd = window;
+		var wnd = Ext.ComponentMgr.get( sWindowId );
+		if( wnd == null ) {
+			formWnd = window.parent;
+			if( formWnd && formWnd.Ext ) {
+				wnd = formWnd.Ext.ComponentMgr.get( sWindowId );
+			}
+		}
+		
+		if( wnd == null ) {
+			formWnd = XVW.findFormWindow( sFormId );
+			if( formWnd && formWnd.Ext ) {
+				wnd = formWnd.Ext.ComponentMgr.get( sWindowId );
+			}
+		}
+		if( wnd ) {
+			ExtXeo.destroyComponents(wnd.body.dom,window);
+			wnd.hide();
+			wnd.destroy();
 		}
 	}
-	
-	if( wnd == null ) {
-		formWnd = XVW.findFormWindow( sFormId );
-		if( formWnd && formWnd.Ext ) {
-			wnd = formWnd.Ext.ComponentMgr.get( sWindowId );
-		}
-	}
-	if( wnd ) {
-		ExtXeo.destroyComponents(wnd.body.dom,window);
-		wnd.hide();
-		wnd.destroy();
+	finally {
+		 if (!XVW.ajax.canAjaxRequest())
+				XVW.ajax.enableAjaxRequests();
 	}
 }
 

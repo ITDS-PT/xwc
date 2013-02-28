@@ -95,6 +95,7 @@ public class ThemeChanger extends XUIComponentBase implements IToolbarGroup {
 		themesLov.setLovMap("#{ " + getBeanId() + ".themeMap}");
 		themesLov.setValueExpression("#{ " + getBeanId() + ".theme}");
 		themesLov.setMaxLength(20);
+		themesLov.setRenderComponent( false );
 		themesLov.setId("themesChangedLov");
 		list.add(themesLov);
 		

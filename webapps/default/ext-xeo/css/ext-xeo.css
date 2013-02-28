@@ -350,3 +350,18 @@ table.x-date-inner {
    width:200px !important;
 }
 
+
+/**
+* Override the ExtMask (Modal Windows no longer appear to be modal
+* but ajax request are much nicer)
+*/
+.ext-el-mask{
+	z-index:20000;
+	position:absolute;
+	top:0;
+	left:0;
+	background-color:transparent;
+	width:100%;
+	height:100%;
+	zoom:1;
+}

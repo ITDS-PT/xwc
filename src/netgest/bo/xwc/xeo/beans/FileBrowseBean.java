@@ -1,8 +1,5 @@
 package netgest.bo.xwc.xeo.beans;
 
-import netgest.bo.system.boAgentsControler;
-import netgest.bo.system.boApplication;
-import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.components.classic.HTMLFileBrowse;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;

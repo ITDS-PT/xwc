@@ -185,8 +185,9 @@ public class ToolBar extends ViewerSecurityBase {
     		Iterator<Entry<String,XUIBaseProperty<?>>> it = props.iterator();
     		while (it.hasNext()){
     			Entry<String,XUIBaseProperty<?>> entry = it.next();
-    			if (entry.getValue().wasChanged())
+    			if (entry.getValue().wasChanged()){
     				return true;
+    			}
     		}
     		return false;
     	}
@@ -273,6 +274,7 @@ public class ToolBar extends ViewerSecurityBase {
         public static final ScriptBuilder updateMenuItems( ToolBar toolBar ) {
             Iterator<UIComponent> childs =  toolBar.getChildren().iterator();
         	ScriptBuilder sb = new ScriptBuilder();
+        	sb.w( " window.setTimeout( function(){ " );
             while( childs.hasNext() ) {
             	UIComponent currChild = childs.next();
             	if (currChild instanceof Menu){
@@ -289,6 +291,7 @@ public class ToolBar extends ViewerSecurityBase {
 	                }
                 }
             }
+            sb.w("  },0);");
             return sb;
         }
 
@@ -301,9 +304,9 @@ public class ToolBar extends ViewerSecurityBase {
                 if( oMenuChild.isRendered() ) {
 	            	if( oMenuChild.wasStateChanged2() == StateChanged.FOR_RENDER ) {
 	                	sb.startBlock();
-	                	sb.w( "try{" );
+	                	//sb.w( " window.setTimeout( function(){ " );
 	                	generateUpdateScript(sb, oMenuChild );
-	                	sb.w("} catch (e) {}");
+	                	//sb.w(" },0);");
 	                	sb.endBlock();
 	            	}
                 }
@@ -330,7 +333,7 @@ public class ToolBar extends ViewerSecurityBase {
 	        		sb.w( "m.setDisabled(").w( toolBar.isDisabled() ).l( ");" );
 	        	sb.w("};");
         	}
-        } 
+        }
         
         public static final void generateUpdateScript( ScriptBuilder sb, Menu oMenuChild ) {
         	sb.w( "var m=Ext.getCmp('ext-").writeValue( oMenuChild.getClientId() ).l("'); if (m) {" );
@@ -347,8 +350,9 @@ public class ToolBar extends ViewerSecurityBase {
         	} else{
         		sb.w( "m.setDisabled(").w( oMenuChild.isDisabled() ).l( ");" );
         	}
-        	if (oMenuChild.wasTextChanged())
-        		sb.w( "m.setText('").w( oMenuChild.getText() ).l( "');" );
+        	
+        	if (oMenuChild.wasTextChanged() && !oMenuChild.isSpacer())
+        		sb.w( "if (m.setText) {m.setText('").w( oMenuChild.getText() ).l( "'); }" );
         	
         	
         	sb.w("};");
@@ -433,32 +437,38 @@ public class ToolBar extends ViewerSecurityBase {
                     }
                     //We may have other things, like form fields
 					else {
-                    	XUIRequestContext req = XUIRequestContext.getCurrentContext();
-                    	XUIComponentStore compStore = req.getApplicationContext().getComponentStore();
-                    	Map<String,XUIRendererDefinition> def = compStore.getMapOfRenderKit("XEOHTML");
-                    	XUIRendererDefinition definition = def.get(currentItem.getFamily()+":"+currentItem.getRendererType());
-                    	if (definition != null){ //For this to be null we probably have a component
-                    		//without a renderer class, like an instance of IToolBarGroup
-                    	String className = definition.getClassName();
-                    		try {
-    							//Instantiate the class and render the component
-    							//to a string (remove the renderTo property, because
-    							//it does not apply in this situation and totally screws up rendering)
-    	                		Object newInstance = Class.forName(className).newInstance();
-    	                		if (newInstance instanceof ExtJsRenderer)
-    	                		{
-    	                			ExtJsRenderer render = (ExtJsRenderer) newInstance;
-    								ExtConfig config = render.getExtJsConfig((XUIComponentBase)currentItem);
-    								if (currentItem instanceof AttributeBase)
-    									config.add("width", ((AttributeBase)currentItem).getWidth());
-    								config.removeConfig("renderTo");
-    								config.removeConfig("validator");
-    								oItemsCfg.addChild(config);
-    							}
-    						}  catch (Exception e) {
-    							e.printStackTrace();
-    						}
-    					}
+						if (currentItem instanceof XUIComponentBase){
+							XUIComponentBase currentComponent = (XUIComponentBase) currentItem;
+							StateChanged state = currentComponent.wasStateChanged2(); 
+							if (state == StateChanged.FOR_RENDER || state == StateChanged.FOR_UPDATE){
+		                    	XUIRequestContext req = XUIRequestContext.getCurrentContext();
+		                    	XUIComponentStore compStore = req.getApplicationContext().getComponentStore();
+		                    	Map<String,XUIRendererDefinition> def = compStore.getMapOfRenderKit("XEOHTML");
+		                    	XUIRendererDefinition definition = def.get(currentItem.getFamily()+":"+currentItem.getRendererType());
+		                    	if (definition != null){ //For this to be null we probably have a component
+		                    		//without a renderer class, like an instance of IToolBarGroup
+		                    		String className = definition.getClassName();
+		                    		try {
+		    							//Instantiate the class and render the component
+		    							//to a string (remove the renderTo property, because
+		    							//it does not apply in this situation and totally screws up rendering)
+		    	                		Object newInstance = Class.forName(className).newInstance();
+		    	                		if (newInstance instanceof ExtJsRenderer)
+		    	                		{
+		    	                			ExtJsRenderer render = (ExtJsRenderer) newInstance;
+		    								ExtConfig config = render.getExtJsConfig((XUIComponentBase)currentItem);
+		    								if (currentItem instanceof AttributeBase)
+		    									config.add("width", ((AttributeBase)currentItem).getWidth());
+		    								config.removeConfig("renderTo");
+		    								config.removeConfig("validator");
+		    								oItemsCfg.addChild(config);
+		    							}
+		    						}  catch (Exception e) {
+		    							e.printStackTrace();
+		    						}
+		    					}
+							}
+						}
                     }
                 }
                 return oToolBarCfg;
@@ -521,11 +531,7 @@ public class ToolBar extends ViewerSecurityBase {
         public void encodeSubMenuJS( ToolBar tool, ExtConfig oMenu, Menu oSubMenu ) {
             ExtConfigArray  oSubChildCfg;
 
-            //sOut.write(" new Ext.menu.Menu({ "); sOut.write("\n");
             oMenu.setComponentType( "Ext.menu.Menu" );
-            //sOut.write(" id: '" + oSubMenu.getClientId() + "'"); sOut.write(",\n");
-            //oMenu.addJSString("id", oSubMenu.getClientId() );
-            //sOut.write(" items: [ "); sOut.write("\n");
             oSubChildCfg = oMenu.addChildArray( "items" );
             
             Iterator<UIComponent> oSubChildren = oSubMenu.getChildren().iterator();

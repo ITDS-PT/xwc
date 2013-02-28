@@ -4,19 +4,28 @@
 
 XVW.closeWindowJquery = function (sComponentId, sViewId){
 	
-	var finalId = "#" + sComponentId + "";
-	var finalViewId = "#" + sViewId + "";
-	
-	//Destroy any ExtJS Based Components inside the Window
-	var domElement = jQuery( finalId ).get(0);
-	ExtXeo.destroyComponents( domElement , true );
-	
-	//Destroy the Window and Remove the elements from the DOM
-	jQuery( finalId ).dialog('destroy').parent().remove();
-	
-	//Destroy the Div with the ViewID that gets separated from the rest
-	//when creating the window
-	jQuery( finalViewId ).remove();
+	try{
+		
+		var finalId = "#" + sComponentId + "";
+		var finalViewId = "#" + sViewId + "";
+		
+		//Destroy any ExtJS Based Components inside the Window
+		var domElement = jQuery( finalId ).get(0);
+		ExtXeo.destroyComponents( domElement , true );
+		
+		//Destroy the Window and Remove the elements from the DOM
+		jQuery( finalId ).dialog('destroy').parent().remove();
+		
+		//Destroy the Div with the ViewID that gets separated from the rest
+		//when creating the window
+		jQuery( finalViewId ).remove();
+		
+		} finally {
+			if (!XVW.ajax.canAjaxRequest())
+				XVW.ajax.enableAjaxRequests();
+		}
+		
+		}
 	
 }
 

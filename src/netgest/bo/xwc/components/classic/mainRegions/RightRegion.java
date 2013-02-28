@@ -109,7 +109,7 @@ public class RightRegion extends BaseRegion  {
 			w.endElement(DIV);
 			
 			//Render the layout at the end
-			String result = " Ext.onReady(function() { Ext.getCmp('east-panel').doLayout(); });";
+			String result = " Ext.onReady(function() { var m = Ext.getCmp('east-panel'); if (m) {m.doLayout();} });";
 			getRequestContext().getScriptContext().add(XUIScriptContext.POSITION_FOOTER,
 					oComp.getId(), result);
 			

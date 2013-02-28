@@ -31,8 +31,28 @@ public class XVWScripts {
     public static final int ALERT_ICON_ERROR = 2;
     public static final int ALERT_ICON_WARNING = 3;
     
-    public enum ValueType{
-    	LITERAL,
+     public enum Queue{
+    	QUEUE_COMMAND(true),
+    	DONT_QUEUE_DOMMAND(false);
+    	
+    	private boolean queue;
+    	
+    	private Queue(boolean q){
+    		this.queue = q;
+    	}
+    	
+    	public boolean toBoolean(){
+    		return queue;
+    	}
+    	
+    	public static Queue fromBoolean(boolean queue){
+    		if (queue)
+    			return QUEUE_COMMAND;
+    		else
+    			return DONT_QUEUE_DOMMAND;
+    	}
+    }
+public enum ValueType{LITERAL,
     	VAR;
     	
     	public static ValueType fromString(String value){
@@ -42,9 +62,8 @@ public class XVWScripts {
     		}
     		return LITERAL;
     	}
-    }
-    
-    public static final String getCommandScript( String target, XUIComponentBase oComponent, int iWaitMode ) { 
+    }  
+  public static final String getCommandScript( String target, XUIComponentBase oComponent, int iWaitMode ) { 
     	return getCommandScript( target, null,oComponent, null, iWaitMode, ValueType.LITERAL );
     }
     
@@ -132,8 +151,13 @@ public class XVWScripts {
         return 
             "XVW.AjaxCommand( '" + containerId +  "','" + compId + "','" + value + "','"+WAIT_DIALOG+"')";
     }
+
+public static final String getAjaxCommandScript( XUIComponentBase oComponent, int iWaitMode ) {
+    	return getAjaxCommandScript( oComponent , iWaitMode, Queue.QUEUE_COMMAND );
+    }
+
      
-    public static final String getAjaxCommandScript( XUIComponentBase oComponent, int iWaitMode ) {
+    public static final String getAjaxCommandScript( XUIComponentBase oComponent, int iWaitMode, Queue queue ) {
     	assert oComponent != null : MessageLocalizer.getMessage("THE_COMPONENT_IS_NULL");
     	String containerId = oComponent.findParentComponent(XUIForm.class).getClientId();
     	assert containerId != null : MessageLocalizer.getMessage("CANNOT_FIND_A_NAMING_CONTAINER_FOR_THE_COMPONENT"); 
@@ -142,7 +166,7 @@ public class XVWScripts {
     	String compId = oComponent.getClientId();
     	
         return 
-            "XVW.AjaxCommand( '" + containerId +  "','" + compId + "','" + compId + "','"+iWaitMode+"')";
+            "XVW.AjaxCommand( '" + containerId +  "','" + compId + "','" + compId + "','"+iWaitMode+"', true, null, "+queue.toBoolean( )+")";
     }
 
     public static final String getAjaxCommandScript( XUIComponentBase oComponent, String sValue, int iWaitMode ) {

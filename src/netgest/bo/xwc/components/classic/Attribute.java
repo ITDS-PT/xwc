@@ -72,7 +72,7 @@ public class Attribute extends AttributeBase
     
 	@Override
 	public void initComponent() {
-        // per component initializations.
+        super.initComponent();
         createChildComponents();
     }
 
@@ -331,6 +331,11 @@ public class Attribute extends AttributeBase
         if( getValueExpression("displayValue") != null )
             oAttr.setDisplayValue( getValueExpression("displayValue").getExpressionString() );
         
+
+		if( getValueExpression("dataFieldConnector") != null )
+            oAttr.dataFieldConnector.setExpressionText( getValueExpression("dataFieldConnector").getExpressionString() );
+        
+
         if (StringUtils.hasValue( lookupResults.getExpressionString( ) ) )
             oAttr.setLookupResults( lookupResults.getExpressionString( ) );
         

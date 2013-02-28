@@ -281,7 +281,7 @@ public class Tabs extends XUIComponentBase implements NavigatableComponent
 	                        w.writeAttribute("href", "javascript:void(0)", null );
 	                    }
 	                    else {
-	                        w.writeAttribute("href", "javascript:" + XVWScripts.getAjaxCommandScript( oChildTab, XVWScripts.WAIT_STATUS_MESSAGE ), null );
+	                        w.writeAttribute("href", "javascript:" + XVWScripts.getAjaxCommandScript( oChildTab, XVWScripts.WAIT_DIALOG ), null );
 	                    }
 	    
 	                    w.startElement("em", component );
