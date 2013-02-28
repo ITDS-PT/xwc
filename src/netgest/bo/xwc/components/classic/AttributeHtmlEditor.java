@@ -239,8 +239,8 @@ public class AttributeHtmlEditor extends AttributeBase {
             //Really weird ExtJS or IE (probably) Bug? 
             //In IE, if we swtich to a tab while having
             //focus on the editor, fields become "non-editable"
-            //Cant understand why, I don't find any javascript/css
-            //that makes them this way, maybe
+            //Cant understand why, I couldn't find any javascript/css
+            //that makes them this way. Anyway, workaround for Bug 502
             listeners.add("beforeDestroy", "function(editor) {\n" +
             		" editor.toggleSourceEdit(true);" +
             		" editor.toggleSourceEdit(true); " +
