@@ -237,9 +237,15 @@ public class XUIViewRoot extends UIViewRoot {
 	    	if( _renderKit == null || "HTML_BASIC".equals( _renderKit ) ) {
 		    	XUIRequestContext requestContext = XUIRequestContext.getCurrentContext();
 		    	
+		    	//Get renderKit from Parameter, overrides anything
 		    	_renderKit = requestContext.getRequestParameterMap().get("__renderKit");
-		    	if( _renderKit == null ){ 
-		    		_renderKit = requestContext.getXUIApplicationConfig().getDefaultRenderKitId(); 
+		    	if( _renderKit == null ){
+		    		//Get from servlet
+		    		_renderKit = (String) requestContext.getAttribute( "__renderKit" );
+		    		if (_renderKit == null){
+		    			//Get application default
+		    			_renderKit = requestContext.getXUIApplicationConfig().getDefaultRenderKitId();
+		    		}
 		    	}
 	    	}
 		}

@@ -58,6 +58,10 @@
 			<param-name>LoginPageWhenExpired</param-name>
 			<param-value>Login.xvw</param-value>
 		</init-param>
+		<init-param>
+			<param-name>renderKit</param-name>
+			<param-value>XEOHTML</param-value>
+		</init-param>
 	</servlet>
 	<filter>
 		<filter-name>DeployFilter</filter-name>

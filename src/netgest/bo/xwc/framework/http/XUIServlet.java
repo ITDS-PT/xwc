@@ -40,6 +40,10 @@ public class XUIServlet extends HttpServlet
     boolean             bIsInitialized;
     String				defaultLang;
     Locale 				defaultLocale;
+    /**
+     * RenderKit used in this web context
+     */
+    String				renderKit;
     
     public XUIServlet()
     {
@@ -63,6 +67,9 @@ public class XUIServlet extends HttpServlet
     	else {
     		defaultLocale = Locale.getDefault();
     	}
+    	
+    	renderKit = servletConfig.getInitParameter("renderKit");
+    	
         facesServlet.init(servletConfig);
         initializeXeo();
     }
@@ -111,6 +118,10 @@ public class XUIServlet extends HttpServlet
     	
     	if( defaultLocale != null ) {
     		XUIMessagesLocalization.setThreadCurrentLocale( defaultLocale );
+    	}
+    	
+    	if (StringUtils.hasValue( renderKit )){
+    		oRequest.setAttribute( "__renderKit" , renderKit );
     	}
     	
         try {
