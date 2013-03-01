@@ -53,13 +53,13 @@ public class MultipartUploadParser
 		{
 			log.warn("No files were found when processing the requst. Debugging info follows.");
 
-			writeDebugInfo(request);
+			//writeDebugInfo(request);
 
 			throw new FileUploadException("No files were found when processing the requst.");
 		}
 		else
 		{
-			writeDebugInfo(request);
+			//writeDebugInfo(request);
 		}
 	}
 
@@ -75,6 +75,7 @@ public class MultipartUploadParser
 		return factory;
 	}
 
+	@SuppressWarnings("unused")
 	private void writeDebugInfo(HttpServletRequest request)
 	{
 		log.warn("-- POST HEADERS --");
