@@ -183,7 +183,7 @@ public class AttributeFile extends AttributeBase {
             Form                oForm;
             
             sFormId = oAttr.getNamingContainerId();
-            oForm   = (Form)oAttr.findComponent( sFormId );
+            oForm   = (Form)oAttr.findParentComponent( Form.class );
             
             oAttFile = (AttributeFile)oAttr;
     		
@@ -221,7 +221,7 @@ public class AttributeFile extends AttributeBase {
 	            }
 	            oInpConfig.add("onTrigger2Click", "function(){if(!this.disabled){ " +
 	            		XVWScripts.getOpenCommandWindow( oAttFile.getLookupCommand(), 
-	            				oAttFile.getLookupCommand() + "_" + System.currentTimeMillis(), "{width:400, height:250}" ) +
+	            				oAttFile.getLookupCommand().getClientId(), "{width:400, height:250}" ) +
 	            		"}}"
 	            );
             

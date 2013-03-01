@@ -266,7 +266,7 @@ public static final String getAjaxCommandScript( XUIComponentBase oComponent, in
 	    	"XVW.OpenCommandWindow( " +
 	        "'" + sFrameName + "'," +
 	        "'" + oComponent.findParentComponent(XUIForm.class).getClientId() + "'," +
-	        "'" + oComponent.getId() + "'" +
+	        "'" + oComponent.getClientId() + "'" +
 	        
 	        (sActionValue == null?",'',":
 	        	",'" 
