@@ -20,12 +20,11 @@ XVW.closeWindowJquery = function (sComponentId, sViewId){
 		//when creating the window
 		jQuery( finalViewId ).remove();
 		
-		} finally {
+	} finally {
 			if (!XVW.ajax.canAjaxRequest())
 				XVW.ajax.enableAjaxRequests();
-		}
-		
-		}
+	}
+	
 	
 }
 
