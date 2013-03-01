@@ -4,8 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="project_lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="project_lib/el-ri.jar"/>
-	<classpathentry kind="lib" path="project_lib/jsf-api.jar" sourcepath="C:/xeostudio/workspace/jsf/jsf-api/src"/>
-	<classpathentry kind="lib" path="project_lib/jsf-impl.jar" sourcepath="C:/xeostudio/workspace/jsf/jsf-ri/src"/>
 	<classpathentry kind="lib" path="project_lib/jstl.jar"/>
 	<classpathentry kind="lib" path="project_lib/sun-commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="project_lib/sun-commons-collections.jar"/>
@@ -72,5 +70,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/xeo"/>
 	<classpathentry kind="lib" path="project_lib/freemarker.jar"/>
 	<classpathentry kind="lib" path="project_lib/commons-fileupload-1.2.2.jar"/>
+	<classpathentry kind="lib" path="project_lib/jsf-api.jar"/>
+	<classpathentry kind="lib" path="project_lib/jsf-impl.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
