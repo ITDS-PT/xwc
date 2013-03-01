@@ -3,8 +3,6 @@ package netgest.bo.xwc.components.classic;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 
-import org.json.JSONArray;
-
 import netgest.bo.xwc.components.classic.fileuploader.FileUploaderApi;
 import netgest.bo.xwc.components.classic.fileuploader.UploadValidation;
 import netgest.bo.xwc.components.classic.fileuploader.XeoObjectAttributeAdapter;
@@ -18,6 +16,9 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.messages.XUIMessageBuilder;
 import netgest.io.iFile;
+import netgest.utils.StringUtils;
+
+import org.json.JSONArray;
 
 public class FileUpload extends AttributeBase {
 	
@@ -197,9 +198,7 @@ public class FileUpload extends AttributeBase {
 		validExtensions.setExpressionText( extensionsExpr );
 	}
 	
-	public void setValidExtensions(String... values){
-		validExtensions.setValue( values );
-	}
+	
 	
 	/**
 	 * 
@@ -267,6 +266,8 @@ public class FileUpload extends AttributeBase {
     		sendingMessage.setValue( ComponentMessages.UPLOAD_SENDING_MESSAGE.toString() );
     	if (progressMessage.isDefaultValue())	
     		progressMessage.setValue( ComponentMessages.UPLOAD_PROGRESS_MESSAGE.toString() );
+    	if (tooManyFilesMessage.isDefaultValue())	
+    		tooManyFilesMessage.setValue( ComponentMessages.UPLOAD_PROGRESS_TOO_MANY_FILES.toString() );
 	}
 	
 	public static class RemoveActionListener implements ActionListener {
@@ -374,7 +375,7 @@ public class FileUpload extends AttributeBase {
     		new XUIBindProperty<String>( "startMessage" , this, String.class );
 
 	public String getStartMessage() {
-		return startMessage.getEvaluatedValue();
+		return StringUtils.escapeSingleQuotes( startMessage.getEvaluatedValue() );
 	}
 
 	public void setStartMessage(String newValExpr) {
@@ -389,7 +390,7 @@ public class FileUpload extends AttributeBase {
 			"savingMessage" , this, String.class );
 
 	public String getSavingMessage() {
-		return savingMessage.getEvaluatedValue();
+		return StringUtils.escapeSingleQuotes( savingMessage.getEvaluatedValue() );
 	}
 
 	public void setSavingMessage(String newValExpr) {
@@ -403,7 +404,7 @@ public class FileUpload extends AttributeBase {
 			"uploadFailed" , this , String.class );
 
 	public String getUploadFailed() {
-		return uploadFailed.getEvaluatedValue();
+		return StringUtils.escapeSingleQuotes( uploadFailed.getEvaluatedValue() );
 	}
 
 	public void setUploadFailed(String newValExpr) {
@@ -418,7 +419,7 @@ public class FileUpload extends AttributeBase {
 			"sendingMessage" , this , String.class );
 
 	public String getSendingMessage() {
-		return sendingMessage.getEvaluatedValue();
+		return StringUtils.escapeSingleQuotes( sendingMessage.getEvaluatedValue() );
 	}
 
 	public void setSendingMessage(String newValExpr) {
@@ -433,11 +434,25 @@ public class FileUpload extends AttributeBase {
     XUIBindProperty< String > progressMessage = new XUIBindProperty< String >(
 			"progressMessage" , this , String.class );
 
-	public String getprogressMessage() {
-		return progressMessage.getEvaluatedValue();
+	public String getProgressMessage() {
+		return StringUtils.escapeSingleQuotes( progressMessage.getEvaluatedValue() );
 	}
 
-	public void setprogressMessage(String newValExpr) {
+	public void setProgressMessage(String newValExpr) {
 		progressMessage.setExpressionText( newValExpr );
+	}
+	
+	/**
+	 * Message to display when to many files are being sent
+	 */
+	XUIBindProperty< String > tooManyFilesMessage = new XUIBindProperty< String >(
+			"tooManyFilesMessage" , this , String.class );
+
+	public String getTooManyFilesMessage() {
+		return StringUtils.escapeSingleQuotes( tooManyFilesMessage.getEvaluatedValue() );
+	}
+
+	public void setTooManyFilesMessage(String newValExpr) {
+		tooManyFilesMessage.setExpressionText( newValExpr );
 	}
 }

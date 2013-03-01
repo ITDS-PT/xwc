@@ -55,11 +55,16 @@ qq.extend(qq.FineUploaderXEO.prototype, qq.FineUploaderBasic.prototype);
 
 qq.extend(qq.FineUploaderXEO.prototype, {
 	
-	, _onSubmit : function (id , fileName){
+	 _onSubmit : function (id , fileName){
 		qq.FineUploaderBasic.prototype._onSubmit.apply(this, arguments);
+		
+		if (this.isNumberOfFilesLimited()){
+			this.addFile();
+		}
 		this.hideAttach(this.getAttatchElem());
 		this.createProgressContainer(id);
 		this.messageOnProgress(id,this._options.startMessage);
+		
 	} 
 	
 	, _onUpload: function(id, fileName) {
@@ -106,19 +111,23 @@ qq.extend(qq.FineUploaderXEO.prototype, {
 	        	this.clearAllMessages();
 	        }
 	        this.clearErrorMessages(errors);
-	        this.addFile();
+	        
 	        if (this.isNumberOfFilesLimited()){
 		        if (this.getFileCount() >= this._options.maxFiles){
 		        	this.hideAttach(this.getAttatchElem());
 		        }
 	        }
 	      } else {
+	    	if (this.isNumberOfFilesLimited())
+	  			this.removeFile();
 	      	this.errorMessage(errors,this._options.uploadFailed);
 	      }
 	}
 	
 	, _onError : function ( id,  fileName,  errorReason){
 		qq.FineUploaderBasic.prototype._onError.apply(this, arguments);
+		if (this.isNumberOfFilesLimited())
+			this.removeFile();
 		var buttons = this.getAttatchElem();
 		var errors = this.getErrorsElem();
     	this.restoreAttach(button);
@@ -182,8 +191,23 @@ qq.extend(qq.FineUploaderXEO.prototype, {
     , getFileCount : function() {
     	return this._options.fileCount;
     }
+    , getMaxFiles : function() {
+    	return this._options.maxFiles;
+    }
     , addFile : function (){
     	this._options.fileCount = this._options.fileCount + 1;
+    }
+    , canAddFile : function(){
+    	if (this.isNumberOfFilesLimited()){
+    		if (this.getFileCount() < this.getMaxFiles()){
+    			return true;
+    		} else
+    			return false;
+    	}
+    	return false;
+    }
+    , removeFile : function (){
+    	this._options.fileCount = this._options.fileCount - 1;
     }
     , getClientId : function (){
 		return this._options.clientId;
@@ -368,29 +392,39 @@ qq.extend(qq.FineUploaderXEO.prototype, {
 		elem.innerHTML = message;
 	}
 	
+	, getDragAndDropElement : function (){
+		return XVW.get(this._options.clientId + "_dnd");
+	}
+	
+	, _leaving_document_out: function(e){
+        return ((qq.chrome() || (qq.safari() && qq.windows())) && e.clientX == 0 && e.clientY == 0) // null coords for Chrome and Safari Windows
+            || (qq.firefox() && !e.relatedTarget); // null e.relatedTarget for Firefox
+    }
+	
 	, _setupDragAndDrop: function() {
         var self = this,
-            dropProcessingEl = this._find(this._element, 'dropProcessing'), //Ver o que é o find
+            dropProcessingEl = this.getDragAndDropElement(), 
             dnd, preventSelectFiles, defaultDropAreaEl;
 
         preventSelectFiles = function(event) {
             event.preventDefault();
         };
 
-        if (!this._options.dragAndDrop.disableDefaultDropzone) {
+        /*if (!this._options.dragAndDrop.disableDefaultDropzone) {
             defaultDropAreaEl = this._find(this._options.element, 'drop');
-        }
+        }*/
 
         dnd = new qq.DragAndDrop({
-            dropArea: defaultDropAreaEl,
-            extraDropzones: this._options.dragAndDrop.extraDropzones,
-            hideDropzones: this._options.dragAndDrop.hideDropzones,
+            dropArea: this.getDragAndDropElement(),
+            //extraDropzones: this._options.dragAndDrop.extraDropzones,
+            //hideDropzones: this._options.dragAndDrop.hideDropzones,
             multiple: this._options.multiple,
             classes: {
                 dropActive: this._options.classes.dropActive
             },
             callbacks: {
                 dropProcessing: function(isProcessing, files) {
+                	
                     var input = self._button.getInput();
 
                     if (isProcessing) {

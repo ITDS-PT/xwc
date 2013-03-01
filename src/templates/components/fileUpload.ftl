@@ -8,9 +8,9 @@
 			<div id="${this.clientId}_attatch" class='upload'>
 			  <span>Click to upload</span>
 			</div>
-			<div id='${this.clientId}_messages'>
-			</div>
+			<div id='${this.clientId}_messages'></div>
 			<div id='${this.clientId}_errors' class='upload-errors'></div>
+			<div id='${this.clientId}_dnd' class='xwc-dnd'>Drop Area</div>
 		</div>
 	</div>
 	
@@ -66,6 +66,27 @@
 			text-decoration:none;
 		}
 		
+		.xwc-drop-active {
+			background : #F7DDB0 !important;
+			font-weight: bold;
+		}
+		
+		.xwc-dnd {
+			color: black;
+			background: white;
+			display : inline;
+			font-size: 20px;
+			width: 350px;
+			text-align: center;
+			padding-top: 6px;
+			padding-bottom: 6px;
+			-webkit-border-radius: 8px;
+			-moz-border-radius: 8px;
+			border-radius: 8px;
+			border-color: grey;
+			border: 1px solid grey;
+		}
+		
 	</@xvw_css>
 	
 	<@xvw_script position='FOOTER'>
@@ -83,9 +104,10 @@
 		  , formId : '${this.formId}'
 		  , startMessage : '${this.startMessage}'
 		  , savingMessage : '${this.savingMessage}'
-	  	  , uploadFailed : '${this.uploadFailed}'
+		  , uploadFailed : '${this.uploadFailed}'
 	  	  , sendingMessage : '${this.sendingMessage}'
 	  	  , progressMessage : '${this.progressMessage}'
+	  	  , tooManyFilesMessage : '${this.tooManyFilesMessage}'
 	  	  , currentFiles : ${this.fileCount}
 		  , request: {
 	        	endpoint: '${this.servletUrl}'
@@ -93,8 +115,19 @@
 				   'xwc-upload': 'true'
 		   		}
 		  	}
+		  	, callbacks : {
+		  		onSubmit : function (id, name) {
+		  			if (this.isNumberOfFilesLimited()){
+						if (!this.canAddFile()){
+							alert(this._options.tooManyFilesMessage.replace("{file}",name));
+							return false;
+						}
+					}
+		  		}
+		  	}
 		  , classes : {
-			  buttonHover : 'x-form-trigger-hover'
+			    buttonHover : 'x-form-trigger-hover'
+			  , dropActive : 'xwc-drop-active'
 		  }
 		  , messages: {
             typeError: "${this.typeError}",

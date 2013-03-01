@@ -36,12 +36,12 @@ public class BridgeUpload extends FileUpload {
 	
 	@Override
 	public void initComponent() {
-		
+		super.initComponent();
 		DataFieldConnector connector = getDataFieldConnector();
 		long boui = 0;
 		if (connector != null){
 			if (connector instanceof XEOObjectAttributeConnector){
-				XEOObjectAttributeConnector attConnector = (XEOObjectAttributeConnector) connector;
+				XEOObjectAttributeConnector attConnector = ( XEOObjectAttributeConnector ) connector;
 				boui = attConnector.getAttributeHandler().getParent().getBoui();
 			}
 		}

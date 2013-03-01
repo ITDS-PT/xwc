@@ -178,7 +178,7 @@ qq.DragAndDrop = function(o) {
             });
         }
         disposeSupport.attach(document, 'dragleave', function(e){
-            if (options.hideDropzones && qq.FineUploader.prototype._leaving_document_out(e)) {
+            if (options.hideDropzones && qq.FineUploaderXEO.prototype._leaving_document_out(e)) {
                 for (i=0; i < dropzones.length; i+=1) {
                     qq(dropzones[i]).hide();
                 }
