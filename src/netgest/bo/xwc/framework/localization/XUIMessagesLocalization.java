@@ -15,6 +15,7 @@ import java.util.ResourceBundle.Control;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boSessionUser;
+import netgest.utils.StringUtils;
 
 public class XUIMessagesLocalization {
 
@@ -41,7 +42,7 @@ public class XUIMessagesLocalization {
 				{
 					boSessionUser boUser = ctx.getSysUser();
 					if (boUser != null){
-						if (boUser.getLanguage() != null && boUser.getLanguage() != "") {
+						if (StringUtils.hasValue( boUser.getLanguage() )) {
 							ret = boUser.getLanguage();
 						}
 					}
@@ -58,7 +59,7 @@ public class XUIMessagesLocalization {
 	public static String getMessage(String lang, Locale local, String bundle,
 			String key, Object... args) {
 		Locale language;
-		if (lang != null && lang != "") {
+		if (StringUtils.hasValue( lang )) {
 			if (lang.charAt(2) == '_') {
 
 				String s1 = lang.substring(0, 2);
