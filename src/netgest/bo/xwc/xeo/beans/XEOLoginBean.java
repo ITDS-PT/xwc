@@ -27,6 +27,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.utils.StringUtils;
 
 public class XEOLoginBean extends XEOSecurityLessBean {
 
@@ -37,7 +38,7 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 
 	public XEOLoginBean() {
 		showProfiles = getIsLoggedIn();
-		if (showProfiles && getProfileLovMap().size() <= 1)
+		if ( showProfiles && getProfileLovMap().size() <= 1 )
 			login();
 	}
 
@@ -51,10 +52,10 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 
 		XUIRequestContext oRequestContext = XUIRequestContext
 				.getCurrentContext();
-		String msg = oRequestContext.getRequestParameterMap().get("msg");
+		String msg = oRequestContext.getRequestParameterMap().get( "msg" );
 
-		if (msg != null) {
-			if ("1".equals(msg)) {
+		if ( msg != null ) {
+			if ( "1".equals( msg ) ) {
 				message = XUICoreMessages.SESSION_EXPIRED.toString();
 			}
 		}
@@ -82,10 +83,10 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 	}
 
 	public boSession getBoSession() {
-		HttpSession session = getHttpSession(false);
-		if (session != null) {
-			boSession xeoSession = (boSession) session
-					.getAttribute("boSession");
+		HttpSession session = getHttpSession( false );
+		if ( session != null ) {
+			boSession xeoSession = ( boSession ) session
+					.getAttribute( "boSession" );
 			return xeoSession;
 		}
 		return null;
@@ -103,23 +104,23 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 		this.profile = profile;
 	}
 
-	public Map<Object, String> getProfileLovMap() {
+	public Map< Object , String > getProfileLovMap() {
 
-		Map<Object, String> oProfilesMap = new LinkedHashMap<Object, String>();
-		if (getBoSession() != null) {
+		Map< Object , String > oProfilesMap = new LinkedHashMap< Object , String >();
+		if ( getBoSession() != null ) {
 			String[] iProfiles;
 
 			// SYSUSER should have access to all profiles configured on XEO
 			// Instance
-			if (getBoSession().getUser().getUserName().equals("SYSUSER"))
-				iProfiles = IProfileUtils.getAllIProfiles(getBoSession());
+			if ( getBoSession().getUser().getUserName().equals( "SYSUSER" ) )
+				iProfiles = IProfileUtils.getAllIProfiles( getBoSession() );
 			else
-				iProfiles = IProfileUtils.getIProfiles(getBoSession());
+				iProfiles = IProfileUtils.getIProfiles( getBoSession() );
 
-			if (iProfiles != null) {
-				for (String profileString : iProfiles) {
-					String[] currProfile = profileString.split(";");
-					oProfilesMap.put(currProfile[0], currProfile[1]);
+			if ( iProfiles != null ) {
+				for ( String profileString : iProfiles ) {
+					String[] currProfile = profileString.split( ";" );
+					oProfilesMap.put( currProfile[0] , currProfile[1] );
 				}
 			}
 		}
@@ -132,32 +133,33 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 
 		mainViewer = null;
 
-		boDefHandler defH = boDefHandler.getBoDefinition("uiWorkPlace");
-		if (defH != null && defH.getAttributeRef("defaultViewer") != null) {
+		boDefHandler defH = boDefHandler.getBoDefinition( "uiWorkPlace" );
+		if ( defH != null && defH.getAttributeRef( "defaultViewer" ) != null ) {
 			EboContext loginCtx;
 			loginCtx = null;
-			if (boApplication.currentContext().getEboContext() == null) {
-				loginCtx = oXeoSession.createRequestContext(null, null, null);
-				boApplication.currentContext().addEboContext(loginCtx);
+			if ( boApplication.currentContext().getEboContext() == null ) {
+				loginCtx = oXeoSession
+						.createRequestContext( null , null , null );
+				boApplication.currentContext().addEboContext( loginCtx );
 			} else {
 				loginCtx = boApplication.currentContext().getEboContext();
 			}
 			try {
 				boObject workPlace = null;
 				long boui = oXeoSession.getPerformerIProfileBoui();
-				if (boui == 0) {
-					boObjectList proflist = boObjectList.list(loginCtx,
-							"select uiWorkPlace where name='default'");
-					if (proflist.next())
+				if ( boui == 0 ) {
+					boObjectList proflist = boObjectList.list( loginCtx ,
+							"select uiWorkPlace where name='default'" );
+					if ( proflist.next() )
 						workPlace = proflist.getObject();
 					// workPlace =
 					// boObject.getBoManager().loadObject(loginCtx,"uiWorkPlace"
 					// ,"name='default'");
 				} else {
-					boObjectList proflist = boObjectList.list(loginCtx,
-							"SELECT uiWorkPlace WHERE profile=?",
-							new Object[] { boui });
-					if (proflist.next())
+					boObjectList proflist = boObjectList.list( loginCtx ,
+							"SELECT uiWorkPlace WHERE profile=?" ,
+							new Object[] { boui } );
+					if ( proflist.next() )
 						workPlace = proflist.getObject();
 
 					// workPlace = boObject.getBoManager().loadObject(loginCtx,
@@ -165,27 +167,27 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 					// new Object[] { boui }
 					// );
 				}
-				if (workPlace != null && workPlace.exists()) {
-					mainViewer = workPlace.getAttribute("defaultViewer")
+				if ( workPlace != null && workPlace.exists() ) {
+					mainViewer = workPlace.getAttribute( "defaultViewer" )
 							.getValueString();
-					if (mainViewer.length() == 0) {
+					if ( mainViewer.length() == 0 ) {
 						mainViewer = null;
 					}
 				}
-			} catch (Exception e) {
+			} catch ( Exception e ) {
 				e.printStackTrace();
 			} finally {
-				if (loginCtx != null)
+				if ( loginCtx != null )
 					loginCtx.close();
 			}
 
 		}
 
-		if (mainViewer == null) {
-			mainViewer = (String) ((HttpServletRequest) XUIRequestContext
-					.getCurrentContext().getRequest())
-					.getAttribute("__xwcMainViewer");
-			if (mainViewer == null) {
+		if ( mainViewer == null ) {
+			mainViewer = ( String ) ( ( HttpServletRequest ) XUIRequestContext
+					.getCurrentContext().getRequest() )
+					.getAttribute( "__xwcMainViewer" );
+			if ( mainViewer == null ) {
 				return "Main.xvw";
 			}
 		}
@@ -199,70 +201,69 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 		try {
 
 			boApplication bApp = boApplication
-					.getApplicationFromStaticContext("XEO");
+					.getApplicationFromStaticContext( "XEO" );
 
 			boSession oXeoSession = getBoSession();
 
-			if (this.getIsLoggedIn() && showProfiles && this.profile != null) {
+			if ( this.getIsLoggedIn() && showProfiles && this.profile != null ) {
 				showProfiles = false;
 				invalidCredentials = false;
-				oXeoSession.setPerformerIProfileBoui(this.profile);
+				oXeoSession.setPerformerIProfileBoui( this.profile );
 				XUIRequestContext oRequestContext = XUIRequestContext
 						.getCurrentContext();
-				HttpServletResponse oHttpResponse = (HttpServletResponse) oRequestContext
+				HttpServletResponse oHttpResponse = ( HttpServletResponse ) oRequestContext
 						.getResponse();
 
-				if (oRequestContext.isAjaxRequest()) {
+				if ( oRequestContext.isAjaxRequest() ) {
 					oRequestContext
 							.getScriptContext()
-							.add(
-									XUIScriptContext.POSITION_HEADER,
-									"Login_Logout",
+							.add( XUIScriptContext.POSITION_HEADER ,
+									"Login_Logout" ,
 									"document.location.href='"
 											+ oRequestContext
-													.getActionUrl(getMainViewer(oXeoSession))
-											+ "'");
+													.getActionUrl( getMainViewer( oXeoSession ) )
+											+ "'" );
 					oRequestContext.renderResponse();
 				} else {
 					try {
-						oHttpResponse.sendRedirect(oRequestContext
-								.getActionUrl(getMainViewer(oXeoSession)));
+						oHttpResponse.sendRedirect( oRequestContext
+								.getActionUrl( getMainViewer( oXeoSession ) ) );
 						oRequestContext.responseComplete();
-					} catch (IOException e) {
+					} catch ( IOException e ) {
 						e.printStackTrace();
 					}
 				}
 			} else {
-				if (this.userName != null && this.password != null) {
-					oXeoSession = bApp.boLogin(this.userName, this.password);
-					HttpSession session = getHttpSession(true);
+				if ( this.userName != null && this.password != null ) {
+					oXeoSession = bApp.boLogin( this.userName , this.password );
+					HttpSession session = getHttpSession( true );
 					XUIRequestContext oRequestContext = XUIRequestContext
 							.getCurrentContext();
-					HttpServletResponse oHttpResponse = (HttpServletResponse) oRequestContext
+					HttpServletResponse oHttpResponse = ( HttpServletResponse ) oRequestContext
 							.getResponse();
-					session.setAttribute("boSession", oXeoSession);
+					session.setAttribute( "boSession" , oXeoSession );
 					showProfiles = false;
 
-					Map<Object, String> profilesMap = getProfileLovMap();
-					if (profilesMap.size() > 0) {
-						if (profilesMap.size() > 1) {
+					Map< Object , String > profilesMap = getProfileLovMap();
+					if ( profilesMap.size() > 0 ) {
+						if ( profilesMap.size() > 1 ) {
 							showProfiles = true;
 						} else {
 							EboContext loginCtx = null;
 							try {
-								if (boApplication.currentContext()
-										.getEboContext() == null) {
+								if ( boApplication.currentContext()
+										.getEboContext() == null ) {
 									loginCtx = oXeoSession
-											.createRequestContext(null, null,
-													null);
+											.createRequestContext( null , null ,
+													null );
 									boApplication.currentContext()
-											.addEboContext(loginCtx);
+											.addEboContext( loginCtx );
 								}
-								oXeoSession.setPerformerIProfileBoui(String
-										.valueOf(profilesMap.keySet()
-												.iterator().next()));
+								oXeoSession.setPerformerIProfileBoui( String
+										.valueOf( profilesMap.keySet()
+												.iterator().next() ) );
 							} finally {
-								if (loginCtx != null) {
+								if ( loginCtx != null ) {
 									loginCtx.close();
 								}
 							}
@@ -270,30 +271,28 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 					}
 
 					invalidCredentials = false;
-					Boolean showProfilesConfig = (Boolean) ((HttpServletRequest) XUIRequestContext
-							.getCurrentContext().getRequest())
-							.getAttribute("__xwcShowUserProfiles");
-					if ((showProfilesConfig != null && !showProfilesConfig
-							.booleanValue())
-							|| !showProfiles) {
-						if (oRequestContext.isAjaxRequest()) {
+					Boolean showProfilesConfig = ( Boolean ) ( ( HttpServletRequest ) XUIRequestContext
+							.getCurrentContext().getRequest() )
+							.getAttribute( "__xwcShowUserProfiles" );
+					if ( ( showProfilesConfig != null && !showProfilesConfig
+							.booleanValue() ) || !showProfiles ) {
+						if ( oRequestContext.isAjaxRequest() ) {
 							oRequestContext
 									.getScriptContext()
-									.add(
-											XUIScriptContext.POSITION_HEADER,
-											"Login_Logout",
+									.add( XUIScriptContext.POSITION_HEADER ,
+											"Login_Logout" ,
 											"document.location.href='"
 													+ oRequestContext
-															.getActionUrl(getMainViewer(oXeoSession))
-													+ "'");
+															.getActionUrl( getMainViewer( oXeoSession ) )
+													+ "'" );
 							oRequestContext.renderResponse();
 						} else {
 							try {
 								oHttpResponse
-										.sendRedirect(oRequestContext
-												.getActionUrl(getMainViewer(oXeoSession)));
+										.sendRedirect( oRequestContext
+												.getActionUrl( getMainViewer( oXeoSession ) ) );
 								oRequestContext.responseComplete();
-							} catch (IOException e) {
+							} catch ( IOException e ) {
 								e.printStackTrace();
 							}
 						}
@@ -301,49 +300,48 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 				}
 			}
 
-		} catch (boLoginException e) {
-			if ("BO-4000".equals(e.getErrorCode())) {
+		} catch ( boLoginException e ) {
+			if ( "BO-4000".equals( e.getErrorCode() ) ) {
 				invalidCredentials = true;
 			} else {
 
 			}
 		}
 
-		if (invalidCredentials) {
+		if ( invalidCredentials ) {
 			XUIRequestContext.getCurrentContext().addMessage(
-					"LoginBean",
-					new XUIMessage(XUIMessage.TYPE_ALERT,
-							XUIMessage.SEVERITY_ERROR,
-							ViewersMessages.LOGIN_TITLE_ERROR_LOGIN.toString(),
+					"LoginBean" ,
+					new XUIMessage( XUIMessage.TYPE_ALERT ,
+							XUIMessage.SEVERITY_ERROR ,
+							ViewersMessages.LOGIN_TITLE_ERROR_LOGIN.toString() ,
 							ViewersMessages.LOGIN_INVALID_CREDENCIALS
-									.toString()));
+									.toString() ) );
 		}
 	}
 
 	public void logout() {
-		HttpSession session = getHttpSession(true);
+		HttpSession session = getHttpSession( true );
 		XUIRequestContext oRequestContext = XUIRequestContext
 				.getCurrentContext();
-		HttpServletResponse oHttpResponse = (HttpServletResponse) oRequestContext
+		HttpServletResponse oHttpResponse = ( HttpServletResponse ) oRequestContext
 				.getResponse();
-		if (oRequestContext.isAjaxRequest()) {
+		if ( oRequestContext.isAjaxRequest() ) {
 			oRequestContext.getScriptContext().add(
-					XUIScriptContext.POSITION_HEADER,
-					"Login_Logout",
+					XUIScriptContext.POSITION_HEADER ,
+					"Login_Logout" ,
 					XVWScripts.getCommandScript(
-							(XUIComponentBase) oRequestContext.getViewRoot()
-									.findComponent("login:logoutBtn"),
-							XVWScripts.WAIT_STATUS_MESSAGE));
+							( XUIComponentBase ) oRequestContext.getViewRoot()
+									.findComponent( "login:logoutBtn" ) ,
+							XVWScripts.WAIT_STATUS_MESSAGE ) );
 			oRequestContext.renderResponse();
 		} else {
 			try {
-				session.removeAttribute("boSession");
+				session.removeAttribute( "boSession" );
 				session.invalidate();
-				oHttpResponse
-						.sendRedirect(oRequestContext
-								.getActionUrl(oRequestContext.getViewRoot()
-										.getViewId()));
-			} catch (IOException e) {
+				oHttpResponse.sendRedirect( oRequestContext
+						.getActionUrl( oRequestContext.getViewRoot()
+								.getViewId() ) );
+			} catch ( IOException e ) {
 				e.printStackTrace();
 			}
 			oRequestContext.responseComplete();
@@ -351,68 +349,61 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 	}
 
 	private HttpSession getHttpSession(boolean createNew) {
-		HttpServletRequest req = (HttpServletRequest) XUIRequestContext
+		HttpServletRequest req = ( HttpServletRequest ) XUIRequestContext
 				.getCurrentContext().getRequest();
-		HttpSession session = req.getSession(createNew);
+		HttpSession session = req.getSession( createNew );
 		return session;
 	}
 
 	/**
-	 * Changes the user profile
-	 * in the current session
+	 * Changes the user profile in the current session
 	 */
 	public void change_profile() {
-		if(getBoSession()==null)
-		{
+		if ( getBoSession() == null ) {
 			logout();
-		}
-	  else{
-		boSessionUser user=getBoSession().getUser();
-		userName=user.getUserName();
-		if(userName!=null)
-		if(userName!="")
-		{
-		XUIRequestContext oRequestContext = XUIRequestContext
-				.getCurrentContext();
-		String boui = oRequestContext.getRequestParameterMap().get("boui");
-		boSession oXeoSession = getBoSession();
-		HttpServletResponse oHttpResponse = (HttpServletResponse) oRequestContext
-				.getResponse();
+		} else {
+			boSessionUser user = getBoSession().getUser();
+			userName = user.getUserName();
+			if ( StringUtils.hasValue( userName ) ) {
 
-		Map<Object, String> profileMap = getProfileLovMap();
+					XUIRequestContext oRequestContext = XUIRequestContext
+							.getCurrentContext();
+					String boui = oRequestContext.getRequestParameterMap().get(
+							"boui" );
+					boSession oXeoSession = getBoSession();
+					HttpServletResponse oHttpResponse = ( HttpServletResponse ) oRequestContext
+							.getResponse();
 
-		if (profileMap.containsKey(boui)) {
-			setProfile(profileMap.get(boui));
-			if (oXeoSession.getPerformerIProfileBouiAsString() != boui) {
-				oXeoSession.setPerformerIProfileBoui(boui);
+					Map< Object , String > profileMap = getProfileLovMap();
 
-				if (oRequestContext.isAjaxRequest()) {
-					oRequestContext
-							.getScriptContext()
-							.add(
-									XUIScriptContext.POSITION_HEADER,
-									"Login_Logout",
-									"document.location.href='"
-											+ oRequestContext
-													.getActionUrl(getMainViewer(oXeoSession))
-											+ "'");
-					oRequestContext.renderResponse();
-				} else {
-					try {
-						oHttpResponse.sendRedirect(oRequestContext
-								.getActionUrl(getMainViewer(oXeoSession)));
-						oRequestContext.responseComplete();
-					} catch (IOException e) {
-						e.printStackTrace();
+					if ( profileMap.containsKey( boui ) ) {
+						setProfile( profileMap.get( boui ) );
+						if ( oXeoSession.getPerformerIProfileBouiAsString() != boui ) {
+							oXeoSession.setPerformerIProfileBoui( boui );
+
+							if ( oRequestContext.isAjaxRequest() ) {
+								oRequestContext
+										.getScriptContext()
+										.add( XUIScriptContext.POSITION_HEADER ,
+												"Login_Logout" ,
+												"document.location.href='"
+														+ oRequestContext
+																.getActionUrl( getMainViewer( oXeoSession ) )
+														+ "'" );
+								oRequestContext.renderResponse();
+							} else {
+								try {
+									oHttpResponse
+											.sendRedirect( oRequestContext
+													.getActionUrl( getMainViewer( oXeoSession ) ) );
+									oRequestContext.responseComplete();
+								} catch ( IOException e ) {
+									e.printStackTrace();
+								}
+							}
+						}
 					}
 				}
-			}
 		}
-		}}
 	}
 }
-	
-	
-	
-
-

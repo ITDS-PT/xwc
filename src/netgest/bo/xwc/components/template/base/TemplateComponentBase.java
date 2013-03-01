@@ -15,12 +15,6 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 public class TemplateComponentBase extends XUIComponentBase {
 	
 	/**
-	 * The name of the template for this component
-	 */
-	protected XUIBindProperty<String> template =
-			new XUIBindProperty<String>( "template", this, String.class );
-	
-	/**
 	 * Content for the template (specified in a bean)
 	 */
 	private XUIBindProperty<String> templateContent =
