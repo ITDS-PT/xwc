@@ -637,12 +637,13 @@ public class XUIViewRoot extends UIViewRoot {
 				headerW.writeText('\n');
 			}
 
-			theme.writePostBodyContent( getRequestContext() , w, viewRoot );
 
 			if (renderScripts(viewRoot) && getTheme() != null ) {
 				getTheme().addStyle(w.getStyleContext());
 				getTheme().addScripts(w.getScriptContext());
 			}
+			
+			theme.writePostBodyContent( getRequestContext() , w, viewRoot );
 
 		}
 
@@ -682,6 +683,7 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 			
 			
+			theme.writePreFooterContent( oRequestContext , w , viewRoot );
 			
 			if (renderHead(viewRoot) ) {
 				// Write footer Elements
@@ -695,7 +697,6 @@ public class XUIViewRoot extends UIViewRoot {
 				headerW.endElement("head");
 				headerW.writeText('\n');
 				
-				theme.writePreFooterContent( oRequestContext , w , viewRoot );
 
 				// End tag body
 				w.writeText('\n');
