@@ -38,7 +38,7 @@ import freemarker.template.Template;
  */
 public class TemplateRenderer extends XUIRenderer {
 
-	enum ProcessorDirectives{
+	public enum ProcessorDirectives{
 		SCRIPT("xvw_script"),
 		CSS("xvw_css"),
 		CHILDREN("xvw_facet"),
@@ -126,7 +126,7 @@ public class TemplateRenderer extends XUIRenderer {
 		}
 	}
 	
-	XUIViewRoot getRoot(UIComponent component){
+	protected XUIViewRoot getRoot(UIComponent component){
 		while ((component = component.getParent( )) != null ){
 				if (component instanceof XUIViewRoot)
 					return (XUIViewRoot)component;
@@ -135,7 +135,7 @@ public class TemplateRenderer extends XUIRenderer {
 	}
 
 
-	private void reportErrorProcessingTemplate( XUIComponentBase base, Exception e ) throws IOException {
+	protected void reportErrorProcessingTemplate( XUIComponentBase base, Exception e ) throws IOException {
 		String content = base.getTemplateContent();
 		if (!StringUtils.isEmpty( content )){
 			getResponseWriter().write( "Could not process the template("+content+") for component" + base.getId() + " reason: " + e.getMessage() );
@@ -154,7 +154,7 @@ public class TemplateRenderer extends XUIRenderer {
 	 * @return The loaded template
 	 * @throws IOException If something goes wrong while reading the template
 	 */
-	private Template getTemplate( XUIComponentBase template ) throws IOException {
+	protected Template getTemplate( XUIComponentBase template ) throws IOException {
 		String templateContent = template.getTemplateContent();
 		if (StringUtils.isEmpty( templateContent ))
 			return TemplateLoaderFactory.loadTemplate( template.getTemplate() );
