@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.faces.FactoryFinder;
-import javax.faces.context.FacesContext;
 import javax.faces.render.RenderKit;
 import javax.faces.render.RenderKitFactory;
 import javax.faces.render.Renderer;
@@ -14,10 +13,8 @@ import javax.faces.render.Renderer;
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
-import netgest.bo.system.boApplicationConfig;
 import netgest.bo.xwc.components.classic.renderers.XMLViewRootRenderer;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.framework.def.XUIComponentDefinition;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
 import netgest.bo.xwc.framework.def.XUIComponentStore;
 import netgest.bo.xwc.framework.def.XUIRendererDefinition;
