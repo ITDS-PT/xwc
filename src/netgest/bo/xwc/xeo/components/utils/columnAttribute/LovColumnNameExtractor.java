@@ -2,7 +2,7 @@ package netgest.bo.xwc.xeo.components.utils.columnAttribute;
 
 public class LovColumnNameExtractor {
 
-	private static final String LOV_ID_PREFIX = "xeoLov";
+	public static final String LOV_ID_PREFIX = "xeoLov";
 	
 	private String dataField = "";
 	

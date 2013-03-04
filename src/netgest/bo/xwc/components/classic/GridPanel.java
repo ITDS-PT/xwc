@@ -61,7 +61,9 @@ import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+import netgest.utils.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1180,7 +1182,14 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * @return String with the dataField of the group by column
 	 */
 	public String getGroupBy() {
-		return this.groupBy.getEvaluatedValue();
+		String groupBy =  this.groupBy.getEvaluatedValue();
+		if (StringUtils.hasValue( groupBy )){
+			Column c = getColumn( groupBy );
+			if (c == null){
+				return LovColumnNameExtractor.LOV_ID_PREFIX + groupBy;
+			}
+		}
+		return groupBy;
 	}
 	
 	/**
