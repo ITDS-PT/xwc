@@ -94,7 +94,7 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 
 			Object value=field.getValue();
 			if (value==null)
-				return null;
+				return new SimpleScalar("");
 			else {
 				String file=(String)value;
 				link+=file.substring(file.lastIndexOf("/")+1,file.length());
@@ -113,7 +113,7 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 		{
 			Object value=field.getValue();
 			if (value==null)
-				return null;
+				return new SimpleScalar("");
 			BigDecimal boui = (BigDecimal)value;
 			XEOObjectConnector xeoobject = new XEOObjectConnector(boui.longValue(), 0);			
 			try {
@@ -181,7 +181,7 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 						==boDefAttribute.ATTRIBUTE_OBJECT)
 				{
 					if (value==null)
-						return null;
+						return new SimpleScalar("");
 					BigDecimal boui = (BigDecimal)value;
 					XEOObjectConnector xeoobject = new XEOObjectConnector(boui.longValue(), 0);
 					return new TemplateDataRecordConnectorWrapper(xeoobject);
@@ -196,7 +196,7 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 				if (value!=null)
 					return new SimpleScalar(value.toString());
 				else
-					return null;
+					return new SimpleScalar("");
 		}
 		else
 			return null;

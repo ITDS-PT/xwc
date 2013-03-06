@@ -36,17 +36,6 @@ public class TemplateDataRecordConnectorWrapper implements TemplateHashModel {
 			}		
 		}
 		
-		if (isXEOObject() && (name.equals(TemplateDataFieldConnectorWrapper.LABEL))) {
-			XEOObjectConnector obj=(XEOObjectConnector)this.record;
-			try {
-				if (name.toLowerCase().equals(TemplateDataFieldConnectorWrapper.LABEL))
-						return new SimpleScalar(obj.getXEOObject().getLabel());					
-			}
-			catch (boRuntimeException e) {
-				
-			}		
-		}
-		
 		if (((isXEOObject() || 
 				wrapper.getField()==null) && name.endsWith("$"))) {
 			name=name.substring(0, name.length()-1);
