@@ -363,14 +363,14 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 
 	public XUIComponentBase findComponent(Class<?> cType) {
-		List<UIComponent> list;
+		Iterator<UIComponent> list;
 		XUIComponentBase oComp;
 
 		oComp = null;
 
-		list = getChildren();
-		for (UIComponent component : list) {
-			
+		list = getFacetsAndChildren();
+		while (list.hasNext()){
+			UIComponent component = list.next();
 			if (component instanceof XUIComponentBase)
 			{
 				oComp = ((XUIComponentBase) component).findComponent(cType);
@@ -380,10 +380,11 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 			else
 			{
-				List<UIComponent> listChildren = component.getChildren();
-				for (UIComponent chilCmp: listChildren)
+				Iterator<UIComponent> listChildren = component.getFacetsAndChildren();
+				while (listChildren.hasNext())
 				{
-					findComponent(chilCmp, cType);
+					UIComponent childCmp = listChildren.next();
+					findComponent(childCmp, cType);
 				}
 			}
 			
@@ -396,9 +397,10 @@ public class XUIViewRoot extends UIViewRoot {
 		XUIComponentBase oComp = null;
 		if (current != null)
 		{
-			List<UIComponent> list = current.getChildren();
-			for (UIComponent component : list)
-			{
+			Iterator<UIComponent> list = current.getFacetsAndChildren();
+			while (list.hasNext()){
+				UIComponent component = list.next();
+			
 				if (component instanceof XUIComponentBase)
 				{
 					oComp = ((XUIComponentBase) component).findComponent(cType);
@@ -408,9 +410,9 @@ public class XUIViewRoot extends UIViewRoot {
 				}
 				else
 				{
-					List<UIComponent> listChildren = component.getChildren();
-					for (UIComponent chilCmp: listChildren)
-					{
+					Iterator<UIComponent> listChildren = component.getFacetsAndChildren();
+					while (listChildren.hasNext()){
+						UIComponent chilCmp = listChildren.next();
 						return findComponent(chilCmp,cType);
 					}
 				}
