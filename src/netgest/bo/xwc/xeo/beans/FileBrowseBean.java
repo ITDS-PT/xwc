@@ -32,8 +32,6 @@ public class FileBrowseBean extends netgest.bo.xwc.xeo.beans.XEOBaseBean {
 		
 		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
 		
-		System.out.println(sViewStateId);
-		
 		XUIViewRoot oViewRoot = oRequestContext.getViewRoot(); 
 			
 		HTMLFileBrowse 	oFileComp   = 
