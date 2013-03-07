@@ -1,17 +1,12 @@
 package netgest.bo.xwc.components.template.xeo;
 
-import java.io.IOException;
-
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
-import netgest.bo.xwc.components.template.base.TemplateRenderer;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 
 public class Xeolist extends PaginatedList {
@@ -22,7 +17,7 @@ public class Xeolist extends PaginatedList {
 	private XUIBindProperty<XEOObjectListConnector> dataSource = new XUIBindProperty<XEOObjectListConnector>(
 			"dataSource", this, XEOObjectListConnector.class);
 	
-	private int recordcount;
+	private int recordCount=-1;
 	private XEOObjectListConnector connector = null;
 
 	public void setBoql( String boql ) {
@@ -75,10 +70,10 @@ public class Xeolist extends PaginatedList {
 					connector=new XEOObjectListConnector(list);
 				}
 				
-				connector.setPage(new Integer(this.getPage()).intValue());
-				connector.setPageSize(new Integer(this.getPagesize()).intValue());			
-				connector.refresh();
-				recordcount = connector.getRecordCount();
+				//connector.setPage(new Integer(this.getPage()).intValue());
+				//connector.setPageSize(new Integer(this.getPagesize()).intValue());			
+				//connector.refresh();
+				//recordcount = connector.getRecordCount();
 			}
 			else if (connector.getPage()!=new Integer(this.getPage()).intValue() ||
 					connector.getPageSize()!=new Integer(this.getPagesize()).intValue()
@@ -87,7 +82,7 @@ public class Xeolist extends PaginatedList {
 				connector.setPage(new Integer(this.getPage()).intValue());
 				connector.setPageSize(new Integer(this.getPagesize()).intValue());			
 				connector.refresh();
-				recordcount = connector.getRecordCount();
+				//recordcount = connector.getRecordCount();
 			}
 		}
 		finally {
@@ -99,7 +94,9 @@ public class Xeolist extends PaginatedList {
 
 	@Override
 	public int getRecordCount() {
-		return this.recordcount;
+		if (this.recordCount==-1 && this.connector!=null)
+			this.recordCount = connector.getRecordCount();
+		return this.recordCount;
 	}
 	
 }
