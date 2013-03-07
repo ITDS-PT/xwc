@@ -466,31 +466,33 @@ public class SQLDataListConnector implements DataListConnector {
 	
 	@Override
 	public void refresh() {
+		
 		resetRowsAndCols();
 		Connection cn = this.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		try {
+		try {			
 			ps = cn.prepareStatement(sqlQuery,
 					ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			setParameters(ps,pars);
-			rs = ps.executeQuery();
+			rs = ps.executeQuery();			
 			
-			if (this.dataFieldsMeta == null)
+			if (this.dataFieldsMeta == null)				
 				addDataFieldMetaData(rs.getMetaData());
+						
 			int rowNumber = 1;
 			int firstRow = (page * pageSize - pageSize) +1;
-			int lastRow = page * pageSize;
+			int lastRow = page * pageSize;		
 			while (rs.next()) {
 				if (rowNumber>=firstRow && rowNumber<=lastRow)
 					addRow(rs, rowNumber);
 				
 				rowNumber++;
-			}
-			
+			}					
 		} catch (SQLException e) {
 			LOGGER.severe("Error refreshing Connector", e);
-		}		
+		}	
+		
 		finally {
 			sqlQuery = sqlOriginalQuery;
 			pars = null;
@@ -505,7 +507,7 @@ public class SQLDataListConnector implements DataListConnector {
 				LOGGER.severe("Something went wrong closing jdbc resources", e);
 			}
 			if (ctx!=null)
-				ctx.close();
+				ctx.close();			
 		}
 	}
 
@@ -549,10 +551,9 @@ public class SQLDataListConnector implements DataListConnector {
 			
 			colIndex++;			
 		}
-		SQLDataRecordConnector record = new SQLDataRecordConnector(row, 1);
-		rows.add(record);
 		
-		
+		SQLDataRecordConnector record = new SQLDataRecordConnector(row, rowIndex);
+		rows.add(record);				
 	}
 	
 	private void addDataFieldMetaData(ResultSetMetaData rsMetaData) {
@@ -586,8 +587,7 @@ public class SQLDataListConnector implements DataListConnector {
 		}
 		catch (SQLException e) {
 			
-		}
-		
+		}		
 	}
 	
 	private String getColumnNameOrExpression(int index) {
