@@ -228,12 +228,13 @@ public abstract class XUIComponentBase extends UIComponentBase
     	}
     	
     	XUIComponentBase oRet;
-    	List<UIComponent> oChildrenList;
+    	Iterator<UIComponent> oChildrenList;
     	
     	oRet = null;
     	
-    	oChildrenList = getChildren();
-    	for( UIComponent child : oChildrenList ) {
+    	oChildrenList = getFacetsAndChildren();
+    	while (oChildrenList.hasNext()){
+    		UIComponent child = oChildrenList.next();
     		if( cType.isInstance( child ) ) {
     			oRet = (XUIComponentBase)child;
     			break;
@@ -262,9 +263,9 @@ public abstract class XUIComponentBase extends UIComponentBase
 		XUIComponentBase oComp = null;
 		if (current != null)
 		{
-			List<UIComponent> list = current.getChildren();
-			for (UIComponent component : list)
-			{
+			Iterator<UIComponent> list = current.getFacetsAndChildren();
+			while (list.hasNext()){
+				UIComponent component = list.next();
 				if (component instanceof XUIComponentBase)
 				{
 					oComp = ((XUIComponentBase) component).findComponent(cType);
@@ -274,9 +275,9 @@ public abstract class XUIComponentBase extends UIComponentBase
 				}
 				else
 				{
-					List<UIComponent> listChildren = component.getChildren();
-					for (UIComponent chilCmp: listChildren)
-					{
+					Iterator<UIComponent> listChildren = component.getFacetsAndChildren();
+					while (listChildren.hasNext()){
+						UIComponent chilCmp = listChildren.next();
 						return findComponent(chilCmp,cType);
 					}
 				}
