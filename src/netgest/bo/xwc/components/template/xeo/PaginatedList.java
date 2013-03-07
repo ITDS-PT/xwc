@@ -47,7 +47,7 @@ public abstract class PaginatedList extends XUIComponentBase {
 
 	@Override
 	public void initComponent() {
-		initConnector();
+		//initConnector();
 		nextPageCommand = new XUICommand();
 		String id=getId()+"_nextpage";
 		nextPageCommand.setId( id );
@@ -264,7 +264,7 @@ public abstract class PaginatedList extends XUIComponentBase {
 	
 	@Override
 	public void preRender() {
-		initConnector();
+		//initConnector();
         nextPageCommand = (XUICommand)getChild( 0 );
         previousPageCommand = (XUICommand)getChild( 1 );
         firstPageCommand = (XUICommand)getChild( 2 );
@@ -286,7 +286,7 @@ public abstract class PaginatedList extends XUIComponentBase {
 	}
 	
 	public TemplateListWrapper getList() {
-		initConnector();
+		//initConnector();
 		return new TemplateListWrapper(getConnector().iterator());	
 	}
 	
@@ -316,9 +316,10 @@ public abstract class PaginatedList extends XUIComponentBase {
 	public static class ListRenderer extends TemplateRenderer {
 
 		@Override
-		public void encodeBegin(XUIComponentBase component) throws IOException {
+		public void encodeBegin(XUIComponentBase component) throws IOException {			
 			XUIResponseWriter w = getResponseWriter();
 			PaginatedList oComp = (PaginatedList)component;
+			oComp.initConnector();
 			w.startElement("div");
 			w.writeAttribute("id", oComp.getClientId());
 			

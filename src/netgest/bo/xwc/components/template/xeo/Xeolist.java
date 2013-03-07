@@ -1,17 +1,12 @@
 package netgest.bo.xwc.components.template.xeo;
 
-import java.io.IOException;
-
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
-import netgest.bo.xwc.components.template.base.TemplateRenderer;
 import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 
 public class Xeolist extends PaginatedList {
@@ -22,7 +17,7 @@ public class Xeolist extends PaginatedList {
 	private XUIBindProperty<XEOObjectListConnector> dataSource = new XUIBindProperty<XEOObjectListConnector>(
 			"dataSource", this, XEOObjectListConnector.class);
 	
-	private int recordcount;
+	private int recordcount=-1;
 	private XEOObjectListConnector connector = null;
 
 	public void setBoql( String boql ) {
@@ -78,7 +73,7 @@ public class Xeolist extends PaginatedList {
 				connector.setPage(new Integer(this.getPage()).intValue());
 				connector.setPageSize(new Integer(this.getPagesize()).intValue());			
 				connector.refresh();
-				recordcount = connector.getRecordCount();
+				//recordcount = connector.getRecordCount();
 			}
 			else if (connector.getPage()!=new Integer(this.getPage()).intValue() ||
 					connector.getPageSize()!=new Integer(this.getPagesize()).intValue()
@@ -87,18 +82,19 @@ public class Xeolist extends PaginatedList {
 				connector.setPage(new Integer(this.getPage()).intValue());
 				connector.setPageSize(new Integer(this.getPagesize()).intValue());			
 				connector.refresh();
-				recordcount = connector.getRecordCount();
+				//recordcount = connector.getRecordCount();
 			}
 		}
 		finally {
 			if (ctx!=null)
 				ctx.close();
-		}
-		
+		}	
 	}
 
 	@Override
 	public int getRecordCount() {
+		if (this.connector!=null && this.recordcount==-1)
+			this.recordcount = connector.getRecordCount();
 		return this.recordcount;
 	}
 	

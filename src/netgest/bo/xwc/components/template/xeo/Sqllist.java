@@ -16,7 +16,7 @@ public class Sqllist extends PaginatedList {
 			"dataSource", this, SQLDataListConnector.class);
 	
 	
-	private int recordCount=0;
+	private int recordCount=-1;
 	private SQLDataListConnector connector = null;
 
 	public void setSql( String sql ) {
@@ -50,6 +50,8 @@ public class Sqllist extends PaginatedList {
 
 	@Override
 	public int getRecordCount() {
+		if (this.connector!=null && this.recordCount==-1)
+			this.recordCount = connector.getRecordCount();
 		return this.recordCount;
 	}
 	
@@ -71,7 +73,7 @@ public class Sqllist extends PaginatedList {
 				connector.setPage(new Integer(this.getPage()).intValue());
 				connector.setPageSize(new Integer(this.getPagesize()).intValue());			
 				connector.refresh();
-				recordCount = connector.getRecordCount();
+				//recordCount = connector.getRecordCount();
 			}
 			else if (connector.getPage()!=new Integer(this.getPage()).intValue() ||
 					connector.getPageSize()!=new Integer(this.getPagesize()).intValue() 
@@ -80,7 +82,7 @@ public class Sqllist extends PaginatedList {
 				connector.setPage(new Integer(this.getPage()).intValue());
 				connector.setPageSize(new Integer(this.getPagesize()).intValue());			
 				connector.refresh();
-				recordCount = connector.getRecordCount();
+				//recordCount = connector.getRecordCount();
 			}
 		}
 		finally {
