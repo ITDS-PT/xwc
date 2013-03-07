@@ -37,6 +37,7 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 	public static String SYSCARDID = "syscardid";
 	public static String SYSCARDIDIMG = "syscardidimg";
 	public static String FILE = "file";
+	public static String FILEABSURL = "fileabsurl";
 	
 	public TemplateDataFieldConnectorWrapper(DataRecordConnector record,DataFieldConnector field){
 		this.record = record;
@@ -62,7 +63,8 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 			else if (name.toLowerCase().equals(SYSCARDID) ||
 					name.toLowerCase().equals(SYSCARDIDIMG))
 				return getCardId(name);
-			else if (name.toLowerCase().equals(FILE))
+			else if (name.toLowerCase().equals(FILE) 
+					|| name.toLowerCase().equals(FILEABSURL))
 				return getFileLink(name);
 			else
 				return null;
@@ -81,8 +83,11 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 		if (attconnector.getBoDefAttribute().getAtributeDeclaredType()
 				==boDefAttribute.ATTRIBUTE_BINARYDATA)
 		{
-			XEOObjectConnector objectconnector = (XEOObjectConnector)record;
 			String link="file/";
+			if (name.equals(FILEABSURL)) {
+				//TO BE DONE
+			}
+			XEOObjectConnector objectconnector = (XEOObjectConnector)record;
 			
 	/*		if (!StringUtils.isEmpty(PortalApplication
 					.currentPortalContext().getCurrentPortal().getId()))
