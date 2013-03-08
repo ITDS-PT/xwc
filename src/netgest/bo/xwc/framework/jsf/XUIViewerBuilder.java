@@ -156,6 +156,19 @@ public class XUIViewerBuilder
         {
         }
         
+        if( dcomponent.isRawContent() ) {
+	        try
+	        {
+	        	Method m = comp.getClass().getMethod( "setRawContent",new Class[] { Boolean.TYPE } );
+	            m.invoke( comp, new Object[] { true } );
+	            
+	        }
+	        catch(Exception e)
+	        {
+	        	e.printStackTrace();
+	        }
+        }
+        
         Iterator<String> keysEnum = dcomponent.getProperties().keySet().iterator();
         while( keysEnum.hasNext() )
         {

@@ -121,7 +121,7 @@ public class XUIViewerDefinitonParser
         }
         catch (Exception e)
         {
-        	throw new RuntimeException( "Viewer " + viewerName + " "  +  e );
+        	throw new RuntimeException( "Viewer " + viewerName + " "  +  e, e );
         }
         finally {
         }
@@ -390,7 +390,9 @@ public class XUIViewerDefinitonParser
             	XUIViewerDefinitionNode childText = new XUIViewerDefinitionNode();
             	childText.setName("xvw:genericTag");
             	childText.setTextContent( getLocalizedMessage( root, cnode.getNodeValue() ) );
+            	childText.setRawContent( true );
             	component.addChild( childText );
+            	
             }
         }
         return component; 
