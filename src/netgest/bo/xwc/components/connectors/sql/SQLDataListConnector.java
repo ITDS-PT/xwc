@@ -55,6 +55,7 @@ import netgest.utils.StringUtils;
  */
 public class SQLDataListConnector implements DataListConnector {
 
+	//Query to execute
 	private String sqlQuery = null;
 	
 	//Control variables for count and query
@@ -672,8 +673,6 @@ public class SQLDataListConnector implements DataListConnector {
 
 	@Override
 	public void setSqlFields(List<SqlField> sqlFields) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/**
@@ -714,5 +713,10 @@ public class SQLDataListConnector implements DataListConnector {
 
 	public void setRows(Collection<SQLDataRecordConnector> rows) {
 		this.rows = rows;
+	}
+
+	@Override
+	public boolean hasMorePages() {
+		return false;
 	}
 }
