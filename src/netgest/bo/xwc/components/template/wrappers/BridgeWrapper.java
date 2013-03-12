@@ -17,6 +17,7 @@ public class BridgeWrapper implements TemplateCollectionModel, XeoWrapper {
 	
 	public BridgeWrapper(bridgeHandler handler){
 		this.handler = handler;
+		this.handler.beforeFirst();
 	}
 	
 	@Override
