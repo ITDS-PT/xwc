@@ -17,6 +17,7 @@ public class BridgeWrapper implements TemplateCollectionModel, XeoWrapper {
 	
 	public BridgeWrapper(bridgeHandler handler){
 		this.handler = handler;
+		this.handler.beforeFirst();
 	}
 	
 	@Override
@@ -27,6 +28,7 @@ public class BridgeWrapper implements TemplateCollectionModel, XeoWrapper {
 			@Override
 			public TemplateModel next() throws TemplateModelException {
 				try {
+					handler.next();
 					return new ObjectWrapper(handler.getObject());
 				} catch ( boRuntimeException e ) {
 					e.printStackTrace();
@@ -35,7 +37,7 @@ public class BridgeWrapper implements TemplateCollectionModel, XeoWrapper {
 			
 			@Override
 			public boolean hasNext() throws TemplateModelException {
-				return handler.next();
+				return handler.getRow() < handler.getRowCount();
 			}
 		};
 	}

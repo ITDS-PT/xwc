@@ -17,6 +17,7 @@ public interface DataFieldMetaData {
     
     public boolean  getIsLov();
     public String   getLabel();
+    public String 	getToolTip();
 
     public byte		getSecurityPermissions();
     

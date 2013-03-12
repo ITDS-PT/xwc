@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.el.MethodExpression;
@@ -380,7 +381,38 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private String currAggregateFieldCheckSet;
 	private String aggregateData;
 	
+	XUIBaseProperty< Boolean > showCounters = new XUIBaseProperty< Boolean >(
+			"showCounters" , this, Boolean.TRUE );
+
+	public Boolean getShowCounters() {
+		return showCounters.getValue();
+	}
+
+	public void setShowCounters(boolean newVal) {
+		showCounters.setValue( newVal );
+	}
 	
+	/**
+	 * For internal use only: Marks the last page of a store 
+	 */
+	XUIBindProperty< Map<String,Integer> > recordCount = new XUIBindProperty< Map<String,Integer> >(
+			"recordCount" , this , Map.class );
+
+	public Integer getRecordCount(String groupId ) {
+		return recordCount.getEvaluatedValue().get( groupId );
+	}
+	
+	public void resetRecordCount(){
+		recordCount.getEvaluatedValue().clear();
+	}
+
+	public void setRecordCount(String newValExpr) {
+		recordCount.setExpressionText( newValExpr );
+	}
+	
+	public void setRecordCount(String groupId, int newVal) {
+		recordCount.getEvaluatedValue().put( groupId , Integer.valueOf( newVal ) );
+	}
 	
 	/**
 	 * Represents the maximum number of rows that can be selected in the Grid
@@ -608,6 +640,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public void initComponent() {
 		super.initComponent();
 		
+		if (this.recordCount.isDefaultValue()){
+			recordCount.setValue( new HashMap< String , Integer >() );
+		}
+		
 		if (filterLookup.isDefaultValue())
 			setFilterLookup( "#{" + getBeanId() + ".lookupFilterObject}" );
 
@@ -774,6 +810,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 			
 			GridPanel gridPanel = (GridPanel)arg0.getComponent().getParent();
 			gridPanel.resetToDefaults();
+			
 			
 		}
 		
@@ -1805,6 +1842,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 		setCurrentFilters( null );
 		setAggregateData(null);
 		setAggregateFieldsFromString(getAggregateData());
+		resetRecordCount();
 		forceRenderOnClient();
 	}
 	

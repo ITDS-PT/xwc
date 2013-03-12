@@ -385,7 +385,6 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 
 	public int getPage() {
 		return this.oObjectList.getPage();
-		
 	}
 
 	public int getPageSize() {
@@ -478,6 +477,9 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 	}
 
 	public void refresh() {
+		if (oObjectList.getPage() == -1){
+			oObjectList.lastPage();
+		}
 		this.oObjectList.refreshData();
 	}
 
@@ -725,5 +727,10 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 	@Override
 	public Object[] toArray(Object[] arg0) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean hasMorePages() {
+		return oObjectList.haveMorePages();
 	}
 }

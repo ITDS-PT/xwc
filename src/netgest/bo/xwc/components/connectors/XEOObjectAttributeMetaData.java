@@ -293,6 +293,11 @@ public class XEOObjectAttributeMetaData implements DataFieldMetaData {
 	public double getNumberMinValue() {
 		return Double.parseDouble( defAtt.getMin() );
 	}
+
+	@Override
+	public String getToolTip() {
+		return defAtt.getTooltip();
+	}
 	
 	
 	

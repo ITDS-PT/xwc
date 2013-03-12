@@ -342,7 +342,7 @@ public abstract class PaginatedList extends XUIComponentBase {
 //				w.writeAttribute("type","hidden");
 //				w.writeAttribute("name", oComp.getName()+"page");
 //				System.out.println(oComp.page.getEvaluatedValue());
-//				w.writeAttribute("value", oComp.page.getEvaluatedValue());
+//			w.writeAttribute("value", oComp.page.getEvaluatedValue());
 //				w.endElement("input");
 //				w.startElement("input");
 //				w.writeAttribute("type","hidden");

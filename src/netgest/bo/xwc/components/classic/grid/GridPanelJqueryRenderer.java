@@ -585,7 +585,9 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		    		groupDetails, 
 		    		groupDetails.iterator(), 
 		    		0, 
-		    		pageSize 
+		    		pageSize,
+		    		-1,
+		    		reqParam
 		    	);
 		    oResponse.getWriter().print( oStrBldr );
 		    

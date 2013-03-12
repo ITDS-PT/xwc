@@ -589,6 +589,11 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		
 		boDefHandler subClasseDef;
 		
+		boObject 		targetObject = getTargetObject();
+		bridgeHandler 	targetBridge = targetObject.getBridge( getBridgeName() );
+		
+		
+		
 		if( subClassesDef.size() > 0 ) {
 			subClasseDef = subClassesDef.get( 0 );
 			
@@ -599,7 +604,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 			rootMenu.setValue( subClasseDef.getName() );
 			rootMenu.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 			
-			if (subClasseDef.getBoCanBeOrphan())
+			if ( targetBridge.getDefAttribute().getChildIsOrphan( subClasseDef.getName() ) )
 			{
 				rootMenu.setId( getId() + "_add_" + subClasseDef.getName() );
 				rootMenu.setTargetMethod( "lookupBridge" );
@@ -657,8 +662,6 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		}
 		
 		//Generate tooltip for minimum and maximum
-		boObject 		targetObject = getTargetObject();
-		bridgeHandler 	targetBridge = targetObject.getBridge( getBridgeName() );
 		boDefAttribute	defAttribute = targetBridge.getDefAttribute();
 		rootMenu.setToolTip(getTooltipForAddButton(rootMenu.getToolTip(),defAttribute));
 		

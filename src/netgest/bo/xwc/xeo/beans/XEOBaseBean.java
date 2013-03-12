@@ -48,7 +48,7 @@ import org.json.JSONObject;
 
 public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUIViewBean {
 
-	private String sViewStateId;
+	protected String sViewStateId;
     private String sParentBeanId;
 	private String sTitle;
 	private String id = "viewBean" ;
