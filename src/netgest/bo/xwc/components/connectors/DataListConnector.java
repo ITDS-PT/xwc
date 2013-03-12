@@ -50,4 +50,6 @@ public interface DataListConnector {
     
     public void setSqlFields( List<SqlField> sqlFields );
     
+    public boolean hasMorePages();
+    
 }

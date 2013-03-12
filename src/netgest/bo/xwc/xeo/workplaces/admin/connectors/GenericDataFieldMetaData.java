@@ -59,7 +59,6 @@ public class GenericDataFieldMetaData implements DataFieldMetaData {
 
 	@Override
 	public int getDecimalPrecision() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -70,7 +69,6 @@ public class GenericDataFieldMetaData implements DataFieldMetaData {
 
 	@Override
 	public boolean getIsLov() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -81,44 +79,42 @@ public class GenericDataFieldMetaData implements DataFieldMetaData {
 
 	@Override
 	public Map<Object, String> getLovMap() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public int getMaxLength() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int getMinDecimals() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public boolean getNumberGrouping() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public double getNumberMaxValue() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public double getNumberMinValue() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public byte getSecurityPermissions() {
-		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public String getToolTip() {
+		return null;
 	}
 
 }

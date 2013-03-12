@@ -715,4 +715,10 @@ public class SQLDataListConnector implements DataListConnector {
 		this.rows = rows;
 	}
 
+	@Override
+	public boolean hasMorePages() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

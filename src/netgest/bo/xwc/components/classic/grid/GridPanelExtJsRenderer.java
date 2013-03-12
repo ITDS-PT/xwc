@@ -563,6 +563,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         
         oDataStoreConfig.addJSString( "url", actionURL );
+        oDataStoreConfig.add( "showCounters", oGrid.getShowCounters() );
         oDataStoreConfig.add("reader","new Ext.data.JsonReader({remoteSort:true, url:'"+actionURL+"',root:'" + oGrid.getId() + "',totalProperty:'totalCount'}," 
         		+ oFieldsConfig.renderExtConfig() + ")");
         
@@ -645,12 +646,14 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         ExtConfig onLoad = oExtListeners.addChild( "'load'");
         onLoad.add( "fn", 
-                "function() {" +
+                "function(store) {" +
                 "	var c = Ext.getCmp(\"" + oGrid.getClientId() +"\");\n" +
                 "	if( c && c.loadMask ) { " +
                 "		if( c.loadMask.xwc_wtout ) {window.clearTimeout(c.loadMask.xwc_wtout);}\n" + 		                
                 "		c.loadMask.onLoad();\n" +
         		"	} " +
+                " console.log(store.dataSourceChange);" + 
+                " store.resetDataSourceChange(); " +
         		"}" );
         
 /*        
@@ -969,7 +972,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         /** END ML - 10-10-2011 **/
         
         oView.add("onSelColumns", "function() { " + XVWScripts.getCommandScript("self", oGrid.getSelectColumnsCommand(), XVWScripts.WAIT_DIALOG ) + " }" );
-        oView.add("onResetDefaults", "function() { " + XVWScripts.getCommandScript("self", oGrid.getResetDefaultsCommand(), XVWScripts.WAIT_DIALOG ) + " }" );
+        oView.add("onResetDefaults", "function() { this.grid.markDataSourceChange(); " + XVWScripts.getCommandScript("self", oGrid.getResetDefaultsCommand(), XVWScripts.WAIT_DIALOG ) + " }" );
         //oGridConfig.addJSString("layout", "fit");
         
         if( this.oExtButtons != null ) {

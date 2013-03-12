@@ -22,6 +22,7 @@ import netgest.bo.xwc.components.classic.Tab;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.grid.Aggregate.AggregateAction;
 import netgest.bo.xwc.components.classic.grid.WebRequest.GridParameter;
+import netgest.bo.xwc.components.classic.grid.metadata.GridPanelGroupJSONRendererMetadata;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataGroupConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
@@ -169,7 +170,9 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	                		groupDetails, 
 	                		groupDetails.iterator(), 
 	                		0, 
-	                		reqParam.getPageSize() 
+	                		reqParam.getPageSize(),
+	                		-1,
+	                		reqParam
 	                	);
 	                oResponse.getWriter().print( oStrBldr );
 	                
@@ -207,16 +210,20 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 		                		50
 		                	);
 	                }
-	                	                
-	                int cnt = groupConnector.getRecordCount();
+	                
+	                
 	                oJsArrayProvider.getJSONArray( s, oGrid, oGrid.getGroupBy(), null, null, columnRenderer );
-	                s.append(",totalCount:").append( cnt );
-	                s.append('}');
+	                GridPanelGroupJSONRendererMetadata metadata = new GridPanelGroupJSONRendererMetadata( oGrid , groupConnector , reqParam );
+	                s.append(",");
+	                	s.append(metadata.outputJSON());
+	                s.append( "}" );
+	                
 	            	oResponse.getWriter().print( s );
 	        	}
 	        }
         }
     }
+	
 	
 	public GridPanelRequestParameters decodeServiceParameters( GridPanel oGridPanel, WebRequest oRequest ) {
 		String selectedRows 	= oRequest.getParameter( GridParameter.SELECTED_ROWS );
@@ -226,6 +233,8 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         String aggregateField 		= oRequest.getParameter( GridParameter.AGGREGATE );
         
         String groupToolBarVisible = oRequest.getParameter( GridParameter.TOOLBAR_VISIBLE );
+        
+        GridPanelRequestParameters reqParam = new GridPanelRequestParameters();
         
         if (groupToolBarVisible != null){
         	Boolean groupToolBarVisibleValue = Boolean.parseBoolean( groupToolBarVisible );
@@ -302,6 +311,11 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        }
         }
         
+        String dataSourceChanged = oRequest.getParameter( GridParameter.DATASOURCE_CHANGE );
+        if (StringUtils.hasValue( dataSourceChanged ) && Boolean.parseBoolean( dataSourceChanged )){
+        	reqParam.dataSourceChanged();
+        }
+        
         int groupByLevel = -1;
         
         if( groupByLevelS != null ) {
@@ -309,9 +323,6 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         }
         Object[] parentValues = null;
         
-        /*if( sParentValues != null ) {
-        	parentValues = Arrays.asList(sParentValues).toArray( new Object[ sParentValues.length ] );
-        }*/
         if (sParentValues != null){
         	parentValues = new Object[serviceParameterValues.size()];
         	int k = 0;
@@ -331,17 +342,36 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         	oGridPanel.setCurrentExpandedGroups( null );
         }
         
-        //oGridPanel.setGroupBy( groupBy );
         oGridPanel.setActiveRowByIdentifier( activeRow );
         if( selectedRows != null && selectedRows.length() > 0 ) {
         	oGridPanel.setSelectedRowsByIdentifier( selectedRows.split("\\|"));
         }
         
+        // Group by parameters
+        reqParam.setGroupBy( groupBy );
+        //String previousGroupBy = oGridPanel.getGroupBy();
+        String newGroupBy = org.apache.commons.lang.StringUtils.join(groupBy, ',');
+        //if (!org.apache.commons.lang.StringUtils.equals( previousGroupBy , newGroupBy ))
+        //	reqParam.dataSourceChanged();
+        oGridPanel.setGroupBy( newGroupBy );
+        
+        //FultexSearch Parameters
+        String sFullText    = oRequest.getParameter(GridParameter.FULL_TEXT);
+        String previousFullText = oGridPanel.getCurrentFullTextSearch();
+        if (!org.apache.commons.lang.StringUtils.equals( previousFullText , sFullText ))
+        	reqParam.dataSourceChanged();
+        oGridPanel.setCurrentFullTextSearch( sFullText );
+        
         // Parameters at requestLevel
         String sStart = oRequest.getParameter( GridParameter.START );
         String sLimit = oRequest.getParameter( GridParameter.LIMIT );
         
+        
         int start = Integer.parseInt( sStart!=null&&sStart.length()>0?sStart : "0" );
+        if (reqParam.isDataSourceChanged()){
+        	start = 0; //Prevent wrong pages from being present to the user
+        }
+        
         int limit = Integer.parseInt( sLimit!=null&&sLimit.length()>0?sLimit : oGridPanel.getPageSize() );
         
         int page = 1;
@@ -350,8 +380,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         else
         	page = (start / limit) + 1;
 		
-		GridPanelRequestParameters reqParam;
-		reqParam = new GridPanelRequestParameters();
+		
 		
 		if (groupToolBarVisible != null)
 			reqParam.setGroupToolBarVisible(Boolean.parseBoolean(groupToolBarVisible));
@@ -376,22 +405,20 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 			
 		}
 		
-		// Group by parameters
-		reqParam.setGroupBy( groupBy );
 		
-		
-		oGridPanel.setGroupBy( org.apache.commons.lang.StringUtils.join(groupBy, ',') );
 		 
 		reqParam.setGroupByLevel( groupByLevel );
 		reqParam.setParentValues( parentValues );
 		
-		reqParam.setPage( page );
+		if (start >= 0 )
+			reqParam.setPage( page );
+		else
+			reqParam.setPage( -1 );
 		reqParam.setPageSize( limit );
 		reqParam.setStart( start );
 		reqParam.setLimit( limit );
         
-        String sFullText    = oRequest.getParameter(GridParameter.FULL_TEXT);
-        oGridPanel.setCurrentFullTextSearch( sFullText );
+        
         
         
         // Sort Terms
@@ -458,6 +485,8 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 			}
         }
         
+        
+        
         // Filter terms
         String sFilters = oRequest.getParameter(GridParameter.FILTERS);
 		String sServerFilters = oGridPanel.getCurrentFilters();
@@ -508,6 +537,9 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         if( oGridPanel.getAutoSaveGridState()) {
         	oGridPanel.saveUserState();
         }
+        
+        System.out.println("DataSource changed "+  reqParam.isDataSourceChanged());
+        
 		return reqParam;
 		
 	}

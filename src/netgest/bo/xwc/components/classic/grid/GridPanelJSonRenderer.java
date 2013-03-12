@@ -20,6 +20,7 @@ import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
+import netgest.bo.xwc.components.classic.grid.metadata.GridPanelNormalJSONRendererMetadata;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
@@ -51,10 +52,14 @@ public class GridPanelJSonRenderer {
 		
 	}
 	
-    public StringBuilder buildDataArray( GridPanel oGrid, DataListConnector oDataSource,Iterator<DataRecordConnector> dataIterator, int start, int limit ) {
-    	return buildDataArray( oGrid, oDataSource,dataIterator, start, limit, -1 );
+	public StringBuilder buildDataArray( GridPanel oGrid, DataListConnector oDataSource,Iterator<DataRecordConnector> dataIterator, GridPanelRequestParameters params) {
+    	return buildDataArray( oGrid, oDataSource,dataIterator, params.getStart(), params.getLimit(), -1 , params);
     }
-    public StringBuilder buildDataArray( GridPanel oGrid, DataListConnector oDataSource,Iterator<DataRecordConnector> dataIterator, int start, int limit, long rowCount ) {
+	
+    public StringBuilder buildDataArray( GridPanel oGrid, DataListConnector oDataSource,Iterator<DataRecordConnector> dataIterator, int start, int limit ) {
+    	return buildDataArray( oGrid, oDataSource,dataIterator, start, limit, -1 , null);
+    }
+    public StringBuilder buildDataArray( GridPanel oGrid, DataListConnector oDataSource,Iterator<DataRecordConnector> dataIterator, int start, int limit, long rowCount, GridPanelRequestParameters parameters ) {
         JavaScriptArrayProvider oJsArrayProvider;
         
         Map<String,GridColumnRenderer> columnRenderer = new HashMap<String,GridColumnRenderer>();
@@ -91,15 +96,17 @@ public class GridPanelJSonRenderer {
         s.append( "\" :" );
         oJsArrayProvider.getJSONArray( s, oGrid, rowIdentifier, selRows, oGrid.getRowClass(), columnRenderer );
 
-        s.append(",\"totalCount\":\"").append( rowCount > -1?rowCount:oDataSource.getRecordCount() );
-        s.append("\"");
-        s.append('}');
+        GridPanelNormalJSONRendererMetadata metadata = 
+        		new GridPanelNormalJSONRendererMetadata( oGrid , oDataSource , parameters, rowCount );
+        s.append(",");
+    		s.append(metadata.outputJSON());
+    	s.append( "}" );
         
         return s;
         
     }
 	
-    public void getJsonData( ServletRequest oRequest, ServletResponse oResponse, 
+	public void getJsonData( ServletRequest oRequest, ServletResponse oResponse, 
     		GridPanelRequestParameters reqParam, GridPanel oGrid, DataListConnector oDataCon ) throws IOException {
     	
         Iterator<DataRecordConnector> dataIterator;
@@ -118,14 +125,14 @@ public class GridPanelJSonRenderer {
         		w.print( getJsonDataApplyingLocalGrouping(oGrid, oDataCon, reqParam) );
         	}
         	else if( (oDataCon.dataListCapabilities() & DataListConnector.CAP_PAGING) == DataListConnector.CAP_PAGING )  {
-            	oGrid.setGroupBy( null );
+            	//oGrid.setGroupBy( null );
         		oDataCon.setPageSize( reqParam.getLimit() ); 
                 oDataCon.setPage( reqParam.getPage() );
                 dataIterator = getDataListIterator(oGrid, oDataCon);
-                StringBuilder oStrBldr = buildDataArray( oGrid, oDataCon, dataIterator, 0, reqParam.getLimit() );
+                StringBuilder oStrBldr = buildDataArray( oGrid, oDataCon, dataIterator, 0, reqParam.getLimit(), -1, reqParam );
                 w.print( oStrBldr );
         	} else {
-            	oGrid.setGroupBy( null );
+            	//oGrid.setGroupBy( null );
                 dataIterator = getDataListIterator(oGrid, oDataCon);
                 
             	// Result Counter
@@ -137,7 +144,7 @@ public class GridPanelJSonRenderer {
                 }
                 dataIterator  = counterList.iterator();
                 
-            	StringBuilder oStrBldr = buildDataArray( oGrid, oDataCon, dataIterator, reqParam.getStart(), reqParam.getLimit(), counter );
+            	StringBuilder oStrBldr = buildDataArray( oGrid, oDataCon, dataIterator, reqParam.getStart(), reqParam.getLimit(), counter, reqParam );
                 w.print( oStrBldr );
         	}
         }
@@ -273,7 +280,7 @@ public class GridPanelJSonRenderer {
             dataIterator  = counterList.iterator();
             
             //dataIterator = getDataListIterator(oGrid, oDataCon);
-        	StringBuilder oStrBldr = buildDataArray( oGrid, oDataCon, dataIterator, reqParam.getStart(), reqParam.getLimit(), counter );
+        	StringBuilder oStrBldr = buildDataArray( oGrid, oDataCon, dataIterator, reqParam.getStart(), reqParam.getLimit(), counter, reqParam );
         	
         	return oStrBldr;
             
@@ -430,6 +437,11 @@ public class GridPanelJSonRenderer {
 		@Override
 		public void setPageSize(int pageSize) {
 			//
+		}
+
+		@Override
+		public boolean hasMorePages() {
+			return true;
 		}
 	}
 	
@@ -679,6 +691,11 @@ public class GridPanelJSonRenderer {
 		@Override
 		public boolean isValid() {
 			return true;
+		}
+
+		@Override
+		public String getToolTip() {
+			return null;
 		}
 	}
 	

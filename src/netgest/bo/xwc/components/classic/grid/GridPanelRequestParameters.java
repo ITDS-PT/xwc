@@ -112,6 +112,16 @@ public class GridPanelRequestParameters {
 	public void setLimit(int limit) {
 		this.limit = limit;
 	}
+
+	private boolean dataSourceChanged = false;
+	
+	public void dataSourceChanged() {
+		this.dataSourceChanged = true;
+	}
+	
+	public boolean isDataSourceChanged(){
+		return dataSourceChanged;
+	}
 	
 	
 }

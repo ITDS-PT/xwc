@@ -28,7 +28,7 @@ import netgest.utils.StringUtils;
  * This components renders a label and the input component for a {@link DataFieldConnector}
  * 
  * The inputType is automatic calculated based on the renderType returned from the DataFieldConnector
- * but can be overwrited for any valid AttributeBase input field
+ * but can be overwritten for any valid AttributeBase input field
  * 
  * Example:
  * <code>
@@ -238,6 +238,9 @@ public class Attribute extends AttributeBase
         if( getValueExpression( "viewerSecurityPermissions" )!=null )
         	label.setViewerSecurityPermissions( getValueExpression("viewerSecurityPermissions").getExpressionString() );
 
+        if (getValueExpression( "toolTip" ) != null )
+        	label.setToolTip( getValueExpression( "toolTip" ).getExpressionString() );
+        
         label.setInstanceId( getInstanceId() );
     }
     

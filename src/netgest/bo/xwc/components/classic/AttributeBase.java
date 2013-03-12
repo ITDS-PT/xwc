@@ -253,6 +253,21 @@ public class AttributeBase extends ViewerInputSecurityBase {
     XUIMethodBindProperty lookupResults = 
         	new XUIMethodBindProperty( "lookupResults", this  );
     
+    
+    /**
+     * Tooltip for this component
+     */
+    XUIBindProperty< String > toolTip = new XUIBindProperty< String >(
+			"toolTip" , this , String.class );
+
+	public String getToolTip() {
+		return toolTip.getEvaluatedValue();
+	}
+
+	public void setToolTip(String newValExpr) {
+		toolTip.setExpressionText( newValExpr );
+	}
+    
     /**
      * Initialize the component
      */
@@ -407,6 +422,10 @@ public class AttributeBase extends ViewerInputSecurityBase {
 	        
 	        if (displayValue.isDefaultValue()){
 	        	this.displayValue.setExpressionText(sBeanExpression + ".displayValue}" );
+	        }
+	        
+	        if (toolTip.isDefaultValue()){
+	        	this.toolTip.setExpressionText(sBeanExpression + ".toolTip}" );
 	        }
     	}
 	}
