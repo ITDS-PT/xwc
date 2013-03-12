@@ -123,9 +123,9 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 			XEOObjectConnector xeoobject = new XEOObjectConnector(boui.longValue(), 0);			
 			try {
 				if (name.toLowerCase().equals(SYSCARDIDIMG))
-					return new SimpleScalar(xeoobject.getXEOObject().getCARDID().toString());
+					return new SimpleScalar(xeoobject.getXEOObject().getCARDID(false).toString());
 				else
-					return new SimpleScalar(xeoobject.getXEOObject().getCARDIDwNoIMG().toString());
+					return new SimpleScalar(xeoobject.getXEOObject().getTextCARDID().toString());
 			} catch (boRuntimeException e) {
 				return null;
 			}
