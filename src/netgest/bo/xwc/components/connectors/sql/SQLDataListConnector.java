@@ -475,6 +475,16 @@ public class SQLDataListConnector implements DataListConnector {
 		try {			
 			ps = cn.prepareStatement(sqlQuery,
 					ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			
+			int toadd=1;
+            if (pageSize==Integer.MAX_VALUE)
+            	toadd=0;
+	           
+	        int maxRows = (page*pageSize)+toadd;
+	        if (maxRows > 50000000)
+	                   maxRows = 0;
+	        ps.setMaxRows(maxRows);
+	        
 			setParameters(ps,pars);
 			rs = ps.executeQuery();			
 			
