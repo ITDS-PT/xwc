@@ -475,8 +475,23 @@ public class XUIViewerDefinitonParser
     	addBeanIdsToViewerDefinition( def , included.getViewerBeanIds() );
     	addEventsFromIncludedViewer( def, included );
     	
-    	XUIViewerDefinitionNode wrapper = wrapInclusion( def, included.getRootComponent().getChildren().get( 0 ).getChildren(), parent );
+    	//XUIViewerDefinitionNode wrapper = wrapInclusion( def, included.getRootComponent().getChildren().get( 0 ).getChildren(), parent );
+    	List<XUIViewerDefinitionNode> listToWrap = findSuitableRootToInclude( included.getRootComponent() );
+    	XUIViewerDefinitionNode wrapper = wrapInclusion( def, listToWrap, parent );
     	return wrapper;
+    }
+    
+    private List<XUIViewerDefinitionNode> findSuitableRootToInclude(XUIViewerDefinitionNode root){
+    	String rootName = root.getName();
+    	if ("xvw:root".equalsIgnoreCase( rootName ) || "xvw:viewer".equalsIgnoreCase( rootName )){
+    		if (root.getChildren().size() == 1)
+    			return findSuitableRootToInclude( root.getChildren().get( 0 ) );
+    		else
+    			return root.getChildren();
+    	} else if ("xvw:composition".equalsIgnoreCase( rootName ) || "xvw:container".equalsIgnoreCase( rootName ))
+    		return root.getChildren();
+    	else
+    		return new ArrayList< XUIViewerDefinitionNode >();
     }
     
     private void addBeansToViewerDefinition( XUIViewerDefinition toAdd, List<String> beans ){
@@ -517,6 +532,7 @@ public class XUIViewerDefinitonParser
     	
     	for (XUIViewerDefinitionNode child : result){
     		wrapper.addChild(child);
+    		
     	}
     	return wrapper;
     }
