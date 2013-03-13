@@ -68,15 +68,18 @@ public class XUIViewerDefinitonParser
             
             Map<String,XMLElement> defines = new HashMap< String , XMLElement >();
             
+            xwvr = new XUIViewerDefinition();
+            
             //Deal with a Composition 
             XMLElement potentialComposition = findPotentialCompositionElement( element );
             if ( isPageComposition( potentialComposition ) ){
             	defines = findDefineElements( potentialComposition );
             	String templateToParse = potentialComposition.getAttribute( "template" );
+            	parseBeanClasses( xwvr, node.getAttribute( "beanClass" ) );
+                parseBeanIds( xwvr, node.getAttribute( "beanId" ) );
             	node = reloadViewerFromTemplate( templateToParse );
             }
 
-            xwvr = new XUIViewerDefinition();
             parseBeanClasses( xwvr, node.getAttribute( "beanClass" ) );
             parseBeanIds( xwvr, node.getAttribute( "beanId" ) );
             List<String> beanIds = xwvr.getViewerBeanIds( );
