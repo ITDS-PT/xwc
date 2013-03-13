@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
@@ -86,4 +87,36 @@ public class Template extends XUIComponentBase {
 		return this.properties;
 	}
 
+	
+	@Override
+	public void restoreState(Object state) {
+		this.properties = new LinkedHashMap<String, Object>();
+
+		Object[] oState = (Object[])state;
+		super.restoreState(oState[0]);
+		
+		int keysCntr = (Integer)oState[1];
+		for( int i=0; i < keysCntr; i++ ) {
+			Object[] keyPar = (Object[])oState[ i + 2 ];
+			this.properties.put( (String)keyPar[0], (String)keyPar[1] );   
+		}
+	}
+
+	@Override
+	public Object saveState() {
+		
+		Object[] saveObj = new Object[ this.properties.size() + 3 ];
+		saveObj[0] = super.saveState();
+		saveObj[1] = this.properties.size();
+		Set<String> keyNames = this.properties.keySet();
+		
+		int iPos = 2;
+		for( String keyName : keyNames ) {
+			saveObj[ iPos ] = new Object[] { keyName, this.properties.get( keyName ) };
+			iPos++;
+		}
+		return saveObj;
+	}
+	
+	
 }
