@@ -1202,19 +1202,24 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	    		for( Method m : beanMethods ) {
 	    			XUIWebParameter parameter = (XUIWebParameter)m.getAnnotation( XUIWebParameter.class );
 	    			if( parameter != null ) {
+    					String parameterName = parameter.name();
+    					String defaultValue  = parameter.defaultValue();
+    					String value = null;
+    					if( parameters.containsKey( parameterName ) ) {
+    						value = parameters.get( parameterName );
+    					}
+    					else if (defaultValue != null) {
+    						value = defaultValue;
+    					}
 	    				try {
-	    					String parameterName = parameter.name();
-	    					String defaultValue  = parameter.defaultValue();
-	    					String value = null;
-	    					if( parameters.containsKey( parameterName ) ) {
-	    						value = parameters.get( parameterName );
-	    					}
-	    					else if (defaultValue != null) {
-	    						value = defaultValue;
-	    					}
 							m.invoke(bean, new XUIPropertyValueDecoder( value ).getDecodedValue() );
 						}  catch (Exception e) {
-							log.warn( "Could not invoke " + m.getName() , e );
+		    				try {
+		    					m.invoke(bean, value );
+		    				}
+		    				catch( Exception e1 ) {  
+		    					log.warn( "Could not invoke " + m.getName() , e );
+		    				}
 						}
 	    			}
 	    			
