@@ -1,7 +1,6 @@
 package netgest.bo.xwc.components.template;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +11,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import netgest.bo.xwc.components.template.preprocessor.CommandsPreProcessor;
+import netgest.bo.xwc.components.template.util.TemplateMap;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
@@ -24,7 +24,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class Template extends XUIComponentBase {
 
-	private Map<String, Object> properties;
+	private TemplateMap<String, Object> properties;
 	
 	/**
 	 * Whether or not to reRender the Template component
@@ -59,28 +59,23 @@ public class Template extends XUIComponentBase {
 
 	public void setProperties( Map<String, String> properties ) {
 		if ( this.properties == null )
-			this.properties = new LinkedHashMap<String, Object>();
+			this.properties = new TemplateMap< String , Object >( getELContext() );
 
 		Iterator<String> it = properties.keySet().iterator();
 		while ( it.hasNext() ) {
 			String propName = it.next();
 			String value = properties.get( propName );
 
-			FacesContext context = FacesContext.getCurrentInstance();
-			ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
-			ValueExpression expression = oExFactory.createValueExpression( getELContext(), value, Object.class );
-			if ( expression.isLiteralText() )
-				this.properties.put( propName, value );
-			else {
-				try {
-					Object evaluatedValue = expression.getValue( getELContext() );
-					this.properties.put( propName,  evaluatedValue );
-				} catch ( Exception e ) {
-					e.printStackTrace();
-					throw new RuntimeException( "Could not evaluate the expression " + value + " " + e.getMessage() );
-				}
-			}
+			ValueExpression expression = createValueExpression( value );
+			this.properties.put( propName, expression );
 		}
+	}
+
+	protected ValueExpression createValueExpression(String value) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
+		ValueExpression expression = oExFactory.createValueExpression( getELContext(), value, Object.class );
+		return expression;
 	}
 
 	public Map<String, Object> getProperties() {
@@ -90,7 +85,7 @@ public class Template extends XUIComponentBase {
 	
 	@Override
 	public void restoreState(Object state) {
-		this.properties = new LinkedHashMap<String, Object>();
+		this.properties = new TemplateMap< String , Object >( getELContext() );
 
 		Object[] oState = (Object[])state;
 		super.restoreState(oState[0]);
@@ -98,7 +93,8 @@ public class Template extends XUIComponentBase {
 		int keysCntr = (Integer)oState[1];
 		for( int i=0; i < keysCntr; i++ ) {
 			Object[] keyPar = (Object[])oState[ i + 2 ];
-			this.properties.put( (String)keyPar[0], (String)keyPar[1] );   
+			ValueExpression expression = createValueExpression( (String)keyPar[1] );
+			this.properties.put( (String)keyPar[0], expression );   
 		}
 	}
 
@@ -112,11 +108,12 @@ public class Template extends XUIComponentBase {
 		
 		int iPos = 2;
 		for( String keyName : keyNames ) {
-			saveObj[ iPos ] = new Object[] { keyName, this.properties.get( keyName ) };
+			saveObj[ iPos ] = new Object[] { keyName, this.properties.getExpressionText( keyName ) };
 			iPos++;
 		}
 		return saveObj;
 	}
+	
 	
 	
 }
