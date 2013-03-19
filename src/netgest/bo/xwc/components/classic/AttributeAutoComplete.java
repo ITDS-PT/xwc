@@ -10,6 +10,7 @@ import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMessage;
+import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 
@@ -75,6 +76,20 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 				maxItems.setValue(10);
 			}
 		}
+		
+	}
+	
+	protected void includeHeaderScript(String id, String scriptPath){
+		getRequestContext().getScriptContext().addInclude( XUIScriptContext.POSITION_FOOTER,
+				id, 
+				scriptPath );
+	}
+	
+	protected void includeHeaderCss(String id, String cssPath){
+		getRequestContext().getStyleContext().addInclude( 
+				XUIScriptContext.POSITION_FOOTER,
+				id, 
+				cssPath );
 	}
 	
 	/**
@@ -184,8 +199,14 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 	@Override
 	public void initComponent() {
 		super.initComponent( );
+		setAttributeProperties();
 		if (lookupResults.isDefaultValue( ) ){
 			lookupResults.setExpressionText( "#{" + getBeanId( ) + ".getAutoCompleteSearchResult}", new Class<?>[]{String.class, AttributeBase.class} );
+		}
+		
+		if (!isRenderedOnClient()){
+			includeHeaderCss( "autoComplete_css", "ext-xeo/autocomplete/style.css" );
+			includeHeaderScript( "autoComplete_js","ext-xeo/autocomplete/jquery.fcbkcomplete.js" );
 		}
 	}
 	
