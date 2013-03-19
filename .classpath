@@ -70,7 +70,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/xeo"/>
 	<classpathentry kind="lib" path="project_lib/freemarker.jar"/>
 	<classpathentry kind="lib" path="project_lib/commons-fileupload-1.2.2.jar"/>
-	<classpathentry kind="lib" path="project_lib/jsf-api.jar"/>
+	<classpathentry kind="lib" path="project_lib/jsf-api.jar" sourcepath="C:/xeostudio/workspace-git/jsf-api"/>
 	<classpathentry kind="lib" path="project_lib/jsf-impl.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
