@@ -1253,44 +1253,74 @@ public class XEOEditBean extends XEOBaseBean
             	if( value != null ) {
             		oSelectedRow = oGrid.getRowByIdentifier( value );
             	}
+            	if (oSelectedRow == null){
+            		DataRecordConnector[] lines = oGrid.getSelectedRows();
+            		if (lines.length > 0)
+            			oSelectedRow = lines[0];
+            	}
             }
             
-    		sBridgeKeyToEdit = String.valueOf( oSelectedRow.getAttribute("BOUI").getValue() );
-    		
-    		try {
-				boObject childObj = boObject.getBoManager().loadObject(
-						getEboContext(), Long.valueOf(sBridgeKeyToEdit));
-				if (securityRights.canRead(getEboContext(), childObj.getName())) {
-					if (oAttDef.getChildIsOrphan( childObj.getName() ) ) {
-						if (oRequestContext.isAjaxRequest()) {
-							// Resubmit the to the command... to save the selected row.
-							oCommand.setValue( oSelectedRow
-									.getAttribute("BOUI")
-									.getValue().toString());
-							
-							String frameId = "rowDblClick_"+oSelectedRow
-							.getAttribute("BOUI")
-							.getValue().toString();
-							
-							oRequestContext.getScriptContext().add(
-									XUIScriptContext.POSITION_FOOTER,
-									"editBrigde_openTab",
-									XVWScripts.getOpenCommandTab(frameId,oCommand, "" , null ));
-							
-							oRequestContext.renderResponse();
+            
+            if (oSelectedRow != null){
+	    		sBridgeKeyToEdit = String.valueOf( oSelectedRow.getAttribute("BOUI").getValue() );
+	    		try {
+					boObject childObj = boObject.getBoManager().loadObject(
+							getEboContext(), Long.valueOf(sBridgeKeyToEdit));
+					if (securityRights.canRead(getEboContext(), childObj.getName())) {
+						if (oAttDef.getChildIsOrphan( childObj.getName() ) ) {
+							if (oRequestContext.isAjaxRequest()) {
+								// Resubmit the to the command... to save the selected row.
+								oCommand.setValue( oSelectedRow
+										.getAttribute("BOUI")
+										.getValue().toString());
+								
+								String frameId = "rowDblClick_"+oSelectedRow
+								.getAttribute("BOUI")
+								.getValue().toString();
+								
+								oRequestContext.getScriptContext().add(
+										XUIScriptContext.POSITION_FOOTER,
+										"editBrigde_openTab",
+										XVWScripts.getOpenCommandTab(frameId,oCommand, "" , null ));
+								
+								oRequestContext.renderResponse();
+							} else {
+								boObject sObjectToOpen;
+								try {
+									sObjectToOpen = boObject
+											.getBoManager()
+											.loadObject(
+													getEboContext(),
+													Long
+															.parseLong(sBridgeKeyToEdit));
+									oViewRoot = oSessionContext
+											.createChildView(
+									        		getViewerResolver().getViewer( sObjectToOpen, XEOViewerResolver.ViewerType.EDIT )
+												);
+									XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
+											.getBean("viewBean");
+									oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
+								} catch (NumberFormatException e) {
+									throw new RuntimeException(e);
+								} catch (boRuntimeException e) {
+									throw new RuntimeException(e);
+								}
+							}
 						} else {
-							boObject sObjectToOpen;
+							long lCurrentBoui;
+	
+							lCurrentBoui = ((BigDecimal) oSelectedRow.getAttribute(
+									"BOUI").getValue()).longValue();
+	
+							String sClassName;
 							try {
-								sObjectToOpen = boObject
-										.getBoManager()
-										.loadObject(
-												getEboContext(),
-												Long
-														.parseLong(sBridgeKeyToEdit));
+								sClassName = boObject.getBoManager()
+										.getClassNameFromBOUI(getEboContext(),
+												lCurrentBoui);
 								oViewRoot = oSessionContext
 										.createChildView(
-								        		getViewerResolver().getViewer( sObjectToOpen, XEOViewerResolver.ViewerType.EDIT )
-											);
+								        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+										);
 								XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 										.getBean("viewBean");
 								oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
@@ -1299,56 +1329,35 @@ public class XEOEditBean extends XEOBaseBean
 							} catch (boRuntimeException e) {
 								throw new RuntimeException(e);
 							}
-						}
-					} else {
-						long lCurrentBoui;
-
-						lCurrentBoui = ((BigDecimal) oSelectedRow.getAttribute(
-								"BOUI").getValue()).longValue();
-
-						String sClassName;
-						try {
-							sClassName = boObject.getBoManager()
-									.getClassNameFromBOUI(getEboContext(),
-											lCurrentBoui);
-							oViewRoot = oSessionContext
-									.createChildView(
-							        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
-									);
+	
+							oViewRoot = oSessionContext.createChildView(
+					        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+								);
 							XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 									.getBean("viewBean");
-							oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
-						} catch (NumberFormatException e) {
-							throw new RuntimeException(e);
-						} catch (boRuntimeException e) {
-							throw new RuntimeException(e);
+							oBaseBean.setEditInOrphanMode( false );
+							oBaseBean.setParentBeanId( getId() );
+							oBaseBean.setParentComponentId(oGrid.getClientId());
+							oBaseBean.setCurrentObjectKey(String
+									.valueOf(lCurrentBoui));
 						}
-
-						oViewRoot = oSessionContext.createChildView(
-				        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
-							);
-						XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
-								.getBean("viewBean");
-						oBaseBean.setEditInOrphanMode( false );
-						oBaseBean.setParentBeanId( getId() );
-						oBaseBean.setParentComponentId(oGrid.getClientId());
-						oBaseBean.setCurrentObjectKey(String
-								.valueOf(lCurrentBoui));
+					} else {
+						
+						oRequestContext
+								.addMessage(
+										"error_edit_bridge",
+										new XUIMessage(XUIMessage.TYPE_ALERT,
+												XUIMessage.SEVERITY_ERROR,
+												BeansMessages.ERROR_EXECUTING_OPERATION.toString(),
+												BeansMessages.NOT_ENOUGH_PERMISSIONS_TO_OPEN_OBJECT.toString()
+											));
 					}
-				} else {
-					
-					oRequestContext
-							.addMessage(
-									"error_edit_bridge",
-									new XUIMessage(XUIMessage.TYPE_ALERT,
-											XUIMessage.SEVERITY_ERROR,
-											BeansMessages.ERROR_EXECUTING_OPERATION.toString(),
-											BeansMessages.NOT_ENOUGH_PERMISSIONS_TO_OPEN_OBJECT.toString()
-										));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
 				}
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+            } else {
+            	log.warn( "Could not open bridge element for Bridge %s" , gridBridge.getName() );
+            }
         }
         else {
         	oRequestContext.addMessage( "error_edit_bridge" , 
