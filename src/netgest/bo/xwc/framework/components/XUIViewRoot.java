@@ -1,6 +1,7 @@
 package netgest.bo.xwc.framework.components;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.List;
@@ -92,10 +93,18 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 		}
 	}
-
+	
+	private Object referenceToBean ;
+	private String beanId;
+	
 	public Object getBean(String sBeanName) {
-		return XUIRequestContext.getCurrentContext().getSessionContext()
+		Object bean = XUIRequestContext.getCurrentContext().getSessionContext()
 				.getAttribute(getBeanPrefix() + sBeanName);
+		if (bean == null){
+			if (sBeanName.equalsIgnoreCase( beanId ))
+				bean = referenceToBean;
+		}
+		return bean;
 	}
 
 	public String getBeanUniqueId(String sBeanName) {
@@ -103,6 +112,8 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 
 	public void addBean(String sBeanName, Object oBean) {
+		this.referenceToBean = oBean;
+		this.beanId = sBeanName;
 		this.sBeanIds += "|" + sBeanName;
 		XUIRequestContext.getCurrentContext().getSessionContext().setAttribute(
 				getBeanPrefix() + sBeanName, oBean);
