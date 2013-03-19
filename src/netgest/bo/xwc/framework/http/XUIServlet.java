@@ -189,6 +189,7 @@ public class XUIServlet extends HttpServlet
 	        		}
 	        		oResponse.reset();
 	        		oResponse.resetBuffer();
+	        		oResponse.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
 	        		oResponse.setContentType("text/html;charset=utf-8");
 	        		PrintWriter out = oResponse.getWriter();
 	        		out.println( "<h2>" + XUICoreMessages.REQUEST_ERROR.toString() +  "</h2><br>" );
