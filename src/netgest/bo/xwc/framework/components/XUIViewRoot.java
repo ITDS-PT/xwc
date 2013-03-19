@@ -361,6 +361,57 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 		}
 	}
+	
+	public XUIComponentBase findComponent(String clientId) {
+		Iterator<UIComponent> list;
+		XUIComponentBase oComp;
+
+		oComp = null;
+		UIComponent found = null;
+
+		list = getFacetsAndChildren();
+		while (list.hasNext()){
+			UIComponent component = list.next();
+			if (clientId.equalsIgnoreCase( component.getClientId( getFacesContext() ) )){
+				return (XUIComponentBase) component;
+			}
+			found = findComponent( component , clientId );
+		}
+		return (XUIComponentBase) found ;
+	}
+	
+	public XUIComponentBase findComponent(UIComponent mcomponent, String clientId) {
+		Iterator<UIComponent> list;
+		XUIComponentBase oComp;
+
+		oComp = null;
+		UIComponent found = null;
+
+		list = mcomponent.getFacetsAndChildren();
+		while (list.hasNext()){
+			UIComponent component = list.next();
+			if (component instanceof XUIComponentBase)
+			{
+				found = ((XUIComponentBase) component).findComponent(clientId);
+				if (found != null) {
+					return (XUIComponentBase) found;
+				}
+			}
+			else
+			{
+				Iterator<UIComponent> listChildren = component.getFacetsAndChildren();
+				while (listChildren.hasNext())
+				{
+					UIComponent childCmp = listChildren.next();
+					found  = childCmp.findComponent( clientId );
+					if (found != null && found instanceof XUIComponentBase)
+						return ((XUIComponentBase) found);
+				}
+			}
+			
+		}
+		return oComp;
+	}
 
 	public XUIComponentBase findComponent(Class<?> cType) {
 		Iterator<UIComponent> list;

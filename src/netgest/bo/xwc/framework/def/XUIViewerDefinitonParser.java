@@ -8,18 +8,15 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 
@@ -33,6 +30,7 @@ import oracle.xml.parser.v2.XMLDocument;
 import oracle.xml.parser.v2.XMLElement;
 import oracle.xml.parser.v2.XSLException;
 
+import org.apache.batik.ext.awt.geom.Cubic;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -71,17 +69,23 @@ public class XUIViewerDefinitonParser
             xwvr = new XUIViewerDefinition();
             
             //Deal with a Composition 
+            
+            String currentBeanId = null;
+            
             XMLElement potentialComposition = findPotentialCompositionElement( element );
             if ( isPageComposition( potentialComposition ) ){
             	defines = findDefineElements( potentialComposition );
             	String templateToParse = potentialComposition.getAttribute( "template" );
             	parseBeanClasses( xwvr, node.getAttribute( "beanClass" ) );
                 parseBeanIds( xwvr, node.getAttribute( "beanId" ) );
+                currentBeanId = getBeanId( xwvr );
             	node = reloadViewerFromTemplate( templateToParse );
             }
 
             parseBeanClasses( xwvr, node.getAttribute( "beanClass" ) );
             parseBeanIds( xwvr, node.getAttribute( "beanId" ) );
+            currentBeanId = getBeanId( xwvr ); 
+            
             List<String> beanIds = xwvr.getViewerBeanIds( );
             for (String beanId : beanIds){
             	if (counter.wasBeanIdFound( beanId ))
@@ -119,7 +123,7 @@ public class XUIViewerDefinitonParser
             
             counter.parsed( viewerName , xwvr.getViewerBeanIds( ) );
             
-            xwvr.setRootComponent( parseNode( xwvr, (XMLElement)node, null, counter, defines ) );
+            xwvr.setRootComponent( parseNode( xwvr, (XMLElement)node, null, counter, defines, currentBeanId ) );
             
         }
         catch (Exception e)
@@ -130,6 +134,19 @@ public class XUIViewerDefinitonParser
         }
         return xwvr;
     }
+
+
+	protected String getBeanId(XUIViewerDefinition xwvr) {
+		if (xwvr.getViewerBeanIds().isEmpty() && StringUtils.isEmpty( xwvr.getViewerBeanId() ) ){
+			return "";
+		} else {
+			if (xwvr.getViewerBeanIds().size() > 0)
+				return xwvr.getViewerBeanIds().get( 0 );
+			if ( StringUtils.hasValue( xwvr.getViewerBeanId() ) )
+				return xwvr.getViewerBeanId();
+		}
+		return "";
+	}
 
 
 	protected XMLElement findPotentialCompositionElement(XMLElement element) {
@@ -321,12 +338,12 @@ public class XUIViewerDefinitonParser
     	return null;
     }
     
-    public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, XUIViewerDefinitionNode parent ){
-    	return parseNode(root, node, parent, new IncludeCounter(), new HashMap<String,XMLElement>());
+    public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, XUIViewerDefinitionNode parent, String beanId ){
+    	return parseNode(root, node, parent, new IncludeCounter(), new HashMap<String,XMLElement>(), beanId);
     }
     
     public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, 
-    		XUIViewerDefinitionNode parent, IncludeCounter counter, Map<String,XMLElement> defines )
+    		XUIViewerDefinitionNode parent, IncludeCounter counter, Map<String,XMLElement> defines, String beanId )
     {
         XUIViewerDefinitionNode component = new XUIViewerDefinitionNode();
         component.setRoot( root );
@@ -338,7 +355,7 @@ public class XUIViewerDefinitonParser
         	String name = node.getAttribute( "name" );
         	if (defines.containsKey( name )){
     			XMLElement element = defines.get( name );
-    			return replaceInsertContent(root, element, parent, defines);
+    			return replaceInsertContent(root, element, parent, defines, beanId);
     		} else {
     			return replaceIncludeContent( root, node, parent, counter, defines );
     		}
@@ -365,7 +382,7 @@ public class XUIViewerDefinitonParser
             component.setName( node.getNodeName() );
         }
         
-        setComponentBeanIdPropertyForNonDefaultBean(component, root);
+        setComponentBeanIdPropertyForNonDefaultBean( component, beanId );
         
         NamedNodeMap atts = node.getAttributes();
         for (int i = 0; i < atts.getLength(); i++) 
@@ -386,7 +403,7 @@ public class XUIViewerDefinitonParser
             Node cnode = nlist.item( i );
             if( cnode.getNodeType() == Node.ELEMENT_NODE )
             {
-                component.addChild( parseNode( root, (XMLElement)nlist.item( i ), component, counter, defines ) );
+                component.addChild( parseNode( root, (XMLElement)nlist.item( i ), component, counter, defines, beanId ) );
             } 
             else if ( cnode.getNodeType() == Node.TEXT_NODE ) 
             {
@@ -403,13 +420,13 @@ public class XUIViewerDefinitonParser
     
     private XUIViewerDefinitionNode replaceInsertContent(
 			XUIViewerDefinition root, XMLElement element,
-			XUIViewerDefinitionNode parent, Map< String , XMLElement > defines) {
+			XUIViewerDefinitionNode parent, Map< String , XMLElement > defines, String beanId) {
     	
     	List<XUIViewerDefinitionNode> nodes = new ArrayList< XUIViewerDefinitionNode >();
     	NodeList children = element.getChildNodes();
     	for (int k = 0 ; k < children.getLength(); k++){
     		Node child = children.item( k );
-    		nodes.add( parseNode( root , (XMLElement) child , parent ) );
+    		nodes.add( parseNode( root , (XMLElement) child , parent, beanId ) );
     	}
 		return wrapInclusion( root , nodes , parent );
 	}
@@ -418,28 +435,16 @@ public class XUIViewerDefinitonParser
 		return "xvw:insert".equalsIgnoreCase( node.getNodeName() );
 	}
 
-	private void setComponentBeanIdPropertyForNonDefaultBean( XUIViewerDefinitionNode component, XUIViewerDefinition viewerDef ){
-    	String beanId = component.getProperty("beanId");
-    	if ( StringUtils.isEmpty( beanId ) ){
-    		if ( viewerHasOneBeanIdentifier( viewerDef ) ) {
-    			String viewerBeanIdentifier = getBeanIdentifier( viewerDef );
-    			if ( !viewerBeanIdentifier.equalsIgnoreCase( DEFAULT_BEAN_ID ) ){
-    				component.setProperty("beanId",viewerBeanIdentifier);
-    			}
-    		}
+	private void setComponentBeanIdPropertyForNonDefaultBean( XUIViewerDefinitionNode component, String otherBeanId ){
+    	String beanId = component.getProperty( "beanId" );
+    	if ( StringUtils.isEmpty( beanId ) && StringUtils.hasValue( otherBeanId )){
+			if ( !DEFAULT_BEAN_ID.equalsIgnoreCase( otherBeanId ) ){
+				component.setProperty( "beanId" , otherBeanId );
+			}
     	}
     }
     
-    private String getBeanIdentifier( XUIViewerDefinition def ){
-    	if (def.getViewerBeanIds().size() > 0)
-    		return def.getViewerBeanIds().get( 0 );
-    	return "";
-    }
     
-    private boolean viewerHasOneBeanIdentifier( XUIViewerDefinition def ){
-    	return def.getViewerBeanIds().size() == 1 
-    	 && !StringUtils.isEmpty(def.getViewerBeanIds().get(0));
-    }
     private boolean isIncludeComponent( XMLElement node ){
     	return "xvw:include".equalsIgnoreCase( node.getNodeName());
     }

@@ -2804,9 +2804,8 @@ public class XEOEditBean extends XEOBaseBean
     		XEOObjectAttributeConnector attributeConector = (XEOObjectAttributeConnector) genericConnector;
     		boDefAttribute attributeDefinition = attributeConector.getBoDefAttribute( );
     		targetObjectName = attributeDefinition.getReferencedObjectName( );
-    		String fullText = getEboContext().getDataBaseDriver().getDriverUtils().getFullTextSearchWhere( "text" , filter );
-    		boObjectList list = boObjectList.list( getEboContext( ) , "select " + targetObjectName + " " );
-    		list.setFullTextSearch( fullText );
+    		boObjectList list = boObjectList.list( getEboContext( ) , "select " + targetObjectName );
+    		list.setFullTextSearch( filter );
     		try {
 	    		list.beforeFirst( );
 	    		while (list.next()){

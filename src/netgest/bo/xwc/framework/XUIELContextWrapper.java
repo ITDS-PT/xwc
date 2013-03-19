@@ -14,6 +14,8 @@ public class XUIELContextWrapper extends ELContext {
 	
 	private UIComponent	contextComponent;
 	
+	private boolean wasEvaluated = true;
+	
 	public XUIELContextWrapper( ELContext elContext, UIComponent component ) {
 		this.elContext = elContext;
 		this.contextComponent = component;
@@ -96,6 +98,23 @@ public class XUIELContextWrapper extends ELContext {
 	 */
 	public void setPropertyResolved(boolean arg0) {
 		elContext.setPropertyResolved(arg0);
+	}
+	
+	public void setCouldNotEvaluate(){
+		wasEvaluated = false;
+	}
+	
+	/**
+	 * 
+	 * Retrieves whether the property value was evaluated or not
+	 * Had to add this because the "propertyResolved" method is always true
+	 * the XUIELResolver sets it to false but somewhere after the JSF runtime
+	 * sets the value to true
+	 * 
+	 * @return If the property was evaluated
+	 */
+	public boolean wasPropertyEvaluated(){
+		return wasEvaluated;
 	}
 
 	/**

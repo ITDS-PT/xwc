@@ -135,6 +135,9 @@ public class XUIELResolver extends ELResolver {
             elContext.setPropertyResolved( true );
             return oResult;
         }
+        if (elContextc instanceof XUIELContextWrapper){
+        	((XUIELContextWrapper) elContextc).setCouldNotEvaluate();
+        }
         elContext.setPropertyResolved( false );
         return null;
 

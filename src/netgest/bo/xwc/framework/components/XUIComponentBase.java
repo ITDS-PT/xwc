@@ -288,52 +288,26 @@ public abstract class XUIComponentBase extends UIComponentBase
 		return null;
 		
 	}
-    
+	
     @Override
 	public UIComponent findComponent(String expr) {
+    	UIComponent oComp=super.findComponent(expr);
 		
-		UIComponent oComp=super.findComponent(expr);
-		
-		//Try Other Way
-		//Problem with container
-		if (oComp==null)
-		{
-			UIComponent base = this;
-			if (expr.charAt(0) == NamingContainer.SEPARATOR_CHAR) {
-	            // Absolute searches start at the root of the tree
-	            while (base.getParent() != null) {
-	                base = base.getParent();
-	            }
-	            // Treat remainder of the expression as relative
-	            expr = expr.substring(1);
-	        } else {
-	            // Relative expressions start at the closest NamingContainer or root
-	            while (base.getParent() != null) {
-	                if (base instanceof NamingContainer) {
-	                    break;
-	                }
-	                base = base.getParent();
-	            }
-	        }
-			
-			// Evaluate the search expression (now guaranteed to be relative)
-	        String[] segments = expr.split(String.valueOf(NamingContainer.SEPARATOR_CHAR));
-	        for (int i = 0, length = (segments.length - 1);
-	             i < segments.length;
-	             i++, length--) {
-	        	if (base!=null)
-	        		oComp = findComponent(base, segments[i], (i == 0));
-	            // the first element of the expression may match base.id
-	            // (vs. a child if of base)
-	            /*if (i == 0 && oComp == null &&
-	                 segments[i].equals(base.getId())) {
-	            	oComp = base;
-	            }*/
-	            if (oComp != null && (!(oComp instanceof NamingContainer)) && length > 0) {
-	                throw new IllegalArgumentException(segments[i]);
-	            }
-	            base = oComp;
-	        }
+		if (oComp == null){
+			UIComponent result = null;
+			for (Iterator<UIComponent> i = getFacetsAndChildren(); i.hasNext();) {
+				UIComponent kid =  i.next();	
+					if ( expr.equals(kid.getClientId( getFacesContext() ))) {
+						result = kid;
+						oComp = result;
+						break;
+					}
+					result = findComponent(kid, expr, true);
+					if (result != null) {
+						oComp = result;
+						break;
+					}
+			}
 		}
 		
 		return oComp;
@@ -341,24 +315,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 
 	private static UIComponent findComponent(UIComponent base, String id,
 			boolean checkId) {
-		if (id.equals(base.getId())) {
-			return base;
-		}
-		// Search through our facets and children
-		UIComponent result = null;
-		for (Iterator<UIComponent> i = base.getFacetsAndChildren(); i.hasNext();) {
-			UIComponent kid =  i.next();	
-				if ( id.equals(kid.getId())) {
-					result = kid;
-					break;
-				}
-				result = findComponent(kid, id, true);
-				if (result != null) {
-					break;
-				}
-		}
-		return (result);
-
+		return base.findComponent( id );
 	}
 	
     public Object saveState() 
