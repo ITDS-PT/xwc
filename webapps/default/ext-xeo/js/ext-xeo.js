@@ -94,38 +94,18 @@ XVW.beforeApplyHtml = function( oDNode, destroyComponent ) {
 XVW.Wait = function( iWaitMode ) {
     if( iWaitMode == '1' )
     {
-//    	if( Ext.isIE ) {
-//    		// IE Crashes with loadMask
-//            Ext.MessageBox.show({
-//                title: ExtXeo.Messages.PROCESSING + '      ',
-//                msg: ExtXeo.Messages.SENDING_DATA,
-//                width:300,
-//                wait:true,
-//                waitConfig: {interval:200},
-//                icon:'ext-mb-download', //custom class in msg-box.html
-//                animEl: 'mb7'
-//            });
-//    	}
-//    	else {
-	    	if( !ExtXeo.loadMask ) {
-	    		ExtXeo.loadMask = new Ext.LoadMask(document.body, {msg: ExtXeo.Messages.SENDING_DATA });
-	    	}
-	    	ExtXeo.loadMask.show();
-//    	}
+    	if( !ExtXeo.loadMask ) {
+    		ExtXeo.loadMask = new Ext.LoadMask(document.body, {msg: ExtXeo.Messages.SENDING_DATA });
+    	}
+    	ExtXeo.loadMask.show();
     }
 }
 
 
 XVW.NoWait = function() { 
-//	if( Ext.isIE ) {
-//		if( Ext.MessageBox.getDialog().title == ExtXeo.Messages.PROCESSING + '      ' ) {
-//			Ext.MessageBox.hide();
-//		}
-//	} else {
-		if( ExtXeo.loadMask ) {
-			window.setTimeout( "ExtXeo.loadMask.hide();", 50 );
-		}
-//	}
+	if( ExtXeo.loadMask ) {
+		window.setTimeout( "ExtXeo.loadMask.hide();", 50 );
+	}
 }
 
 XVW.openViewOnElement = function( sFormId, sActionId, sActionValue, renderOnElementId ) {
@@ -558,7 +538,7 @@ XVW.setTitle = function( sTitle ) {
 
 
 XVW.canCloseTab = function( sFormId, sCmdId ) {
-	XVW.AjaxCommand( sFormId, sCmdId,"",2,true );
+	XVW.AjaxCommand( sFormId, sCmdId, "" , 1 , true );
 	return false;
 }
 
