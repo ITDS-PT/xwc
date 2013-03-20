@@ -1,6 +1,7 @@
 package netgest.bo.xwc.framework.http;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
+import netgest.bo.xwc.components.util.JavaScriptUtils;
 
 public class XUILoginFilter implements Filter {
 
@@ -21,7 +23,6 @@ public class XUILoginFilter implements Filter {
 	private boolean 	showUserProfiles = true;
 	
 	public void destroy() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -29,6 +30,7 @@ public class XUILoginFilter implements Filter {
 			FilterChain chain) throws IOException, ServletException {
 
 		HttpServletRequest oRequest = (HttpServletRequest)request;
+		HttpServletResponse oResponse = (HttpServletResponse)response;
 		
 		String servletPath = oRequest.getContextPath();
 		if( !servletPath.startsWith("/") ) {
@@ -44,15 +46,64 @@ public class XUILoginFilter implements Filter {
 		}
 		else {
 			HttpSession oHttpSession = oRequest.getSession();
+			
 			if( oHttpSession != null && oHttpSession.getAttribute("boSession") != null ) {
 				chain.doFilter(request, response);
 			}
 			else {
-				HttpServletResponse oResponse = (HttpServletResponse)response;
+				String redirectUrl = loginPageUrl(oRequest);
+				if (oRequest.getContentType() != null && oRequest.getContentType().startsWith("text/xml")) {
+				    oResponse.setHeader("login-url", redirectUrl + "?msg=1");
+				    oResponse.sendError(401);
+				} else {
+				    oResponse.reset();
+				    oResponse.resetBuffer();
+				    oResponse.setContentType("text/html;charset=utf-8");
+				    PrintWriter out = oResponse.getWriter();
+				    out.println("<script>parent.top.location.href='" + JavaScriptUtils.safeJavaScriptWrite(redirectUrl, '\'') + "';</script>");
+				}
 				oResponse.sendRedirect( servletPath + "/" + loginPage );
 			}
 		}
 	}
+	
+	private String loginPageUrl(HttpServletRequest oRequest) {
+		StringBuilder sb = new StringBuilder();
+
+		if (oRequest.isSecure()) {
+		    sb.append("https://");
+		    sb.append(oRequest.getServerName());
+
+		    if (oRequest.getServerPort() != 443) {
+			sb.append(':');
+			sb.append(oRequest.getServerPort());
+		    }
+		} else {
+		    sb.append("http://");
+		    sb.append(oRequest.getServerName());
+
+		    if (oRequest.getServerPort() != 80) {
+			sb.append(':');
+			sb.append(oRequest.getServerPort());
+		    }
+		}
+
+		String ctxPath = oRequest.getContextPath();
+
+		if (!ctxPath.startsWith("/")) {
+		    ctxPath = "/" + ctxPath;
+		}
+
+		sb.append(ctxPath);
+
+		if (!loginPage.startsWith("/")) {
+		    sb.append("/");
+		}
+
+		sb.append(loginPage);
+
+		return sb.toString();
+	    }
 
 	public void init(FilterConfig arg0) throws ServletException {
 
