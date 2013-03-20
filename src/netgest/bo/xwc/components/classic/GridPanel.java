@@ -131,7 +131,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 */
 	@Values({"NONE","DIALOG","STATUS_MESSAGE"})
 	public XUIBindProperty<String> 	serverActionWaitMode = 
-    	new XUIBindProperty<String>( "serverActionWaitMode", this ,String.class );
+    	new XUIBindProperty<String>( "serverActionWaitMode", this ,String.class, "DIALOG" );
     
 	/**
 	 * Binds the data of the GridPanel to an attribute of an object
