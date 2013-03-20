@@ -46,6 +46,28 @@ public class MainLayout extends XUIComponentBase {
 	public void setApplicationType(String applicationType) {
 		this.applicationType.setExpressionText(applicationType);
 	}
+	
+	XUIBindProperty< Boolean > renderPropertiesBtn = new XUIBindProperty< Boolean >(
+			"renderPropertiesBtn" , this , Boolean.class, "true" );
+
+	public Boolean getRenderPropertiesBtn() {
+		return renderPropertiesBtn.getEvaluatedValue();
+	}
+
+	public void setRenderPropertiesBtn(String newValExpr) {
+		renderPropertiesBtn.setExpressionText( newValExpr );
+	}
+	
+	XUIBindProperty< Boolean > renderProfilesList = new XUIBindProperty< Boolean >(
+			"renderProfilesList" , this , Boolean.class );
+
+	public Boolean getRenderProfilesList() {
+		return renderProfilesList.getEvaluatedValue();
+	}
+
+	public void setRenderProfilesList(String newValExpr) {
+		renderProfilesList.setExpressionText( newValExpr );
+	}
 
 	public void initComponent() {
 		XUICommand showUserPropsCmd = (XUICommand) this
@@ -131,43 +153,44 @@ public class MainLayout extends XUIComponentBase {
 		arrayChild1.add("handler",
 				"function() { document.location.href='LogoutXVW.jsp'}");
 
-		ExtConfig arrayChild2 = arrayMenu.addChild();// userProps
-		arrayChild2.addJSString("xtype", "button");
-		arrayChild2.addJSString("icon", "ext-xeo/admin/users.gif");
-		arrayChild2.addJSString("cls", "x-btn-text-icon");
-		arrayChild2.add("text", "ExtXeo.Messages.USER_PROPS");
-		arrayChild2
-				.add(
-						"handler",
-						"function() {XVW.AjaxCommand('formMain','showUserPropsCmd','showUserPropsCmd',2);}");
+		if (getRenderPropertiesBtn()){
+			ExtConfig arrayChild2 = arrayMenu.addChild();// userProps
+			arrayChild2.addJSString("xtype", "button");
+			arrayChild2.addJSString("icon", "ext-xeo/admin/users.gif");
+			arrayChild2.addJSString("cls", "x-btn-text-icon");
+			arrayChild2.add("text", "ExtXeo.Messages.USER_PROPS");
+			arrayChild2
+					.add(
+							"handler",
+							"function() {XVW.AjaxCommand('formMain','showUserPropsCmd','showUserPropsCmd',2);}");
+		}
 
-		Collection<String> valuesColl = map.values();
-		Iterator<String> valuesIt = valuesColl.iterator();
-		Set<Object> keySet = map.keySet();
-		Iterator<Object> keyIt = keySet.iterator();
+		if ( getRenderProfilesList() ) {
+			Collection< String > valuesColl = map.values();
+			Iterator< String > valuesIt = valuesColl.iterator();
+			Set< Object > keySet = map.keySet();
+			Iterator< Object > keyIt = keySet.iterator();
+			// repeat for profiles
+			if ( valuesColl.size() > 1 ) {
+				if ( valuesColl.size() == keySet.size() ) {
+					while ( valuesIt.hasNext() ) {
 
-		// repeat for profiles
-		if (valuesColl.size() > 1) {
-			if (valuesColl.size() == keySet.size()) {
-				while (valuesIt.hasNext()) {
+						ExtConfig arrayChild3 = arrayMenu.addChild();
+						arrayChild3.addJSString( "xtype" , "button" );
+						arrayChild3.addJSString( "icon" ,
+								"ext-xeo/admin/profiles.gif" );
+						arrayChild3.addJSString( "cls" , "x-btn-text-icon" );
+						arrayChild3.addJSString( "text" , valuesIt.next() );// //replace
+						// with
+						// profiles
+						arrayChild3.add( "handler" ,
+								"function() { document.location.href='Login.xvw?action=change_profile&boui="
+										+ keyIt.next() + "'}" );
 
-					ExtConfig arrayChild3 = arrayMenu.addChild();
-					arrayChild3.addJSString("xtype", "button");
-					arrayChild3.addJSString("icon",
-							"ext-xeo/admin/profiles.gif");
-					arrayChild3.addJSString("cls", "x-btn-text-icon");
-					arrayChild3.addJSString("text", valuesIt.next());// //replace
-																		// with
-					// profiles
-					arrayChild3.add("handler",
-							"function() { document.location.href='Login.xvw?action=change_profile&boui="
-									+ keyIt.next() + "'}");
-
+					}
 				}
 			}
 		}
-	
-
 		return oTreeConfig;
 	}
 
