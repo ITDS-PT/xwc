@@ -991,9 +991,9 @@ public abstract class XUIComponentBase extends UIComponentBase
 			((XUIComponentBase)component).isRenderedOnClient.setValue( false );
 			((XUIComponentBase)component)._isRenderedOnClient = false;
 		}
-		List<UIComponent> children = component.getChildren();
-		for( UIComponent child : children ) 
-		{
+		Iterator<UIComponent> it = component.getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent child = it.next();
 			resetRenderOnClientChildren( child );
 		}
 	} 
@@ -1009,9 +1009,9 @@ public abstract class XUIComponentBase extends UIComponentBase
 	public void forceRenderOnClient() {
 		this.setDestroyOnClient(true);
 		this._isRenderedOnClient = false;
-		List<UIComponent> children = getChildren();
-		for( UIComponent child : children ) 
-		{
+		Iterator<UIComponent> it = getFacetsAndChildren();
+		while (it.hasNext()) {
+			UIComponent child = it.next();
 			if( child instanceof XUIComponentBase ) {
 				((XUIComponentBase)child).forceRenderOnClient();
 			}
