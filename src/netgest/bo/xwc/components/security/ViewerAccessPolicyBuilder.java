@@ -34,10 +34,15 @@ public class ViewerAccessPolicyBuilder {
 	
 	public enum SecurityMode {
 		MORE_RESTRICTED,
-		LESS_RESTRICTED
+		LESS_RESTRICTED,
+		DISABLED
 	}
 	
 	private static SecurityMode securityMode = SecurityMode.MORE_RESTRICTED;
+	
+	public static SecurityMode getSecurityMode(){
+		return securityMode;
+	}
 	
 	public static void setSecurityMode( SecurityMode securityMode ) {
 		ViewerAccessPolicyBuilder.securityMode = securityMode;
@@ -122,42 +127,6 @@ public class ViewerAccessPolicyBuilder {
 	private void processViewer( String viewer, EboContext context, XUISessionContext sessionContext, boolean buildObjects ) throws boRuntimeException {
 		XUIViewRoot viewRoot = sessionContext.createChildView( viewer );
 		
-		// Try to intialize all the components in the tree....
-		/*
-		Object bean = viewRoot.getBean("viewBean");
-		if( bean instanceof XEOBaseBean ) {
-			String viewId = viewRoot.getViewId();
-			String objectName = viewId.substring( 0, viewId.lastIndexOf("_") );
-			boDefHandler defH = boDefHandler.getBoDefinition( objectName );
-			if( defH != null ) {
-				((XEOBaseBean)bean).createNew( defH.getName() );
-				XUIViewRoot originalView = XUIRequestContext.getCurrentContext().getViewRoot();
-				try {
-					XUIRequestContext.getCurrentContext().setViewRoot( viewRoot );
-					//viewRoot.processInitComponents();
-				}
-				finally {
-					XUIRequestContext.getCurrentContext().setViewRoot( originalView );
-				}
-			}
-		}
-		else if ( bean instanceof XEOBaseList ) {
-			String viewId = viewRoot.getViewId();
-			String objectName = viewId.substring( 0, viewId.lastIndexOf("_") );
-			boDefHandler defH = boDefHandler.getBoDefinition( objectName );
-			if( defH != null ) {
-				((XEOBaseList)bean).executeBoql( "select " + defH.getName() + " where 0=1 " );
-				XUIViewRoot originalView = XUIRequestContext.getCurrentContext().getViewRoot();
-				try {
-					XUIRequestContext.getCurrentContext().setViewRoot( viewRoot );
-					//viewRoot.processInitComponents();
-				}
-				finally {
-					XUIRequestContext.getCurrentContext().setViewRoot( originalView );
-				}
-			}
-		}
-		*/
 		processViewer( viewRoot, context, buildObjects );
 	}
 	
