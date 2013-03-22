@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.connectors;
 
 import netgest.bo.data.DataSet;
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.runtime.boRuntimeException;
 
 public class XEOObjectListRowConnector extends XEOObjectConnector {
 
@@ -14,6 +15,7 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 	}
 	@Override
 	public DataFieldConnector getAttribute(String name) {
+		preloadObject();
 		DataFieldConnector ret = null;
 		if( this.oObjectList.getRslt() != null ) {
 			DataSet dataSet = this.oObjectList.getRslt().getDataSet();
@@ -31,6 +33,14 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 			ret = super.getAttribute(name);
 		}
 		return ret;
+	}
+	protected void preloadObject() {
+		// Force preload...
+		try {
+			this.oObjectList.getObject();
+		} catch (boRuntimeException e) {
+			
+		}
 	}
 	
 	
