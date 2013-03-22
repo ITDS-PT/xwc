@@ -17,6 +17,7 @@ import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.utils.StringUtils;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
@@ -113,7 +114,10 @@ public class GridPanelPDFRenderer {
 					}
 					
 	    			String sLabel = GridPanel.getColumnLabel( oDataSource, oGridColumns[i] );
-	    			sLabel = HTMLEntityDecoder.htmlEntityToChar( sLabel );
+	    			if (StringUtils.isEmpty( sLabel )){
+	    				sLabel = "";
+	    			} else
+	    				sLabel = HTMLEntityDecoder.htmlEntityToChar( sLabel );
 	    			
 					Paragraph p = new Paragraph( sLabel , fontH);
 	    			PdfPCell h1 = new PdfPCell(p);
