@@ -146,6 +146,20 @@ public class GridExplorer extends List {
 		this.enableAdvancedSearch.setValue( newValue );
 	}
 	
+	/**
+	 * Whether or not to show the save view button
+	 */
+	private XUIViewProperty<Boolean> enableListSavedViews = 
+		new XUIViewProperty<Boolean>("enableListSavedViews", this, true );
+	
+	public boolean getEnableListSavedViews(){
+		return enableListSavedViews.getValue();
+	}
+	
+	public void setEnableListSavedViews(boolean listSavedViews){
+		enableListSavedViews.setValue( listSavedViews );
+	}
+	
 	private boolean restoreFiltersState = false;
 	private boolean restoreViewState = false;
 	private XUIBaseProperty<Boolean> isSavedViewOwner = new XUIBaseProperty<Boolean>("isSavedViewOwner", this, true );
@@ -648,26 +662,6 @@ public class GridExplorer extends List {
 			pvw.setId( getId() + "_mpvw" );
 			
 			PreviewPanelPosition 	p = getPreviewPanelPosition();
-	//		PreviewPanelMode 		m = getPreviewPanelMode();
-			
-	//		PreviewModeMenu pvwE = new PreviewModeMenu();
-	//		pvwE.setText( "Mode Edi��o" );
-	//		pvwE.setValue( PreviewPanelMode.EDIT == m );
-	//		pvwE.setGroup( "mode" );
-	//		pvwE.setMode( PreviewPanelMode.EDIT.name() );
-	//		pvwE.setId( getId() + "_mpvwE" );
-	//		pvw.getChildren().add( pvwE );
-	//
-	//		PreviewModeMenu pvwP = new PreviewModeMenu();
-	//		pvwP.setText( "Pr�-Visualiza��o" );
-	//		pvwP.setValue( PreviewPanelMode.PREVIEW == m );
-	//		pvwP.setGroup( "mode" );
-	//		pvwP.setMode( PreviewPanelMode.PREVIEW.name() );
-	//		pvwP.setId( getId() + "_mpvwP" );
-	//		pvw.getChildren().add( pvwP );
-			
-			//The action to execute when button is pressed
-			MethodExpression previewAction = createMethodBinding( previewCommand.getValue() );
 			
 			PreviewPositionMenu pvwb = new PreviewPositionMenu();
 			pvwb.setText( XEOComponentMessages.EXPLORER_PREVIEW_BOTTOM.toString() );
@@ -695,13 +689,19 @@ public class GridExplorer extends List {
 			
 			
 			tb.getChildren().add( pvw );
+			tb.getChildren().add( Menu.getMenuSpacer() );
 	
+		}
+		
+		if (getEnableSaveView()){
+			tb.getChildren().add( createSaveMenu() );
 			tb.getChildren().add( Menu.getMenuSpacer() );
 		}
-		tb.getChildren().add( createSaveMenu() );
-
-		tb.getChildren().add( Menu.getMenuSpacer() );
-		tb.getChildren().add( createViewsCombo() );
+		
+		if (getEnableListSavedViews()){
+			tb.getChildren().add( createViewsCombo() );
+			tb.getChildren().add( Menu.getMenuSpacer() );
+		}
 		
 		if (getEnableAdvancedSearch())
 			createAdvancedSearchButton( tb );
