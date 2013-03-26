@@ -14,6 +14,7 @@ import java.util.ListIterator;
 import netgest.bo.data.DataSet;
 import netgest.bo.data.DriverUtils;
 import netgest.bo.def.boDefAttribute;
+import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boObjectList.SqlField;
@@ -439,8 +440,10 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 				return new XEOObjectAttributeMetaData(XEOObjectConnector.getAttributeDefinitionFromName(attributeName, this.oObjectList.getBoDef()));
 			} else if ( attributeName.contains("." )) {
 				//In the column definition for the attribute boql's dot syntax is used, but internal transformations
-				//use "__" instead of dot syntax, as such the comparison is done against the "." string. 
-				return new XEOObjectAttributeMetaData(XEOObjectConnector.getAttributeDefinitionFromNameWithDotSeparator( attributeName, this.oObjectList.getBoDef()));
+				//use "__" instead of dot syntax, as such the comparison is done against the "." string.
+				boDefAttribute attributeMetadata = XEOObjectConnector.getAttributeDefinitionFromNameWithDotSeparator( attributeName, this.oObjectList.getBoDef());
+				if (attributeMetadata != null)
+					return new XEOObjectAttributeMetaData(attributeMetadata);
 			} else if ( LovColumnNameExtractor.isXeoLovColumn( attributeName) ) {
 				LovColumnNameExtractor extractor = new LovColumnNameExtractor( attributeName );
 				attributeName = extractor.extractName();
