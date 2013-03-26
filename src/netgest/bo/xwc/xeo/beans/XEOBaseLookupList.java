@@ -100,7 +100,7 @@ public class XEOBaseLookupList extends XEOBaseList {
 	public void setSelectedObject(String selectedObject) {
         if( !selectedObject.equals( this.selectedObject ) ) {
               this.selectedObject = selectedObject;
-              if (this.sParentComponentId != null){
+              if (this.sParentComponentId != null && !isFilterLookup()){
                     XUIViewRoot actual = getRequestContext().getViewRoot();
                     XEOEditBean bean = (XEOEditBean) getParentBean();
                     executeBoql( bean.getLookupQuery( getHandlerForParentComponent(bean), this.selectedObject ) );

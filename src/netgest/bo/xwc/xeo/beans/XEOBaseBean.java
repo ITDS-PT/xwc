@@ -173,7 +173,9 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
         oBaseBean.setLookupObjects( lookupObjs );
         oBaseBean.setParentParentBeanId( "viewBean" );
         oBaseBean.setParentAttributeName( column );
-    	oBaseBean.executeBoql( "select " + lookupObjs.keySet().iterator().next() );
+        String objectSelected = lookupObjs.keySet().iterator().next();
+        oBaseBean.setSelectedObject( objectSelected );
+    	oBaseBean.executeBoql( "select " + objectSelected );
 
         // Diz a que a view corrente � a criada.
         oRequestContext.setViewRoot( oViewRoot );
