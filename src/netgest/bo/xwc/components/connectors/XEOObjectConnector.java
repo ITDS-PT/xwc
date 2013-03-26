@@ -386,9 +386,13 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 					if (i+1 < size){
 						String childAtt = relationAttribute[i+1];
 						boDefAttribute defAttRel = parent.getAttributeRef( parentAtt );
-						boDefHandler defModelRel = defAttRel.getReferencedObjectDef();
-						targetAttributeDefinition = defModelRel.getAttributeRef(childAtt);
-						parent = defModelRel;
+						if (defAttRel != null){
+							boDefHandler defModelRel = defAttRel.getReferencedObjectDef();
+							if (defModelRel != null){
+								targetAttributeDefinition = defModelRel.getAttributeRef(childAtt);
+								parent = defModelRel;
+							}
+						}
 					}
 				}
 				return targetAttributeDefinition;
@@ -409,9 +413,13 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 					if (i+1 < size){
 						String childAtt = relationAttribute[i+1];
 						boDefAttribute defAttRel = parent.getAttributeRef( parentAtt );
-						boDefHandler defModelRel = defAttRel.getReferencedObjectDef();
-						targetAttributeDefinition = defModelRel.getAttributeRef(childAtt);
-						parent = defModelRel;
+						if (defAttRel != null){
+							boDefHandler defModelRel = defAttRel.getReferencedObjectDef();
+							if (defModelRel != null){
+								targetAttributeDefinition = defModelRel.getAttributeRef(childAtt);
+								parent = defModelRel;
+							}
+						}
 					}
 				}
 				return targetAttributeDefinition;
