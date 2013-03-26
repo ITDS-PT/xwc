@@ -40,6 +40,7 @@ import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl;
+import netgest.utils.StringUtils;
 
 import com.lowagie.text.html.HtmlTags;
 import com.sun.faces.util.LRUMap;
@@ -100,7 +101,7 @@ public class XUIViewRoot extends UIViewRoot {
 	public Object getBean(String sBeanName) {
 		Object bean = XUIRequestContext.getCurrentContext().getSessionContext()
 				.getAttribute(getBeanPrefix() + sBeanName);
-		if (bean == null){
+		if (StringUtils.hasValue( sBeanName ) && StringUtils.hasValue( beanId )){
 			if (sBeanName.equalsIgnoreCase( beanId ))
 				bean = referenceToBean;
 		}
