@@ -105,8 +105,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 
         oGrid = (GridPanel)oComp;
         
-        if( "true".equals( oRequest.getParameter("updateConfig") ) )
-        	return;
+        
 
         String sType = oRequest.getParameter("type");
         
@@ -123,6 +122,8 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         else {
         	//Decode only for data render, PDF and Excel submit don't have the parameters (removing sorting, etc...)  
         	reqParam = decodeServiceParmeters( oGrid, (HttpServletRequest)oRequest );
+        	if( "true".equals( oRequest.getParameter("updateConfig") ) )
+            	return;
         	DataListConnector dataSource = oGrid.getDataSource();
 	        if ( reqParam.getGroupBy() == null || (dataSource.dataListCapabilities() & DataListConnector.CAP_GROUPING) == 0 ) {
 	        	GridPanelJSonRenderer jsonRenderer = new GridPanelJSonRenderer();
