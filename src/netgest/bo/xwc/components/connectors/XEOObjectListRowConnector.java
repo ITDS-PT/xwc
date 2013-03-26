@@ -13,27 +13,29 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 		this.row = row;
 		this.oObjectList = oObjectList;
 	}
+	
 	@Override
 	public DataFieldConnector getAttribute(String name) {
 		preloadObject();
 		DataFieldConnector ret = null;
-		if( this.oObjectList.getRslt() != null ) {
-			DataSet dataSet = this.oObjectList.getRslt().getDataSet();
-			int col = dataSet.findColumn( name );
-			if( col > 0 ) {
-				Object value = dataSet.rows( row ).getObject( col );
-				ret = new XEOObjectConnector.GenericFieldConnector( 
-						name, 
-						value!=null?String.valueOf( value ):null, 
-						DataFieldTypes.VALUE_CHAR 
-				);
+		ret = super.getAttribute(name);
+		if (ret == null){
+			if( this.oObjectList.getRslt() != null ) {
+				DataSet dataSet = this.oObjectList.getRslt().getDataSet();
+				int col = dataSet.findColumn( name );
+				if( col > 0 ) {
+					Object value = dataSet.rows( row ).getObject( col );
+					ret = new XEOObjectConnector.GenericFieldConnector( 
+							name, 
+							value!=null?String.valueOf( value ):null, 
+									DataFieldTypes.VALUE_CHAR 
+							);
+				}
 			}
-		}
-		if( ret == null ) {
-			ret = super.getAttribute(name);
 		}
 		return ret;
 	}
+	
 	protected void preloadObject() {
 		// Force preload...
 		try {
