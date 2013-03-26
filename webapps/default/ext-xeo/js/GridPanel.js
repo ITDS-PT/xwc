@@ -1482,6 +1482,10 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
 	        				if( gv ) {
 				        		break;
 				        	}
+	        			} else {
+	        				gv = this.rows[ this.rowsIndex[i] ].groupingView.getGroupView( groupId );
+	        				if ( gv )
+	        					break;
 	        			}
 	        		}
 	        	}
