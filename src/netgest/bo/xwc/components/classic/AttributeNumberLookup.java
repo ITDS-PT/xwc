@@ -43,6 +43,7 @@ import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
@@ -417,7 +418,8 @@ public class AttributeNumberLookup extends AttributeBase {
 
         public String getClearCode( Form oForm, AttributeBase oAttr ) {
             if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
-	            return "XVW.AjaxCommand( '" + oAttr.getNamingContainerId() +  "','" + oAttr.getId() + "_clear','true');";
+            	XUIForm form = (XUIForm) oAttr.findParent( XUIForm.class );
+	            return "XVW.AjaxCommand( '" + form.getClientId() +  "','" + oAttr.getClientId() + "_clear','true',0);";
             }
             else {
             	return "Ext.ComponentMgr.get('" + getExtComponentId(oAttr) + "').setValue('');\n" + 

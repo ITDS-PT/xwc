@@ -246,11 +246,19 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
     	private byte dataType;
     	private String label;
     	private String value;
+    	private String displayValue=null;
     	
     	public GenericFieldConnector( String label, String value, byte dataType ) {
     		this.label = label;
     		this.value = value;
     		this.dataType = dataType;
+    	}
+    	
+    	public GenericFieldConnector( String label, String value, byte dataType,String displayValue ) {
+    		this.label = label;
+    		this.value = value;
+    		this.dataType = dataType;
+    		this.displayValue = displayValue;
     	}
     	
 		public byte getDataType() {
@@ -310,7 +318,10 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 		}
 
 		public String getDisplayValue() {
-			return value;
+			if (displayValue!=null)
+				return displayValue;
+			else
+				return value;
 		}
 
 		public boolean getIsLovEditable() {

@@ -1,7 +1,11 @@
 package netgest.bo.xwc.xeo.components;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
+import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -19,6 +23,7 @@ import netgest.utils.StringUtils;
 public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAttribute {
 	
 	private XUICommand cardIdCommand;
+	private static String castType=null;
 
 	public XUICommand getCardIdCommand(){
 		return cardIdCommand;
@@ -123,7 +128,9 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 											" Ebo_LovDetails ld  " +
 											" inner join Ebo_Lov$details b on ld.boui = b.child$ " + 
 											" inner join Ebo_Lov l on  b.parent$ = l.boui  " +
-											" where l.name = '"+attribute.getLOVName()+"' and ld.value = cast("+handler.getBoMasterTable()+"."+attribute.getName()+" as char))";		
+											" where l.name = '"+attribute.getLOVName()+"' and ld.value = " +
+													"cast("+handler.getBoMasterTable()+"."+attribute.getName()+" as "+
+													getCastType((XEOObjectListConnector)listConnector)+"))";		
 							}
 					} catch ( boRuntimeException e ) {
 						e.printStackTrace();
@@ -134,6 +141,36 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 			return sqlExpression;
 		} else
 			return super.getSqlExpression();
+	}
+	
+	private String getCastType(XEOObjectListConnector listConnector) {		
+		Connection cn=null;
+		try {
+			if (castType==null) {
+				EboContext ctx=listConnector.getObjectList().getEboContext();
+				cn=ctx.getConnectionData();
+				String dbName = cn.getMetaData().getDatabaseProductName().toUpperCase();
+				
+				if (dbName.toUpperCase().indexOf("ORACLE")>-1)	
+					castType="varchar(50)";
+				else if (dbName.toUpperCase().indexOf("POSTGRE")>-1)
+					castType="varchar";
+				else if (dbName.toUpperCase().indexOf("MYSQL")>-1)
+					castType="char";						
+				else if (dbName.toUpperCase().indexOf("SQL SERVER")>-1)
+					castType="char";
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if (cn!=null)
+				try {
+					cn.close();
+				} catch (SQLException e) {
+				}
+		}
+		return castType;
 	}
 	
 	private String extractLovName(String dataField){

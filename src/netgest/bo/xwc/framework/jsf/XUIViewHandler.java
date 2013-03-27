@@ -45,6 +45,7 @@ import netgest.bo.system.boApplication;
 import netgest.bo.transaction.XTransaction;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
+import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder.SecurityMode;
 import netgest.bo.xwc.framework.PackageIAcessor;
 import netgest.bo.xwc.framework.XUIApplicationContext;
 import netgest.bo.xwc.framework.XUIRendererServlet;
@@ -652,20 +653,22 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         	
     		List<String> beanIds = definition.getViewerBeanIds();
     		
-    		for (String beanId: beanIds){
-    		
-	    		Object bean = result.getBean( beanId );
-	        	
-	    		// Only activates viewerSecurity if the XVWAccessPolicy object is deployed.
-	    		if ( ViewerAccessPolicyBuilder.applyViewerSecurity ) {
-	    			
-	    			ViewerAccessPolicyBuilder.applyViewerSecurity = boDefHandler.getBoDefinition( "XVWAccessPolicy" ) != null;
-		        	if ( bean!=null && bean instanceof XEOSecurityBaseBean ) {
-		        		ViewerAccessPolicyBuilder viewerAccessPolicyBuilder = new ViewerAccessPolicyBuilder();
-		        		viewerAccessPolicyBuilder.processViewer( result, boApplication.currentContext().getEboContext(), false );
-		        		((XEOSecurityBaseBean)bean).initializeSecurityMap(viewerAccessPolicyBuilder, result.getViewId() );
-		        	}
-	    		}
+    		if (ViewerAccessPolicyBuilder.getSecurityMode() != SecurityMode.DISABLED){
+    			for (String beanId: beanIds){
+
+    				Object bean = result.getBean( beanId );
+
+    				// Only activates viewerSecurity if the XVWAccessPolicy object is deployed.
+    				if ( ViewerAccessPolicyBuilder.applyViewerSecurity ) {
+
+    					ViewerAccessPolicyBuilder.applyViewerSecurity = boDefHandler.getBoDefinition( "XVWAccessPolicy" ) != null;
+    					if ( bean!=null && bean instanceof XEOSecurityBaseBean ) {
+    						ViewerAccessPolicyBuilder viewerAccessPolicyBuilder = new ViewerAccessPolicyBuilder();
+    						viewerAccessPolicyBuilder.processViewer( result, boApplication.currentContext().getEboContext(), false );
+    						((XEOSecurityBaseBean)bean).initializeSecurityMap(viewerAccessPolicyBuilder, result.getViewId() );
+    					}
+    				}
+    			}
     		}	
 	    		
     		UIViewRoot savedView = context.getViewRoot();

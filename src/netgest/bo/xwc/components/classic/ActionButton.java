@@ -80,8 +80,9 @@ public class ActionButton extends XUICommand
     private XUIViewProperty<Integer>		waitMode = new XUIViewProperty<Integer>( "waitMode" , this, XVWScripts.WAIT_DIALOG );		
     
     /**
-     * The position
+     * The position of the icon
      */
+    @Values({ "left","top" })
     private XUIBaseProperty<String>			iconPosition = new XUIBaseProperty<String>( "iconPosition", this, "left" );
     
     public String getIconPosition(){

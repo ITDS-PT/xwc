@@ -972,7 +972,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         /** END ML - 10-10-2011 **/
         
         oView.add("onSelColumns", "function() { " + XVWScripts.getCommandScript("self", oGrid.getSelectColumnsCommand(), XVWScripts.WAIT_DIALOG ) + " }" );
-        oView.add("onResetDefaults", "function() { this.grid.markDataSourceChange(); " + XVWScripts.getCommandScript("self", oGrid.getResetDefaultsCommand(), XVWScripts.WAIT_DIALOG ) + " }" );
+        oView.add("onResetDefaults", "function() { Ext.getCmp('"+oGrid.getClientId()+"').markDataSourceChange(); " + XVWScripts.getCommandScript("self", oGrid.getResetDefaultsCommand(), XVWScripts.WAIT_DIALOG ) + " }" );
         //oGridConfig.addJSString("layout", "fit");
         
         if( this.oExtButtons != null ) {

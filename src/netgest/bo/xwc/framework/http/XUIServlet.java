@@ -40,6 +40,7 @@ public class XUIServlet extends HttpServlet
     boolean             bIsInitialized;
     String				defaultLang;
     Locale 				defaultLocale;
+    boolean				useBrowserLanguage = false;
     /**
      * RenderKit used in this web context
      */
@@ -52,7 +53,7 @@ public class XUIServlet extends HttpServlet
 
     public void init(ServletConfig servletConfig) throws ServletException
     {
-        String loginPageParam = servletConfig.getInitParameter("LoginPageWhenExpired");
+    	String loginPageParam = servletConfig.getInitParameter("LoginPageWhenExpired");
         if (loginPageParam != null && !"".equals(loginPageParam))
         	this.loginPage = loginPageParam;
         
@@ -66,6 +67,11 @@ public class XUIServlet extends HttpServlet
     	}
     	else {
     		defaultLocale = Locale.getDefault();
+    	}
+    	
+    	String useBrowserLanguage = servletConfig.getInitParameter("UseBrowserLanguage");
+    	if (StringUtils.hasValue( useBrowserLanguage )){
+    		this.useBrowserLanguage = Boolean.parseBoolean( useBrowserLanguage );
     	}
     	
     	renderKit = servletConfig.getInitParameter("renderKit");
@@ -108,16 +114,24 @@ public class XUIServlet extends HttpServlet
         if( oHttpSession != null ) {
         	oXEOSession = (boSession)oHttpSession.getAttribute( "boSession" );
         }
+        
+        Locale localeForRequest = defaultLocale;
+        if (useBrowserLanguage){
+        	Locale browserLocale = oRequest.getLocale();
+        	if (browserLocale != null){
+        		localeForRequest = browserLocale;
+        	}
+        }
     
     	if( oXEOSession != null ) {
-    		oXEOSession.setDefaultLocale( defaultLocale );
+    		oXEOSession.setDefaultLocale( localeForRequest );
     		oXEOSession.getApplication().removeContextFromThread();
 	        oEboContext = oXEOSession.createRequestContextInServlet( oRequest, oResponse, getServletContext() );
 	        boApplication.currentContext().addEboContext( oEboContext );
     	}
     	
-    	if( defaultLocale != null ) {
-    		XUIMessagesLocalization.setThreadCurrentLocale( defaultLocale );
+    	if( localeForRequest != null ) {
+    		XUIMessagesLocalization.setThreadCurrentLocale( localeForRequest );
     	}
     	
     	if (StringUtils.hasValue( renderKit )){

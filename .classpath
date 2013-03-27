@@ -1,76 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/commons-logging.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/el-ri.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/jstl.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/sun-commons-beanutils.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/sun-commons-collections.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/sun-commons-digester.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/sun-commons-logging.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/fop-avalon-framework-4.2.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/fop-batik-all-1.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/fop-commons-io-1.3.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/fop-commons-logging-1.0.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/fop-serializer-2.7.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/fop-xml-apis-1.3.04.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/fop-xmlgraphics-commons-1.3.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/fop.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/jcommon-1.0.16.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/jfreechart-1.0.13.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/jofc2-1.0-0.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/saxon9-dom.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/saxon9-jdom.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/saxon9.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/xstream-1.3.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/servlet_2_4.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/jhighlight-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/html2xhtml-jtidy-r938.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/sigar.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/commons-lang-2.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/EarnstonePerf.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/iText-2.1.7.jar"/>
 	<classpathentry kind="src" path=".apt_generated">
 		<attributes>
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/xeo/base_lib/j2ee/activation.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/base_lib/j2ee/adk.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/base_lib/j2ee/ejb.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/base_lib/j2ee/jms.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/base_lib/j2ee/jndi.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/base_lib/j2ee/jta.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/base_lib/j2ee/mail.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/base_lib/j2ee/ojsp.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/base_lib/j2ee/servlet.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/base_lib/j2ee/soap.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/AppXTender.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/bcmail-jdk14-125.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/bcpg-jdk14-125.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/bcprov-jdk14-125.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/bsh-2.0b1.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/ConvertImagesStub.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/cos.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/java_sql_interfaces_1_6.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/jcr-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/JimiProClasses.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/log4j-1.2.15.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/mysql-connector-java-5.1.18-bin.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/ojdbc14.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/postgresql-9.1-901.jdbc4.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/regex4j.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/sqljdbc4.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/timerservice.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/WordWriter-v2-License.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/WordWriter-v2.5.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/xeoWin32Client.jar"/>
-	<classpathentry exported="true" kind="lib" path="/xeo/project_lib/xmlparserv2.jar"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/xeo"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/freemarker.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/commons-fileupload-1.2.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/jsf-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="project_lib/jsf-impl.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -112,6 +112,11 @@ public class XUIBindProperty<V> extends XUIBaseProperty<Object> {
 	            else {
 	            	ELContext elCtx = getComponent().getELContext();
 	                oRetValue = (V)oValExpr.getValue( elCtx );
+	                if (elCtx instanceof XUIELContextWrapper){
+	                	if (!((XUIELContextWrapper) elCtx).wasPropertyEvaluated()){
+	                		wasEvaluated = false;
+	                	}
+	                }
 	            }
         	}
         	else {
@@ -136,9 +141,12 @@ public class XUIBindProperty<V> extends XUIBaseProperty<Object> {
             else if( this.cValueType == Byte.class ) {
                 oRetValue = (V)Byte.valueOf( (byte)0 );
             }
+            wasEvaluated = false;
         }
         return oRetValue;
     }
+    
+    
     
     public boolean isLiteralText() {
         Object oValue = getValue();

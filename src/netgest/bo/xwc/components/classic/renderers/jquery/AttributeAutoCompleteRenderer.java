@@ -72,7 +72,6 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 	 */
 	public void encodeBegin(AttributeAutoComplete component, XUIResponseWriter w, JQueryWidget widget) throws IOException {
 		
-		setupIncludes( component );
 		createMarkup( component, w );
 		Layouts.registerComponent( 
 				getRequestContext().getScriptContext(), 
@@ -280,14 +279,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 		
 	}
 
-	private void setupIncludes( XUIComponentBase component ) {
-		if (!component.isRenderedOnClient()){
-			includeHeaderScript( "autoComplete_js", 
-					"ext-xeo/autocomplete/jquery.fcbkcomplete.js" );
-			includeHeaderCss( "autoComplete_css", 
-			"ext-xeo/autocomplete/style.css" );
-		}
-	}
+	
 	
 	@Override
 	public void encodeEnd(XUIComponentBase component) throws IOException { }

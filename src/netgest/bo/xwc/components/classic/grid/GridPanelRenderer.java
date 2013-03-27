@@ -537,8 +537,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         if( oGridPanel.getAutoSaveGridState()) {
         	oGridPanel.saveUserState();
         }
-        
-        System.out.println("DataSource changed "+  reqParam.isDataSourceChanged());
+       
         
 		return reqParam;
 		

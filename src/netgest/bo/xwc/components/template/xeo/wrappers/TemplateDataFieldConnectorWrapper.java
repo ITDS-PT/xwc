@@ -138,21 +138,24 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 	private TemplateModel getValueForFields(String name) {		
 		Object value = field.getValue();	
 			
-		if (field.getDataType() == DataFieldTypes.VALUE_DATETIME) {
+		if (value!=null && field.getDataType() == DataFieldTypes.VALUE_DATETIME) {
 			Timestamp timestampValue=(Timestamp)value;
 			return new SimpleDate(timestampValue);
 		}
-		else if (field.getDataType() == DataFieldTypes.VALUE_DATE) {
+		else if (value!=null && field.getDataType() == DataFieldTypes.VALUE_DATE) {
 			java.sql.Date dateValue=(java.sql.Date)value;
 			return new SimpleDate(dateValue);
 		}
-		else if (field.getDataType() == DataFieldTypes.VALUE_NUMBER) {
+		else if (value!=null && field.getDataType() == DataFieldTypes.VALUE_NUMBER) {
 			return getValueForNumber(value);
 		}
-		else if (field.getDataType() == DataFieldTypes.VALUE_CHAR || 
+		else if (value!=null && field.getDataType() == DataFieldTypes.VALUE_CHAR || 
 				field.getDataType()==DataFieldTypes.VALUE_CLOB) {
 			String valueString = (String)field.getValue();
 			return new SimpleScalar(valueString);
+		}
+		else if (value==null) {
+			return null;
 		}
 		else
 			return new SimpleScalar(value.toString());		
@@ -164,29 +167,27 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 			Object value = field.getValue();
 			
 			//Testar
-			if (field.getIsLov() && name.equals(LOVLABEL)) {
+			if (value!=null && field.getIsLov() && name.equals(LOVLABEL)) {
 				String valueLov=field.getLovMap().get(value.toString());
 				return new SimpleScalar(valueLov);
 			}
 			
-			if (field.getDataType() == DataFieldTypes.VALUE_DATETIME) {
+			if (value!=null && field.getDataType() == DataFieldTypes.VALUE_DATETIME) {
 				Timestamp timestampValue=(Timestamp)value;
 				return new SimpleDate(timestampValue);
 			}
-			else if (field.getDataType() == DataFieldTypes.VALUE_DATE) {
+			else if (value!=null && field.getDataType() == DataFieldTypes.VALUE_DATE) {
 				Date dateValue=(Date)value;
 				return new SimpleDate(new java.sql.Date(dateValue.getTime()));
 			}
-			else if (field.getDataType() == DataFieldTypes.VALUE_NUMBER) {
+			else if (value!=null && field.getDataType() == DataFieldTypes.VALUE_NUMBER) {
 				//Test if is a XEOObject relation
 				//Workaround since the connector treats ATTRIBUTE_OBJECT as NUMBER
 				XEOObjectAttributeConnector attconnector = (XEOObjectAttributeConnector)field;
 				
 				if (attconnector.getBoDefAttribute().getAtributeDeclaredType()
 						==boDefAttribute.ATTRIBUTE_OBJECT)
-				{
-					if (value==null)
-						return null;
+				{					
 					BigDecimal boui = (BigDecimal)value;
 					XEOObjectConnector xeoobject = new XEOObjectConnector(boui.longValue(), 0);
 					return new TemplateDataRecordConnectorWrapper(xeoobject);
@@ -194,7 +195,7 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 				else
 					return getValueForNumber(value);
 			}
-			else if (field.getDataType() == DataFieldTypes.VALUE_BRIDGE) {
+			else if (value!=null && field.getDataType() == DataFieldTypes.VALUE_BRIDGE) {
 				return new TemplateListWrapper(field.getDataList().iterator());
 			}
 			else
@@ -240,6 +241,8 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 			BigInteger numericValue=(BigInteger)value;
 			return new SimpleNumber(numericValue.longValue());
 		}
+		else if (value==null)
+			return null;
 		else return new SimpleScalar(value.toString()); 
 
 	}

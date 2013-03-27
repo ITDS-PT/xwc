@@ -3,6 +3,7 @@ package netgest.bo.xwc.components.classic;
 import java.io.IOException;
 
 import javax.faces.component.NamingContainer;
+import javax.faces.component.UIComponent;
 
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
@@ -12,6 +13,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 
 public class TemplateInclude extends XUIComponentBase implements NamingContainer {
 	
@@ -38,6 +40,19 @@ public class TemplateInclude extends XUIComponentBase implements NamingContainer
 		this.getChildren().clear();
 		
 		this.getChildren().add( viewRoot );
+		
+		UIComponent r = this;
+        while( r.getParent() != null )
+               r = r.getParent();
+        
+        for( String s : viewRoot.getBeanIds() ) {
+        		Object bean = viewRoot.getBean( s );
+        		if (bean instanceof XEOBaseBean){
+        			XEOBaseBean castBean = (XEOBaseBean) bean;
+        			castBean.setViewRoot( ((XUIViewRoot)r).getViewState() );
+        		}
+        }
+
 
 	}
 	

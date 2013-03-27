@@ -1,5 +1,6 @@
 package netgest.bo.xwc.framework;
 
+import javax.el.ELContext;
 import javax.el.ValueExpression;
 
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -87,7 +88,13 @@ public class XUIStateBindProperty<V> extends XUIStateProperty<ValueExpression> {
                 }
             }
             else {
-                oRetValue = oValExpr.getValue( getComponent().getELContext() );
+            	ELContext context = getComponent().getELContext();
+                oRetValue = oValExpr.getValue( context );
+                if (context instanceof XUIELContextWrapper){
+                	if (!((XUIELContextWrapper) context).wasPropertyEvaluated()){
+                		wasEvaluated = false;
+                	}
+                }
             }
         }
         
@@ -108,7 +115,9 @@ public class XUIStateBindProperty<V> extends XUIStateProperty<ValueExpression> {
             else if( this.cValueType == Byte.class ) {
                 oRetValue = Byte.valueOf( (byte)0 );
             }
+            wasEvaluated = false;
         }
+        
         setLastEvaluatedValue( oRetValue );
         return oRetValue;
     }
