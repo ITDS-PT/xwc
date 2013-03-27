@@ -422,7 +422,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
         if( sLovName == null || sLovName.length() == 0 ) {
             ArrayList<Object> list = new ArrayList<Object>();
             try {
-            	if( oAttHandler.isObject() && oAttHandler.getDefAttribute().renderAsLov() ) {
+            	if( oAttHandler.isObject() ) {
                 	
             		list.add( new Object[] { "", "" } );
             		

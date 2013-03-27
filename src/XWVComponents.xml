@@ -394,10 +394,10 @@
             <xwc:render for='attributeDate'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='attributeTime'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='attributeDateTime'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributeLov'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeLov'>netgest.bo.xwc.components.classic.renderers.XMLAttributeRenderer</xwc:render>
             <xwc:render for='attributeBoolean'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributeNumber'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributeNumberLookup'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeNumber'>netgest.bo.xwc.components.classic.renderers.XMLAttributeRenderer</xwc:render>
+            <xwc:render for='attributeNumberLookup'>netgest.bo.xwc.components.classic.renderers.XMLAttributeRenderer</xwc:render>
             <xwc:render for='attributeOutput'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='attributeFile'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
             <xwc:render for='attributePassword'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
