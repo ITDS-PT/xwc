@@ -34,15 +34,6 @@ import netgest.utils.StringUtils;
  * <code>
  * 		<xvw:attribute objectAttribute='att1' inputType='attributePassword'/>
  * 		<!-- In this case the attribute is forced to render as a password -->
- * 
- * 		<!-- To overwrite properties from the {@link DataFieldConnector} the
- * 			objectAttribute property must be first attribute in the xml
- * 	 	-->
- * 		<-- Wrong Way -->
- * 		<xvw:attribute objectAttribute='att1' disabled='true'/>
- * 		<-- Write Way -->
- * 		<xvw:attribute disabled='true' objectAttribute='att1'/>
- * 
  * </code>
  * 
  * Can't have children
