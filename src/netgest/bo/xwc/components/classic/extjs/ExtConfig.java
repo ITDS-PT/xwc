@@ -146,7 +146,7 @@ public class ExtConfig implements Serializable {
     	ExtConfig ret;
     	
     	ret = (ExtConfig)oConfigOptions.get( id );
-    	if( ret == null ) {
+    	if( ret == null && createNew) {
     		ret = new ExtConfig();
     		add( id, ret );
     	}
