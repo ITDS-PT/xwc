@@ -4,6 +4,7 @@
         <wb-resource deploy-path="/" source-path="/webapps/default/xwc/js/localization"/>
         <wb-resource deploy-path="/" source-path="/webapps/default/ext-xeo/js/localization"/>
         <wb-resource deploy-path="/" source-path="/.build/src"/>
+        <wb-resource deploy-path="/" source-path="/src"/>
         <wb-resource deploy-path="/" source-path="/.apt_generated"/>
     </wb-module>
 </project-modules>
