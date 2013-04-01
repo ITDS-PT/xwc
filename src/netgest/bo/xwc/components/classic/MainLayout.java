@@ -59,7 +59,7 @@ public class MainLayout extends XUIComponentBase {
 	}
 	
 	XUIBindProperty< Boolean > renderProfilesList = new XUIBindProperty< Boolean >(
-			"renderProfilesList" , this , Boolean.class );
+			"renderProfilesList" , this , Boolean.class, "true" );
 
 	public Boolean getRenderProfilesList() {
 		return renderProfilesList.getEvaluatedValue();
