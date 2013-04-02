@@ -310,11 +310,11 @@ public class GridPanelUtilities {
 			String[] names = JSONObject.getNames(jFilters);
 			if (names != null) {
 	
-				for (String name : names) {
-					if (getColumn( name ) == null)
+				for (String nameCol : names) {
+					if (getColumn( nameCol ) == null)
 						continue;
 					
-					JSONObject jsonColDef = jFilters.getJSONObject( name );
+					JSONObject jsonColDef = jFilters.getJSONObject( nameCol );
 					String submitedType = jsonColDef.getString("type");
 	
 					boolean active = jsonColDef.getBoolean("active");
@@ -339,6 +339,11 @@ public class GridPanelUtilities {
 							if (valuesList.size() == 0) {
 								bAddCodition = false;
 							}
+							
+							operator = checkForContainsOperator( jsonColDef , operator );
+							
+							if (isOperatorForContainsFilter( operator ))
+								terms = addFilterTerm(terms, nameCol, getColumn( nameCol ).getSqlExpression(),operator, value, FilterTerms.JOIN_AND);
 	
 						} else if ("list".equals(submitedType)) {
 							List<String> valuesList = new ArrayList<String>();
@@ -354,10 +359,15 @@ public class GridPanelUtilities {
 							if (valuesList.size() == 0) {
 								bAddCodition = false;
 							}
+							
+							operator = checkForContainsOperator( jsonColDef , operator );
+							if (isOperatorForContainsFilter( operator ))
+								terms = addFilterTerm(terms, nameCol, getColumn( nameCol ).getSqlExpression(),operator, value, FilterTerms.JOIN_AND);
 	
 						} else if ("string".equals(submitedType)) {
 							value = jsonColDef.getString("value");
 							operator = FilterTerms.OPERATOR_LIKE;
+							operator = checkForContainsOperator( jsonColDef , operator );
 						} else if ("date".equals(submitedType)) {
 							SimpleDateFormat sdf = new SimpleDateFormat(
 									"dd/MM/yyyy");
@@ -381,8 +391,14 @@ public class GridPanelUtilities {
 								else
 									operator = FilterTerms.OPERATOR_GREATER_THAN;
 								
-								terms = addFilterTerm(terms, name, getColumn( name ).getSqlExpression(),operator, value, FilterTerms.JOIN_AND);
+								operator = checkForContainsOperator( jsonColDef , operator );
+								terms = addFilterTerm(terms, nameCol, getColumn( nameCol ).getSqlExpression(),operator, value, FilterTerms.JOIN_AND);
 							}
+							
+							operator = checkForContainsOperator( jsonColDef , operator );
+							if (isOperatorForContainsFilter( operator ))
+								terms = addFilterTerm(terms, nameCol, getColumn( nameCol ).getSqlExpression(),operator, value, FilterTerms.JOIN_AND);
+							
 							bAddCodition = false;
 						} else if ("boolean".equals(submitedType)) {
 							value = Boolean.valueOf(jsonColDef.getString("value"));
@@ -402,15 +418,19 @@ public class GridPanelUtilities {
 								else
 									operator = FilterTerms.OPERATOR_GREATER_THAN;
 								
-								terms = addFilterTerm(terms, name, getColumn( name ).getSqlExpression(), operator, value, FilterTerms.JOIN_AND);
+								terms = addFilterTerm(terms, nameCol, getColumn( nameCol ).getSqlExpression(), operator, value, FilterTerms.JOIN_AND);
 							}
+							operator = checkForContainsOperator( jsonColDef , operator );
+							if (isOperatorForContainsFilter( operator ))
+								terms = addFilterTerm(terms, nameCol, getColumn( nameCol ).getSqlExpression(), operator, value, FilterTerms.JOIN_AND);
 							bAddCodition = false;
 						} else {
 							value = null;
 						}
 	
 						if (bAddCodition) {
-							terms = addFilterTerm(terms, name, getColumn( name ).getSqlExpression() ,operator, value, FilterTerms.JOIN_AND);
+							operator = checkForContainsOperator( jsonColDef , operator );
+							terms = addFilterTerm(terms, nameCol, getColumn( nameCol ).getSqlExpression() ,operator, value, FilterTerms.JOIN_AND);
 						}
 					}
 				}
@@ -420,6 +440,25 @@ public class GridPanelUtilities {
 			e.printStackTrace();
 		}
 		return terms;
+	}
+
+	protected boolean isOperatorForContainsFilter(Byte operator) {
+		return operator != null && (FilterTerms.OPERATOR_CONTAINS == operator || FilterTerms.OPERATOR_NOT_CONTAINS == operator);
+	}
+
+	protected Byte checkForContainsOperator(JSONObject jsonColDef,
+			Byte operator) throws JSONException {
+		Object contains = jsonColDef.opt( "containsData" ); 
+		if (contains != null){
+			if (JSONObject.NULL != contains){
+				if ("true".equalsIgnoreCase( contains.toString()) ){
+					operator = FilterTerms.OPERATOR_CONTAINS;
+				} else if ("false".equalsIgnoreCase( contains.toString() ) ){
+					operator = FilterTerms.OPERATOR_NOT_CONTAINS;
+				}
+			}
+		}
+		return operator;
 	}
 	
 	/**

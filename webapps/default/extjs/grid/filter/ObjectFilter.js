@@ -36,10 +36,11 @@ Ext.grid.filter.ObjectFilter = Ext.extend(Ext.grid.filter.Filter, {
 	},
 	
 	isActivatable: function() {
-		return true;
+		return true || this.containsData != null;
 	},
 	
 	fireClick: function() {
+		this.clearData();
 		this.lookupCommand();
 	},
 	fireUpdate: function() {		
@@ -58,7 +59,7 @@ Ext.grid.filter.ObjectFilter = Ext.extend(Ext.grid.filter.Filter, {
 	},
 	
 	serialize: function() {
-		var args = {active:this.active, type: 'object', value: this.getValue()};
+		var args = {active:this.active, type: 'object', value: this.getValue(), containsData : this.containsData};
 		this.fireEvent('serialize', args, this);
 		return args;
 	},

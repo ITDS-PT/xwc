@@ -1104,7 +1104,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             	oExtFiltersChild.addJSString( "dataIndex", dataField.replaceAll( "\\.", "__" ) );
             	oExtFiltersChild.add( "active" , colFilter.getBoolean("active"));
             	oExtFiltersChild.add( "searchable", col.isSearchable() );
-        		
+            	
             	JSONArray filters;
             	String	  filterValue;
 

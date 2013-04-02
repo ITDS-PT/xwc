@@ -496,6 +496,9 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         					if( clientFilter.opt("value") != null ) {
         						serverFilter.put( "value", clientFilter.get("value") );
         					}
+        					if (clientFilter.opt( "containsData" ) != null){
+        						serverFilter.put( "containsData", clientFilter.get("containsData") );
+        					}
         					jFilters.put( name, serverFilter );
 	        			}
 	        		}

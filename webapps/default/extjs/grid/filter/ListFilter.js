@@ -98,6 +98,9 @@ Ext.grid.filter.ListFilter = Ext.extend(Ext.grid.filter.Filter, {
 			this.menu.add(item);
 		}
 		
+		this.menu.add("-");
+		this.createDataPresenceFilters();
+		
 		this.setActive(this.isActivatable());
 		this.loaded = true;
 		
@@ -106,7 +109,17 @@ Ext.grid.filter.ListFilter = Ext.extend(Ext.grid.filter.Filter, {
     }
 	},
 	
-	checkChange: function(item, checked) {
+	clearValue : function () {
+		var items = this.menu.items;
+		for (var k = 0 ; k < items.length ; k++){
+			if (items.items[k].setChecked){
+				items.items[k].setChecked(false);
+			} else
+				break;
+		}
+	}
+	
+	, checkChange: function(item, checked) {
 		var value = [];
 		this.menu.items.each(function(item) {
 			if(item.checked) {
@@ -116,11 +129,12 @@ Ext.grid.filter.ListFilter = Ext.extend(Ext.grid.filter.Filter, {
 		this.value = value;
 		
 		this.setActive(this.isActivatable());
+		this.clearData();
 		this.fireEvent("update", this);
 	},
 	
 	isActivatable: function() {
-		return this.value.length > 0;
+		return this.value.length > 0 || this.containsData != null;
 	},
 	
 	setValue: function(value) {
@@ -145,7 +159,7 @@ Ext.grid.filter.ListFilter = Ext.extend(Ext.grid.filter.Filter, {
 	},
 	
 	serialize: function() {
-    var args = {active:this.active, type: 'list', value: this.phpMode ? this.value.join(',') : this.value};
+    var args = {active:this.active, type: 'list', value: this.phpMode ? this.value.join(',') : this.value, containsData : this.containsData};
     this.fireEvent('serialize', args, this);
 		return args;
 	},

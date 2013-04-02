@@ -75,6 +75,8 @@ if( Ext.grid.filter.ObjectFilter) {
 	  Ext.apply(Ext.grid.filter.ObjectFilter.prototype , {
 		  yesText: 'Seleccione los valores',
 		  noText: 'No'
+		  , containsDataText : 'Contiene datos'
+		  , notContainsDataText : 'No contiene datos'	   
 	 });
 }
 
@@ -83,6 +85,8 @@ if( Ext.grid.filter.DateFilter) {
 		  beforeText: 'Antes de',
 		  afterText: 'Despu&eacute;s de',
 		  onText: 'En'
+		  , containsDataText : 'Contiene datos'
+		  , notContainsDataText : 'No contiene datos'	  
 	 });
 }
 
@@ -90,15 +94,32 @@ if( Ext.grid.filter.BooleanFilter) {
 	  Ext.apply(Ext.grid.filter.BooleanFilter.prototype , {
 		  yesText: 'S&iacute;'	,
 		  noText: 'No'
+		  , containsDataText : 'Contiene datos'
+		  , notContainsDataText : 'No contiene datos'	  
 	 });
 }
 
 if( Ext.grid.filter.ListFilter) {
 	  Ext.apply(Ext.grid.filter.ListFilter.prototype , {
 		  loadingText: 'Lectura de los datos...'
+		  , containsDataText : 'Contiene datos'
+		  , notContainsDataText : 'No contiene datos'
 	 });
 }
 
+if( Ext.grid.filter.NumericFilter) {
+	  Ext.apply(Ext.grid.filter.NumericFilter.prototype , {
+		  containsDataText : 'Contiene datos'
+		  , notContainsDataText : 'No contiene datos'	  
+	 });
+}
+
+if( Ext.grid.filter.StringFilter) {
+	  Ext.apply(Ext.grid.filter.StringFilter.prototype , {
+		  containsDataText : 'Contiene datos'
+		  , notContainsDataText : 'No contiene datos'	  
+	 });
+}
 
 if( ExtXeo.form.NumberField) {
 	  Ext.apply(ExtXeo.form.NumberField.prototype , {

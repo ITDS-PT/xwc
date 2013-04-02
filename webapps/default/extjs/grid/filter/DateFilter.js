@@ -61,29 +61,29 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
 			date.menu.on('select', this.onSelect.createDelegate(this, [date]), this);
   
       date.on('checkchange', function(){
-        this.setActive(this.isActivatable());
+        this.setActive(this.isActivatable());this.setActive(this.isActivatable());this.setActive(this.isActivatable());this.setActive(this.isActivatable());this.setActive(this.isActivatable());this.setActive(this.isActivatable());this.setActive(this.isActivatable());
 			}, this);
 		};
 	},
   
 	onSelect: function(date, menuItem, value, picker) {
-    date.setChecked(true);
-    var dates = this.dates;
-    
-    if(date == dates.on) {
-      dates.before.setChecked(false, true);
-      dates.after.setChecked(false, true);
-    } else {
-      dates.on.setChecked(false, true);
-      
-      if(date == dates.after && dates.before.menu.picker.value < value) {
-        dates.before.setChecked(false, true);
-      } else if (date == dates.before && dates.after.menu.picker.value > value) {
-        dates.after.setChecked(false, true);
-      }
-    }
-    
-    this.fireEvent("update", this);
+	    date.setChecked(true);
+	    var dates = this.dates;
+	    
+	    if(date == dates.on) {
+	      dates.before.setChecked(false, true);
+	      dates.after.setChecked(false, true);
+	    } else {
+	      dates.on.setChecked(false, true);
+	      
+	      if(date == dates.after && dates.before.menu.picker.value < value) {
+	        dates.before.setChecked(false, true);
+	      } else if (date == dates.before && dates.after.menu.picker.value > value) {
+	        dates.after.setChecked(false, true);
+	      }
+	    }
+	    this.clearData();
+	    this.fireEvent("update", this);
   },
   
 	getFieldValue: function(field) {
@@ -95,7 +95,7 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
 	},
 	
 	isActivatable: function() {
-		return this.dates.on.checked || this.dates.after.checked || this.dates.before.checked;
+		return this.dates.on.checked || this.dates.after.checked || this.dates.before.checked || this.containsData != null;
 	},
 	
 	setValue: function(value) {
@@ -111,10 +111,18 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
 			} else {
 				this.dates[key].setChecked(false);
 			}
-    }
-	},
+		}
+		this.clearData();
+	}
 	
-	getValue: function() {
+	, clearValue : function () {
+		for(var key in this.dates){
+			this.dates[key].setChecked(false);
+		}
+	}
+	
+	
+	, getValue: function() {
 		var result = {};
 		for(var key in this.dates) {
 			if(this.dates[key].checked) {
@@ -139,7 +147,7 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
 	},
 	serialize: function() {
 		var args = [];
-		if(this.dates.before.checked || this.dates.after.checked) {
+		if(this.dates.before.checked || this.dates.after.checked || this.containsData != null) {
 			var values =  [];
 			
 			if( this.dates.before.checked )
@@ -151,7 +159,13 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
 			args = {active:this.active, type: 'date', value: values};
 		}
 		if(this.dates.on.checked) {
-			args = {active:this.active, type: 'date', value: [ {comparison: 'eq', value: this.getFieldValue('on').format(this.dateFormat)}] };
+			args = {active:this.active, type: 'date', value: [ {comparison: 'eq', value: this.getFieldValue('on').format(this.dateFormat)}]};
+		}
+		
+		if (args.length == 0){
+			args = {active:this.active, type: 'date', containsData : this.containsData};
+		} else {
+			args.containsData = this.containsData;
 		}
 		this.fireEvent('serialize', args, this);
 		return args;

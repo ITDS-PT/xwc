@@ -71,6 +71,10 @@ if( Ext.grid.filter.ObjectFilter) {
 	  Ext.apply(Ext.grid.filter.ObjectFilter.prototype , {
 		  yesText: 'Seleccionar valores',
 		  noText: 'N&atilde;o'
+		  , containsDataText : 'Cont&eacute;m dados'
+		  , notContainsDataText : 'N&atilde;o cont&eacute;m dados'
+			  
+			  
 	 });
 }
 
@@ -79,6 +83,8 @@ if( Ext.grid.filter.DateFilter) {
 		  beforeText: 'Antes de',
 		  afterText: 'Depois de',
 		  onText: 'Em'
+		  , containsDataText : 'Cont&eacute;m dados'
+		  , notContainsDataText : 'N&atilde;o cont&eacute;m dados'
 	 });
 }
 
@@ -86,12 +92,30 @@ if( Ext.grid.filter.BooleanFilter) {
 	  Ext.apply(Ext.grid.filter.BooleanFilter.prototype , {
 		  yesText: 'Sim'	,
 		  noText: 'N&atilde;o'
+		  , containsDataText : 'Cont&eacute;m dados'
+		  , notContainsDataText : 'N&atilde;o cont&eacute;m dados'	  
 	 });
 }
 
 if( Ext.grid.filter.ListFilter) {
 	  Ext.apply(Ext.grid.filter.ListFilter.prototype , {
 		  loadingText: 'Lendo Dados...'
+		  , containsDataText : 'Cont&eacute;m dados'
+		  , notContainsDataText : 'N&atilde;o cont&eacute;m dados'	  
+	 });
+}
+
+if( Ext.grid.filter.NumericFilter) {
+	  Ext.apply(Ext.grid.filter.NumericFilter.prototype , {
+		  containsDataText : 'Cont&eacute;m dados'
+		  , notContainsDataText : 'N&atilde;o cont&eacute;m dados'	  
+	 });
+}
+
+if( Ext.grid.filter.StringFilter) {
+	  Ext.apply(Ext.grid.filter.StringFilter.prototype , {
+		  containsDataText : 'Cont&eacute;m dados'
+		  , notContainsDataText : 'N&atilde;o cont&eacute;m dados'	  
 	 });
 }
 
