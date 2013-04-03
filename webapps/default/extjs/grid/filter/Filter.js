@@ -41,7 +41,7 @@ Ext.grid.filter.Filter = function(config){
 	
 	this.menu = new Ext.menu.Menu();
 	this.init();
-	this.createDataPresenceFilters();
+	this.createDataPresenceFilters(config);
 	if(config && config.value) {
 		this.setValue(config.value);
 		this.setActive(config.active !== false, true);
@@ -110,7 +110,7 @@ Ext.extend(Ext.grid.filter.Filter, Ext.util.Observable, {
 	 */
 	, init: Ext.emptyFn,
 	
-	createDataPresenceFilters : function () {
+	createDataPresenceFilters : function (config) {
 		
 		this.dataPresenceMenus = [
 			new Ext.menu.CheckItem({text: this.containsDataText, checked: false, }),
@@ -120,38 +120,50 @@ Ext.extend(Ext.grid.filter.Filter, Ext.util.Observable, {
 		this.menu.add(this.dataPresenceMenus[0]);
 		this.menu.add(this.dataPresenceMenus[1]);
 		
-		var checkForData = this.dataPresenceMenus[0];
-		var checkForNull = this.dataPresenceMenus[1]
+		if (config){
+			if (config.containsData != undefined){
+				if (config.containsData == true){
+					this.dataPresenceMenus[0].setChecked(true);
+					this.dataPresenceMenus[1].setChecked(false);
+				} else if (config.containsData == false){
+					this.dataPresenceMenus[1].setChecked(false);
+					this.dataPresenceMenus[1].setChecked(true);
+				}
+			}
+		}
 		
-		var that = this;
+		var checkForData = this.dataPresenceMenus[0];
+		var checkForNull = this.dataPresenceMenus[1];
+		
 		checkForData.on('checkchange', function (item, checked){
 			if (checked){
 			  checkForNull.setChecked(false);
-			  that.clearValue();
-			  that.containsData = true; 	
+			  this.clearValue();
+			  this.containsData = true; 	
 			} else{
-			  that.containsData = null;
+			  this.containsData = null;
 			}
-			that.setActive(that.isActivatable());
-			that.fireUpdate();
+			this.setActive(this.isActivatable());
+			this.fireUpdate();
 		}, this);
 		
 		
 		checkForNull.on('checkchange', function (item, checked){
+			
 			if (checked){
 			  checkForData.setChecked(false);
-			  that.clearValue();
-			  that.containsData = false; 	
+			  this.clearValue();
+			  this.containsData = false; 	
 			} else{
-			  that.containsData = null;
+			  this.containsData = null;
 			}
-			that.setActive(that.isActivatable());
-			that.fireUpdate();
+			this.setActive(this.isActivatable());
+			this.fireUpdate();
 		}, this);
 		
 		for(var i=0; i<this.dataPresenceMenus.length; i++) {
 			this.dataPresenceMenus[i].on('click', function(item, evt){ 
-				that.fireUpdate(); 
+				this.fireUpdate(); 
 			}, this);
 		}
 		
