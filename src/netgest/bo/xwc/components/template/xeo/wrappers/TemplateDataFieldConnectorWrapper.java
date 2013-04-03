@@ -162,7 +162,7 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 	}
 	
 	
-	private TemplateModel getValueForXEOObjects(String name) {		
+	public TemplateModel getValueForXEOObjects(String name) {		
 		if (field!=null) {
 			Object value = field.getValue();
 			
