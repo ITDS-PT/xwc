@@ -47,6 +47,7 @@ import netgest.bo.system.boApplication;
 import netgest.bo.utils.XEOObjectUtils;
 import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.annotations.Visible;
+import netgest.bo.xwc.components.classic.AttributeAutoComplete;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.AttributeNumberLookup;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -2799,12 +2800,17 @@ public class XEOEditBean extends XEOBaseBean
     	
     	DataFieldConnector genericConnector = component.getDataFieldConnector( );
     	String targetObjectName = "";
-    	String attribute = component.getObjectAttribute( );
+    	String attribute = component.getObjectAttribute();
     	if (genericConnector instanceof XEOObjectAttributeConnector){
     		XEOObjectAttributeConnector attributeConector = (XEOObjectAttributeConnector) genericConnector;
     		boDefAttribute attributeDefinition = attributeConector.getBoDefAttribute( );
     		targetObjectName = attributeDefinition.getReferencedObjectName( );
     		boObjectList list = boObjectList.list( getEboContext( ) , "select " + targetObjectName );
+    		AttributeAutoComplete autoComplete = ( AttributeAutoComplete ) component;
+    		if ( autoComplete.getAllowWildCardSearch() ){
+    			filter = filter + "%";
+    		}
+    		
     		list.setFullTextSearch( filter );
     		try {
 	    		list.beforeFirst( );

@@ -183,10 +183,10 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 	
 	/**
 	 * Delay between ajax requests (bigger delay, lower server time request) - in miliseconds
-	 * Default value is 350 ms
+	 * Default value is 200 ms
 	 */
 	XUIBaseProperty< Integer > searchDelay = new XUIBaseProperty< Integer >( "searchDelay" ,
-			this, 350 );
+			this, 200 );
 
 	public Integer getSearchDelay() {
 		return searchDelay.getValue( );
@@ -194,6 +194,20 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 
 	public void setSearchDelay(Integer value) {
 		searchDelay.setValue( value );
+	}
+	
+	/**
+	 * Whether or not to allow wildcard searches
+	 */
+	XUIBindProperty< Boolean > allowWildCardSearch = new XUIBindProperty< Boolean >(
+			"allowWildCardSearch" , this , Boolean.class, "true" );
+
+	public Boolean getAllowWildCardSearch() {
+		return allowWildCardSearch.getEvaluatedValue();
+	}
+
+	public void setAllowWildCardSearch(String newValExpr) {
+		allowWildCardSearch.setExpressionText( newValExpr );
 	}
 	
 	@Override
