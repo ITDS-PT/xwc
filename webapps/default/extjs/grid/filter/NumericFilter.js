@@ -10,7 +10,7 @@ Ext.grid.filter.NumericFilter = Ext.extend(Ext.grid.filter.Filter, {
 	init: function() {
 		this.menu = new Ext.menu.RangeMenu();
 		
-		this.menu.on("update", this.fireUpdate, this);
+		this.menu.on("update", function() { this.clearData(); this.fireUpdate() }, this);
 	},
 	
 	fireUpdate: function() {
