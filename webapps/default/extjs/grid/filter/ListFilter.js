@@ -100,6 +100,15 @@ Ext.grid.filter.ListFilter = Ext.extend(Ext.grid.filter.Filter, {
 		
 		this.menu.add("-");
 		this.createDataPresenceFilters();
+		if (this.containsData){
+			if (this.containsData == true){
+				this.dataPresenceMenus[0].setChecked(true);
+				this.dataPresenceMenus[1].setChecked(false);
+			} else if (this.containsData == false){
+				this.dataPresenceMenus[0].setChecked(false);
+				this.dataPresenceMenus[1].setChecked(true);
+			}
+		}
 		
 		this.setActive(this.isActivatable());
 		this.loaded = true;
@@ -112,6 +121,7 @@ Ext.grid.filter.ListFilter = Ext.extend(Ext.grid.filter.Filter, {
 	clearValue : function () {
 		var items = this.menu.items;
 		for (var k = 0 ; k < items.length ; k++){
+			//Uncheck every item until the first separator
 			if (items.items[k].setChecked){
 				items.items[k].setChecked(false);
 			} else
