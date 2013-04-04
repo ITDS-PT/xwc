@@ -41,8 +41,9 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
      * @cfg {Date} maxDate
      * The maximum date allowed in the menu's {@link Ext.menu.DateMenu}
      */
+    lookupCommand : Ext.emptyFn
 	
-	init: function() {
+	, init: function() {
 		var opts = Ext.apply(this.pickerOpts, {
 			minDate: this.minDate, 
 			maxDate: this.maxDate, 
@@ -54,14 +55,19 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
 			'on':     new Ext.menu.CheckItem({text: this.onText, menu: new Ext.menu.DateMenu(opts)})
 		};
 				
-		this.menu.add(dates.before, dates.after, "-", dates.on);
+		var between = new Ext.menu.Item({
+			  text: 'Entre datas'
+					, handler : this.lookupCommand
+		});
+		
+		this.menu.add(dates.before, dates.after, between, "-", dates.on);
 		
 		for(var key in dates) {
 			var date = dates[key];
 			date.menu.on('select', this.onSelect.createDelegate(this, [date]), this);
   
       date.on('checkchange', function(){
-        this.setActive(this.isActivatable());this.setActive(this.isActivatable());this.setActive(this.isActivatable());this.setActive(this.isActivatable());this.setActive(this.isActivatable());this.setActive(this.isActivatable());this.setActive(this.isActivatable());
+        this.setActive(this.isActivatable());
 			}, this);
 		};
 	},
@@ -184,5 +190,22 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
 			return false;
     }
 		return true;
+	}
+	
+	
+	, setBeforeValue : function(newDate){
+		this.dates.before.menu.picker.setValue(new Date(newDate));
+	}
+	
+	, setBeforeCheck : function(checked){
+		this.dates.before.setChecked(checked);
+	}
+	
+	, setAfterValue : function(newDate){
+		this.dates.after.menu.picker.setValue(new Date(newDate));
+	}
+	
+	, setAfterCheck : function(checked){
+		this.dates.after.setChecked(checked);
 	}
 });

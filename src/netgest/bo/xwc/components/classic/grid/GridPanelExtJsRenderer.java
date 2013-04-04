@@ -1211,6 +1211,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		                    	oExtFiltersChild.addJSString( "type", "date" );
 		            			colFilter.put("type", "date");
 		            			filters = colFilter.optJSONArray("value");
+		            			oExtFiltersChild.add( "lookupCommand", 	            		
+			                			"function(){ " +
+			                				XVWScripts.getAjaxCommandScript( oGrid.getSelectDatesFilterCommand(),col.getDataField(),XVWScripts.WAIT_DIALOG ) +
+			                			"}"
+			                	);
 		            			if( filters != null && filters.length() > 0 ) {
 		            				ExtConfig values = oExtFiltersChild.addChild("value");
 		            				for( int i=0; i < filters.length(); i++ ) {

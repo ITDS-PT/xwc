@@ -2,8 +2,10 @@ package netgest.bo.xwc.xeo.beans;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -25,9 +27,13 @@ import netgest.bo.system.boPoolOwner;
 import netgest.bo.xwc.components.classic.GridExplorer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
+import netgest.bo.xwc.components.classic.grid.GridDatesBetweenFilterBean;
 import netgest.bo.xwc.components.classic.grid.GridPanelJSonFiltersBuilder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
+import netgest.bo.xwc.components.connectors.FilterTerms;
+import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
+import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeMetaData;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.framework.XUIActionEvent;
@@ -39,6 +45,7 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.beans.XEOViewerResolver.ViewerType;
+import netgest.utils.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -592,6 +599,58 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 		oRequestContext.getViewRoot().setRendered( false );
 		oRequestContext.renderResponse();
 	}
+	
+	
+	/**
+	 * Opens the viewer to filter grid data between two dates
+	 */
+	public void betweenDatesFilter() {
+
+        // Cria view
+        XUIRequestContext   oRequestContext;
+        XUISessionContext   oSessionContext;
+        XUIViewRoot         oViewRoot;
+
+        oRequestContext = XUIRequestContext.getCurrentContext();
+        oSessionContext = oRequestContext.getSessionContext();
+
+    	XUIActionEvent e = oRequestContext.getEvent();
+    	XUICommand cmd = (XUICommand)e.getComponent();
+    	
+    	String column = (String)cmd.getValue();
+    	GridPanel  oGridPanel = (GridPanel)cmd.getParent();
+    	FilterTerms terms = oGridPanel.getCurrentFilterTerms();
+    	Iterator<FilterJoin> it = terms.iterator();
+    	
+    	oViewRoot = oSessionContext.createChildView( "netgest/bo/xwc/components/classic/grid/GridBetweenDateSelector.xvw" );
+    	GridDatesBetweenFilterBean bean = (GridDatesBetweenFilterBean) oViewRoot.getBean( "viewBean" );
+    	bean.setColumn( column );
+    	bean.setGridId( oGridPanel.getClientId() );
+    	
+    	while (it.hasNext()){
+    		FilterJoin join = it.next();
+    		FilterTerm term = join.getTerm();
+    		if (term != null && StringUtils.hasValue( term.getDataField() ) ){
+    			if (column.equals( term.getDataField() )){
+    				byte operator = term.getOperator();
+    				Object value = term.getValue();
+    				Timestamp newTime = null;
+    				if (value != null && value instanceof java.util.Date){
+    					newTime = new Timestamp( ((java.util.Date) value).getTime() );
+    					if (operator == FilterTerms.OPERATOR_GREATER_THAN){
+    						bean.setStart( newTime );
+    					}
+    					else if (operator == FilterTerms.OPERATOR_LESS_THAN){
+    						bean.setEnd( newTime );
+    					}
+    				}
+    			}
+    		}
+    	}
+    	
+        oRequestContext.setViewRoot( oViewRoot );
+        
+    }
 	
 }
 

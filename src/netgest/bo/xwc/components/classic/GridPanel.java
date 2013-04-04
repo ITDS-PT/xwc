@@ -106,6 +106,13 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIMethodBindProperty filterLookup = new XUIMethodBindProperty(
 			"filterLookup", this);
 	
+	private XUIMethodBindProperty selectDatesFilter = new XUIMethodBindProperty(
+			"selectDatesFilter", this);
+	
+	public void setSelectDatesFilter(String filterExpr){
+		this.selectDatesFilter.setExpressionText( filterExpr );
+	}
+	
 	public void setFilterLookup( String lookupExpr ){
 		this.filterLookup.setExpressionText( lookupExpr );
 	}
@@ -369,6 +376,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUICommand filterLookupCommand;
 	private XUICommand selectColumnsCommand;
 	private XUICommand resetDefaultsCommand;
+	private XUICommand selectDatesFilterCommand;
 	
 	private XUIInput filterLookupInput;
 	
@@ -545,6 +553,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 		return this.filterLookupCommand;
 	}
 	
+	public XUICommand getSelectDatesFilterCommand() {
+		return this.selectDatesFilterCommand;
+	}
+	
 	public XUICommand getSelectColumnsCommand() {
 		return this.selectColumnsCommand;
 	}
@@ -606,6 +618,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 		
 		if (filterLookup.isDefaultValue())
 			setFilterLookup( "#{" + getBeanId() + ".lookupFilterObject}" );
+		
+		if (selectDatesFilter.isDefaultValue())
+			setSelectDatesFilter( "#{" + getBeanId() + ".betweenDatesFilter}" );
 
 		
 		HashMap<String, String> defaults = new HashMap<String, String>();
@@ -735,6 +750,16 @@ public class GridPanel extends ViewerInputSecurityBase {
 			filterLookupInput = (XUIInput) findComponent(getId()
 					+ "_lookupInput");
 		}
+		
+		if (findComponent(getId() + "_selectDatesFilter") == null) {
+			selectDatesFilterCommand = new XUICommand();
+			selectDatesFilterCommand.setId(getId() + "_selectDatesFilter");
+			selectDatesFilterCommand.addActionListener( new SelectDatesActionListener() );
+			getChildren().add( selectDatesFilterCommand );
+		} else {
+			selectDatesFilterCommand = (XUICommand) findComponent(getId()
+					+ "_selectDatesFilter");
+		}
 
 		String viewerSecurityId = getInstanceId();
 		if (viewerSecurityId != null) {
@@ -742,7 +767,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 					+ viewerSecurityId + "}");
 		}
 	}
-
+	
 	public static class FilterLookupListener implements ActionListener {
 
 		public void processAction(ActionEvent event)
@@ -753,6 +778,19 @@ public class GridPanel extends ViewerInputSecurityBase {
 					.getRequest()).getParameter(cmd.getClientId()));
 			((GridPanel) cmd.getParent()).doFilterLookup();
 		}
+	}
+	
+	public static class SelectDatesActionListener implements ActionListener {
+		@Override
+		public void processAction(ActionEvent event)
+				throws AbortProcessingException {
+			
+			XUICommand cmd = (XUICommand) event.getComponent();
+			cmd.setValue(cmd.getCommandArgument());
+			((GridPanel) cmd.getParent()).doDateFilter();
+			
+		}
+		
 	}
 
 	public static class ResetDefaultsListener implements ActionListener {
@@ -827,6 +865,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	private void doFilterLookup() {
 		this.filterLookup.invoke();
+	}
+	
+	private void doDateFilter(){
+		this.selectDatesFilter.invoke();
 	}
 	
 	/**
