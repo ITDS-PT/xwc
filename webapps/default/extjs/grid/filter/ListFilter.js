@@ -139,7 +139,9 @@ Ext.grid.filter.ListFilter = Ext.extend(Ext.grid.filter.Filter, {
 		this.value = value;
 		
 		this.setActive(this.isActivatable());
-		this.clearData();
+		if (checked){
+			this.clearData();
+		}
 		this.fireEvent("update", this);
 	},
 	

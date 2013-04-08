@@ -34,8 +34,8 @@ Ext.grid.filter.NumericFilter = Ext.extend(Ext.grid.filter.Filter, {
 	, clearValue : function () {
 		var fields = this.menu.fields;
 		if (fields){
-			for (var k = 0 ; k < fields.length ; k++){
-				fiels[k].setValue("");
+			for (var k in fields){
+				fields[k].setValue("");
 			}
 		}
 	}
