@@ -2079,7 +2079,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public void applyFilters(DataListConnector listConnector) {
 		if ((listConnector.dataListCapabilities() & DataListConnector.CAP_FILTER) > 0) {
 			FilterTerms filterTerms = getCurrentFilterTerms();
-			listConnector.setFilterTerms(filterTerms);
+		listConnector.setFilterTerms(filterTerms);
 		}
 	}
 

@@ -10,10 +10,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import netgest.bo.data.DataSet;
 import netgest.bo.data.DriverUtils;
 import netgest.bo.def.boDefAttribute;
+import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
@@ -24,6 +27,7 @@ import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
+import netgest.bo.xwc.components.connectors.helper.CardIDParser;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
 import netgest.utils.StringUtils;
@@ -171,9 +175,11 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
     }
     
     public void setFilterTerms( FilterTerms filterTerms, EboContext eboCtx ) {
-    	
     	DriverUtils dutl = eboCtx.getDataBaseDriver().getDriverUtils();
-    	
+    	setFilterTerms( filterTerms, dutl );
+    }
+    
+    public void setFilterTerms( FilterTerms filterTerms, DriverUtils dutl){
     	if ( filterTerms == null ) {
     		oObjectList.setUserQuery( null, null );
     		return;
@@ -230,8 +236,6 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
     				query.append( " ( " );
     		}
     		
-    		
-    		
 			FilterTerm t =  j.getTerm();
 			
 			String name = t.getDataField();
@@ -245,67 +249,71 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 			}
 			
 			Object val 	= t.getValue();
+			byte operator = t.getOperator();
 			
 			String parVal = "?";
-			if( val != null ) {
-				if( val instanceof String ) {
-					val = ((String)val).replace( "'" , "''").toUpperCase();
-					if( t.getOperator() == FilterTerms.OPERATOR_NOT_LIKE  || t.getOperator() == FilterTerms.OPERATOR_LIKE) {
-						val = "%" + val + "%";
+			//Only enter here if we have a value and (IMPORTANT) operator is for comparison with a value (can't be IS NULL / NOT IS NULL)
+			if( val != null && (FilterTerms.OPERATOR_CONTAINS != operator && FilterTerms.OPERATOR_NOT_CONTAINS != operator) ) {
+				if (!t.isCardIdSearch()){
+					if( val instanceof String && !t.isCardIdSearch() ) {
+						val = ((String)val).replace( "'" , "''").toUpperCase();
+						if( operator == FilterTerms.OPERATOR_NOT_LIKE  || operator == FilterTerms.OPERATOR_LIKE) {
+							val = "%" + val + "%";
+						}
+						else if (operator == FilterTerms.OPERATOR_STARTS_WITH)
+							val = val + "%";
+						else if (operator == FilterTerms.OPERATOR_ENDS_WITH)
+							val = "%" + val;
+						parVal = "?";
+						query.append( "UPPER((" + sqlExpr + "))" );
+						pars.add( val );
+					} else if ( val instanceof Boolean ) {
+						val = ((Boolean)val).booleanValue()?"1":"0";
+						query.append( sqlExpr );
+						parVal = "?";
+						pars.add( val );
+					} else if ( val instanceof java.util.Date ) {
+						val = new Timestamp( ((Date)val).getTime() );
+						query.append( dutl.fnTruncateDate( sqlExpr ) );
+						parVal = dutl.fnTruncateDate( "?" );
+						pars.add( val );
+					} else if ( val instanceof Object[] ) {
+
+						StringBuilder parValues = new StringBuilder("(");
+						query.append( sqlExpr );
+						Object[] parArray = (Object[])val;
+
+						for( Object parArrayVal : parArray ) {
+							if( parValues.length() > 1 )
+								parValues.append( ',' );
+							parValues.append( '?' );
+
+							pars.add( parArrayVal );
+						}
+						if( parValues.length() == 1 ) {
+							parValues.append("NULL");
+						}
+						parValues.append(")");
+						parVal = parValues.toString();
+
+					} else {
+						query.append( sqlExpr );
+						parVal = "?";
+						pars.add( val );
+
 					}
-					else if (t.getOperator() == FilterTerms.OPERATOR_STARTS_WITH)
-						val = val + "%";
-					else if (t.getOperator() == FilterTerms.OPERATOR_ENDS_WITH)
-						val = "%" + val;
-					parVal = "?";
-					query.append( "UPPER((" + sqlExpr + "))" );
-					pars.add( val );
-				} else if ( val instanceof Boolean ) {
-					val = ((Boolean)val).booleanValue()?"1":"0";
-					query.append( sqlExpr );
-					parVal = "?";
-					pars.add( val );
-				} else if ( val instanceof java.util.Date ) {
-					val = new Timestamp( ((Date)val).getTime() );
-					query.append( dutl.fnTruncateDate( sqlExpr ) );
-					parVal = dutl.fnTruncateDate( "?" );
-					pars.add( val );
-				} else if ( val instanceof Object[] ) {
-					
-					StringBuilder parValues = new StringBuilder("(");
-					query.append( sqlExpr );
-					Object[] parArray = (Object[])val;
-					
-					for( Object parArrayVal : parArray ) {
-						if( parValues.length() > 1 )
-							parValues.append( ',' );
-						parValues.append( '?' );
-						
-						pars.add( parArrayVal );
-					}
-					if( parValues.length() == 1 ) {
-						parValues.append("NULL");
-					}
-					parValues.append(")");
-					parVal = parValues.toString();
-					
 				} else {
 					query.append( sqlExpr );
-					parVal = "?";
-					pars.add( val );
+					parVal = formatCardIdSearch( t.getDataField() , dutl );
+					pars.add( "%"+val+"%" );
 				}
 			} else {
 				if ( StringUtils.hasValue( sqlExpr ) ){
 					query.append( sqlExpr );
-					parVal = "?";
-					pars.add( val );
 				}
 			}
 			
-			if (isCheckingForNullPresence( t ) )
-				removeLastParameter( pars );
-			
-			switch ( t.getOperator() ) {
+			switch ( operator ) {
 				case FilterTerms.OPERATOR_CONTAINS:
 					query.append( " IS NOT NULL " );
 					break;
@@ -359,18 +367,38 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
     		oObjectList.setUserQuery( query.length() > 0 ? query.toString() : null , pars.toArray() );
     	else
     		oObjectList.setUserQuery( null, null );
-    	
     }
 
-	private void removeLastParameter( List<Object> pars ) {
-		if (!pars.isEmpty())
-			pars.remove( pars.size() - 1);
+	/**
+	 * 
+	 * Prepare a search query for a cardID search, at the moment it only
+	 * 
+	 * @param columnName
+	 * @param utils
+	 * @return
+	 */
+	protected String formatCardIdSearch(String columnName, DriverUtils utils)  {
+		try {
+			boDefAttribute attributeDef = this.oObjectList.getBoDef().getAttributeRef( columnName );
+			if (attributeDef != null){
+				boDefHandler handler = attributeDef.getReferencedObjectDef();
+				if (handler != null){
+					String cardId = handler.getCARDID();
+					CardIDParser parser = new CardIDParser( cardId );
+					List<String> parts = parser.getParts();
+					if (!parts.isEmpty()){
+						String concat = utils.concatColumnsWithSeparator( parts , "', '" );
+						String expression = "([SELECT BOUI FROM " + handler.getBoMasterTable() + " WHERE " + concat + " LIKE ?])"; ;
+						return expression;
+					}
+				}
+			}
+		} catch ( boRuntimeException e ) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
-	private boolean isCheckingForNullPresence( FilterTerm t ) {
-		return t.getOperator() == FilterTerms.OPERATOR_CONTAINS || t.getOperator() == FilterTerms.OPERATOR_NOT_CONTAINS;
-	}
-    
     public DataRecordConnector findByUniqueIdentifier(String sUniqueIdentifier) {
 		long boui;
 		DataRecordConnector drc;
@@ -685,7 +713,6 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
 		return this.getRowCount();
 	}
 

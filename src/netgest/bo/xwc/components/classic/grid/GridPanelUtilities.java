@@ -190,10 +190,8 @@ public class GridPanelUtilities {
 						String currValue = currRow.getString("value");
 						if (StringUtils.hasValue( currValue )){
 							valuesList.add( currValue );
+							value = valuesList.toArray();
 						}
-						value = valuesList.toArray();
-						
-						
 						
 						valueOpParam = fixOperatorForObjectType( valueOpParam, submitedType );
 						
@@ -204,39 +202,45 @@ public class GridPanelUtilities {
 					} else if ("list".equals(submitedType)) {
 						List<BigDecimal> valuesList = new ArrayList<BigDecimal>();
 						String values = currRow.getString("value");
-
-						String[] valArray = values.split( "," );
-						for ( String currValue : valArray ) {
-							valuesList.add( new BigDecimal(currValue) );
+						if (StringUtils.hasValue( values )){	
+							String[] valArray = values.split( "," );
+							for ( String currValue : valArray ) {
+								valuesList.add( new BigDecimal(currValue) );
+							}
+							value = valuesList.toArray();
+							operator = fixOperatorForObjectType( valueOpParam, submitedType );
+	
+							if (valuesList.size() == 0 && checkingForData( valueOpParam )) {
+								bAddCodition = false;
+							}
 						}
-						value = valuesList.toArray();
-						operator = fixOperatorForObjectType( valueOpParam, submitedType );
-
-						if (valuesList.size() == 0 && checkingForData( valueOpParam )) {
-							bAddCodition = false;
-						}
-						
 
 					} else if ("string".equals(submitedType)) {
-						value = currRow.getString("value");
+						if (StringUtils.hasValue( currRow.getString("value") ))
+							value = currRow.getString("value");
 					} else if ("date".equals(submitedType)) {
-						value = currRow.getString("value");
-						Long date = Long.valueOf( value.toString() );
-						value = new Date(date);
-						
-						terms = addFilterTerm(terms, name, sqlExpression, operator, value, joinOpParam);
-						bAddCodition = false;
-						
+						if (StringUtils.hasValue( currRow.getString("value") )){
+							value = currRow.getString("value");
+							Long date = Long.valueOf( value.toString() );
+							value = new Date(date);
+							
+							terms = addFilterTerm(terms, name, sqlExpression, operator, value, joinOpParam);
+							bAddCodition = false;
+						}
 					} else if ( "boolean".equals( submitedType) ) {
 						String valueToCheck = currRow.getString( "value" );
-						if ("1".equals( valueToCheck ))
-							value = Boolean.TRUE;
-						else if ("0".equals( valueToCheck ))
-							value = Boolean.FALSE;
-						else
-							value = Boolean.valueOf( valueToCheck );
+						if (StringUtils.hasValue( valueToCheck )){
+							if ("1".equals( valueToCheck ))
+								value = Boolean.TRUE;
+							else if ("0".equals( valueToCheck ))
+								value = Boolean.FALSE;
+							else
+								value = Boolean.valueOf( valueToCheck );
+						}
 					} else if ("numeric".equals( submitedType) ) {
-						value = new BigDecimal( currRow.getString( "value" ) );
+						if (currRow.has( "value" ) && StringUtils.hasValue( currRow.getString( "value" ) )){
+							value = new BigDecimal( currRow.getString( "value" ) );
+						}
 						terms = addFilterTerm( terms, name, sqlExpression , operator, value, joinOpParam );
 						bAddCodition = false;
 					} else {
@@ -291,6 +295,19 @@ public class GridPanelUtilities {
 		}
 		return terms;
 	}
+	
+	private FilterTerms addFilterTerm( FilterTerms terms, String name, String sqlExpression, byte operator, Object value, byte joinOperator, boolean cardIdSearch ) {
+		if (terms == null) {
+			FilterTerm f = new FilterTerm( name, sqlExpression, operator, value);
+			if (cardIdSearch)
+				f.enableCardIdSearch();
+			terms = new FilterTerms( f, joinOperator ); 
+		} else {
+			terms.addTerm( joinOperator , name, sqlExpression,
+					operator, value, cardIdSearch);
+		}
+		return terms;
+	}
 
 	/**
 	 * 
@@ -327,7 +344,7 @@ public class GridPanelUtilities {
 	
 						if ("object".equals(submitedType)) {
 							List<String> valuesList = new ArrayList<String>();
-	
+							
 							JSONArray jArray = jsonColDef.optJSONArray("value");
 							if (jArray != null) {
 								for (int z = 0; z < jArray.length(); z++) {
@@ -336,8 +353,14 @@ public class GridPanelUtilities {
 								value = valuesList.toArray();
 								operator = FilterTerms.OPERATOR_IN;
 							}
-							if (valuesList.size() == 0) {
+							if (valuesList.size() == 0 && !jsonColDef.optBoolean( "cardIdSearch" )) {
 								bAddCodition = false;
+								value = null;
+							}
+							
+							if (jsonColDef.optBoolean( "cardIdSearch" )){
+								value = jsonColDef.get( "value" );
+								operator = FilterTerms.OPERATOR_IN;
 							}
 							
 							operator = checkForContainsOperator( jsonColDef , operator );
@@ -358,6 +381,7 @@ public class GridPanelUtilities {
 	
 							if (valuesList.size() == 0) {
 								bAddCodition = false;
+								value = null;
 							}
 							
 							operator = checkForContainsOperator( jsonColDef , operator );
@@ -365,7 +389,8 @@ public class GridPanelUtilities {
 								terms = addFilterTerm(terms, nameCol, getColumn( nameCol ).getSqlExpression(),operator, value, FilterTerms.JOIN_AND);
 	
 						} else if ("string".equals(submitedType)) {
-							value = jsonColDef.getString("value");
+							if (StringUtils.hasValue( jsonColDef.getString("value") ))
+								value = jsonColDef.getString("value");
 							operator = FilterTerms.OPERATOR_LIKE;
 							operator = checkForContainsOperator( jsonColDef , operator );
 						} else if ("date".equals(submitedType)) {
@@ -401,7 +426,8 @@ public class GridPanelUtilities {
 							
 							bAddCodition = false;
 						} else if ("boolean".equals(submitedType)) {
-							value = Boolean.valueOf(jsonColDef.getString("value"));
+							if (StringUtils.hasValue( jsonColDef.getString("value") ))
+								value = Boolean.valueOf(jsonColDef.getString("value"));
 							operator = FilterTerms.OPERATOR_EQUAL;
 						} else if ("numeric".equals(submitedType)) {
 							JSONArray jArray = jsonColDef.getJSONArray("value");
@@ -429,8 +455,13 @@ public class GridPanelUtilities {
 						}
 	
 						if (bAddCodition) {
+							String sqlExpression = getColumn( nameCol ).getSqlExpression();
 							operator = checkForContainsOperator( jsonColDef , operator );
-							terms = addFilterTerm(terms, nameCol, getColumn( nameCol ).getSqlExpression() ,operator, value, FilterTerms.JOIN_AND);
+							boolean cardIdSearch = false;
+							if (jsonColDef.has( "cardIdSearch" )){
+								cardIdSearch = jsonColDef.getBoolean( "cardIdSearch" );
+							}
+							terms = addFilterTerm(terms, nameCol, sqlExpression ,operator, value, FilterTerms.JOIN_AND, cardIdSearch);
 						}
 					}
 				}

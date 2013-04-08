@@ -499,6 +499,11 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         					if (clientFilter.opt( "containsData" ) != null){
         						serverFilter.put( "containsData", clientFilter.get("containsData") );
         					}
+        					
+        					if (clientFilter.opt( "cardIdSearch" ) != null){
+        						serverFilter.put( "cardIdSearch", clientFilter.get("cardIdSearch") );
+        					}
+        					
         					jFilters.put( name, serverFilter );
 	        			}
 	        		}

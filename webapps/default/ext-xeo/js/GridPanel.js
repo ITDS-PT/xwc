@@ -265,6 +265,10 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 			}
 		}
 		
+		, uploadConfig : function (params){
+			this.store.uploadConfig(params);
+		}
+		
 		
 	}
 );
@@ -1925,16 +1929,23 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     	
     	
     },
-    uploadConfig : function() {
+    uploadConfig : function(additionalParams) {
     	var params = {};
     	this.preparedHttpParams(params);
     	params.updateConfig = true;
+    	
         var p = Ext.apply(params || {}, this.baseParams);
         
         //Parameter for the visibility of the group toolbar
         if ( this.grid != null ) {
     		p.toolBarVisible = Ext.encode(this.grid.toolBarVisible);
     	}
+        
+        if (additionalParams){
+        	for (var key in additionalParams){
+        		p[key] = additionalParams[key];
+        	}
+        }
         
         var url = this.url;
 		Ext.Ajax.request( { 
