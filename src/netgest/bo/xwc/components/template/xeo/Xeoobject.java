@@ -3,19 +3,18 @@ package netgest.bo.xwc.components.template.xeo;
 import java.util.Map;
 
 import netgest.bo.runtime.EboContext;
+import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.template.base.TemplateComponentBase;
-import netgest.bo.xwc.components.template.wrappers.ListWrapper;
+import netgest.bo.xwc.components.template.wrappers.WrapperFactory;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 
-/**
- * Component that allows displaying an {@link boObjectList} using a template 
- *
- */
-public class XeoList extends TemplateComponentBase {
+public class Xeoobject extends TemplateComponentBase {
+	
 	
 	/**
 	 * The boql expression used to retrieve the list of objects
@@ -49,21 +48,25 @@ public class XeoList extends TemplateComponentBase {
 		this.name.setValue( value );
 	}
 	
-	public void initComponents(){
-		if (template.isDefaultValue()){
-			template.setExpressionText( "templates/xeolist.ftl" );
-		}
-	}
-	
 	public EboContext getEboContext(){
 		return boApplication.currentContext().getEboContext();
 	}
+	
+	
 	
 	@Override
 	public Map<String, Object> getProperties() {
 		Map<String, Object> props = super.getProperties();
 		boObjectList list = boObjectList.list( getEboContext(), getBoql() );
-		props.put( getName(), new ListWrapper( list ) );
+		if (list.next()){
+			boObject objectToExport;
+			try {
+				objectToExport = list.getObject();
+				props.put( getName(), WrapperFactory.wrapObject( objectToExport ) );
+			} catch ( boRuntimeException e ) {
+				e.printStackTrace();
+			}
+		}
 		return props;
 	}
 
