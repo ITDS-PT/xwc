@@ -1,70 +1,101 @@
 package netgest.bo.xwc.components.template.xeo;
 
-import java.util.Map;
-
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.system.boApplication;
-import netgest.bo.xwc.components.annotations.RequiredAlways;
-import netgest.bo.xwc.components.template.base.TemplateComponentBase;
-import netgest.bo.xwc.components.template.wrappers.ListWrapper;
-import netgest.bo.xwc.framework.XUIBaseProperty;
+import netgest.bo.xwc.components.connectors.DataListConnector;
+import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 
-/**
- * Component that allows displaying an {@link boObjectList} using a template 
- *
- */
-public class Xeolist extends TemplateComponentBase {
+
+public class Xeolist extends PaginatedList {
+
+	private XUIViewStateBindProperty<String> boql = 
+		new XUIViewStateBindProperty<String>("boql", this, String.class );
+
+	private XUIBindProperty<XEOObjectListConnector> dataSource = new XUIBindProperty<XEOObjectListConnector>(
+			"dataSource", this, XEOObjectListConnector.class);
 	
-	/**
-	 * The boql expression used to retrieve the list of objects
-	 */
-	@RequiredAlways
-	private XUIBindProperty<String> boql = new
-			XUIBindProperty<String>( "boql", this, String.class );
-	
-	
-	public String getBoql(){
-		return boql.getEvaluatedValue();
+	private int recordcount=-1;
+	private XEOObjectListConnector connector = null;
+
+	public void setBoql( String boql ) {
+		this.boql.setExpressionText(boql);
 	}
 	
-	public void setBoql(String boqlExpr){
-		boql.setExpressionText( boqlExpr );
+	public String getBoql() {
+		return this.boql.getEvaluatedValue();
 	}
 	
-	/**
-	 * The name of the property to export the list. i.e. If name = 'list'
-	 * inside the template you can do ${list}
-	 */
-	@RequiredAlways
-	private XUIBaseProperty<String> name = new
-			XUIBaseProperty<String>( "name", this );
 	
-	public String getName(){
-		return name.getValue();
+	public XEOObjectListConnector getDataSource() {
+		if (!hasDataSourceBeenEvaluated || connector == null){
+			if (dataSource.getValue() != null) {
+				connector = dataSource.getEvaluatedValue();
+				if( connector != null )
+					hasDataSourceBeenEvaluated = true;
+			}
+		} 
+		return connector;
 	}
 	
-	public void setName( String value ){
-		this.name.setValue( value );
+	public void setDataSource(String dataSource) {
+		this.dataSource.setValue(createValueExpression(dataSource,
+				XEOObjectListConnector.class));
 	}
 	
-	public void initComponents(){
-		if (template.isDefaultValue()){
-			template.setExpressionText( "templates/xeolist.ftl" );
-		}
-	}
-	
-	public EboContext getEboContext(){
-		return boApplication.currentContext().getEboContext();
-	}
+	private boolean hasDataSourceBeenEvaluated = false; 
 	
 	@Override
-	public Map<String, Object> getProperties() {
-		Map<String, Object> props = super.getProperties();
-		boObjectList list = boObjectList.list( getEboContext(), getBoql() );
-		props.put( getName(), new ListWrapper( list ) );
-		return props;
+	public void preRender() {
+		hasDataSourceBeenEvaluated = false;
+		super.preRender();
 	}
 
+	@Override
+	public DataListConnector getConnector() {
+		return this.connector;
+	}
+
+	@Override
+	public void initConnector() {
+		EboContext ctx = null;		
+		try {
+			if (this.connector==null) {
+				if (this.getDataSource()==null) {
+					ctx = boApplication.currentContext().getEboContext();
+					boObjectList list=boObjectList.list(ctx, getBoql(),
+							new Integer(getPage()).intValue(), new Integer(getPagesize()).intValue());
+					connector=new XEOObjectListConnector(list);
+				}
+				
+				connector.setPage(new Integer(this.getPage()).intValue());
+				connector.setPageSize(new Integer(this.getPagesize()).intValue());			
+				connector.refresh();
+				//recordcount = connector.getRecordCount();
+			}
+			else if (connector.getPage()!=new Integer(this.getPage()).intValue() ||
+					connector.getPageSize()!=new Integer(this.getPagesize()).intValue()
+					|| (this.getDataSource()==null 
+					&& !connector.getObjectList().getBOQL().equals(this.getBoql()))) {
+				connector.setPage(new Integer(this.getPage()).intValue());
+				connector.setPageSize(new Integer(this.getPagesize()).intValue());			
+				connector.refresh();
+				//recordcount = connector.getRecordCount();
+			}
+		}
+		finally {
+			if (ctx!=null)
+				ctx.close();
+		}	
+	}
+
+	@Override
+	public int getRecordCount() {
+		if (this.connector!=null && this.recordcount==-1)
+			this.recordcount = connector.getRecordCount();
+		return this.recordcount;
+	}
+	
 }
