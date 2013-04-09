@@ -6,6 +6,8 @@
  */
 package netgest.bo.xwc.components.classic.grid;
 
+import org.apache.commons.lang.StringUtils;
+
 public class HTMLEntityDecoder {
 
 	/** The Constant htmlEntities. */
@@ -110,6 +112,9 @@ public class HTMLEntityDecoder {
 	 */
 	public static final String htmlEntityToChar(CharSequence s) {
 
+		if (s == null || s.length() == 0)
+			return "";
+		
 		boolean entityStart = false;
 		boolean codeStart = false;
 

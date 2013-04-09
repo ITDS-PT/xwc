@@ -120,11 +120,15 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 	                    		else
 	                    			sDisplayValue = oDataField.getDisplayValue();
 	                    		
-		                    	if( sDisplayValue != null ) 
+	                    		if( sDisplayValue != null ) 
 		                    	{
 		                            w.writeAttribute("displayValue", sDisplayValue, null);
 		                            w.writeText(sDisplayValue,null);
 		                        }
+	                    		if (sDisplayValue == null)
+	                    			sDisplayValue = "";
+	                    		
+	                    		
 		                    	else 
 		                    	{
 		                    		oDataFieldType = oDataField.getDataType();

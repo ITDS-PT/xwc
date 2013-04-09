@@ -273,6 +273,10 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 			this.store.markDataSourceChange();
 		}
 		
+		, uploadConfig : function (params){
+			this.store.uploadConfig(params);
+		}
+		
 		
 	}
 );
@@ -770,8 +774,6 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         var gel = Ext.fly(group);
         var groupId = gel.getAttributeNS("","value");
         
-
-						        var group = this.rootView.getGroupView(groupId);
         groupId = group.groupId;
         
         expanded = expanded !== undefined ?
@@ -1494,6 +1496,10 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
 	        				if( gv ) {
 				        		break;
 				        	}
+	        			} else {
+	        				gv = this.rows[ this.rowsIndex[i] ].groupingView.getGroupView( groupId );
+	        				if ( gv )
+	        					break;
 	        			}
 	        		}
 	        	}
@@ -1940,16 +1946,23 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     	
     	
     },
-    uploadConfig : function() {
+    uploadConfig : function(additionalParams) {
     	var params = {};
     	this.preparedHttpParams(params);
     	params.updateConfig = true;
+    	
         var p = Ext.apply(params || {}, this.baseParams);
         
         //Parameter for the visibility of the group toolbar
         if ( this.grid != null ) {
     		p.toolBarVisible = Ext.encode(this.grid.toolBarVisible);
     	}
+        
+        if (additionalParams){
+        	for (var key in additionalParams){
+        		p[key] = additionalParams[key];
+        	}
+        }
         
         var url = this.url;
 		Ext.Ajax.request( { 
@@ -2058,7 +2071,7 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
     nextText : "Pr&oacute;xima P&aacute;gina",
     lastText : "&Uacute;ltima p&aacute;gina",
     refreshText : "Actualizar",
-    paramNames : {start: 'start', limit: 'limit' }, //Aqui posso acrescentar
+    paramNames : {start: 'start', limit: 'limit' }, 
     initComponent : function(){
         this.addEvents('change', 'beforechange');
         ExtXeo.PagingToolbar.superclass.initComponent.call(this);

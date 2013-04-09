@@ -41,6 +41,7 @@ Ext.grid.filter.Filter = function(config){
 	
 	this.menu = new Ext.menu.Menu();
 	this.init();
+	this.createDataPresenceFilters(config);
 	if(config && config.value) {
 		this.setValue(config.value);
 		this.setActive(config.active !== false, true);
@@ -77,19 +78,119 @@ Ext.extend(Ext.grid.filter.Filter, Ext.util.Observable, {
 	 * @type Ext.menu.Menu
 	 * @property
 	 */
-	menu: null,
+	menu: null
+	
+	/**
+	 * The menus for the Contains Data / Not Contains Data Filtering
+	 * @type Ext.menu.Menu []
+	 * 
+	 */
+	,dataPresenceMenus : null
+	
+	/**
+	 * Whether or not the the Contains Data / Not Contains Data are in place.
+	 * True = Contains Data
+	 * False = Not Contains Data
+	 * Null = Filters not active
+	 * @type boolean
+	 * 
+	 */
+	, containsData : null
+	/**
+	 * Text to show in the Contains Data filter
+	 * */
+	, containsDataText : 'Cont&eacute;m dados'
+		/**
+		 * Text to show in the Not Contains Data filter
+		 * */	
+	, notContainsDataText : 'N&atilde;o cont&eacute;m dados'	
 	
 	/**
 	 * Initialize the filter and install required menu items.
 	 */
-	init: Ext.emptyFn,
+	, init: Ext.emptyFn,
 	
-	fireUpdate: function() {
+	createDataPresenceFilters : function (config) {
+		
+		this.dataPresenceMenus = [
+			new Ext.menu.CheckItem({text: this.containsDataText, checked: false, }),
+			new Ext.menu.CheckItem({text: this.notContainsDataText, checked: false})
+		];
+		    	
+		this.menu.add(this.dataPresenceMenus[0]);
+		this.menu.add(this.dataPresenceMenus[1]);
+		
+		if (config){
+			if (config.containsData != undefined){
+				if (config.containsData == true){
+					this.dataPresenceMenus[0].setChecked(true);
+					this.dataPresenceMenus[1].setChecked(false);
+				} else if (config.containsData == false){
+					this.dataPresenceMenus[1].setChecked(false);
+					this.dataPresenceMenus[1].setChecked(true);
+				}
+			}
+		}
+		
+		var checkForData = this.dataPresenceMenus[0];
+		var checkForNull = this.dataPresenceMenus[1];
+		
+		checkForData.on('checkchange', function (item, checked){
+			if (checked){
+			  checkForNull.setChecked(false);
+			  this.clearValue();
+			  this.containsData = true; 	
+			} else{
+			  this.containsData = null;
+			}
+			this.setActive(this.isActivatable());
+			this.fireUpdate();
+		}, this);
+		
+		
+		checkForNull.on('checkchange', function (item, checked){
+			
+			if (checked){
+			  checkForData.setChecked(false);
+			  this.clearValue();
+			  this.containsData = false; 	
+			} else{
+			  this.containsData = null;
+			}
+			this.setActive(this.isActivatable());
+			this.fireUpdate();
+		}, this);
+		
+		for(var i=0; i<this.dataPresenceMenus.length; i++) {
+			this.dataPresenceMenus[i].on('click', function(item, evt){ 
+				this.fireUpdate(); 
+			}, this);
+		}
+		
+		
+	} 
+
+	, clearValue : Ext.emptyFn
+
+	, clearData : function (){
+		if (this.dataPresenceMenus != null){
+			for (var k = 0 ; k < this.dataPresenceMenus.length ; k++){
+				//Set false and supress event
+				this.dataPresenceMenus[k].setChecked(false,true);
+			}
+		}
+		this.containsData = null;
+	}
+	
+	, fireUpdate: function() {
+		if (this.item)
 		this.value = this.item.getValue();
 		
-		if(this.active) {
+		if(this.active || this.containsData !== null) {
 			this.fireEvent("update", this);
     }
+		
+		if (this.item && this.value)
 		this.setActive(this.value.length > 0);
 	},
 	

@@ -361,7 +361,7 @@ public class AttributeNumberLookup extends AttributeBase {
             if( enableCardIdLink ) {
 	            oInpLsnr.add("'render'", "function(){ " +
 	            		"this.getEl().dom.onclick=function(event){" +
-	            			XVWScripts.getAjaxCommandScript( oAttLk.oOpenCommand ,  XVWScripts.WAIT_STATUS_MESSAGE ) +
+	            			XVWScripts.getAjaxCommandScript( oAttLk.oOpenCommand ,  XVWScripts.WAIT_DIALOG ) +
 	            		"};" +
 	            		"}" );
             }

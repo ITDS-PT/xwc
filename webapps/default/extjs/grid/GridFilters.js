@@ -14,6 +14,10 @@ Ext.grid.GridFilters = function(config){
 		this.addFilter(config.filters[i]);
   }
   
+	for (var k = 0 ; k < this.filters.getCount() ; k++){
+		this.filters.get(k).parentFilters = this;
+	}
+  
 	this.deferredUpdate = new Ext.util.DelayedTask(this.reload, this);
 	
 	delete config.filters;
@@ -85,10 +89,15 @@ Ext.extend(Ext.grid.GridFilters, Ext.util.Observable, {
 	    } else if(grid instanceof Ext.PagingToolbar) {
 	      this.toolbar = grid;
 	    }
-	},
+	}
+
+	, uploadConfig : function () {
+		this.grid.uploadConfig(this.buildQuery(this.getFilterData()));
+	}
+	
 		
 	/** private **/
-	applyState: function(grid, state) {
+	,applyState: function(grid, state) {
 		this.suspendStateStore = true;
 		this.clearFilters();
 		if(state.filters) {

@@ -649,11 +649,16 @@ ExtXeo.DateField.ProcessDot = function(field){
 
 ExtXeo.switchLookup = function(elementToSwitch){
 	
-	//Este dois
 	var elem = Ext.get(elementToSwitch + "_lookupColumn");
 	elem.first('input').on('blur',function(eventBlur,element){XVW.searchLookup(element);});
-	//Ext.get("inputSearch").on('blur',function(){XVW.searchLookup();});
-	//Fim
+	elem.first('input').on('keydown',function(event,element){
+		if (event.which == 13 || event.keyCode == 13){
+			event.preventDefault();
+			return false;
+		}
+	}
+		
+	);
 	
 	elem.on('dblclick',function(evt,element){
 				//Estes dois

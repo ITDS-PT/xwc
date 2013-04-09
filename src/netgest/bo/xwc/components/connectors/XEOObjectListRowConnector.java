@@ -24,7 +24,10 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 
 	@Override
 	public DataFieldConnector getAttribute(String name) {
+		preloadObject();
 		DataFieldConnector ret = null;
+		ret = super.getAttribute(name);
+		if (ret == null){
 		if (this.oObjectList.getRslt() != null) {
 			DataSet dataSet = this.oObjectList.getRslt().getDataSet();
 
@@ -53,11 +56,23 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 							DataFieldTypes.VALUE_CHAR);
 			}
 		}
+		}
 		if (ret == null) {
 			ret = super.getAttribute(name);
 		}
 		return ret;
 	}
+
+
+	protected void preloadObject() {
+		// Force preload...
+		try {
+			this.oObjectList.getObject();
+		} catch (boRuntimeException e) {
+			
+		}
+	}
+
 
 	private String getLovValue(String name,Object value) {
 		String toRet=null;
@@ -83,4 +98,5 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 		return toRet;
 	}
 
+	
 }

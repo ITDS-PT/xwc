@@ -7,10 +7,12 @@
  */
 
 Ext.grid.filter.StringFilter = Ext.extend(Ext.grid.filter.Filter, {
-	updateBuffer: 500,
-	icon: 'extjs/grid/img/find.png',
+	updateBuffer: 500
+	, icon: 'extjs/grid/img/find.png'
+	, containsData : null
+	, options : null
 
-	init: function() {
+	, init: function() {
 		var value = this.value = new Ext.menu.EditableItem({icon: this.icon});
 		value.on('keyup', this.onKeyUp, this);
 		this.menu.add(value);
@@ -23,15 +25,25 @@ Ext.grid.filter.StringFilter = Ext.extend(Ext.grid.filter.Filter, {
 			this.menu.hide(true);
 			return;
 		}
+		this.clearData();
 		this.updateTask.delay(this.updateBuffer);
-	},
+	}
 	
-	isActivatable: function() {
-		return this.value.getValue().length > 0;
+	, clearValue : function () {
+		this.value.setValue(null);
+	}
+	
+	,isActivatable: function() {
+		if (this.value){
+			if (this.value.getValue() != null){
+		return this.value.getValue().length > 0 || this.containsData !== null;
+			}
+		}
+		return this.containsData != null;
 	},
 	
 	fireUpdate: function() {		
-		if(this.active) {
+		if(this.active || this.containsData !== null) {
 			this.fireEvent("update", this);
     }
 		this.setActive(this.isActivatable());
@@ -52,7 +64,7 @@ Ext.grid.filter.StringFilter = Ext.extend(Ext.grid.filter.Filter, {
 	},
 
 	serialize: function() {
-		var args = {active:this.active, type: 'string', value: this.getValue()};
+		var args = {active:this.active, type: 'string', value: this.getValue(), containsData : this.containsData};
 		this.fireEvent('serialize', args, this);
 		return args;
 	},

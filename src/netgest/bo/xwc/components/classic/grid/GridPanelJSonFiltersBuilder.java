@@ -86,13 +86,20 @@ public class GridPanelJSonFiltersBuilder {
 
 	private Object getCorrectValue( JSONObject currentObj, ValueType type ) throws JSONException {
 		String value = currentObj.getString( "value" );
+		if (StringUtils.isEmpty( value ))
+			return null;
 		switch (type){
 			case STRING : return value;
-			case NUMERIC : return new BigDecimal(value);
-			case DATE : return new Timestamp( Long.valueOf( value ) );
-			case BOOLEAN : return value;
-			case OBJECT : return value;
-			case LIST : return value;
+			case NUMERIC :
+					return new BigDecimal(value);
+			case DATE : 
+				return new Timestamp( Long.valueOf( value ) );
+			case BOOLEAN : 
+				return value;
+			case OBJECT : 
+				return value;
+			case LIST : 
+				return value;
 		default :
 			break;
 		}

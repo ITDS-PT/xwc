@@ -652,7 +652,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                 "		if( c.loadMask.xwc_wtout ) {window.clearTimeout(c.loadMask.xwc_wtout);}\n" + 		                
                 "		c.loadMask.onLoad();\n" +
         		"	} " +
-                " console.log(store.dataSourceChange);" + 
                 " store.resetDataSourceChange(); " +
         		"}" );
         
@@ -1113,7 +1112,9 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             	oExtFiltersChild.addJSString( "dataIndex", dataField.replaceAll( "\\.", "__" ) );
             	oExtFiltersChild.add( "active" , colFilter.getBoolean("active"));
             	oExtFiltersChild.add( "searchable", col.isSearchable() );
-        		
+            	if (colFilter.has( "containsData" ))
+            		oExtFiltersChild.add( "containsData", colFilter.get( "containsData" ) );
+            	
             	JSONArray filters;
             	String	  filterValue;
 
@@ -1218,6 +1219,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		                    	oExtFiltersChild.addJSString( "type", "date" );
 		            			colFilter.put("type", "date");
 		            			filters = colFilter.optJSONArray("value");
+		            			oExtFiltersChild.add( "lookupCommand", 	            		
+			                			"function(){ " +
+			                				XVWScripts.getAjaxCommandScript( oGrid.getSelectDatesFilterCommand(),col.getDataField(),XVWScripts.WAIT_DIALOG ) +
+			                			"}"
+			                	);
 		            			if( filters != null && filters.length() > 0 ) {
 		            				ExtConfig values = oExtFiltersChild.addChild("value");
 		            				for( int i=0; i < filters.length(); i++ ) {

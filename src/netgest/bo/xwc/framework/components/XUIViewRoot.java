@@ -39,6 +39,7 @@ import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 import netgest.bo.xwc.framework.jsf.XUIPhaseEvent;
 import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl;
+import netgest.utils.StringUtils;
 
 import com.sun.faces.util.LRUMap;
 import com.sun.faces.util.RequestStateManager;
@@ -109,18 +110,29 @@ public class XUIViewRoot extends UIViewRoot {
 	
 
 	public Object getBean(String sBeanName) {
-		return new ViewRootBeanFinder().getBean( this , sBeanName ); 
+		Object bean = new ViewRootBeanFinder().getBean( this , sBeanName );
+		if (bean == null){
+			if (StringUtils.hasValue( sBeanName ) && sBeanName.equalsIgnoreCase( beanId )){
+				bean = beanReference;
+			}
+		}
+		return bean;
 	}
 	
 	public String getBeanUniqueId(String sBeanName) {
 		return getBeanPrefix() + sBeanName;
 	}
+	
+	private Object beanReference;
+	private String beanId;
 
 	public void addBean(String sBeanName, Object oBean) {
 		if( this.sBeanIds != null && this.sBeanIds.length() > 0 ) {
 			this.sBeanIds += "|";
 		}
 		this.sBeanIds += sBeanName;
+		this.beanId = sBeanName;
+		this.beanReference = oBean; 
 		XUIRequestContext.getCurrentContext().getSessionContext().setAttribute(
 				getBeanPrefix() + sBeanName, oBean);
 	}

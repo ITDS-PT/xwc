@@ -10,7 +10,7 @@ Ext.grid.filter.NumericFilter = Ext.extend(Ext.grid.filter.Filter, {
 	init: function() {
 		this.menu = new Ext.menu.RangeMenu();
 		
-		this.menu.on("update", this.fireUpdate, this);
+		this.menu.on("update", function() { this.clearData(); this.fireUpdate() }, this);
 	},
 	
 	fireUpdate: function() {
@@ -20,7 +20,7 @@ Ext.grid.filter.NumericFilter = Ext.extend(Ext.grid.filter.Filter, {
 	
 	isActivatable: function() {
 		var value = this.menu.getValue();
-		return value.eq !== undefined || value.gt !== undefined || value.lt !== undefined;
+		return value.eq !== undefined || value.gt !== undefined || value.lt !== undefined || this.containsData !== null;
 	},
 	
 	setValue: function(value) {
@@ -29,9 +29,18 @@ Ext.grid.filter.NumericFilter = Ext.extend(Ext.grid.filter.Filter, {
 	
 	getValue: function() {
 		return this.menu.getValue();
-	},
+	}
 	
-	serialize: function() {
+	, clearValue : function () {
+		var fields = this.menu.fields;
+		if (fields){
+			for (var k in fields){
+				fields[k].setValue("");
+			}
+		}
+	}
+	
+	, serialize: function() {
 		var args = {};
 		var argvals = [];
 		
@@ -41,7 +50,7 @@ Ext.grid.filter.NumericFilter = Ext.extend(Ext.grid.filter.Filter, {
 			argvals.push({comparison: key, value: values[key]});
 		}
 		
-		args = {active:this.active, type: 'numeric', value: argvals };
+		args = {active:this.active, type: 'numeric', value: argvals, containsData : this.containsData };
 		
 		this.fireEvent('serialize', args, this);
 		return args;

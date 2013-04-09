@@ -31,10 +31,18 @@ Ext.grid.filter.BooleanFilter = Ext.extend(Ext.grid.filter.Filter, {
 	    ];
 		
 		this.menu.add(this.options[0], this.options[1]);
-		
 		for(var i=0; i<this.options.length; i++) {
-			this.options[i].on('click', this.fireUpdate, this);
-			this.options[i].on('checkchange', this.fireUpdate, this);
+			this.options[i].on('click', function (e) {
+					this.clearData(); 
+					this.fireUpdate();  
+					if (e.checked) 
+						e.setChecked(false); 
+					else 
+						e.setChecked(true);
+			}, this);
+			this.options[i].on('checkchange', function (e) {
+				this.fireUpdate(); 
+			}, this);
 		}
 	},
 	
@@ -49,14 +57,19 @@ Ext.grid.filter.BooleanFilter = Ext.extend(Ext.grid.filter.Filter, {
 	
 	setValue: function(value) {
 		this.options[value ? 0 : 1].setChecked(true);
-	},
+	}
 	
-	getValue: function() {
+	, clearValue : function () {
+		this.options[0].setChecked(false);
+		this.options[1].setChecked(false);
+	}
+	
+	, getValue: function() {
 		return this.options[0].checked;
 	},
 	
 	serialize: function() {
-		var args = {active:this.active, type: 'boolean', value: this.getValue()};
+		var args = {active:this.active, type: 'boolean', value: this.getValue(), containsData : this.containsData};
 		this.fireEvent('serialize', args, this);
 		return args;
 	},

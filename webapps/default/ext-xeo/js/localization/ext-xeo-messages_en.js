@@ -73,6 +73,8 @@ if( Ext.grid.filter.ObjectFilter) {
 	  Ext.apply(Ext.grid.filter.ObjectFilter.prototype , {
 		  yesText: 'Select values'	,
 		  noText: 'No'
+		  , containsDataText : 'Contains data'
+		  , notContainsDataText : "Doesn't contain data"	  
 	 });
 }
 
@@ -81,6 +83,8 @@ if( Ext.grid.filter.DateFilter) {
 		  beforeText: 'Before',
 		  afterText: 'After',
 		  onText: 'In'
+		  , containsDataText : 'Contains data'
+		  , notContainsDataText : "Doesn't contain data"	  
 	 });
 }
 
@@ -88,12 +92,30 @@ if( Ext.grid.filter.BooleanFilter) {
 	  Ext.apply(Ext.grid.filter.BooleanFilter.prototype , {
 		  yesText: 'Yes'	,
 		  noText: 'No'
+		  , containsDataText : 'Contains data'
+		  , notContainsDataText : "Doesn't contain data"
 	 });
 }
 
 if( Ext.grid.filter.ListFilter) {
 	  Ext.apply(Ext.grid.filter.ListFilter.prototype , {
 		  loadingText: 'Reading Data...'
+			, containsDataText : 'Contains data'
+			, notContainsDataText : "Doesn't contain data"	
+	 });
+}
+
+if( Ext.grid.filter.NumericFilter) {
+	  Ext.apply(Ext.grid.filter.NumericFilter.prototype , {
+		  containsDataText : 'Contains data'
+		  , notContainsDataText : "Doesn't contain data"	  
+	 });
+}
+
+if( Ext.grid.filter.StringFilter) {
+	  Ext.apply(Ext.grid.filter.StringFilter.prototype , {
+		  containsDataText : 'Contains data'
+		  , notContainsDataText : "Doesn't contain data"	  
 	 });
 }
 

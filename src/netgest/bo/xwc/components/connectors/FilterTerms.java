@@ -65,6 +65,12 @@ public class FilterTerms {
 		addJoin( joinCondition, new FilterTerm( dataField, sqlExpression, operator, value ) );
 	}
 
+	public void addTerm( byte joinCondition, String dataField, String sqlExpression, byte operator, Object value, boolean cardIdSearch ) {
+		FilterTerm t = new FilterTerm( dataField, sqlExpression, operator, value );
+		if (cardIdSearch)
+			t.enableCardIdSearch();
+		addJoin( joinCondition, t );
+	}
 	
 	public void addTerm( byte joinCondition, FilterTerm term ) {
 		addJoin( joinCondition, term );
@@ -88,10 +94,19 @@ public class FilterTerms {
 
 	public static class FilterTerm {
 		
+		//FIXME: Colocar isto a ser usado
+		public enum Values{
+			ACTIVE,
+			VALUE,
+			CARD_ID_SEARCH,
+			TYPE
+		}
+		
 		private String dataField;
 		private String sqlExpression;
 		private Object value;
 		private byte   operator;
+		private boolean cardIdSearch = false;
 		
 		public FilterTerm createEmptyFilterTerm(){
 			return new FilterTerm("",null,JOIN_NONE,"");
@@ -103,8 +118,6 @@ public class FilterTerms {
 			this.value     = value;
 			this.sqlExpression = sqlExpression;
 			this.operator  = operator;
-			
-			
 		}
 		public String getDataField() {
 			return dataField.replace( "__", "." );
@@ -124,6 +137,14 @@ public class FilterTerms {
 		
 		public void setSqlExpression( String sqlExpression ) {
 			this.sqlExpression = sqlExpression;
+		}
+		
+		public void enableCardIdSearch(){
+			this.cardIdSearch = true;
+		}
+		
+		public boolean isCardIdSearch(){
+			return cardIdSearch;
 		}
 		
 	}

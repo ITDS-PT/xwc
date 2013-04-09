@@ -147,5 +147,28 @@ public interface ViewersMessages {
 	
 	public static final XUILocalizedMessage TREE_SHUTTLE_SELECT_COLS = 
 		new XUILocalizedMessage( ViewersMessages.class.getName(), "TREE_SHUTTLE_SELECT_COLS" );
+	
+	public static final XUILocalizedMessage GRID_DATE_FILTER_VIEWER_TITLE = new XUILocalizedMessage(
+			ViewersMessages.class.getName() , "GRID_DATE_FILTER_VIEWER_TITLE" );
+	
+	public static final XUILocalizedMessage GRID_DATE_FILTER_START_DATE = new XUILocalizedMessage(
+			ViewersMessages.class.getName() , "GRID_DATE_FILTER_START_DATE" );
+	
+	public static final XUILocalizedMessage GRID_DATE_FILTER_END_DATE = new XUILocalizedMessage(
+			ViewersMessages.class.getName() , "GRID_DATE_FILTER_END_DATE" );
+	
+	public static final XUILocalizedMessage GRID_DATE_FILTER_APPLY_FILTER = new XUILocalizedMessage(
+			ViewersMessages.class.getName() , "GRID_DATE_FILTER_APPLY_FILTER" );
+	
+	public static final XUILocalizedMessage GRID_DATE_FILTER_CANCEL_FILTER = new XUILocalizedMessage(
+			ViewersMessages.class.getName() , "GRID_DATE_FILTER_CANCEL_FILTER" );
+	
+	public static final XUILocalizedMessage GRID_DATE_FILTER_DATES_REQUIRED = new XUILocalizedMessage(
+			ViewersMessages.class.getName() , "GRID_DATE_FILTER_DATES_REQUIRED" );
+	
+	public static final XUILocalizedMessage GRID_DATE_FILTER_START_DATE_BEFORE_END_DATE = new XUILocalizedMessage(
+			ViewersMessages.class.getName() , "GRID_DATE_FILTER_START_DATE_BEFORE_END_DATE" );
+	
+	
 }
 

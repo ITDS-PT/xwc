@@ -98,6 +98,18 @@ Ext.grid.filter.ListFilter = Ext.extend(Ext.grid.filter.Filter, {
 			this.menu.add(item);
 		}
 		
+		this.menu.add("-");
+		this.createDataPresenceFilters();
+		if (this.containsData){
+			if (this.containsData == true){
+				this.dataPresenceMenus[0].setChecked(true);
+				this.dataPresenceMenus[1].setChecked(false);
+			} else if (this.containsData == false){
+				this.dataPresenceMenus[0].setChecked(false);
+				this.dataPresenceMenus[1].setChecked(true);
+			}
+		}
+		
 		this.setActive(this.isActivatable());
 		this.loaded = true;
 		
@@ -106,7 +118,18 @@ Ext.grid.filter.ListFilter = Ext.extend(Ext.grid.filter.Filter, {
     }
 	},
 	
-	checkChange: function(item, checked) {
+	clearValue : function () {
+		var items = this.menu.items;
+		for (var k = 0 ; k < items.length ; k++){
+			//Uncheck every item until the first separator
+			if (items.items[k].setChecked){
+				items.items[k].setChecked(false);
+			} else
+				break;
+		}
+	}
+	
+	, checkChange: function(item, checked) {
 		var value = [];
 		this.menu.items.each(function(item) {
 			if(item.checked) {
@@ -116,11 +139,14 @@ Ext.grid.filter.ListFilter = Ext.extend(Ext.grid.filter.Filter, {
 		this.value = value;
 		
 		this.setActive(this.isActivatable());
+		if (checked){
+			this.clearData();
+		}
 		this.fireEvent("update", this);
 	},
 	
 	isActivatable: function() {
-		return this.value.length > 0;
+		return this.value.length > 0 || this.containsData != null;
 	},
 	
 	setValue: function(value) {
@@ -145,7 +171,7 @@ Ext.grid.filter.ListFilter = Ext.extend(Ext.grid.filter.Filter, {
 	},
 	
 	serialize: function() {
-    var args = {active:this.active, type: 'list', value: this.phpMode ? this.value.join(',') : this.value};
+    var args = {active:this.active, type: 'list', value: this.phpMode ? this.value.join(',') : this.value, containsData : this.containsData};
     this.fireEvent('serialize', args, this);
 		return args;
 	},
