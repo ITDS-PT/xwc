@@ -15,7 +15,7 @@ import netgest.bo.xwc.framework.XUIBindProperty;
  * Component that allows displaying an {@link boObjectList} using a template 
  *
  */
-public class Xeolist extends TemplateComponentBase {
+public class XeoList extends TemplateComponentBase {
 	
 	/**
 	 * The boql expression used to retrieve the list of objects

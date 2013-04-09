@@ -13,7 +13,7 @@ import netgest.bo.xwc.components.template.wrappers.WrapperFactory;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 
-public class Xeoobject extends TemplateComponentBase {
+public class XeoObject extends TemplateComponentBase {
 	
 	
 	/**
