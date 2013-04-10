@@ -58,7 +58,7 @@ public class GridExplorer extends List {
 	
 	@Override
 	public String getRendererType() {
-		return "gridExplorer";
+		return "gridPanel";
 	}
 	
 	public static enum PreviewPanelPosition {
