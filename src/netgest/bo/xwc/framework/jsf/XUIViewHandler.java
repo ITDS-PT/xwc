@@ -416,6 +416,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         XUIViewerBuilder oViewerBuilder;
         XUIRequestContext      oContext;
         XUIApplicationContext  oApp;
+        
+        long init = System.currentTimeMillis();
 
         Locale locale = null;
         String renderKitId = null;
@@ -440,6 +442,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
         //String sOldViewId = viewId;
         //viewId = context.getExternalContext().getRequestServletPath() + viewId;
+        
+        
+        //Aqui verificar se está na cache, se estiver, devolve, senão cria novo
         
         XUIViewRoot result = new XUIViewRoot();
         UIViewRoot previousViewRoot = context.getViewRoot();
@@ -532,26 +537,25 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        result.setLocale(locale);
 	        result.setRenderKitId(renderKitId);
 	        
+	        ///O que estiver com tab para dentro não é para ser feito quando já existe uma versão na cache
+	        
 	        // Load the Viewer definition a build component tree
 	        XUIViewerDefinition oViewerDef;
 	        
-	        if (viewerDefinition == null){
-	            if( viewerInputStream != null )
-		        	oViewerDef = oApp.getViewerDef( viewerInputStream );
-		        else
-		        	oViewerDef = oApp.getViewerDef( viewId );
-	        } else
-	        	oViewerDef = viewerDefinition;
-	        
-	        result.setTransient( oViewerDef.isTransient() );
-	        
+	        	//Only if cache is not available
+		        if (viewerDefinition == null){
+		            if( viewerInputStream != null )
+			        	oViewerDef = oApp.getViewerDef( viewerInputStream );
+			        else
+			        	oViewerDef = oApp.getViewerDef( viewId );
+		        } else
+		        	oViewerDef = viewerDefinition;
+		        
+		        result.setTransient( oViewerDef.isTransient() );
+		        
 	        initializeAndAssociateBeansToView(oViewerDef, result, viewId);
 	        
 	        //ReplaceDynamyicIncludes
-	        
-	        //MÃ©todo prÃ³prio na bean que depois o que faz Ã© acrescentar ao request o nome do viewer
-	        //que se quer incluir.
-	        
 	        
 	        // Create a new instance of the view bean
 	        if (log.isDebugEnabled()) 
@@ -560,15 +564,39 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	                MessageLocalizer.getMessage("START_BUILDING_COMPONENT_VIEW")+" " + viewId );
 	        }
 	        
-	        oViewerBuilder.buildView( oContext, oViewerDef, result );
+	        
+	        
+	        //Chave da cache lingua / viewer
+	        //Flag na viewRoot (cacheable ou não)
+	        //Fixar ids? 
+	        	//E TemplateIncludes? - ele faz cache?
+	        	//Include de Viewer (se calhar nao faz diferença porque e sempre o mesmo)
+	        
+	        //Gerar os ids por sessao de utlilizador, e o viewState tambem?
+	        	//Onde sao gerados os ids dos componentes e os ids do viewState? (ViewState talvez no stateManager?)
+	        
+	        	//If not in cache
+	        	oViewerBuilder.buildView( oContext, oViewerDef, result );
 	
+	        
+	        
 	        if (log.isDebugEnabled()) 
 	        {
 	            log.debug(MessageLocalizer.getMessage("END_BUILDING_COMPONENT_VIEW")+
 	                  " " + viewId );
 	        }
-	
 	        
+	        long end = init - System.currentTimeMillis();
+	        System.out.println( viewId + " " + (end/1000) + " s");
+	
+	        //Salvar a vista aqui
+	        //Guardar a cache num mecanismo LRU / MRU
+	        //Ver o saveTree do XUIStateManager IMpl e restore tree aquilo tem um Object[] que representa o state
+	        //Serialize view?
+	        //XUIStateManagerImpl stateManager = (XUIStateManagerImpl) Util.getStateManager(context);
+	        
+	        //stateManager.saveView( oContext.getFacesContext() );
+	        //stateManager.saveSerializedView( oContext.getFacesContext() );
 	        
 	        // Initialize security
 	        initializeSecurity(result, oViewerDef, context);

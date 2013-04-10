@@ -47,9 +47,16 @@ import com.sun.faces.util.TypedCollections;
 import com.sun.faces.util.Util;
 
 public class XUIViewRoot extends UIViewRoot {
+	
 	private static AtomicInteger oInstanceIdCntr = new AtomicInteger(0);
+	
+	/*{ //Para fixar os Ids de alguma forma temos de fazer isto
+		AtomicInteger i = Session.get( "Longi.xvw" );
+		sIstanceId = t.addAndGet(1);
+	}*/
 
 	private String sInstanceId = String.valueOf(oInstanceIdCntr.addAndGet(1));
+	//private String sInstanceId = null;
 	private String sBeanIds = "";
 	private Object oViewerBean;
 	private String sStateId = null;
