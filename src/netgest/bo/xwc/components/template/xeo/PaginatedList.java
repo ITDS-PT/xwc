@@ -133,8 +133,11 @@ public abstract class PaginatedList extends XUIComponentBase {
 			if (getRecordCount()==0)
 				pages=0;
 			else {
-				pages=getRecordCount()/
-						(new Integer(getConnector().getPageSize()).intValue());
+				int psize=new Integer(getConnector().getPageSize()).intValue();
+				if ((getRecordCount() % psize) == 0)
+					pages=(getRecordCount()/psize);
+				else
+					pages=(getRecordCount()/psize)+1;
 				if (pages==0)
 					pages=1;
 			}
