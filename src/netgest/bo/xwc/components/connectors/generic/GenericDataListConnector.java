@@ -82,7 +82,7 @@ public class GenericDataListConnector implements DataListConnector {
 
 	@Override
 	public int dataListCapabilities() {
-		return 0;
+		return DataListConnector.CAP_PAGING;
 	}
 
 	@Override
@@ -129,8 +129,9 @@ public class GenericDataListConnector implements DataListConnector {
 
 	@Override
 	public void refresh() {
-		this.rows = new ArrayList<Map<String,Object>>();
-		this.currentRow = null;
+		//Do nothing
+		//this.rows = new ArrayList<Map<String,Object>>();
+		//this.currentRow = null;
 	}
 
 	@Override
@@ -205,7 +206,12 @@ public class GenericDataListConnector implements DataListConnector {
 
 	@Override
 	public boolean hasMorePages() {
-		return false;
+		int pageRows=this.getPage() * this.getPageSize();
+
+		if (this.getRecordCount()>pageRows)
+			return true;
+		else
+			return false;
 	}
 
 }
