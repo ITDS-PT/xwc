@@ -8,6 +8,7 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -61,6 +62,9 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
+import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl.TreeNode;
+import netgest.bo.xwc.framework.jsf.cache.CacheEntry;
+import netgest.bo.xwc.framework.jsf.utils.LRUCache;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.bo.xwc.xeo.beans.SystemViewer;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
@@ -91,6 +95,19 @@ import com.sun.faces.util.Util;
  */
 public class XUIViewHandler extends XUIViewHandlerImpl {
 
+	/**
+	 * Size of the cache
+	 */
+	private static final int CACHE_MAX_SIZE = 30;
+	/**
+	 * Viewer Cache
+	 */
+	private static final LRUCache< String , CacheEntry > viewerCache = new LRUCache< String , CacheEntry >( CACHE_MAX_SIZE );
+	
+	public static void cleanCache(){
+		viewerCache.clear();
+	}
+	
     //
     // Private/Protected Constants
     //
@@ -411,6 +428,27 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     	return createView( context, viewId, viewerInputStream, sTransactionId, null );
     }
     
+    boolean canReadFromCache(XUIApplicationContext applicationCtx, String viewerId){
+    	
+    	if ( !viewerCache.contains( ( viewerId ) ) )
+    		return false;
+    	//Check if we're in development mode
+    	boolean development = boApplication.getDefaultApplication().inDevelopmentMode();
+    	if (development){
+    		CacheEntry viewer = viewerCache.get( viewerId );
+    		XUIViewerDefinition definition = applicationCtx.getViewerDef( viewerId );
+    		Timestamp dateInCache = viewer.getLastUpdateDate();
+    		Timestamp dateInResource = definition.getDateLastUpdate();
+    		
+    		if ( dateInResource.after( dateInCache ) ){
+    			return false;
+    		}
+    	} else {
+    		return true;
+    	}
+    	return true;
+    }
+    
     public UIViewRoot createView(FacesContext context, String viewId, InputStream viewerInputStream, String sTransactionId, XUIViewerDefinition viewerDefinition ) 
     {
         XUIViewerBuilder oViewerBuilder;
@@ -421,6 +459,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
         Locale locale = null;
         String renderKitId = null;
+        
         
         oContext = XUIRequestContext.getCurrentContext();
         oApp      = oContext.getApplicationContext();
@@ -440,13 +479,19 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             renderKitId = context.getViewRoot().getRenderKitId();
         }
 
-        //String sOldViewId = viewId;
-        //viewId = context.getExternalContext().getRequestServletPath() + viewId;
+        XUIViewRoot result = null;
+        String viewerCacheId = viewId;
+        boolean createNew = true;
         
+        if ( canReadFromCache( oApp , viewerCacheId ) ){
+        	System.out.println("Reading " + viewerCacheId + " from cache");
+        	result = ( XUIViewRoot ) restoreViewFromCachePhase1( context , viewerCacheId );
+        	createNew = false;
+        } else{
+        	System.out.println("Creating " + viewerCacheId);
+        	result = new XUIViewRoot();
+    	}
         
-        //Aqui verificar se está na cache, se estiver, devolve, senão cria novo
-        
-        XUIViewRoot result = new XUIViewRoot();
         UIViewRoot previousViewRoot = context.getViewRoot();
         try {
         	// Work around to allows expression evaluation during the viewer creation.
@@ -537,11 +582,10 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        result.setLocale(locale);
 	        result.setRenderKitId(renderKitId);
 	        
-	        ///O que estiver com tab para dentro não é para ser feito quando já existe uma versão na cache
-	        
 	        // Load the Viewer definition a build component tree
-	        XUIViewerDefinition oViewerDef;
+	        XUIViewerDefinition oViewerDef = null;
 	        
+	        if (createNew){
 	        	//Only if cache is not available
 		        if (viewerDefinition == null){
 		            if( viewerInputStream != null )
@@ -552,10 +596,29 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 		        	oViewerDef = viewerDefinition;
 		        
 		        result.setTransient( oViewerDef.isTransient() );
-		        
-	        initializeAndAssociateBeansToView(oViewerDef, result, viewId);
+	        }
 	        
-	        //ReplaceDynamyicIncludes
+	        List<String> beanIds = new ArrayList< String >();
+	        if (createNew){
+	        	beanIds = oViewerDef.getViewerBeanIds();
+	        } else {
+	        	String[] beans =result.getBeanIds();
+	        	for (String bean : beans){
+	        		beanIds.add( bean );
+	        	}
+	        }
+	        
+	        List<String> beanList = new ArrayList< String >();
+	        if (createNew){
+	        	beanList = oViewerDef.getViewerBeans();
+	        } else {
+	        	for (String beanId : beanIds){
+	        		beanList.add( result.getBeanClass( beanId ) );
+	        	}
+	        }
+		    
+	        //
+	        initializeAndAssociateBeansToView(beanIds, beanList , result, viewId);
 	        
 	        // Create a new instance of the view bean
 	        if (log.isDebugEnabled()) 
@@ -563,8 +626,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	            log.debug(
 	                MessageLocalizer.getMessage("START_BUILDING_COMPONENT_VIEW")+" " + viewId );
 	        }
-	        
-	        
 	        
 	        //Chave da cache lingua / viewer
 	        //Flag na viewRoot (cacheable ou não)
@@ -575,37 +636,34 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        //Gerar os ids por sessao de utlilizador, e o viewState tambem?
 	        	//Onde sao gerados os ids dos componentes e os ids do viewState? (ViewState talvez no stateManager?)
 	        
-	        	//If not in cache
+	        //If not in cache
+	       if (createNew) 
 	        	oViewerBuilder.buildView( oContext, oViewerDef, result );
 	
-	        
-	        
 	        if (log.isDebugEnabled()) 
 	        {
 	            log.debug(MessageLocalizer.getMessage("END_BUILDING_COMPONENT_VIEW")+
 	                  " " + viewId );
 	        }
 	        
-	        long end = init - System.currentTimeMillis();
-	        System.out.println( viewId + " " + (end/1000) + " s");
+	        long end = System.currentTimeMillis() - init;
+	        System.out.println( viewId + " " + end + " ms ("+((float)end/1000)+")" + " s");
 	
-	        //Salvar a vista aqui
-	        //Guardar a cache num mecanismo LRU / MRU
-	        //Ver o saveTree do XUIStateManager IMpl e restore tree aquilo tem um Object[] que representa o state
-	        //Serialize view?
-	        //XUIStateManagerImpl stateManager = (XUIStateManagerImpl) Util.getStateManager(context);
-	        
-	        //stateManager.saveView( oContext.getFacesContext() );
-	        //stateManager.saveSerializedView( oContext.getFacesContext() );
+	        if (createNew){
+	        	if ( canAddViewToCache( viewerCacheId, oViewerDef.getDateLastUpdate() ) ){
+	        			saveViewToCache( context , result , viewerCacheId , oViewerDef );
+	        	}
+	        }
 	        
 	        // Initialize security
-	        initializeSecurity(result, oViewerDef, context);
+	        initializeSecurity( result, beanIds, context );
 	        
-	        // Pass XUIWeb**
-	        processXUIWebAnnotations( result, oViewerDef, context );
+	        if (!createNew){
+	        	restoreViewFromCachePhase2( context , result , viewerCacheId );
+	        }
 	        
+	        processXUIWebAnnotations( result, beanIds, context );
 	        
-//	        
         }
         finally {
         	if (previousViewRoot != null)
@@ -616,13 +674,60 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
         
     }
+
+
+	protected boolean canAddViewToCache(String viewerCacheId, Timestamp current) {
+		if ( !viewerCache.contains( viewerCacheId ) )
+			return true;
+			
+		CacheEntry entry = viewerCache.get( viewerCacheId );
+		if (entry.getLastUpdateDate().before( current )){
+			return true;
+		}
+		
+		return false;	
+	}
+
+
+	protected void restoreViewFromCachePhase2(FacesContext context,
+			XUIViewRoot result, String viewerCacheId) {
+		Object[] state = ( Object[] ) viewerCache.get( viewerCacheId ).getCacheContent()[0];
+		XUIStateManagerImpl oStateManagerImpl = ( XUIStateManagerImpl ) Util.getStateManager( context );
+		result.processRestoreState( context , oStateManagerImpl.handleRestoreState( state ) );
+		result.resetState();
+	}
+
+
+	protected void saveViewToCache(FacesContext context, XUIViewRoot result,
+			String viewerCacheId, XUIViewerDefinition oViewerDef) {
+		Object state = result.processSaveState( context );
+		List<TreeNode> treeList = new ArrayList<TreeNode>( 32 );
+		XUIStateManagerImpl.captureChild( treeList, 0, result );        
+		Object[] tree = treeList.toArray();
+		viewerCache.put( viewerCacheId , 
+				new CacheEntry( 
+						viewerCacheId , 
+						oViewerDef.getDateLastUpdate() , 
+						new Object[]{ state,tree } 
+				)  
+		);
+	}
+
+
+	protected UIViewRoot restoreViewFromCachePhase1(FacesContext context,
+			String viewerCacheId) {
+		XUIStateManagerImpl stateManager = ( XUIStateManagerImpl ) Util.getStateManager(context);
+		Object[] state = (Object[])viewerCache.get( viewerCacheId ).getCacheContent()[0];
+		Object[] tree = (Object[]) viewerCache.get( viewerCacheId ).getCacheContent()[1];
+		UIViewRoot root = stateManager.restoreTree( tree.clone() ); //Clone foi preciso porque senao os tree nodes 
+		//estavam a ser convertidos noutra coisa e depois estoiravam na vez seguinte
+		root.restoreState( context , state[0] );
+		return root;
+	}
     
-    private void initializeAndAssociateBeansToView( XUIViewerDefinition oViewerDef, XUIViewRoot result, String viewId  ){
+    private void initializeAndAssociateBeansToView( List<String> beanIdList, List<String> beanList, XUIViewRoot result, String viewId  ){
     	
-    	List<String> beanList = oViewerDef.getViewerBeans();
-        List<String> beanIdList = oViewerDef.getViewerBeanIds();
-        
-        // Initialize View Bean.
+    	// Initialize View Bean.
         if( log.isDebugEnabled() ) {
             log.debug(MessageLocalizer.getMessage("INITIALIZING_BEANS_FOR_VIEW")+" " + viewId );    
         }
@@ -676,11 +781,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         }
     }
     
-    private void initializeSecurity(XUIViewRoot result, XUIViewerDefinition definition, FacesContext context){
+    private void initializeSecurity(XUIViewRoot result, List<String> beanIds, FacesContext context){
     	try {
         	
-    		List<String> beanIds = definition.getViewerBeanIds();
-    		
     		if (ViewerAccessPolicyBuilder.getSecurityMode() != SecurityMode.DISABLED){
     			for (String beanId: beanIds){
 
@@ -1220,10 +1323,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         }
     }
     
-    public void processXUIWebAnnotations( XUIViewRoot viewRoot, XUIViewerDefinition viewerDefinition, FacesContext context ) {
+    public void processXUIWebAnnotations( XUIViewRoot viewRoot, List<String> beanList, FacesContext context ) {
     	
     	Map<String,String> parameters = context.getExternalContext().getRequestParameterMap();
-    	List<String> beanList = viewerDefinition.getViewerBeanIds();
     	
     	// Process XUIWebParameters
     	for( String beanIdentifier : beanList ) {

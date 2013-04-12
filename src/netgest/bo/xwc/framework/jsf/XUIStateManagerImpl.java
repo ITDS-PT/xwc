@@ -564,7 +564,7 @@ public class XUIStateManagerImpl extends StateManager {
      *  If {@link BooleanWebContextInitParameter#SerializeServerState} de-serialize the
      *  state prior to returning it, otherwise return <code>state</code> as is.
      */
-    private Object handleRestoreState(Object state) {
+    Object handleRestoreState(Object state) {
 
         if (webConfig.isOptionEnabled(BooleanWebContextInitParameter.SerializeServerState)) {
             ByteArrayInputStream bais = new ByteArrayInputStream((byte[]) state);
@@ -596,7 +596,7 @@ public class XUIStateManagerImpl extends StateManager {
     }
 
 
-    private static void captureChild(List<TreeNode> tree, 
+    static void captureChild(List<TreeNode> tree, 
                                      int parent,
                                      UIComponent c) {
 
@@ -764,7 +764,7 @@ public class XUIStateManagerImpl extends StateManager {
     }
 
 
-    private UIViewRoot restoreTree(Object[] tree)
+    UIViewRoot restoreTree(Object[] tree)
     throws FacesException {
 
         UIComponent c;
@@ -794,7 +794,7 @@ public class XUIStateManagerImpl extends StateManager {
     }
 
 
-    private static class TreeNode implements Externalizable {
+    static class TreeNode implements Externalizable {
 
         private static final String NULL_ID = "";
 

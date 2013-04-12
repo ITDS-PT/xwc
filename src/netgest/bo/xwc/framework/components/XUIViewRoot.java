@@ -132,6 +132,7 @@ public class XUIViewRoot extends UIViewRoot {
 	
 	private Object beanReference;
 	private String beanId;
+	private Map<String,String> beanMapping = new HashMap< String , String >();
 
 	public void addBean(String sBeanName, Object oBean) {
 		if( this.sBeanIds != null && this.sBeanIds.length() > 0 ) {
@@ -139,9 +140,14 @@ public class XUIViewRoot extends UIViewRoot {
 		}
 		this.sBeanIds += sBeanName;
 		this.beanId = sBeanName;
-		this.beanReference = oBean; 
+		this.beanReference = oBean;
+		this.beanMapping.put( sBeanName , oBean.getClass().getName() );
 		XUIRequestContext.getCurrentContext().getSessionContext().setAttribute(
 				getBeanPrefix() + sBeanName, oBean);
+	}
+	
+	public String getBeanClass(String beanId){
+		return beanMapping.get( beanId );
 	}
 	
 	public String[] getBeanIds() {
@@ -938,6 +944,36 @@ public class XUIViewRoot extends UIViewRoot {
 	
 	public Renderer getRenderer(){
 		return super.getRenderer( getFacesContext() );
+	}
+
+	public void resetState() {
+		isPostBack = false;
+		resetStateOnComponents();
+		
+	}
+	
+	void resetStateOnComponents(){
+		Iterator<UIComponent> it = getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent comp = it.next();
+			if (comp instanceof XUIComponentBase){
+				((XUIComponentBase)comp).resetState();
+			} else {
+				processResetStateOnComponents( comp );
+			}
+		}
+	}
+	
+	void processResetStateOnComponents(UIComponent comp){
+		Iterator<UIComponent> it = getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent child = it.next();
+			if (child instanceof XUIComponentBase){
+				((XUIComponentBase)child).resetState();
+			} else {
+				processResetStateOnComponents(child);
+			}
+		}
 	}
     
 }

@@ -1105,6 +1105,33 @@ public abstract class XUIComponentBase extends UIComponentBase
 			template.setExpressionText( templateName );
 		}
 	}
+
+	public void resetState() {
+		this.wasInitComponentProcessed = false;
+		this.isPostBack = false;
+		Iterator<UIComponent> it = getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent child = it.next();
+			if (child instanceof XUIComponentBase){
+				((XUIComponentBase)child).resetState();
+			} else {
+				processResetState(child);
+			}
+		}
+		
+	}
+	
+	void processResetState(UIComponent comp){
+		Iterator<UIComponent> it = comp.getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent child = it.next();
+			if (child instanceof XUIComponentBase){
+				((XUIComponentBase)child).resetState();
+			} else {
+				processResetState(child);
+			}
+		}
+	}
 	
 	///---------------------------------------
 	
