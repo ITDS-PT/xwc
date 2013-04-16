@@ -57,7 +57,7 @@ public class XUIViewHandlerImpl extends ViewHandler {
 
     public XUIViewHandlerImpl() {
         if (logger.isFinerEnabled()) {
-            logger.finer(LoggerMessageLocalizer.getMessage("CREATED_VIEWEHANDLER_INSTANCE"));
+            logger.finer("CREATED_VIEWEHANDLER_INSTANCE");
         }
     }
     

@@ -50,8 +50,9 @@ public class XUIViewRoot extends UIViewRoot {
 	
 	private static AtomicInteger oInstanceIdCntr = new AtomicInteger(0);
 	
-	/*{ //Para fixar os Ids de alguma forma temos de fazer isto
-		AtomicInteger i = Session.get( "Longi.xvw" );
+	/*{ 
+	    //Para fixar os Ids de alguma forma temos de fazer isto
+		AtomicInteger i = Session.get( "Login.xvw" );
 		sIstanceId = t.addAndGet(1);
 	}*/
 
@@ -113,6 +114,13 @@ public class XUIViewRoot extends UIViewRoot {
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
+	}
+	
+	public XUIViewRoot(String instanceId, String viewState) {
+		this();
+		System.out.println("InstanceId: " + instanceId +  " ViewState: " + viewState);
+		this.sInstanceId = instanceId;
+		this.sStateId = viewState;
 	}
 	
 

@@ -10,14 +10,17 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
 import javax.faces.application.ViewHandler;
+import javax.faces.component.NamingContainer;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
@@ -43,6 +46,7 @@ import javax.xml.transform.stream.StreamSource;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.boApplication;
+import netgest.bo.system.boSession;
 import netgest.bo.transaction.XTransaction;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
@@ -83,7 +87,9 @@ import com.sun.faces.application.ViewHandlerResponseWrapper;
 import com.sun.faces.config.WebConfiguration;
 import com.sun.faces.config.WebConfiguration.WebContextInitParameter;
 import com.sun.faces.io.FastStringWriter;
+import com.sun.faces.util.LRUMap;
 import com.sun.faces.util.RequestStateManager;
+import com.sun.faces.util.TypedCollections;
 import com.sun.faces.util.Util;
 
 
@@ -103,6 +109,10 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	 * Viewer Cache
 	 */
 	private static final LRUCache< String , CacheEntry > viewerCache = new LRUCache< String , CacheEntry >( CACHE_MAX_SIZE );
+	
+	static final String USER_VIEWER_SEQUENCE = "xwcViewerSequence";
+	
+	static final String USER_SEQUENCE_MAP = "xwcViewerMap";
 	
 	public static void cleanCache(){
 		viewerCache.clear();
@@ -126,7 +136,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
     public XUIViewHandler() {
         if (log.isDebugEnabled()) {
-            log.debug(MessageLocalizer.getMessage("CREATE_VIEWHANDLER_INSTANCE"));
+            log.debug("Create XUIViewHandler instance");
         }
     }
 
@@ -147,7 +157,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
         // set up the ResponseWriter
 
-        // TODO: Inicializar uma unica vez por sessão.
+        // TODO: Inicializar uma unica vez por sessao.
 
         RenderKitFactory renderFactory = (RenderKitFactory)
             FactoryFinder.getFactory(FactoryFinder.RENDER_KIT_FACTORY);
@@ -405,10 +415,12 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             if( viewRoot == context.getViewRoot() && savedView != null )
             	context.setViewRoot( savedView );
             
-            
+            requestContext.setAttribute( XUISessionContext.RESTORED_VIEWS_PREFIX + viewRoot.getViewState(), viewRoot );
+        } else {
+        	if (log.isErrorEnabled()) {
+                log.error(String.format("Could not restore %s",viewId));
+            }
         }
-        
-        requestContext.setAttribute( XUISessionContext.RESTORED_VIEWS_PREFIX + viewRoot.getViewState(), viewRoot );
         
         return viewRoot;
     }
@@ -483,13 +495,18 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         String viewerCacheId = viewId;
         boolean createNew = true;
         
+        cleanCache();
         if ( canReadFromCache( oApp , viewerCacheId ) ){
-        	System.out.println("Reading " + viewerCacheId + " from cache");
         	result = ( XUIViewRoot ) restoreViewFromCachePhase1( context , viewerCacheId );
         	createNew = false;
         } else{
-        	System.out.println("Creating " + viewerCacheId);
-        	result = new XUIViewRoot();
+        	XUISessionContext session = oContext.getSessionContext();
+        	boSession xeoSession =  (boSession)oContext.getSessionContext().getAttribute( "boSession" );
+        	String user = null;
+        	if (xeoSession != null){
+        		user = xeoSession.getUser().getUserName();
+        	}
+        	result = new XUIViewRoot( generateId( viewId, session.getSessionMap() ) , generateViewState( viewId, user ) );
     	}
         
         UIViewRoot previousViewRoot = context.getViewRoot();
@@ -674,6 +691,88 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
         
     }
+
+
+	String generateViewState(String viewId, String user) {
+		
+		if (user == null){
+			user = "XWC_DefaultUser";
+		}
+		
+		FacesContext context = FacesContext.getCurrentInstance();
+		XUIStateManagerImpl stateManager = (XUIStateManagerImpl) Util
+				.getStateManager(context);
+
+		ExternalContext externalContext = context.getExternalContext();
+		Object sessionObj = externalContext.getSession(true);
+		Map<String, Object> sessionMap = externalContext.getSessionMap();
+
+		synchronized (sessionObj) {
+			Map<String, Map> logicalMap = TypedCollections
+					.dynamicallyCastMap((Map) sessionMap
+							.get(XUIStateManagerImpl.LOGICAL_VIEW_MAP),
+							String.class, Map.class);
+
+			int logicalMapSize = stateManager.getNumberOfViewsParameter();
+
+			if (logicalMap == null) {
+				logicalMap = new LRUMap<String, Map>(logicalMapSize);
+				sessionMap.put(XUIStateManagerImpl.LOGICAL_VIEW_MAP,
+						logicalMap);
+			}
+
+			String idInLogicalMap = viewId;
+			// = (String) RequestStateManager.get(context, RequestStateManager.LOGICAL_VIEW_MAP);*/
+
+			String idInActualMap = user;
+			//String idInActualMap = stateManager.createUniqueRequestId( context );
+			int actualMapSize = stateManager.getNumberOfViewsInLogicalViewParameter();
+
+			Map<String, Object[]> actualMap = (Map<String, Object[]>) TypedCollections
+					.dynamicallyCastMap(logicalMap.get(idInLogicalMap),
+							String.class, Object[].class);
+			if (actualMap == null) {
+				actualMap = new LRUMap<String, Object[]>(actualMapSize);
+				logicalMap.put(idInLogicalMap, actualMap);
+			}
+
+			return idInLogicalMap + NamingContainer.SEPARATOR_CHAR + idInActualMap;
+		}
+	}
+
+
+	/**
+	 * 
+	 * Generate an Id for a given viewer
+	 * 
+	 * @param viewerId The viewer identifier
+	 * @param session The session map
+	 * 
+	 * @return An identifier for the viewer
+	 */
+	String generateId(String viewerId, Map<String,Object> session) {
+		
+		@SuppressWarnings("unchecked")
+		Map<String,Integer> sequenceMap = (Map<String,Integer>) session.get( USER_SEQUENCE_MAP );
+		if (sequenceMap == null){
+			sequenceMap = new HashMap< String , Integer >();
+			session.put( USER_SEQUENCE_MAP , sequenceMap );
+		}
+		
+		Integer result = null;
+		if (sequenceMap.containsKey( viewerId )){
+			result = sequenceMap.get( viewerId );
+		} else {
+			AtomicInteger sequenceGenerator = (AtomicInteger) session.get( USER_VIEWER_SEQUENCE );
+			if (sequenceGenerator == null){
+				sequenceGenerator = new AtomicInteger();
+				session.put( USER_VIEWER_SEQUENCE , sequenceGenerator );
+			}
+			result = new Integer( sequenceGenerator.addAndGet( 1 ) );
+			sequenceMap.put( viewerId , result );
+		}
+		return result.toString();
+	}
 
 
 	protected boolean canAddViewToCache(String viewerCacheId, Timestamp current) {

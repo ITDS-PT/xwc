@@ -217,7 +217,11 @@ public class XUISessionContext {
 			throw new IllegalStateException( ExceptionMessage.CANNOT_FIND_USER_HTTPSESSION__.toString() );
 		}
 	}
-
+	
+	public Map<String,Object> getSessionMap(){
+		return getExternalSessionMap();
+	}
+	
 	private static final Map<String, Object> getExternalSessionMap() {
 
 		// Get a bean from the User Context
