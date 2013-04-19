@@ -8,12 +8,10 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 import javax.servlet.http.HttpServletRequest;
 
-import netgest.bo.xwc.components.template.xeo.wrappers.TemplateListWrapper;
 
 import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.template.base.TemplateRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
@@ -123,26 +121,9 @@ public abstract class PaginatedList extends XUIComponentBase {
 		return this.pagesize.getEvaluatedValue();
 	}
 	
-	public abstract DataListConnector getConnector();
-	
 	public abstract void initConnector();
 	
-	public int getPages() {
-		int pages=0;
-		if (getConnector()!=null)
-			if (getRecordCount()==0)
-				pages=0;
-			else {
-				int psize=new Integer(getConnector().getPageSize()).intValue();
-				if ((getRecordCount() % psize) == 0)
-					pages=(getRecordCount()/psize);
-				else
-					pages=(getRecordCount()/psize)+1;
-				if (pages==0)
-					pages=1;
-			}
-		return pages;
-	}
+	public abstract int getPages();
 	
 	public abstract int getRecordCount();
 	
@@ -278,19 +259,20 @@ public abstract class PaginatedList extends XUIComponentBase {
 			HttpServletRequest request = (HttpServletRequest)getRequestContext().getRequest();
 			String pagenumber=request.getParameter(this.getName()+"page");
 			if (pagenumber
-				!=null && !pagenumber.equals(""))
-				this.setPage(pagenumber);
-			
+				!=null && !pagenumber.equals("")) {
+				int pageInt=Integer.parseInt(pagenumber);
+				if (pageInt<=this.getPages())
+					this.setPage(pagenumber);
+				
+			}
 			String pagesize=request.getParameter(this.getName()+"pagesize");
 			if (pagesize
-				!=null && !pagesize.equals(""))
-				this.setPagesize(pagesize);
+				!=null && !pagesize.equals("")) {
+				int pageSizeInt=Integer.parseInt(pagesize);
+				if (pageSizeInt<=this.getRecordCount())
+					this.setPagesize(pagesize);
+			}
 		}
-	}
-	
-	public TemplateListWrapper getList() {
-		//initConnector();
-		return new TemplateListWrapper(getConnector().iterator());	
 	}
 	
 	public static class GotoPageListener implements ActionListener {

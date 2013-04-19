@@ -7,7 +7,7 @@ import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 
 
-public class Sqllist extends PaginatedList {
+public class Sqllist extends PaginatedConnectorList {
 
 	private XUIViewStateBindProperty<String> sql = 
 		new XUIViewStateBindProperty<String>("sql", this, String.class );

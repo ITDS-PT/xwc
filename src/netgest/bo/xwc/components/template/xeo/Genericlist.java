@@ -10,7 +10,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 
-public class Genericlist extends PaginatedList {
+public class Genericlist extends PaginatedConnectorList {
 
 	private XUIBindProperty<DataListConnector> dataSource = new XUIBindProperty<DataListConnector>(
 			"dataSource", this, DataListConnector.class);
