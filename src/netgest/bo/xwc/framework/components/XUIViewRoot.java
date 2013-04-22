@@ -50,14 +50,8 @@ public class XUIViewRoot extends UIViewRoot {
 	
 	private static AtomicInteger oInstanceIdCntr = new AtomicInteger(0);
 	
-	/*{ 
-	    //Para fixar os Ids de alguma forma temos de fazer isto
-		AtomicInteger i = Session.get( "Login.xvw" );
-		sIstanceId = t.addAndGet(1);
-	}*/
 
-	private String sInstanceId = String.valueOf(oInstanceIdCntr.addAndGet(1));
-	//private String sInstanceId = null;
+	private String sInstanceId = null;
 	private String sBeanIds = "";
 	private Object oViewerBean;
 	private String sStateId = null;
@@ -118,7 +112,7 @@ public class XUIViewRoot extends UIViewRoot {
 	
 	public XUIViewRoot(String instanceId, String viewState) {
 		this();
-		System.out.println("InstanceId: " + instanceId +  " ViewState: " + viewState);
+		//System.out.println("InstanceId: " + instanceId +  " ViewState: " + viewState);
 		this.sInstanceId = instanceId;
 		this.sStateId = viewState;
 	}
@@ -300,6 +294,7 @@ public class XUIViewRoot extends UIViewRoot {
 	 final String getBeanPrefix() {
 		return getViewId() + ":" + sInstanceId + ":";
 	}
+	 
 
 	@Override
 	public Object saveState(FacesContext context) {
@@ -307,7 +302,7 @@ public class XUIViewRoot extends UIViewRoot {
 		Object[] oMyState;
 
 		oSuperState = super.saveState(context);
-		oMyState = new Object[8];
+		oMyState = new Object[9];
 
 		oMyState[0] = sInstanceId;
 		oMyState[1] = sParentViewState;
@@ -318,10 +313,12 @@ public class XUIViewRoot extends UIViewRoot {
 
 		oMyState[6] = oSuperState;
 		oMyState[7] = localizationClasses;
+		oMyState[8] = beanMapping;
 
 		return oMyState;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object[] oMyState;
@@ -337,6 +334,7 @@ public class XUIViewRoot extends UIViewRoot {
 		sStateId = (String) oMyState[5];
 		super.restoreState(context, oMyState[6]);
 		localizationClasses = (String[]) oMyState[7];
+		beanMapping = (Map<String,String>) oMyState[8];
 	}
 
 	public boolean wasStateChanged() {
@@ -582,6 +580,10 @@ public class XUIViewRoot extends UIViewRoot {
 	public String getInstanceId() {
 		return this.sInstanceId;
 	}
+	
+	public void setInstanceId(String instanceId){
+		this.sInstanceId = instanceId;
+	}
 
 	public String getClientId() {
 		return getViewId() + ":" + sInstanceId;
@@ -589,6 +591,10 @@ public class XUIViewRoot extends UIViewRoot {
 
 	public boolean isPostBack() {
 		return isPostBack;
+	}
+	
+	public void setViewState(String newState){
+		sStateId = newState;
 	}
 
 	public String getViewState() {
@@ -983,5 +989,7 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 		}
 	}
+	
+	
     
 }

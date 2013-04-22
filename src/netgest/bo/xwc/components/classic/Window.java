@@ -447,7 +447,8 @@ public class Window extends XUIComponentBase {
                 oChildComp = oChildIterator.next();
 
                 if (!oChildComp.isRendered()) {
-                    //return;
+                    //return; //Must check if can be left like this
+                	//TODO
                 }
                 
                 String rendererType;

@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -69,8 +70,14 @@ public class XUIViewerDefinitonParser
             
             xwvr = new XUIViewerDefinition();
             
-            //Deal with a Composition 
+            String isTransient = node.getAttribute("transient");
+            boolean originalHasTransient = false;
+            if( isTransient != null ) {
+            	originalHasTransient = true;
+            	xwvr.setTransient( Boolean.valueOf( isTransient ) );
+            }
             
+            //Deal with a Composition 
             String currentBeanId = null;
             
             XMLElement potentialComposition = findPotentialCompositionElement( element );
@@ -84,6 +91,12 @@ public class XUIViewerDefinitonParser
             	node = wrapper.getNode();
             	//Set date
             	xwvr.setDateLastUpdate( wrapper.getTime() );
+            	if (!originalHasTransient){
+	            	isTransient = node.getAttribute("transient");
+	                if( isTransient != null ) {
+	                	xwvr.setTransient( Boolean.valueOf( isTransient ) );
+	                }
+            	}
             }
 
             parseBeanClasses( xwvr, node.getAttribute( "beanClass" ) );
@@ -120,10 +133,7 @@ public class XUIViewerDefinitonParser
             	xwvr.setLocalizationClasses( classes );
             }
             
-            String isTransient = node.getAttribute("transient");
-            if( isTransient != null ) {
-            	xwvr.setTransient( Boolean.valueOf( isTransient ) );
-            }
+            
             
             counter.parsed( viewerName , xwvr.getViewerBeanIds( ) );
             
@@ -302,9 +312,13 @@ public class XUIViewerDefinitonParser
     private Timestamp getLastDateOfResource(String viewerName, ClassLoader loader){
     	URLConnection connection = null;
     	try {
-    		connection = loader.getResource( viewerName ).openConnection(); 
-			Long time = connection.getLastModified();
-			return new Timestamp( time );
+    		URL url = loader.getResource( viewerName );
+    		if (url != null){
+	    		connection = url.openConnection(); 
+				Long time = connection.getLastModified();
+				return new Timestamp( time );
+    		} else 
+    			return new Timestamp( System.currentTimeMillis() );
 		} catch ( IOException e ) {
 			return new Timestamp( System.currentTimeMillis() );
 		} finally {

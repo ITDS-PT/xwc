@@ -495,18 +495,21 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         String viewerCacheId = viewId;
         boolean createNew = true;
         
-        cleanCache();
+        //cleanCache();
+        XUISessionContext session = oContext.getSessionContext();
         if ( canReadFromCache( oApp , viewerCacheId ) ){
         	result = ( XUIViewRoot ) restoreViewFromCachePhase1( context , viewerCacheId );
+        	String newState = generateId( viewId , session.getSessionMap() );
+        	String initialComponentId = generateInitialComponentId( viewId , session.getSessionMap() );
+        	result.setInstanceId( initialComponentId );
+        	result.setViewState( viewId + NamingContainer.SEPARATOR_CHAR + newState );
+        	//Set viewId e viewState
         	createNew = false;
         } else{
-        	XUISessionContext session = oContext.getSessionContext();
-        	boSession xeoSession =  (boSession)oContext.getSessionContext().getAttribute( "boSession" );
-        	String user = null;
-        	if (xeoSession != null){
-        		user = xeoSession.getUser().getUserName();
-        	}
-        	result = new XUIViewRoot( generateId( viewId, session.getSessionMap() ) , generateViewState( viewId, user ) );
+        	String id = generateId( viewId , session.getSessionMap() );
+        	String initialComponentId = generateInitialComponentId( viewId , session.getSessionMap() );
+        	//System.out.println(viewId + ":" + id + " -> Instance " + initialComponentId );
+        	result = new XUIViewRoot( initialComponentId , generateViewState( viewId, session.getSessionMap(), id ) );
     	}
         
         UIViewRoot previousViewRoot = context.getViewRoot();
@@ -664,7 +667,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        }
 	        
 	        long end = System.currentTimeMillis() - init;
-	        System.out.println( viewId + " " + end + " ms ("+((float)end/1000)+")" + " s");
+	        //System.out.println( viewId + " " + end + " ms ("+((float)end/1000)+")" + " s");
 	
 	        if (createNew){
 	        	if ( canAddViewToCache( viewerCacheId, oViewerDef.getDateLastUpdate() ) ){
@@ -693,11 +696,31 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     }
 
 
-	String generateViewState(String viewId, String user) {
+	private String generateInitialComponentId(String viewId,
+			Map< String , Object > sessionMap) {
 		
-		if (user == null){
-			user = "XWC_DefaultUser";
+		String VIEW_SEQUENCE_MAP = "XUI:ViewSequenceMap";
+		String VIEW_SEQUENCE_GENERATOR = "XUI:ViewSequenceGenerator";
+		@SuppressWarnings("unchecked")
+		Map<String,AtomicInteger> viewSequence = ( Map<String,AtomicInteger> ) sessionMap.get( VIEW_SEQUENCE_MAP );
+		if (viewSequence == null){
+			viewSequence = new HashMap< String , AtomicInteger >();
+			sessionMap.put( VIEW_SEQUENCE_MAP , viewSequence );
 		}
+		
+		AtomicInteger generator = (AtomicInteger) viewSequence.get( VIEW_SEQUENCE_GENERATOR );
+		if (generator == null){
+			generator = new AtomicInteger( 0 );
+			viewSequence.put( VIEW_SEQUENCE_GENERATOR, generator );
+		}
+		
+		Integer result = generator.addAndGet( 1 );
+		
+		return result.toString();
+	}
+
+
+	String generateViewState(String viewId, Map<String,Object> session, String sequenceId ) {
 		
 		FacesContext context = FacesContext.getCurrentInstance();
 		XUIStateManagerImpl stateManager = (XUIStateManagerImpl) Util
@@ -722,10 +745,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 			}
 
 			String idInLogicalMap = viewId;
-			// = (String) RequestStateManager.get(context, RequestStateManager.LOGICAL_VIEW_MAP);*/
-
-			String idInActualMap = user;
-			//String idInActualMap = stateManager.createUniqueRequestId( context );
+			String idInActualMap = sequenceId;
+			
 			int actualMapSize = stateManager.getNumberOfViewsInLogicalViewParameter();
 
 			Map<String, Object[]> actualMap = (Map<String, Object[]>) TypedCollections
@@ -760,17 +781,14 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 		}
 		
 		Integer result = null;
-		if (sequenceMap.containsKey( viewerId )){
+		if ( sequenceMap.containsKey( viewerId ) ){
 			result = sequenceMap.get( viewerId );
 		} else {
-			AtomicInteger sequenceGenerator = (AtomicInteger) session.get( USER_VIEWER_SEQUENCE );
-			if (sequenceGenerator == null){
-				sequenceGenerator = new AtomicInteger();
-				session.put( USER_VIEWER_SEQUENCE , sequenceGenerator );
-			}
-			result = new Integer( sequenceGenerator.addAndGet( 1 ) );
+			result = new Integer( 0 );
 			sequenceMap.put( viewerId , result );
 		}
+		result = result + 1;
+		sequenceMap.put( viewerId , result );
 		return result.toString();
 	}
 
@@ -790,15 +808,31 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
 	protected void restoreViewFromCachePhase2(FacesContext context,
 			XUIViewRoot result, String viewerCacheId) {
+		
+		String viewInstanceId = result.getInstanceId();
+		String viewState = result.getViewState();
+		
 		Object[] state = ( Object[] ) viewerCache.get( viewerCacheId ).getCacheContent()[0];
 		XUIStateManagerImpl oStateManagerImpl = ( XUIStateManagerImpl ) Util.getStateManager( context );
 		result.processRestoreState( context , oStateManagerImpl.handleRestoreState( state ) );
+		
+		result.setInstanceId( viewInstanceId );
+		result.setViewState( viewState );
+		
 		result.resetState();
 	}
 
 
 	protected void saveViewToCache(FacesContext context, XUIViewRoot result,
 			String viewerCacheId, XUIViewerDefinition oViewerDef) {
+		//Transient has a lot of implications and it shouldn't be saved (seeing JSF's source), 
+		//to make cache and transient work we have to "untransientify" temporarily and then
+		//"transientify" again at the end of saving to cache
+		boolean restoreTransient = false;
+		if (result.isTransient()){
+			result.setTransient( false );
+			restoreTransient = true;
+		}
 		Object state = result.processSaveState( context );
 		List<TreeNode> treeList = new ArrayList<TreeNode>( 32 );
 		XUIStateManagerImpl.captureChild( treeList, 0, result );        
@@ -810,6 +844,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 						new Object[]{ state,tree } 
 				)  
 		);
+		
+		if (restoreTransient)
+			result.setTransient( true );
 	}
 
 
@@ -818,9 +855,10 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 		XUIStateManagerImpl stateManager = ( XUIStateManagerImpl ) Util.getStateManager(context);
 		Object[] state = (Object[])viewerCache.get( viewerCacheId ).getCacheContent()[0];
 		Object[] tree = (Object[]) viewerCache.get( viewerCacheId ).getCacheContent()[1];
-		UIViewRoot root = stateManager.restoreTree( tree.clone() ); //Clone foi preciso porque senao os tree nodes 
-		//estavam a ser convertidos noutra coisa e depois estoiravam na vez seguinte
+		UIViewRoot root = stateManager.restoreTree( tree.clone() ); //Clone was needed because tree nodes were being converted
+		//to something else and in the next request it blew up the code (because they were not TreeNodes anymore)
 		root.restoreState( context , state[0] );
+		//Set do viewState
 		return root;
 	}
     
