@@ -447,7 +447,7 @@ public class Window extends XUIComponentBase {
                 oChildComp = oChildIterator.next();
 
                 if (!oChildComp.isRendered()) {
-                    return;
+                    //return;
                 }
                 
                 String rendererType;

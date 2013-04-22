@@ -331,10 +331,6 @@ public abstract class XUIComponentBase extends UIComponentBase
 	            while( oStatePropertiesIt.hasNext() ) {
 	            	XUIBaseProperty<?> x = oStatePropertiesIt.next().getValue();
 	            	
-	//            	if(  "displayValue".equals( x.getName() ) ) {
-	//            		System.out.println( "[SAVE][" + this.getId() + "] Default Value:" + x.getValue() );
-	//            	}
-	            	
 	            	if( !x.isDefaultValue() )
 	            		oStateProperyState[ iCntr ] = x.saveState();
 	            	else

@@ -636,7 +636,14 @@ public class GridPanel extends ViewerInputSecurityBase {
 	@Override
 	public void restoreState(Object state) {
 		super.restoreState(state);
-		setRendered(true);
+		//setRendered(true);
+	}
+	
+	@Override
+	public void resetState() {
+		super.resetState();
+		setRenderedOnClient( false );
+		//setRendered(true);
 	}
 
 	/**
@@ -813,7 +820,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 		String viewerSecurityId = getInstanceId();
 		if (viewerSecurityId != null) {
-			setViewerSecurityPermissions("#{viewBean.viewerPermissions."
+			setViewerSecurityPermissions("#{"+getBeanId()+".viewerPermissions."
 					+ viewerSecurityId + "}");
 		}
 	}

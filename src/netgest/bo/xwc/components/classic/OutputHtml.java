@@ -51,9 +51,15 @@ public class OutputHtml extends ViewerOutputSecurityBase {
         return StateChanged.NONE;    
     }
     
+    
+    @Override
+    public void initComponent() {
+    	super.initComponent();
+    	this.renderedValue.setValue( getValue() );
+    }
+    
     @Override
     public Object saveState() {
-        this.renderedValue.setValue( getValue() );
         return super.saveState();
     }
     

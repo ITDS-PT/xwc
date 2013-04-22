@@ -174,7 +174,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
     @Override
     public void encodeEnd(XUIComponentBase oComp) throws IOException {
         ExtConfig oGridConfig;
-        if( oComp.isRendered() ) {
+        if( oComp.getRenderComponent() ) {
         
             XUIResponseWriter w = getResponseWriter();
         
