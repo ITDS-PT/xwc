@@ -248,7 +248,7 @@ public abstract class PaginatedList extends XUIComponentBase {
 	
 	@Override
 	public void preRender() {
-		initConnector();
+		//initConnector();
         nextPageCommand = (XUICommand)getChild( 0 );
         previousPageCommand = (XUICommand)getChild( 1 );
         firstPageCommand = (XUICommand)getChild( 2 );
@@ -260,35 +260,40 @@ public abstract class PaginatedList extends XUIComponentBase {
 			String pagenumber=request.getParameter(this.getName()+"page");
 			if (pagenumber
 				!=null && !pagenumber.equals("")) {
-				int pageInt=1;
-				try {
-					pageInt=Integer.parseInt(pagenumber);
-				}
-				catch (NumberFormatException e) {
-					
-				}
-				if (pageInt<=this.getPages()) {
-					this.setPage(Integer.toString(pageInt));
-					initConnector();
-				}
-				
+				//Validar se a página passada pode ser mostrada
+				//Pesado pois implica duas queries (uma para inicializar o connector e ir buscar o número de páginas, a outra após 
+				//se fazer set da página e refrescar)
+//				int pageInt=1;
+//				try {
+//					pageInt=Integer.parseInt(pagenumber);
+//				}
+//				catch (NumberFormatException e) {
+//					
+//				}
+//				if (pageInt<=this.getPages()) {
+//					this.setPage(Integer.toString(pageInt));
+//					initConnector();
+//				}
+				this.setPage(pagenumber);
 			}
 			String pagesize=request.getParameter(this.getName()+"pagesize");
 			if (pagesize
 				!=null && !pagesize.equals("")) {
-				int pageSizeInt=Integer.parseInt(this.getPagesize());
-				try {					
-					pageSizeInt=Integer.parseInt(pagesize);
-				}
-				catch (NumberFormatException e) {
-					
-				}
-				if (pageSizeInt<=this.getRecordCount()) {
-					this.setPagesize(Integer.toString(pageSizeInt));
-					initConnector();
-				}
+//				int pageSizeInt=Integer.parseInt(this.getPagesize());
+//				try {					
+//					pageSizeInt=Integer.parseInt(pagesize);
+//				}
+//				catch (NumberFormatException e) {
+//					
+//				}
+//				if (pageSizeInt<=this.getRecordCount()) {
+//					this.setPagesize(Integer.toString(pageSizeInt));
+//					initConnector();
+//				}
+				this.setPagesize(pagesize);
 			}
 		}
+        initConnector();
 	}
 	
 	public static class GotoPageListener implements ActionListener {
