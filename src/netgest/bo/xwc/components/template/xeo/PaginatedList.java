@@ -260,16 +260,16 @@ public abstract class PaginatedList extends XUIComponentBase {
 			String pagenumber=request.getParameter(this.getName()+"page");
 			if (pagenumber
 				!=null && !pagenumber.equals("")) {
-				int pageInt=Integer.parseInt(pagenumber);
-				if (pageInt<=this.getPages())
+			//	int pageInt=Integer.parseInt(pagenumber);
+			//	if (pageInt<=this.getPages())
 					this.setPage(pagenumber);
 				
 			}
 			String pagesize=request.getParameter(this.getName()+"pagesize");
 			if (pagesize
 				!=null && !pagesize.equals("")) {
-				int pageSizeInt=Integer.parseInt(pagesize);
-				if (pageSizeInt<=this.getRecordCount())
+			//	int pageSizeInt=Integer.parseInt(pagesize);
+			//	if (pageSizeInt<=this.getRecordCount())
 					this.setPagesize(pagesize);
 			}
 		}
