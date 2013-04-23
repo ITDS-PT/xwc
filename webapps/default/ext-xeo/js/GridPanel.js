@@ -774,6 +774,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         var gel = Ext.fly(group);
         var groupId = gel.getAttributeNS("","value");
         
+        var group = this.rootView.getGroupView(groupId);
         groupId = group.groupId;
         
         expanded = expanded !== undefined ?
