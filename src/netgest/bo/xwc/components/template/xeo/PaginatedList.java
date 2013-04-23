@@ -248,7 +248,7 @@ public abstract class PaginatedList extends XUIComponentBase {
 	
 	@Override
 	public void preRender() {
-		//initConnector();
+		initConnector();
         nextPageCommand = (XUICommand)getChild( 0 );
         previousPageCommand = (XUICommand)getChild( 1 );
         firstPageCommand = (XUICommand)getChild( 2 );
@@ -260,17 +260,33 @@ public abstract class PaginatedList extends XUIComponentBase {
 			String pagenumber=request.getParameter(this.getName()+"page");
 			if (pagenumber
 				!=null && !pagenumber.equals("")) {
-			//	int pageInt=Integer.parseInt(pagenumber);
-			//	if (pageInt<=this.getPages())
-					this.setPage(pagenumber);
+				int pageInt=1;
+				try {
+					pageInt=Integer.parseInt(pagenumber);
+				}
+				catch (NumberFormatException e) {
+					
+				}
+				if (pageInt<=this.getPages()) {
+					this.setPage(Integer.toString(pageInt));
+					initConnector();
+				}
 				
 			}
 			String pagesize=request.getParameter(this.getName()+"pagesize");
 			if (pagesize
 				!=null && !pagesize.equals("")) {
-			//	int pageSizeInt=Integer.parseInt(pagesize);
-			//	if (pageSizeInt<=this.getRecordCount())
-					this.setPagesize(pagesize);
+				int pageSizeInt=Integer.parseInt(this.getPagesize());
+				try {					
+					pageSizeInt=Integer.parseInt(pagesize);
+				}
+				catch (NumberFormatException e) {
+					
+				}
+				if (pageSizeInt<=this.getRecordCount()) {
+					this.setPagesize(Integer.toString(pageSizeInt));
+					initConnector();
+				}
 			}
 		}
 	}
@@ -304,7 +320,7 @@ public abstract class PaginatedList extends XUIComponentBase {
 		public void encodeBegin(XUIComponentBase component) throws IOException {			
 			XUIResponseWriter w = getResponseWriter();
 			PaginatedList oComp = (PaginatedList)component;
-			oComp.initConnector();
+			//oComp.initConnector();
 			w.startElement("div");
 			w.writeAttribute("id", oComp.getClientId());
 			

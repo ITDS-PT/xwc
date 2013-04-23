@@ -61,6 +61,7 @@ public class Xeolist extends PaginatedConnectorList {
 	@Override
 	public void initConnector() {
 		EboContext ctx = null;		
+		System.out.println(this.getBoql());
 		try {
 			if (this.connector==null) {
 				if (this.getDataSource()==null) {
