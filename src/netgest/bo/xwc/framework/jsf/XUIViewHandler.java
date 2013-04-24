@@ -500,16 +500,16 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         if ( canReadFromCache( oApp , viewerCacheId ) ){
         	result = ( XUIViewRoot ) restoreViewFromCachePhase1( context , viewerCacheId );
         	String newState = generateId( viewId , session.getSessionMap() );
-        	String initialComponentId = generateInitialComponentId( viewId , session.getSessionMap() );
+        	String initialComponentId = generateInitialComponentId( viewId , newState, session.getSessionMap() );
         	result.setInstanceId( initialComponentId );
         	result.setViewState( viewId + NamingContainer.SEPARATOR_CHAR + newState );
         	//Set viewId e viewState
         	createNew = false;
         } else{
-        	String id = generateId( viewId , session.getSessionMap() );
-        	String initialComponentId = generateInitialComponentId( viewId , session.getSessionMap() );
+        	String state = generateId( viewId , session.getSessionMap() );
+        	String initialComponentId = generateInitialComponentId( viewId , state, session.getSessionMap() );
         	//System.out.println(viewId + ":" + id + " -> Instance " + initialComponentId );
-        	result = new XUIViewRoot( initialComponentId , generateViewState( viewId, session.getSessionMap(), id ) );
+        	result = new XUIViewRoot( initialComponentId , generateViewState( viewId, session.getSessionMap(), state ) );
     	}
         
         UIViewRoot previousViewRoot = context.getViewRoot();
@@ -696,25 +696,32 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     }
 
 
-	private String generateInitialComponentId(String viewId,
+	 String generateInitialComponentId(String viewId, String state,
 			Map< String , Object > sessionMap) {
 		
 		String VIEW_SEQUENCE_MAP = "XUI:ViewSequenceMap";
 		String VIEW_SEQUENCE_GENERATOR = "XUI:ViewSequenceGenerator";
 		@SuppressWarnings("unchecked")
-		Map<String,AtomicInteger> viewSequence = ( Map<String,AtomicInteger> ) sessionMap.get( VIEW_SEQUENCE_MAP );
+		Map<String,Integer> viewSequence = ( Map<String,Integer> ) sessionMap.get( VIEW_SEQUENCE_MAP );
 		if (viewSequence == null){
-			viewSequence = new HashMap< String , AtomicInteger >();
+			viewSequence = new HashMap< String , Integer >();
 			sessionMap.put( VIEW_SEQUENCE_MAP , viewSequence );
 		}
 		
-		AtomicInteger generator = (AtomicInteger) viewSequence.get( VIEW_SEQUENCE_GENERATOR );
+		AtomicInteger generator = (AtomicInteger) sessionMap.get( VIEW_SEQUENCE_GENERATOR );
 		if (generator == null){
 			generator = new AtomicInteger( 0 );
-			viewSequence.put( VIEW_SEQUENCE_GENERATOR, generator );
+			sessionMap.put( VIEW_SEQUENCE_GENERATOR, generator );
 		}
 		
-		Integer result = generator.addAndGet( 1 );
+		Integer result = null;
+		String keyMap = viewId +  state;
+		if (viewSequence.containsKey( keyMap )){
+			result = viewSequence.get( keyMap );
+		} else {
+			result = generator.addAndGet( 1 );
+			viewSequence.put( keyMap , result );
+		}
 		
 		return result.toString();
 	}
