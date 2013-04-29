@@ -32,6 +32,21 @@ public class Template extends XUIComponentBase {
 	private XUIStateBindProperty< Boolean > reRender = 
 			new XUIStateBindProperty< Boolean >( "reRender" , this , "false"	 , Boolean.class );
 	
+	/**
+	 * Whether or not to update the Template component
+	 */
+	private XUIStateBindProperty< Boolean > update = 
+		new XUIStateBindProperty< Boolean >( "update" , this , "false"	 , Boolean.class );
+	
+	
+	public boolean getUpdate(){
+	    return update.getEvaluatedValue();
+	}
+	
+	public void setUpdate(String updateExpr){
+	    update.setExpressionText(updateExpr);
+	}
+	
 	public void setReRender(String reRenderExpr){
 		reRender.setExpressionText( reRenderExpr );
 	}
@@ -61,13 +76,17 @@ public class Template extends XUIComponentBase {
 		if ( this.properties == null )
 			this.properties = new TemplateMap< String , Object >( getELContext() );
 
+		
+		
 		Iterator<String> it = properties.keySet().iterator();
 		while ( it.hasNext() ) {
 			String propName = it.next();
 			String value = properties.get( propName );
 
-			ValueExpression expression = createValueExpression( value );
-			this.properties.put( propName, expression );
+			if (getStateProperty(propName) == null){
+			    ValueExpression expression = createValueExpression( value );
+			    this.properties.put( propName, expression );
+			}
 		}
 	}
 
