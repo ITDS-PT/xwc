@@ -11,12 +11,14 @@ import netgest.bo.xwc.framework.cache.CacheElement;
 import netgest.bo.xwc.framework.cache.CacheEngine;
 import netgest.bo.xwc.framework.cache.CacheEntry;
 import netgest.bo.xwc.framework.cache.time.TimeProvider;
-import netgest.bo.xwc.framework.cache.time.TimeProviderFactory;
 import netgest.bo.xwc.framework.jsf.utils.LRUCache;
 
 public class TriggerBasedCacheProvider implements CacheEngine {
 	
-	public static final String CACHE_TABLE = "XEO_CACHE_TABLE";
+	public static final String CACHE_TABLE_NAME = "XEO_CACHE_TABLE";
+	public static final String CACHE_TABLE_KEY_COLUMN = "KEY";
+	public static final String CACHE_TABLE_DATE_COLUMN = "LAST_UPDATE";
+	
 	public static final int DEFAULT_EXPIRE_TIME = 60;
 	private static final int CACHE_DEFAULT_SIZE = 100;
 	public static final Date EPOCH_TIME = new Date( 0 );
@@ -101,7 +103,7 @@ public class TriggerBasedCacheProvider implements CacheEngine {
 		//Check for the Table, and create if needed
 		Connection conn = dbConnectionProvider.getConnection();
 		try {
-			ResultSet set = conn.getMetaData().getTables(null, null, CACHE_TABLE, null);
+			ResultSet set = conn.getMetaData().getTables(null, null, CACHE_TABLE_NAME, null);
 			boolean found = false;
 			while (set.next()){
 				found = true;
@@ -120,7 +122,7 @@ public class TriggerBasedCacheProvider implements CacheEngine {
 	void createInitialTable(Connection conn) {
 		try {
 			Statement statement = conn.createStatement();
-			statement.execute( "CREATE TABLE " + CACHE_TABLE + " (KEY VARCHAR(50) UNIQUE, date TIMESTAMP);"  );
+			statement.execute( "CREATE TABLE " + CACHE_TABLE_NAME + " (KEY VARCHAR(50) UNIQUE, LAST_UPDATE TIMESTAMP);"  );
 		} catch ( SQLException e ) {
 			e.printStackTrace();
 		}
