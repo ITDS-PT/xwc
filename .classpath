@@ -47,7 +47,6 @@
 	<classpathentry kind="lib" path="/xeo/project_lib/ConvertImagesStub.jar"/>
 	<classpathentry kind="lib" path="/xeo/project_lib/cos.jar"/>
 	<classpathentry kind="lib" path="/xeo/project_lib/java_sql_interfaces_1_6.jar"/>
-	<classpathentry kind="lib" path="/xeo/project_lib/jcr-1.0.jar"/>
 	<classpathentry kind="lib" path="/xeo/project_lib/JimiProClasses.jar"/>
 	<classpathentry kind="lib" path="/xeo/project_lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="/xeo/project_lib/mysql-connector-java-5.1.18-bin.jar"/>
