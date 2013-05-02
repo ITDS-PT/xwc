@@ -10,6 +10,7 @@ import java.util.Date;
  */
 public interface CacheEntry {
 	
+	
 	/**
 	 * 
 	 * Key representing the cache element
@@ -30,29 +31,12 @@ public interface CacheEntry {
 	
 	/**
 	 * 
-	 * Date when the content was created
+	 * Date when the content was added to the cache
 	 * 
-	 * @return The date when the content was created
+	 * @return The date when the content was added to the cache
 	 * 
 	 */
-	public Date getDateCreation();
-	
-	/**
-	 * 
-	 * Date when the content was last created
-	 * 
-	 * @return The date of last update
-	 */
-	public Date getDateLastUpdate();
-	
-	
-	/**
-	 * 
-	 * Update the date of last update of this element with a new date
-	 * 
-	 * @param newDateOfLastUpdate 
-	 */
-	public void updateResource(Date newDateOfLastUpdate);
+	public Date getDateAdded();
 	
 	/**
 	 * 
@@ -64,10 +48,10 @@ public interface CacheEntry {
 	
 	/**
 	 * 
-	 * Set a new expired date for the resource
+	 * Whether or not the resource is expired
 	 * 
-	 * @param newDate The expired date
+	 * @return True if the resource is expired and false otherwise
 	 */
-	public void setExpiredDate(Date newDate);
+	public boolean isExpired();
 	
 }

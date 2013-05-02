@@ -5,7 +5,7 @@ package netgest.bo.xwc.framework.cache;
  * Represents a Key for the cache engine
  * 
  * @author PedroRio
- *
+ * 
  */
 public class CacheKey {
 	
