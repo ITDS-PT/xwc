@@ -8,16 +8,18 @@ import netgest.bo.xwc.components.template.base.TemplateRenderer;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.components.template.xeo.wrappers.TemplateListWrapper;
 
 
-public class Genericlist extends XUIComponentBase {
+public class Genericlist extends PaginatedConnectorList {
 
-	private XUIBindProperty<GenericDataListConnector> dataSource = new XUIBindProperty<GenericDataListConnector>(
-			"dataSource", this, GenericDataListConnector.class);
+	private XUIBindProperty<DataListConnector> dataSource = new XUIBindProperty<DataListConnector>(
+			"dataSource", this, DataListConnector.class);
 	
-	private GenericDataListConnector connector = null;	
-	public GenericDataListConnector getDataSource() {
+	private int recordCount=-1;
+	
+	private DataListConnector connector = null;
+	
+	public DataListConnector getDataSource() {
 		if (!hasDataSourceBeenEvaluated || connector == null){
 			if (dataSource.getValue() != null) {
 				connector = dataSource.getEvaluatedValue();
@@ -46,13 +48,23 @@ public class Genericlist extends XUIComponentBase {
 		super.preRender();
 	}
 	
-	public void initConnector() {
-		connector.refresh();				
+	public void initConnector() {	
+		if (this.connector == null)
+			this.getDataSource();
+		
+		if (connector.getPage()!=new Integer(this.getPage()).intValue() ||
+				connector.getPageSize()!=new Integer(this.getPagesize()).intValue()) {
+			connector.setPage(new Integer(this.getPage()).intValue());
+			connector.setPageSize(new Integer(this.getPagesize()).intValue());						
+			//recordCount = connector.getRecordCount();
+		}		
 	}
 	
-	public TemplateListWrapper getList() {
-		initConnector();
-		return new TemplateListWrapper(getConnector().iterator());	
+	@Override
+	public int getRecordCount() {
+		if (this.connector!=null && this.recordCount==-1)
+			this.recordCount = connector.getRecordCount();
+		return this.recordCount;
 	}
 	
 	public static class ListRenderer extends TemplateRenderer {
@@ -61,12 +73,12 @@ public class Genericlist extends XUIComponentBase {
 		public void encodeBegin(XUIComponentBase component) throws IOException {
 			XUIResponseWriter w = getResponseWriter();
 			Genericlist oComp = (Genericlist)component;
-			
+			oComp.initConnector();
 			
 			w.startElement("div");
 			w.writeAttribute("id", oComp.getClientId());
 			super.encodeBegin(component);
 			w.endElement("div");
 		}
-	}
+	}	
 }

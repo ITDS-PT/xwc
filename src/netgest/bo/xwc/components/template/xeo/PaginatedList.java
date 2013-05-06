@@ -8,12 +8,10 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 import javax.servlet.http.HttpServletRequest;
 
-import netgest.bo.xwc.components.template.xeo.wrappers.TemplateListWrapper;
 
 import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.template.base.TemplateRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
@@ -123,23 +121,9 @@ public abstract class PaginatedList extends XUIComponentBase {
 		return this.pagesize.getEvaluatedValue();
 	}
 	
-	public abstract DataListConnector getConnector();
-	
 	public abstract void initConnector();
 	
-	public int getPages() {
-		int pages=0;
-		if (getConnector()!=null)
-			if (getRecordCount()==0)
-				pages=0;
-			else {
-				pages=getRecordCount()/
-						(new Integer(getConnector().getPageSize()).intValue());
-				if (pages==0)
-					pages=1;
-			}
-		return pages;
-	}
+	public abstract int getPages();
 	
 	public abstract int getRecordCount();
 	
@@ -275,19 +259,41 @@ public abstract class PaginatedList extends XUIComponentBase {
 			HttpServletRequest request = (HttpServletRequest)getRequestContext().getRequest();
 			String pagenumber=request.getParameter(this.getName()+"page");
 			if (pagenumber
-				!=null && !pagenumber.equals(""))
+				!=null && !pagenumber.equals("")) {
+				//Validar se a página passada pode ser mostrada
+				//Pesado pois implica duas queries (uma para inicializar o connector e ir buscar o número de páginas, a outra após 
+				//se fazer set da página e refrescar)
+//				int pageInt=1;
+//				try {
+//					pageInt=Integer.parseInt(pagenumber);
+//				}
+//				catch (NumberFormatException e) {
+//					
+//				}
+//				if (pageInt<=this.getPages()) {
+//					this.setPage(Integer.toString(pageInt));
+//					initConnector();
+//				}
 				this.setPage(pagenumber);
-			
+			}
 			String pagesize=request.getParameter(this.getName()+"pagesize");
 			if (pagesize
-				!=null && !pagesize.equals(""))
+				!=null && !pagesize.equals("")) {
+//				int pageSizeInt=Integer.parseInt(this.getPagesize());
+//				try {					
+//					pageSizeInt=Integer.parseInt(pagesize);
+//				}
+//				catch (NumberFormatException e) {
+//					
+//				}
+//				if (pageSizeInt<=this.getRecordCount()) {
+//					this.setPagesize(Integer.toString(pageSizeInt));
+//					initConnector();
+//				}
 				this.setPagesize(pagesize);
+			}
 		}
-	}
-	
-	public TemplateListWrapper getList() {
-		//initConnector();
-		return new TemplateListWrapper(getConnector().iterator());	
+        initConnector();
 	}
 	
 	public static class GotoPageListener implements ActionListener {
@@ -319,7 +325,7 @@ public abstract class PaginatedList extends XUIComponentBase {
 		public void encodeBegin(XUIComponentBase component) throws IOException {			
 			XUIResponseWriter w = getResponseWriter();
 			PaginatedList oComp = (PaginatedList)component;
-			oComp.initConnector();
+			//oComp.initConnector();
 			w.startElement("div");
 			w.writeAttribute("id", oComp.getClientId());
 			
