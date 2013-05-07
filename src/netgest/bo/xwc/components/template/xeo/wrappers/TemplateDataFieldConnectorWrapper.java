@@ -13,7 +13,6 @@ import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOBridgeRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector;
-import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListRowConnector;
 import freemarker.template.SimpleDate;
 import freemarker.template.SimpleNumber;
