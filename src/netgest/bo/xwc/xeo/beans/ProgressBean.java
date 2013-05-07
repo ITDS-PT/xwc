@@ -2,13 +2,9 @@ package netgest.bo.xwc.xeo.beans;
 
 import javax.el.ELContext;
 import javax.el.MethodExpression;
-import javax.faces.component.UIComponentBase;
-
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 import netgest.bo.transaction.XTransaction;
 import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 /**
