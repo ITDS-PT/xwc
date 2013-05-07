@@ -35,7 +35,7 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 	public static String VISIBLE = "visible";
 	public static String ISLOV = "islov";
 	public static String SYSCARDID = "syscardid";
-	public static String SYSCARDIDIMG = "syscardidimg";
+	public static String SYSCARDIDIMG = "syscardidimg"; 
 	public static String FILE = "file";
 	public static String FILEABSURL = "fileabsurl";
 	
