@@ -180,6 +180,7 @@
 			<xwc:render for="collapsiblePanel">netgest.bo.xwc.components.classic.mainRegions.CollapsiblePanel$XEOHTMLRenderer</xwc:render>
 
 			<xwc:render for='templateInclude'>netgest.bo.xwc.components.classic.TemplateInclude$XEOHTMLRenderer</xwc:render>			
+			<xwc:render for="cache">netgest.bo.xwc.components.cache.CacheRenderer</xwc:render>
 
         </xwc:renderKit>
         
@@ -302,6 +303,7 @@
 			<xwc:render for="footer">netgest.bo.xwc.components.classic.Footer$XEOHTMLRenderer</xwc:render>
 			
 			<xwc:render for="fileUpload">netgest.bo.xwc.components.template.renderers.FileUploadRenderer</xwc:render>
+			<xwc:render for="cache">netgest.bo.xwc.components.cache.CacheRenderer</xwc:render>
 			
         </xwc:renderKit>
         
@@ -865,6 +867,12 @@
             <xwc:className>netgest.bo.xwc.components.classic.FileUpload</xwc:className>
             <xwc:description>File Upload Component (Upload progress, Multiple Files, etc..)</xwc:description>
         </xwc:component>
+        
+        <xwc:component name='cache'>
+            <xwc:className>netgest.bo.xwc.components.cache.Cache</xwc:className>
+            <xwc:description>A Cache Component</xwc:description>
+        </xwc:component>
+        
 
     </xwc:components>
     

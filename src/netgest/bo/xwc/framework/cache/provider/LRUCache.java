@@ -1,9 +1,11 @@
-package netgest.bo.xwc.framework.jsf.utils;
+package netgest.bo.xwc.framework.cache.provider;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Collection;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 
 /**
  * An LRU cache, based on <code>LinkedHashMap</code>.
@@ -113,6 +115,19 @@ public class LRUCache<K, V> {
 		return map.get( key ) != null;
 	}
 
+	
+	public synchronized void removeKeysMatching(K key){
+		Iterator<Entry<K,V>> it = map.entrySet().iterator();
+		while (it.hasNext()){
+			Entry<K,V> entry = it.next();
+			K currKey = entry.getKey();
+			if (currKey.equals( key ))
+				it.remove();
+			else if (currKey.toString().startsWith( key.toString() ) )
+				it.remove();
+		}
+	}
+	
 	/**
 	 * Returns a <code>Collection</code> that contains a copy of all cache
 	 * entries.

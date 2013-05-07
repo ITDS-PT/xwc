@@ -83,6 +83,10 @@ public class XUIRequestContext {
         }
         return oScriptContext;
     }
+    
+    public void setScriptContext(XUIScriptContext ctx){
+    	this.oScriptContext = ctx;
+    }
 
     public XUIStyleContext getStyleContext() {
         if( oStyleContext == null ) {
