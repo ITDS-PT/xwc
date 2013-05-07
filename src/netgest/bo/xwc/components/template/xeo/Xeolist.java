@@ -9,7 +9,7 @@ import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 
 
-public class Xeolist extends PaginatedList {
+public class Xeolist extends PaginatedConnectorList {
 
 	private XUIViewStateBindProperty<String> boql = 
 		new XUIViewStateBindProperty<String>("boql", this, String.class );

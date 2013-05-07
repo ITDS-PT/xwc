@@ -42,16 +42,16 @@ import netgest.utils.StringUtils;
 
 /**
  * @author acruz
- * Generic Connector that works in all databases. It can be used for example to display the results of a query in
+ * SQL Connector that works in all databases. It can be used to display the results of a query in
  * a XWCGrid. 
  * The default usage is to create a new instance of this class with the desired query, this
- * uses the default connection to the database available to XEO.
+ * uses the default database connection available to XEO.
  * If you want to use different databases you should extend this class and reimplement the method getConnection
- * a return a Connection to a database of you choice.
+ * and return a Connection to a database of your choice.
  * 
  * A method called truncateDate is used to do queries on Date fields. Right now it works with Oracle, MySQL,
  * SQLServer and Postgres, if you want to use it in any other database you should reimplement it to the database
- * of you choice. 
+ * of your choice. 
  */
 public class SQLDataListConnector implements DataListConnector {
 
@@ -727,8 +727,12 @@ public class SQLDataListConnector implements DataListConnector {
 
 	@Override
 	public boolean hasMorePages() {
-		// TODO Auto-generated method stub
-		return false;
+		int pageRows=this.getPage() * this.getPageSize();
+
+		if (this.getRecordCount()>pageRows)
+			return true;
+		else
+			return false;
 	}
 
 }

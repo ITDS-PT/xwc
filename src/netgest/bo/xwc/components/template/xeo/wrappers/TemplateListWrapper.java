@@ -18,6 +18,14 @@ public class TemplateListWrapper implements TemplateCollectionModel {
 		
 		return new TemplateListIterator( list );
 	}
+
+	public DataListIterator getList() {
+		return list;
+	}
+
+	public void setList(DataListIterator list) {
+		this.list = list;
+	}
 	
 
 }
