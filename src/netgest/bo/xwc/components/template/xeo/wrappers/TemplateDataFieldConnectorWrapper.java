@@ -13,6 +13,7 @@ import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOBridgeRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector;
+import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListRowConnector;
 import freemarker.template.SimpleDate;
 import freemarker.template.SimpleNumber;
@@ -180,20 +181,30 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 				Date dateValue=(Date)value;
 				return new SimpleDate(new java.sql.Date(dateValue.getTime()));
 			}
-			else if (value!=null && field.getDataType() == DataFieldTypes.VALUE_NUMBER) {
+			//WorkAround for BOUI to return as Number/BigDecimal
+			else if (value!=null && (field.getDataType() == DataFieldTypes.VALUE_NUMBER
+					|| field.getLabel().toLowerCase().equals("boui"))) {
+				
 				//Test if is a XEOObject relation
 				//Workaround since the connector treats ATTRIBUTE_OBJECT as NUMBER
-				XEOObjectAttributeConnector attconnector = (XEOObjectAttributeConnector)field;
-				
-				if (attconnector.getBoDefAttribute().getAtributeDeclaredType()
+				XEOObjectAttributeConnector attconnector =null;				
+				if (field instanceof XEOObjectAttributeConnector)
+					attconnector = (XEOObjectAttributeConnector)field;
+
+				if (attconnector!=null &&
+						attconnector.getBoDefAttribute().getAtributeDeclaredType()
 						==boDefAttribute.ATTRIBUTE_OBJECT)
-				{					
+				{										
 					BigDecimal boui = (BigDecimal)value;
 					XEOObjectConnector xeoobject = new XEOObjectConnector(boui.longValue(), 0);
 					return new TemplateDataRecordConnectorWrapper(xeoobject);
 				}
-				else
+				else {
+					if (field.getLabel().toLowerCase().equals("boui") && value instanceof String)
+						value=new BigDecimal((String)value);
+					
 					return getValueForNumber(value);
+				}
 			}
 			else if (value!=null && field.getDataType() == DataFieldTypes.VALUE_BRIDGE) {
 				return new TemplateListWrapper(field.getDataList().iterator());
