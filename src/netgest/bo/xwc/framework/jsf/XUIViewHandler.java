@@ -45,6 +45,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import netgest.bo.def.boDefHandler;
 import netgest.bo.localizations.MessageLocalizer;
+import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boSession;
 import netgest.bo.transaction.XTransaction;
@@ -122,6 +123,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     // Private/Protected Constants
     //
     private static final Log log = LogFactory.getLog(netgest.bo.xwc.framework.jsf.XUIViewHandler.class);
+    
+    private static final Logger logger = Logger.getLogger( XUIViewHandler.class );
     
 	// 1. Instantiate a TransformerFactory.
 	 javax.xml.transform.TransformerFactory tFactory = 
@@ -816,15 +819,26 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	protected void restoreViewFromCachePhase2(FacesContext context,
 			XUIViewRoot result, String viewerCacheId) {
 		
+		//Retrieve values before process restore state (it will change some importante values in XUIViewRoot)
 		String viewInstanceId = result.getInstanceId();
 		String viewState = result.getViewState();
+		String viewParentState = result.getParentViewState();
+		String transactionId = result.getTransactionId();
+		boolean ownsTransaction = result.getOwnsTransaction();
 		
 		Object[] state = ( Object[] ) viewerCache.get( viewerCacheId ).getCacheContent()[0];
 		XUIStateManagerImpl oStateManagerImpl = ( XUIStateManagerImpl ) Util.getStateManager( context );
 		result.processRestoreState( context , oStateManagerImpl.handleRestoreState( state ) );
 		
+		//Set the values as they were before, because the processRestoreState sets them again
+		//Note to self, could it be possible in the first cache phase to set the new values in the cache (for viewState, etc)?
+		//Would make it a dependency of saveState/restoreState because it would know the array positions
+		//of the array with the state 
 		result.setInstanceId( viewInstanceId );
 		result.setViewState( viewState );
+		result.setParentViewState( viewParentState );
+		result.setTransactionId( transactionId );
+		result.setOwnsTransaction( ownsTransaction );
 		
 		result.resetState();
 	}

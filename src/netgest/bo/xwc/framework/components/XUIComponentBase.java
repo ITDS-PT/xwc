@@ -296,7 +296,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 		if (oComp == null){
 			UIComponent result = null;
 			for (Iterator<UIComponent> i = getFacetsAndChildren(); i.hasNext();) {
-				UIComponent kid =  i.next();	
+				UIComponent kid =  i.next();
 					if ( expr.equals(kid.getClientId( getFacesContext() ))) {
 						result = kid;
 						oComp = result;

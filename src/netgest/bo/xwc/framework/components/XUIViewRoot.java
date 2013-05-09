@@ -28,6 +28,7 @@ import javax.faces.render.Renderer;
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import netgest.bo.system.Logger;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -50,7 +51,8 @@ public class XUIViewRoot extends UIViewRoot {
 	
 	private static AtomicInteger oInstanceIdCntr = new AtomicInteger(0);
 	
-
+	private static final Logger logger = Logger.getLogger( XUIViewRoot.class );
+	
 	private String sInstanceId = null;
 	private String sBeanIds = "";
 	private Object oViewerBean;
@@ -73,6 +75,10 @@ public class XUIViewRoot extends UIViewRoot {
 
 	public void setOwnsTransaction(boolean owns) {
 		this.bOwnsTransaction = owns;
+	}
+	
+	public boolean getOwnsTransaction(){
+		return this.bOwnsTransaction;
 	}
 	
 	public String[] getLocalizationClasses(){
@@ -304,6 +310,9 @@ public class XUIViewRoot extends UIViewRoot {
 		oSuperState = super.saveState(context);
 		oMyState = new Object[9];
 
+		if (logger.isFineEnabled())
+			logger.fine( "Saving state for %s - %s - %s", this.sInstanceId, sStateId ,this.sParentViewState );
+		
 		oMyState[0] = sInstanceId;
 		oMyState[1] = sParentViewState;
 		oMyState[2] = sTransactionId;
@@ -335,6 +344,9 @@ public class XUIViewRoot extends UIViewRoot {
 		super.restoreState(context, oMyState[6]);
 		localizationClasses = (String[]) oMyState[7];
 		beanMapping = (Map<String,String>) oMyState[8];
+		
+		if (logger.isFineEnabled())
+			logger.fine( "Restoring for %s - %s - %s", this.sInstanceId, sStateId ,this.sParentViewState );
 	}
 
 	public boolean wasStateChanged() {
@@ -518,6 +530,9 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 	
 	
+	public String getParentViewState(){
+		return sParentViewState;
+	}
 
 	public XUIViewRoot getParentView() {
 		if (sParentViewState != null && oParentView == null) {
@@ -953,7 +968,12 @@ public class XUIViewRoot extends UIViewRoot {
     
 	@Override
 	public String toString() {
-		return getViewId() + " " + getViewState() + " " + getBeanIds();
+		String result =  "id:"+ getViewId() + " state:" + getViewState() + " beanIds:";
+		for (String b : getBeanIds()){
+			result += b + ",";
+		}
+		
+		return result;
 	}
 	
 	public Renderer getRenderer(){

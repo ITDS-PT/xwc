@@ -54,8 +54,8 @@ public class CacheProviderFactory {
 		
 		if (CacheType.TRIGGER_BASED == type){
 			CacheEngine newProvider = new TriggerBasedCacheProvider( 
-					TimeProviderFactory.getTimeProvider()
-					, ConnectionProviderFactory.getConnectionProvider() ); 
+					  TimeProviderFactory.getTimeProvider( TimeProviderFactory.DATABASE )
+					, ConnectionProviderFactory.getConnectionProvider( ) ); 
 			newProvider.init();
 			engines.put( CacheType.TRIGGER_BASED.name() , newProvider );
 			return newProvider;
