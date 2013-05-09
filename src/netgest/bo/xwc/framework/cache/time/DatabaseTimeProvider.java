@@ -24,6 +24,7 @@ public class DatabaseTimeProvider implements TimeProvider {
 	private ConnectionProvider databaseProvider;
 	
 	public DatabaseTimeProvider(DriverUtils utils, ConnectionProvider provider){
+		this.cleanup = new ConnectionCleanup();
 		this.dbUtils = utils;
 		this.databaseProvider = provider;
 	}
@@ -39,8 +40,10 @@ public class DatabaseTimeProvider implements TimeProvider {
 		try {
 			st = conn.createStatement();
 			rs = st.executeQuery( query );
-			Timestamp time = rs.getTimestamp( 1 );
-			return new Date(time.getTime());
+			if (rs.next()){
+				Timestamp time = rs.getTimestamp( 1 );
+				return new Date(time.getTime());
+			}
 		} catch ( SQLException e ) {
 			e.printStackTrace();
 		} finally {
