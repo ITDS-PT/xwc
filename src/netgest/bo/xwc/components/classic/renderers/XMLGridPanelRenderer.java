@@ -30,11 +30,11 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 	/**
 	 * Syntactic format for Date instances
 	 */
-	private static final SimpleDateFormat oDateFormater = new SimpleDateFormat( "dd/MM/yyyy" );
+	private final SimpleDateFormat oDateFormater = new SimpleDateFormat( "dd/MM/yyyy" );
     /**
      * Syntactic format for DateTime instances
      */
-    private static final SimpleDateFormat oDateTimeFormater = new SimpleDateFormat( "dd/MM/yyyy hh:MM:ss" );
+    private final SimpleDateFormat oDateTimeFormater = new SimpleDateFormat( "dd/MM/yyyy hh:MM:ss" );
 	
     
 	@Override
@@ -116,20 +116,15 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 		                    	
 		                    	
 	                    		if (hasCustomRender)
-	                    			sDisplayValue = sCustomRenderDisplay;
+	                    			sDisplayValue = sCustomRenderDisplay ;
 	                    		else
 	                    			sDisplayValue = oDataField.getDisplayValue();
 	                    		
-	                    		if( sDisplayValue != null ) 
-		                    	{
-		                            w.writeAttribute("displayValue", sDisplayValue, null);
-		                            w.writeText(sDisplayValue,null);
-		                        }
-	                    		if (sDisplayValue == null)
+	                    		if (sDisplayValue == null){
 	                    			sDisplayValue = "";
+	                    		}
 	                    		
-	                    		
-		                    	else 
+	                    		else 
 		                    	{
 		                    		oDataFieldType = oDataField.getDataType();
 			                        switch( oDataFieldType ) 
@@ -141,8 +136,14 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 			                            	 w.writeAttribute("displayValue",  oDataFieldValue , null);
 			                            	 w.writeText(sDisplayValue,null);
 			                                break;
-			                            case DataFieldTypes.VALUE_CHAR:
+			                            case DataFieldTypes.VALUE_CHAR: 
+			                            	w.writeAttribute("displayValue",  oDataFieldValue , null);
+			                            	w.writeText(sDisplayValue,null);
+			                            	break;
 			                            case DataFieldTypes.VALUE_CLOB:
+			                            	w.writeAttribute("displayValue",  oDataFieldValue , null);
+			                            	w.writeText(sDisplayValue,null);
+			                            	break;
 			                            case DataFieldTypes.VALUE_NUMBER:
 			                            	w.writeAttribute("displayValue",((BigDecimal)oDataFieldValue).toString(),null );
 			                            	w.writeText(sDisplayValue,null);
