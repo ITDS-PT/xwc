@@ -211,4 +211,7 @@ public interface ComponentMessages {
 	
 	public static final XUILocalizedMessage UPLOAD_PROGRESS_TOO_MANY_FILES = new XUILocalizedMessage(
 			ComponentMessages.class.getName() , "UPLOAD_PROGRESS_TOO_MANY_FILES" );
+	
+	public static final XUILocalizedMessage ASSYNCH_REGION_WAIT_MESSAGE = new XUILocalizedMessage(
+			ComponentMessages.class.getName() , "ASSYNCH_REGION_WAIT_MESSAGE" );
 }

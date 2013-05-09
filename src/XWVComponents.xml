@@ -181,6 +181,7 @@
 
 			<xwc:render for='templateInclude'>netgest.bo.xwc.components.classic.TemplateInclude$XEOHTMLRenderer</xwc:render>			
 			<xwc:render for="cache">netgest.bo.xwc.components.cache.CacheRenderer</xwc:render>
+			<xwc:render for="assyncRegion">netgest.bo.xwc.components.assync.AssyncRenderer</xwc:render>
 
         </xwc:renderKit>
         
@@ -304,6 +305,8 @@
 			
 			<xwc:render for="fileUpload">netgest.bo.xwc.components.template.renderers.FileUploadRenderer</xwc:render>
 			<xwc:render for="cache">netgest.bo.xwc.components.cache.CacheRenderer</xwc:render>
+			
+			<xwc:render for="assyncRegion">netgest.bo.xwc.components.assync.AssyncRenderer</xwc:render>
 			
         </xwc:renderKit>
         
@@ -871,6 +874,11 @@
         <xwc:component name='cache'>
             <xwc:className>netgest.bo.xwc.components.cache.Cache</xwc:className>
             <xwc:description>A Cache Component</xwc:description>
+        </xwc:component>
+        
+        <xwc:component name='assyncRegion'>
+            <xwc:className>netgest.bo.xwc.components.assync.AssyncRegion</xwc:className>
+            <xwc:description>Assyncronous Region</xwc:description>
         </xwc:component>
         
 

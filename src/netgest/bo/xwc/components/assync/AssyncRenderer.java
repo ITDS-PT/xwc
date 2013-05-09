@@ -2,14 +2,14 @@ package netgest.bo.xwc.components.assync;
 
 import java.io.IOException;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.framework.XUIRenderer;
+import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIForm;
+import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 
 public class AssyncRenderer extends XUIRenderer {
 	
@@ -18,27 +18,69 @@ public class AssyncRenderer extends XUIRenderer {
 		return true;
 	}
 	
+	protected boolean wasRenderParameterSentInRequest(){
+		XUIRequestContext ctx = getRequestContext();
+		return ctx.getRequestParameterMap().containsKey( XUIViewHandler.RENDER_COMPONENT_PARAMETER );
+	}
+	
 	@Override
 	public void encodeChildren(XUIComponentBase component) throws IOException {
-		//Do nothing on purpose
+		
+		if (component.isRenderedOnClient() && wasRenderParameterSentInRequest()){
+			super.encodeChildren( component );
+		} else {
+			//Do nothing on purpose
+		}
 	}
 
 	
 	@Override
 	public void encodeBegin(XUIComponentBase component) throws IOException {
 		XUIResponseWriter w = getResponseWriter();
+		AssyncRegion comp = (AssyncRegion) component;
 		w.startElement( HTMLTag.DIV );
 		w.writeAttribute( HTMLAttr.ID , component.getClientId() );
+		
+		if (renderLoading(comp)){
+			if (comp.usesCustomLoadingHtml()){
+				w.write( comp.getLoadingHtml() );
+			} else {
+				w.startElement( HTMLTag.IMG );
+					w.writeAttribute( HTMLAttr.SRC , comp.getPathIcon() );
+					w.writeAttribute( HTMLAttr.STYLE , "display:inline" );
+				w.endElement( HTMLTag.IMG );
+				w.write( comp.getWaitMessage() );
+			}
+		}
 	}
 	
 	
+	protected boolean renderLoading(AssyncRegion comp) {
+		return !comp.isRenderedOnClient() && !wasRenderParameterSentInRequest();
+	}
+
 	@Override
-	@Deprecated
-	public void encodeEnd(FacesContext context, UIComponent component)
+	public void encodeEnd(XUIComponentBase component)
 			throws IOException {
 		
+		AssyncRegion comp = (AssyncRegion) component;
 		XUIResponseWriter w = getResponseWriter();
 		w.endElement( HTMLTag.DIV );
+		XUIRequestContext ctx = getRequestContext();
+		
+		if (!component.isRenderedOnClient() && !wasRenderParameterSentInRequest()){
+			XUIForm form = (XUIForm) component.findParent( XUIForm.class );
+			Integer delay = comp.getDelay();
+			
+			String renderComponent = String.format("XVW.AjaxRenderComp('%s', '%s', false )", form.getClientId(), component.getClientId());
+			
+			if (delay.intValue() > 0 )
+				ctx.addFooterScript( component.getClientId() , "window.setTimeout(function (){"+renderComponent+";},"+delay.intValue()+")");
+			else
+				ctx.addFooterScript( component.getClientId() , renderComponent);
+				
+		}
+		
 	}
 	
 

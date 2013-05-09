@@ -102,6 +102,7 @@ import com.sun.faces.util.Util;
  */
 public class XUIViewHandler extends XUIViewHandlerImpl {
 
+	public static final String RENDER_COMPONENT_PARAMETER = "xvw.render";
 	/**
 	 * Size of the cache
 	 */
@@ -1233,7 +1234,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         ArrayList<XUIComponentBase> oToRenderList = new ArrayList<XUIComponentBase>();
         
         if( oViewToRender.isPostBack() && oViewToRender.isRendered() ) {
-	        String[] oRenderCompId = (String[])request.getParameterMap().get("xvw.render");
+	        String[] oRenderCompId = (String[])request.getParameterMap().get(RENDER_COMPONENT_PARAMETER);
 	        if( oRenderCompId != null && oRenderCompId.length > 0 ) {
 	        	for( int i=0; i <oRenderCompId.length; i++ ) {
 	        		
