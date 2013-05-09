@@ -11,7 +11,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 
-public class AssyncRenderer extends XUIRenderer {
+public class AsyncRenderer extends XUIRenderer {
 	
 	@Override
 	public boolean getRendersChildren() {
@@ -37,7 +37,7 @@ public class AssyncRenderer extends XUIRenderer {
 	@Override
 	public void encodeBegin(XUIComponentBase component) throws IOException {
 		XUIResponseWriter w = getResponseWriter();
-		AssyncRegion comp = (AssyncRegion) component;
+		AsyncRegion comp = (AsyncRegion) component;
 		w.startElement( HTMLTag.DIV );
 		w.writeAttribute( HTMLAttr.ID , component.getClientId() );
 		
@@ -55,7 +55,7 @@ public class AssyncRenderer extends XUIRenderer {
 	}
 	
 	
-	protected boolean renderLoading(AssyncRegion comp) {
+	protected boolean renderLoading(AsyncRegion comp) {
 		return !comp.isRenderedOnClient() && !wasRenderParameterSentInRequest();
 	}
 
@@ -63,7 +63,7 @@ public class AssyncRenderer extends XUIRenderer {
 	public void encodeEnd(XUIComponentBase component)
 			throws IOException {
 		
-		AssyncRegion comp = (AssyncRegion) component;
+		AsyncRegion comp = (AsyncRegion) component;
 		XUIResponseWriter w = getResponseWriter();
 		w.endElement( HTMLTag.DIV );
 		XUIRequestContext ctx = getRequestContext();
@@ -78,6 +78,13 @@ public class AssyncRenderer extends XUIRenderer {
 				ctx.addFooterScript( component.getClientId() , "window.setTimeout(function (){"+renderComponent+";},"+delay.intValue()+")");
 			else
 				ctx.addFooterScript( component.getClientId() , renderComponent);
+			
+			
+			Integer refreshInterval = comp.getRefreshInterval();
+			if (refreshInterval.intValue() > 0){
+				String refresh = String.format( "window.setInterval(function(){%s;},%d)",renderComponent, refreshInterval * 1000 );
+				ctx.addFooterScript( component.getClientId() +"_refresh" , refresh);
+			}
 				
 		}
 		
