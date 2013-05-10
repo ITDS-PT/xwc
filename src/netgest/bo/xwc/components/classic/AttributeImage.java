@@ -71,6 +71,8 @@ public class AttributeImage extends ViewerOutputSecurityBase {
     	
         createChildComponents();
         
+        this.renderedValue.setValue( getValue() );
+        
     }
     
     public void createChildComponents() {
@@ -236,7 +238,6 @@ public class AttributeImage extends ViewerOutputSecurityBase {
 
     @Override
     public Object saveState() {
-        this.renderedValue.setValue( getValue() );
         return super.saveState();
     }
     

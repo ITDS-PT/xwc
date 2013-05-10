@@ -28,6 +28,7 @@ import javax.faces.render.Renderer;
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import netgest.bo.system.Logger;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -39,6 +40,7 @@ import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 import netgest.bo.xwc.framework.jsf.XUIPhaseEvent;
 import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl;
+import netgest.utils.StringUtils;
 
 import com.sun.faces.util.LRUMap;
 import com.sun.faces.util.RequestStateManager;
@@ -46,9 +48,12 @@ import com.sun.faces.util.TypedCollections;
 import com.sun.faces.util.Util;
 
 public class XUIViewRoot extends UIViewRoot {
+	
 	private static AtomicInteger oInstanceIdCntr = new AtomicInteger(0);
-
-	private String sInstanceId = String.valueOf(oInstanceIdCntr.addAndGet(1));
+	
+	private static final Logger logger = Logger.getLogger( XUIViewRoot.class );
+	
+	private String sInstanceId = null;
 	private String sBeanIds = "";
 	private Object oViewerBean;
 	private String sStateId = null;
@@ -70,6 +75,10 @@ public class XUIViewRoot extends UIViewRoot {
 
 	public void setOwnsTransaction(boolean owns) {
 		this.bOwnsTransaction = owns;
+	}
+	
+	public boolean getOwnsTransaction(){
+		return this.bOwnsTransaction;
 	}
 	
 	public String[] getLocalizationClasses(){
@@ -107,22 +116,46 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 	}
 	
+	public XUIViewRoot(String instanceId, String viewState) {
+		this();
+		//System.out.println("InstanceId: " + instanceId +  " ViewState: " + viewState);
+		this.sInstanceId = instanceId;
+		this.sStateId = viewState;
+	}
+	
 
 	public Object getBean(String sBeanName) {
-		return new ViewRootBeanFinder().getBean( this , sBeanName ); 
+		Object bean = new ViewRootBeanFinder().getBean( this , sBeanName );
+		if (bean == null){
+			if (StringUtils.hasValue( sBeanName ) && sBeanName.equalsIgnoreCase( beanId )){
+				bean = beanReference;
+			}
+		}
+		return bean;
 	}
 	
 	public String getBeanUniqueId(String sBeanName) {
 		return getBeanPrefix() + sBeanName;
 	}
+	
+	private Object beanReference;
+	private String beanId;
+	private Map<String,String> beanMapping = new HashMap< String , String >();
 
 	public void addBean(String sBeanName, Object oBean) {
 		if( this.sBeanIds != null && this.sBeanIds.length() > 0 ) {
 			this.sBeanIds += "|";
 		}
 		this.sBeanIds += sBeanName;
+		this.beanId = sBeanName;
+		this.beanReference = oBean;
+		this.beanMapping.put( sBeanName , oBean.getClass().getName() );
 		XUIRequestContext.getCurrentContext().getSessionContext().setAttribute(
 				getBeanPrefix() + sBeanName, oBean);
+	}
+	
+	public String getBeanClass(String beanId){
+		return beanMapping.get( beanId );
 	}
 	
 	public String[] getBeanIds() {
@@ -267,6 +300,7 @@ public class XUIViewRoot extends UIViewRoot {
 	 final String getBeanPrefix() {
 		return getViewId() + ":" + sInstanceId + ":";
 	}
+	 
 
 	@Override
 	public Object saveState(FacesContext context) {
@@ -274,8 +308,11 @@ public class XUIViewRoot extends UIViewRoot {
 		Object[] oMyState;
 
 		oSuperState = super.saveState(context);
-		oMyState = new Object[8];
+		oMyState = new Object[9];
 
+		if (logger.isFineEnabled())
+			logger.fine( "Saving state for %s - %s - %s", this.sInstanceId, sStateId ,this.sParentViewState );
+		
 		oMyState[0] = sInstanceId;
 		oMyState[1] = sParentViewState;
 		oMyState[2] = sTransactionId;
@@ -285,10 +322,12 @@ public class XUIViewRoot extends UIViewRoot {
 
 		oMyState[6] = oSuperState;
 		oMyState[7] = localizationClasses;
+		oMyState[8] = beanMapping;
 
 		return oMyState;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object[] oMyState;
@@ -304,6 +343,10 @@ public class XUIViewRoot extends UIViewRoot {
 		sStateId = (String) oMyState[5];
 		super.restoreState(context, oMyState[6]);
 		localizationClasses = (String[]) oMyState[7];
+		beanMapping = (Map<String,String>) oMyState[8];
+		
+		if (logger.isFineEnabled())
+			logger.fine( "Restoring for %s - %s - %s", this.sInstanceId, sStateId ,this.sParentViewState );
 	}
 
 	public boolean wasStateChanged() {
@@ -487,6 +530,9 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 	
 	
+	public String getParentViewState(){
+		return sParentViewState;
+	}
 
 	public XUIViewRoot getParentView() {
 		if (sParentViewState != null && oParentView == null) {
@@ -549,6 +595,10 @@ public class XUIViewRoot extends UIViewRoot {
 	public String getInstanceId() {
 		return this.sInstanceId;
 	}
+	
+	public void setInstanceId(String instanceId){
+		this.sInstanceId = instanceId;
+	}
 
 	public String getClientId() {
 		return getViewId() + ":" + sInstanceId;
@@ -556,6 +606,10 @@ public class XUIViewRoot extends UIViewRoot {
 
 	public boolean isPostBack() {
 		return isPostBack;
+	}
+	
+	public void setViewState(String newState){
+		sStateId = newState;
 	}
 
 	public String getViewState() {
@@ -914,11 +968,48 @@ public class XUIViewRoot extends UIViewRoot {
     
 	@Override
 	public String toString() {
-		return getViewId() + " " + getViewState() + " " + getBeanIds();
+		String result =  "id:"+ getViewId() + " state:" + getViewState() + " beanIds:";
+		for (String b : getBeanIds()){
+			result += b + ",";
+		}
+		
+		return result;
 	}
 	
 	public Renderer getRenderer(){
 		return super.getRenderer( getFacesContext() );
 	}
+
+	public void resetState() {
+		isPostBack = false;
+		resetStateOnComponents();
+		
+	}
+	
+	void resetStateOnComponents(){
+		Iterator<UIComponent> it = getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent comp = it.next();
+			if (comp instanceof XUIComponentBase){
+				((XUIComponentBase)comp).resetState();
+			} else {
+				processResetStateOnComponents( comp );
+			}
+		}
+	}
+	
+	void processResetStateOnComponents(UIComponent comp){
+		Iterator<UIComponent> it = getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent child = it.next();
+			if (child instanceof XUIComponentBase){
+				((XUIComponentBase)child).resetState();
+			} else {
+				processResetStateOnComponents(child);
+			}
+		}
+	}
+	
+	
     
 }

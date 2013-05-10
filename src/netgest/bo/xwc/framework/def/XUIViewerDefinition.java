@@ -1,5 +1,6 @@
 package netgest.bo.xwc.framework.def;
 
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,6 +43,8 @@ public class XUIViewerDefinition
 	protected List<String>			   beforeRenderPhaseList;
 	protected String				   afterRenderPhase;
 	protected List<String>			   afterRenderPhaseList;
+	
+	protected Timestamp				   dateLastUpdate;
 	
     public XUIViewerDefinition()
     {
@@ -91,8 +94,7 @@ public class XUIViewerDefinition
 		for ( String act : actions )
 			addOnRestoreViewPhase( act );
 	}
-
-
+	
 	/**
 	 * @return the onCreateViewPhase
 	 */
@@ -397,6 +399,17 @@ public class XUIViewerDefinition
 		return hasComponentRecursive(name, prefix, rootComponent);
 	}
 	
+	public Timestamp getDateLastUpdate() {
+		return dateLastUpdate;
+	}
+
+	public void setDateLastUpdate(Timestamp dateLastUpdate) {
+		this.dateLastUpdate = dateLastUpdate;
+	}
+
+
+
+
 	private boolean hasComponentRecursive(String name, String prefix, XUIViewerDefinitionNode node){
 		if (node.getName().equals(prefix + ":" + name))
 			return true;

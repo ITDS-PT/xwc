@@ -275,8 +275,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
     public void initComponent() {
         super.initComponent();
         setAttributeProperties( );
-        
-        
+        this.renderedValue.setValue( getValue() );
     }
     
     public void initSpecificSettings(){
@@ -1090,7 +1089,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
 	 */
     @Override
     public Object saveState() {
-        this.renderedValue.setValue( getValue() );
+        
         return super.saveState();
     }
 

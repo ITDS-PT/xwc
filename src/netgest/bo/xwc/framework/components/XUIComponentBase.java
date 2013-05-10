@@ -296,7 +296,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 		if (oComp == null){
 			UIComponent result = null;
 			for (Iterator<UIComponent> i = getFacetsAndChildren(); i.hasNext();) {
-				UIComponent kid =  i.next();	
+				UIComponent kid =  i.next();
 					if ( expr.equals(kid.getClientId( getFacesContext() ))) {
 						result = kid;
 						oComp = result;
@@ -330,10 +330,6 @@ public abstract class XUIComponentBase extends UIComponentBase
 	            Iterator<Entry<String,XUIBaseProperty<?>>> oStatePropertiesIt = getStateProperties().iterator();
 	            while( oStatePropertiesIt.hasNext() ) {
 	            	XUIBaseProperty<?> x = oStatePropertiesIt.next().getValue();
-	            	
-	//            	if(  "displayValue".equals( x.getName() ) ) {
-	//            		System.out.println( "[SAVE][" + this.getId() + "] Default Value:" + x.getValue() );
-	//            	}
 	            	
 	            	if( !x.isDefaultValue() )
 	            		oStateProperyState[ iCntr ] = x.saveState();
@@ -1103,6 +1099,33 @@ public abstract class XUIComponentBase extends UIComponentBase
 	protected final void initializeTemplate(String templateName){
 		if (template.isDefaultValue()){
 			template.setExpressionText( templateName );
+		}
+	}
+
+	public void resetState() {
+		this.wasInitComponentProcessed = false;
+		this.isPostBack = false;
+		Iterator<UIComponent> it = getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent child = it.next();
+			if (child instanceof XUIComponentBase){
+				((XUIComponentBase)child).resetState();
+			} else {
+				processResetState(child);
+			}
+		}
+		
+	}
+	
+	void processResetState(UIComponent comp){
+		Iterator<UIComponent> it = comp.getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent child = it.next();
+			if (child instanceof XUIComponentBase){
+				((XUIComponentBase)child).resetState();
+			} else {
+				processResetState(child);
+			}
 		}
 	}
 	

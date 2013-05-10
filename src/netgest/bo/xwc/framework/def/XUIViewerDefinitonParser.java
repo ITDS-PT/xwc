@@ -6,6 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.URL;
+import java.net.URLConnection;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,7 +33,6 @@ import oracle.xml.parser.v2.XMLDocument;
 import oracle.xml.parser.v2.XMLElement;
 import oracle.xml.parser.v2.XSLException;
 
-import org.apache.batik.ext.awt.geom.Cubic;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -68,8 +70,14 @@ public class XUIViewerDefinitonParser
             
             xwvr = new XUIViewerDefinition();
             
-            //Deal with a Composition 
+            String isTransient = node.getAttribute("transient");
+            boolean originalHasTransient = false;
+            if( isTransient != null ) {
+            	originalHasTransient = true;
+            	xwvr.setTransient( Boolean.valueOf( isTransient ) );
+            }
             
+            //Deal with a Composition 
             String currentBeanId = null;
             
             XMLElement potentialComposition = findPotentialCompositionElement( element );
@@ -79,7 +87,16 @@ public class XUIViewerDefinitonParser
             	parseBeanClasses( xwvr, node.getAttribute( "beanClass" ) );
                 parseBeanIds( xwvr, node.getAttribute( "beanId" ) );
                 currentBeanId = getBeanId( xwvr );
-            	node = reloadViewerFromTemplate( templateToParse );
+                ViewerXMLWrapper wrapper =  reloadViewerFromTemplate( templateToParse );
+            	node = wrapper.getNode();
+            	//Set date
+            	xwvr.setDateLastUpdate( wrapper.getTime() );
+            	if (!originalHasTransient){
+	            	isTransient = node.getAttribute("transient");
+	                if( isTransient != null ) {
+	                	xwvr.setTransient( Boolean.valueOf( isTransient ) );
+	                }
+            	}
             }
 
             parseBeanClasses( xwvr, node.getAttribute( "beanClass" ) );
@@ -116,10 +133,7 @@ public class XUIViewerDefinitonParser
             	xwvr.setLocalizationClasses( classes );
             }
             
-            String isTransient = node.getAttribute("transient");
-            if( isTransient != null ) {
-            	xwvr.setTransient( Boolean.valueOf( isTransient ) );
-            }
+            
             
             counter.parsed( viewerName , xwvr.getViewerBeanIds( ) );
             
@@ -159,13 +173,32 @@ public class XUIViewerDefinitonParser
 	}
 
 
-	protected XMLElement reloadViewerFromTemplate(String templateToParse)
+	protected ViewerXMLWrapper reloadViewerFromTemplate(String templateToParse)
 			throws XSLException {
 		XMLElement node;
 		XMLDocument xmldoc;
-		xmldoc =  ngtXMLUtils.loadXML( resolveViewer( templateToParse ) );
+		StreamWrapper wrapper = resolveViewerWithTime( templateToParse );
+		xmldoc =  ngtXMLUtils.loadXML( wrapper.getInputStream() );
 		node = (XMLElement)xmldoc.selectSingleNode( "/xvw:root/xvw:viewer" , ns);
-		return node;
+		return new ViewerXMLWrapper( node , wrapper.getTime() );
+	}
+	
+	private class ViewerXMLWrapper{
+		
+		private XMLElement node;
+		private Timestamp time;
+		public ViewerXMLWrapper(XMLElement node, Timestamp time) {
+			super();
+			this.node = node;
+			this.time = time;
+		}
+		public XMLElement getNode() {
+			return node;
+		}
+		public Timestamp getTime() {
+			return time;
+		}
+		
 	}
     
     private Map< String , XMLElement > findDefineElements(XMLElement element) {
@@ -220,12 +253,19 @@ public class XUIViewerDefinitonParser
         xwvr = null;//viewCache.get( viewerName );
         if( xwvr == null ) {
             
-        	InputStream is = resolveViewer( viewerName );
-            
-            if( is != null )
+        	StreamWrapper wrapper = resolveViewerWithTime( viewerName );
+            InputStream is = null;
+            if( wrapper != null )
             {
             	try {
+            		is = wrapper.getInputStream();
             		xwvr = parse( is , counter, viewerName );
+            		if (xwvr.getDateLastUpdate() != null){
+	            		if (xwvr.getDateLastUpdate().before( wrapper.getTime() ))
+	            			xwvr.setDateLastUpdate( wrapper.getTime() );
+            		} else {
+            			xwvr.setDateLastUpdate( wrapper.getTime() );
+            		}
             		viewCache.put( viewerName, xwvr );
             	} finally {
             		if( is != null )
@@ -257,22 +297,50 @@ public class XUIViewerDefinitonParser
     	return counter.wasViewerParsed( viewerName );
     }
 
-    public InputStream resolveViewer( String viewerName ) {
-    	InputStream is = resolveViewerFromWebContext( viewerName );
+    public StreamWrapper resolveViewerWithTime( String viewerName ) {
+    	StreamWrapper is = resolveViewerFromWebContext( viewerName );
     	if( is == null ) {
     		is = resolveViewerFromClassLoader( viewerName );
     	}
     	return is;
     }
     
-    private InputStream resolveViewerFromClassLoader( String viewerName ) {
+    public InputStream resolveViewer( String viewerName ) {
+    	return resolveViewerWithTime(viewerName).getInputStream();
+    }
+    
+    private Timestamp getLastDateOfResource(String viewerName, ClassLoader loader){
+    	URLConnection connection = null;
+    	try {
+    		URL url = loader.getResource( viewerName );
+    		if (url != null){
+	    		connection = url.openConnection(); 
+				Long time = connection.getLastModified();
+				return new Timestamp( time );
+    		} else 
+    			return new Timestamp( System.currentTimeMillis() );
+		} catch ( IOException e ) {
+			return new Timestamp( System.currentTimeMillis() );
+		} finally {
+			try {
+				if (connection != null)
+					connection.getInputStream().close();
+			} catch ( IOException e ) {
+				e.printStackTrace();
+			}
+		}
+    }
+    
+    private StreamWrapper resolveViewerFromClassLoader( String viewerName ) {
     	
     	ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
     	
      	InputStream is = null;
+     	Timestamp time = null;
     	
-    	if( is == null ) {
-    		is = contextClassLoader.getResourceAsStream( viewerName );
+    	is = contextClassLoader.getResourceAsStream( viewerName );
+    	if (is != null){
+    		time = getLastDateOfResource( viewerName , contextClassLoader );
     	}
     	
     	if ( is == null)
@@ -285,6 +353,8 @@ public class XUIViewerDefinitonParser
 				v[ underScoreIdx ] = '/';
 				String sviewId = DEFAULT_VIEWERS_ROOT + "/" + String.valueOf( v );
 				is = contextClassLoader.getResourceAsStream( sviewId );
+				if (is != null)
+					time = getLastDateOfResource( viewerName , contextClassLoader );
 			}
     	}
     	
@@ -300,13 +370,15 @@ public class XUIViewerDefinitonParser
 				v[ slashIdx ] = '_';
 				String sviewId = String.valueOf( v );
 				is = contextClassLoader.getResourceAsStream( sviewId );
+				if (is != null)
+					time = getLastDateOfResource( viewerName , contextClassLoader );
 			}
     	}
 		
-    	return is;
+    	return new StreamWrapper(is,time);
     }
     
-    private InputStream resolveViewerFromWebContext( String viewerName ) {
+    private StreamWrapper resolveViewerFromWebContext( String viewerName ) {
     	
     	File viewerFile;
     	 
@@ -330,7 +402,8 @@ public class XUIViewerDefinitonParser
     	} 
     	if( viewerFile != null ) {
     		try {
-				return new FileInputStream( viewerFile );
+    			Timestamp time = new Timestamp( viewerFile.lastModified() );
+				return new StreamWrapper(new FileInputStream( viewerFile ), time);
 			} catch (FileNotFoundException e) {
 				throw new RuntimeException(e);
 			}
@@ -472,6 +545,20 @@ public class XUIViewerDefinitonParser
     	
     	
     	XUIViewerDefinition included =  this.parse( includeFilePath , parsedCounter );
+    	//Update date if included file was changed after the current viewer
+    	if (def.getDateLastUpdate() != null ){
+    		if (included.getDateLastUpdate() != null){
+    			if (def.getDateLastUpdate().before( included.getDateLastUpdate() )){
+    	    		def.setDateLastUpdate( included.getDateLastUpdate() );
+    	    	} 
+    		}
+    	} else {
+    		if (included.getDateLastUpdate() != null){
+    			def.setDateLastUpdate( included.getDateLastUpdate() );
+    		}
+    	}
+    	
+    	
     	
     	parsedCounter.parsed( includeFilePath, included.getViewerBeanIds( ) );
     	
@@ -628,6 +715,31 @@ public class XUIViewerDefinitonParser
 			}
 			return false;
 		}
+		
+	}
+	
+	private class StreamWrapper {
+		
+		private InputStream is;
+		private Timestamp time;
+		
+		public StreamWrapper(InputStream is, Timestamp ts){
+			this.is = is;
+			this.time = ts;
+			if (this.time == null)
+				this.time = new Timestamp( System.currentTimeMillis() );
+		}
+
+		public InputStream getInputStream() {
+			return is;
+		}
+
+		public Timestamp getTime() {
+			return time;
+		}
+		
+		
+		
 		
 	}
     

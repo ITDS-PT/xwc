@@ -83,6 +83,10 @@ public class XUIRequestContext {
         }
         return oScriptContext;
     }
+    
+    public void setScriptContext(XUIScriptContext ctx){
+    	this.oScriptContext = ctx;
+    }
 
     public XUIStyleContext getStyleContext() {
         if( oStyleContext == null ) {
@@ -349,6 +353,17 @@ public class XUIRequestContext {
     
     public XUIApplicationConfig getXUIApplicationConfig(){
     	return oApplication.getXUIApplicationConfig();
+    }
+    
+    /**
+     * 
+     * Adds a script to the footer
+     * 
+     * @param scriptId The script identifier
+     * @param code The script source
+     */
+    public void addFooterScript(String scriptId, String code){
+    	getScriptContext().add( XUIScriptContext.POSITION_FOOTER , scriptId , code );
     }
 
 	

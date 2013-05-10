@@ -62,9 +62,11 @@ import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
 import netgest.bo.xwc.framework.properties.XUIProperty;
 import netgest.bo.xwc.framework.properties.XUIPropertyVisibility;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+import netgest.utils.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -107,6 +109,13 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIMethodBindProperty filterLookup = new XUIMethodBindProperty(
 			"filterLookup", this);
 	
+	private XUIMethodBindProperty selectDatesFilter = new XUIMethodBindProperty(
+			"selectDatesFilter", this);
+	
+	public void setSelectDatesFilter(String filterExpr){
+		this.selectDatesFilter.setExpressionText( filterExpr );
+	}
+	
 	public void setFilterLookup( String lookupExpr ){
 		this.filterLookup.setExpressionText( lookupExpr );
 	}
@@ -132,7 +141,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 */
 	@Values({"NONE","DIALOG","STATUS_MESSAGE"})
 	public XUIBindProperty<String> 	serverActionWaitMode = 
-    	new XUIBindProperty<String>( "serverActionWaitMode", this ,String.class );
+    	new XUIBindProperty<String>( "serverActionWaitMode", this ,String.class, "DIALOG" );
     
 	/**
 	 * Binds the data of the GridPanel to an attribute of an object
@@ -370,6 +379,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUICommand filterLookupCommand;
 	private XUICommand selectColumnsCommand;
 	private XUICommand resetDefaultsCommand;
+	private XUICommand selectDatesFilterCommand;
 	
 	private XUIInput filterLookupInput;
 	
@@ -581,6 +591,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 		return this.filterLookupCommand;
 	}
 	
+	public XUICommand getSelectDatesFilterCommand() {
+		return this.selectDatesFilterCommand;
+	}
+	
 	public XUICommand getSelectColumnsCommand() {
 		return this.selectColumnsCommand;
 	}
@@ -622,7 +636,14 @@ public class GridPanel extends ViewerInputSecurityBase {
 	@Override
 	public void restoreState(Object state) {
 		super.restoreState(state);
-		setRendered(true);
+		//setRendered(true);
+	}
+	
+	@Override
+	public void resetState() {
+		super.resetState();
+		setRenderedOnClient( false );
+		//setRendered(true);
 	}
 
 	/**
@@ -646,6 +667,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 		
 		if (filterLookup.isDefaultValue())
 			setFilterLookup( "#{" + getBeanId() + ".lookupFilterObject}" );
+		
+		if (selectDatesFilter.isDefaultValue())
+			setSelectDatesFilter( "#{" + getBeanId() + ".betweenDatesFilter}" );
 
 		
 		HashMap<String, String> defaults = new HashMap<String, String>();
@@ -783,10 +807,20 @@ public class GridPanel extends ViewerInputSecurityBase {
 			filterLookupInput = (XUIInput) findComponent(getId()
 					+ "_lookupInput");
 		}
+		
+		if (findComponent(getId() + "_selectDatesFilter") == null) {
+			selectDatesFilterCommand = new XUICommand();
+			selectDatesFilterCommand.setId(getId() + "_selectDatesFilter");
+			selectDatesFilterCommand.addActionListener( new SelectDatesActionListener() );
+			getChildren().add( selectDatesFilterCommand );
+		} else {
+			selectDatesFilterCommand = (XUICommand) findComponent(getId()
+					+ "_selectDatesFilter");
+		}
 
 		String viewerSecurityId = getInstanceId();
 		if (viewerSecurityId != null) {
-			setViewerSecurityPermissions("#{viewBean.viewerPermissions."
+			setViewerSecurityPermissions("#{"+getBeanId()+".viewerPermissions."
 					+ viewerSecurityId + "}");
 		}
 	}
@@ -801,6 +835,19 @@ public class GridPanel extends ViewerInputSecurityBase {
 					.getRequest()).getParameter(cmd.getClientId()));
 			((GridPanel) cmd.getParent()).doFilterLookup();
 		}
+	}
+	
+	public static class SelectDatesActionListener implements ActionListener {
+		@Override
+		public void processAction(ActionEvent event)
+				throws AbortProcessingException {
+			
+			XUICommand cmd = (XUICommand) event.getComponent();
+			cmd.setValue(cmd.getCommandArgument());
+			((GridPanel) cmd.getParent()).doDateFilter();
+			
+		}
+		
 	}
 
 	public static class ResetDefaultsListener implements ActionListener {
@@ -876,6 +923,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 	private void doFilterLookup() {
 		this.filterLookup.invoke();
+	}
+	
+	private void doDateFilter(){
+		this.selectDatesFilter.invoke();
 	}
 	
 	/**
@@ -1231,7 +1282,14 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * @return String with the dataField of the group by column
 	 */
 	public String getGroupBy() {
-		return this.groupBy.getEvaluatedValue();
+		String groupBy =  this.groupBy.getEvaluatedValue();
+		if (StringUtils.hasValue( groupBy )){
+			Column c = getColumn( groupBy );
+			if (c == null){
+				return LovColumnNameExtractor.LOV_ID_PREFIX + groupBy;
+			}
+		}
+		return groupBy;
 	}
 	
 	/**
@@ -2080,7 +2138,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public void applyFilters(DataListConnector listConnector) {
 		if ((listConnector.dataListCapabilities() & DataListConnector.CAP_FILTER) > 0) {
 			FilterTerms filterTerms = getCurrentFilterTerms();
-			listConnector.setFilterTerms(filterTerms);
+		listConnector.setFilterTerms(filterTerms);
 		}
 	}
 
@@ -2420,17 +2478,6 @@ public class GridPanel extends ViewerInputSecurityBase {
 		return result;
 	}
 
-@Override
-@XUIProperty(name = "id", label = "Component Id", visibility = XUIPropertyVisibility.DOCUMENTATION)
-public void setId(String id) {
-	super.setId( id );
-}
 	
-
-@Override
-public String getClientId() {
-	// TODO Auto-generated method stub
-	return super.getClientId( );
-}
 
 }

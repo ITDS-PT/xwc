@@ -152,8 +152,7 @@ public class XUIStateManagerImpl extends StateManager {
 
             if (null != id) {
                 if (LOGGER.isFinerEnabled()) {
-                    LOGGER.finer(LoggerMessageLocalizer.getMessage("BEGIN_RESTORING_VIEW_IN_SESSION_FOR_VIEWID")+" "
-                                + viewId);
+                    LOGGER.finer("Begin restoring view in session for viewid %s and viewstate %s",viewId,id);
                 }
                 String idString = (String) id;
                 String idInLogicalMap;
@@ -293,8 +292,7 @@ public class XUIStateManagerImpl extends StateManager {
 
 
         if (LOGGER.isFinerEnabled()) {
-            LOGGER.finer(LoggerMessageLocalizer.getMessage("BEGIN_CREATING_SERIALIZED_VIEW_FOR")+" "
-                        + viewRoot.getViewId());
+            LOGGER.finer( "Begin creating serialized view for %s" , viewRoot.getViewId() );
         }
         List<TreeNode> treeList = new ArrayList<TreeNode>(32);
         Object state = viewRoot.processSaveState(context);
@@ -564,7 +562,7 @@ public class XUIStateManagerImpl extends StateManager {
      *  If {@link BooleanWebContextInitParameter#SerializeServerState} de-serialize the
      *  state prior to returning it, otherwise return <code>state</code> as is.
      */
-    private Object handleRestoreState(Object state) {
+    Object handleRestoreState(Object state) {
 
         if (webConfig.isOptionEnabled(BooleanWebContextInitParameter.SerializeServerState)) {
             ByteArrayInputStream bais = new ByteArrayInputStream((byte[]) state);
@@ -596,7 +594,7 @@ public class XUIStateManagerImpl extends StateManager {
     }
 
 
-    private static void captureChild(List<TreeNode> tree, 
+    static void captureChild(List<TreeNode> tree, 
                                      int parent,
                                      UIComponent c) {
 
@@ -764,7 +762,7 @@ public class XUIStateManagerImpl extends StateManager {
     }
 
 
-    private UIViewRoot restoreTree(Object[] tree)
+    UIViewRoot restoreTree(Object[] tree)
     throws FacesException {
 
         UIComponent c;
@@ -794,7 +792,7 @@ public class XUIStateManagerImpl extends StateManager {
     }
 
 
-    private static class TreeNode implements Externalizable {
+    static class TreeNode implements Externalizable {
 
         private static final String NULL_ID = "";
 
