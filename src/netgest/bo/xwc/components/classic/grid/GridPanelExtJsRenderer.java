@@ -652,7 +652,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                 "		if( c.loadMask.xwc_wtout ) {window.clearTimeout(c.loadMask.xwc_wtout);}\n" + 		                
                 "		c.loadMask.onLoad();\n" +
         		"	} " +
-                " console.log(store.dataSourceChange);" + 
                 " store.resetDataSourceChange(); " +
         		"}" );
         

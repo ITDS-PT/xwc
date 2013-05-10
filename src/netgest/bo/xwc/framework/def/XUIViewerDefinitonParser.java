@@ -259,6 +259,8 @@ public class XUIViewerDefinitonParser
             {
             	try {
             		is = wrapper.getInputStream();
+            		if (is == null)
+            			throw new RuntimeException( String.format("Viewer %s does not exist",viewerName) );
             		xwvr = parse( is , counter, viewerName );
             		if (xwvr.getDateLastUpdate() != null){
 	            		if (xwvr.getDateLastUpdate().before( wrapper.getTime() ))
