@@ -5,14 +5,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import bsh.StringUtil;
+
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.classic.AttributeImage;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.jsf.utils.Base64;
 import netgest.io.iFile;
 import netgest.io.iFilePermissionDenied;
+import netgest.utils.StringUtils;
+
 
 public class XMLAttributeImageRenderer extends XMLBasicRenderer {
 	
@@ -26,75 +31,49 @@ public class XMLAttributeImageRenderer extends XMLBasicRenderer {
 		
 		XUIResponseWriter rw = getResponseWriter();
 		
-		String sViewState = getRequestContext().getViewRoot().getViewState();
-        //xvw.servlet
-        String sServletId = component.getClientId();
-        
-        String sActionUrl = getRequestContext().getAjaxURL();
-        
-        if( sActionUrl.indexOf('?') != -1 ) {
-        	sActionUrl += "&";
-        }
-        else {
-        	sActionUrl += "?";
-        }
-        sActionUrl += "javax.faces.ViewState=" + sViewState;
-        sActionUrl += "&xvw.servlet=" + sServletId;
+		String imageBase64 = encodeImageBase64((AttributeImage) component);
         
         //Write the image to disk
-        
-        String tmpFolder = netgest.bo.impl.document.Ebo_DocumentImpl.getTempDir();
-        String imgFolder = "images";
-		if(tmpFolder.endsWith("\\") || tmpFolder.endsWith("/"))
-			tmpFolder =  tmpFolder + imgFolder + File.separator;
+		if (StringUtils.hasValue( imageBase64 ))
+			rw.writeAttribute("url", "data:image/png;base64,"+imageBase64);
 		else
-			tmpFolder =  tmpFolder + File.separator + imgFolder;
+			rw.writeAttribute("url", "");
 		
-		java.io.File tmpdir = new java.io.File(tmpFolder);
-		if(!tmpdir.exists()) 
-			tmpdir.mkdirs();
+        
 		
-		String id = component.getClientId();
-		id = id.replace(':','_');
-		
-		AttributeImage imgComp = (AttributeImage) component;
-		DataFieldConnector oConnector = imgComp.getDataFieldConnector();
-		String fileUrl = null;
+	}
+
+	private String encodeImageBase64(AttributeImage component) {
+
+		DataFieldConnector oConnector = component.getDataFieldConnector();
 		if( oConnector instanceof XEOObjectAttributeConnector ) {
-    		XEOObjectAttributeConnector oXeoConnector = (XEOObjectAttributeConnector)oConnector;
-    		try {
+			XEOObjectAttributeConnector oXeoConnector = (XEOObjectAttributeConnector)oConnector;
+			try {
 				iFile file = oXeoConnector.getAttributeHandler().getValueiFile();
-    			if (file != null){
-    				File tempFile = new File( tmpdir +File.separator + "image" + file.getName());
-    				if (!tempFile.exists()){
-    						
-    					FileOutputStream fos = new FileOutputStream(tempFile);
-    					byte[] buff = new byte[4096];
-    					InputStream io = file.getInputStream();
-    					while (io.read(buff) > 0){
-    						fos.write(buff);
-    					}
-    					fos.close();
-    					io.close();
-    					fileUrl = tempFile.getAbsolutePath();
-    				}
-    				else
-    					fileUrl = tempFile.getAbsolutePath();
-    			}
-    			
+				if (file != null){
+					InputStream fin = file.getInputStream();
+					byte fileContent[] = new byte[(int)file.length()];
+					int offset = 0;
+
+					while ( offset < fileContent.length ) {
+						int count = fin.read(fileContent, offset, fileContent.length - offset);
+						offset += count;
+					}
+
+					//all chars in encoded are guaranteed to be 7-bit ASCII
+					String encodedFile = Base64.encodeBytes( fileContent );
+					return encodedFile;
+				}
+			} catch (IOException e){
+				logger.warn( e );
+				//Do nothing
+			} catch ( boRuntimeException e ) {
+				logger.warn( e );
+			} catch ( iFilePermissionDenied e ) {
+				logger.warn( e );
 			}
-    		catch (boRuntimeException e){
-    			e.printStackTrace();
-    		} catch (iFilePermissionDenied e) {
-				e.printStackTrace();
-			} 
-		
 		}
-		
-		rw.writeAttribute("url", sActionUrl, "url");
-        if (fileUrl != null)
-        	rw.writeAttribute("urlPdf", fileUrl, "urlPdf");
-		
+		return "";
 	}
 
 	/* (non-Javadoc)
