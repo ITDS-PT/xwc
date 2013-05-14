@@ -89,6 +89,9 @@ public class Row extends XUIComponentBase
 	            w.writeAttribute(VALIGN,"top");
 	            w.writeAttribute( CLASS, "xwc-rows-row");
         	
+	        Row row = (Row) component;
+	        if (!row.isVisible())
+	        	hideRow( row.getClientId() );
             
         }
         
