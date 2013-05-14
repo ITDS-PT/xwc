@@ -56,7 +56,7 @@ public class XEOObjectAttributeMetaData implements DataFieldMetaData {
                 return DataFieldTypes.VALUE_NUMBER;
 
         if ( boDefAttribute.ATTRIBUTE_LONGTEXT.equals( sValueType ) )
-                return DataFieldTypes.VALUE_CHAR;
+                return DataFieldTypes.VALUE_CLOB;
             
         if ( boDefAttribute.ATTRIBUTE_NUMBER.equals( sValueType ) )
                 return DataFieldTypes.VALUE_NUMBER;
