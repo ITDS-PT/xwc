@@ -106,9 +106,14 @@ public class XEOBaseLookupList extends XEOBaseList {
                     executeBoql( bean.getLookupQuery( getHandlerForParentComponent(bean), this.selectedObject ) );
                     getRequestContext().setViewRoot( actual );
               }
-              else
-                    executeBoql( ((XEOBaseBean) getParentBean()).getLookupQuery( this.parentAttribute , this.selectedObject ) );
-        }
+              else if (isFilterLookup()){
+            	  	//When we have a filter, execute the normal query
+            	  	//Don't know if we should respect filters
+            	    executeBoql("select " + selectedObject);
+              } else {
+            	    executeBoql( ((XEOEditBean) getParentBean()).getLookupQuery( this.parentAttribute , this.selectedObject ) );
+              }
+        }  
   }
 
 
