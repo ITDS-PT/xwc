@@ -104,7 +104,8 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 			else {
 				String file=(String)value;
 				String filename=file.substring(file.lastIndexOf("/")+1,file.length());
-				link+=URLEncoder.encode(filename);
+				//link+=URLEncoder.encode(filename);
+				link+=filename;
 			}
 			
 			return new SimpleScalar(link);
