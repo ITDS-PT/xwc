@@ -205,6 +205,12 @@ public interface BeansMessages {
 	
 	public static final XUILocalizedMessage ADVANCED_SEARCH_QUERY_ERROR = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "ADVANCED_SEARCH_QUERY_ERROR" );
+	
+	public static final XUILocalizedMessage EBO_LOV_LIST_RELOADED = new XUILocalizedMessage(
+			BeansMessages.class.getName() , "EBO_LOV_LIST_RELOADED" );
+	
+	public static final XUILocalizedMessage EBO_LOV_LIST_CHOOSE_LOV = new XUILocalizedMessage(
+			BeansMessages.class.getName() , "EBO_LOV_LIST_CHOOSE_LOV" );
 	 
 	  
 }

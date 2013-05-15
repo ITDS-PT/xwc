@@ -169,6 +169,9 @@ public interface ViewersMessages {
 	public static final XUILocalizedMessage GRID_DATE_FILTER_START_DATE_BEFORE_END_DATE = new XUILocalizedMessage(
 			ViewersMessages.class.getName() , "GRID_DATE_FILTER_START_DATE_BEFORE_END_DATE" );
 	
+	public static final XUILocalizedMessage EBO_LOV_LIST_RELOAD_BUTTON = new XUILocalizedMessage(
+			ViewersMessages.class.getName() , "EBO_LOV_LIST_RELOAD_BUTTON" );
+	
 	
 }
 
