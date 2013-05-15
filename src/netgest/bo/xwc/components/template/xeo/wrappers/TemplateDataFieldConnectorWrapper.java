@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.template.xeo.wrappers;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -102,7 +103,8 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 				return null;
 			else {
 				String file=(String)value;
-				link+=file.substring(file.lastIndexOf("/")+1,file.length());
+				String filename=file.substring(file.lastIndexOf("/")+1,file.length());
+				link+=URLEncoder.encode(filename);
 			}
 			
 			return new SimpleScalar(link);
