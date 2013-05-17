@@ -11,7 +11,7 @@ import javax.faces.component.UIComponent;
 
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
-import netgest.bo.xwc.components.annotations.Property;
+import netgest.bo.xwc.components.annotations.AcceptsIncludeValue;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -25,7 +25,7 @@ public class ViewerAsComponent extends XUIComponentBase {
 	/**
 	 * Name of the viewer to include
 	 */
-	XUIBindProperty< String > viewerName = new XUIBindProperty< String >(
+	protected XUIBindProperty< String > viewerName = new XUIBindProperty< String >(
 			"viewerName" , this , String.class );
 
 	public String getViewerName() {
@@ -36,49 +36,49 @@ public class ViewerAsComponent extends XUIComponentBase {
 		viewerName.setExpressionText( newValExpr );
 	}
 	
-	protected Map<String,String>	 		properties;
+	protected Map<String,Object>	 		properties;
 	
-	public void setProperties( Map<String, String> properties ) {
+	public void setProperties( Map<String, Object> properties ) {
 		if( this.properties == null )
-			this.properties = new LinkedHashMap<String, String>();
+			this.properties = new LinkedHashMap<String, Object>();
 		this.properties.putAll( properties );
 	}
 
-        public Map<String, String> getProperties() {
-                return this.properties;
-        }   
-	
-        @Override
-    	public void restoreState(Object state) {
-    		this.properties = new LinkedHashMap<String, String>();
+	public Map<String, Object> getProperties() {
+		return this.properties;
+	}   
 
-    		Object[] oState = (Object[])state;
-    		super.restoreState(oState[0]);
-    		
-    		int keysCntr = (Integer)oState[1];
-    		for( int i=0; i < keysCntr; i++ ) {
-    			Object[] keyPar = (Object[])oState[ i + 2 ];
-    			this.properties.put( (String)keyPar[0], (String)keyPar[1] );   
-    		}
-    	}
+	@Override
+	public void restoreState(Object state) {
+		this.properties = new LinkedHashMap<String, Object>();
 
-    	@Override
-    	public Object saveState() {
-    		
-    		Object[] saveObj = new Object[ this.properties.size() + 2 ];
-    		saveObj[0] = super.saveState();
-    		saveObj[1] = this.properties.size();
-    		Set<String> keyNames = this.properties.keySet();
-    		
-    		int iPos = 2;
-    		for( String keyName : keyNames ) {
-    			saveObj[ iPos ] = new Object[] { keyName, this.properties.get( keyName ) };
-    			iPos++;
-    		}
-    		return saveObj;
-    	}
+		Object[] oState = (Object[])state;
+		super.restoreState(oState[0]);
+
+		int keysCntr = (Integer)oState[1];
+		for( int i=0; i < keysCntr; i++ ) {
+			Object[] keyPar = (Object[])oState[ i + 2 ];
+			this.properties.put( (String)keyPar[0], (String)keyPar[1] );   
+		}
+	}
+
+	@Override
+	public Object saveState() {
+
+		Object[] saveObj = new Object[ this.properties.size() + 2 ];
+		saveObj[0] = super.saveState();
+		saveObj[1] = this.properties.size();
+		Set<String> keyNames = this.properties.keySet();
+
+		int iPos = 2;
+		for( String keyName : keyNames ) {
+			saveObj[ iPos ] = new Object[] { keyName, this.properties.get( keyName ) };
+			iPos++;
+		}
+		return saveObj;
+	}
 	
-	private transient XUIViewRoot 			viewRoot;
+	protected transient XUIViewRoot 			viewRoot;
 	
 	@Override
 	public void initComponent() {
@@ -96,17 +96,17 @@ public class ViewerAsComponent extends XUIComponentBase {
         
         for( String s : viewRoot.getBeanIds() ) {
         		Object bean = viewRoot.getBean( s );
-        		if (bean instanceof XEOBaseBean){
-        			XEOBaseBean castBean = (XEOBaseBean) bean;
-        			castBean.setViewRoot( ((XUIViewRoot)r).getViewState() );
+        		if ( bean instanceof XEOBaseBean ){
+        			XEOBaseBean castBean = ( XEOBaseBean ) bean;
+        			castBean.setViewRoot( ((XUIViewRoot) r ).getViewState() );
         		}	
     			for (String propName : properties.keySet()){
     				String propSetter = "set" + propName.toLowerCase();
-    				String propValue = properties.get( propName );
+    				Object propValue = properties.get( propName );
     				try {
     					for (Method m : bean.getClass().getMethods()){
-    						if (m.isAnnotationPresent( Property.class ) && m.getName().equalsIgnoreCase( propSetter ) ){
-    							ValueExpression exprt = createValueExpression( propValue , Object.class );
+    						if (m.isAnnotationPresent( AcceptsIncludeValue.class ) && propertyNameIsSameAsMethodName( propSetter , m ) ){
+    							ValueExpression exprt = createValueExpression( propValue.toString() , Object.class );
     							if (exprt.isLiteralText())
     								m.invoke( bean , propValue );
     							else
@@ -118,12 +118,15 @@ public class ViewerAsComponent extends XUIComponentBase {
 					}
         			
         		}
+    			
+    			//FIXME: Add an annotation for the onAfterCreateEvent and call the method
+    			//annotation by it
         }
         
-        
-        
+	}
 
-
+	protected boolean propertyNameIsSameAsMethodName(String propSetter, Method m) {
+		return m.getName().equalsIgnoreCase( propSetter );
 	}
 	
 		
@@ -140,14 +143,14 @@ public class ViewerAsComponent extends XUIComponentBase {
 		@Override
 		public void encodeBegin( XUIComponentBase component ) throws IOException {
 			super.encodeBegin(component);
-			XUIResponseWriter w = XUIRequestContext.getCurrentContext().getResponseWriter();
+			XUIResponseWriter w = getResponseWriter();
 			w.startElement( HTMLTag.DIV , component );
 			w.writeAttribute( HTMLAttr.ID , component.getClientId(), "id" );
 		}
 	
 		@Override
 		public void encodeEnd( XUIComponentBase component ) throws IOException {
-			XUIResponseWriter w = XUIRequestContext.getCurrentContext().getResponseWriter();
+			XUIResponseWriter w = getResponseWriter();
 			w.endElement( HTMLTag.DIV );
 			super.encodeEnd(component);
 		}
