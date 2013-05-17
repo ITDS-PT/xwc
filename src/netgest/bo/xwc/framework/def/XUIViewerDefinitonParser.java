@@ -40,7 +40,7 @@ import org.w3c.dom.NodeList;
 public class XUIViewerDefinitonParser
 {
 	
-	private static final String DEFAULT_VIEWERS_ROOT = "viewers";
+	public static final String DEFAULT_VIEWERS_ROOT = "viewers";
 	public static final String DEFAULT_BEAN_ID = "viewBean";
     private static NSResolver ns = new GenericResolver();
     private static HashMap<String, XUIViewerDefinition> viewCache = new HashMap<String, XUIViewerDefinition>();
