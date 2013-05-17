@@ -236,7 +236,7 @@ public class XEOMainBean extends XEOBaseBean {
         oViewRoot = oSessionContext.createView( sViewerName );
         
         oRequestContext.setViewRoot( oViewRoot );
-        oViewRoot.processInitComponents();
+        //oViewRoot.processInitComponents();
     	
     }
     
