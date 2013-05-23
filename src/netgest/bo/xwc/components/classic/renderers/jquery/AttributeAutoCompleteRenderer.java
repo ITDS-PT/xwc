@@ -26,6 +26,10 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
@@ -156,6 +160,8 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 			addScriptFooter( component.getClientId() + "_disabled", updaterUsage.build() );
 			
 			if (component.isXEOEnabled()){
+				setExistingValuesXEOConnector( component );
+			} else {
 				setExistingValues( component );
 			}
 			
@@ -165,8 +171,49 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 	}
 
 
+	
 
-	private void setExistingValues( AttributeAutoComplete component ) {
+	private void setExistingValues(AttributeAutoComplete component) {
+		AutoCompleteBuilder builder = new AutoCompleteBuilder();
+		Object sourceValue = component.getValue();
+		if (sourceValue == null)
+			return;
+		
+		String value = String.valueOf( sourceValue );
+		String[] values = value.split( "," ); 
+		
+		String displayValue = component.getDisplayValue();
+		if (StringUtils.isEmpty( displayValue ))
+			displayValue = value;
+		String[] displayValues = displayValue.split( "," );
+		
+		int k = 0;
+		JSONArray[] itemsToAdd = new JSONArray[values.length];
+		for (String object : values){
+				JSONArray itemHolder = new JSONArray();
+				JSONObject newItem = new JSONObject();
+				String currDisplay = displayValues[k];
+				try {
+					newItem.put( "title" , currDisplay );
+					newItem.put( "value" , object );
+				} catch ( JSONException e ) {
+					e.printStackTrace();
+				}
+				itemHolder.put( newItem );
+				itemsToAdd[k] = itemHolder;
+				k++;
+		}
+		
+		builder.componentSelectorById( getComponentId( component ) );
+		for (JSONArray current : itemsToAdd){
+			builder.openTrigger().addItem( current.toString() ).endTrigger();
+		}
+		addScriptFooter( component.getId() + "_updateVals", builder.build() );
+	}
+
+
+
+	private void setExistingValuesXEOConnector( AttributeAutoComplete component ) {
 		AttributeHandler handler = ((XEOObjectAttributeConnector) component.getDataFieldConnector()).getAttributeHandler();
 		AutoCompleteBuilder builder = new AutoCompleteBuilder();
 		//Object selectedObjects =  component.getValue() ;
@@ -174,22 +221,33 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 			String selectedObjects =  handler.getValueString() ;
 			if ( StringUtils.hasValue( selectedObjects) ){
 				String[] values = selectedObjects.toString().split( "," );
-				String append = "";
-				StringBuilder result = new StringBuilder("[");
+				
+				JSONArray[] itemsToAdd = new JSONArray[values.length];
+				int k = 0;
 				for (String object : values){
+						JSONArray itemHolder = new JSONArray();
+						JSONObject newItem = new JSONObject();
 						boObject loadedObject = boObject.getBoManager().loadObject( handler.getEboContext() , Long.valueOf( object ));
-						String displayValue = loadedObject.getTextCARDID().toString();
-						result.append(append);
-						result.append("{")
-							.append("'title':").append("'").append(displayValue).append("'").append(",")
-							.append("'value':").append("'").append(object).append("'")
-							
-							.append("}");
-						append = ",";
+						String currDisplay = loadedObject.getTextCARDID().toString();
+						try {
+							newItem.put( "title" , currDisplay );
+							newItem.put( "value" , object );
+						} catch ( JSONException e ) {
+							e.printStackTrace();
+						}
+						itemHolder.put( newItem );
+						itemsToAdd[k] = itemHolder;
+						k++;
 				}
-				result.append("]");
-				builder.componentSelectorById( getComponentId( component ) ).openTrigger().addItem( result.toString() ).endTrigger();
-				addScriptFooter( component.getId() + "_update", builder.build() );
+				
+				builder.componentSelectorById( getComponentId( component ) );
+				for (JSONArray current : itemsToAdd){
+					builder.openTrigger().addItem( current.toString() ).endTrigger();
+				}
+				addScriptFooter( component.getId() + "_updateVals", builder.build() );
+				
+				
+				
 			}
 		} catch ( boRuntimeException e ) {
 			e.printStackTrace();

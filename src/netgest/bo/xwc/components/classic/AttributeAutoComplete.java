@@ -96,7 +96,7 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 	 * The maximum number of items that can be added to the attribute
 	 */
 	private XUIBindProperty<Integer> maxItems = 
-		new XUIBindProperty<Integer>( "maxItems", this, Integer.class );
+		new XUIBindProperty<Integer>( "maxItems", this, Integer.class, "1" );
 	
 	public Integer getMaxItems(){
 		return this.maxItems.getEvaluatedValue();
