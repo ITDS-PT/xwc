@@ -108,6 +108,9 @@ public class TemplateRenderer extends XUIRenderer {
 		context.put( ProcessorDirectives.HEADER.getName(), header );
 		context.put( ProcessorDirectives.COMMAND.getName(), new XUICommandDirectiveProcessor( ) );
 		context.put( ProcessorDirectives.INPUT.getName(), new XUIInputDirectiveProcessor( ) );
+		
+		addContexParameters(context);
+		
 		List<UIComponent> childrenComps = component.getChildren( );
 		for (UIComponent child : childrenComps){
 			if (child instanceof TemplateCommand || child instanceof TemplateInput)
@@ -126,6 +129,16 @@ public class TemplateRenderer extends XUIRenderer {
 		}
 	}
 	
+	/**
+	 * 
+	 * Allos subclasses to add context parameters to the Renderer
+	 * 
+	 * @param context The current context
+	 */
+	protected void addContexParameters(Map< String , Object > context){
+		//Do nothing
+	}
+
 	protected XUIViewRoot getRoot(UIComponent component){
 		while ((component = component.getParent( )) != null ){
 				if (component instanceof XUIViewRoot)
