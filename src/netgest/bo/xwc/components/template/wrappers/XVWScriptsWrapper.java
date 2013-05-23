@@ -49,9 +49,13 @@ public class XVWScriptsWrapper {
 		return XVWScripts.getCommandScript(target, component, XVWScripts.WAIT_DIALOG);
 	}
 	
+	public String command(String target, XUIComponentBase component, String value){
+		return XVWScripts.getCommandScript(target, component, value, XVWScripts.WAIT_DIALOG );
+	}
+	
 	public String command(String target, XUIComponentBase component, String value, String type){
 		ValueType valueType = ValueType.fromString( type );
-		return XVWScripts.getCommandScript(target, component, XVWScripts.WAIT_DIALOG, valueType );
+		return XVWScripts.getCommandScript(target, component, value, XVWScripts.WAIT_DIALOG );
 	}
 
 	public String ajaxCommand(String containerId, String commandId){
