@@ -123,7 +123,7 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 											" Ebo_LovDetails ld  " +
 											" inner join Ebo_Lov$details b on ld.boui = b.child$ " + 
 											" inner join Ebo_Lov l on  b.parent$ = l.boui  " +
-											" where l.name = '"+attribute.getLOVName()+"' and ld.value = cast("+handler.getBoMasterTable()+"."+attribute.getName()+" as char))";		
+											" where l.name = '"+attribute.getLOVName()+"' and ld.value = cast("+handler.getBoMasterTable()+"."+attribute.getName()+" as varchar("+attribute.getLen()+")))";		
 							}
 					} catch ( boRuntimeException e ) {
 						e.printStackTrace();
