@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.el.MethodExpression;
 import javax.faces.component.UIComponent;
@@ -48,6 +49,7 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 import netgest.bo.xwc.xeo.components.List;
 import netgest.bo.xwc.xeo.components.ListToolBar;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
@@ -570,6 +572,8 @@ public class GridExplorer extends List {
 		
 		super.initComponent();
 
+		Preference expPref = getExplorerUserSatePreference();
+		restoreUserExplorerState( expPref );
 		// Preview Command 
 		XUICommand previewCmd = new XUICommand();
 		previewCmd.setId( getId() + "_pvwcmd" );
@@ -582,8 +586,6 @@ public class GridExplorer extends List {
 		getChildren().add( setViewCmd );
 		createToolBar();
 		
-		Preference expPref = getExplorerUserSatePreference();
-		restoreUserExplorerState( expPref );
 		
 		this.isNew = true;
 	}
@@ -613,6 +615,8 @@ public class GridExplorer extends List {
 		}
 		
 	}
+	
+	
 	
 	public ToolBar getToolBar() {
 		ToolBar tb;
@@ -660,6 +664,8 @@ public class GridExplorer extends List {
 			//pvw.setText("Painel de Leitura");
 			pvw.setIcon("ext-xeo/images/gridexplorer/prev-bott.gif");
 			pvw.setId( getId() + "_mpvw" );
+			
+			
 			
 			PreviewPanelPosition 	p = getPreviewPanelPosition();
 			
@@ -1087,6 +1093,7 @@ public class GridExplorer extends List {
 			if( value != null && value ) {
 				gexp.setPreviewPanelPosition( PreviewPanelPosition.OFF );
 				menu.setValue( false );
+				
 			}
 			else if( menuId.endsWith( "_mpvw" ) ) {
 				// Rotate preview
@@ -1130,6 +1137,7 @@ public class GridExplorer extends List {
 					m.setValue( false );
 				}
 			}
+			
 		}
 		
 		public void setPosition( String position ) {
@@ -1141,6 +1149,8 @@ public class GridExplorer extends List {
 		}
 		
 	}
+	
+	
 	
 	
 	protected XUICommand getPreviewCommandComponent() {
@@ -1165,8 +1175,9 @@ public class GridExplorer extends List {
 					return "west";
 				case RIGHT:
 					return "east";
+				default : 
+					return "south";	
 			}
-			return "south";
 		}
 		
 		
@@ -1207,6 +1218,14 @@ public class GridExplorer extends List {
 							"Ext.getCmp('" + exp.getId() + "_vp').destroy();" );
 				}
 				else {
+					
+					//At the moment a hack to circunvent the bug of not destroying the ViewPort when 
+					//changing preview directions. The problem is with the isRenderedOnClient condition never being true
+					getResponseWriter().getScriptContext().add(
+							XUIScriptContext.POSITION_HEADER, 
+							"destroyCheck" + exp.getId(), 
+							"var c = Ext.getCmp('" + exp.getId() + "_vp'); if (c) {c.destroy();}");
+					
 					if( exp.isNew ) {
 						XUIResponseWriter w = getResponseWriter();
 						String hiddenName =  component.getClientId() + "_cvnh1";
