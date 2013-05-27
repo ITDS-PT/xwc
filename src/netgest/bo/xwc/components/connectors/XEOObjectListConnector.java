@@ -388,7 +388,7 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 					List<String> parts = parser.getParts();
 					if (!parts.isEmpty()){
 						String concat = utils.concatColumnsWithSeparator( parts , "', '" );
-						String expression = "([SELECT BOUI FROM " + handler.getBoMasterTable() + " WHERE " + concat + " LIKE ?])"; ;
+						String expression = "([SELECT BOUI FROM " + handler.getBoMasterTable() + " WHERE " + concat + " LIKE UPPER(?)])"; ;
 						return expression;
 					}
 				}
