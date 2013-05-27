@@ -620,28 +620,32 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
     	String column = (String)cmd.getValue();
     	GridPanel  oGridPanel = (GridPanel)cmd.getParent();
     	FilterTerms terms = oGridPanel.getCurrentFilterTerms();
-    	Iterator<FilterJoin> it = terms.iterator();
     	
     	oViewRoot = oSessionContext.createChildView( "netgest/bo/xwc/components/classic/grid/GridBetweenDateSelector.xvw" );
     	GridDatesBetweenFilterBean bean = (GridDatesBetweenFilterBean) oViewRoot.getBean( "viewBean" );
     	bean.setColumn( column );
     	bean.setGridId( oGridPanel.getClientId() );
-    	
-    	while (it.hasNext()){
-    		FilterJoin join = it.next();
-    		FilterTerm term = join.getTerm();
-    		if (term != null && StringUtils.hasValue( term.getDataField() ) ){
-    			if (column.equals( term.getDataField() )){
-    				byte operator = term.getOperator();
-    				Object value = term.getValue();
-    				Timestamp newTime = null;
-    				if (value != null && value instanceof java.util.Date){
-    					newTime = new Timestamp( ((java.util.Date) value).getTime() );
-    					if (operator == FilterTerms.OPERATOR_GREATER_THAN){
-    						bean.setStart( newTime );
-    					}
-    					else if (operator == FilterTerms.OPERATOR_LESS_THAN){
-    						bean.setEnd( newTime );
+
+    	if (terms != null){
+    		Iterator<FilterJoin> it = terms.iterator();
+    		while (it.hasNext()){
+    			FilterJoin join = it.next();
+    			if (join != null){
+    				FilterTerm term = join.getTerm();
+    				if (term != null && StringUtils.hasValue( term.getDataField() ) ){
+    					if (column.equals( term.getDataField() )){
+    						byte operator = term.getOperator();
+    						Object value = term.getValue();
+    						Timestamp newTime = null;
+    						if (value != null && value instanceof java.util.Date){
+    							newTime = new Timestamp( ((java.util.Date) value).getTime() );
+    							if (operator == FilterTerms.OPERATOR_GREATER_THAN){
+    								bean.setStart( newTime );
+    							}
+    							else if (operator == FilterTerms.OPERATOR_LESS_THAN){
+    								bean.setEnd( newTime );
+    							}
+    						}
     					}
     				}
     			}
