@@ -113,7 +113,7 @@ Ext.extend(Ext.grid.filter.Filter, Ext.util.Observable, {
 	createDataPresenceFilters : function (config) {
 		
 		this.dataPresenceMenus = [
-			new Ext.menu.CheckItem({text: this.containsDataText, checked: false, }),
+			new Ext.menu.CheckItem({text: this.containsDataText, checked: false }),
 			new Ext.menu.CheckItem({text: this.notContainsDataText, checked: false})
 		];
 		    	
