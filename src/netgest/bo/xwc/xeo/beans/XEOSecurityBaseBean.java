@@ -27,22 +27,18 @@ public abstract class XEOSecurityBaseBean extends boObjectContainer {
 		boObject userObj = null;
 		Map<String, Byte> viewerPermissions = null;
 		Map<String, String> idsByComponent = null;
-		try
-		{
-			if ( ViewerAccessPolicyBuilder.applyViewerSecurity ) {
-				ctx = boApplication.currentContext().getEboContext();
-				userObj = boObject.getBoManager().loadObject( ctx, ctx.getSysUser().getBoui() );
-				viewerPermissions = 
+		
+		if ( ViewerAccessPolicyBuilder.applyViewerSecurity ) {
+			ctx = boApplication.currentContext().getEboContext();
+			userObj = boObject.getBoManager().loadObject( ctx, ctx.getSysUser().getBoui() );
+			viewerPermissions = 
 					accessPolicyBuilder.getPoliciesByViewer( getEboContext(), viewerName, userObj );
-				idsByComponent = accessPolicyBuilder.getIdsByComponent();
-				componentSecurityMap = new ComponentSecurityMap( viewerPermissions, idsByComponent );			
-			} else {
-				componentSecurityMap = new ComponentSecurityMap( null, null );
-			}
+			idsByComponent = accessPolicyBuilder.getIdsByComponent();
+			componentSecurityMap = new ComponentSecurityMap( viewerPermissions, idsByComponent );			
+		} else {
+			componentSecurityMap = new ComponentSecurityMap( null, null );
 		}
-		finally
-		{
-			if (ctx!=null)ctx.close();
-		}
+		
+		
 	}
 }

@@ -91,7 +91,7 @@ public class XUIStateBindProperty<V> extends XUIStateProperty<ValueExpression> {
             	ELContext context = getComponent().getELContext();
                 oRetValue = oValExpr.getValue( context );
                 if (context instanceof XUIELContextWrapper){
-                	if (!((XUIELContextWrapper) context).wasPropertyEvaluated()){
+                	if (!((XUIELContextWrapper) context).wasPropertyEvaluated() ){
                 		wasEvaluated = false;
                 	}
                 }

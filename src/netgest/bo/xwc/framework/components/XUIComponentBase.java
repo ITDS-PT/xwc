@@ -34,6 +34,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.jsf.XUIPropertySetter;
+import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
 import netgest.bo.xwc.framework.properties.XUIProperty;
 import netgest.bo.xwc.framework.properties.XUIPropertyVisibility;
@@ -320,7 +321,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 	
     public Object saveState() 
     {   
-    	if( isRendered() ) {
+    	if( isRendered() || !XUIViewHandler.isSavingInCache()  ) {
 	        // Save the state of all the properties of the object
 	        Object[] oStateProperyState;
 	        int      iCntr = 0;

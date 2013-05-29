@@ -120,6 +120,17 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 		viewerCache.clear();
 	}
 	
+	static ThreadLocal< Boolean > savingInCache = new ThreadLocal< Boolean >(){
+        protected Boolean initialValue() {
+            return Boolean.FALSE;
+        }
+    };
+	
+    
+    public static boolean isSavingInCache(){
+    	return savingInCache.get();
+    }
+	
     //
     // Private/Protected Constants
     //
@@ -501,8 +512,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         
         //cleanCache();
         XUISessionContext session = oContext.getSessionContext();
+        //viewerCache.clear();
         if ( canReadFromCache( oApp , viewerCacheId ) ){
-        	result = ( XUIViewRoot ) restoreViewFromCachePhase1( context , viewerCacheId );
+        	result = ( XUIViewRoot ) restoreTreeStructureFromCache( context , viewerCacheId );
         	String newState = generateId( viewId , session.getSessionMap() );
         	String initialComponentId = generateInitialComponentId( viewId , newState, session.getSessionMap() );
         	result.setInstanceId( initialComponentId );
@@ -675,16 +687,22 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	
 	        if (createNew){
 	        	if ( canAddViewToCache( viewerCacheId, oViewerDef.getDateLastUpdate() ) ){
+	        		try{
+	        			savingInCache.set( Boolean.TRUE );
 	        			saveViewToCache( context , result , viewerCacheId , oViewerDef );
+	        		} finally {
+	        			savingInCache.set( Boolean.FALSE );
+	        		}
 	        	}
+	        }
+	        
+	        
+	        if (!createNew){
+	        	restoreTreeStateFromCache( context , result , viewerCacheId );
 	        }
 	        
 	        // Initialize security
 	        initializeSecurity( result, beanIds, context );
-	        
-	        if (!createNew){
-	        	restoreViewFromCachePhase2( context , result , viewerCacheId );
-	        }
 	        
 	        processXUIWebAnnotations( result, beanIds, context );
 	        
@@ -817,7 +835,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	}
 
 
-	protected void restoreViewFromCachePhase2(FacesContext context,
+	protected void restoreTreeStateFromCache(FacesContext context,
 			XUIViewRoot result, String viewerCacheId) {
 		
 		//Retrieve values before process restore state (it will change some importante values in XUIViewRoot)
@@ -872,7 +890,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	}
 
 
-	protected UIViewRoot restoreViewFromCachePhase1(FacesContext context,
+	protected UIViewRoot restoreTreeStructureFromCache(FacesContext context,
 			String viewerCacheId) {
 		XUIStateManagerImpl stateManager = ( XUIStateManagerImpl ) Util.getStateManager(context);
 		Object[] state = (Object[])viewerCache.get( viewerCacheId ).getCacheContent()[0];

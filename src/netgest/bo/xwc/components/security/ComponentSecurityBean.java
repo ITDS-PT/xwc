@@ -200,7 +200,7 @@ public class ComponentSecurityBean extends XEOEditBean {
 			try {
 				boObjectList list = boObjectList.list(  
 						getEboContext(), 
-						"select XVWAccessPolicy where viewer=? "+getFilter()+" order by BOUI",
+						"select XVWAccessPolicy where viewer=? "+getFilter()+" and referenced = '1' order by BOUI",
 						new Object[] { this.selectedViewer },
 						1,
 						9999,

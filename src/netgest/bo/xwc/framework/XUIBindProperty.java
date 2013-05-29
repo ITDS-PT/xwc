@@ -111,9 +111,9 @@ public class XUIBindProperty<V> extends XUIBaseProperty<Object> {
 	            }
 	            else {
 	            	ELContext elCtx = getComponent().getELContext();
-	                oRetValue = (V)oValExpr.getValue( elCtx );
-	                if (elCtx instanceof XUIELContextWrapper){
-	                	if (!((XUIELContextWrapper) elCtx).wasPropertyEvaluated()){
+	            	oRetValue = (V)oValExpr.getValue( elCtx );
+	            	if (elCtx instanceof XUIELContextWrapper){
+	                	if (!( ( XUIELContextWrapper) elCtx ).wasPropertyEvaluated() ){
 	                		wasEvaluated = false;
 	                	}
 	                }

@@ -35,9 +35,15 @@ public class ComponentSecurityHandler {
 
 	public boolean getEffectivePermission(byte securityPermision) {
 		byte value = getEffectivePermission();
-		if (!securityPermissions.wasEvaluated() || !viewerPermissions.wasEvaluated())
-			return true;
-		return (value & securityPermision)!=0;
+//		if (value > SecurityPermissions.NONE)
+//			return (value & securityPermision) != 0;
+//		if (couldNotEvaluatePermissions())
+//			return true;
+		return (value & securityPermision) != 0;
+	}
+
+	protected boolean couldNotEvaluatePermissions() {
+		return !securityPermissions.wasEvaluated() || !viewerPermissions.wasEvaluated();
 	}
 
     public void setSecurityPermissions( String sExpressionText ) {
