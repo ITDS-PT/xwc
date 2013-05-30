@@ -77,7 +77,6 @@ public class TemplateRenderer extends XUIRenderer {
 	@Override
 	public void encodeBegin(XUIComponentBase component) throws IOException {
 		
-		netgest.bo.xwc.components.template.Template templateComponent = (netgest.bo.xwc.components.template.Template) component;
 		Template p = null;
 		try{
 			p = getTemplate( component );
@@ -110,7 +109,7 @@ public class TemplateRenderer extends XUIRenderer {
 		context.put( ProcessorDirectives.COMMAND.getName(), new XUICommandDirectiveProcessor( ) );
 		context.put( ProcessorDirectives.INPUT.getName(), new XUIInputDirectiveProcessor( ) );
 		
-		addContexParameters(context, templateComponent);
+		addContexParameters( context, component );
 		
 		List<UIComponent> childrenComps = component.getChildren( );
 		for (UIComponent child : childrenComps){
@@ -136,7 +135,7 @@ public class TemplateRenderer extends XUIRenderer {
 	 * 
 	 * @param context The current context
 	 */
-	protected void addContexParameters(Map< String , Object > context, netgest.bo.xwc.components.template.Template template){
+	protected void addContexParameters(Map< String , Object > context, XUIComponentBase component){
 		//Do nothing
 		
 	}
