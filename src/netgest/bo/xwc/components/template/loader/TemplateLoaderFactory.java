@@ -59,8 +59,8 @@ public class TemplateLoaderFactory {
 	}
 	
 	public static TemplateLoader getLoader(TemplateType type){
-		if (loaders.containsKey( type )){
-			return loaders.get( type );
+		if (loaders.containsKey( type.name() )){
+			return loaders.get( type.name() );
 		}
 		return getDefaultLoader();
 	}

@@ -1,5 +1,6 @@
 package netgest.bo.xwc.components.template;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
+import netgest.bo.xwc.components.template.loader.TemplateLoaderFactory;
 import netgest.bo.xwc.components.template.preprocessor.CommandsPreProcessor;
 import netgest.bo.xwc.components.template.util.TemplateMap;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
@@ -61,11 +63,19 @@ public class Template extends XUIComponentBase {
 		return reRender.getEvaluatedValue( );
 	}
 	
+	protected freemarker.template.Template loadTemplate(String name){
+		try {
+			return TemplateLoaderFactory.loadTemplate( name );
+		} catch ( IOException e ) {
+			throw new RuntimeException( String.format(" Could not load template %s ", name ) , e );
+		}
+	}
+	
 	@Override
 	public void initComponent() {
 		super.initComponent( );
 		if (!this.template.isDefaultValue( )){
-			CommandsPreProcessor p = new CommandsPreProcessor( getTemplate(), this );
+			CommandsPreProcessor p = new CommandsPreProcessor( loadTemplate( getTemplate() ), this );
 			List<UIComponent> list = p.createComponents( );
 				getChildren( ).addAll( list );
 		}

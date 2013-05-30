@@ -14,7 +14,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import netgest.bo.xwc.components.template.Template;
 import netgest.bo.xwc.components.template.TemplateCommand;
 import netgest.bo.xwc.components.template.TemplateInput;
-import netgest.bo.xwc.components.template.loader.TemplateLoaderFactory;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIInput;
 
@@ -27,12 +26,12 @@ import freemarker.core.TemplateObject;
 
 public class CommandsPreProcessor {
 
-	private String templateName = null;
+	private freemarker.template.Template template = null;
 	private Template component;
 	private DocumentBuilder docBuilder;
 	
-	public CommandsPreProcessor(String templateName, Template component) {
-		this.templateName = templateName;
+	public CommandsPreProcessor(freemarker.template.Template template, Template component) {
+		this.template = template;
 		this.component = component;
 		DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
         try {
@@ -56,7 +55,7 @@ public class CommandsPreProcessor {
 	public List<UIComponent> createComponents(){
 		List<UIComponent> result =  new LinkedList< UIComponent >( );
 		try{
-			freemarker.template.Template t = TemplateLoaderFactory.loadTemplate( templateName );
+			freemarker.template.Template t = template;
 			TemplateElement template = t.getRootTreeNode( );
 			int count = t.getRootTreeNode().getChildCount( );
 			for (int k = 0 ; k < count ; k++){
