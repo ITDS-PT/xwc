@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.el.ValueExpression;
+import javax.faces.component.NamingContainer;
 import javax.faces.component.UIComponent;
 
 import netgest.bo.xwc.components.HTMLAttr;
@@ -20,7 +21,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 
-public class ViewerAsComponent extends XUIComponentBase {
+public class ViewerAsComponent extends XUIComponentBase implements NamingContainer {
 	
 	/**
 	 * Name of the viewer to include
