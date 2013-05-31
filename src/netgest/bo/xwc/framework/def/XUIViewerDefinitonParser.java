@@ -432,8 +432,12 @@ public class XUIViewerDefinitonParser
     			XMLElement element = defines.get( name );
     			return replaceInsertContent(root, element, parent, defines, beanId);
     		} else {
-    			if ( node.getAttribute( "src" ) != null ){
+    			if ( StringUtils.hasValue( node.getAttribute( "src" ) ) ){
     				return replaceIncludeContent( root, node, parent, counter, defines );
+    			} else{
+    				XUIViewerDefinitionNode newNode = new XUIViewerDefinitionNode();
+    				newNode.setName( "xvw:genericTag" );
+    				return newNode;
     			}
     		}
         }
