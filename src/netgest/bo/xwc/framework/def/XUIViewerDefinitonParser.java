@@ -177,6 +177,19 @@ public class XUIViewerDefinitonParser
 			throws XSLException {
 		XMLElement node;
 		XMLDocument xmldoc;
+		
+		//Ver aqui o resolver da expressao
+		FacesContext context = FacesContext.getCurrentInstance();
+    	
+        ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
+        ValueExpression m = oExFactory.createValueExpression( context.getELContext(), templateToParse, String.class);
+        
+        if ( !m.isLiteralText() ){
+        	templateToParse = (String)m.getValue( context.getELContext() );
+        	if ("".equalsIgnoreCase(templateToParse))
+        		throw new RuntimeException( String.format("The expression %s does not resolve to a viewer path to include", m.getExpressionString() ) );
+        }
+		
 		StreamWrapper wrapper = resolveViewerWithTime( templateToParse );
 		xmldoc =  ngtXMLUtils.loadXML( wrapper.getInputStream() );
 		node = (XMLElement)xmldoc.selectSingleNode( "/xvw:root/xvw:viewer" , ns);
