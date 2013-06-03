@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -476,6 +477,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     	return true;
     }
     
+    
     public UIViewRoot createView(FacesContext context, String viewId, InputStream viewerInputStream, String sTransactionId, XUIViewerDefinition viewerDefinition ) 
     {
         XUIViewerBuilder oViewerBuilder;
@@ -524,7 +526,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         } else{
         	String state = generateId( viewId , session.getSessionMap() );
         	String initialComponentId = generateInitialComponentId( viewId , state, session.getSessionMap() );
-        	//System.out.println(viewId + ":" + id + " -> Instance " + initialComponentId );
         	result = new XUIViewRoot( initialComponentId , generateViewState( viewId, session.getSessionMap(), state ) );
     	}
         
@@ -838,16 +839,17 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	protected void restoreTreeStateFromCache(FacesContext context,
 			XUIViewRoot result, String viewerCacheId) {
 		
-		//Retrieve values before process restore state (it will change some importante values in XUIViewRoot)
+		//Retrieve values before process restore state (it will change some important values in XUIViewRoot)
 		String viewInstanceId = result.getInstanceId();
 		String viewState = result.getViewState();
 		String viewParentState = result.getParentViewState();
 		String transactionId = result.getTransactionId();
+		String viewId = result.getId();
 		boolean ownsTransaction = result.getOwnsTransaction();
-		
 		Object[] state = ( Object[] ) viewerCache.get( viewerCacheId ).getCacheContent()[0];
 		XUIStateManagerImpl oStateManagerImpl = ( XUIStateManagerImpl ) Util.getStateManager( context );
-		result.processRestoreState( context , oStateManagerImpl.handleRestoreState( state ) );
+		result.processRestoreState( context , oStateManagerImpl.handleRestoreState( state ) ); //Culpado está aqui??????????
+		
 		
 		//Set the values as they were before, because the processRestoreState sets them again
 		//Note to self, could it be possible in the first cache phase to set the new values in the cache (for viewState, etc)?
@@ -858,6 +860,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 		result.setParentViewState( viewParentState );
 		result.setTransactionId( transactionId );
 		result.setOwnsTransaction( ownsTransaction );
+		result.setId( viewId );
 		
 		result.resetState();
 	}
