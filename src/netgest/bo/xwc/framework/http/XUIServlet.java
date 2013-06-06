@@ -6,7 +6,6 @@ import java.util.Locale;
 
 import javax.faces.application.ViewExpiredException;
 import javax.faces.webapp.FacesServlet;
-import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -16,17 +15,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
-import netgest.bo.system.boApplicationLogger;
 import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 import netgest.utils.StringUtils;
+
+import org.apache.log4j.Logger;
 
 public class XUIServlet extends HttpServlet
 {
@@ -115,25 +113,39 @@ public class XUIServlet extends HttpServlet
         	oXEOSession = (boSession)oHttpSession.getAttribute( "boSession" );
         }
         
-        Locale localeForRequest = defaultLocale;
-        if (useBrowserLanguage){
-        	Locale browserLocale = oRequest.getLocale();
-        	if (browserLocale != null){
-        		localeForRequest = browserLocale;
-        	}
-        }
-    
-    	if( oXEOSession != null ) {
-    		oXEOSession.setDefaultLocale( localeForRequest );
-    		oXEOSession.getApplication().removeContextFromThread();
-	        oEboContext = oXEOSession.createRequestContextInServlet( oRequest, oResponse, getServletContext() );
-	        boApplication.currentContext().addEboContext( oEboContext );
-    	}
     	
-    	if( localeForRequest != null ) {
-    		XUIMessagesLocalization.setThreadCurrentLocale( localeForRequest );
-    	}
-    	
+	
+		if( oXEOSession != null ) {
+			oXEOSession.getApplication().removeContextFromThread();
+			oEboContext = oXEOSession.createRequestContextInServlet( oRequest, oResponse, getServletContext() );
+			boApplication.currentContext().addEboContext( oEboContext );
+		}
+		
+		Locale userLocale = XUIMessagesLocalization.getUserLanguageLocale();
+		Locale localeForRequest = null;
+		if ( userLocale != null )
+			localeForRequest = userLocale;
+		else{
+			if ( useBrowserLanguage ){
+				Locale browserLocale = oRequest.getLocale();
+				if (browserLocale != null){
+					localeForRequest = browserLocale;
+				} 
+			} else {
+				Locale appLocale = XUIMessagesLocalization.getApplicationLocale();
+				if ( appLocale != null ){ 
+					localeForRequest = appLocale;
+				}
+				else{
+					localeForRequest = defaultLocale;
+				}
+			}
+		}
+		XUIMessagesLocalization.setThreadCurrentLocale( localeForRequest );
+		if( oXEOSession != null ) {
+			oXEOSession.setDefaultLocale( localeForRequest );
+		}
+		
     	if (StringUtils.hasValue( renderKit )){
     		oRequest.setAttribute( "__renderKit" , renderKit );
     	}

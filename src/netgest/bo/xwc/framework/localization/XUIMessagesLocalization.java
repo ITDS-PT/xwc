@@ -21,6 +21,13 @@ public class XUIMessagesLocalization {
 
 	private static UTF8Control control = new UTF8Control();
 	
+	public static Locale getApplicationLocale(){
+		String appLocale = getApplicationLanguage();
+		if (StringUtils.hasValue( appLocale ))
+			return new Locale(appLocale);
+		return null;
+	}
+	
 	public static String getApplicationLanguage() {
 		try{
 			boApplication bo = boApplication.currentContext().getApplication();
@@ -30,10 +37,19 @@ public class XUIMessagesLocalization {
 			return "";
 		}
 	}
+	
+	public static Locale getUserLanguageLocale(){
+		String language = getUserLanguage( false );
+		if (StringUtils.hasValue( language ))
+			return new Locale( getUserLanguage() );
+		else
+			return null;
+	}
 
-	public static String getUserLanguage() {
-		String ret;
-		ret = getApplicationLanguage();
+	protected static String getUserLanguage(boolean useApplicationOnMiss){
+		String ret = null;
+		if ( useApplicationOnMiss )
+			ret = getApplicationLanguage();
 		try {
 			if (boApplication.currentContext() != null) 
 			{
@@ -54,6 +70,28 @@ public class XUIMessagesLocalization {
 			//e.printStackTrace();
 		}
 		return ret;
+	}
+	
+	public static String getUserLanguage() {
+		return getUserLanguage( true );
+	}
+	
+	/**
+	 * 
+	 * Retrieves the current locale associated to the user/application
+	 * 
+	 * @return
+	 */
+	public static Locale getCurrentLocale(){
+		String language = getUserLanguage();
+		Locale locale = null;
+		if ( StringUtils.isEmpty( language ) ){
+			language = getApplicationLanguage();
+		}
+		if ( StringUtils.hasValue( language ) ){
+			locale = new Locale( language );
+		} 
+		return locale;
 	}
 
 	public static String getMessage(String lang, Locale local, String bundle,
