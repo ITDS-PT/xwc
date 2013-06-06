@@ -55,7 +55,7 @@ public class XVWScriptsWrapper {
 	
 	public String command(String target, XUIComponentBase component, String value, String type){
 		ValueType valueType = ValueType.fromString( type );
-		return XVWScripts.getCommandScript(target, component, value, XVWScripts.WAIT_DIALOG );
+		return XVWScripts.getCommandScript(target, null, component, value, XVWScripts.WAIT_DIALOG, valueType );
 	}
 
 	public String ajaxCommand(String containerId, String commandId){

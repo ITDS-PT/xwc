@@ -102,10 +102,10 @@ public enum ValueType{LITERAL,
     		return getCommandDownloadFrame( oComponent, actionValue);
     	}
     	else if( "self".equalsIgnoreCase( target ) ) {
-    		return getAjaxCommandScript( oComponent, iWaitMode );
+    		return getAjaxCommandScript( oComponent, actionValue, iWaitMode );
     	}
     	else if( "top".equalsIgnoreCase( target ) ) {
-    		return getCommandScript( oComponent, iWaitMode );
+    		return getCommandScript( oComponent, actionValue, iWaitMode );
     	}
     	else if (target == null)
     		return getAjaxCommandScript( oComponent, actionValue, iWaitMode );	
@@ -116,7 +116,7 @@ public enum ValueType{LITERAL,
     		if (target.startsWith("window:"))
     			return getOpenCommandWindow( oComponent, actionValue, target);
     	}
-    	return getAjaxCommandScript( oComponent, iWaitMode );
+    	return getAjaxCommandScript( oComponent, actionValue, iWaitMode );
 		
     }
     
@@ -174,6 +174,8 @@ public static final String getAjaxCommandScript( XUIComponentBase oComponent, in
     }
     
     public static final String getAjaxCommandScript( XUIComponentBase oComponent, String sValue, int iWaitMode, ValueType type ) {
+    	if (sValue == null)
+    		sValue = "";
         if (type == ValueType.LITERAL )
             return "XVW.AjaxCommand( '" + oComponent.findParentComponent(XUIForm.class).getClientId() +  "','" + oComponent.getClientId() + "','" + sValue + "', '"+ iWaitMode +"')";
         else
