@@ -374,16 +374,20 @@ public class AttributeBase extends ViewerInputSecurityBase {
 	        
 	        // Lovs
 	        if (isLov.isDefaultValue()){
-	        this.isLov.setValue( 
-	                createValueExpression( sBeanExpression + ".isLov}", Boolean.class ) 
-	            );
+		        this.isLov.setValue( 
+		                createValueExpression( sBeanExpression + ".isLov}", Boolean.class ) 
+		            );
 	        }
 	        
-	        this.isLovEditable.setValue( 
-	                createValueExpression( sBeanExpression + ".isLovEditable}", Boolean.class ) 
-	            );
+	        if (this.isLovEditable.isDefaultValue()){
+		        this.isLovEditable.setValue( 
+		                createValueExpression( sBeanExpression + ".isLovEditable}", Boolean.class ) 
+		            );
+	        }
 	
-	        this.lovMap.setExpressionText( sBeanExpression + ".lovMap}" );
+	        if (this.lovMap.isDefaultValue()){
+	        	this.lovMap.setExpressionText( sBeanExpression + ".lovMap}" );
+	        }
 	
 	        this.dataFieldConnector.setValue( 
 	                createValueExpression( sBeanExpression + "}", DataFieldConnector.class ) 
