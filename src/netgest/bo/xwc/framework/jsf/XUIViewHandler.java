@@ -1492,6 +1492,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             
         }
         
+        if (newWriter != null )
+        	Layouts.doLayout( newWriter );
         XUIRequestContext.getCurrentContext().getScriptContext().renderForAjaxDom( oXvwAjaxResp );
         
         
