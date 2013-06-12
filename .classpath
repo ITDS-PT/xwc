@@ -58,7 +58,7 @@
 	<classpathentry kind="lib" path="project_lib/saxon9-dom.jar"/>
 	<classpathentry kind="lib" path="project_lib/saxon9-jdom.jar"/>
 	<classpathentry kind="lib" path="project_lib/saxon9.jar"/>
-	<classpathentry kind="lib" path="project_lib/servlet_2_4.jar"/>
+	<classpathentry kind="lib" path="project_lib/servlet_2_4.jar" sourcepath="project_lib/jsp-api-2.1-sources.jar"/>
 	<classpathentry kind="lib" path="project_lib/sigar.jar"/>
 	<classpathentry kind="lib" path="project_lib/sun-commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="project_lib/sun-commons-collections.jar"/>

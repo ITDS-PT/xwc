@@ -1474,6 +1474,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             }
         }
 
+        if (newWriter != null )
+        	Layouts.doLayout( newWriter );
         //TODO: Dá erro se não existir elementos para se efectuar o render do lado do cliente
         if( oToRenderList.size() > 0 || !oViewToRender.isPostBack() )
         {
@@ -1492,8 +1494,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             
         }
         
-        if (newWriter != null )
-        	Layouts.doLayout( newWriter );
         XUIRequestContext.getCurrentContext().getScriptContext().renderForAjaxDom( oXvwAjaxResp );
         
         
