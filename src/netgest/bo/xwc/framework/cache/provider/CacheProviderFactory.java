@@ -24,8 +24,8 @@ public class CacheProviderFactory {
 	private static Map<String,CacheEngine> engines = new HashMap<String,CacheEngine>();
 	
 	public static synchronized CacheEngine getCacheProvider(){
-		if (engines.containsKey( CacheType.TRIGGER_BASED ))
-			return engines.get( CacheType.TRIGGER_BASED );
+		if (engines.containsKey( CacheType.TRIGGER_BASED.name() ))
+			return engines.get( CacheType.TRIGGER_BASED.name() );
 		
 		CacheEngine defaultProvider = new TriggerBasedCacheProvider(
 				  TimeProviderFactory.getTimeProvider()

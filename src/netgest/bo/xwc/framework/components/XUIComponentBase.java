@@ -1106,6 +1106,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 	public void resetState() {
 		this.wasInitComponentProcessed = false;
 		this.isPostBack = false;
+		this.setRenderedOnClient( false );
 		String id = this.getId();
 		this.setId( id );
 		Iterator<UIComponent> it = getFacetsAndChildren();

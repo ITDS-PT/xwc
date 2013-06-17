@@ -30,7 +30,7 @@
 		$( XVW.get('${this.clientId}') ).tabs("option","selected",${this.activeTabIndex}); 
 		<#if this.renderTabBar>
 		 	<#list this.children as tab>
-			 	$( XVW.get("${tab.id}_link") ).click(function() { ${xvw.js.ajaxCommand(tab)}; });
+			 	$( XVW.get('${tab.clientId}_link') ).click(function() { ${xvw.js.ajaxCommand(tab)}; });
 		 	</#list>
 		</#if> 	 	
 }); 

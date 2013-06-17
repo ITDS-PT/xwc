@@ -72,6 +72,8 @@ import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl.TreeNode;
 import netgest.bo.xwc.framework.jsf.cache.CacheEntry;
 import netgest.bo.xwc.framework.jsf.utils.LRUCache;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.bo.xwc.framework.localization.XUILocalizedMessage;
+import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 import netgest.bo.xwc.xeo.beans.SystemViewer;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.bo.xwc.xeo.beans.XEOSecurityBaseBean;
@@ -456,14 +458,14 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     	return createView( context, viewId, viewerInputStream, sTransactionId, null );
     }
     
-    boolean canReadFromCache(XUIApplicationContext applicationCtx, String viewerId){
+    boolean canReadFromCache(XUIApplicationContext applicationCtx, String cacheKey, String viewerId){
     	
-    	if ( !viewerCache.contains( ( viewerId ) ) )
+    	if ( !viewerCache.contains( ( cacheKey ) ) )
     		return false;
     	//Check if we're in development mode
     	boolean development = boApplication.getDefaultApplication().inDevelopmentMode();
     	if (development){
-    		CacheEntry viewer = viewerCache.get( viewerId );
+    		CacheEntry viewer = viewerCache.get( cacheKey );
     		XUIViewerDefinition definition = applicationCtx.getViewerDef( viewerId );
     		Timestamp dateInCache = viewer.getLastUpdateDate();
     		Timestamp dateInResource = definition.getDateLastUpdate();
@@ -509,14 +511,14 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         }
 
         XUIViewRoot result = null;
-        String viewerCacheId = viewId;
+        String cacheKey = createCacheIdFromViewAndLanguage( viewId );
         boolean createNew = true;
         
         //cleanCache();
         XUISessionContext session = oContext.getSessionContext();
         //viewerCache.clear();
-        if ( canReadFromCache( oApp , viewerCacheId ) ){
-        	result = ( XUIViewRoot ) restoreTreeStructureFromCache( context , viewerCacheId );
+        if ( canReadFromCache( oApp , cacheKey, viewId ) ){
+        	result = ( XUIViewRoot ) restoreTreeStructureFromCache( context , cacheKey );
         	String newState = generateId( viewId , session.getSessionMap() );
         	String initialComponentId = generateInitialComponentId( viewId , newState, session.getSessionMap() );
         	result.setInstanceId( initialComponentId );
@@ -687,10 +689,10 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        //System.out.println( viewId + " " + end + " ms ("+((float)end/1000)+")" + " s");
 	
 	        if (createNew){
-	        	if ( canAddViewToCache( viewerCacheId, oViewerDef.getDateLastUpdate() ) ){
+	        	if ( canAddViewToCache( cacheKey, oViewerDef.getDateLastUpdate() ) ){
 	        		try{
 	        			savingInCache.set( Boolean.TRUE );
-	        			saveViewToCache( context , result , viewerCacheId , oViewerDef );
+	        			saveViewToCache( context , result , cacheKey , oViewerDef );
 	        		} finally {
 	        			savingInCache.set( Boolean.FALSE );
 	        		}
@@ -699,7 +701,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        
 	        
 	        if (!createNew){
-	        	restoreTreeStateFromCache( context , result , viewerCacheId );
+	        	restoreTreeStateFromCache( context , result , cacheKey );
 	        }
 	        
 	        // Initialize security
@@ -717,6 +719,20 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
         
     }
+
+
+	protected String createCacheIdFromViewAndLanguage(String viewId) {
+		StringBuilder b = new StringBuilder();
+			b.append(viewId)
+			.append("_")
+			.append(XUIMessagesLocalization.getThreadCurrentLocale().getLanguage());
+			String country = XUIMessagesLocalization.getThreadCurrentLocale().getCountry();
+			if (StringUtils.hasValue( country )){
+			b.append("_")
+			.append(country);
+			}
+		return b.toString();
+	}
 
 
 	 String generateInitialComponentId(String viewId, String state,
@@ -1458,6 +1474,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             }
         }
 
+        if (newWriter != null )
+        	Layouts.doLayout( newWriter );
         //TODO: Dá erro se não existir elementos para se efectuar o render do lado do cliente
         if( oToRenderList.size() > 0 || !oViewToRender.isPostBack() )
         {

@@ -508,16 +508,48 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
     XVW.ajax.enableAjaxRequests();
 }
 
-XVW.addScriptInclude = function( oScriptId, xsrc ) {
+
+XVW.ajaxResponse = function() {};
+
+XVW.ajaxResponse.createScriptElement = function ( scriptId, scriptContent ){
+	var scriptElement = document.createElement('script');
+	scriptElement.id = scriptId;
+	scriptElement.type = 'text/javascript';
+	scriptElement.text = scriptContent;
+	return scriptElement;
+}
+
+XVW.ajaxResponse.isXmlRequestReady = function ( xmlHttpRequest ){
+	return xmlHttpRequest.readyState == 4;
+}
+
+XVW.ajaxResponse.includeScriptWithXmlHttp = function (oScriptId, pathToScript){
 	if( document.getElementById( oScriptId )==null ) {
-		var head = document.getElementsByTagName('head')[0];
-		var scriptElement = document.createElement('script');
-		scriptElement.id = oScriptId;
-		scriptElement.type = 'text/javascript';
-		scriptElement.src = xsrc;
-		head.appendChild( scriptElement );
+		var oXmlReq = XVW.createXMLHttpRequest(  );
+	    oXmlReq.open('GET', pathToScript , false );
+	    oXmlReq.onreadystatechange = function(){
+	      if ( XVW.ajaxResponse.isXmlRequestReady( oXmlReq ) ){
+	    	  var head = document.getElementsByTagName('head')[0];
+	    	  var script = XVW.ajaxResponse.createScriptElement(oScriptId,oXmlReq.responseText);
+	    	  head.appendChild( script );
+	      }
+	    }
+	    oXmlReq.send(null);
 	}
 }
+
+/**
+ * 
+ * This function is called to include a javascript source file dinamically within an AjaxRequest, uses
+ * XMLHttpRequest to download the script (synchronously) and appends the script content to the head
+ * 
+ * */
+XVW.addScriptInclude = function( oScriptId, xsrc ) {
+	XVW.ajaxResponse.includeScriptWithXmlHttp(oScriptId,xsrc);
+}
+
+
+
 
 XVW.getViewInputById = function( sViewDivId, sInputId ) {
     var oViewDiv = document.getElementById( sViewDivId );

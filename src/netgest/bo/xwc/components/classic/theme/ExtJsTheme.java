@@ -371,7 +371,6 @@ public class ExtJsTheme implements XUITheme {
 				writer.writeAttribute("style", "width:100%;height:100%");
 		}
 		
-		Layouts.doLayout(writer);
 		
 	}
 
@@ -388,7 +387,6 @@ public class ExtJsTheme implements XUITheme {
 		} else {
 			writer.endElement("div");
 		}
-		
 	}
 
 }

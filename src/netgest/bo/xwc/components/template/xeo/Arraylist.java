@@ -1,7 +1,7 @@
 package netgest.bo.xwc.components.template.xeo;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import netgest.bo.xwc.components.template.base.TemplateRenderer;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -11,19 +11,19 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 public class Arraylist extends XUIComponentBase {
 
-	private XUIBindProperty<ArrayList<Object>> dataSource = new XUIBindProperty<ArrayList<Object>>(
-			"dataSource", this, ArrayList.class);
+	private XUIBindProperty<List<Object>> dataSource = new XUIBindProperty<List<Object>>(
+			"dataSource", this, List.class);
 		
-	public ArrayList<Object> getDataSource() {		
+	public List<Object> getDataSource() {		
 		return dataSource.getEvaluatedValue();		
 	}
 	
 	public void setDataSource(String dataSource) {
 		this.dataSource.setValue(createValueExpression(dataSource,
-				ArrayList.class));
+				List.class));
 	}
 			
-	public ArrayList<Object> getList() {
+	public List<Object> getList() {
 		return getDataSource();
 	}
 	

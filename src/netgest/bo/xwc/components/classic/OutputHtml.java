@@ -55,6 +55,12 @@ public class OutputHtml extends ViewerOutputSecurityBase {
     @Override
     public void initComponent() {
     	super.initComponent();
+    }
+    
+    @Override
+    public void preRender() {
+    	super.preRender();
+    	//WasStateChanged needs this value set, as such it needs to be set once per component render
     	this.renderedValue.setValue( getValue() );
     }
     
@@ -134,7 +140,7 @@ public class OutputHtml extends ViewerOutputSecurityBase {
             w.startElement( HTMLTag.SPAN, component );
             w.writeAttribute( HTMLAttr.ID , component.getClientId(), null );
             if ( oOut.getEffectivePermission(SecurityPermissions.READ) && oOut.getVisible() ) {
-            	w.write( (String)((OutputHtml)component).getValue() );
+            	w.write( ((OutputHtml)component).getValue().toString() );
             } else {
             	w.write( "" );            	
             }

@@ -22,8 +22,8 @@ public class XUIScriptContext {
     public static final RenderType TYPE_TEXT = new RenderType( 2, "TYPE_TEXT" );
     
     public static final RenderPosition POSITION_HEADER = new RenderPosition( 1, "POSITION_HEADER" );
-    public static final RenderPosition POSITION_INLINE = new RenderPosition( 2, "POSITION_INLINE" );;
-    public static final RenderPosition POSITION_FOOTER = new RenderPosition( 3, "POSITION_FOOTER" );;
+    public static final RenderPosition POSITION_INLINE = new RenderPosition( 2, "POSITION_INLINE" );
+    public static final RenderPosition POSITION_FOOTER = new RenderPosition( 3, "POSITION_FOOTER" );
 
     protected Vector<Fragment> oFragmentsVector = new Vector<Fragment>();
 

@@ -35,7 +35,7 @@ public class XUIRequestContext {
 	private Map<String,XUIViewRoot> changedViews = new HashMap<String, XUIViewRoot>();
     private XUIApplicationContext   oApplication;
     private Boolean                 bIsAjax;
-    private boolean                 bIsClosed;
+    private boolean                 bIsClosed = false;
     private boolean                 bIsPostBack;
 
     private XUIScriptContext        oScriptContext;

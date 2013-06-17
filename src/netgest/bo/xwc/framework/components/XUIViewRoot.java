@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.system.Logger;
 import netgest.bo.xwc.components.classic.Form;
+import netgest.bo.xwc.components.classic.Layouts;
+import netgest.bo.xwc.components.classic.TemplateInclude;
 import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -699,7 +701,7 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 	
 	public static final boolean renderScripts(XUIViewRoot root) {
-		return renderScripts() && root.getParent() == null;
+		return renderScripts() && (root.getParent() == null);
 	}
 
 	public static class XEOHTMLRenderer extends XUIRenderer {
@@ -781,6 +783,7 @@ public class XUIViewRoot extends UIViewRoot {
 
 			if (renderScripts(viewRoot)) {
 
+				Layouts.doLayout( w );
 				w.getStyleContext().render(headerW, w, footerW);
 				w.getScriptContext().render(headerW, w, footerW);
 				oRequestContext.getStyleContext().render(headerW, w, footerW);

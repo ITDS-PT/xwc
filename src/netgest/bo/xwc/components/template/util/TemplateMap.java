@@ -55,7 +55,9 @@ public class TemplateMap<K, V> implements Map< K , V > {
 		if (value != null && value instanceof ValueExpression){
 			return ((ValueExpression) value).getExpressionString();
 		}
-		return (String) value;
+		if (value instanceof Boolean)
+			System.out.println("Boolean");
+		return ((Object) value).toString();
 	}
 
 	@Override
