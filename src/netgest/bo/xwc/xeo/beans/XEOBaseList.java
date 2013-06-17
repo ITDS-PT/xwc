@@ -106,15 +106,13 @@ public class XEOBaseList extends XEOBaseBean {
 			        XEOEditBean oEditBean = (XEOEditBean)oEditViewRoot.getBean("viewBean");
 			    	oEditBean.setCurrentObjectKey( String.valueOf( oActiveRow.getAttribute("BOUI").getValue() ) );
 		            oRequestContext.setViewRoot( oEditViewRoot );
-		            oEditViewRoot.processInitComponents();
+		            
 			    }
-		        //TODO: Call must be not necessary
-		        oRequestContext.renderResponse();
-	        }
+		    }
         }
         else {
         	oRequestContext.setViewRoot( oRequestContext.getSessionContext().createView(SystemViewer.DUMMY_VIEWER) );
-	        oRequestContext.renderResponse();
+	        
         }
     }
     
@@ -158,10 +156,7 @@ public class XEOBaseList extends XEOBaseBean {
 	        oEditBean.createNew( sObjectName );
 	        oRequestContext.setViewRoot( oEditViewRoot );
 	        
-	        //TODO: Call must be not necessary
-	        oEditViewRoot.processInitComponents();
-	        oRequestContext.renderResponse();
-        }
+	    }
     }
 
     public boObjectList getCurrentObjectList() {
