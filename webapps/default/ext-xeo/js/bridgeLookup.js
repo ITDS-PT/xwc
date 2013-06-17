@@ -28,6 +28,6 @@ XVW.openBridgeLookup = function(form,id,boui,window){
 XVW.removeBridgeLookup = function(form,id,boui){
 	var idClient = form+":"+id+"_toRemove";
 	var cmdId = form+":"+id+"_rmBridge";
-	document.getElementById(''+idClient+'').value = boui;
-	XVW.AjaxCommand( form,cmdId,cmdId,1);
+	document.getElementById(idClient).value = boui;
+	XVW.AjaxCommand( form,cmdId,boui,1);
 };
