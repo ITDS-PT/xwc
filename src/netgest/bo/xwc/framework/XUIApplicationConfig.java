@@ -22,7 +22,10 @@ public class XUIApplicationConfig {
 	
 	public XUIApplicationConfig(boApplicationConfig boConfig){
 		initDefaults();
-		defaultApplicationRenderKit = boConfig.getDefaultRenderKit();
+		if (StringUtils.hasValue( boConfig.getDefaultRenderKit() ))
+			defaultApplicationRenderKit = boConfig.getDefaultRenderKit();
+		else
+			defaultApplicationRenderKit = "XEOHTML";
 		Iterator<Entry<String,RenderKit>> entries = boConfig.getRenderKits().entrySet().iterator();
 		while (entries.hasNext()){
 			Entry<String,RenderKit> current = entries.next();
