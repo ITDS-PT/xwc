@@ -96,7 +96,6 @@ public class ComponentRenderUtils {
 		
 		url += "javax.faces.ViewState=" + reqContext.getViewRoot().getViewState();
 		url += "&xvw.servlet="+clientID;
-		
 		return url;
 	}
 	

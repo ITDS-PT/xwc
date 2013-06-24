@@ -18,6 +18,7 @@ public interface WebRequest {
 		, FULL_TEXT ("fullText")
 		, SORT ("sort")
 		, FILTERS ("filters")
+		, DATASOURCE_CHANGE ("dataSourceChange") //Whether the DataSource was changed or not
 		;
 		
 		private String name;

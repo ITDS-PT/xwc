@@ -110,6 +110,7 @@ public class ToolBar extends ViewerSecurityBase {
     
     public ToolBar()
     {
+    	
     }
     
     @Override
@@ -145,7 +146,14 @@ public class ToolBar extends ViewerSecurityBase {
 		
 		initializeTemplate( "templates/components/toolbar.ftl" );
 		
+		if (rendererType.isDefaultValue( ))
+			rendererType.setValue( "toolBar" );
 		
+    }
+    
+    @Override
+    public String getFamily() {
+    	return "toolBar";
     }
 
     @Override
@@ -273,13 +281,13 @@ public class ToolBar extends ViewerSecurityBase {
 	                Menu oMenuChild = (Menu)currChild;
 	                if( oMenuChild.isRendered() ) {
                 		sb.startBlock();
-                		
-                    		generateUpdateScript(sb, oMenuChild );
-		                	if( oMenuChild.getChildCount() > 0 ) {
-		                		updateChildMenuItems(sb, oMenuChild);
-		                	}
-	                	
-	                	sb.endBlock();
+                		sb.w( "try{" );
+                    	generateUpdateScript(sb, oMenuChild );
+                    	sb.w("} catch (e) {}");
+                    	sb.endBlock();
+	                	if( oMenuChild.getChildCount() > 0 ) {
+	                		updateChildMenuItems(sb, oMenuChild);
+	                	}
 	                }
                 }
             }
@@ -415,6 +423,9 @@ public class ToolBar extends ViewerSecurityBase {
 		    			                    	//If our top Menu has an action, make it a split button with default action
 		    			                    	//if (oMenuChild.serverAction != null && oMenuChild.serverAction.getValue() != null) 
 		    				                    oItemCfg.addJSString( "xtype", "splitbutton" );
+		    				                    if (oItemCfg.getConfigValue( "handler" ) == null){
+		    				                    	oItemCfg.add( "handler" , "function () { this.showMenu(); }"); 
+		    				                    }
 		    			                    	if( oItemCfg != null ) {
 		    			    	                    encodeSubMenuJS( toolBar,oItemCfg.addChild( "menu" ), oMenuChild );
 		    			                    	}
@@ -506,8 +517,20 @@ public class ToolBar extends ViewerSecurityBase {
             	waitMode = XVWServerActionWaitMode.STATUS_MESSAGE;
             }
             
-            String handler = "function(){" + XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode.ordinal() ) +"}";
-            oItemCfg.add( "handler", handler  );
+            String handler = "";
+            //Menus can have an action, or implement the actionPerformed method. We need to generate the handler
+            //for the two situations (and don't generate when neither is present). Problem is we can't detect if the
+            //action performed method is implemented in a subclass, thus we need to check if it's an instance of Menu (
+            //and check for actions) or an instance of a subclass (and generate anyway)
+            if ( isBaseMenu( oMenuChild ) ){
+            	if ( menuHasAction( oMenuChild ) ){
+            		handler = "function(){" + XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode.ordinal() ) +"}";
+                	oItemCfg.add( "handler", handler  );
+            	}
+            } else {
+            	handler = "function(){" + XVWScripts.getCommandScript( oMenuChild.getTarget(), oMenuChild, waitMode.ordinal() ) +"}";
+            	oItemCfg.add( "handler", handler  );
+            }
             
             if( shortCut != null ) {
             	XUIScriptContext sc = XUIRequestContext.getCurrentContext().getScriptContext();
@@ -520,7 +543,35 @@ public class ToolBar extends ViewerSecurityBase {
         }
         
         
-        public void encodeSubMenuJS( ToolBar tool, ExtConfig oMenu, Menu oSubMenu ) {
+        /**
+         * 
+         * Checks if a menu has an action associated.
+         * It's only guaranteed to work with instances of Menu (and not with instances
+         * of descendants which may implement the actionPerformed method)
+         * 
+         * @param oMenuChild The menu to check
+         * @return True if the menu has actions and false otherwise
+         */
+        private static boolean menuHasAction(Menu oMenuChild) {
+			if (oMenuChild.getActionExpression() != null || oMenuChild.getActionListener() != null || 
+					(oMenuChild.getActionListeners() != null && oMenuChild.getActionListeners().length > 0) )
+				return true;
+			else
+				return false;
+		}
+
+		/**
+		 * 
+		 * Checks whether the Menu is a subclass of the base Menu or a base menu
+		 * 
+		 * @param oMenuChild The menu to test
+		 * @return True if it's an instance of menu, false if it's a instance of a subclasss
+		 */
+		private static boolean isBaseMenu(Menu oMenuChild) {
+			return oMenuChild.getClass().equals( Menu.class );
+		}
+
+		public void encodeSubMenuJS( ToolBar tool, ExtConfig oMenu, Menu oSubMenu ) {
             ExtConfigArray  oSubChildCfg;
 
             oMenu.setComponentType( "Ext.menu.Menu" );

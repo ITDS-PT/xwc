@@ -28,14 +28,17 @@ import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIComponentPlugIn;
 import netgest.bo.xwc.framework.XUIDefaultPropertiesHandler;
+import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.jsf.XUIPropertySetter;
+import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
 import netgest.bo.xwc.framework.properties.XUIProperty;
 import netgest.bo.xwc.framework.properties.XUIPropertyVisibility;
+import netgest.utils.StringUtils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -112,6 +115,15 @@ public abstract class XUIComponentBase extends UIComponentBase
         return oStatePropertyMap.get( propertyName );
 	}
     
+	public void setRendered(String renderedValueExpression) {
+		if( "true".equals(renderedValueExpression) ) 
+			super.setRendered(true);
+		else if ( "false".equals(renderedValueExpression) )
+			super.setRendered(false);
+		else
+			setValueExpression("rendered",  createValueExpression(renderedValueExpression, Boolean.class ) );
+	}
+	
     @Override
 	public boolean isRendered() {
 		return super.isRendered();
@@ -140,28 +152,28 @@ public abstract class XUIComponentBase extends UIComponentBase
     }
     
     private List<XUIBaseProperty<?>> updatedProperties 
-    	= new ArrayList<XUIBaseProperty<?>>( UPDATED_PROPERTIES_INITIAL_SIZE ) ;
-    
+		= new ArrayList<XUIBaseProperty<?>>( UPDATED_PROPERTIES_INITIAL_SIZE ) ;
+
     private StateChanged changed = null;
-    
-    public void setStateChange(StateChanged newState){
-    	changed = newState;
-    }
-    
-    @Deprecated
-    public boolean wasStateChanged(){
-    	return wasStateChanged2() == StateChanged.FOR_RENDER;
-    }
-    
-    public StateChanged wasStateChanged2() {
-    	if (changed == null){
+
+	public void setStateChange(StateChanged newState){
+		changed = newState;
+	}
+	
+	@Deprecated
+	public boolean wasStateChanged(){
+		return wasStateChanged2() == StateChanged.FOR_RENDER;
+	}
+	
+	public StateChanged wasStateChanged2() {
+		if (changed == null){
 	    	XUIRenderer renderer = (XUIRenderer ) getRenderer( getFacesContext() );
 	    	if (renderer != null)
 	    		changed = renderer.wasStateChanged( this, updatedProperties );
 	    	else
 	    		changed = StateChanged.NONE;
-    	}
-    	return changed;
+		}
+		return changed;
     }
     
     
@@ -198,6 +210,16 @@ public abstract class XUIComponentBase extends UIComponentBase
     	return (XUIComponentBase)oParentComp;
     }
     
+    public UIComponent findParent( Class<?> cType ) {
+    	UIComponent oParentComp;
+    	
+    	oParentComp = getParent();
+    	while( oParentComp != null && !cType.isInstance( oParentComp ) ) {
+    		oParentComp = oParentComp.getParent();
+    	}
+    	return oParentComp;
+    }
+    
     public XUIComponentBase findComponent( Class<?> cType ) {
     	
     	assert cType != null;
@@ -207,12 +229,13 @@ public abstract class XUIComponentBase extends UIComponentBase
     	}
     	
     	XUIComponentBase oRet;
-    	List<UIComponent> oChildrenList;
+    	Iterator<UIComponent> oChildrenList;
     	
     	oRet = null;
     	
-    	oChildrenList = getChildren();
-    	for( UIComponent child : oChildrenList ) {
+    	oChildrenList = getFacetsAndChildren();
+    	while (oChildrenList.hasNext()){
+    		UIComponent child = oChildrenList.next();
     		if( cType.isInstance( child ) ) {
     			oRet = (XUIComponentBase)child;
     			break;
@@ -241,9 +264,9 @@ public abstract class XUIComponentBase extends UIComponentBase
 		XUIComponentBase oComp = null;
 		if (current != null)
 		{
-			List<UIComponent> list = current.getChildren();
-			for (UIComponent component : list)
-			{
+			Iterator<UIComponent> list = current.getFacetsAndChildren();
+			while (list.hasNext()){
+				UIComponent component = list.next();
 				if (component instanceof XUIComponentBase)
 				{
 					oComp = ((XUIComponentBase) component).findComponent(cType);
@@ -253,9 +276,9 @@ public abstract class XUIComponentBase extends UIComponentBase
 				}
 				else
 				{
-					List<UIComponent> listChildren = component.getChildren();
-					for (UIComponent chilCmp: listChildren)
-					{
+					Iterator<UIComponent> listChildren = component.getFacetsAndChildren();
+					while (listChildren.hasNext()){
+						UIComponent chilCmp = listChildren.next();
 						return findComponent(chilCmp,cType);
 					}
 				}
@@ -266,52 +289,26 @@ public abstract class XUIComponentBase extends UIComponentBase
 		return null;
 		
 	}
-    
+	
     @Override
 	public UIComponent findComponent(String expr) {
+    	UIComponent oComp=super.findComponent(expr);
 		
-		UIComponent oComp=super.findComponent(expr);
-		
-		//Try Other Way
-		//Problem with container
-		if (oComp==null)
-		{
-			UIComponent base = this;
-			if (expr.charAt(0) == NamingContainer.SEPARATOR_CHAR) {
-	            // Absolute searches start at the root of the tree
-	            while (base.getParent() != null) {
-	                base = base.getParent();
-	            }
-	            // Treat remainder of the expression as relative
-	            expr = expr.substring(1);
-	        } else {
-	            // Relative expressions start at the closest NamingContainer or root
-	            while (base.getParent() != null) {
-	                if (base instanceof NamingContainer) {
-	                    break;
-	                }
-	                base = base.getParent();
-	            }
-	        }
-			
-			// Evaluate the search expression (now guaranteed to be relative)
-	        String[] segments = expr.split(String.valueOf(NamingContainer.SEPARATOR_CHAR));
-	        for (int i = 0, length = (segments.length - 1);
-	             i < segments.length;
-	             i++, length--) {
-	        	if (base!=null)
-	        		oComp = findComponent(base, segments[i], (i == 0));
-	            // the first element of the expression may match base.id
-	            // (vs. a child if of base)
-	            /*if (i == 0 && oComp == null &&
-	                 segments[i].equals(base.getId())) {
-	            	oComp = base;
-	            }*/
-	            if (oComp != null && (!(oComp instanceof NamingContainer)) && length > 0) {
-	                throw new IllegalArgumentException(segments[i]);
-	            }
-	            base = oComp;
-	        }
+		if (oComp == null){
+			UIComponent result = null;
+			for (Iterator<UIComponent> i = getFacetsAndChildren(); i.hasNext();) {
+				UIComponent kid =  i.next();
+					if ( expr.equals(kid.getClientId( getFacesContext() ))) {
+						result = kid;
+						oComp = result;
+						break;
+					}
+					result = findComponent(kid, expr, true);
+					if (result != null) {
+						oComp = result;
+						break;
+					}
+			}
 		}
 		
 		return oComp;
@@ -319,79 +316,65 @@ public abstract class XUIComponentBase extends UIComponentBase
 
 	private static UIComponent findComponent(UIComponent base, String id,
 			boolean checkId) {
-		if (id.equals(base.getId())) {
-			return base;
-		}
-		// Search through our facets and children
-		UIComponent result = null;
-		for (Iterator i = base.getFacetsAndChildren(); i.hasNext();) {
-			UIComponent kid = (UIComponent) i.next();	
-				if ( id.equals(kid.getId())) {
-					result = kid;
-					break;
-				}
-				result = findComponent(kid, id, true);
-				if (result != null) {
-					break;
-				}
-		}
-		return (result);
-
+		return base.findComponent( id );
 	}
 	
     public Object saveState() 
     {   
-        // Save the state of all the properties of the object
-        Object[] oStateProperyState;
-        int      iCntr = 0;
-
-        if( this.oStatePropertyMap != null && oStatePropertyMap.size() > 0 ) {
-        	oStateProperyState = new Object[ this.oStatePropertyMap.size() ];
-            Iterator<Entry<String,XUIBaseProperty<?>>> oStatePropertiesIt = getStateProperties().iterator();
-            while( oStatePropertiesIt.hasNext() ) {
-            	XUIBaseProperty<?> x = oStatePropertiesIt.next().getValue();
-            	
-//            	if(  "displayValue".equals( x.getName() ) ) {
-//            		System.out.println( "[SAVE][" + this.getId() + "] Default Value:" + x.getValue() );
-//            	}
-            	
-            	if( !x.isDefaultValue() )
-            		oStateProperyState[ iCntr ] = x.saveState();
-            	else
-            		oStateProperyState[ iCntr ] = null;
-                iCntr ++;
-            }
-        }
-        else {
-            oStateProperyState = EMPTY_OBJECT_ARRAY;
-        }
-        // Call super to allow him to save her state;
-        return new Object[] { super.saveState( getFacesContext() ), oStateProperyState };
+    	if( isRendered() || !XUIViewHandler.isSavingInCache()  ) {
+	        // Save the state of all the properties of the object
+	        Object[] oStateProperyState;
+	        int      iCntr = 0;
+	
+	        if( this.oStatePropertyMap != null && oStatePropertyMap.size() > 0 ) {
+	        	oStateProperyState = new Object[ this.oStatePropertyMap.size() ];
+	            Iterator<Entry<String,XUIBaseProperty<?>>> oStatePropertiesIt = getStateProperties().iterator();
+	            while( oStatePropertiesIt.hasNext() ) {
+	            	XUIBaseProperty<?> x = oStatePropertiesIt.next().getValue();
+	            	
+	            	if( !x.isDefaultValue() )
+	            		oStateProperyState[ iCntr ] = x.saveState();
+	            	else
+	            		oStateProperyState[ iCntr ] = null;
+	                iCntr ++;
+	            }
+	        }
+	        else {
+	            oStateProperyState = EMPTY_OBJECT_ARRAY;
+	        }
+	        
+	        // Call super to allow him to save her state;
+	        return new Object[] { super.saveState( getFacesContext() ), oStateProperyState, wasRendererTypeSet };
+    	}
+    	return null;
     }
     
     public void restoreState( Object oState ) {
-        Object[] oMyState = (Object[])oState;
-        Object[] oPropertiesState;
-        int      iCntr = 0;
-        
-        isPostBack = true;
-        wasInitComponentProcessed = true;
-        // Restore all the properties
-        super.restoreState( getFacesContext(), oMyState[0] );
-        oPropertiesState = (Object[])oMyState[1];
-        
-        if( this.oStatePropertyMap != null )
-        {
-            Iterator<Entry<String,XUIBaseProperty<?>>> oStatePropertiesIt = getStateProperties().iterator();
-            while( oStatePropertiesIt.hasNext() ) {
-            	XUIBaseProperty<?> prop = oStatePropertiesIt.next().getValue();
-            	if( oPropertiesState[ iCntr ] != null )
-            		prop.restoreState( oPropertiesState[ iCntr ]  );
-            	
-                iCntr ++;
-            }
-        }
-        _isRenderedOnClient = this.isRenderedOnClient.getValue();
+    	if( isRendered() && oState != null ) {
+	        Object[] oMyState = (Object[])oState;
+	        Object[] oPropertiesState;
+	        int      iCntr = 0;
+	        
+	        isPostBack = true;
+	        wasInitComponentProcessed = true;
+	        // Restore all the properties
+	        super.restoreState( getFacesContext(), oMyState[0] );
+	        oPropertiesState = (Object[])oMyState[1];
+	        wasRendererTypeSet = (Boolean) ( oMyState[2] );
+	        
+	        if( this.oStatePropertyMap != null )
+	        {
+	            Iterator<Entry<String,XUIBaseProperty<?>>> oStatePropertiesIt = getStateProperties().iterator();
+	            while( oStatePropertiesIt.hasNext() ) {
+	            	XUIBaseProperty<?> prop = oStatePropertiesIt.next().getValue();
+	            	if( oPropertiesState[ iCntr ] != null )
+	            		prop.restoreState( oPropertiesState[ iCntr ]  );
+	            	
+	                iCntr ++;
+	            }
+	        }
+	        _isRenderedOnClient = this.isRenderedOnClient.getValue();
+    	}
     }
     
     public UIComponent getChild( int i ) {
@@ -481,15 +464,49 @@ public abstract class XUIComponentBase extends UIComponentBase
     @Override
     public String getRendererType() 
     {
-        String sRenderType = getClass().getName();
-        sRenderType = sRenderType.substring( sRenderType.lastIndexOf( "." ) + 1 );
-        sRenderType = sRenderType.substring(0,1).toLowerCase() + sRenderType.substring(1);
-        return sRenderType;
+    	if (rendererType.isDefaultValue( ) || StringUtils.isEmpty( rendererType.getValue() ) ){
+    		return calculateRendererType( );
+    	} else 
+    		return rendererType.getValue( );
+    }
+    
+    /**
+     *  Renderer to use
+     */
+    protected XUIBaseProperty<String> rendererType = new XUIBaseProperty<String>("rendererType", this);
+   
+    private Boolean wasRendererTypeSet = Boolean.FALSE;
+    
+    public void setRendererType(String type){
+    	wasRendererTypeSet = Boolean.TRUE;
+    	rendererType.setValue(type);
+    }
+    
+
+    /*
+     * Overridden to be used to allow multiple renderes for the same
+     * component, returns the "rendererType" value 
+     * 
+     * @see javax.faces.component.UIComponent#getFamily()
+     */
+    @Override
+    public String getFamily() {
+    	if (rendererType.isDefaultValue( ) && !wasRendererTypeSet)
+    		return getRendererType( );
+    	return calculateRendererType( );
     }
 
-    public String getFamily() {
-        return getRendererType();
-    }
+    private String rendererTypeCache = null;
+	private String calculateRendererType() {
+		if (rendererTypeCache == null){
+			String value = getClass().getName();
+			value = value.substring( value.lastIndexOf( "." ) + 1 );
+			rendererTypeCache = value.substring(0,1).toLowerCase() + value.substring(1);
+		}
+		return rendererTypeCache;
+	}
+    
+    
 
     @Override
     public Object saveState(FacesContext context) 
@@ -628,7 +645,7 @@ public abstract class XUIComponentBase extends UIComponentBase
     public ValueExpression createValueExpression( String sValueExpression, Class<?> cType ) {
         ExpressionFactory oExFactory = getFacesContext().getApplication().getExpressionFactory();
         return oExFactory.createValueExpression( 
-                    getFacesContext().getELContext(), sValueExpression, cType
+                    getELContext(), sValueExpression, cType
                 ); 
     }
 
@@ -636,12 +653,17 @@ public abstract class XUIComponentBase extends UIComponentBase
     public MethodExpression createMethodBinding( String sMethodExpression ) {
     	FacesContext context = FacesContext.getCurrentInstance();
         ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
-        return oExFactory.createMethodExpression( context.getELContext(), sMethodExpression, null, DUMMY_CLASS_ARRAY );
+        return oExFactory.createMethodExpression( getELContext(), sMethodExpression, null, DUMMY_CLASS_ARRAY );
     }
 
     public MethodExpression createMethodBinding( String sMethodExpression, Class<?> oReturnValue ) {
         ExpressionFactory oExFactory = getFacesContext().getApplication().getExpressionFactory();
-        return oExFactory.createMethodExpression( getFacesContext().getELContext(), sMethodExpression, null, DUMMY_CLASS_ARRAY );
+        return oExFactory.createMethodExpression( getELContext(), sMethodExpression, null, DUMMY_CLASS_ARRAY );
+    }
+    
+    public MethodExpression createMethodBinding( String sMethodExpression, Class<?>[] types ) {
+        ExpressionFactory oExFactory = getFacesContext().getApplication().getExpressionFactory();
+        return oExFactory.createMethodExpression( getELContext(), sMethodExpression, null, types );
     }
 
     protected UIComponent getNamingContainer() {
@@ -842,7 +864,7 @@ public abstract class XUIComponentBase extends UIComponentBase
      */
     private void recursiveProcessValidateModel(UIComponent oComponent)
     {
-    	Iterator<UIComponent> kids = getFacetsAndChildren();
+    	Iterator<UIComponent> kids = oComponent.getFacetsAndChildren();
         while (kids.hasNext()) {
             UIComponent kid = (UIComponent) kids.next();
             if( kid instanceof XUIComponentBase ) {
@@ -864,7 +886,7 @@ public abstract class XUIComponentBase extends UIComponentBase
     }
 
     public ELContext getELContext() {
-        return getFacesContext().getELContext();
+        return new XUIELContextWrapper( getFacesContext().getELContext() , this );
     }
 
     public XUISessionContext getSessionContext() {
@@ -966,9 +988,9 @@ public abstract class XUIComponentBase extends UIComponentBase
 			((XUIComponentBase)component).isRenderedOnClient.setValue( false );
 			((XUIComponentBase)component)._isRenderedOnClient = false;
 		}
-		List<UIComponent> children = component.getChildren();
-		for( UIComponent child : children ) 
-		{
+		Iterator<UIComponent> it = component.getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent child = it.next();
 			resetRenderOnClientChildren( child );
 		}
 	} 
@@ -984,9 +1006,9 @@ public abstract class XUIComponentBase extends UIComponentBase
 	public void forceRenderOnClient() {
 		this.setDestroyOnClient(true);
 		this._isRenderedOnClient = false;
-		List<UIComponent> children = getChildren();
-		for( UIComponent child : children ) 
-		{
+		Iterator<UIComponent> it = getFacetsAndChildren();
+		while (it.hasNext()) {
+			UIComponent child = it.next();
 			if( child instanceof XUIComponentBase ) {
 				((XUIComponentBase)child).forceRenderOnClient();
 			}
@@ -1008,9 +1030,10 @@ public abstract class XUIComponentBase extends UIComponentBase
 	 */
 	private void recursiveForceRenderOnClient(UIComponent oComponent)
 	{
-		List<UIComponent> children = oComponent.getChildren();
-		for( UIComponent child : children ) 
+		Iterator<UIComponent> children = oComponent.getFacetsAndChildren();
+		while (children.hasNext()) 
 		{
+			UIComponent child = children.next();
 			if( child instanceof XUIComponentBase ) {
 				((XUIComponentBase)child).forceRenderOnClient();
 			}
@@ -1077,6 +1100,36 @@ public abstract class XUIComponentBase extends UIComponentBase
 	protected final void initializeTemplate(String templateName){
 		if (template.isDefaultValue()){
 			template.setExpressionText( templateName );
+		}
+	}
+
+	public void resetState() {
+		this.wasInitComponentProcessed = false;
+		this.isPostBack = false;
+		this.setRenderedOnClient( false );
+		String id = this.getId();
+		this.setId( id );
+		Iterator<UIComponent> it = getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent child = it.next();
+			if (child instanceof XUIComponentBase){
+				((XUIComponentBase)child).resetState();
+			} else {
+				processResetState(child);
+			}
+		}
+		
+	}
+	
+	void processResetState(UIComponent comp){
+		Iterator<UIComponent> it = comp.getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent child = it.next();
+			if (child instanceof XUIComponentBase){
+				((XUIComponentBase)child).resetState();
+			} else {
+				processResetState(child);
+			}
 		}
 	}
 	

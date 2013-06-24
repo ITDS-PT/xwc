@@ -10,6 +10,9 @@ public class XEOObjectListIterator implements DataListIterator {
     
     public XEOObjectListIterator( boObjectList oBoObjectList ) {
         this.oBoObjectList = oBoObjectList;
+        if (this.oBoObjectList.getPage() == -1){
+        	this.oBoObjectList.lastPage();
+        }
     }
 
     public boolean hasNext() {

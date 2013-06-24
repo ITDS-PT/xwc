@@ -270,11 +270,17 @@ public class XUIComponentParser
                     sRenderFor = oRenderElement.getAttribute( "for" );
                     sRenderFamily = oRenderElement.getAttribute( "family" );
                     
+                    
                     if (sRenderFamily.length() == 0)
                     	sRenderFamily = sRenderFor;
                     
                     assert sRenderFor != null:MessageLocalizer.getMessage("FOR_ATTRIBUTE_MUST_BE_DEFINED_IN_ELEMENT");
                     oComponent = oComponents.getComponent( sComponentNamespace +":" + sRenderFor );
+                    
+                    if (oComponent == null)
+                    {
+                    	oComponent = oComponents.getComponent(sComponentNamespace+ ":" + sRenderFamily);
+                    }
                     
                     if (oComponent == null)
                     {

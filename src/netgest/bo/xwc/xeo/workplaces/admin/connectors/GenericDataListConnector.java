@@ -184,4 +184,9 @@ public class GenericDataListConnector implements DataListConnector {
 		}
 	}
 
+	@Override
+	public boolean hasMorePages() {
+		return false;
+	}
+
 }

@@ -6,7 +6,6 @@ import java.util.Locale;
 
 import javax.faces.application.ViewExpiredException;
 import javax.faces.webapp.FacesServlet;
-import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -16,16 +15,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
-import netgest.bo.system.boApplicationLogger;
 import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
+import netgest.utils.StringUtils;
+
+import org.apache.log4j.Logger;
 
 public class XUIServlet extends HttpServlet
 {
@@ -39,6 +38,11 @@ public class XUIServlet extends HttpServlet
     boolean             bIsInitialized;
     String				defaultLang;
     Locale 				defaultLocale;
+    boolean				useBrowserLanguage = false;
+    /**
+     * RenderKit used in this web context
+     */
+    String				renderKit;
     
     public XUIServlet()
     {
@@ -47,7 +51,7 @@ public class XUIServlet extends HttpServlet
 
     public void init(ServletConfig servletConfig) throws ServletException
     {
-        String loginPageParam = servletConfig.getInitParameter("LoginPageWhenExpired");
+    	String loginPageParam = servletConfig.getInitParameter("LoginPageWhenExpired");
         if (loginPageParam != null && !"".equals(loginPageParam))
         	this.loginPage = loginPageParam;
         
@@ -62,6 +66,14 @@ public class XUIServlet extends HttpServlet
     	else {
     		defaultLocale = Locale.getDefault();
     	}
+    	
+    	String useBrowserLanguage = servletConfig.getInitParameter("UseBrowserLanguage");
+    	if (StringUtils.hasValue( useBrowserLanguage )){
+    		this.useBrowserLanguage = Boolean.parseBoolean( useBrowserLanguage );
+    	}
+    	
+    	renderKit = servletConfig.getInitParameter("renderKit");
+    	
         facesServlet.init(servletConfig);
         initializeXeo();
     }
@@ -100,16 +112,42 @@ public class XUIServlet extends HttpServlet
         if( oHttpSession != null ) {
         	oXEOSession = (boSession)oHttpSession.getAttribute( "boSession" );
         }
-    
-    	if( oXEOSession != null ) {
-    		oXEOSession.setDefaultLocale( defaultLocale );
-    		oXEOSession.getApplication().removeContextFromThread();
-	        oEboContext = oXEOSession.createRequestContextInServlet( oRequest, oResponse, getServletContext() );
-	        boApplication.currentContext().addEboContext( oEboContext );
-    	}
+        
     	
-    	if( defaultLocale != null ) {
-    		XUIMessagesLocalization.setThreadCurrentLocale( defaultLocale );
+	
+		if( oXEOSession != null ) {
+			oXEOSession.getApplication().removeContextFromThread();
+			oEboContext = oXEOSession.createRequestContextInServlet( oRequest, oResponse, getServletContext() );
+			boApplication.currentContext().addEboContext( oEboContext );
+		}
+		
+		Locale userLocale = XUIMessagesLocalization.getUserLanguageLocale();
+		Locale localeForRequest = null;
+		if ( userLocale != null )
+			localeForRequest = userLocale;
+		else{
+			if ( useBrowserLanguage ){
+				Locale browserLocale = oRequest.getLocale();
+				if (browserLocale != null){
+					localeForRequest = browserLocale;
+				} 
+			} else {
+				Locale appLocale = XUIMessagesLocalization.getApplicationLocale();
+				if ( appLocale != null ){ 
+					localeForRequest = appLocale;
+				}
+				else{
+					localeForRequest = defaultLocale;
+				}
+			}
+		}
+		XUIMessagesLocalization.setThreadCurrentLocale( localeForRequest );
+		if( oXEOSession != null ) {
+			oXEOSession.setDefaultLocale( localeForRequest );
+		}
+		
+    	if (StringUtils.hasValue( renderKit )){
+    		oRequest.setAttribute( "__renderKit" , renderKit );
     	}
     	
         try {
@@ -120,9 +158,9 @@ public class XUIServlet extends HttpServlet
                 isAjax = true;
                 facesServlet.service( new XUIAjaxRequestWrapper( oRequest ), servletResponse );
             } 
-            else if( oRequest.getContentType() != null && oRequest.getContentType().startsWith( "multipart/form-data" )  )
+            else if( oRequest.getContentType() != null && oRequest.getContentType().startsWith( "multipart/form-data" ) && StringUtils.isEmpty( oRequest.getParameter( "xwc-upload" ))  )
             {
-                facesServlet.service( new XUIMultiPartRequestWrapper( oRequest ), servletResponse );
+                facesServlet.service( new XUIMultiPartRequestWrapper( oRequest ) , servletResponse );
             }
             else { 
                 facesServlet.service( servletRequest, servletResponse );

@@ -96,6 +96,11 @@ public class SQLDataFieldMetaData implements DataFieldMetaData {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public String getToolTip() {
+		return null;
+	}
 	
 
 }

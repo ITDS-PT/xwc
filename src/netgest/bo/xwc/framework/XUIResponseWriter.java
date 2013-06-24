@@ -1083,7 +1083,7 @@ public class XUIResponseWriter extends ResponseWriter {
 
     }
 
-    protected void setScriptContext(XUIScriptContext scriptContext) {
+    public void setScriptContext(XUIScriptContext scriptContext) {
         this.scriptContext = scriptContext;
     }
 }

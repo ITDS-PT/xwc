@@ -675,16 +675,39 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		this.preparedSql  = newsql;
 	}
 	
-	public void refresh() {
+	private int getLastPageRecordCount(){
 		prepareQuery();
+		DataSet countDataSet = DataManager.executeNativeQuery( 
+				getEboContext(), 
+				"DATA", 
+				"select count(*) from (" + this.preparedSql + ") count", 
+				1,
+				1,
+				this.preparedSqlArgs 
+			);		
+		return countDataSet.rows(1).getInt( 1 );
+	}
+	
+	public void refresh() {
+		int pageNum = getPage();
+		prepareQuery();
+		if (getPage() == -1){
+			pageNum = calculateLastPageNumber();
+			setPage( pageNum );
+		} 
 		this.dataSet = DataManager.executeNativeQuery( 
 				getEboContext(), 
 				"DATA", 
 				this.preparedSql, 
-				getPage(),
+				pageNum,
 				getPageSize(),
 				this.preparedSqlArgs 
 			);
+		
+	}
+
+	protected int calculateLastPageNumber() {
+		return (int) Math.ceil( (double) getLastPageRecordCount() / getPageSize());
 	}
 	
 	public void setPage(int pageNo) {
@@ -705,5 +728,10 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public boolean hasMorePages() {
+		return hasMoreResults();
 	}
 }

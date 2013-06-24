@@ -649,6 +649,7 @@ ExtXeo.DateField.ProcessDot = function(field){
 
 ExtXeo.switchLookup = function(elementToSwitch){
 	
+	//Este dois
 	var elem = Ext.get(elementToSwitch + "_lookupColumn");
 	elem.first('input').on('blur',function(eventBlur,element){XVW.searchLookup(element);});
 	elem.first('input').on('keydown',function(event,element){

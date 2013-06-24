@@ -29,7 +29,7 @@ public class XUISessionContext {
 	public static final String TRANSACTION_ATTRIBUTE_ID = "XUI:TransactionManager:";
 	private static final String BEAN_ID_PREFIX = SESSION_ATTRIBUTE_ID + ":Bean:";
 
-	private static final String RESTORED_VIEWS_PREFIX = "XUI:RestoredViews:";
+	public static final String RESTORED_VIEWS_PREFIX = "XUI:RestoredViews:";
 
 	private XTransactionManager oTransactionManager = new XTransactionManager();
 
@@ -217,7 +217,11 @@ public class XUISessionContext {
 			throw new IllegalStateException( ExceptionMessage.CANNOT_FIND_USER_HTTPSESSION__.toString() );
 		}
 	}
-
+	
+	public Map<String,Object> getSessionMap(){
+		return getExternalSessionMap();
+	}
+	
 	private static final Map<String, Object> getExternalSessionMap() {
 
 		// Get a bean from the User Context

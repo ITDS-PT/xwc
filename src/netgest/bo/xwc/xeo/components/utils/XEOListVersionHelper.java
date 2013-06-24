@@ -32,6 +32,7 @@ import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
+import oracle.xml.parser.v2.XMLElement;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -156,7 +157,7 @@ public class XEOListVersionHelper
 						Element label = doc.createElement("attributeLabel");
 						label.setAttribute("text","");
 						Element value = doc.createElement("attributeText");
-						value.setTextContent(cellCurrent.getValue());
+						value.appendChild( doc.createTextNode(cellCurrent.getValue()));
 						attribute.appendChild(label);
 						attribute.appendChild(value);
 						
@@ -213,13 +214,13 @@ public class XEOListVersionHelper
 					{
 						for (int l = 0; l < headerColList.getLength(); l++)
 						{
-							Element colum = (Element) headerColList.item(l);
+							XMLElement colum = (XMLElement) headerColList.item(l);
 							String colName = colum.getAttribute("datafield"); 
 							columnNames.add(colName);
 							
 							//Deal with the top table
 							Element gridHeaderCollumn = doc.createElement("gridTopheadercolumn");
-							gridHeaderCollumn.setTextContent(colum.getTextContent());
+							gridHeaderCollumn.appendChild( doc.createTextNode(colum.getTextContent()));
 							newGridHeaderRow.appendChild(gridHeaderCollumn);
 						}
 					}
@@ -246,12 +247,12 @@ public class XEOListVersionHelper
 						{
 							String colName = (String) itColumns.next();
 							Element newGridColumn = doc.createElement("gridcolumn");
-							newGridColumn.setTextContent(rowGridFlashBack.getRowValue(colName));
+							newGridColumn.appendChild( doc.createTextNode(rowGridFlashBack.getRowValue(colName)));
 							newGridRow.appendChild(newGridColumn);
 							
 							//Deal with the top table 
 							Element newTopTableGridColumn = doc.createElement("gridTopcolumn");
-							newTopTableGridColumn.setTextContent(rowGridFlashBack.getRowValue(colName));
+							newTopTableGridColumn.appendChild( doc.createTextNode(rowGridFlashBack.getRowValue(colName)) );
 							newGridTopTableRow.appendChild(newTopTableGridColumn);
 						}
 						
@@ -279,12 +280,12 @@ public class XEOListVersionHelper
 						{
 							String colName = (String) itColumns.next();
 							Element newGridColumn = doc.createElement("gridTopcolumn");
-							newGridColumn.setTextContent(rowGridFlashBack.getRowValue(colName));
+							newGridColumn.appendChild( doc.createTextNode(rowGridFlashBack.getRowValue(colName)));
 							newGridRow.appendChild(newGridColumn);
 							
 							//Keep the value for later use
 							Element newTopTableGridColumn = doc.createElement("gridTopcolumn");
-							newTopTableGridColumn.setTextContent(rowGridFlashBack.getRowValue(colName));
+							newTopTableGridColumn.appendChild( doc.createTextNode(rowGridFlashBack.getRowValue(colName)));
 							newGridTopTableRow.appendChild(newTopTableGridColumn);
 						}
 						currentPanel.appendChild(newGridRow);

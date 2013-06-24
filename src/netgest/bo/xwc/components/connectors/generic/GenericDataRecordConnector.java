@@ -8,7 +8,7 @@ import java.util.Set;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
-import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
+import netgest.bo.xwc.components.connectors.helper.MultiPurposeFieldConnector;
 
 public class GenericDataRecordConnector implements DataRecordConnector, Map<String,Object> {
 	Map<String, Object> atts;
@@ -27,13 +27,16 @@ public class GenericDataRecordConnector implements DataRecordConnector, Map<Stri
 	@Override
 	public DataFieldConnector getAttribute(String colKey) {
 		byte dataType=DataFieldTypes.VALUE_CHAR;
+		String label=colKey;
 		if (this.cols!=null)
 		{	
 			GenericDataFieldMetaData colmdata=this.cols.get(colKey);
-			if (colmdata!=null)
+			if (colmdata!=null) {
 				dataType=colmdata.getDataType();
+				label = colmdata.getLabel();
+			}
 		}
-		return new GenericFieldConnector(colKey,(String) this.atts.get(colKey),dataType );
+		return new MultiPurposeFieldConnector(label,this.atts.get(colKey),dataType );
 	}
 
 	@Override

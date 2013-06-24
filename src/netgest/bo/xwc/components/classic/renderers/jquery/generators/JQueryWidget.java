@@ -144,12 +144,12 @@ public class JQueryWidget extends JQueryBuilder {
 	}
 
 	public JQueryWidget selectorById( String id ) {
-		b.append( "$( '#" ).append(id).append("' )");
+		super.selectorById( id );
 		return this;
 	}
 	
 	public JQueryWidget componentSelectorById( String clientId ) {
-		b.append( "$( '#" ).append( JQueryBuilder.convertIdJquerySelector( clientId ) ).append("' )");
+		super.componentSelectorById( clientId );
 		return this;
 	}
 	

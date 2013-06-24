@@ -6,8 +6,6 @@
  */
 package netgest.bo.xwc.components.classic.grid;
 
-import org.apache.commons.lang.StringUtils;
-
 public class HTMLEntityDecoder {
 
 	/** The Constant htmlEntities. */

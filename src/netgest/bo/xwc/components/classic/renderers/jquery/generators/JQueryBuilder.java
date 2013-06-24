@@ -6,7 +6,7 @@ public class JQueryBuilder extends JQueryScriptBuilder {
 
 	
 	public JQueryBuilder selectorById( String id ) {
-		b.append( "$( '#" ).append(id).append("' )");
+		b.append( "$( XVW.get('" ).append(id).append("'))");
 		return this;
 	}
 	
@@ -41,8 +41,7 @@ public class JQueryBuilder extends JQueryScriptBuilder {
 	}
 	
 	public JQueryBuilder componentSelectorById( String clientId ) {
-		b.append( "$( '#" ).append( getClientId( clientId ) ).append("' )");
-		return this;
+		return selectorById( clientId );
 	}
 	
 	public JQueryBuilder setInputValue(String value){
@@ -73,10 +72,18 @@ public class JQueryBuilder extends JQueryScriptBuilder {
 	 * 
 	 * @return A valid Id for a JQuery selector
 	 */
+	@Deprecated
 	public static String convertIdJquerySelector(String componentId){
+		return componentId;
+		
+	}
+	
+	public static String escapeJquerySelector(String componentId){
 		String result1 = componentId.replaceAll( "\\.", "\\\\\\\\." );
 		String result2 = result1.replaceAll( "\\/", "\\\\\\\\/" );
 		String result3 = result2.replaceAll( ":", "\\\\\\\\:" );
+		
+		System.out.println(result3);
 		return result3;
 		
 	}

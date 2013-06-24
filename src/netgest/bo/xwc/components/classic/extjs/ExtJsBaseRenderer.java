@@ -15,6 +15,7 @@ import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIBaseProperty;
+import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
@@ -55,7 +56,8 @@ public abstract class ExtJsBaseRenderer extends XUIRenderer implements ExtJsRend
 	        	ValueExpression ve = component.getValueExpression("value");
 	        	if (ve != null) {
 	        	    try {
-	        			value = (ve.getValue(getFacesContext().getELContext()));
+	        	    	XUIELContextWrapper context = new XUIELContextWrapper( getFacesContext().getELContext() , component );
+	        			value = (ve.getValue(context));
 	        		}
 	    		    catch (ELException e) {
 	        			throw new FacesException(e);

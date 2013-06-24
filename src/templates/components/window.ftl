@@ -1,11 +1,11 @@
 <#-- Html for the Window -->
-<div id='${this.id}'>
+<div id='${this.clientId}'>
 	<@xvw_facet />
 </div>
 
 
 <@xvw_script position='footer'>
-	 		$(function() { $( '#${this.id}' )
+	 		$(function() { $( XVW.get('${this.clientId}') )
 	 			.dialog(
 	 				{ 'modal' : ${this.modal?string}
 	 				  ,'width' : ${this.width}
@@ -25,12 +25,8 @@
 	 				  	}
 	 				 }).parent( ).addClass('xwc-window')
 	 				  ;
-	 			}); 
+	 			});
+	 			
+	 			<#-- Layout required for GridPanels -->
+	 			ExtXeo.layoutMan.doLayout('${this.requestContext.viewRoot.clientId}'); 
 </@xvw_script>
-
-<#--
-
-
-
-
- -->

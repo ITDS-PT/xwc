@@ -176,7 +176,42 @@ public interface ComponentMessages {
 	public static final XUILocalizedMessage XUIMESSAGE_INFO = 
 			new XUILocalizedMessage(ComponentMessages.class.getName(), "XUIMESSAGE_INFO");
 	
+	public static final XUILocalizedMessage UPLOAD_SIZE_ERROR = 
+			new XUILocalizedMessage(ComponentMessages.class.getName(), "UPLOAD_SIZE_ERROR");
 	
+	public static final XUILocalizedMessage UPLOAD_MIN_SIZE_ERROR = 
+			new XUILocalizedMessage(ComponentMessages.class.getName(), "UPLOAD_MIN_SIZE_ERROR");
 	
-		
+	public static final XUILocalizedMessage UPLOAD_TYPE_ERROR = 
+			new XUILocalizedMessage(ComponentMessages.class.getName(), "UPLOAD_TYPE_ERROR");    
+	
+	public static final XUILocalizedMessage UPLOAD_NO_FILES_ERROR = 
+			new XUILocalizedMessage(ComponentMessages.class.getName(), "UPLOAD_NO_FILES_ERROR");
+	
+	public static final XUILocalizedMessage UPLOAD_ON_LEAVE_ERROR = 
+			new XUILocalizedMessage(ComponentMessages.class.getName(), "UPLOAD_ON_LEAVE_ERROR");
+
+	public static final XUILocalizedMessage UPLOAD_EMPTY_ERROR = 
+			new XUILocalizedMessage(ComponentMessages.class.getName(), "UPLOAD_EMPTY_ERROR");
+	
+	public static final XUILocalizedMessage UPLOAD_START_MESSAGE = 
+			new XUILocalizedMessage(ComponentMessages.class.getName(), "UPLOAD_START_MESSAGE");
+	
+	public static final XUILocalizedMessage UPLOAD_SENDING_MESSAGE = new XUILocalizedMessage(
+			ComponentMessages.class.getName() , "UPLOAD_SENDING_MESSAGE" );
+	
+	public static final XUILocalizedMessage UPLOAD_SAVING_MESSAGE = new XUILocalizedMessage(
+			ComponentMessages.class.getName() , "UPLOAD_SAVING_MESSAGE" );	
+	
+	public static final XUILocalizedMessage UPLOAD_FAILED_MESSAGE = new XUILocalizedMessage(
+			ComponentMessages.class.getName() , "UPLOAD_FAILED_MESSAGE" );
+	
+	public static final XUILocalizedMessage UPLOAD_PROGRESS_MESSAGE = new XUILocalizedMessage(
+			ComponentMessages.class.getName() , "UPLOAD_PROGRESS_MESSAGE" );
+	
+	public static final XUILocalizedMessage UPLOAD_PROGRESS_TOO_MANY_FILES = new XUILocalizedMessage(
+			ComponentMessages.class.getName() , "UPLOAD_PROGRESS_TOO_MANY_FILES" );
+	
+	public static final XUILocalizedMessage ASSYNCH_REGION_WAIT_MESSAGE = new XUILocalizedMessage(
+			ComponentMessages.class.getName() , "ASSYNCH_REGION_WAIT_MESSAGE" );
 }

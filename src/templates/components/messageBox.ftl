@@ -1,7 +1,5 @@
 
-<#--  Criar variável com o tipo de -->
-
-<div id='${this.id}' title='${this.title}' class='xwc-messagebox' style='display:none'>
+<div id='${this.clientId}' title='${this.title}' class='xwc-messagebox' style='display:none'>
 	<p class='xwc-messagebox-text'>
 		<span style='float:left; margin:0 7px 20px 0' 
 			<#switch this.messageBoxType>
@@ -26,7 +24,7 @@
 <#if this.showMessageBox>
 	<@xvw_script position='footer'>
 	 $(function() { 
-	 	$( '#${this.id}' )
+	 	$( XVW.get('${this.clientId}') )
 	 		.dialog({
 	 		'height' : 140
 	 		,'modal' : true
@@ -34,7 +32,7 @@
 	 		,'buttons' : 
 	 			{
 	 			<#list this.children as menu>
-	 				'${menu.text}' : function() { ${XVWScripts.getAjaxCommand(menu)}; $(this).dialog('destroy');}
+	 				'${menu.text}' : function() { ${xvw.js.ajaxCommand(menu)}; $(this).dialog('destroy');}
 	 				<#if menu_has_next>
 	 				,
 	 				</#if> 	

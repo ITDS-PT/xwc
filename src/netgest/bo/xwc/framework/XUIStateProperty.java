@@ -3,6 +3,7 @@ package netgest.bo.xwc.framework;
 import javax.el.ValueExpression;
 
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 
 
 public class XUIStateProperty<V> extends XUIBaseProperty<V> {
@@ -42,7 +43,10 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
     	if( !lastEvalValueWasSet ) {
 	        Object oValue = getValue();
 	        if( this instanceof XUIStateBindProperty ) {
-	        	lastEvalValue = ((XUIStateBindProperty)this).evaluateValue( (ValueExpression)oValue );
+	        	if (XUIViewHandler.isSavingInCache())
+	        		lastEvalValue = oValue;
+	        	else
+	        		lastEvalValue = ((XUIStateBindProperty)this).evaluateValue( (ValueExpression)oValue );
 	        }
 	        else {
 	        	lastEvalValue = oValue;

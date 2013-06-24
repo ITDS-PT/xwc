@@ -1,15 +1,14 @@
 <@xvw_script src='jquery-xeo/xwc-panel.js' id='xwc-panel' />
 
-<div id="${this.clientId}">
-	<div id="${this.id}" class='xwc-panel' title='${this.title!}'>	
-		<@xvw_facet />
-	</div>
-</div>	
+<div id="${this.clientId}" class='xwc-panel' title='${this.title!}'>
+	<@xvw_facet />
+</div>
+	
 
 
-<@xvw_script position='footer'>
+ <@xvw_script position='footer' id='c'>
 	$(function() {
-		$( '#${this.id}' )
+		$( XVW.get('${this.clientId}') )
 		<#if this.visible>
 		.show()
 		<#else>
@@ -22,3 +21,4 @@
 		</#if>
 	});
 </@xvw_script>
+

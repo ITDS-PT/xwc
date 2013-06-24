@@ -17,6 +17,7 @@ class ListIterator implements TemplateModelIterator {
 	@Override
 	public TemplateModel next() throws TemplateModelException {
 		try { 
+			list.next();
 			return new ObjectWrapper(list.getObject());
 		} catch ( boRuntimeException e ) {
 			e.printStackTrace();
@@ -26,7 +27,7 @@ class ListIterator implements TemplateModelIterator {
 	
 	@Override
 	public boolean hasNext() throws TemplateModelException {
-		return list.next();
+		return list.getRow() < list.getRowCount();
 	}
 
 }

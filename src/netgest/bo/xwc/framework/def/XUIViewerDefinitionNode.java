@@ -15,8 +15,18 @@ public class XUIViewerDefinitionNode
     public String name;
     public String id;
     public String textContent;
+    public boolean rawContent;
     
-    public LinkedHashMap<String,String> properties = new LinkedHashMap<String,String>();
+    
+    public boolean isRawContent() {
+		return rawContent;
+	}
+
+	public void setRawContent(boolean rawContent) {
+		this.rawContent = rawContent;
+	}
+
+	public LinkedHashMap<String,String> properties = new LinkedHashMap<String,String>();
     
     
     public XUIViewerDefinitionNode()

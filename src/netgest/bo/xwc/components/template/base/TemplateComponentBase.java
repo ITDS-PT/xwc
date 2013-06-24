@@ -15,12 +15,6 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 public class TemplateComponentBase extends XUIComponentBase {
 	
 	/**
-	 * The name of the template for this component
-	 */
-	protected XUIBindProperty<String> template =
-			new XUIBindProperty<String>( "template", this, String.class );
-	
-	/**
 	 * Content for the template (specified in a bean)
 	 */
 	private XUIBindProperty<String> templateContent =
@@ -32,7 +26,7 @@ public class TemplateComponentBase extends XUIComponentBase {
 	 * 
 	 * @param templateNameExpr The template name or expression
 	 */
-	public void setTemplate(String templateNameExpr){
+	public void setTemplateForSearch(String templateNameExpr){
 		this.template.setExpressionText( templateNameExpr );
 	}
 	
@@ -42,7 +36,7 @@ public class TemplateComponentBase extends XUIComponentBase {
 	 * 
 	 * @return The name of the template as a String
 	 */
-	public String getTemplate(){
+	public String getTemplateForSearch(){
 		return template.getEvaluatedValue();
 	}
 	

@@ -29,6 +29,7 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts.ValueType;
 import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
@@ -47,6 +48,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
@@ -172,7 +174,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
     @Override
     public void encodeEnd(XUIComponentBase oComp) throws IOException {
         ExtConfig oGridConfig;
-        if( oComp.isRendered() ) {
+        if( oComp.getRenderComponent() ) {
         
             XUIResponseWriter w = getResponseWriter();
         
@@ -561,6 +563,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         
         oDataStoreConfig.addJSString( "url", actionURL );
+        oDataStoreConfig.add( "showCounters", oGrid.getShowCounters() );
         oDataStoreConfig.add("reader","new Ext.data.JsonReader({remoteSort:true, url:'"+actionURL+"',root:'" + oGrid.getId() + "',totalProperty:'totalCount'}," 
         		+ oFieldsConfig.renderExtConfig() + ")");
         
@@ -643,12 +646,13 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         ExtConfig onLoad = oExtListeners.addChild( "'load'");
         onLoad.add( "fn", 
-                "function() {" +
+                "function(store) {" +
                 "	var c = Ext.getCmp(\"" + oGrid.getClientId() +"\");\n" +
                 "	if( c && c.loadMask ) { " +
                 "		if( c.loadMask.xwc_wtout ) {window.clearTimeout(c.loadMask.xwc_wtout);}\n" + 		                
                 "		c.loadMask.onLoad();\n" +
         		"	} " +
+                " store.resetDataSourceChange(); " +
         		"}" );
         
 /*        
@@ -967,7 +971,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         /** END ML - 10-10-2011 **/
         
         oView.add("onSelColumns", "function() { " + XVWScripts.getCommandScript("self", oGrid.getSelectColumnsCommand(), XVWScripts.WAIT_DIALOG ) + " }" );
-        oView.add("onResetDefaults", "function() { " + XVWScripts.getCommandScript("self", oGrid.getResetDefaultsCommand(), XVWScripts.WAIT_DIALOG ) + " }" );
+        oView.add("onResetDefaults", "function() { Ext.getCmp('"+oGrid.getClientId()+"').markDataSourceChange(); " + XVWScripts.getCommandScript("self", oGrid.getResetDefaultsCommand(), XVWScripts.WAIT_DIALOG ) + " }" );
         //oGridConfig.addJSString("layout", "fit");
         
         if( this.oExtButtons != null ) {
@@ -1033,14 +1037,18 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	
             String dblTarget = oGrid.getRowDblClickTarget();
             
+            String viewId = ((XUIViewRoot)oGrid.findParent( XUIViewRoot.class )).getClientId();
+            
             oGridListeners.addChild("'rowdblclick'")
             .add(
                     "fn","function(){" + 
                     XVWScripts.getCommandScript( 
-                    		dblTarget,
-                    		targetName,
-                    		oRowDblClickComp, 
-                    		"self".equals( dblTarget )?oGrid.getServerActionWaitMode().ordinal():XVWScripts.WAIT_STATUS_MESSAGE
+                    		dblTarget
+                    		,targetName
+                    		,oRowDblClickComp
+                    		,viewId
+                    		,"self".equals( dblTarget )?oGrid.getServerActionWaitMode().ordinal():XVWScripts.WAIT_STATUS_MESSAGE
+                    		,ValueType.LITERAL
                     	) 
                     +"}"
             );
@@ -1273,11 +1281,12 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             result = context.getRenderKit().getRenderer(oComp.getFamily(),
                                                         rendererType);
         }            
-        if (result != null)
-        	return result;
-        //Coloquei isto aqui porque senão ia tentar renderizar
-        //a toolbar do Grid com a ToolBar Jquery e o GridPanel n está feito para isso.
-        return new ToolBar.XEOHTMLRenderer();
+        
+        if (oComp instanceof ToolBar)
+        	return new ToolBar.XEOHTMLRenderer();
+        
+        return result;
+        
     }
     
     public void addGridScripts( XUIResponseWriter w ) {

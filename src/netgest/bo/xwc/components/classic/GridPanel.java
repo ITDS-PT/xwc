@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.el.MethodExpression;
@@ -62,6 +63,8 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
+import netgest.bo.xwc.framework.properties.XUIProperty;
+import netgest.bo.xwc.framework.properties.XUIPropertyVisibility;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 import netgest.utils.StringUtils;
 
@@ -388,7 +391,38 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private String currAggregateFieldCheckSet;
 	private String aggregateData;
 	
+	XUIBaseProperty< Boolean > showCounters = new XUIBaseProperty< Boolean >(
+			"showCounters" , this, Boolean.TRUE );
+
+	public Boolean getShowCounters() {
+		return showCounters.getValue();
+	}
+
+	public void setShowCounters(boolean newVal) {
+		showCounters.setValue( newVal );
+	}
 	
+	/**
+	 * For internal use only: Marks the last page of a store 
+	 */
+	XUIBindProperty< Map<String,Integer> > recordCount = new XUIBindProperty< Map<String,Integer> >(
+			"recordCount" , this , Map.class );
+
+	public Integer getRecordCount(String groupId ) {
+		return recordCount.getEvaluatedValue().get( groupId );
+	}
+	
+	public void resetRecordCount(){
+		recordCount.getEvaluatedValue().clear();
+	}
+
+	public void setRecordCount(String newValExpr) {
+		recordCount.setExpressionText( newValExpr );
+	}
+	
+	public void setRecordCount(String groupId, int newVal) {
+		recordCount.getEvaluatedValue().put( groupId , Integer.valueOf( newVal ) );
+	}
 	
 	/**
 	 * Represents the maximum number of rows that can be selected in the Grid
@@ -439,6 +473,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 		return clearSelections;
 	}
 	
+	@Override
+	public String getFamily() {
+		return "gridPanel";
+	}
 	
 	/**
 	 * Flag to tell the grid panel to maintain row selections between page
@@ -598,7 +636,14 @@ public class GridPanel extends ViewerInputSecurityBase {
 	@Override
 	public void restoreState(Object state) {
 		super.restoreState(state);
-		setRendered(true);
+		//setRendered(true);
+	}
+	
+	@Override
+	public void resetState() {
+		super.resetState();
+		setRenderedOnClient( false );
+		//setRendered(true);
 	}
 
 	/**
@@ -615,6 +660,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 	@Override
 	public void initComponent() {
 		super.initComponent();
+		
+		if (this.recordCount.isDefaultValue()){
+			recordCount.setValue( new HashMap< String , Integer >() );
+		}
 		
 		if (filterLookup.isDefaultValue())
 			setFilterLookup( "#{" + getBeanId() + ".lookupFilterObject}" );
@@ -649,6 +698,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 			restoreUserState();
 		}
 		
+		if ( rendererType.isDefaultValue( ) )
+			rendererType.setValue( "gridPanel" );
+		
 	}
 
     public void setServerActionWaitMode( String waitModeName ) {
@@ -662,6 +714,11 @@ public class GridPanel extends ViewerInputSecurityBase {
     	}
     	return XVWServerActionWaitMode.NONE;
     }	
+    
+    public GridPanel() {
+		super();
+		
+	}
 	
 	/**
 	 * Process a preRender Actions
@@ -763,11 +820,11 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 		String viewerSecurityId = getInstanceId();
 		if (viewerSecurityId != null) {
-			setViewerSecurityPermissions("#{viewBean.viewerPermissions."
+			setViewerSecurityPermissions("#{"+getBeanId()+".viewerPermissions."
 					+ viewerSecurityId + "}");
 		}
 	}
-	
+
 	public static class FilterLookupListener implements ActionListener {
 
 		public void processAction(ActionEvent event)
@@ -800,6 +857,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 			
 			GridPanel gridPanel = (GridPanel)arg0.getComponent().getParent();
 			gridPanel.resetToDefaults();
+			
 			
 		}
 		
@@ -1842,6 +1900,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 		setCurrentFilters( null );
 		setAggregateData(null);
 		setAggregateFieldsFromString(getAggregateData());
+		resetRecordCount();
 		forceRenderOnClient();
 	}
 	
@@ -2418,7 +2477,6 @@ public class GridPanel extends ViewerInputSecurityBase {
 		}
 		return result;
 	}
-
 
 	
 

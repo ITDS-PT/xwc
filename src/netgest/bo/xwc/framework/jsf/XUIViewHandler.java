@@ -8,15 +8,20 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
 import javax.faces.application.ViewHandler;
+import javax.faces.component.NamingContainer;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
@@ -41,16 +46,20 @@ import javax.xml.transform.stream.StreamSource;
 
 import netgest.bo.def.boDefHandler;
 import netgest.bo.localizations.MessageLocalizer;
+import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
+import netgest.bo.system.boSession;
 import netgest.bo.transaction.XTransaction;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
+import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder.SecurityMode;
 import netgest.bo.xwc.framework.PackageIAcessor;
 import netgest.bo.xwc.framework.XUIApplicationContext;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUIViewBean;
 import netgest.bo.xwc.framework.annotations.XUIWebCommand;
 import netgest.bo.xwc.framework.annotations.XUIWebDefaultCommand;
@@ -59,7 +68,12 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
+import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl.TreeNode;
+import netgest.bo.xwc.framework.jsf.cache.CacheEntry;
+import netgest.bo.xwc.framework.jsf.utils.LRUCache;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.bo.xwc.framework.localization.XUILocalizedMessage;
+import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 import netgest.bo.xwc.xeo.beans.SystemViewer;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.bo.xwc.xeo.beans.XEOSecurityBaseBean;
@@ -77,7 +91,9 @@ import com.sun.faces.application.ViewHandlerResponseWrapper;
 import com.sun.faces.config.WebConfiguration;
 import com.sun.faces.config.WebConfiguration.WebContextInitParameter;
 import com.sun.faces.io.FastStringWriter;
+import com.sun.faces.util.LRUMap;
 import com.sun.faces.util.RequestStateManager;
+import com.sun.faces.util.TypedCollections;
 import com.sun.faces.util.Util;
 
 
@@ -89,10 +105,41 @@ import com.sun.faces.util.Util;
  */
 public class XUIViewHandler extends XUIViewHandlerImpl {
 
+	public static final String RENDER_COMPONENT_PARAMETER = "xvw.render";
+	/**
+	 * Size of the cache
+	 */
+	private static final int CACHE_MAX_SIZE = 30;
+	/**
+	 * Viewer Cache
+	 */
+	private static final LRUCache< String , CacheEntry > viewerCache = new LRUCache< String , CacheEntry >( CACHE_MAX_SIZE );
+	
+	static final String USER_VIEWER_SEQUENCE = "xwcViewerSequence";
+	
+	static final String USER_SEQUENCE_MAP = "xwcViewerMap";
+	
+	public static void cleanCache(){
+		viewerCache.clear();
+	}
+	
+	static ThreadLocal< Boolean > savingInCache = new ThreadLocal< Boolean >(){
+        protected Boolean initialValue() {
+            return Boolean.FALSE;
+        }
+    };
+	
+    
+    public static boolean isSavingInCache(){
+    	return savingInCache.get();
+    }
+	
     //
     // Private/Protected Constants
     //
     private static final Log log = LogFactory.getLog(netgest.bo.xwc.framework.jsf.XUIViewHandler.class);
+    
+    private static final Logger logger = Logger.getLogger( XUIViewHandler.class );
     
 	// 1. Instantiate a TransformerFactory.
 	 javax.xml.transform.TransformerFactory tFactory = 
@@ -107,7 +154,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
     public XUIViewHandler() {
         if (log.isDebugEnabled()) {
-            log.debug(MessageLocalizer.getMessage("CREATE_VIEWHANDLER_INSTANCE"));
+            log.debug("Create XUIViewHandler instance");
         }
     }
 
@@ -128,7 +175,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
         // set up the ResponseWriter
 
-        // TODO: Inicializar uma unica vez por sessão.
+        // TODO: Inicializar uma unica vez por sessao.
 
         RenderKitFactory renderFactory = (RenderKitFactory)
             FactoryFinder.getFactory(FactoryFinder.RENDER_KIT_FACTORY);
@@ -294,10 +341,12 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     public UIViewRoot restoreView(FacesContext context, String viewId ) {
         return restoreView( context, viewId, null );
     }
+    
     public UIViewRoot restoreView(FacesContext context, String viewId, Object savedId ) {
+    	
+    	XUIRequestContext requestContext = XUIRequestContext.getCurrentContext();
+    	
         ExternalContext extContext = context.getExternalContext();
-
-        
         if( viewId.startsWith("/") ) {
         	viewId = viewId.substring(1);
         }
@@ -370,7 +419,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             String sTransactionId = viewRoot.getTransactionId();
             
             if( sTransactionId != null ) {
-                XTransaction oTransaction = XUIRequestContext.getCurrentContext().getTransactionManager().getTransaction( sTransactionId );
+                XTransaction oTransaction = requestContext.getTransactionManager().getTransaction( sTransactionId );
                 if( oTransaction != null ) {
                 	oTransaction.activate();
                 }
@@ -384,8 +433,13 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             if( viewRoot == context.getViewRoot() && savedView != null )
             	context.setViewRoot( savedView );
             
-            
+            requestContext.setAttribute( XUISessionContext.RESTORED_VIEWS_PREFIX + viewRoot.getViewState(), viewRoot );
+        } else {
+        	if (log.isErrorEnabled()) {
+                log.error(String.format("Could not restore %s",viewId));
+            }
         }
+        
         return viewRoot;
     }
 
@@ -404,14 +458,39 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     	return createView( context, viewId, viewerInputStream, sTransactionId, null );
     }
     
+    boolean canReadFromCache(XUIApplicationContext applicationCtx, String cacheKey, String viewerId){
+    	
+    	if ( !viewerCache.contains( ( cacheKey ) ) )
+    		return false;
+    	//Check if we're in development mode
+    	boolean development = boApplication.getDefaultApplication().inDevelopmentMode();
+    	if (development){
+    		CacheEntry viewer = viewerCache.get( cacheKey );
+    		XUIViewerDefinition definition = applicationCtx.getViewerDef( viewerId );
+    		Timestamp dateInCache = viewer.getLastUpdateDate();
+    		Timestamp dateInResource = definition.getDateLastUpdate();
+    		
+    		if ( dateInResource.after( dateInCache ) ){
+    			return false;
+    		}
+    	} else {
+    		return true;
+    	}
+    	return true;
+    }
+    
+    
     public UIViewRoot createView(FacesContext context, String viewId, InputStream viewerInputStream, String sTransactionId, XUIViewerDefinition viewerDefinition ) 
     {
         XUIViewerBuilder oViewerBuilder;
         XUIRequestContext      oContext;
         XUIApplicationContext  oApp;
+        
+        long init = System.currentTimeMillis();
 
         Locale locale = null;
         String renderKitId = null;
+        
         
         oContext = XUIRequestContext.getCurrentContext();
         oApp      = oContext.getApplicationContext();
@@ -431,10 +510,27 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             renderKitId = context.getViewRoot().getRenderKitId();
         }
 
-        //String sOldViewId = viewId;
-        //viewId = context.getExternalContext().getRequestServletPath() + viewId;
+        XUIViewRoot result = null;
+        String cacheKey = createCacheIdFromViewAndLanguage( viewId );
+        boolean createNew = true;
         
-        XUIViewRoot result = new XUIViewRoot();
+        //cleanCache();
+        XUISessionContext session = oContext.getSessionContext();
+        //viewerCache.clear();
+        if ( canReadFromCache( oApp , cacheKey, viewId ) ){
+        	result = ( XUIViewRoot ) restoreTreeStructureFromCache( context , cacheKey );
+        	String newState = generateId( viewId , session.getSessionMap() );
+        	String initialComponentId = generateInitialComponentId( viewId , newState, session.getSessionMap() );
+        	result.setInstanceId( initialComponentId );
+        	result.setViewState( viewId + NamingContainer.SEPARATOR_CHAR + newState );
+        	//Set viewId e viewState
+        	createNew = false;
+        } else{
+        	String state = generateId( viewId , session.getSessionMap() );
+        	String initialComponentId = generateInitialComponentId( viewId , state, session.getSessionMap() );
+        	result = new XUIViewRoot( initialComponentId , generateViewState( viewId, session.getSessionMap(), state ) );
+    	}
+        
         UIViewRoot previousViewRoot = context.getViewRoot();
         try {
         	// Work around to allows expression evaluation during the viewer creation.
@@ -526,25 +622,42 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        result.setRenderKitId(renderKitId);
 	        
 	        // Load the Viewer definition a build component tree
-	        XUIViewerDefinition oViewerDef;
+	        XUIViewerDefinition oViewerDef = null;
 	        
-	        if (viewerDefinition == null){
-	            if( viewerInputStream != null )
-		        	oViewerDef = oApp.getViewerDef( viewerInputStream );
-		        else
-		        	oViewerDef = oApp.getViewerDef( viewId );
-	        } else
-	        	oViewerDef = viewerDefinition;
+	        if (createNew){
+	        	//Only if cache is not available
+		        if (viewerDefinition == null){
+		            if( viewerInputStream != null )
+			        	oViewerDef = oApp.getViewerDef( viewerInputStream );
+			        else
+			        	oViewerDef = oApp.getViewerDef( viewId );
+		        } else
+		        	oViewerDef = viewerDefinition;
+		        
+		        result.setTransient( oViewerDef.isTransient() );
+	        }
 	        
-	        result.setTransient( oViewerDef.isTransient() );
+	        List<String> beanIds = new ArrayList< String >();
+	        if (createNew){
+	        	beanIds = oViewerDef.getViewerBeanIds();
+	        } else {
+	        	String[] beans =result.getBeanIds();
+	        	for (String bean : beans){
+	        		beanIds.add( bean );
+	        	}
+	        }
 	        
-	        initializeAndAssociateBeansToView(oViewerDef, result, viewId);
-	        
-	        //ReplaceDynamyicIncludes
-	        
-	        //Método próprio na bean que depois o que faz é acrescentar ao request o nome do viewer
-	        //que se quer incluir.
-	        
+	        List<String> beanList = new ArrayList< String >();
+	        if (createNew){
+	        	beanList = oViewerDef.getViewerBeans();
+	        } else {
+	        	for (String beanId : beanIds){
+	        		beanList.add( result.getBeanClass( beanId ) );
+	        	}
+	        }
+		    
+	        //
+	        initializeAndAssociateBeansToView(beanIds, beanList , result, viewId);
 	        
 	        // Create a new instance of the view bean
 	        if (log.isDebugEnabled()) 
@@ -553,24 +666,41 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	                MessageLocalizer.getMessage("START_BUILDING_COMPONENT_VIEW")+" " + viewId );
 	        }
 	        
-	        oViewerBuilder.buildView( oContext, oViewerDef, result );
+	       
+	        //If not in cache
+	       if (createNew) 
+	        	oViewerBuilder.buildView( oContext, oViewerDef, result );
 	
 	        if (log.isDebugEnabled()) 
 	        {
 	            log.debug(MessageLocalizer.getMessage("END_BUILDING_COMPONENT_VIEW")+
 	                  " " + viewId );
 	        }
-	
 	        
+	        long end = System.currentTimeMillis() - init;
+	        //System.out.println( viewId + " " + end + " ms ("+((float)end/1000)+")" + " s");
+	
+	        if (createNew){
+	        	if ( canAddViewToCache( cacheKey, oViewerDef.getDateLastUpdate() ) ){
+	        		try{
+	        			savingInCache.set( Boolean.TRUE );
+	        			saveViewToCache( context , result , cacheKey , oViewerDef );
+	        		} finally {
+	        			savingInCache.set( Boolean.FALSE );
+	        		}
+	        	}
+	        }
+	        
+	        
+	        if (!createNew){
+	        	restoreTreeStateFromCache( context , result , cacheKey );
+	        }
 	        
 	        // Initialize security
-	        initializeSecurity(result, oViewerDef, context);
+	        initializeSecurity( result, beanIds, context );
 	        
-	        // Pass XUIWeb**
-	        processXUIWebAnnotations( result, oViewerDef, context );
+	        processXUIWebAnnotations( result, beanIds, context );
 	        
-	        
-//	        
         }
         finally {
         	if (previousViewRoot != null)
@@ -581,13 +711,211 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
         
     }
+
+
+	protected String createCacheIdFromViewAndLanguage(String viewId) {
+		StringBuilder b = new StringBuilder();
+			b.append(viewId)
+			.append("_")
+			.append(XUIMessagesLocalization.getThreadCurrentLocale().getLanguage());
+			String country = XUIMessagesLocalization.getThreadCurrentLocale().getCountry();
+			if (StringUtils.hasValue( country )){
+			b.append("_")
+			.append(country);
+			}
+		return b.toString();
+	}
+
+
+	 String generateInitialComponentId(String viewId, String state,
+			Map< String , Object > sessionMap) {
+		
+		String VIEW_SEQUENCE_MAP = "XUI:ViewSequenceMap";
+		String VIEW_SEQUENCE_GENERATOR = "XUI:ViewSequenceGenerator";
+		@SuppressWarnings("unchecked")
+		Map<String,Integer> viewSequence = ( Map<String,Integer> ) sessionMap.get( VIEW_SEQUENCE_MAP );
+		if (viewSequence == null){
+			viewSequence = new HashMap< String , Integer >();
+			sessionMap.put( VIEW_SEQUENCE_MAP , viewSequence );
+		}
+		
+		AtomicInteger generator = (AtomicInteger) sessionMap.get( VIEW_SEQUENCE_GENERATOR );
+		if (generator == null){
+			generator = new AtomicInteger( 0 );
+			sessionMap.put( VIEW_SEQUENCE_GENERATOR, generator );
+		}
+		
+		Integer result = null;
+		String keyMap = viewId +  state;
+		if (viewSequence.containsKey( keyMap )){
+			result = viewSequence.get( keyMap );
+		} else {
+			result = generator.addAndGet( 1 );
+			viewSequence.put( keyMap , result );
+		}
+		
+		return result.toString();
+	}
+
+
+	String generateViewState(String viewId, Map<String,Object> session, String sequenceId ) {
+		
+		FacesContext context = FacesContext.getCurrentInstance();
+		XUIStateManagerImpl stateManager = (XUIStateManagerImpl) Util
+				.getStateManager(context);
+
+		ExternalContext externalContext = context.getExternalContext();
+		Object sessionObj = externalContext.getSession(true);
+		Map<String, Object> sessionMap = externalContext.getSessionMap();
+
+		synchronized (sessionObj) {
+			Map<String, Map> logicalMap = TypedCollections
+					.dynamicallyCastMap((Map) sessionMap
+							.get(XUIStateManagerImpl.LOGICAL_VIEW_MAP),
+							String.class, Map.class);
+
+			int logicalMapSize = stateManager.getNumberOfViewsParameter();
+
+			if (logicalMap == null) {
+				logicalMap = new LRUMap<String, Map>(logicalMapSize);
+				sessionMap.put(XUIStateManagerImpl.LOGICAL_VIEW_MAP,
+						logicalMap);
+			}
+
+			String idInLogicalMap = viewId;
+			String idInActualMap = sequenceId;
+			
+			int actualMapSize = stateManager.getNumberOfViewsInLogicalViewParameter();
+
+			Map<String, Object[]> actualMap = (Map<String, Object[]>) TypedCollections
+					.dynamicallyCastMap(logicalMap.get(idInLogicalMap),
+							String.class, Object[].class);
+			if (actualMap == null) {
+				actualMap = new LRUMap<String, Object[]>(actualMapSize);
+				logicalMap.put(idInLogicalMap, actualMap);
+			}
+
+			return idInLogicalMap + NamingContainer.SEPARATOR_CHAR + idInActualMap;
+		}
+	}
+
+
+	/**
+	 * 
+	 * Generate an Id for a given viewer
+	 * 
+	 * @param viewerId The viewer identifier
+	 * @param session The session map
+	 * 
+	 * @return An identifier for the viewer
+	 */
+	String generateId(String viewerId, Map<String,Object> session) {
+		
+		@SuppressWarnings("unchecked")
+		Map<String,Integer> sequenceMap = (Map<String,Integer>) session.get( USER_SEQUENCE_MAP );
+		if (sequenceMap == null){
+			sequenceMap = new HashMap< String , Integer >();
+			session.put( USER_SEQUENCE_MAP , sequenceMap );
+		}
+		
+		Integer result = null;
+		if ( sequenceMap.containsKey( viewerId ) ){
+			result = sequenceMap.get( viewerId );
+		} else {
+			result = new Integer( 0 );
+			sequenceMap.put( viewerId , result );
+		}
+		result = result + 1;
+		sequenceMap.put( viewerId , result );
+		return result.toString();
+	}
+
+
+	protected boolean canAddViewToCache(String viewerCacheId, Timestamp current) {
+		if ( !viewerCache.contains( viewerCacheId ) )
+			return true;
+			
+		CacheEntry entry = viewerCache.get( viewerCacheId );
+		if (entry.getLastUpdateDate().before( current )){
+			return true;
+		}
+		
+		return false;	
+	}
+
+
+	protected void restoreTreeStateFromCache(FacesContext context,
+			XUIViewRoot result, String viewerCacheId) {
+		
+		//Retrieve values before process restore state (it will change some important values in XUIViewRoot)
+		String viewInstanceId = result.getInstanceId();
+		String viewState = result.getViewState();
+		String viewParentState = result.getParentViewState();
+		String transactionId = result.getTransactionId();
+		String viewId = result.getId();
+		boolean ownsTransaction = result.getOwnsTransaction();
+		Object[] state = ( Object[] ) viewerCache.get( viewerCacheId ).getCacheContent()[0];
+		XUIStateManagerImpl oStateManagerImpl = ( XUIStateManagerImpl ) Util.getStateManager( context );
+		result.processRestoreState( context , oStateManagerImpl.handleRestoreState( state ) ); //Culpado est� aqui??????????
+		
+		
+		//Set the values as they were before, because the processRestoreState sets them again
+		//Note to self, could it be possible in the first cache phase to set the new values in the cache (for viewState, etc)?
+		//Would make it a dependency of saveState/restoreState because it would know the array positions
+		//of the array with the state 
+		result.setInstanceId( viewInstanceId );
+		result.setViewState( viewState );
+		result.setParentViewState( viewParentState );
+		result.setTransactionId( transactionId );
+		result.setOwnsTransaction( ownsTransaction );
+		result.setId( viewId );
+		
+		result.resetState();
+	}
+
+
+	protected void saveViewToCache(FacesContext context, XUIViewRoot result,
+			String viewerCacheId, XUIViewerDefinition oViewerDef) {
+		//Transient has a lot of implications and it shouldn't be saved (seeing JSF's source), 
+		//to make cache and transient work we have to "untransientify" temporarily and then
+		//"transientify" again at the end of saving to cache
+		boolean restoreTransient = false;
+		if (result.isTransient()){
+			result.setTransient( false );
+			restoreTransient = true;
+		}
+		Object state = result.processSaveState( context );
+		List<TreeNode> treeList = new ArrayList<TreeNode>( 32 );
+		XUIStateManagerImpl.captureChild( treeList, 0, result );        
+		Object[] tree = treeList.toArray();
+		viewerCache.put( viewerCacheId , 
+				new CacheEntry( 
+						viewerCacheId , 
+						oViewerDef.getDateLastUpdate() , 
+						new Object[]{ state,tree } 
+				)  
+		);
+		
+		if (restoreTransient)
+			result.setTransient( true );
+	}
+
+
+	protected UIViewRoot restoreTreeStructureFromCache(FacesContext context,
+			String viewerCacheId) {
+		XUIStateManagerImpl stateManager = ( XUIStateManagerImpl ) Util.getStateManager(context);
+		Object[] state = (Object[])viewerCache.get( viewerCacheId ).getCacheContent()[0];
+		Object[] tree = (Object[]) viewerCache.get( viewerCacheId ).getCacheContent()[1];
+		UIViewRoot root = stateManager.restoreTree( tree.clone() ); //Clone was needed because tree nodes were being converted
+		//to something else and in the next request it blew up the code (because they were not TreeNodes anymore)
+		root.restoreState( context , state[0] );
+		//Set do viewState
+		return root;
+	}
     
-    private void initializeAndAssociateBeansToView( XUIViewerDefinition oViewerDef, XUIViewRoot result, String viewId  ){
+    private void initializeAndAssociateBeansToView( List<String> beanIdList, List<String> beanList, XUIViewRoot result, String viewId  ){
     	
-    	List<String> beanList = oViewerDef.getViewerBeans();
-        List<String> beanIdList = oViewerDef.getViewerBeanIds();
-        
-        // Initialize View Bean.
+    	// Initialize View Bean.
         if( log.isDebugEnabled() ) {
             log.debug(MessageLocalizer.getMessage("INITIALIZING_BEANS_FOR_VIEW")+" " + viewId );    
         }
@@ -641,25 +969,25 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         }
     }
     
-    private void initializeSecurity(XUIViewRoot result, XUIViewerDefinition definition, FacesContext context){
+    private void initializeSecurity(XUIViewRoot result, List<String> beanIds, FacesContext context){
     	try {
         	
-    		List<String> beanIds = definition.getViewerBeanIds();
-    		
-    		for (String beanId: beanIds){
-    		
-	    		Object bean = result.getBean( beanId );
-	        	
-	    		// Only activates viewerSecurity if the XVWAccessPolicy object is deployed.
-	    		if ( ViewerAccessPolicyBuilder.applyViewerSecurity ) {
-	    			
-	    			ViewerAccessPolicyBuilder.applyViewerSecurity = boDefHandler.getBoDefinition( "XVWAccessPolicy" ) != null;
-		        	if ( bean!=null && bean instanceof XEOSecurityBaseBean ) {
-		        		ViewerAccessPolicyBuilder viewerAccessPolicyBuilder = new ViewerAccessPolicyBuilder();
-		        		viewerAccessPolicyBuilder.processViewer( result, boApplication.currentContext().getEboContext(), false );
-		        		((XEOSecurityBaseBean)bean).initializeSecurityMap(viewerAccessPolicyBuilder, result.getViewId() );
-		        	}
-	    		}
+    		if (ViewerAccessPolicyBuilder.getSecurityMode() != SecurityMode.DISABLED){
+    			for (String beanId: beanIds){
+
+    				Object bean = result.getBean( beanId );
+
+    				// Only activates viewerSecurity if the XVWAccessPolicy object is deployed.
+    				if ( ViewerAccessPolicyBuilder.applyViewerSecurity ) {
+
+    					ViewerAccessPolicyBuilder.applyViewerSecurity = boDefHandler.getBoDefinition( "XVWAccessPolicy" ) != null;
+    					if ( bean!=null && bean instanceof XEOSecurityBaseBean ) {
+    						ViewerAccessPolicyBuilder viewerAccessPolicyBuilder = new ViewerAccessPolicyBuilder();
+    						viewerAccessPolicyBuilder.processViewer( result, boApplication.currentContext().getEboContext(), false );
+    						((XEOSecurityBaseBean)bean).initializeSecurityMap(viewerAccessPolicyBuilder, result.getViewId() );
+    					}
+    				}
+    			}
     		}	
 	    		
     		UIViewRoot savedView = context.getViewRoot();
@@ -935,7 +1263,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         ArrayList<XUIComponentBase> oToRenderList = new ArrayList<XUIComponentBase>();
         
         if( oViewToRender.isPostBack() && oViewToRender.isRendered() ) {
-	        String[] oRenderCompId = (String[])request.getParameterMap().get("xvw.render");
+	        String[] oRenderCompId = (String[])request.getParameterMap().get(RENDER_COMPONENT_PARAMETER);
 	        if( oRenderCompId != null && oRenderCompId.length > 0 ) {
 	        	for( int i=0; i <oRenderCompId.length; i++ ) {
 	        		
@@ -1138,6 +1466,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             }
         }
 
+        if (newWriter != null )
+        	Layouts.doLayout( newWriter );
         //TODO: Dá erro se não existir elementos para se efectuar o render do lado do cliente
         if( oToRenderList.size() > 0 || !oViewToRender.isPostBack() )
         {
@@ -1183,10 +1513,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         }
     }
     
-    public void processXUIWebAnnotations( XUIViewRoot viewRoot, XUIViewerDefinition viewerDefinition, FacesContext context ) {
+    public void processXUIWebAnnotations( XUIViewRoot viewRoot, List<String> beanList, FacesContext context ) {
     	
     	Map<String,String> parameters = context.getExternalContext().getRequestParameterMap();
-    	List<String> beanList = viewerDefinition.getViewerBeanIds();
     	
     	// Process XUIWebParameters
     	for( String beanIdentifier : beanList ) {
@@ -1196,19 +1525,24 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	    		for( Method m : beanMethods ) {
 	    			XUIWebParameter parameter = (XUIWebParameter)m.getAnnotation( XUIWebParameter.class );
 	    			if( parameter != null ) {
+    					String parameterName = parameter.name();
+    					String defaultValue  = parameter.defaultValue();
+    					String value = null;
+    					if( parameters.containsKey( parameterName ) ) {
+    						value = parameters.get( parameterName );
+    					}
+    					else if (defaultValue != null) {
+    						value = defaultValue;
+    					}
 	    				try {
-	    					String parameterName = parameter.name();
-	    					String defaultValue  = parameter.defaultValue();
-	    					String value = null;
-	    					if( parameters.containsKey( parameterName ) ) {
-	    						value = parameters.get( parameterName );
-	    					}
-	    					else if (defaultValue != null) {
-	    						value = defaultValue;
-	    					}
 							m.invoke(bean, new XUIPropertyValueDecoder( value ).getDecodedValue() );
 						}  catch (Exception e) {
-							log.warn( "Could not invoke " + m.getName() , e );
+		    				try {
+		    					m.invoke(bean, value );
+		    				}
+		    				catch( Exception e1 ) {  
+		    					log.warn( "Could not invoke " + m.getName() , e );
+		    				}
 						}
 	    			}
 	    			

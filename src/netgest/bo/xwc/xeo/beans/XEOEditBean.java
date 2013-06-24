@@ -47,6 +47,7 @@ import netgest.bo.system.boApplication;
 import netgest.bo.utils.XEOObjectUtils;
 import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.annotations.Visible;
+import netgest.bo.xwc.components.classic.AttributeAutoComplete;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.AttributeNumberLookup;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -58,6 +59,7 @@ import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.autocomplete.FindAttributesInTemplate;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOBridgeListConnector;
@@ -1253,74 +1255,44 @@ public class XEOEditBean extends XEOBaseBean
             	if( value != null ) {
             		oSelectedRow = oGrid.getRowByIdentifier( value );
             	}
-            	if (oSelectedRow == null){
-            		DataRecordConnector[] lines = oGrid.getSelectedRows();
-            		if (lines.length > 0)
-            			oSelectedRow = lines[0];
-            	}
             }
             
-            
-            if (oSelectedRow != null){
-	    		sBridgeKeyToEdit = String.valueOf( oSelectedRow.getAttribute("BOUI").getValue() );
-	    		try {
-					boObject childObj = boObject.getBoManager().loadObject(
-							getEboContext(), Long.valueOf(sBridgeKeyToEdit));
-					if (securityRights.canRead(getEboContext(), childObj.getName())) {
-						if (oAttDef.getChildIsOrphan( childObj.getName() ) ) {
-							if (oRequestContext.isAjaxRequest()) {
-								// Resubmit the to the command... to save the selected row.
-								oCommand.setValue( oSelectedRow
-										.getAttribute("BOUI")
-										.getValue().toString());
-								
-								String frameId = "rowDblClick_"+oSelectedRow
-								.getAttribute("BOUI")
-								.getValue().toString();
-								
-								oRequestContext.getScriptContext().add(
-										XUIScriptContext.POSITION_FOOTER,
-										"editBrigde_openTab",
-										XVWScripts.getOpenCommandTab(frameId,oCommand, "" , null ));
-								
-								oRequestContext.renderResponse();
-							} else {
-								boObject sObjectToOpen;
-								try {
-									sObjectToOpen = boObject
-											.getBoManager()
-											.loadObject(
-													getEboContext(),
-													Long
-															.parseLong(sBridgeKeyToEdit));
-									oViewRoot = oSessionContext
-											.createChildView(
-									        		getViewerResolver().getViewer( sObjectToOpen, XEOViewerResolver.ViewerType.EDIT )
-												);
-									XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
-											.getBean("viewBean");
-									oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
-								} catch (NumberFormatException e) {
-									throw new RuntimeException(e);
-								} catch (boRuntimeException e) {
-									throw new RuntimeException(e);
-								}
-							}
+    		sBridgeKeyToEdit = String.valueOf( oSelectedRow.getAttribute("BOUI").getValue() );
+    		
+    		try {
+				boObject childObj = boObject.getBoManager().loadObject(
+						getEboContext(), Long.valueOf(sBridgeKeyToEdit));
+				if (securityRights.canRead(getEboContext(), childObj.getName())) {
+					if (oAttDef.getChildIsOrphan( childObj.getName() ) ) {
+						if (oRequestContext.isAjaxRequest()) {
+							// Resubmit the to the command... to save the selected row.
+							oCommand.setValue( oSelectedRow
+									.getAttribute("BOUI")
+									.getValue().toString());
+							
+							String frameId = "rowDblClick_"+oSelectedRow
+							.getAttribute("BOUI")
+							.getValue().toString();
+							
+							oRequestContext.getScriptContext().add(
+									XUIScriptContext.POSITION_FOOTER,
+									"editBrigde_openTab",
+									XVWScripts.getOpenCommandTab(frameId,oCommand, "" , null ));
+							
+							oRequestContext.renderResponse();
 						} else {
-							long lCurrentBoui;
-	
-							lCurrentBoui = ((BigDecimal) oSelectedRow.getAttribute(
-									"BOUI").getValue()).longValue();
-	
-							String sClassName;
+							boObject sObjectToOpen;
 							try {
-								sClassName = boObject.getBoManager()
-										.getClassNameFromBOUI(getEboContext(),
-												lCurrentBoui);
+								sObjectToOpen = boObject
+										.getBoManager()
+										.loadObject(
+												getEboContext(),
+												Long
+														.parseLong(sBridgeKeyToEdit));
 								oViewRoot = oSessionContext
 										.createChildView(
-								        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
-										);
+								        		getViewerResolver().getViewer( sObjectToOpen, XEOViewerResolver.ViewerType.EDIT )
+											);
 								XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 										.getBean("viewBean");
 								oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
@@ -1329,35 +1301,56 @@ public class XEOEditBean extends XEOBaseBean
 							} catch (boRuntimeException e) {
 								throw new RuntimeException(e);
 							}
-	
-							oViewRoot = oSessionContext.createChildView(
-					        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
-								);
-							XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
-									.getBean("viewBean");
-							oBaseBean.setEditInOrphanMode( false );
-							oBaseBean.setParentBeanId( getId() );
-							oBaseBean.setParentComponentId(oGrid.getClientId());
-							oBaseBean.setCurrentObjectKey(String
-									.valueOf(lCurrentBoui));
 						}
 					} else {
-						
-						oRequestContext
-								.addMessage(
-										"error_edit_bridge",
-										new XUIMessage(XUIMessage.TYPE_ALERT,
-												XUIMessage.SEVERITY_ERROR,
-												BeansMessages.ERROR_EXECUTING_OPERATION.toString(),
-												BeansMessages.NOT_ENOUGH_PERMISSIONS_TO_OPEN_OBJECT.toString()
-											));
+						long lCurrentBoui;
+
+						lCurrentBoui = ((BigDecimal) oSelectedRow.getAttribute(
+								"BOUI").getValue()).longValue();
+
+						String sClassName;
+						try {
+							sClassName = boObject.getBoManager()
+									.getClassNameFromBOUI(getEboContext(),
+											lCurrentBoui);
+							oViewRoot = oSessionContext
+									.createChildView(
+							        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+									);
+							XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
+									.getBean("viewBean");
+							oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
+						} catch (NumberFormatException e) {
+							throw new RuntimeException(e);
+						} catch (boRuntimeException e) {
+							throw new RuntimeException(e);
+						}
+
+						oViewRoot = oSessionContext.createChildView(
+				        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+							);
+						XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
+								.getBean("viewBean");
+						oBaseBean.setEditInOrphanMode( false );
+						oBaseBean.setParentBeanId( getId() );
+						oBaseBean.setParentComponentId(oGrid.getClientId());
+						oBaseBean.setCurrentObjectKey(String
+								.valueOf(lCurrentBoui));
 					}
-				} catch (Exception e) {
-					throw new RuntimeException(e);
+				} else {
+					
+					oRequestContext
+							.addMessage(
+									"error_edit_bridge",
+									new XUIMessage(XUIMessage.TYPE_ALERT,
+											XUIMessage.SEVERITY_ERROR,
+											BeansMessages.ERROR_EXECUTING_OPERATION.toString(),
+											BeansMessages.NOT_ENOUGH_PERMISSIONS_TO_OPEN_OBJECT.toString()
+										));
 				}
-            } else {
-            	log.warn( "Could not open bridge element for Bridge %s" , gridBridge.getName() );
-            }
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
         }
         else {
         	oRequestContext.addMessage( "error_edit_bridge" , 
@@ -2801,64 +2794,39 @@ public class XEOEditBean extends XEOBaseBean
      * 
      * @return A JSON array with the values (each value is a JSONObject with key/value properties)
      */
-    public String getAutoCompleteSearchResult( String objectName, 
-    		String attributeName, String filterQuery, 
-    		String filter, String template){
+    public String getAutoCompleteSearchResult( String filter , AttributeBase component){
     	
     	JSONArray result = new JSONArray();
-		
-		String boqlQuery = "";
-		
-		if (StringUtils.isEmpty( filterQuery )){
-			StringBuilder boql = new StringBuilder().
-				 append("select ")
-				.append(objectName)
-				.append(" where ")
-				.append(attributeName)
-				.append(" LIKE ?");
-			boqlQuery = boql.toString();
-		} else {
-			StringBuilder boql = new StringBuilder(filterQuery);
-			boql.append( "AND " ).append(attributeName).append(" LIKE ?");
-			boqlQuery = boql.toString();
-		}
-		
-		boObjectList lst = new boObjectListBuilder( getEboContext(), 
-					boqlQuery ).arg( filter + "%" ).pageSize( 15 ).build();
-		
-		if (lst.isEmpty()){
-			//Search EboTextIndex
-			lst.setFullTextSearch( boObjectList.arrangeFulltext( getEboContext(), filter ) );
-			lst.refreshData();
-		} 
-		
-		while (lst.next()){
-			try {
-				boObject current = lst.getObject();
-				JSONObject currentObj = new JSONObject();
-				
-				if (StringUtils.isEmpty( template ))
-					currentObj.put( "value" , current.getTextCARDID().toString());
-				else{
-					FindAttributesInTemplate finder = new FindAttributesInTemplate();
-					List<String> found = finder.findAttributes( template );
-					XEOObjectUtils replacer = new XEOObjectUtils();
-					for (Iterator<String> it = found.iterator(); it.hasNext();){
-						String currentAttribute = it.next();
-						String toReplace = "{" + currentAttribute + "}";
-						String value = replacer.getStringRepresentation( current.getAttribute( currentAttribute ) );
-						template = template.replace( toReplace, value );
-					}
-					currentObj.put( "value" , template );
-				}
-				currentObj.put( "key", String.valueOf( current.getBoui() )  );
-				
-				result.put( currentObj );
-			} catch ( Exception e ) {
-				e.printStackTrace();
-			}
-		}
-		
+    	
+    	DataFieldConnector genericConnector = component.getDataFieldConnector( );
+    	String targetObjectName = "";
+    	String attribute = component.getObjectAttribute();
+    	if (genericConnector instanceof XEOObjectAttributeConnector){
+    		XEOObjectAttributeConnector attributeConector = (XEOObjectAttributeConnector) genericConnector;
+    		boDefAttribute attributeDefinition = attributeConector.getBoDefAttribute( );
+    		targetObjectName = attributeDefinition.getReferencedObjectName( );
+    		boObjectList list = boObjectList.list( getEboContext( ) , "select " + targetObjectName );
+    		AttributeAutoComplete autoComplete = ( AttributeAutoComplete ) component;
+    		if ( autoComplete.getAllowWildCardSearch() ){
+    			filter = filter + "%";
+    		}
+    		
+    		list.setFullTextSearch( filter );
+    		try {
+	    		list.beforeFirst( );
+	    		while (list.next()){
+	    				boObject current = list.getObject();
+	    				JSONObject currentObj = new JSONObject();
+	    				
+	    				currentObj.put( "value" , current.getTextCARDID().toString());
+	    				currentObj.put( "key", String.valueOf( current.getBoui() )  );
+	    				
+	    				result.put( currentObj );
+	    		}
+    		} catch ( Exception e ) {
+    			log.warn( "Could not retrieve results for attribute %s of type %s", e, attribute, targetObjectName );
+    		}
+    	}
 		return result.toString();
 		
     }

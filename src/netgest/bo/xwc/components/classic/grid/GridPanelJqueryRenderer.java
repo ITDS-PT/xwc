@@ -3,6 +3,7 @@ package netgest.bo.xwc.components.classic.grid;
 import static netgest.bo.xwc.components.HTMLAttr.ID;
 import static netgest.bo.xwc.components.HTMLAttr.NAME;
 import static netgest.bo.xwc.components.HTMLAttr.STYLE;
+import static netgest.bo.xwc.components.HTMLAttr.TYPE;
 import static netgest.bo.xwc.components.HTMLTag.DIV;
 import static netgest.bo.xwc.components.HTMLTag.INPUT;
 import static netgest.bo.xwc.components.HTMLTag.TABLE;
@@ -14,10 +15,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.component.UIComponent;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import netgest.bo.xwc.components.classic.GridPanel;
+import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.grid.GridPanelJSonRenderer.JsonFormat;
 import netgest.bo.xwc.components.classic.grid.GridPanelJqueryRenderer.GridOptionsBuilder.ColumnModelBuilder;
 import netgest.bo.xwc.components.classic.grid.GridPanelJqueryRenderer.GridOptionsBuilder.ColumnModelBuilder.EditOptions;
@@ -28,6 +31,7 @@ import netgest.bo.xwc.components.classic.renderers.jquery.JQueryBaseRenderer;
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.JQueryWidget;
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.WidgetFactory;
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.WidgetFactory.JQuery;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataListConnector;
@@ -39,7 +43,9 @@ import netgest.bo.xwc.components.template.util.CustomTemplateRenderer;
 import netgest.bo.xwc.components.util.ComponentRenderUtils;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.ColumnAttribute;
 import netgest.utils.StringUtils;
 
@@ -58,6 +64,8 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		GridPanel grid = (GridPanel) component;
 		XUIResponseWriter w = getResponseWriter();
 		encodeBegin( grid, w );
+		
+		Layouts.registerComponent( w , grid , Layouts.LAYOUT_FIT_PARENT );
 	}
 	
 	
@@ -65,8 +73,11 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		
 		w.startElement( DIV );
 			w.writeAttribute( ID, grid.getClientId() );
+			w.writeAttribute( STYLE, "width:auto" );
 		
 		createGridMarkup( grid, w );
+		
+		createGridHiddenFields( grid, w );
 		
 		createGridNavBarMarkup( grid, w );
 		
@@ -74,28 +85,56 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		
 		
 		String script = createGridPanelJavascript(grid);
-		addScriptFooter( "gridPanelRender_" + grid.getId(), script );
+		addScriptFooter( "gridPanelRender_" + grid.getClientId(), script );
 		
 		String gridNavBar = createGridNavBarScript(grid);
-		addScriptFooter( "gridPanelRender_" + grid.getId() + "_nav", gridNavBar );
+		addScriptFooter( "gridPanelRender_" + grid.getClientId() + "_nav", gridNavBar );
 		
 		String groupHeaders = addGroupHeaders(grid);
 		if (StringUtils.hasValue( groupHeaders ))
-			addScriptFooter( "gridPanelRender_" + grid.getId() + "_headers", groupHeaders );
+			addScriptFooter( "gridPanelRender_" + grid.getClientId() + "_headers", groupHeaders );
 		
 		String addNavBarButtons = addGridNavBarButtons(grid);
-		addScriptFooter( "gridPanelRender_" + grid.getId() + "_btns", addNavBarButtons );
+		addScriptFooter( "gridPanelRender_" + grid.getClientId() + "_btns", addNavBarButtons );
+		
+	}
+	
+	private void createGridHiddenFields(GridPanel grid, XUIResponseWriter w) throws IOException {
+
+		w.startElement( INPUT , grid);
+        w.writeAttribute( TYPE, "hidden", null );
+        w.writeAttribute( NAME, getGridId(grid) +"_srs", null );
+        w.writeAttribute( ID, getGridId(grid) +"_srs", null );
+        w.endElement( INPUT );
+
+        //Active Row
+        w.startElement( INPUT , grid);
+        w.writeAttribute( TYPE, "hidden", null );
+        w.writeAttribute( NAME, getGridId(grid) +"_act", null );
+        w.writeAttribute( ID, getGridId(grid) +"_act", null );
+        w.endElement( INPUT );
 		
 	}
 
 
+	@Override
+	public void encodeChildren( XUIComponentBase oComp ) throws IOException {
+		
+	}
+	
+	@Override
+    public boolean getRendersChildren() {
+        return true;
+    }
+
+
 	private void createFullTextSearchMarkup( GridPanel grid, XUIResponseWriter w ) throws IOException  {
 		w.startElement( DIV );
-			w.writeAttribute( ID, grid.getId() + "_fullTxtSearch" );
+			w.writeAttribute( ID, grid.getClientId() + "_fullTxtSearch" );
 			w.writeAttribute( STYLE, "display:none" );
 			w.startElement( INPUT );
-				w.writeAttribute( NAME, grid.getId() + "_fullTxtSearchInput" );
-				w.writeAttribute( ID, grid.getId() + "_fullTxtSearchInput" );
+				w.writeAttribute( NAME, grid.getClientId() + "_fullTxtSearchInput" );
+				w.writeAttribute( ID, grid.getClientId() + "_fullTxtSearchInput" );
 			w.endElement( INPUT );
 		w.endElement( DIV );
 		
@@ -109,9 +148,9 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 			header.useColSpanStyle( false );
 			
 			StringBuilder b = new StringBuilder(100);
-				b.append("jQuery('#");
-				b.append(grid.getId());
-				b.append("').jqGrid('setGroupHeaders',");
+				b.append("jQuery(XVW.get('");
+				b.append(getGridId( grid ));
+				b.append("')).jqGrid('setGroupHeaders',");
 				b.append(header.serialize());
 				b.append(");");
 			return b.toString();
@@ -140,23 +179,23 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 
 
 	private void createFullTextSearchButton( GridPanel grid, StringBuilder b ) {
-		b.append("jQuery('#");
-		b.append(grid.getId());
-	b.append("').jqGrid('navButtonAdd',");
-		b.append("'");
-		b.append(getNavBarId( grid ));
+		b.append("jQuery(XVW.get('");
+		b.append(getGridId( grid ));
+		b.append("')).jqGrid('navButtonAdd',");
+		b.append("'#");
+		b.append(getEscapedNavBarId( grid ));
 		b.append("',");
 		b.append("{caption:'',title:'Fulltext Search', buttonicon :'ui-icon-zoomin', ");
 		b.append(" onClickButton: function () { ");
 		
-		String buttons = "{ 'Pesquisar' : function () { var val = $('#" + grid.getId() + "_fullTxtSearchInput').val(); " +
-				"jQuery('#"+grid.getId()+"').jqGrid('setGridParam',{ postData: { fullTxt: val} }).trigger('reloadGrid'); $( this ).dialog( \"close\" ); " +
+		String buttons = "{ 'Pesquisar' : function () { var val = $(XVW.get('" + grid.getId() + "_fullTxtSearchInput')).val(); " +
+				"jQuery(XVW.get('"+getGridId( grid )+"')).jqGrid('setGridParam',{ postData: { fullTxt: val} }).trigger('reloadGrid'); $( this ).dialog( \"close\" ); " +
 		"} ,";
-		buttons += "'Limpar' : function() { jQuery('#"+grid.getId()+"').jqGrid('setGridParam',{ postData: { fullTxt: ''} }).trigger('reloadGrid'); $( this ).dialog( \"close\" ); }, ";
+		buttons += "'Limpar' : function() { jQuery(XVW.get('"+getGridId(grid)+"')).jqGrid('setGridParam',{ postData: { fullTxt: ''} }).trigger('reloadGrid'); $( this ).dialog( \"close\" ); }, ";
 		buttons += "'Cancelar' : function() { $( this ).dialog( \"close\" );} }";
 		
 		JQueryWidget w = WidgetFactory.createWidget( JQuery.WINDOW );
-		w.selectorById( grid.getId()+"_fullTxtSearch" )
+		w.selectorById( grid.getClientId()+"_fullTxtSearch" )
 			.createAndStartOptions()
 				.addOption( "width", 300 )
 				.addOption( "height", 180 )
@@ -172,15 +211,15 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 
 
 	private void createColumnChooserButton( GridPanel grid, StringBuilder b ) {
-		b.append("jQuery('#");
-		b.append(grid.getId());
-	b.append("').jqGrid('navButtonAdd',");
-		b.append("'");
-		b.append(getNavBarId( grid ));
+		b.append("jQuery(XVW.get('");
+		b.append(getGridId( grid ));
+		b.append("')).jqGrid('navButtonAdd',");
+		b.append("'#");
+		b.append(getEscapedNavBarId( grid ));
 		b.append("',");
 		b.append("{caption:'Columns',title:'Reorder Columns',");
 		b.append(" onClickButton: function () { ");
-				b.append( "jQuery('#"+grid.getId()+"').jqGrid('columnChooser');");
+				b.append( "jQuery(XVW.get('"+getGridId( grid )+"')).jqGrid('columnChooser');");
 			
 	b.append(" } }); ");
 	
@@ -188,19 +227,19 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 
 
 	private void activateFrozenColumns( GridPanel grid, StringBuilder b ) {
-		b.append("jQuery('#");
-		b.append(grid.getId());
-		b.append("').jqGrid('setFrozenColumns');");
+		b.append("jQuery(XVW.get('");
+		b.append(getGridId( grid ));
+		b.append("')).jqGrid('setFrozenColumns');");
 		
 	}
 
 
 	private void createExportExcelButton( GridPanel grid, StringBuilder b ) {
-		b.append("jQuery('#");
-			b.append(grid.getId());
-		b.append("').jqGrid('navButtonAdd',");
-			b.append("'");
-			b.append(getNavBarId( grid ));
+		b.append("jQuery(XVW.get('");
+		b.append(getGridId( grid ));
+		b.append("')).jqGrid('navButtonAdd',");
+			b.append("'#");
+			b.append(getEscapedNavBarId( grid ));
 			b.append("',");
 			b.append("{caption:'Excel',title:'Export Excel', buttonicon :'ui-icon-document',");
 			b.append(" onClickButton: ");
@@ -211,11 +250,11 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 	}
 	
 	private void createExportPdfButton( GridPanel grid, StringBuilder b ) {
-		b.append("jQuery('#");
-			b.append(grid.getId());
-		b.append("').jqGrid('navButtonAdd',");
-		b.append("'");
-		b.append(getNavBarId( grid ));
+		b.append("jQuery(XVW.get('");
+		b.append(getGridId( grid ));
+		b.append("')).jqGrid('navButtonAdd',");
+		b.append("'#");
+		b.append(getEscapedNavBarId( grid ));
 		b.append("',");
 		b.append("{caption:'PDF',title:'Export PDF', buttonicon :'ui-icon-document',");
 		b.append(" onClickButton: ");
@@ -226,29 +265,29 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 
 
 	private void activateFilterToolBar( GridPanel grid, StringBuilder b ) {
-		b.append("jQuery('#");
-			b.append(grid.getId());
-		b.append("').jqGrid('filterToolbar');");
+		b.append("jQuery(XVW.get('");
+		b.append(getGridId( grid ));
+		b.append("')).jqGrid('filterToolbar');");
 	}
 
 
 	private void createClearFiltersButton( GridPanel grid, StringBuilder b ) {
-		b.append("jQuery('#");
-			b.append(grid.getId());
-		b.append("').jqGrid('navButtonAdd',");
-			b.append("'");
-			b.append(getNavBarId( grid ));
+		b.append("jQuery(XVW.get('");
+		b.append(getGridId( grid ));
+		b.append("')).jqGrid('navButtonAdd',");
+			b.append("'#");
+			b.append(getEscapedNavBarId( grid ));
 			b.append("',");
 			b.append("{caption:'',title:'Clear Search', buttonicon :'ui-icon-circle-close',");
 			b.append(" onClickButton:function(){ ");
-			b.append(" jQuery('#" + grid.getId() + "').jqGrid('filterToolbar')[0].clearToolbar(); ");
+			b.append(" jQuery(XVW.get('" + getGridId(grid) + "')).jqGrid('filterToolbar')[0].clearToolbar(); ");
 			b.append(" } ");
 			b.append(" }); ");
 	}
 
 
 	private String createGridNavBarScript( GridPanel grid ) {
-		return "jQuery('#" +grid.getId()+"').jqGrid('navGrid','#"+ getNavBarId( grid ) 
+		return "jQuery(XVW.get('" +getGridId(grid)+"')).jqGrid('navGrid','#"+ getEscapedNavBarId( grid ) 
 				+ "',{edit:false,add:false,del:false},{},{},{},{multipleSearch:true, multipleGroup:true});";
 	}
 
@@ -261,17 +300,25 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 
 
 	protected String getNavBarId( GridPanel grid ) {
-		return grid.getId() + "_navBar";
+		//return grid.getClientId() + "_navBar" ;
+		return grid.getClientId().replaceAll( ":" , "_" ) + "_navBar";
+	}
+	
+	protected String getEscapedNavBarId( GridPanel grid ) {
+		//return JQueryBuilder.escapeJquerySelector( grid.getClientId()  ) + "_navBar";
+		return grid.getClientId().replaceAll( ":" , "_" ) + "_navBar";
 	}
 
 
 	private void createGridMarkup( GridPanel grid, XUIResponseWriter w ) throws IOException {
 		w.startElement( TABLE );
-			w.writeAttribute( ID, grid.getId());
+			w.writeAttribute( ID, getGridId(grid) );
 		w.endElement( TABLE );
 	}
 	
-	
+	private String getGridId(GridPanel grid){
+		return grid.getClientId( ) + "_table";
+	}
 	
 	private String createGridPanelJavascript( GridPanel grid ) {
 		GridOptionsBuilder b = new GridOptionsBuilder();
@@ -282,9 +329,12 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 			.dataUrl( ComponentRenderUtils.getCompleteServletURL( grid.getRequestContext(), grid.getClientId() ) )
 			.title( grid.getTitle() )
 			.height( 250 )
-			.width( 700 )
-			.shrinkToFit( false )
+			//.width( 800 )
+			.autoWidth( true )
+			.shrinkToFit( true )
 			.columnReordering( true )
+			.onDoubleClick( grid )
+			.onSelectRow()
 			.rowNum( Integer.parseInt( grid.getPageSize() ) )
 			.pageEvent( grid )
 			//.loadError()
@@ -301,7 +351,7 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		String options = b.build();
 		
 		StringBuilder gridDefinition = new StringBuilder(options.length() + 100);
-		gridDefinition.append("jQuery('#").append(grid.getId()).append("').jqGrid(").append(options).append(");");
+		gridDefinition.append("jQuery(XVW.get('").append(getGridId(grid)).append("')).jqGrid(").append(options).append(");");
 		
 		return gridDefinition.toString();
 	}
@@ -344,7 +394,8 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 	private void buildJsonReader( GridPanel grid, GridOptionsBuilder b ) {
 		
 		b.jsonReader()
-			.root( grid.getId() )
+			//.root( getGridId(grid) )
+			.root(grid.getId())
 			.repeatItems( false )
 			.id( "0" ) //Id is the first element in the list
 			.cell( "" ) //Don't put lines inside an array named "cell"
@@ -365,6 +416,7 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 				.name( column.getDataField() )
 				.index( column.getDataField() )
 				.sortable( column.isSortable() )
+				.hidden(column.isHidden( ))
 				.align( column.getAlign() );
 			
 				if (isFrozen(column))
@@ -415,7 +467,7 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		if (DataFieldTypes.VALUE_BOOLEAN == attributeMetaData.getDataType()){
 			opts.value(  "" , "" );
 			opts.value(  Boolean.TRUE.toString() , "Sim");
-			opts.value(  Boolean.FALSE.toString(), "NÃ£o" );
+			opts.value(  Boolean.FALSE.toString(), "Não" );
 		} else if (attributeMetaData.getIsLov()){
 			Map<Object,String> map = attributeMetaData.getLovMap();
 			Iterator<Object> keys = map.keySet().iterator();
@@ -461,8 +513,16 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 	}
 	
 	public void decode(GridPanel grid, Map<String,String> requestParameters){
-		
-		//GridPanelRequestParameters parameters = new GridPanelRequestParameters();
+		String sGridSelectedIds = null;
+		sGridSelectedIds = requestParameters.get( getGridId( grid ) +"_srs" );
+        if( sGridSelectedIds != null && sGridSelectedIds.length() > 0 ){
+        	grid.setSelectedRowsByIdentifier( sGridSelectedIds.split("\\|") );
+        }
+        
+        sGridSelectedIds = requestParameters.get( getGridId( grid ) +"_act" );
+        if( sGridSelectedIds != null && sGridSelectedIds.length() > 0 ){
+        	grid.setActiveRowByIdentifier( sGridSelectedIds );
+        }
 		
 	}
 
@@ -525,7 +585,9 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		    		groupDetails, 
 		    		groupDetails.iterator(), 
 		    		0, 
-		    		pageSize 
+		    		pageSize,
+		    		-1,
+		    		reqParam
 		    	);
 		    oResponse.getWriter().print( oStrBldr );
 		    
@@ -619,6 +681,37 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 			
 		}
 		
+		public GridOptionsBuilder onDoubleClick(GridPanel grid) {
+			
+			XUICommand oRowDblClickComp = (XUICommand)grid.findComponent( grid.getId() + "_rowDblClick" );
+			UIComponent root = grid.getParent();
+			String viewId = null;
+			while ( root != null){
+				if (root instanceof XUIViewRoot){
+					viewId = ((XUIViewRoot) root).getClientId( );
+					break;
+				}
+				root = root.getParent();
+			}
+			
+			
+			addOption( "ondblClickRow" , new JSFunction("function(rowId, iRow, iCol, e){ "+
+					/*XVWScripts.getCommandScript( 
+                    		grid.getRowDblClickTarget( ) ,
+                    		"edit_" ,
+                    		oRowDblClickComp , 
+                    		XVWScripts.WAIT_STATUS_MESSAGE) + "} "
+                    		)*/
+                    	XVWScripts.getOpenCommandTab( oRowDblClickComp , viewId ) + "}"	
+			));
+			return this;
+		}
+		
+		public GridOptionsBuilder onSelectRow(){
+			addOption("onSelectRow", new JSFunction("function(rowId,status,e){ XVW.grid.onSelectRow(rowId,status,e,this)}"));
+			return this;
+		}
+
 		public GridOptionsBuilder pageEvent(GridPanel grid) {
 			Map<String,Object> ctx = new HashMap<String, Object>();
 			ctx.put( "this", grid );
@@ -670,6 +763,11 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 			return this;
 		}
 		
+		public GridOptionsBuilder autoWidth(boolean autoWidth){
+			addOption( "autowidth", autoWidth );
+			return this;
+		}
+		
 		public GridOptionsBuilder width(int width){
 			addOption( "width", width );
 			return this;
@@ -698,7 +796,7 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		}
 		
 		public GridOptionsBuilder pagerId(GridPanel grid){
-			addOption( "pager", getNavBarId( grid ) );
+			addOption( "pager", "#"+getEscapedNavBarId( grid ) );
 			return this;
 		}
 		
@@ -957,7 +1055,10 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 				
 			}
 			
-			
+			public ColumnModelBuilder hidden(boolean hidden){
+				addOption( "hidden", hidden );
+				return this;
+			}
 			
 			public ColumnModelBuilder sortable(boolean sortable){
 				addOption( "sortable", sortable );

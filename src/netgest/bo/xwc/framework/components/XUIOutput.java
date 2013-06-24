@@ -73,7 +73,6 @@ public class XUIOutput extends XUIComponentBase
     public XUIOutput() {
 
         super();
-        setRendererType("javax.faces.Text");
 
     }
 
@@ -100,7 +99,7 @@ public class XUIOutput extends XUIComponentBase
 	ValueExpression ve = getValueExpression("converter");
 	if (ve != null) {
 	    try {
-		return ((Converter) ve.getValue(getFacesContext().getELContext()));
+		return ((Converter) ve.getValue(getELContext()));
 	    }
 	    catch (ELException e) {
 		throw new FacesException(e);
@@ -135,7 +134,7 @@ public class XUIOutput extends XUIComponentBase
 	ValueExpression ve = getValueExpression("value");
 	if (ve != null) {
 	    try {
-		return (ve.getValue(getFacesContext().getELContext()));
+		return (ve.getValue(getELContext()));
 	    }
 	    catch (ELException e) {
 		throw new FacesException(e);

@@ -1,10 +1,15 @@
 package netgest.bo.xwc.components.classic.theme;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.lowagie.text.html.HtmlTags;
 
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boBridgeIterator;
@@ -19,9 +24,15 @@ import netgest.bo.utils.XeoUserTheme;
 import netgest.bo.utils.XeoUserThemeFile;
 import netgest.bo.xeomodels.system.Theme;
 import netgest.bo.xeomodels.system.ThemeIncludes;
+import netgest.bo.xwc.components.HTMLAttr;
+import netgest.bo.xwc.components.classic.Layouts;
+import netgest.bo.xwc.components.classic.Window;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
 import netgest.bo.xwc.framework.XUITheme;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 import netgest.utils.StringUtils;
 
@@ -252,7 +263,7 @@ public class ExtJsTheme implements XUITheme {
 
 
 	public String getBodyStyle() {
-		return " ext-ie ext-ie7 x-aero";
+		return " ext-ie ext-ie7 x-aero; height:100%;width:100%";
 	}
 
 	public String getHtmlStyle() {
@@ -299,6 +310,83 @@ public class ExtJsTheme implements XUITheme {
 			scriptContext.add(XUIScriptContext.POSITION_HEADER,id,script);
 		}
 		
+	}
+
+	@Override
+	public String getDocType() {
+		return "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
+	}
+
+	@Override
+	public void writeHeader(XUIResponseWriter headerWriter) throws IOException  {
+		
+		headerWriter.startElement( HtmlTags.META);
+		headerWriter.writeAttribute("http-equiv", "X-UA-Compatible");
+		headerWriter.writeAttribute("content", "IE=EmulateIE7;chrome=IE10");
+		headerWriter.endElement( HtmlTags.META );
+		
+	}
+
+	@Override
+	public void writePostBodyContent(XUIRequestContext context,
+			XUIResponseWriter writer, XUIViewRoot viewRoot) throws IOException  {
+		
+		if (context.isPortletRequest()) {
+
+			if (!context.isAjaxRequest()) {
+				writer.getScriptContext().add(XUIScriptContext.POSITION_HEADER,
+						"portalVar", "xvw_isPortal=true");
+			}
+
+			String sWidth = (String) ((HttpServletRequest) context
+					.getRequest()).getAttribute("xvw.width");
+			if (sWidth != null) {
+				writer.startElement("div");
+					writer.writeAttribute("id", viewRoot.getClientId());
+					writer.writeAttribute("style", "width:" + sWidth);
+			} else if (!context.isAjaxRequest()) {
+				writer.startElement("div" );
+					writer.writeAttribute("id", viewRoot.getClientId());
+
+					// Nao sei se e necessario, foi criado por necessidade
+					if (viewRoot.findComponent(Window.class) != null) {
+						writer.writeAttribute(HTMLAttr.CLASS, "x-panel", "");
+					}
+					writer.writeAttribute("style", "width:100%;height:100%", null);
+			}
+		} else {
+
+			if (!context.isAjaxRequest()) {
+				writer.getScriptContext().add(XUIScriptContext.POSITION_HEADER,
+						"portalVar", "xvw_isPortal=false");
+			}
+
+			writer.startElement("div" );
+				writer.writeAttribute("id", viewRoot.getClientId());
+	
+				// Nao sei se e necessario, foi criado por necessidade
+				if (viewRoot.findComponent(Window.class) != null) {
+					writer.writeAttribute(HTMLAttr.CLASS, "x-panel", "");
+				}
+				writer.writeAttribute("style", "width:100%;height:100%");
+		}
+		
+		
+	}
+
+	@Override
+	public void writePreFooterContent(XUIRequestContext context,
+			XUIResponseWriter writer, XUIViewRoot viewRoot) throws IOException {
+		
+		if (context.isPortletRequest()) {
+			String sWidth = (String) ((HttpServletRequest) context
+					.getRequest()).getAttribute("xvw.width");
+			if (sWidth != null) {
+				writer.endElement("div");
+			}
+		} else {
+			writer.endElement("div");
+		}
 	}
 
 }

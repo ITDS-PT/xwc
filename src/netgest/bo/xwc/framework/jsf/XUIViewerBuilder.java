@@ -29,7 +29,9 @@ public class XUIViewerBuilder
 //    private static final Log log = LogFactory.getLog(netgest.bo.xwc.framework.jsf.XUIViewerBuilder.class);
     
     public void buildView( XUIRequestContext oContext, XUIViewerDefinition oViewerDefinition, XUIViewRoot oUIViewRoot  )    {
-        buildComponentTree( oContext, oViewerDefinition, oUIViewRoot );
+        oUIViewRoot.setLocalizationClasses( oViewerDefinition.getLocalizationClasses( ) );
+    	buildComponentTree( oContext, oViewerDefinition, oUIViewRoot );
+        
     }
     
     
@@ -96,7 +98,7 @@ public class XUIViewerBuilder
     	if ( hasEvents( events ) ){
     		for ( String phaseEvent : events ){
     			if ( !isEmpty( phaseEvent ) ){
-    				System.out.println("Adding "  + phaseEvent + "/" + phaseId);
+    				
 	    			root.addPhaseListener(
 	    					new XUIMethodExpressionPhaseListener(
 	    							createEventMethodExpression( phaseEvent ) , 
@@ -152,6 +154,19 @@ public class XUIViewerBuilder
         }
         catch(Exception e)
         {
+        }
+        
+        if( dcomponent.isRawContent() ) {
+	        try
+	        {
+	        	Method m = comp.getClass().getMethod( "setRawContent",new Class[] { Boolean.TYPE } );
+	            m.invoke( comp, new Object[] { true } );
+	            
+	        }
+	        catch(Exception e)
+	        {
+	        	e.printStackTrace();
+	        }
         }
         
         Iterator<String> keysEnum = dcomponent.getProperties().keySet().iterator();

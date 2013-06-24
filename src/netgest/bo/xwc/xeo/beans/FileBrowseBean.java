@@ -37,24 +37,27 @@ public class FileBrowseBean extends netgest.bo.xwc.xeo.beans.XEOBaseBean {
 		HTMLFileBrowse 	oFileComp   = 
 			(HTMLFileBrowse)oViewRoot.findComponent( HTMLFileBrowse.class );
 		
-		XEOEditBean     oParentBean = getParentBean();
+		//Does not work as expexted we need to investigate why it's different
+		//from getParentBean().getViewRoot()
+		//XUIViewRoot parentView = getParentBean().getViewRoot();
+		
+		XUIViewRoot parentView = getParentView();
 		
 		XUIInput oParentInput = 
-			(XUIInput)oParentBean.getViewRoot().findComponent( parentComponentId );
+			(XUIInput)parentView.findComponent( parentComponentId );
 		
 		oRequestContext = oFileComp.getRequestContext();
 
-		oRequestContext.setViewRoot( oParentBean.getViewRoot() );
+		oRequestContext.setViewRoot( parentView );
 
 		oParentInput.setValue( oFileComp.getSubmitedFile() );
 		oParentInput.processUpdate();
 
-        XUIViewRoot oParentView = oParentBean.getViewRoot();
-        XUIForm		oParentForm = (XUIForm)oParentView.findComponent( XUIForm.class );
+        XUIForm		oParentForm = (XUIForm)parentView.findComponent( XUIForm.class );
         if( oParentForm != null ) {
 	        oRequestContext.getScriptContext().add( XUIScriptContext.POSITION_FOOTER, "attachSyncParentView", 
 	                "Ext.onReady( function() { " +
-	                "window.parent.setTimeout(\"XVW.syncView('" + oParentForm.getId() + "')\",0)" +
+	                "window.parent.setTimeout(\"XVW.syncView('" + oParentForm.getClientId() + "')\",0)" +
 	                "});\n"
 	        );
         }

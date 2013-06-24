@@ -1,5 +1,7 @@
 package netgest.bo.xwc.components.connectors.sql;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,12 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import netgest.bo.data.DriverUtils;
-import netgest.bo.data.mysql.MysqlUtils;
-import netgest.bo.data.oracle.OracleUtils;
-import netgest.bo.data.postgre.PostGreUtils;
-import netgest.bo.data.sqlserver.SqlServerUtils;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList.SqlField;
 import netgest.bo.system.Logger;
@@ -40,24 +37,25 @@ import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
-import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
+import netgest.bo.xwc.components.connectors.helper.MultiPurposeFieldConnector;
 import netgest.utils.StringUtils;
 
 /**
  * @author acruz
- * Generic Connector that works in all databases. It can be used for example to display the results of a query in
+ * SQL Connector that works in all databases. It can be used to display the results of a query in
  * a XWCGrid. 
  * The default usage is to create a new instance of this class with the desired query, this
- * uses the default connection to the database available to XEO.
+ * uses the default database connection available to XEO.
  * If you want to use different databases you should extend this class and reimplement the method getConnection
- * a return a Connection to a database of you choice.
+ * and return a Connection to a database of your choice.
  * 
  * A method called truncateDate is used to do queries on Date fields. Right now it works with Oracle, MySQL,
  * SQLServer and Postgres, if you want to use it in any other database you should reimplement it to the database
- * of you choice. 
+ * of your choice. 
  */
 public class SQLDataListConnector implements DataListConnector {
 
+	//Query to execute
 	private String sqlQuery = null;
 	
 	//Control variables for count and query
@@ -409,16 +407,35 @@ public class SQLDataListConnector implements DataListConnector {
 				} catch (SQLException e) {
 		
 				}
-				if (dbName.indexOf("ORACLE")>-1)
-					dutl = new OracleUtils(null);
-				else if (dbName.indexOf("POSTGRE")>-1)
-					dutl = new PostGreUtils(null);
-				else if (dbName.indexOf("MYSQL")>-1)
-					dutl = new MysqlUtils(null);
-				else if (dbName.indexOf("SQL SERVER")>-1)
-					dutl = new SqlServerUtils(null);
-				else //Default to Oracle
-					dutl = new OracleUtils(null);
+				try {	
+					String classname="netgest.bo.data.oracle.OracleUtils";
+					
+					if (dbName.indexOf("ORACLE")>-1)	
+						classname="netgest.bo.data.oracle.OracleUtils";
+					else if (dbName.indexOf("POSTGRE")>-1)
+						classname="netgest.bo.data.oracle.PostGreUtils";
+					else if (dbName.indexOf("MYSQL")>-1)
+						classname="netgest.bo.data.oracle.MysqlUtils";						
+					else if (dbName.indexOf("SQL SERVER")>-1)
+						classname="netgest.bo.data.oracle.SqlServerUtils";					
+					
+					Constructor<?> driverCons = Class.forName( classname ).getConstructor( new Class[] { String.class } );
+					dutl = (DriverUtils)driverCons.newInstance(new Object[] { null });
+				} catch (InstantiationException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				} catch (IllegalAccessException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				} catch (ClassNotFoundException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				} catch (SecurityException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				} catch (NoSuchMethodException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				} catch (IllegalArgumentException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				} catch (InvocationTargetException e) {
+					LOGGER.severe("Error loading DriverUtils class", e);
+				}
 	
 			}
 		}
@@ -450,31 +467,43 @@ public class SQLDataListConnector implements DataListConnector {
 	
 	@Override
 	public void refresh() {
+		
 		resetRowsAndCols();
 		Connection cn = this.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		try {
+		try {			
 			ps = cn.prepareStatement(sqlQuery,
 					ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			setParameters(ps,pars);
-			rs = ps.executeQuery();
 			
-			if (this.dataFieldsMeta == null)
+			int toadd=1;
+            if (pageSize==Integer.MAX_VALUE)
+            	toadd=0;
+	           
+	        int maxRows = (page*pageSize)+toadd;
+	        if (maxRows > 50000000)
+	                   maxRows = 0;
+	        ps.setMaxRows(maxRows);
+	        
+			setParameters(ps,pars);
+			rs = ps.executeQuery();			
+			
+			if (this.dataFieldsMeta == null)				
 				addDataFieldMetaData(rs.getMetaData());
+						
 			int rowNumber = 1;
 			int firstRow = (page * pageSize - pageSize) +1;
-			int lastRow = page * pageSize;
+			int lastRow = page * pageSize;		
 			while (rs.next()) {
 				if (rowNumber>=firstRow && rowNumber<=lastRow)
 					addRow(rs, rowNumber);
 				
 				rowNumber++;
-			}
-			
+			}					
 		} catch (SQLException e) {
 			LOGGER.severe("Error refreshing Connector", e);
-		}		
+		}	
+		
 		finally {
 			sqlQuery = sqlOriginalQuery;
 			pars = null;
@@ -489,7 +518,7 @@ public class SQLDataListConnector implements DataListConnector {
 				LOGGER.severe("Something went wrong closing jdbc resources", e);
 			}
 			if (ctx!=null)
-				ctx.close();
+				ctx.close();			
 		}
 	}
 
@@ -522,10 +551,10 @@ public class SQLDataListConnector implements DataListConnector {
 			SQLDataFieldMetaData sqlmdata=iColumns.next();
 			
 			
-			GenericFieldConnector field=null;
+			MultiPurposeFieldConnector field=null;
 			try {
-				field = new GenericFieldConnector(sqlmdata.getLabel().toLowerCase(), 
-						rs.getString(colIndex), sqlmdata.getDataType());
+				field = new MultiPurposeFieldConnector(sqlmdata.getLabel().toLowerCase(), 
+						rs.getObject(colIndex), sqlmdata.getDataType());
 			} catch (SQLException e) {
 			}			
 			
@@ -533,10 +562,9 @@ public class SQLDataListConnector implements DataListConnector {
 			
 			colIndex++;			
 		}
-		SQLDataRecordConnector record = new SQLDataRecordConnector(row, 1);
-		rows.add(record);
 		
-		
+		SQLDataRecordConnector record = new SQLDataRecordConnector(row, rowIndex);
+		rows.add(record);				
 	}
 	
 	private void addDataFieldMetaData(ResultSetMetaData rsMetaData) {
@@ -570,8 +598,7 @@ public class SQLDataListConnector implements DataListConnector {
 		}
 		catch (SQLException e) {
 			
-		}
-		
+		}		
 	}
 	
 	private String getColumnNameOrExpression(int index) {
@@ -656,8 +683,6 @@ public class SQLDataListConnector implements DataListConnector {
 
 	@Override
 	public void setSqlFields(List<SqlField> sqlFields) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/**
@@ -699,4 +724,15 @@ public class SQLDataListConnector implements DataListConnector {
 	public void setRows(Collection<SQLDataRecordConnector> rows) {
 		this.rows = rows;
 	}
+
+	@Override
+	public boolean hasMorePages() {
+		int pageRows=this.getPage() * this.getPageSize();
+
+		if (this.getRecordCount()>pageRows)
+			return true;
+		else
+			return false;
+	}
+
 }

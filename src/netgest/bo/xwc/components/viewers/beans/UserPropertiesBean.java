@@ -108,20 +108,21 @@ public class UserPropertiesBean extends XEOEditBean {
 			
 			boObject themeObj;
 			try {
-				
-				themeObj = boApplication.getDefaultApplication().getObjectManager().
-					loadObject(getEboContext(), user.getAttribute("theme").getValueLong());
-			 
-				bridgeHandler filesIncludeHandler = themeObj.getBridge(Theme.FILES);
-		    	Map<String,String> files = new HashMap<String, String>();
-		    	filesIncludeHandler.beforeFirst();
-		    	while(filesIncludeHandler.next()){
-		    		boObject currentFileInclude = filesIncludeHandler.getObject();
-		    		String id = currentFileInclude.getAttribute(ThemeIncludes.ID).getValueString();
-		    		String path = currentFileInclude.getAttribute(ThemeIncludes.FILEPATH).getValueString();
-		    		files.put(id, path);
-		    	}
-		    	bouser.setThemeFiles(files);
+				if (user.getAttribute("theme").getValueLong()  > 0){
+					themeObj = user.getAttribute("theme").getObject();
+
+					bridgeHandler filesIncludeHandler = themeObj.getBridge(Theme.FILES);
+					Map<String,String> files = new HashMap<String, String>();
+					filesIncludeHandler.beforeFirst();
+					while(filesIncludeHandler.next()){
+						boObject currentFileInclude = filesIncludeHandler.getObject();
+						String id = currentFileInclude.getAttribute(ThemeIncludes.ID).getValueString();
+						String path = currentFileInclude.getAttribute(ThemeIncludes.FILEPATH).getValueString();
+						files.put(id, path);
+					}
+					bouser.setThemeFiles(files);
+				}
+		    	
 			}
 	    	catch (boRuntimeException e) {
 				logger.severe("Could not change the user theme", e);
@@ -139,8 +140,10 @@ public class UserPropertiesBean extends XEOEditBean {
 						"select XeoApplicationLanguage where boui= ?", new Object[]{languageAtt.getValueLong()});
 				list.beforeFirst();
 				boObject languageObj = list.getObject();
-				String language = languageObj.getAttribute("code").getValueString();
-				bouser.setLanguage(language);
+				if (languageObj != null){
+					String language = languageObj.getAttribute("code").getValueString();
+					bouser.setLanguage(language);
+				}
 			} else{
 				bouser.setLanguage(boApplication.getDefaultApplication()
 						.getApplicationLanguage());

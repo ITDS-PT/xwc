@@ -32,6 +32,12 @@ public class XUIBaseProperty<V> {
             oComponent.setValueExpression( sPropertyName, (ValueExpression)oValue );
 
     }
+    
+    public boolean wasEvaluated(){
+    	return wasEvaluated;
+    }
+    
+    protected boolean wasEvaluated = true;
 
     private final void validate() {
         if( sPropertyName == null ) throw new IllegalArgumentException(ExceptionMessage.PROPERTY_NAME_CANNOT_BE_NULL.toString());

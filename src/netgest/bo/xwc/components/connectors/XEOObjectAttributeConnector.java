@@ -33,6 +33,7 @@ import netgest.bo.system.LoggerLevels;
 import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
+import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 import netgest.io.FSiFile;
@@ -421,7 +422,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
         if( sLovName == null || sLovName.length() == 0 ) {
             ArrayList<Object> list = new ArrayList<Object>();
             try {
-            	if( oAttHandler.isObject() && oAttHandler.getDefAttribute().renderAsLov() ) {
+            	if( oAttHandler.isObject() ) {
                 	
             		list.add( new Object[] { "", "" } );
             		
@@ -437,9 +438,10 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 	                    		LOOKUPQUERY_ARGUMENTS                    		
 	                    		
 	                    );
+	                    XUIELContextWrapper wrapper = new XUIELContextWrapper( context.getELContext( ) , null);
 	            		sql = 
 	            			(String)m.invoke( 
-	            					context.getELContext() , 
+	            					wrapper , 
 	            					new Object[] { 
 	            						oAttHandler, 
 	            						oAttHandler.getDefAttribute().getReferencedObjectDef().getName()

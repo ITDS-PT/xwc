@@ -1,7 +1,11 @@
 package netgest.bo.xwc.framework;
 
 import java.io.Writer;
+import java.util.List;
 
+import javax.faces.component.UIComponent;
+
+import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
 
 public class PackageIAcessor {
@@ -38,6 +42,12 @@ public class PackageIAcessor {
         oWriter.setScriptContext( oScriptContext );
 
     }
+    
+    
+    public static void recursiveProcessStateChanged(UIComponent oComponent, List<XUIComponentBase> oRenderList) {
+    	XUIRenderer.recursiveProcessStateChanged(oComponent, oRenderList);
+    }
+    
 
 
 }

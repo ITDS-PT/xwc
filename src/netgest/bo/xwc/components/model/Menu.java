@@ -82,7 +82,7 @@ public class Menu extends ViewerCommandSecurityBase {
     /**
      * Icon to display next to the label (path to the icon)
      */
-    public XUIViewStateProperty<String> icon 	= new XUIViewStateProperty<String>( "icon", this );
+    public XUIViewStateProperty<String> icon 	= new XUIViewStateProperty<String>( "icon", this, "" );
     /**
      * Which action to execute in the server
      */

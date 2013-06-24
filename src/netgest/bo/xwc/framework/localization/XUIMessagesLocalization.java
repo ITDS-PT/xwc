@@ -15,10 +15,18 @@ import java.util.ResourceBundle.Control;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boSessionUser;
+import netgest.utils.StringUtils;
 
 public class XUIMessagesLocalization {
 
 	private static UTF8Control control = new UTF8Control();
+	
+	public static Locale getApplicationLocale(){
+		String appLocale = getApplicationLanguage();
+		if (StringUtils.hasValue( appLocale ))
+			return new Locale(appLocale);
+		return null;
+	}
 	
 	public static String getApplicationLanguage() {
 		try{
@@ -29,10 +37,19 @@ public class XUIMessagesLocalization {
 			return "";
 		}
 	}
+	
+	public static Locale getUserLanguageLocale(){
+		String language = getUserLanguage( false );
+		if (StringUtils.hasValue( language ))
+			return new Locale( getUserLanguage() );
+		else
+			return null;
+	}
 
-	public static String getUserLanguage() {
-		String ret;
-		ret = getApplicationLanguage();
+	protected static String getUserLanguage(boolean useApplicationOnMiss){
+		String ret = null;
+		if ( useApplicationOnMiss )
+			ret = getApplicationLanguage();
 		try {
 			if (boApplication.currentContext() != null) 
 			{
@@ -41,7 +58,7 @@ public class XUIMessagesLocalization {
 				{
 					boSessionUser boUser = ctx.getSysUser();
 					if (boUser != null){
-						if (boUser.getLanguage() != null && boUser.getLanguage() != "") {
+						if (StringUtils.hasValue( boUser.getLanguage() )) {
 							ret = boUser.getLanguage();
 						}
 					}
@@ -54,11 +71,33 @@ public class XUIMessagesLocalization {
 		}
 		return ret;
 	}
+	
+	public static String getUserLanguage() {
+		return getUserLanguage( true );
+	}
+	
+	/**
+	 * 
+	 * Retrieves the current locale associated to the user/application
+	 * 
+	 * @return
+	 */
+	public static Locale getCurrentLocale(){
+		String language = getUserLanguage();
+		Locale locale = null;
+		if ( StringUtils.isEmpty( language ) ){
+			language = getApplicationLanguage();
+		}
+		if ( StringUtils.hasValue( language ) ){
+			locale = new Locale( language );
+		} 
+		return locale;
+	}
 
 	public static String getMessage(String lang, Locale local, String bundle,
 			String key, Object... args) {
 		Locale language;
-		if (lang != null && lang != "") {
+		if (StringUtils.hasValue( lang )) {
 			if (lang.charAt(2) == '_') {
 
 				String s1 = lang.substring(0, 2);
@@ -85,8 +124,17 @@ public class XUIMessagesLocalization {
 		return getMessage(locale, bundle, key, (Object[]) null);
 	}
 
+	private enum HandleMissingResource{
+		RETURN_NULL,
+		RETURN_MESSAGE
+	}
+	
 	public static String getMessage(Locale locale, String bundle, String key,
 			Object... args) {
+		return getMessage(locale,bundle,key,HandleMissingResource.RETURN_MESSAGE, args);
+	}
+	public static String getMessage(Locale locale, String bundle, String key, HandleMissingResource missingResource,
+			Object... args ) {
 		// ///////
 		String lang = locale.getLanguage();
 		if (!lang.equalsIgnoreCase(getUserLanguage())) {
@@ -140,6 +188,9 @@ public class XUIMessagesLocalization {
 		} catch (java.util.MissingResourceException e) {
 		}
 		if (localizedMessage == null) {
+			if (missingResource == HandleMissingResource.RETURN_NULL)
+				return null;
+			
 			localizedMessage = bundle + "_" + locale.getLanguage() + "[" + key
 					+ "]";
 
@@ -156,6 +207,18 @@ public class XUIMessagesLocalization {
 			}
 		}
 		return localizedMessage;
+	}
+	
+	/**
+	 * 
+	 * Attemps to retrieve the message if it exits, if it does not exist return null
+	 * 
+	 * @param bundle
+	 * @param id
+	 * @return
+	 */
+	public static String getMessageOptional(String bundle, String id) {
+		return getMessage(getThreadCurrentLocale(), bundle, id, HandleMissingResource.RETURN_NULL, (Object[]) null);
 	}
 
 	public static String getMessage(String bundle, String id) {

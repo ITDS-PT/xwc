@@ -43,8 +43,11 @@ public class Form extends XUIForm
 	private XUIViewStateProperty<String> 	encType 			= 
 		new XUIViewStateProperty<String>("encType", this, null );
 	
+	private XUIBindProperty<String> 	cssClass 			= 
+			new XUIBindProperty<String>("cssClass", this, String.class, "" );
+	
 	private XUIBindProperty<Byte> 		securityPermissions = 
-		new XUIBindProperty<Byte>("securityPermissions", this, Byte.class, "#{viewBean.securityPermissions}" );
+		new XUIBindProperty<Byte>("securityPermissions", this, Byte.class );
 
 	
 	public void setSecurityPermissions( String sExpressionString ) {
@@ -52,8 +55,8 @@ public class Form extends XUIForm
 	}
 	
 	public byte getSecurityPermissions() {
-		// Quando n�o existe bean associada ao viewer ignora seguran�as.
-		// N�o existe outra maneira j� que o propriedade � sempre resolvida atrav�s da class
+		// Quando nao existe bean associada ao viewer ignora segurancas.
+		// Nao existe outra maneira ja que a propriedade e sempre resolvida atraves da class
 		// ScopedAttributeELResolver 
 		
 		if( getRequestContext().getViewRoot().getBean( getBeanId() ) != null ) {
@@ -74,7 +77,14 @@ public class Form extends XUIForm
 	public void setEncType(String encType) {
 		this.encType.setValue( encType );
 	}
+	
+	public String getCssClass(){
+		return cssClass.getEvaluatedValue();
+	}
 
+	public void setCssClass(String cssExpr){
+		cssClass.setExpressionText( cssExpr );
+	}
 	private HashMap<String, Boolean> oComponentDependeces;
 
     @Override
@@ -92,6 +102,14 @@ public class Form extends XUIForm
     @Override
     public void initComponent(){
     	super.initComponent();
+    	if (securityPermissions.isDefaultValue( )){
+    		securityPermissions.setExpressionText( "#{"+getBeanId( )+".securityPermissions}");
+    	}
+    }
+    
+    @Override
+    public String getFamily() {
+    	return "form";
     }
     
     public void buildComponentDependences( UIComponent oComponent ) {
@@ -224,10 +242,11 @@ public class Form extends XUIForm
             
             writer.writeAttribute("action", getActionStr(context), null);
             String styleClass =
-                  (String) component.getAttributes().get("styleClass");
+                  (String) oForm.getCssClass( );
             if (styleClass != null) {
-                writer.writeAttribute("class", styleClass, "styleClass");
+                writer.writeAttribute("class", styleClass);
             }
+            
             String acceptcharset = (String)
                   component.getAttributes().get("acceptcharset");
             if (acceptcharset != null) {

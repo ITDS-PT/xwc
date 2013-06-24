@@ -19,5 +19,7 @@ public interface DataGroupConnector {
     public void setPageSize( int pageSize );
     
     public DataFieldMetaData getAttributeMetaData( String attributeName );
+    
+    public boolean hasMorePages();
 
 }

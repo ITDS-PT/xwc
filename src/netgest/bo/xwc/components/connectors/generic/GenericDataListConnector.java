@@ -3,6 +3,7 @@ package netgest.bo.xwc.components.connectors.generic;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,9 @@ public class GenericDataListConnector implements DataListConnector {
 
 	private XUIComponentPlugIn colPlugin;
 
+	private int page=1;
+	private int pageSize=Integer.MAX_VALUE;
+	
 
 	public void createColumn(String key, String label) {
 		this.cols.put(key, new GenericDataFieldMetaData(label));
@@ -53,12 +57,32 @@ public class GenericDataListConnector implements DataListConnector {
 	}
 
 	public Collection<Map<String, Object>> getRows() {
-		return rows;
+		if (this.page==1 && this.pageSize==Integer.MAX_VALUE)
+			return rows;
+		else {
+			Collection<Map<String,Object>> auxRows = new ArrayList<Map<String,Object>>();
+			
+			int rowNumber = 1;
+			int firstRow = (page * pageSize - pageSize) +1;
+			int lastRow = page * pageSize;
+			
+			Iterator<Map<String,Object>> itRows=rows.iterator();
+			while (itRows.hasNext()) {
+				Map<String,Object> currRow=itRows.next();
+			
+				if (rowNumber>=firstRow && rowNumber<=lastRow)
+					auxRows.add(currRow);					
+				rowNumber++;				
+			}
+			
+			
+			return auxRows;
+		}
 	}
 
 	@Override
 	public int dataListCapabilities() {
-		return 0;
+		return DataListConnector.CAP_PAGING;
 	}
 
 	@Override
@@ -74,12 +98,12 @@ public class GenericDataListConnector implements DataListConnector {
 
 	@Override
 	public int getPage() {
-		return 1;
+		return this.page;
 	}
 
 	@Override
 	public int getPageSize() {
-		return rows.size();
+		return this.pageSize;
 	}
 
 	@Override
@@ -105,8 +129,9 @@ public class GenericDataListConnector implements DataListConnector {
 
 	@Override
 	public void refresh() {
-		this.rows = new ArrayList<Map<String,Object>>();
-		this.currentRow = null;
+		//Do nothing
+		//this.rows = new ArrayList<Map<String,Object>>();
+		//this.currentRow = null;
 	}
 
 	@Override
@@ -115,10 +140,12 @@ public class GenericDataListConnector implements DataListConnector {
 
 	@Override
 	public void setPage(int pageNo) {
+		this.page = pageNo;
 	}
 
 	@Override
 	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
 	}
 
 	@Override
@@ -175,6 +202,16 @@ public class GenericDataListConnector implements DataListConnector {
 					getComponent().getChildren().add(ca);
 			}
 		}
+	}
+
+	@Override
+	public boolean hasMorePages() {
+		int pageRows=this.getPage() * this.getPageSize();
+
+		if (this.getRecordCount()>pageRows)
+			return true;
+		else
+			return false;
 	}
 
 }

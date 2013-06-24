@@ -128,4 +128,9 @@ public class XEOObjectListAttributeAggregate implements DataFieldConnector {
 		return true;
 	}
 
+	@Override
+	public String getToolTip() {
+		return null;
+	}
+
 }

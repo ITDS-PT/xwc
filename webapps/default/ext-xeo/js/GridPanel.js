@@ -78,7 +78,6 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         	//the X button to remove a group). Had to switch back to
         	//this solution: Removing all groups and adding them again (without the one
         	//to remove)
-        	
         	var groups = this.store.groupField;
         	var newGroups = [];
         	this.clearGroups();
@@ -87,6 +86,10 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         			newGroups.push(groups[k]);
         		}
         	}
+        	
+        	//No groups means
+        	if (newGroups.length == 0)
+        		this.markDataSourceChange();
         	
         	for ( i = 0 ; i < newGroups.length ; i++){
         		this.groupByColumn(newGroups[i]);
@@ -123,6 +126,8 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         	//only after we can remove them
         	this.showGroupedColumns();
         	this.getGroupDragDropPlugin().removeAllGroupButtons();
+        	
+        	this.markDataSourceChange();
         	
         	//Clear the data grouping
         	this.store.clearGroupBy();
@@ -267,6 +272,9 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 		
 		, uploadConfig : function (params){
 			this.store.uploadConfig(params);
+		}
+		, markDataSourceChange : function (){
+			this.store.markDataSourceChange();
 		}
 		
 		
@@ -704,6 +712,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     	return table;
     }
     ,checkHandlerAggregate: function(mi, checked){
+    	this.grid.markDataSourceChange();
     	if(checked)
     	{
     		this.grid.store.addAggregateField('T:' + mi.itemId, mi.itemId, checked);  
@@ -732,6 +741,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         cmp.setChecked(true);
     },
     onShowGroupsClick : function(mi, checked){
+    	this.grid.markDataSourceChange();
         if(checked){
         	  if(this.grid.store.aggregateFieldsOn.length > 0 && 
         	  	(this.grid.store.groupField.length == 0 || 
@@ -751,6 +761,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         }
     },
     onClearGroups : function() {
+    	this.grid.markDataSourceChange();
     	this.grid.removeAllGroups();
     	if(this.grid.store.aggregateFieldsOn.length > 0)
     	{    			
@@ -1593,7 +1604,7 @@ ExtXeo.grid.GridGroup = Ext.extend( ExtXeo.grid.GridGroup, {
 	},
 	groupLoaded : function() {
 		if( this.toolBar ) {
-			if( this.groupStore.getTotalCount() > 50 ) {
+			if( parseInt(this.count) > 50) {
 				this.toolBar.show();
 			}
 			else {
@@ -1617,10 +1628,11 @@ ExtXeo.grid.GridGroup = Ext.extend( ExtXeo.grid.GridGroup, {
 ExtXeo.grid.GroupingView.GROUP_ID = 10000;
 
 ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
-	changePageControl: false, 
-    grid : null,
-	rowIdentifier : '',
-	constructor: function( opts ) {
+	  changePageControl: false 
+    , grid : null
+	, rowIdentifier : ''
+	, dataSourceChange : false //Represents a change in the datasource
+	, constructor: function( opts ) {
 		this.groupStores = [];
 		if( opts.groupField ) 
 			this.groupField = opts.groupField;
@@ -1643,11 +1655,11 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 		ExtXeo.data.GroupingStore.superclass.constructor.apply(this, arguments);
 	},
     clearGroupBy : function( field ){
-    	
     	this.clearGroupByWithoutReload( field );
 		if( this.groupField.length > 0 ) {
 			this.reload();
 		}
+		this.markDataSourceChange();
 		this.clearExpandedGroups();
 	}
 	, clearGroupByWithoutReload : function ( field ){
@@ -1677,7 +1689,8 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 	}
 	
     , removeGroupBy : function( field ){
-		if( this.groupField.indexOf( field ) != -1 ) {
+    	if( this.groupField.indexOf( field ) != -1 ) {
+    		this.markDataSourceChange();
 			this.groupField.remove( field );
 	        if(this.baseParams){
 	            delete this.baseParams.groupBy;
@@ -1767,9 +1780,10 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     },
     addGroupBy : function( field, forceRegroup ){
     	this.addGroupByWithoutReload(field, forceRegroup);
-        this.reload();
+    	this.reload();
     }
     , addGroupByWithoutReload : function (field, forceRegroup ){
+    	this.markDataSourceChange();
     	if(this.groupField.indexOf( field ) > -1 && !forceRegroup){
             return; 
         }
@@ -1840,7 +1854,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
             return true;
         } else {
           return false;
-        }
+        }    
     },
     isGroupByField : function( fieldName ) {
     	return this.groupField.indexOf( fieldName ) > -1
@@ -1872,6 +1886,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     	
     	var gs = new ExtXeo.data.GroupingStore( c );
     	gs.reader = this.reader;
+    	gs.showCounters = this.showCounters;
     	gs.baseParams = this.baseParams;
     	gs.callback = callback;
     	gs.groupByParentValues = parentValues;
@@ -1917,6 +1932,9 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 
 		if( this.columnsConfig ) 
     		p.columnsConfig = Ext.encode(this.columnsConfig);
+		
+		//Signal if a datasource change is needed
+		p.dataSourceChange = this.dataSourceChange;
     	
     	if( this.groupField && this.groupField.length > 0 ) {
     		p.groupBy 		= this.groupField;
@@ -2033,6 +2051,14 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 		}
 		this.changePageControl = false; 
 	}
+    
+    , markDataSourceChange : function () {
+    	this.dataSourceChange = true;
+    }
+    
+    , resetDataSourceChange : function () {
+    	this.dataSourceChange = false;
+    }
 });
 
 ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
@@ -2046,7 +2072,7 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
     nextText : "Pr&oacute;xima P&aacute;gina",
     lastText : "&Uacute;ltima p&aacute;gina",
     refreshText : "Actualizar",
-    paramNames : {start: 'start', limit: 'limit'},
+    paramNames : {start: 'start', limit: 'limit' }, //Aqui posso acrescentar
     initComponent : function(){
         this.addEvents('change', 'beforechange');
         ExtXeo.PagingToolbar.superclass.initComponent.call(this);
@@ -2125,20 +2151,68 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
             return;
         }
 		this.cursor = o.params && o.params[this.paramNames.start] ? o.params[this.paramNames.start] : 0;
+		if (this.cursor == -1){
+			var total = this.store.getTotalCount() - this.store.getCount();
+			if (total > 0)
+				this.cursor = total;
+			else{
+				var newCursor = this.getMetadataValue('cursor');
+				if (newCursor != null){
+					this.cursor = parseInt(newCursor);
+				}
+			}
+		} else {
+			var newCursor = this.getMetadataValue('cursor');
+			if (newCursor != null){
+				this.cursor = parseInt(newCursor);
+			}
+		}
 		var d = this.getPageData(), ap = d.activePage, ps = d.pages;
-		this.afterTextEl.el.innerHTML = String.format(this.afterPageText, d.pages, d.total );
+		var hasMorePages = this.getMetadataValue('hasMorePages');
+		var lastPage = this.getMetadataValue('lastPage');
+		var isLastPage  = this.getMetadataValue('isLastPage');
+		
+		if (this.showCounters())
+			this.afterTextEl.el.innerHTML = String.format(this.afterPageText, d.pages, d.total );
+		else{
+			if ( (hasMorePages && (lastPage == undefined || lastPage === 0)) || (lastPage === undefined || lastPage === 0))
+				this.afterTextEl.el.innerHTML = "?";
+			else{
+				this.afterTextEl.el.innerHTML = String.format(this.afterPageText, d.pages, d.total);
+			}
+		}
 		
 		this.field.dom.value = ap;
 		
+		var nextDisabled = false;
+		if (this.showCounters()){
+			nextDisabled = (ap == ps) || (hasMorePages != null && !hasMorePages);
+		} else {
+			nextDisabled = (ap == ps && d.pages > 1) || (hasMorePages != null && !hasMorePages);
+		}
+		
 		this.first.setDisabled(ap == 1);
 		this.prev.setDisabled(ap == 1);
-		this.next.setDisabled(ap == ps);
-		this.last.setDisabled(ap == ps);
+		this.next.setDisabled(nextDisabled);
+		this.last.setDisabled(nextDisabled);
 		this.loading.enable();
 		this.updateInfo();
 		this.fireEvent('change', this, d);
-    },
-    getPageData : function(){
+    }
+    
+    , getMetadataValue : function(param){
+    	if (this.store.reader.jsonData.metadata !== undefined)
+    		return this.store.reader.jsonData.metadata[param];
+    	else
+    		return null;
+    	
+    }
+    
+    , showCounters : function(){
+    	return this.store.showCounters;
+    }
+    
+    , getPageData : function(){
         var total = this.store.getTotalCount();
         return {
             total : total,
@@ -2200,12 +2274,16 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
         var o = {}, pn = this.paramNames;
         o[pn.start] = start;
         o[pn.limit] = this.pageSize;
+        o[pn.last] = true;
         if(this.fireEvent('beforechange', this, o) !== false){
             this.store.load({params:o});
         }
     },
     changePage: function(page){
-        this.doLoad(((page-1) * this.pageSize).constrain(0, this.store.getTotalCount()));  
+    	if (this.store.showCounters)
+    		this.doLoad(((page-1) * this.pageSize).constrain(0, this.store.getTotalCount()));
+    	else
+    		this.doLoad(page);
     },
 
         onClick : function(which){
@@ -2224,7 +2302,10 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
                 var total = store.getTotalCount();
                 var extra = total % this.pageSize;
                 var lastStart = extra ? (total - extra) : total-this.pageSize;
-                this.doLoad(lastStart);
+                if (store.showCounters)
+                	this.doLoad(lastStart);
+                else
+                	this.doLoad(-1);
             break;
             case "refresh":
                 this.doLoad(this.cursor);
@@ -2253,6 +2334,7 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
         },
         scope:this
     }
+    
 });
 
 ExtXeo.grid.rowClickHndlr = function( oGrid, rowIndex, oEvent, sGridInputId, sRowIdentifier ) {

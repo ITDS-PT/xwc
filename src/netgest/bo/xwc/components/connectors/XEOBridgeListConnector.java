@@ -164,6 +164,11 @@ public class XEOBridgeListConnector implements DataListConnector {
     public boolean hasMoreResults() {
     	return true;
     }
+
+	@Override
+	public boolean hasMorePages() {
+		return oBridge.haveMorePages();
+	}
 	
 	
 }

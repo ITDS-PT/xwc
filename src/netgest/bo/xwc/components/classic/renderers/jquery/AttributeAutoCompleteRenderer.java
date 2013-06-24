@@ -22,11 +22,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import javax.el.ExpressionFactory;
-import javax.el.MethodExpression;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.boObject;
@@ -46,8 +48,6 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.utils.StringUtils;
-
-import org.json.JSONArray;
 
 
 public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements XUIRendererServlet {
@@ -76,7 +76,6 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 	 */
 	public void encodeBegin(AttributeAutoComplete component, XUIResponseWriter w, JQueryWidget widget) throws IOException {
 		
-		setupIncludes( component );
 		createMarkup( component, w );
 		Layouts.registerComponent( 
 				getRequestContext().getScriptContext(), 
@@ -87,7 +86,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 		if (shouldUpdate( component )){
 			
 			widget
-			.componentSelectorById( component.getId() + "_complete" )
+			.componentSelectorById( getComponentId( component ) )
 			.createAndStartOptions()
 			.addOption( "json_url", 
 					ComponentRenderUtils.getServletURL( getContext(), component.getClientId() ) )
@@ -95,8 +94,17 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 					.addOption( "formId" , component.findParentComponent( XUIForm.class ).getClientId() )
 					.addOption( "componentId" , component.getOpenCommand().getClientId() )
 					.addOption( "enableCardIdLink" , component.getEnableCardIdLink() )
-					.addOption( "height" , 5);
-					//.addOption( "width", "100%" );
+					.addOption( "input_name" , component.getClientId( ) +"_input" )
+					.addOption( "input_min_size" , component.getMinSearchChars( ) )
+					.addOption( "initialTextClass" , component.getInitialTextClass( ) )
+					.addOption( "resultTextClass" , component.getResultTextClass( ) )
+					.addOption( "selectedElementClass" , component.getSelectedElementClass( ) )
+					.addOption( "delay" , component.getSearchDelay( ) )
+					.addOption( "height" , 5 )
+					.addOption( "width", "100%" )
+					.addOption( "firstselected", true );
+			
+			
 					if (component.isUsable())
 						widget.addOption("maxitems", component.getMaxItems());
 					else
@@ -109,11 +117,6 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 						widget.addOption("searchType", "character");
 					}
 					
-					String template = component.getTemplate();
-					if (StringUtils.hasValue( template )){
-						widget.addOption("template", template);
-					}
-			
 					String typeText = component.getTypeMessage();
 					if (StringUtils.hasValue( typeText ))
 						widget.addOption( "complete_text", typeText);
@@ -130,7 +133,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 				updater.hide();
 			
 			JQueryBuilder status = new JQueryBuilder();
-			status.selectorById( component.getId() + "_complete" );
+			status.selectorById( getComponentId( component ) );
 			if (component.isUsable())
 				status.command( "trigger(\"enable\")" );
 			else
@@ -157,6 +160,8 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 			addScriptFooter( component.getClientId() + "_disabled", updaterUsage.build() );
 			
 			if (component.isXEOEnabled()){
+				setExistingValuesXEOConnector( component );
+			} else {
 				setExistingValues( component );
 			}
 			
@@ -166,8 +171,49 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 	}
 
 
+	
 
-	private void setExistingValues( AttributeAutoComplete component ) {
+	private void setExistingValues(AttributeAutoComplete component) {
+		AutoCompleteBuilder builder = new AutoCompleteBuilder();
+		Object sourceValue = component.getValue();
+		if (sourceValue == null)
+			return;
+		
+		String value = String.valueOf( sourceValue );
+		String[] values = value.split( "," ); 
+		
+		String displayValue = component.getDisplayValue();
+		if (StringUtils.isEmpty( displayValue ))
+			displayValue = value;
+		String[] displayValues = displayValue.split( "," );
+		
+		int k = 0;
+		JSONArray[] itemsToAdd = new JSONArray[values.length];
+		for (String object : values){
+				JSONArray itemHolder = new JSONArray();
+				JSONObject newItem = new JSONObject();
+				String currDisplay = displayValues[k];
+				try {
+					newItem.put( "title" , currDisplay );
+					newItem.put( "value" , object );
+				} catch ( JSONException e ) {
+					e.printStackTrace();
+				}
+				itemHolder.put( newItem );
+				itemsToAdd[k] = itemHolder;
+				k++;
+		}
+		
+		builder.componentSelectorById( getComponentId( component ) );
+		for (JSONArray current : itemsToAdd){
+			builder.openTrigger().addItem( current.toString() ).endTrigger();
+		}
+		addScriptFooter( component.getId() + "_updateVals", builder.build() );
+	}
+
+
+
+	private void setExistingValuesXEOConnector( AttributeAutoComplete component ) {
 		AttributeHandler handler = ((XEOObjectAttributeConnector) component.getDataFieldConnector()).getAttributeHandler();
 		AutoCompleteBuilder builder = new AutoCompleteBuilder();
 		//Object selectedObjects =  component.getValue() ;
@@ -175,33 +221,48 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 			String selectedObjects =  handler.getValueString() ;
 			if ( StringUtils.hasValue( selectedObjects) ){
 				String[] values = selectedObjects.toString().split( "," );
-				String append = "";
-				StringBuilder result = new StringBuilder("[");
+				
+				JSONArray[] itemsToAdd = new JSONArray[values.length];
+				int k = 0;
 				for (String object : values){
+						JSONArray itemHolder = new JSONArray();
+						JSONObject newItem = new JSONObject();
 						boObject loadedObject = boObject.getBoManager().loadObject( handler.getEboContext() , Long.valueOf( object ));
-						String displayValue = loadedObject.getTextCARDID().toString();
-						result.append(append);
-						result.append("{")
-							.append("'title':").append("'").append(displayValue).append("'").append(",")
-							.append("'value':").append("'").append(object).append("'")
-							
-							.append("}");
-						append = ",";
+						String currDisplay = loadedObject.getTextCARDID().toString();
+						try {
+							newItem.put( "title" , currDisplay );
+							newItem.put( "value" , object );
+						} catch ( JSONException e ) {
+							e.printStackTrace();
+						}
+						itemHolder.put( newItem );
+						itemsToAdd[k] = itemHolder;
+						k++;
 				}
-				result.append("]");
-				builder.componentSelectorById( component.getId() + "_complete" ).openTrigger().addItem( result.toString() ).endTrigger();
-				addScriptFooter( component.getId() + "_update", builder.build() );
+				
+				builder.componentSelectorById( getComponentId( component ) );
+				for (JSONArray current : itemsToAdd){
+					builder.openTrigger().addItem( current.toString() ).endTrigger();
+				}
+				addScriptFooter( component.getId() + "_updateVals", builder.build() );
+				
+				
+				
 			}
 		} catch ( boRuntimeException e ) {
 			e.printStackTrace();
 		}
+	}
+	
+	public String getComponentId(AttributeAutoComplete comp){
+		return comp.getClientId() + "_input";
 	}
 
 	public void createMarkup( AttributeAutoComplete component, XUIResponseWriter w ) throws IOException {
 		w.startElement( DIV );
 			w.writeAttribute( ID, component.getClientId() );
 			
-			String tableStyle = "table-layout:fixed;height:21px;margin:0px 0xp 0px 0px; padding:0px 0px 0px 0px;";
+			String tableStyle = "table-layout:fixed;height:21px;margin:0px 0xp 0px 0px; padding:0px 0px 0px 0px;width:100%";
 			
 			w.startElement( TABLE );
 	        	w.writeAttribute( CELLPADDING, "0", null );
@@ -232,7 +293,13 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 						w.writeAttribute( ID, component.getId() + "_column" );
 						w.writeAttribute( STYLE, "width:100%" );
 						w.startElement( DIV);
-		            		w.writeAttribute( ID, component.getId() + "_complete", null);
+		            		w.writeAttribute( ID, component.getClientId() + "_div");
+		            		w.writeAttribute( CLASS, "xwc-attribute-autoComplete");
+		            		w.startElement( SELECT );
+			    				w.writeAttribute( NAME, component.getClientId( ) + "_input" );
+			    				w.writeAttribute( STYLE, "display:none" );
+			    				w.writeAttribute( ID, component.getClientId( ) + "_input" );
+		    			w.endElement( SELECT );
 		            	w.endElement( DIV );	
 					w.endElement( TD );
 					w.startElement( TD );
@@ -262,11 +329,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 			w.endElement( TABLE );
 			
 			
-			w.startElement( SELECT );
-				w.writeAttribute( NAME, component.getId() + "_input" );
-				w.writeAttribute( STYLE, "display:none" );
-				w.writeAttribute( ID, component.getId() );
-			w.endElement( SELECT );
+			
 			
 		w.endElement( DIV );
 		
@@ -274,64 +337,11 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 		
 	}
 
-	private void setupIncludes( XUIComponentBase component ) {
-		if (!component.isRenderedOnClient()){
-			
-			includeHeaderScript( component.getClientId() + "_js", 
-					"ext-xeo/autocomplete/jquery.fcbkcomplete.js" );
-			includeHeaderCss( component.getClientId() + "_css", 
-			"ext-xeo/autocomplete/style.css" );
-		}
-	}
+	
 	
 	@Override
 	public void encodeEnd(XUIComponentBase component) throws IOException { }
 	
-	
-	
-	public JSONArray retrieveFilteredListValue( AttributeAutoComplete component,  String beanId, String method,  String filter ){
-		final Class<?>[] QUERY_ARGUMENTS = { String.class, String.class, String.class, String.class, String.class };
-		String filterQuery = null;
-		String objectName = null;
-		String attributeName = component.getAttributeName();
-		if (component.getDataFieldConnector() instanceof XEOObjectAttributeConnector){
-			AttributeHandler handler = ((XEOObjectAttributeConnector) component.getDataFieldConnector()).getAttributeHandler();
-			if (StringUtils.hasValue( handler.getFilterBOQL_query() ))
-				filterQuery = handler.getFilterBOQL_query();
-			objectName = handler.getDefAttribute().getReferencedObjectName();
-		} else{
-			objectName = component.getObjectName();
-		}
-		
-		JSONArray result = new JSONArray();
-		try {
-			String sql = ""; 
-        	FacesContext context = FacesContext.getCurrentInstance();
-            ExpressionFactory oExFactory = context.getApplication().getExpressionFactory();
-            MethodExpression m = oExFactory.createMethodExpression( 
-            		context.getELContext(), 
-            		"#{" + beanId + "." + method + "}", 
-            		String.class,
-            		QUERY_ARGUMENTS                    		
-            		
-            );
-    		sql = ( String ) m.invoke(
-    					context.getELContext() , 
-    					new Object[] {
-    						objectName,
-    						attributeName,
-    						filterQuery,
-    						filter,
-    						component.getTemplate()
-    					} 
-    			);
-    		return new JSONArray( sql );
-		}
-		catch ( Exception e ) {
-    		e.printStackTrace();
-		}
-		return result;
-	}
 
 	@Override
 	public void service( ServletRequest oRequest, ServletResponse oResponse, XUIComponentBase oComp )
@@ -341,8 +351,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 		
 		//The FBCK script sends a tag attribute in the request
 		String filter = oRequest.getParameter( "tag" );
-		String result = retrieveFilteredListValue( auto, auto.getBeanId(), auto.getLookupMethod(),  filter ).toString();
-		System.out.println( result );
+		String result = auto.getLookupResults ( filter );
 		OutputStream os = oResponse.getOutputStream();
 		os.write( result.getBytes() );
 		
@@ -358,7 +367,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
     }
 	
 	public void decodeValue(AttributeAutoComplete component, Map<String,String> parameters){
-		String value = parameters.get( component.getId() + "_input[]" );
+		String value = parameters.get( component.getClientId() + "_input[]" );
 		if( "NaN".equals( value ) ) {
 			component.setSubmittedValue( "" );
 		}

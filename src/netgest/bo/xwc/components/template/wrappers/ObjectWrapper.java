@@ -11,7 +11,7 @@ import freemarker.template.TemplateModelException;
  * Wraps a boObject so that it can be used inside a FTL template
  *
  */
-public class ObjectWrapper implements TemplateHashModel {
+public class ObjectWrapper implements TemplateHashModel, XeoWrapper {
 	
 	private boObject object;
 	

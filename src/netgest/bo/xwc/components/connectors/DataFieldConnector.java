@@ -32,6 +32,4 @@ public interface DataFieldConnector extends DataFieldMetaData {
     
     public DataListConnector getDataList();
     
-    
-   
 }

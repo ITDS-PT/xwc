@@ -282,15 +282,19 @@ ExtXeo.layoutMan.doLayout = function( sViewId ) {
 	}
 }
 
+
+
+
 ExtXeo.layoutMan.doLayout1 = function( sViewId )
 {
 	var compArray = ExtXeo.layoutMan.comp[ sViewId ];
 	var sId;
-	var oLayouts = new Array(
+	/*var oLayouts = new Array(
 			['fit-window',ExtXeo.layoutMan.doFitWindow],
 			['fit-parent',ExtXeo.layoutMan.doFitParent],
 			['form',ExtXeo.layoutMan.doForm]
-	);
+	);*/
+	var oLayouts = ExtXeo.layoutMan.managers;
 	
 	for( sId in compArray )	{
 		var oElem = document.getElementById( sId );
@@ -301,12 +305,18 @@ ExtXeo.layoutMan.doLayout1 = function( sViewId )
 
 	var fnLMan;
 	for ( var i = 0; i < oLayouts.length; i++) {
-		fnLMan = oLayouts[i][1];
 		for( sId in compArray )	{
 			if( compArray[ sId ] == oLayouts[i][0] ) {
-				var oElem = document.getElementById( sId );
-				if( oElem != null ) {
-					fnLMan( oElem );
+				for (var k = 0 ; k < oLayouts[i][1].length ; k++ ){
+					fnLMan = oLayouts[i][1][k];
+					var oElem = document.getElementById( sId );
+					if( oElem != null && fnLMan !== 'undefined' && fnLMan != null) {
+						try{
+							fnLMan( oElem );
+						} catch (e){
+							
+						}
+					}
 				}
 			}
 		}
@@ -483,6 +493,20 @@ ExtXeo.layoutMan.doForm = function( oElem )
 		var oc = oElem.childNodes;
 		for ( var i = 0; i < oc.length; i++) {
 			ExtXeo.layoutMan.doForm( oc[i] );
+		}
+	}
+}
+
+ExtXeo.layoutMan.managers = 
+	new Array(	['fit-window',[ExtXeo.layoutMan.doFitWindow]],
+				['fit-parent',[ExtXeo.layoutMan.doFitParent]],
+				['form',[ExtXeo.layoutMan.doForm]]);
+
+ExtXeo.layoutMan.registerManager = function (id, funct){
+	for (var i = 0 ; i < ExtXeo.layoutMan.managers.length ; i++){
+		var index = ExtXeo.layoutMan.managers[i];
+		if (index[0] == id){
+			ExtXeo.layoutMan.managers[i][1].push(funct);
 		}
 	}
 }
@@ -711,91 +735,11 @@ XVW.findTabByFormId = function ( sFormId ) {
 }
 
 
-
-
-
-//Localizacao
-/*
-
-Date.monthNames =
- ["Janeiro",
-  "Fevereiro",
-  "Mar�o",
-  "Abril",
-  "Maio",
-  "Junho",
-  "Julho",
-  "Agosto",
-  "Setembro",
-  "Outubro",
-  "Novembro",
-  "Dezembro"];
-
-Date.dayNames =
- ["Domingo",
-  "Segunda",
-  "Ter�a",
-  "Quarta",
-  "Quinta",
-  "Sexta",
-  "Sabado",
-  ];
-  
-Ext.apply(Ext.grid.GridView.prototype, {
-sortAscText: "Ordem ascendente",
-sortDescText: "Ordem descendente",
-lockText: "Bloquear Coluna",
-unlockText: "Desbloquear Coluna",
-columnsText: "Colunas"
-});
-
-Ext.apply(Ext.DatePicker.prototype, {
-  todayText : "Hoje",
-  todayTip : "{0} (barra de espa��s)",
-  minText : "Data m�xima.",
-  maxText : "Data minima.",
-  format : "d/m/y",
-  disabledDaysText : "",
-  disabledDatesText : "",
-  monthNames : Date.monthNames,
-  dayNames : Date.dayNames,
-  nextText: "Pr�ximo M�s (Ctrl + Seta para a direita)",
-  prevText: "M�s Anterior (Ctrl + Seta para a esquerda)",
-  monthYearText: "Escolha de Ano (Ctrl + Para cima/Para baixo para mudar o ano)",
-  startDay: 1 // Week start on Monday
-});
-
-Ext.apply(Ext.form.DateField.prototype, {
-  format: "d/m/y"
-});
-
-Ext.MessageBox.buttonText = {
-  ok : "OK",
-  cancel : "Cancelar",
-  yes : "Sim",
-  no : "N�o" 
-};
-
-Ext.apply(Ext.PagingToolbar.prototype, {
-  beforePageText : "P�gina",
-  afterPageText : "de {0}",
-  firstText : "Primeria P�gina",
-  prevText : "P�gina Anterior",
-  nextText : "P�gina Seguinte",
-  lastText : "�ltima P�gina",
-  refreshText : "Actualizar"
-});
-
-Ext.apply(Ext.form.ComboBox.prototype, {
-  loadingText: "A Carregar..."
-});
-
-*/
+// Disable back
+// window.history.forward(1);
 
 //Disable back
-window.history.forward(1);
-
-XVW.MenuCounter = {
+window.history.forward(1);XVW.MenuCounter = {
 	counterRefreshId : 0,
 	counters : {},
 	registerCounter : function( sUrl, sContId, sNodeId, interval ) {

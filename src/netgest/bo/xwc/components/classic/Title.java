@@ -69,10 +69,15 @@ public class Title extends XUIOutput {
         }
         return StateChanged.FOR_RENDER;    
     }
+    
+    @Override
+    public void initComponent() {
+    	super.initComponent();
+    	this.renderedValue.setValue( getValue() );
+    }
 
     @Override
     public Object saveState() {
-        this.renderedValue.setValue( getValue() );
         return super.saveState();
     }
 

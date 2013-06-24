@@ -197,7 +197,7 @@ public class BridgeLookup extends AttributeBase {
 			boBridgeMasterAttribute bridge = (boBridgeMasterAttribute)((XEOObjectAttributeConnector)getDataFieldConnector()).getAttributeHandler();
 			long[] bouis = bridge.getValuesLong();
 			boManagerLocal objManager = boApplication.getDefaultApplication().getObjectManager();
-			String formId = findParentComponent(XUIForm.class).getId();
+			String formId = findParentComponent(XUIForm.class).getClientId();
 			boolean orphan = bridge.getDefAttribute().getChildIsOrphan();
 			for (long boui: bouis){
 				if (boui > 0){ //getValuesLong returns an array with boui = 0 when no elements are in the list 

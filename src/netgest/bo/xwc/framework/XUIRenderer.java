@@ -214,12 +214,12 @@ public class XUIRenderer extends Renderer
         }
         
         if( component.getRenderComponent() ) {
-	        List<UIComponent> oKids = component.getChildren();
-	        for (int i = 0; i < oKids.size(); i++) {
+	        Iterator<UIComponent> oKids = component.getFacetsAndChildren();
+	        for (; oKids.hasNext(); ) {
 	            
 	        	bChanged = false;
 	            
-	            oKid = oKids.get( i );
+	            oKid = oKids.next();
 	            
 	            if( oKid instanceof XUIComponentBase ) {
 	            	
@@ -261,17 +261,19 @@ public class XUIRenderer extends Renderer
      * @param oComponent The component to process
      * @param oRenderList The list of components whose state was changed
      */
-    private void recursiveProcessStateChanged(UIComponent oComponent, List<XUIComponentBase> oRenderList)
+    static void recursiveProcessStateChanged(UIComponent oComponent, List<XUIComponentBase> oRenderList)
     {
-    	Iterator<UIComponent> kids = oComponent.getFacetsAndChildren();
-        while (kids.hasNext()) {
-            UIComponent kid = kids.next();
+    	Iterator<UIComponent> oKids = oComponent.getFacetsAndChildren();
+        while (oKids.hasNext()) {
+            UIComponent kid = oKids.next();
             if( kid instanceof XUIComponentBase ) {
                 ((XUIComponentBase)kid).processStateChanged(oRenderList);
             }
-            else
+            else {
             	recursiveProcessStateChanged(kid, oRenderList);
+            }
         }
+        
     }
     
     public String composeUrlWithWebContext( String resourcePath ) {

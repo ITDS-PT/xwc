@@ -9,9 +9,11 @@ import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.utils.StringUtils;
 /**
  * This component renders a label for a input component
  * @author jcarreira
@@ -24,6 +26,7 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
     private XUIViewStateBindProperty<Boolean> 	visible        = new XUIViewStateBindProperty<Boolean>( "visible", this, Boolean.class );
     private XUIViewStateBindProperty<Boolean> 		modelRequired  = new XUIViewStateBindProperty<Boolean>( "modelRequired", this, Boolean.class );
     private XUIViewStateBindProperty<Boolean> 		recommended    = new XUIViewStateBindProperty<Boolean>( "recommended", this, Boolean.class );
+    private XUIViewStateBindProperty<String> 		toolTip    = new XUIViewStateBindProperty<String>( "toolTip", this, String.class );
     
     public void setText( String sText ) {
         this.text.setValue( sText );
@@ -74,7 +77,13 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 		this.recommended.setExpressionText( recommendedExpression );
 	}
 	
+	public String getToolTip(){
+		return toolTip.getEvaluatedValue();
+	}
 	
+	public void setToolTip(String ttipExpr){
+		this.toolTip.setExpressionText( ttipExpr );
+	}
 
 	public static class XEOHTMLRenderer extends ExtJsBaseRenderer {
 
@@ -94,6 +103,32 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 			super.encodeBeginPlaceHolder(oAtt);
 			XUIResponseWriter w = getResponseWriter();
             w.writeAttribute( "class" , "xwc-form-label", null);
+		}
+		
+		@Override
+		public void encodeEndPlaceHolder(XUIComponentBase oAtt)
+				throws IOException {
+			super.encodeEndPlaceHolder( oAtt );
+
+			AttributeLabel label = (AttributeLabel) oAtt;
+			addToolTip( oAtt , label );
+		}
+
+
+		protected void addToolTip(XUIComponentBase oAtt, AttributeLabel label) {
+			String tooltip = label.getToolTip();
+			if (StringUtils.hasValue( tooltip )){
+				StringBuilder b = new StringBuilder();
+				b.append("new Ext.ToolTip({ " +
+			        "target: '"+oAtt.getClientId()+"', " +
+			        "html: '"+tooltip+"'" +
+			        "});"	);
+				addScript( oAtt.getClientId() , b );
+			}
+		}
+
+		protected void addScript(String id, StringBuilder b) {
+			getRequestContext().getScriptContext().add( XUIScriptContext.POSITION_FOOTER , id + "_ttip" , b.toString() );
 		}
 		
 		@Override
@@ -129,6 +164,9 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 
             if( oLabel.isModelRequired() )
             	cls.append( "xwc-form-required " );
+            
+            if (StringUtils.hasValue( oLabel.getToolTip() ) )
+            	cls.append( "xwc-tooltip " );
             
             return cls;
 		}

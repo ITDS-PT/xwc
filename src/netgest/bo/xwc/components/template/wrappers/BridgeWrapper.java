@@ -11,12 +11,13 @@ import freemarker.template.TemplateModelIterator;
  * Wraps a bridge handler so that it can be used inside a FTL template
  *
  */
-public class BridgeWrapper implements TemplateCollectionModel {
+public class BridgeWrapper implements TemplateCollectionModel, XeoWrapper {
 
 	private bridgeHandler handler;
 	
 	public BridgeWrapper(bridgeHandler handler){
 		this.handler = handler;
+		this.handler.beforeFirst();
 	}
 	
 	@Override
@@ -27,6 +28,7 @@ public class BridgeWrapper implements TemplateCollectionModel {
 			@Override
 			public TemplateModel next() throws TemplateModelException {
 				try {
+					handler.next();
 					return new ObjectWrapper(handler.getObject());
 				} catch ( boRuntimeException e ) {
 					e.printStackTrace();
@@ -35,7 +37,7 @@ public class BridgeWrapper implements TemplateCollectionModel {
 			
 			@Override
 			public boolean hasNext() throws TemplateModelException {
-				return handler.next();
+				return handler.getRow() < handler.getRowCount();
 			}
 		};
 	}

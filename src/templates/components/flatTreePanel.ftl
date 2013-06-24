@@ -21,7 +21,7 @@ XVW.showHideMenu = function (elemParent){
 	<#list this.children as menu>
 		<ul class='xwc-flat-treepanel-first-level-group'>
 			<li class='xwc-flat-treepanel-first-level'>
-			<a href='javascript:void(0)' onClick="${XVWScripts.getAjaxCommand(menu)}">
+			<a href='javascript:void(0)' onClick="${xvw.js.ajaxCommand(menu)}">
 				${menu.text}
 			</a>
 			<!-- <a href='javascript:void(0)' onClick='XVW.showHideMenu(this)'>

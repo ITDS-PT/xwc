@@ -5,14 +5,24 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.utils.StringUtils;
 
 public class GenericTag extends XUIComponentBase {
 
-	private String textContent;
-	private Map<String,String>	 properties; 
+	private String 						textContent;
+	private Map<String,String>	 		properties; 
+	private XUIBaseProperty<Boolean> 	rawContent = new XUIBaseProperty<Boolean>( "rawContent",  this, false );
+	
+	public boolean isRawContent() {
+		return this.rawContent.getValue();
+	}
+	public void setRawContent(boolean rawContent) {
+		this.rawContent.setValue( rawContent );
+	}
 	
 	public void setProperties( Map<String, String> properties ) {
 		if( this.properties == null )
@@ -64,6 +74,28 @@ public class GenericTag extends XUIComponentBase {
 		}
 		return saveObj;
 	}
+	
+	public String serialize(){
+		StringBuilder b = new StringBuilder(200);
+		String tagName = properties.get("__tagName");
+		b.append( "<" + tagName );
+		if( tagName != null ) {
+			Set<String> props = properties.keySet();
+			for( String propName : props ) {
+				if( !propName.equals( "__tagName" ) ) {
+					b.append( " " + propName+"='"+properties.get( propName )+"' " );
+				}
+			}
+		}
+		b.append(" >");
+		if (StringUtils.hasValue( textContent) )
+			b.append(textContent);
+		
+		b.append( "</" + tagName + ">");
+		
+		return b.toString();
+	}
+	
 
 	public static class XEOHTMLRenderer extends XUIRenderer {
 
@@ -73,24 +105,29 @@ public class GenericTag extends XUIComponentBase {
 			
 			XUIResponseWriter w = getResponseWriter();
 			GenericTag t = (GenericTag)component;
-
-			String			  tagName;
 			
-			tagName = t.properties.get("__tagName");
-			
-			
-			if( tagName != null ) {
-				w.startElement( tagName, component );
-				Set<String> props = t.properties.keySet();
-				for( String propName : props ) {
-					if( !propName.equals( "__tagName" ) ) {
-						w.writeAttribute( propName , t.properties.get( propName ), null );
-					}
+			if( t.isRawContent() ) {
+				if( t.textContent != null ) {
+					w.write( t.textContent );
 				}
 			}
-			if( t.textContent != null ) {
-				w.writeText( t.textContent, null );
+			else {
+				String			  tagName;
+				tagName = t.properties.get("__tagName");
+				if( tagName != null ) {
+					w.startElement( tagName, component );
+					Set<String> props = t.properties.keySet();
+					for( String propName : props ) {
+						if( !propName.equals( "__tagName" ) ) {
+							w.writeAttribute( propName , t.properties.get( propName ), null );
+						}
+					}
+				}
+				if( t.textContent != null ) {
+					w.writeText( t.textContent, null );
+				}
 			}
+
 		}
 
 		@Override
@@ -112,4 +149,8 @@ public class GenericTag extends XUIComponentBase {
 		
 	}
 	
+	@Override
+	public String toString() {
+		return getProperties( ).get("__tagName");
+	}
 }

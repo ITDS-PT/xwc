@@ -127,4 +127,9 @@ public class XEOObjectListAttributeCount implements DataFieldConnector {
 		return true;
 	}
 
+	@Override
+	public String getToolTip() {
+		return null;
+	}
+
 }

@@ -137,8 +137,6 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
     public XUIInput() {
 
         super();
-        setRendererType("javax.faces.Text");
-
     }
 
     // -------------------------------------------------------------- Properties
@@ -247,7 +245,7 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
         ValueExpression ve = getValueExpression("required");
         if (ve != null) {
             try {
-                return (Boolean.TRUE.equals(ve.getValue(getFacesContext().getELContext())));
+                return (Boolean.TRUE.equals(ve.getValue(getELContext())));
             }
             catch (ELException e) {
                 throw new FacesException(e);
@@ -276,7 +274,7 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
         ValueExpression ve = getValueExpression("requiredMessage");
         if (ve != null) {
             try {
-                return ((String) ve.getValue(getFacesContext().getELContext()));
+                return ((String) ve.getValue(getELContext()));
             }
             catch (ELException e) {
                 throw new FacesException(e);
@@ -318,7 +316,7 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
         ValueExpression ve = getValueExpression("converterMessage");
         if (ve != null) {
             try {
-                return ((String) ve.getValue(getFacesContext().getELContext()));
+                return ((String) ve.getValue(getELContext()));
             }
             catch (ELException e) {
                 throw new FacesException(e);
@@ -360,7 +358,7 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
         ValueExpression ve = getValueExpression("validatorMessage");
         if (ve != null) {
             try {
-                return ((String) ve.getValue(getFacesContext().getELContext()));
+                return ((String) ve.getValue(getELContext()));
             }
             catch (ELException e) {
                 throw new FacesException(e);
@@ -427,7 +425,7 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
         ValueExpression ve = getValueExpression("immediate");
         if (ve != null) {
             try {
-                return (Boolean.TRUE.equals(ve.getValue(getFacesContext().getELContext())));
+                return (Boolean.TRUE.equals(ve.getValue(getELContext())));
             }
             catch (ELException e) {
                 throw new FacesException(e);
@@ -744,7 +742,7 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
         ValueExpression ve = getValueExpression("value");
         if (ve != null) {
             try {
-                ve.setValue(context.getELContext(), getLocalValue());
+                ve.setValue(getELContext(), getLocalValue());
                 setValue(null);
                 setLocalValueSet(false);
             } catch (ELException e) {
@@ -1259,7 +1257,7 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
 
         Class converterType;
         try {
-            converterType = valueExpression.getType(context.getELContext());
+            converterType = valueExpression.getType(getELContext());
         }
         catch (ELException e) {
             throw new FacesException(e);

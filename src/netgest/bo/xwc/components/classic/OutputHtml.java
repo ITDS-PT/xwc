@@ -13,6 +13,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.utils.StringUtils;
 
 /**
  * 
@@ -51,9 +52,21 @@ public class OutputHtml extends ViewerOutputSecurityBase {
         return StateChanged.NONE;    
     }
     
+    
+    @Override
+    public void initComponent() {
+    	super.initComponent();
+    }
+    
+    @Override
+    public void preRender() {
+    	super.preRender();
+    	//WasStateChanged needs this value set, as such it needs to be set once per component render
+    	this.renderedValue.setValue( getValue() );
+    }
+    
     @Override
     public Object saveState() {
-        this.renderedValue.setValue( getValue() );
         return super.saveState();
     }
     
@@ -128,7 +141,9 @@ public class OutputHtml extends ViewerOutputSecurityBase {
             w.startElement( HTMLTag.SPAN, component );
             w.writeAttribute( HTMLAttr.ID , component.getClientId(), null );
             if ( oOut.getEffectivePermission(SecurityPermissions.READ) && oOut.getVisible() ) {
-            	w.write( (String)((OutputHtml)component).getValue() );
+            	String value = (String)((OutputHtml)component).getValue();
+            	if (StringUtils.hasValue( value ))
+            		w.write( value );
             } else {
             	w.write( "" );            	
             }

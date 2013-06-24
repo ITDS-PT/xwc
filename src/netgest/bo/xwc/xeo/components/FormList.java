@@ -12,10 +12,6 @@ import netgest.bo.xwc.framework.XUIBindProperty;
  */
 public class FormList extends Form {
 	
-	@Override
-	public String getRendererType() {
-		return "form";
-	}
 
 	/**
 	 * If the title of the viewer should be rendered
@@ -44,8 +40,15 @@ public class FormList extends Form {
 			createViewerTitle( position++ );
 		}
 
+		if (rendererType.isDefaultValue( )){
+			rendererType.setValue( "form" );
+		}
+		
 		super.initComponent();
+		
+		
 	}
+	
 	
 	private void createViewerTitle( int pos ) {
 		ViewerTitle viewerTitle = new ViewerTitle();

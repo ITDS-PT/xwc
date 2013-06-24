@@ -10,7 +10,7 @@ import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl;
 public class SystemOperationsBean {
 
 	public void closeView() {
-		
+		/*
 		XUIRequestContext rc = XUIRequestContext.getCurrentContext();
 		String viewId = rc.getRequestParameterMap().get( "viewId" );
 		if( viewId != null ) {
@@ -19,6 +19,7 @@ public class SystemOperationsBean {
 		}
 		rc.responseComplete();
 		rc.getViewRoot().dispose();
+		*/
 		
 	}
 	

@@ -316,10 +316,40 @@ mean "drop here */
 	top:5px;
 }
 
+/* Auto Complete Lookup Styles (Facebook style) */
+/**
+* Style to apply to the div with the "Type here" (initial search) message
+*/
+div.xwc-attribute-autoComplete .xwc-initial-text{
+	color : black;
+	background : #CCCCCC;
+	font-family : arial, tahoma, helvetica, sans-serif;
+	font-size : 11px;
+}
+/**
+* Style to apply to each element that is the result of a search
+*/
+div.xwc-attribute-autoComplete ul li.xwc-lookup-element{
+	color : black;
+	background: #CCCCCC;
+	font-style : italic;
+}
+			
+/**
+* Style to apply to the li element that represents the 
+*/		 	
+div.xwc-attribute-autoComplete ul.holder li.xwc-selected-element{
+	color:black;
+	background : #CCCCCC;
+	margin-top:2px;
+	margin-left:2px;
+}
+
 /* Chrome25 Bug fix, 100% width causes issues with the date picket, replaced with a fixed value width*/
 table.x-date-inner {
    width:200px !important;
 }
+
 
 /**
 * Override the ExtMask (Modal Windows no longer appear to be modal

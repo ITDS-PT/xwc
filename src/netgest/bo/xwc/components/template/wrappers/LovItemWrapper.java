@@ -5,7 +5,7 @@ import freemarker.template.TemplateHashModel;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
-public class LovItemWrapper implements TemplateHashModel {
+public class LovItemWrapper implements TemplateHashModel,XeoWrapper {
 
 	private String value;
 	private String description;

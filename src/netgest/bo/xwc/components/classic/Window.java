@@ -189,6 +189,9 @@ public class Window extends XUIComponentBase {
     public void initComponent(){
     	this.setOnBeforeClose("#{" + getBeanId() + ".canCloseTab}");
     	initializeTemplate( "templates/components/window.ftl" );
+    	if (rendererType.isDefaultValue( )){
+    		rendererType.setValue( "window" );
+    	}
     }
     
 
@@ -256,6 +259,11 @@ public class Window extends XUIComponentBase {
         			this.getClientId() + "_closeWnd",
         			script);
         }
+    }
+    
+    @Override
+    public String getFamily() {
+    	return "window";
     }
     
     public Renderer getRenderer() {
@@ -399,9 +407,9 @@ public class Window extends XUIComponentBase {
             if( closeCmd != null ) {
 	            ExtConfig oDestroy = oExtListeners.addChild( "'destroy'");
 	            StringBuilder destroy = new StringBuilder( "function() {");
-		        	destroy.append(  
-		        			XVWScripts.getAjaxCommandScript( closeCmd , XVWScripts.WAIT_DIALOG )
-		        	).append(';');
+	        	/*destroy.append(  
+	        			XVWScripts.getAjaxCommandScript( closeCmd , XVWScripts.WAIT_DIALOG )
+	        	).append(';');*/
 	            destroy.append( "var o=document.getElementById('" )
 	            .append( oRequestContext.getViewRoot().getClientId() )
 	            .append( "'); " )
@@ -439,7 +447,8 @@ public class Window extends XUIComponentBase {
                 oChildComp = oChildIterator.next();
 
                 if (!oChildComp.isRendered()) {
-                    return;
+                    //return; //Must check if can be left like this
+                	//TODO
                 }
                 
                 String rendererType;

@@ -10,9 +10,11 @@ import javax.faces.el.MethodBinding;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+import netgest.bo.xwc.framework.jsf.XUIELResolver;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 /**
  * This component is not usable in the viewers,
@@ -243,13 +245,41 @@ public class AttributeBase extends ViewerInputSecurityBase {
     	new XUIViewStateBindProperty<Boolean>( "enableFullTextSearch", this, "false",Boolean.class );
     
     /**
+     * Associates to a method that returns the list of results for a lookup
+     * Must return a JSONArray containing a set of JSONObjects each with two entries:
+     * key and value. Key is the BOUI of the object retrieved and value is the value to present to the user 
+     * ( can have HTML )
+     */
+    XUIMethodBindProperty lookupResults = 
+        	new XUIMethodBindProperty( "lookupResults", this  );
+    
+    
+    /**
+     * Tooltip for this component
+     */
+    XUIBindProperty< String > toolTip = new XUIBindProperty< String >(
+			"toolTip" , this , String.class );
+
+	public String getToolTip() {
+		return toolTip.getEvaluatedValue();
+	}
+
+	public void setToolTip(String newValExpr) {
+		toolTip.setExpressionText( newValExpr );
+	}
+    
+    /**
      * Initialize the component
      */
     @Override
     public void initComponent() {
         super.initComponent();
         setAttributeProperties( );
-        
+        this.renderedValue.setValue( getValue() );
+    }
+    
+    public void initSpecificSettings(){
+    	
     }
 
 	protected void setAttributeProperties() {
@@ -396,6 +426,10 @@ public class AttributeBase extends ViewerInputSecurityBase {
 	        if (displayValue.isDefaultValue()){
 	        	this.displayValue.setExpressionText(sBeanExpression + ".displayValue}" );
 	        }
+	        
+	        if (toolTip.isDefaultValue()){
+	        	this.toolTip.setExpressionText(sBeanExpression + ".toolTip}" );
+	        }
     	}
 	}
 
@@ -413,6 +447,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
     	objectAttribute.setValue(sObjectAttribute);
     	
     	
+        
         
     }
     
@@ -443,6 +478,20 @@ public class AttributeBase extends ViewerInputSecurityBase {
     
     public void setIsValid(Boolean val){
     	this.isValidAttribute.setValue(val);
+    }
+    
+    public String getLookupResults(){
+    	return lookupResults.getExpressionString();
+    }
+    
+    public void setLookupResults(String queryExpr){
+    	lookupResults.setExpressionText(queryExpr);
+    	lookupResults.setValue(createMethodBinding(queryExpr, String.class));
+    }
+    
+    public String getLookupResults(String filter){
+    	lookupResults.invoke(new Object[]{ filter, this });
+		return (String) lookupResults.getReturnValue();
     }
     
     /**
@@ -908,17 +957,23 @@ public class AttributeBase extends ViewerInputSecurityBase {
      * @return  Map<Object,String> with the lov Map
      */
     public Map<Object, String> getLovMap() {
-    	if( this.lovMap.getValue() != null && this.lovMap.isLiteral() ) {
-        	Map<Object, String> oRetLovMap = new LinkedHashMap<Object, String>();
-            String[] values = this.lovMap.getExpressionString().split(";");
-            for( String lovValue : values  ) {
-            	oRetLovMap.put( lovValue , lovValue);
-            }
-        }
-        else if( this.lovMap.getValue() != null ) {
-             return this.lovMap.getEvaluatedValue();
-        }
+    	
     	final Map<Object, String> oRetLovMap = new LinkedHashMap<Object, String>();
+    	try{
+    		XUIELResolver.setContext( this );
+    		if( this.lovMap.getValue() != null && this.lovMap.isLiteral() ) {
+	        	String[] values = this.lovMap.getExpressionString().split(";");
+	            for( String lovValue : values  ) {
+	            	oRetLovMap.put( lovValue , lovValue);
+	            }
+	        }
+	        else if( this.lovMap.getValue() != null ) {
+	             return this.lovMap.getEvaluatedValue();
+	        }
+	    	
+    	} finally{
+    		XUIELResolver.setContext( null );
+    	}
     	return oRetLovMap;
     }
     
@@ -1038,7 +1093,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
 	 */
     @Override
     public Object saveState() {
-        this.renderedValue.setValue( getValue() );
+        
         return super.saveState();
     }
 

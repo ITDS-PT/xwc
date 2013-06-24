@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,7 +54,7 @@ import org.json.JSONObject;
 
 public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUIViewBean {
 
-	private String sViewStateId;
+	protected String sViewStateId;
     private String sParentBeanId;
 	private String sTitle;
 	private String id = "viewBean" ;
@@ -105,9 +106,9 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 
     public XUIViewRoot getParentView()
     {
-        XUIRequestContext oRequestContext;
-        oRequestContext = XUIRequestContext.getCurrentContext();
-        return oRequestContext.getViewRoot().getParentView();
+        //XUIRequestContext oRequestContext;
+        //oRequestContext = XUIRequestContext.getCurrentContext();
+        return getViewRoot().getParentView();
     }
     
     public XUIViewRoot getViewRoot() {
@@ -115,10 +116,42 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 		
 		oRequestContext = XUIRequestContext.getCurrentContext();
 		
+		//Check if view is the same as the context
 		if( this.sViewStateId.equals( oRequestContext.getViewRoot().getViewState() ) )
 			return oRequestContext.getViewRoot();
-		return XUIRequestContext.getCurrentContext().getSessionContext().getView( sViewStateId );
+		//If not check recursively in that view 
+		XUIViewRoot root = findRecursiveRoot( oRequestContext.getViewRoot() );
+		if (root == null){
+			//If the view was replaced in the context, try to load the view
+			root = oRequestContext.getSessionContext( ).getView( sViewStateId );
+		}
+		return root;
+		
+		
 	}
+    
+    private XUIViewRoot findRecursiveRoot(UIComponent component){
+    	XUIViewRoot root = null;
+    	Iterator<UIComponent> it = component.getFacetsAndChildren();
+    	while (it.hasNext()){
+    		UIComponent child = it.next();
+    		if (child instanceof XUIViewRoot){
+    			XUIViewRoot view = (XUIViewRoot) child;
+    			if (sViewStateId.equals( view.getViewState( ))){
+    				root = (XUIViewRoot)child;
+    			} else {
+    				root = findRecursiveRoot( child );
+    				if (root != null)
+    					return root;
+    			}
+    		} else {
+    			root = findRecursiveRoot( child );
+    			if (root != null)
+    				return root;
+    		}
+    	}
+    	return root;
+    }
 
 	public void setViewRoot( String viewRootStateId ) {
 		this.sViewStateId = viewRootStateId;

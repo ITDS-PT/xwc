@@ -9,6 +9,8 @@ import static netgest.bo.xwc.components.HTMLTag.TR;
 
 import java.io.IOException;
 
+import javax.faces.component.UIComponent;
+
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -20,26 +22,18 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIMethodBindingValueChangeListener;
+import netgest.utils.StringUtils;
 
 /**
  * This components renders a label and the input component for a {@link DataFieldConnector}
  * 
  * The inputType is automatic calculated based on the renderType returned from the DataFieldConnector
- * but can be overwrited for any valid AttributeBase input field
+ * but can be overwritten for any valid AttributeBase input field
  * 
  * Example:
  * <code>
  * 		<xvw:attribute objectAttribute='att1' inputType='attributePassword'/>
  * 		<!-- In this case the attribute is forced to render as a password -->
- * 
- * 		<!-- To overwrite properties from the {@link DataFieldConnector} the
- * 			objectAttribute property must be first attribute in the xml
- * 	 	-->
- * 		<-- Wrong Way -->
- * 		<xvw:attribute objectAttribute='att1' disabled='true'/>
- * 		<-- Write Way -->
- * 		<xvw:attribute disabled='true' objectAttribute='att1'/>
- * 
  * </code>
  * 
  * Can't have children
@@ -61,7 +55,7 @@ public class Attribute extends AttributeBase
     /**
      * The input type for the field
      */
-    @Values({"attributeText","attributeBoolean","attributeNumber","attributeDate","attributeTime","attributeDateTime","attributeHtmlEditor","attributeLov","bridgeLookup"})
+    @Values({"attributeText","attributeBoolean","attributeNumber","attributeDate","attributeTime","attributeDateTime","attributeHtmlEditor","attributeLov","bridgeLookup","attributeAutoComplete"})
     private XUIViewStateBindProperty<String> inputType   = new XUIViewStateBindProperty<String>( "inputType", this,"", String.class );
 
 
@@ -89,47 +83,58 @@ public class Attribute extends AttributeBase
     
     public void createChildComponents() {
         
-    	AttributeLabel      oLabel = null;
-    	AttributeBase       oInput = null;
-    	
-    	
-        String sComponentType;
+    	String sComponentType;
         if( isLov() ) {
             sComponentType = "attributeLov";
         }
         else {
             sComponentType = getInputComponentType();    
         }
-
-        if( sComponentType != null ) {
-	        if( oLabel == null && "1".equals( getRenderLabel() ) ) {
-	
-	            oLabel = new AttributeLabel();
-	            oLabel.setId( getId() +  "_l" );
-	            oLabel.setText( getLabel() );
-	
-	            propagateLabelProperties( oLabel );
+        
+        createLabelComponent( );
+	    createInputComponent( sComponentType );
 	            
-	            this.getChildren().add( oLabel );
-	            
-	        }
-	        
-	        if( oInput == null ) {
-	            XUIRequestContext oRequestContext = getRequestContext();
-	            
-	            oInput = (AttributeBase)oRequestContext.getApplicationContext().getViewerBuilder()
-	                                    .createComponent( oRequestContext, sComponentType );
-	            
-	            oInput.setId( getId() + "_i" );
-	            
-	            propagateInputProperties( oInput );
-	            
-	            this.getChildren().add( oInput );
-	            
-	            
-	        }
-        }
+	    
     }
+
+	private void createLabelComponent() {
+		if( "1".equals( getRenderLabel() ) ) {
+			
+			AttributeLabel oLabel = null;
+			UIComponent labelFacet = getFacet( "label" );
+			if (labelFacet != null){
+				oLabel = (AttributeLabel) labelFacet.getChildren( ).get( 0 );
+			} else {
+				oLabel = new AttributeLabel();
+				oLabel.setText( getLabel() );
+			}
+			
+		    oLabel.setId( getId() +  "_l" );
+
+		    propagateLabelProperties( oLabel );
+		    
+		    this.getChildren().add( oLabel );
+		    
+		}
+	}
+
+	private void createInputComponent( String sComponentType) {
+		UIComponent inputFacet = getFacet( "input" );
+		AttributeBase oInput = null;
+		XUIRequestContext oRequestContext = getRequestContext();
+		if (inputFacet != null){
+			oInput = (AttributeBase) inputFacet.getChildren( ).get( 0 );
+		} else {
+		    oInput = (AttributeBase)oRequestContext.getApplicationContext().getViewerBuilder()
+                            .createComponent( oRequestContext, sComponentType );
+		}
+		
+		oInput.setId( getId() + "_i" );
+		
+		propagateInputProperties( oInput );
+		
+		this.getChildren().add( oInput );
+	}
     
     
     private String getInputComponentType(  ) {
@@ -224,6 +229,9 @@ public class Attribute extends AttributeBase
         if( getValueExpression( "viewerSecurityPermissions" )!=null )
         	label.setViewerSecurityPermissions( getValueExpression("viewerSecurityPermissions").getExpressionString() );
 
+        if (getValueExpression( "toolTip" ) != null )
+        	label.setToolTip( getValueExpression( "toolTip" ).getExpressionString() );
+        
         label.setInstanceId( getInstanceId() );
     }
     
@@ -317,14 +325,21 @@ public class Attribute extends AttributeBase
         if( getValueExpression("displayValue") != null )
             oAttr.setDisplayValue( getValueExpression("displayValue").getExpressionString() );
         
-        if( getValueExpression("dataFieldConnector") != null )
+
+		if( getValueExpression("dataFieldConnector") != null )
             oAttr.dataFieldConnector.setExpressionText( getValueExpression("dataFieldConnector").getExpressionString() );
+        
+
+        if (StringUtils.hasValue( lookupResults.getExpressionString( ) ) )
+            oAttr.setLookupResults( lookupResults.getExpressionString( ) );
         
         XUIMethodBindingValueChangeListener[] valueChangeListener  = 
         	(XUIMethodBindingValueChangeListener[]) getFacesListeners( XUIMethodBindingValueChangeListener.class );
         for (int i = 0; i < valueChangeListener.length; i++) {
 			oAttr.addValueChangeListener( valueChangeListener[i] );
 		}
+        
+        oAttr.initSpecificSettings();
         
     }
      
@@ -460,7 +475,8 @@ public class Attribute extends AttributeBase
             }
             
             w.startElement( TR, oComp );
-
+            w.writeAttribute(HTMLAttr.STYLE, "width:100%");
+            
             if( "1".equals( oAttr.getRenderLabel() ) )
             {
             	w.startElement( TD, oComp );

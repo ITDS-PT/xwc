@@ -3,12 +3,11 @@ package netgest.bo.xwc.framework.components;
 import javax.el.MethodExpression;
 import javax.faces.component.StateHolder;
 import javax.faces.context.FacesContext;
+import javax.faces.el.MethodBinding;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 import javax.faces.event.ValueChangeListener;
-
-import netgest.bo.xwc.framework.XUIRequestContext;
 
 public class XUIMethodExpressionPhaseListener implements PhaseListener, StateHolder {
 

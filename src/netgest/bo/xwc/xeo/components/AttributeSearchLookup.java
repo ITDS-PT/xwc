@@ -259,7 +259,7 @@ public class AttributeSearchLookup extends AttributeNumberLookup {
 	            	w.startElement(A, null);
 	            	w.writeAttribute( HREF, "javascript:void(0)", null );
 	        		w.writeAttribute( ONCLICK, 
-	        				XVWScripts.getAjaxCommandScript( oAttr.getOpenCommand() ,  XVWScripts.WAIT_STATUS_MESSAGE ) , null );
+	        				XVWScripts.getAjaxCommandScript( oAttr.getOpenCommand() ,  XVWScripts.WAIT_DIALOG ) , null );
 	            	w.write(oAttr.getDisplayValue());
 	            	w.endElement(A);
 	            } else{

@@ -1,13 +1,15 @@
 package netgest.bo.xwc.framework.components;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.el.ELContext;
 import javax.el.MethodExpression;
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
@@ -26,12 +28,11 @@ import javax.faces.render.Renderer;
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import netgest.bo.xwc.components.HTMLAttr;
+import netgest.bo.system.Logger;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.Layouts;
-import netgest.bo.xwc.components.classic.Window;
-import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
-import netgest.bo.xwc.components.classic.theme.JQueryTheme;
+import netgest.bo.xwc.components.classic.TemplateInclude;
+import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -39,19 +40,22 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
+import netgest.bo.xwc.framework.jsf.XUIPhaseEvent;
 import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl;
 import netgest.utils.StringUtils;
 
-import com.lowagie.text.html.HtmlTags;
 import com.sun.faces.util.LRUMap;
 import com.sun.faces.util.RequestStateManager;
 import com.sun.faces.util.TypedCollections;
 import com.sun.faces.util.Util;
 
 public class XUIViewRoot extends UIViewRoot {
+	
 	private static AtomicInteger oInstanceIdCntr = new AtomicInteger(0);
-
-	private String sInstanceId = String.valueOf(oInstanceIdCntr.addAndGet(1));
+	
+	private static final Logger logger = Logger.getLogger( XUIViewRoot.class );
+	
+	private String sInstanceId = null;
 	private String sBeanIds = "";
 	private Object oViewerBean;
 	private String sStateId = null;
@@ -67,57 +71,163 @@ public class XUIViewRoot extends UIViewRoot {
 	private String	_renderKit = null;
 
 	private static Lifecycle lifecycle;
+	private String[] localizationClasses;
 
 	private boolean wasInitComponentsProcessed = false;
 
 	public void setOwnsTransaction(boolean owns) {
 		this.bOwnsTransaction = owns;
 	}
+	
+	public boolean getOwnsTransaction(){
+		return this.bOwnsTransaction;
+	}
+	
+	public String[] getLocalizationClasses(){
+		/*String[] selfIds = localizationClasses;
+		List<String> list = new ArrayList< String >( );
+		findChildLocalizationClasses( this , list );
+		
+		if (localizationClasses == null)
+			return new String[0];
+		for (String id :selfIds){
+			list.add(id);
+		}*/
+		return localizationClasses;
+		//return list.toArray(new String[list.size()]);
+	}
+	
+	public void setLocalizationClasses(String[] localizations){
+		this.localizationClasses = localizations;
+	}
+	
+	public String getTemplate(){
+		return "templates/components/viewroot.ftl";
+	}
 
 	public XUIViewRoot() {
-		super();
-		if ("XEOHTML".equals(getRenderKitId()))
-			oTheme = new ExtJsTheme();
-		else if ("XEOJQUERY".equals(getRenderKitId()))
-			oTheme = new JQueryTheme();
-		else if ("XEOV2".equals(getRenderKitId())) {
 			try {
-				Class<XUITheme> theme = (Class<XUITheme>) Class
-						.forName("xeo.viewers.theme.XEOV2Theme");
-				oTheme = theme.newInstance();
+				Class<?> themeClass = Class.forName( getRenderKitClass() );
+				oTheme = (XUITheme) themeClass.newInstance();
 			} catch (ClassNotFoundException e) {
-				throw new RuntimeException(e);
+				throw new RuntimeException(String.format("Class %s for renderKit %s not found",getRenderKitClass(), getRenderKitId()), e);
 			} catch (InstantiationException e) {
-				throw new RuntimeException(e);
+				throw new RuntimeException(String.format("Class %s for renderKit %s could not be instatiated",getRenderKitClass(), getRenderKitId()), e);
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
-		}
 	}
 	
-	private Object referenceToBean ;
-	private String beanId;
+	public XUIViewRoot(String instanceId, String viewState) {
+		this();
+		//System.out.println("InstanceId: " + instanceId +  " ViewState: " + viewState);
+		this.sInstanceId = instanceId;
+		this.sStateId = viewState;
+	}
 	
+
 	public Object getBean(String sBeanName) {
-		Object bean = XUIRequestContext.getCurrentContext().getSessionContext()
-				.getAttribute(getBeanPrefix() + sBeanName);
-		if (StringUtils.hasValue( sBeanName ) && StringUtils.hasValue( beanId )){
-			if (sBeanName.equalsIgnoreCase( beanId ))
-				bean = referenceToBean;
+		Object bean = new ViewRootBeanFinder().getBean( this , sBeanName );
+		if (bean == null){
+			if (StringUtils.hasValue( sBeanName ) && sBeanName.equalsIgnoreCase( beanId )){
+				bean = beanReference;
+			}
 		}
 		return bean;
 	}
-
+	
 	public String getBeanUniqueId(String sBeanName) {
 		return getBeanPrefix() + sBeanName;
 	}
+	
+	private Object beanReference;
+	private String beanId;
+	private Map<String,String> beanMapping = new HashMap< String , String >();
 
 	public void addBean(String sBeanName, Object oBean) {
-		this.referenceToBean = oBean;
+		if( this.sBeanIds != null && this.sBeanIds.length() > 0 ) {
+			this.sBeanIds += "|";
+		}
+		this.sBeanIds += sBeanName;
 		this.beanId = sBeanName;
-		this.sBeanIds += "|" + sBeanName;
+		this.beanReference = oBean;
+		this.beanMapping.put( sBeanName , oBean.getClass().getName() );
 		XUIRequestContext.getCurrentContext().getSessionContext().setAttribute(
 				getBeanPrefix() + sBeanName, oBean);
+	}
+	
+	public String getBeanClass(String beanId){
+		return beanMapping.get( beanId );
+	}
+	
+	public String[] getBeanIds() {
+		
+		if( this.sBeanIds == null )
+			return null;
+		
+		return this.sBeanIds.split("\\|");
+		
+	}
+	
+	String[] beanIds = null;
+	
+	/**
+	 * 
+	 * Retrieves the bean identifiers from the current view and child views
+	 * 
+	 * @return
+	 */
+	public String[] getAllBeanIds(){
+		//if (beanIds == null){
+			String[] selfIds = getBeanIds( );
+			List<String> list = new ArrayList< String >( );
+			findChildBeanIds( this , list );
+			
+			for (String id :selfIds){
+				list.add(id);
+			}
+			
+			beanIds = list.toArray(new String[list.size()]);
+		//}
+		return beanIds;
+	}
+	
+	void findChildBeanIds(UIComponent component, List<String> ids){
+		Iterator<UIComponent> children = component.getFacetsAndChildren();
+		
+		while (children.hasNext()){
+			UIComponent comp = children.next();
+				if (comp instanceof XUIViewRoot){
+					String[] beanIds = ((XUIViewRoot) comp).getAllBeanIds( );
+					for (String b : beanIds){
+						ids.add( b );
+					}
+				} 
+				findChildBeanIds( comp , ids ); 
+		}
+	}
+	
+	void findChildLocalizationClasses(UIComponent component, List<String> localizations){
+		Iterator<UIComponent> children = component.getFacetsAndChildren();
+		
+		while (children.hasNext()){
+			UIComponent comp = children.next();
+				if (comp instanceof XUIViewRoot){
+					String[] beanIds = ((XUIViewRoot) comp).getLocalizationClasses( );
+					for (String b : beanIds){
+						localizations.add( b );
+					}
+				} 
+				findChildLocalizationClasses( comp , localizations ); 
+		}
+	}
+	
+	public Map<String,Object> getViewBeans() {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		for( String beanId : getBeanIds() ) {
+			map.put( beanId , getBean( beanId ) );
+		}
+		return map;
 	}
 
 	public void dispose() {
@@ -145,29 +255,35 @@ public class XUIViewRoot extends UIViewRoot {
 		setTransient(true);
 	}
 	
+	/**
+	 * Retrieves the Theme class name associated with the current renderkit
+	 * (must be an instance of XUITheme)
+	 * 
+	 * @return The name of the class
+	 */
+	private String getRenderKitClass(){
+		return XUIRequestContext.getCurrentContext().getXUIApplicationConfig().getThemeForRenderKit( getRenderKitId() );
+	}
+	
 	@Override
 	public String getRenderKitId() {
 		if( _renderKit == null ) {
 	    	_renderKit = super.getRenderKitId();
 	    	if( _renderKit == null || "HTML_BASIC".equals( _renderKit ) ) {
-		    	XUIRequestContext requestContext;
-		    	requestContext = XUIRequestContext.getCurrentContext();
+		    	XUIRequestContext requestContext = XUIRequestContext.getCurrentContext();
 		    	
+		    	//Get renderKit from Parameter, overrides anything
 		    	_renderKit = requestContext.getRequestParameterMap().get("__renderKit");
-		    	/*if( _renderKit != null ) { 
-		    		_renderKit = "XEOXML";
-		    	}
-		    	else {
-		    		_renderKit = "XEOHTML";
-		    	}*/
 		    	if( _renderKit == null ){
-		    		_renderKit = "XEOHTML";
+		    		//Get from servlet
+		    		_renderKit = (String) requestContext.getAttribute( "__renderKit" );
+		    		if (_renderKit == null){
+		    			//Get application default
+		    			_renderKit = requestContext.getXUIApplicationConfig().getDefaultRenderKitId();
+		    		}
 		    	}
 	    	}
 		}
-		
-		//_renderKit = "XEOJQUERY"; 
-		
     	return _renderKit; 
     } 
 	
@@ -183,9 +299,10 @@ public class XUIViewRoot extends UIViewRoot {
 		return oTheme;
 	}
 
-	private final String getBeanPrefix() {
+	 final String getBeanPrefix() {
 		return getViewId() + ":" + sInstanceId + ":";
 	}
+	 
 
 	@Override
 	public Object saveState(FacesContext context) {
@@ -193,8 +310,11 @@ public class XUIViewRoot extends UIViewRoot {
 		Object[] oMyState;
 
 		oSuperState = super.saveState(context);
-		oMyState = new Object[7];
+		oMyState = new Object[9];
 
+		if (logger.isFineEnabled())
+			logger.fine( "Saving state for %s - %s - %s", this.sInstanceId, sStateId ,this.sParentViewState );
+		
 		oMyState[0] = sInstanceId;
 		oMyState[1] = sParentViewState;
 		oMyState[2] = sTransactionId;
@@ -203,10 +323,13 @@ public class XUIViewRoot extends UIViewRoot {
 		oMyState[5] = sStateId;
 
 		oMyState[6] = oSuperState;
+		oMyState[7] = localizationClasses;
+		oMyState[8] = beanMapping;
 
 		return oMyState;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object[] oMyState;
@@ -221,6 +344,11 @@ public class XUIViewRoot extends UIViewRoot {
 		sBeanIds = (String) oMyState[4];
 		sStateId = (String) oMyState[5];
 		super.restoreState(context, oMyState[6]);
+		localizationClasses = (String[]) oMyState[7];
+		beanMapping = (Map<String,String>) oMyState[8];
+		
+		if (logger.isFineEnabled())
+			logger.fine( "Restoring for %s - %s - %s", this.sInstanceId, sStateId ,this.sParentViewState );
 	}
 
 	public boolean wasStateChanged() {
@@ -244,10 +372,10 @@ public class XUIViewRoot extends UIViewRoot {
 		boolean bChanged;
 		UIComponent oKid;
 
-		List<UIComponent> oKids = this.getChildren();
-		for (int i = 0; i < oKids.size(); i++) {
+		Iterator<UIComponent> it = this.getFacetsAndChildren();
+		while (it.hasNext()){
 			bChanged = false;
-			oKid = oKids.get(i);
+			oKid = it.next();
 			if (oKid instanceof XUIComponentBase) {
 				StateChanged change = ((XUIComponentBase) oKid).wasStateChanged2();
 				if (change == StateChanged.FOR_RENDER || change == StateChanged.FOR_UPDATE) {
@@ -263,10 +391,11 @@ public class XUIViewRoot extends UIViewRoot {
 	}
 
 	public void syncClientView() {
-		List<UIComponent> list;
+		Iterator<UIComponent> it = getFacetsAndChildren();
 		Form oForm;
-		list = getChildren();
-		for (UIComponent component : list) {
+		UIComponent component = null;
+		while (it.hasNext()){
+			component = it.next();
 			oForm = (Form) ((XUIComponentBase) component)
 					.findComponent(Form.class);
 			if (oForm != null) {
@@ -274,19 +403,68 @@ public class XUIViewRoot extends UIViewRoot {
 						XUIScriptContext.POSITION_HEADER,
 						oForm.getClientId() + "_syncView",
 						"XVW.syncView('" + oForm.getClientId() + "');");
+				break;
 			}
 		}
 	}
+	
+	public XUIComponentBase findComponent(String clientId) {
+		
+		UIComponent found = null;
 
-	public XUIComponentBase findComponent(Class cType) {
-		List<UIComponent> list;
+		Iterator<UIComponent> it = getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent component = it.next();
+			if (clientId.equalsIgnoreCase( component.getClientId( getFacesContext() ) )){
+				return (XUIComponentBase) component;
+			}
+			found = findComponent( component , clientId );
+		}
+		return (XUIComponentBase) found ;
+	}
+	
+	public XUIComponentBase findComponent(UIComponent mcomponent, String clientId) {
+		Iterator<UIComponent> list;
+		XUIComponentBase oComp;
+
+		oComp = null;
+		UIComponent found = null;
+
+		list = mcomponent.getFacetsAndChildren();
+		while (list.hasNext()){
+			UIComponent component = list.next();
+			if (component instanceof XUIComponentBase)
+			{
+				found = ((XUIComponentBase) component).findComponent(clientId);
+				if (found != null) {
+					return (XUIComponentBase) found;
+				}
+			}
+			else
+			{
+				Iterator<UIComponent> listChildren = component.getFacetsAndChildren();
+				while (listChildren.hasNext())
+				{
+					UIComponent childCmp = listChildren.next();
+					found  = childCmp.findComponent( clientId );
+					if (found != null && found instanceof XUIComponentBase)
+						return ((XUIComponentBase) found);
+				}
+			}
+			
+		}
+		return oComp;
+	}
+
+	public XUIComponentBase findComponent(Class<?> cType) {
+		Iterator<UIComponent> list;
 		XUIComponentBase oComp;
 
 		oComp = null;
 
-		list = getChildren();
-		for (UIComponent component : list) {
-			
+		list = getFacetsAndChildren();
+		while (list.hasNext()){
+			UIComponent component = list.next();
 			if (component instanceof XUIComponentBase)
 			{
 				oComp = ((XUIComponentBase) component).findComponent(cType);
@@ -296,10 +474,11 @@ public class XUIViewRoot extends UIViewRoot {
 			}
 			else
 			{
-				List<UIComponent> listChildren = component.getChildren();
-				for (UIComponent chilCmp: listChildren)
+				Iterator<UIComponent> listChildren = component.getFacetsAndChildren();
+				while (listChildren.hasNext())
 				{
-					findComponent(chilCmp, cType);
+					UIComponent childCmp = listChildren.next();
+					findComponent(childCmp, cType);
 				}
 			}
 			
@@ -307,14 +486,15 @@ public class XUIViewRoot extends UIViewRoot {
 		return oComp;
 	}
 	
-	private XUIComponentBase findComponent(UIComponent current, Class cType )
+	private XUIComponentBase findComponent(UIComponent current, Class<?> cType )
 	{
 		XUIComponentBase oComp = null;
 		if (current != null)
 		{
-			List<UIComponent> list = current.getChildren();
-			for (UIComponent component : list)
-			{
+			Iterator<UIComponent> list = current.getFacetsAndChildren();
+			while (list.hasNext()){
+				UIComponent component = list.next();
+			
 				if (component instanceof XUIComponentBase)
 				{
 					oComp = ((XUIComponentBase) component).findComponent(cType);
@@ -324,9 +504,9 @@ public class XUIViewRoot extends UIViewRoot {
 				}
 				else
 				{
-					List<UIComponent> listChildren = component.getChildren();
-					for (UIComponent chilCmp: listChildren)
-					{
+					Iterator<UIComponent> listChildren = component.getFacetsAndChildren();
+					while (listChildren.hasNext()){
+						UIComponent chilCmp = listChildren.next();
 						return findComponent(chilCmp,cType);
 					}
 				}
@@ -350,13 +530,18 @@ public class XUIViewRoot extends UIViewRoot {
 	public void setParentView(XUIViewRoot oViewRoot) {
 		setParentViewState(oViewRoot.getViewState());
 	}
+	
+	
+	public String getParentViewState(){
+		return sParentViewState;
+	}
 
 	public XUIViewRoot getParentView() {
 		if (sParentViewState != null && oParentView == null) {
 			oParentView = XUIRequestContext.getCurrentContext()
 					.getSessionContext().getView(sParentViewState);
-			oParentView.sStateId = sParentViewState;
-		}
+				oParentView.sStateId = sParentViewState;
+			}
 		return oParentView;
 	}
 
@@ -376,7 +561,7 @@ public class XUIViewRoot extends UIViewRoot {
 
 	public void processInitComponents() {
 		// Process all facets and children of this component
-		Iterator kids = getFacetsAndChildren();
+		Iterator<UIComponent> kids = getFacetsAndChildren();
 		while (kids.hasNext()) {
 			UIComponent kid = (UIComponent) kids.next();
 			if (kid instanceof UIComponent) {
@@ -389,7 +574,7 @@ public class XUIViewRoot extends UIViewRoot {
 
 	public void processValidateModel() {
 		// Process all facets and children of this component
-		Iterator kids = getFacetsAndChildren();
+		Iterator<UIComponent> kids = getFacetsAndChildren();
 		while (kids.hasNext()) {
 			UIComponent kid = (UIComponent) kids.next();
 			if (kid instanceof XUIComponentBase) {
@@ -400,7 +585,7 @@ public class XUIViewRoot extends UIViewRoot {
 
 	public void processPreRender() {
 		// Process all facets and children of this component
-		Iterator kids = getFacetsAndChildren();
+		Iterator<UIComponent> kids = getFacetsAndChildren();
 		while (kids.hasNext()) {
 			UIComponent kid = (UIComponent) kids.next();
 			if (kid instanceof UIComponent) {
@@ -412,6 +597,10 @@ public class XUIViewRoot extends UIViewRoot {
 	public String getInstanceId() {
 		return this.sInstanceId;
 	}
+	
+	public void setInstanceId(String instanceId){
+		this.sInstanceId = instanceId;
+	}
 
 	public String getClientId() {
 		return getViewId() + ":" + sInstanceId;
@@ -419,6 +608,10 @@ public class XUIViewRoot extends UIViewRoot {
 
 	public boolean isPostBack() {
 		return isPostBack;
+	}
+	
+	public void setViewState(String newState){
+		sStateId = newState;
 	}
 
 	public String getViewState() {
@@ -497,10 +690,18 @@ public class XUIViewRoot extends UIViewRoot {
 				.isPortletRequest());
 	}
 
+	public static final boolean renderHead(XUIViewRoot root ) {
+		return renderHead() && root.getParent() == null;
+	}
+	
 	public static final boolean renderScripts() {
 		XUIRequestContext oRequestContext = XUIRequestContext
 				.getCurrentContext();
 		return !(oRequestContext.isAjaxRequest());
+	}
+	
+	public static final boolean renderScripts(XUIViewRoot root) {
+		return renderScripts() && (root.getParent() == null);
 	}
 
 	public static class XEOHTMLRenderer extends XUIRenderer {
@@ -510,10 +711,10 @@ public class XUIViewRoot extends UIViewRoot {
 				throws IOException {
 			
 			XUIResponseWriter w = getResponseWriter();
-
+			XUITheme theme = getTheme();
 			XUIViewRoot viewRoot = (XUIViewRoot) component;
 
-			if (renderHead() ) {
+			if (renderHead(viewRoot) ) {
 
 				// Add Scripts and Style
 				XUIResponseWriter headerW = getResponseWriter()
@@ -521,141 +722,78 @@ public class XUIViewRoot extends UIViewRoot {
 
 				// Write Header
 
-				headerW
-						.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n");
-
-				// else
-				// headerW.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
-
+				headerW.write(theme.getDocType());
 				headerW.writeText('\n');
+				
 				headerW.startElement("html", component);
-				// headerW.writeAttribute("SCROLL", "no", null );
 				if( getTheme() != null )
-					headerW.writeAttribute("style", getTheme().getHtmlStyle(),
-							"style");
+					headerW.writeAttribute("style", getTheme().getHtmlStyle());
 
 				headerW.writeText('\n');
 				headerW.startElement("head", component);
-
-				// <meta http-equiv="X-UA-Compatible" content="chrome=1">
 				
+				theme.writeHeader( headerW );
 				
-				headerW.startElement( HtmlTags.META, component);
-				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
-				headerW.writeAttribute("content", "IE=EmulateIE7;chrome=IE10", null);
-				headerW.endElement( HtmlTags.META );
-				
-				/*headerW.startElement( HtmlTags.META, component);
-				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
-				headerW.writeAttribute("content", "IE=EmulateIE7", null);
-				headerW.endElement( HtmlTags.META );
-
-				headerW.startElement(HtmlTags.META, component);
-				headerW.writeAttribute("http-equiv", "X-UA-Compatible", null);
-				headerW.writeAttribute("content", "IE=7", null);
-				headerW.endElement( HtmlTags.META );*/
-				
-				headerW.startElement("base", component);
-				HttpServletRequest req = (HttpServletRequest) getRequestContext()
-						.getRequest();
-				String link = (req.isSecure() ? "https" : "http")
-						+ "://"
-						+ req.getServerName()
-						+ (req.getServerPort() == 80 ? "" : ":"
-								+ req.getServerPort())
-						+ getRequestContext().getResourceUrl("");
-				headerW.writeAttribute("href", link, "href");
+				renderBaseUrl( component , headerW );
 				
 				// Write Body
 				w.startElement("body", component);
 				if (getTheme() != null && getTheme().getBodyStyle() != null) {
-					w.writeAttribute("style", getTheme().getBodyStyle()
-							+ ";height:100%;width:100%", "style");
+					w.writeAttribute( "style", getTheme().getBodyStyle() );
 				}
 				headerW.writeText('\n');
 			}
 
-			if (getRequestContext().isPortletRequest()) {
 
-				if (!isAjax()) {
-					w.getScriptContext().add(XUIScriptContext.POSITION_HEADER,
-							"portalVar", "xvw_isPortal=true");
-				}
-
-				String sWidth = (String) ((HttpServletRequest) getRequestContext()
-						.getRequest()).getAttribute("xvw.width");
-				if (sWidth != null) {
-					w.startElement("div", null);
-					w.writeAttribute("id", ((XUIViewRoot) component)
-							.getClientId(), "id");
-					w.writeAttribute("style", "width:" + sWidth, null);
-				} else if (isAjax()) {
-					w.startElement("div", component);
-					w.writeAttribute("id", ((XUIViewRoot) component)
-							.getClientId(), "id");
-
-					// N�o sei se � necess�rio, foi criado a necessidade atrav�s
-					if (viewRoot.findComponent(Window.class) != null) {
-						w.writeAttribute(HTMLAttr.CLASS, "x-panel", "");
-					}
-					w.writeAttribute("style", "width:100%;height:100%", null);
-				}
-			} else {
-
-				if (!isAjax()) {
-					w.getScriptContext().add(XUIScriptContext.POSITION_HEADER,
-							"portalVar", "xvw_isPortal=false");
-				}
-
-				w.startElement("div", component);
-				w.writeAttribute("id", ((XUIViewRoot) component).getClientId(),
-						"id");
-
-				// N�o sei se � necess�rio, foi criado a necessidade atrav�s
-				if (viewRoot.findComponent(Window.class) != null) {
-					w.writeAttribute(HTMLAttr.CLASS, "x-panel", "");
-				}
-				w.writeAttribute("style", "width:100%;height:100%", null);
-			}
-
-			if (renderScripts() && getTheme() != null ) {
-				getTheme().addScripts(w.getScriptContext());
+			if (renderScripts(viewRoot) && getTheme() != null ) {
 				getTheme().addStyle(w.getStyleContext());
+				getTheme().addScripts(w.getScriptContext());
 			}
+			
+			theme.writePostBodyContent( getRequestContext() , w, viewRoot );
 
+		}
+
+		protected void renderBaseUrl(UIComponent component,
+				XUIResponseWriter headerW) throws IOException {
+			headerW.startElement("base", component);
+			HttpServletRequest req = (HttpServletRequest) getRequestContext()
+					.getRequest();
+			String link = (req.isSecure() ? "https" : "http")
+					+ "://"
+					+ req.getServerName()
+					+ (req.getServerPort() == 80 ? "" : ":"
+							+ req.getServerPort())
+					+ getRequestContext().getResourceUrl("");
+			headerW.writeAttribute("href", link, "href");
+			headerW.endElement( "base" );
 		}
 
 		@Deprecated
 		public void encodeEnd(FacesContext context, UIComponent component)
 				throws IOException {
 			XUIRequestContext oRequestContext;
-			
+			XUIViewRoot viewRoot = (XUIViewRoot) component;
 			oRequestContext = XUIRequestContext.getCurrentContext();
+			XUITheme theme = getTheme();
 			XUIResponseWriter w = getResponseWriter();
 			
-			if (getRequestContext().isPortletRequest()) {
-				String sWidth = (String) ((HttpServletRequest) getRequestContext()
-						.getRequest()).getAttribute("xvw.width");
-				if (sWidth != null) {
-					w.endElement("div");
-				}
-			} else {
-				w.endElement("div");
-			}
-
-			Layouts.doLayout(w);
 			XUIResponseWriter footerW = getResponseWriter().getFooterWriter();
 			XUIResponseWriter headerW = getResponseWriter().getHeaderWriter();
 
-			if (renderScripts()) {
+			if (renderScripts(viewRoot)) {
 
-				w.getScriptContext().render(headerW, w, footerW);
+				Layouts.doLayout( w );
 				w.getStyleContext().render(headerW, w, footerW);
-				oRequestContext.getScriptContext().render(headerW, w, footerW);
+				w.getScriptContext().render(headerW, w, footerW);
 				oRequestContext.getStyleContext().render(headerW, w, footerW);
+				oRequestContext.getScriptContext().render(headerW, w, footerW);
 			}
 			
-			if (renderHead() ) {
+			
+			theme.writePreFooterContent( oRequestContext , w , viewRoot );
+			
+			if (renderHead(viewRoot) ) {
 				// Write footer Elements
 				if ( getTheme() != null && getTheme().getHtmlStyle() != null) {
 					w.writeAttribute("style", getTheme().getHtmlStyle(),
@@ -666,6 +804,7 @@ public class XUIViewRoot extends UIViewRoot {
 				headerW.writeText('\n');
 				headerW.endElement("head");
 				headerW.writeText('\n');
+				
 
 				// End tag body
 				w.writeText('\n');
@@ -732,48 +871,56 @@ public class XUIViewRoot extends UIViewRoot {
 		boolean hasPhaseMethodExpression = (isBefore && (null != getBeforePhaseListener()))
 				|| (!isBefore && (null != getAfterPhaseListener()));
 		MethodExpression expression = isBefore ? getBeforePhaseListener() : getAfterPhaseListener();
-
-		if (hasPhaseMethodExpression) {
-			try {
-				expression.invoke(context.getELContext(),
-						new Object[] { event });
-				skipPhase = context.getResponseComplete()
-						|| context.getRenderResponse();
-			} catch (Exception e) {
-				// PENDING(edburns): log this
-			}
-		}
 		
-		List<PhaseListener> phaseListeners;
-		
+		XUIRequestContext.getCurrentContext().setPhaseEvent( new XUIPhaseEvent(this, event ) );
 		try {
-			if( phaseListenersField == null ) {
-				phaseListenersField = UIViewRoot.class.getDeclaredField("phaseListeners");
-				phaseListenersField.setAccessible( true );
+
+			if (hasPhaseMethodExpression) {
+				try {
+					expression.invoke(getELContext(),
+							new Object[] { event });
+					skipPhase = context.getResponseComplete()
+							|| context.getRenderResponse();
+				} catch (Exception e) {
+					// PENDING(edburns): log this
+				}
 			}
-			phaseListeners = (List<PhaseListener>)phaseListenersField.get( this );
-		} catch (Exception e1) {
-			throw new RuntimeException(e1);
-		}
-		
-		if (null != phaseListeners) {
 			
-			for (PhaseListener curFacesListener : phaseListeners ) {
-				PhaseListener curListener = (PhaseListener)curFacesListener;
-				if (phaseId == curListener.getPhaseId()
-						|| PhaseId.ANY_PHASE == curListener.getPhaseId()) {
-					try {
-						if (isBefore) {
-							curListener.beforePhase(event);
-						} else {
-							curListener.afterPhase(event);
+			List<PhaseListener> phaseListeners;
+			
+			try {
+				if( phaseListenersField == null ) {
+					phaseListenersField = UIViewRoot.class.getDeclaredField("phaseListeners");
+					phaseListenersField.setAccessible( true );
+				}
+				phaseListeners = (List<PhaseListener>)phaseListenersField.get( this );
+			} catch (Exception e1) {
+				throw new RuntimeException(e1);
+			}
+			
+			if (null != phaseListeners) {
+				
+				for (PhaseListener curFacesListener : phaseListeners ) {
+					PhaseListener curListener = (PhaseListener)curFacesListener;
+					if (phaseId == curListener.getPhaseId()
+							|| PhaseId.ANY_PHASE == curListener.getPhaseId()) {
+						try {
+							if (isBefore) {
+								curListener.beforePhase(event);
+							} else {
+								curListener.afterPhase(event);
+							}
+							skipPhase = context.getResponseComplete();
+						} catch (Exception e) {
+							// PENDING(edburns): log this
 						}
-						skipPhase = context.getResponseComplete();
-					} catch (Exception e) {
-						// PENDING(edburns): log this
 					}
 				}
 			}
+		}
+		finally {
+			XUIRequestContext.getCurrentContext()
+				.setPhaseEvent(null);
 		}
 	}
 	
@@ -794,7 +941,78 @@ public class XUIViewRoot extends UIViewRoot {
 		return (new PhaseEvent(context, phaseId, lifecycle));
 
 	}
-	
-	
 
+	public ELContext getELContext() {
+        return new XUIELContextWrapper( getFacesContext().getELContext() , this );
+    }
+
+    
+    @Override
+    public void processApplication(FacesContext context) {
+    	
+    	processApplicationOnChildViews(context, this.getFacetsAndChildren() );
+    	
+    	super.processApplication(context);
+    }
+	
+    private void processApplicationOnChildViews( FacesContext context, Iterator<UIComponent> components ) {
+		for( ; components.hasNext(); ) {
+			
+			UIComponent child = components.next();
+			
+	    	if( child instanceof UIViewRoot ) {
+	    		((UIViewRoot)child).processApplication( context );
+	    	}
+	    	else {
+    			processApplicationOnChildViews( context, child.getFacetsAndChildren() );
+	    	}
+    	}
+    }
+    
+	@Override
+	public String toString() {
+		String result =  "id:"+ getViewId() + " state:" + getViewState() + " beanIds:";
+		for (String b : getBeanIds()){
+			result += b + ",";
+		}
+		
+		return result;
+	}
+	
+	public Renderer getRenderer(){
+		return super.getRenderer( getFacesContext() );
+	}
+
+	public void resetState() {
+		isPostBack = false;
+		resetStateOnComponents();
+		
+	}
+	
+	void resetStateOnComponents(){
+		Iterator<UIComponent> it = getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent comp = it.next();
+			if (comp instanceof XUIComponentBase){
+				((XUIComponentBase)comp).resetState();
+			} else {
+				processResetStateOnComponents( comp );
+			}
+		}
+	}
+	
+	void processResetStateOnComponents(UIComponent comp){
+		Iterator<UIComponent> it = getFacetsAndChildren();
+		while (it.hasNext()){
+			UIComponent child = it.next();
+			if (child instanceof XUIComponentBase){
+				((XUIComponentBase)child).resetState();
+			} else {
+				processResetStateOnComponents(child);
+			}
+		}
+	}
+	
+	
+    
 }

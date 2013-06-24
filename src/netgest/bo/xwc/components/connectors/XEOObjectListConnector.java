@@ -10,14 +10,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import netgest.bo.data.DataSet;
 import netgest.bo.data.DriverUtils;
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
-import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boObjectList.SqlField;
@@ -87,6 +84,10 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
     
     public boObjectList getObjectList() {
 		return oObjectList;
+	}
+    
+    public void setObjectList(boObjectList oObjectList) {
+		this.oObjectList=oObjectList;
 	}
     
 	public XEOObjectListConnector( boObjectList oBoObjectList ) {
@@ -236,6 +237,8 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
     				query.append( " ( " );
     		}
     		
+    		
+    		
 			FilterTerm t =  j.getTerm();
 			
 			String name = t.getDataField();
@@ -367,6 +370,7 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
     		oObjectList.setUserQuery( query.length() > 0 ? query.toString() : null , pars.toArray() );
     	else
     		oObjectList.setUserQuery( null, null );
+    	
     }
 
 	/**
@@ -410,7 +414,6 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 
 	public int getPage() {
 		return this.oObjectList.getPage();
-		
 	}
 
 	public int getPageSize() {
@@ -505,6 +508,9 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 	}
 
 	public void refresh() {
+		if (oObjectList.getPage() == -1){
+			oObjectList.lastPage();
+		}
 		this.oObjectList.refreshData();
 	}
 
@@ -751,5 +757,10 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 	@Override
 	public Object[] toArray(Object[] arg0) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean hasMorePages() {
+		return oObjectList.haveMorePages();
 	}
 }

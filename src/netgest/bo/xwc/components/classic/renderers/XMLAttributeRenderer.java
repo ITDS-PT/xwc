@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 import javax.el.ValueExpression;
 import javax.faces.component.ValueHolder;
 
+import netgest.bo.xwc.components.classic.Attribute;
+import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -28,7 +30,15 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 public class XMLAttributeRenderer extends XMLBasicRenderer {
 	@Override
 	public void encodeBegin(XUIComponentBase component) throws IOException {
+		
+		boolean isLov = false;
+		
 		XUIResponseWriter rw = getResponseWriter();
+		
+		
+		isLov = ((AttributeBase)component).isLov();
+		
+		
 		rw.startElement( component.getRendererType(), component );
 		Map<String,Object>  map = component.getAttributes();
 		for( String s : map.keySet() ) {
@@ -44,6 +54,10 @@ public class XMLAttributeRenderer extends XMLBasicRenderer {
 		
 		
 		for( Entry<String,XUIBaseProperty<?>> s : props ) {
+			
+			if( !isLov && "lovMap".equals( s.getKey() ) ) {
+				continue;
+			}
 			
 			value = null;
 			

@@ -64,6 +64,11 @@ public class Bridge extends GridPanel {
     	new XUIViewStateBindProperty<List<Long>>( "listFavorites", this, List.class);
     
     
+    public Bridge(){
+    	super();
+    	
+    }
+    
     /**
      * 
      * Retrieves a list of bouis to show as favorites

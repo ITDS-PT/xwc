@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import netgest.bo.transaction.XTransactionManager;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
+import netgest.bo.xwc.framework.jsf.XUIPhaseEvent;
 import netgest.bo.xwc.framework.jsf.XUIViewHandlerImpl;
 
 import com.sun.faces.io.FastStringWriter;
@@ -34,7 +35,7 @@ public class XUIRequestContext {
 	private Map<String,XUIViewRoot> changedViews = new HashMap<String, XUIViewRoot>();
     private XUIApplicationContext   oApplication;
     private Boolean                 bIsAjax;
-    private boolean                 bIsClosed;
+    private boolean                 bIsClosed = false;
     private boolean                 bIsPostBack;
 
     private XUIScriptContext        oScriptContext;
@@ -46,6 +47,7 @@ public class XUIRequestContext {
     private XTransactionManager     oTransactionManager;
 
     private XUIActionEvent          oEvent;
+    private XUIPhaseEvent			oPhaseEvent;
 
     private LinkedHashMap<String, XUIMessage> oMessages;
 
@@ -80,6 +82,10 @@ public class XUIRequestContext {
             oScriptContext = new XUIScriptContext();
         }
         return oScriptContext;
+    }
+    
+    public void setScriptContext(XUIScriptContext ctx){
+    	this.oScriptContext = ctx;
     }
 
     public XUIStyleContext getStyleContext() {
@@ -277,6 +283,14 @@ public class XUIRequestContext {
         return oEvent;
     }
 
+    public void setPhaseEvent(XUIPhaseEvent oPhaseEvent) {
+        this.oPhaseEvent = oPhaseEvent;
+    }
+
+    public XUIPhaseEvent getPhaseEvent() {
+        return oPhaseEvent;
+    }
+
     public void renderResponse() {
     	getFacesContext().renderResponse();
     }
@@ -336,5 +350,22 @@ public class XUIRequestContext {
     public UIViewRoot getRenderedViewer() {
     	return this.oRenderedViewer;
     }
+    
+    public XUIApplicationConfig getXUIApplicationConfig(){
+    	return oApplication.getXUIApplicationConfig();
+    }
+    
+    /**
+     * 
+     * Adds a script to the footer
+     * 
+     * @param scriptId The script identifier
+     * @param code The script source
+     */
+    public void addFooterScript(String scriptId, String code){
+    	getScriptContext().add( XUIScriptContext.POSITION_FOOTER , scriptId , code );
+    }
+
+	
 }
 
