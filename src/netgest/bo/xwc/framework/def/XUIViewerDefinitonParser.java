@@ -453,9 +453,28 @@ public class XUIViewerDefinitonParser
     		} else {
     			if ( StringUtils.hasValue( node.getAttribute( "src" ) ) ){
     				return replaceIncludeContent( root, node, parent, counter, defines );
-    			} else{
+    			}
+    			else{
     				XUIViewerDefinitionNode newNode = new XUIViewerDefinitionNode();
     				newNode.setName( "xvw:genericTag" );
+				    NodeList nlist = node.getChildNodes();
+			        for (int i = 0; i < nlist.getLength(); i++) 
+			        {
+			            Node cnode = nlist.item( i );
+			            if( cnode.getNodeType() == Node.ELEMENT_NODE )
+			            {
+			            	newNode.addChild( parseNode( root, (XMLElement)nlist.item( i ), component, counter, defines, beanId ) );
+			            } 
+			            else if ( cnode.getNodeType() == Node.TEXT_NODE ) 
+			            {
+			            	XUIViewerDefinitionNode childText = new XUIViewerDefinitionNode();
+			            	childText.setName("xvw:genericTag");
+			            	childText.setTextContent( getLocalizedMessage( root, cnode.getNodeValue() ) );
+			            	childText.setRawContent( true );
+			            	newNode.addChild( childText );
+			            	
+			            }
+			        }
     				return newNode;
     			}
     		}
