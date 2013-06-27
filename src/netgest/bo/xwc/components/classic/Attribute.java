@@ -91,8 +91,10 @@ public class Attribute extends AttributeBase
             sComponentType = getInputComponentType();    
         }
         
-        createLabelComponent( );
-	    createInputComponent( sComponentType );
+        if (StringUtils.hasValue( sComponentType )){
+        	createLabelComponent( );
+        	createInputComponent( sComponentType );
+        }
 	            
 	    
     }
