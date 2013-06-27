@@ -356,7 +356,7 @@ table.x-date-inner {
 * but ajax request are much nicer)
 */
 .ext-el-mask{
-	z-index:20000;
+	z-index:9000000;
 	position:absolute;
 	top:0;
 	left:0;
