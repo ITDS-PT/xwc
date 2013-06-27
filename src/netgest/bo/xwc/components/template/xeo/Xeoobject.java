@@ -95,14 +95,16 @@ public class Xeoobject extends XUIComponentBase {
 	}
 	
 	public void preRender() {
-		HttpServletRequest request = (HttpServletRequest)getRequestContext().getRequest();
-		String boui=request.getParameter(this.getName()+"boui");
-		if (!StringUtils.isEmpty(boui))
-				this.setBoui(boui);
-		
-		boui=request.getParameter(this.getName());
-		if (!StringUtils.isEmpty(boui))
-				this.setBoui(boui);				
+		if (!StringUtils.isEmpty(this.getName())) {
+			HttpServletRequest request = (HttpServletRequest)getRequestContext().getRequest();
+			String boui=request.getParameter(this.getName()+"boui");
+			if (!StringUtils.isEmpty(boui))
+					this.setBoui(boui);
+			
+			boui=request.getParameter(this.getName());
+			if (!StringUtils.isEmpty(boui))
+					this.setBoui(boui);				
+		}
 	}
 	
 	public static class XEOObjectRenderer extends TemplateRenderer {

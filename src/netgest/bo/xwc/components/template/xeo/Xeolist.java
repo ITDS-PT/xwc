@@ -17,6 +17,9 @@ public class Xeolist extends PaginatedConnectorList {
 	private XUIBindProperty<XEOObjectListConnector> dataSource = new XUIBindProperty<XEOObjectListConnector>(
 			"dataSource", this, XEOObjectListConnector.class);
 	
+	private XUIBindProperty<Boolean> showPagination = new XUIBindProperty<Boolean>(
+			"showPagination", this, Boolean.class,"true");
+	
 	private int recordcount=-1;
 	private XEOObjectListConnector connector = null;
 
@@ -28,6 +31,13 @@ public class Xeolist extends PaginatedConnectorList {
 		return this.boql.getEvaluatedValue();
 	}
 	
+	public void setShowPagination( String showPagination ) {
+		this.showPagination.setExpressionText(showPagination);
+	}
+	
+	public boolean isShowPagination() {
+		return this.showPagination.getEvaluatedValue();
+	}
 	
 	public XEOObjectListConnector getDataSource() {
 		if (!hasDataSourceBeenEvaluated || connector == null){
