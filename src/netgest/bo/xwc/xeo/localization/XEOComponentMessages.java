@@ -177,6 +177,9 @@ public interface XEOComponentMessages {
 	public static final XUILocalizedMessage EXPLORER_TOOLBAR_REMOVE_ADVANCED_SEARCH= 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_TOOLBAR_REMOVE_ADVANCED_SEARCH" );
 	
+	public static final XUILocalizedMessage EXPLORER_TOOLBAR_PREVIEW_TOOLTIP= 
+			new XUILocalizedMessage( XEOComponentMessages.class.getName(), "EXPLORER_TOOLBAR_PREVIEW_TOOLTIP" );
+	
 	public static final XUILocalizedMessage TREE_SHUTLE_AVAILABLE= 
 		new XUILocalizedMessage( XEOComponentMessages.class.getName(), "TREE_SHUTLE_AVAILABLE" );
 	
