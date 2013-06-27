@@ -4,12 +4,16 @@ import netgest.bo.data.DataSet;
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.system.Logger;
 import netgest.bo.xwc.components.security.SecurityPermissions;
+import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
+import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovValueGridDisplay;
 
 public class XEOObjectListGroupDataRecord implements DataRecordConnector {
 
 	private XEOObjectListGroupConnector parent;
 	private int row;
+	private static final Logger logger = Logger.getLogger( XEOObjectListGroupDataRecord.class );
 
 	public XEOObjectListGroupDataRecord(int row,
 			XEOObjectListGroupConnector parent) {
@@ -59,18 +63,30 @@ public class XEOObjectListGroupDataRecord implements DataRecordConnector {
 						if (value == null) {
 							value = "";
 						}
+						
+						if (LovColumnNameExtractor.isXeoLovColumn(name)) {
+							String attributeName = new LovColumnNameExtractor( name ).extractName();
+							defAtt= parent.getRootList().oObjectList.getBoDef().getAttributeRef( attributeName );
+							LovValueGridDisplay displayLovValue = new LovValueGridDisplay( defAtt );
+							return displayLovValue.getConnectorForValue( value );
+						}
 						return new XEOObjectConnector.GenericFieldConnector(
 								name, String.valueOf(value),
 								DataFieldTypes.VALUE_CHAR);
 					}
 				}
-			}
 			return handleSpecialFields(objDef, name);
+			}
 		} catch (boRuntimeException e) {
 			throw new RuntimeException(e);
 		}
+		return new XEOObjectConnector.GenericFieldConnector(
+				name, String.valueOf(""),
+				DataFieldTypes.VALUE_CHAR);
 	}
-
+	
+		
+		
 	private DataFieldConnector handleSpecialFields( boDefHandler objDef, String name ) {
 		if (name.endsWith("__count")) {
 			return new XEOObjectListAttributeCount(this.parent, this.row,

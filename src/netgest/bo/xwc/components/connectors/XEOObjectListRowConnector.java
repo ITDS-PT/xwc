@@ -1,17 +1,18 @@
 package netgest.bo.xwc.components.connectors;
 
-import org.apache.commons.lang.StringUtils;
+
 
 import netgest.bo.data.DataSet;
 import netgest.bo.def.boDefAttribute;
-import netgest.bo.lovmanager.LovManager;
-import netgest.bo.lovmanager.lovObject;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.system.Logger;
 import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
+import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovValueGridDisplay;
 
 public class XEOObjectListRowConnector extends XEOObjectConnector {
 
+	private static final Logger logger = Logger.getLogger( XEOObjectListRowConnector.class );
 	int row;
 	boObjectList oObjectList;
 
@@ -31,26 +32,20 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 
 			int col = dataSet.findColumn(name);
 			if (col > 0) {
-				Object value = dataSet.rows(row).getObject(col);
+				Object description = dataSet.rows(row).getObject(col);
 
 				if (LovColumnNameExtractor.isXeoLovColumn(name)) {
-					LovColumnNameExtractor lovExtractor = new LovColumnNameExtractor(
-							name);
-					String attname = lovExtractor.extractName();
-					String lovValue = getLovValue(attname, value);
-					if (lovValue != null) {
-						ret = new XEOObjectConnector.GenericFieldConnector(
-								name, lovValue, DataFieldTypes.VALUE_CHAR,
-								value != null ? String.valueOf(value) : null);
-					} else {
-						ret = new XEOObjectConnector.GenericFieldConnector(
-								name, value != null ? String.valueOf(value)
-										: null, DataFieldTypes.VALUE_CHAR);
+					try{
+						String attributeName = new LovColumnNameExtractor( name ).extractName();
+						boDefAttribute attributeDefinition = this.oObjectList.getBoDef().getAttributeRef( attributeName );
+						LovValueGridDisplay displayLovValue = new LovValueGridDisplay( attributeDefinition );
+						return displayLovValue.getConnectorForValue( description );
+					} catch (boRuntimeException e){
+						logger.warn( "Could not read model definition", e );
 					}
-
 				} else
 					ret = new XEOObjectConnector.GenericFieldConnector(name,
-							value != null ? String.valueOf(value) : null,
+							description != null ? String.valueOf(description) : null,
 							DataFieldTypes.VALUE_CHAR);
 			}
 		}
@@ -59,31 +54,8 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 		}
 		return ret;
 	}
-
-	private String getLovValue(String name,Object value) {
-		String toRet=null;
-		try {
-			String lovName=null;
-			boDefAttribute defatt=this.oObjectList.getBoDef().getAttributeRef(name);
-			if (defatt!=null && !StringUtils.isEmpty(defatt.getLOVName()))
-				lovName=this.oObjectList.getBoDef().getAttributeRef(name).getLOVName();
-			
-			if (value!=null && lovName!=null) {
-				lovObject lovObj = LovManager.getLovObject(this.oObjectList.getEboContext(), lovName);
-				lovObj.beforeFirst();
-				boolean found=lovObj.findLovItemByDescription(String.valueOf( value ));
-				
-				if (found) {							
-					toRet=lovObj.getCode();
-				}
-			}
-		} catch (boRuntimeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return toRet;
-	}
-
+	
+	
 	protected void preloadObject() {
 		// Force preload...
 		try {
