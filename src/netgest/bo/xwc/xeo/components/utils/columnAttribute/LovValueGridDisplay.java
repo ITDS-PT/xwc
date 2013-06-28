@@ -24,7 +24,9 @@ public class LovValueGridDisplay {
 	
 	public DataFieldConnector getConnectorForValue(Object value){
 		String attributeName = attributeDefinition.getName();
-		String description = value.toString();
+		
+		String description = "";
+		description = value.toString();
 		String lovValue = getLovValue(attributeName, description);
 		if (lovValue != null) {
 			String translation = null;
