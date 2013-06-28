@@ -25,34 +25,55 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 
 	@Override
 	public DataFieldConnector getAttribute(String name) {
-		preloadObject();
-		DataFieldConnector ret = null;
+		
+		Object description = null;
 		if (this.oObjectList.getRslt() != null) {
 			DataSet dataSet = this.oObjectList.getRslt().getDataSet();
-
 			int col = dataSet.findColumn(name);
 			if (col > 0) {
-				Object description = dataSet.rows(row).getObject(col);
-
-				if (LovColumnNameExtractor.isXeoLovColumn(name)) {
-					try{
-						String attributeName = new LovColumnNameExtractor( name ).extractName();
-						boDefAttribute attributeDefinition = this.oObjectList.getBoDef().getAttributeRef( attributeName );
-						LovValueGridDisplay displayLovValue = new LovValueGridDisplay( attributeDefinition );
-						return displayLovValue.getConnectorForValue( description );
-					} catch (boRuntimeException e){
-						logger.warn( "Could not read model definition", e );
-					}
-				} else
-					ret = new XEOObjectConnector.GenericFieldConnector(name,
-							description != null ? String.valueOf(description) : null,
-							DataFieldTypes.VALUE_CHAR);
+				description = dataSet.rows(row).getObject(col);
 			}
 		}
-		if (ret == null) {
-			ret = super.getAttribute(name);
+
+		if (isLov( name , description )) {
+			try{
+				return createLovFieldConnector( name , description );
+			} catch (boRuntimeException e){
+				logger.warn( "Could not read model definition", e );
+			}
+		} 
+	
+		preloadObject();
+		
+		DataFieldConnector ret = null;
+		ret = super.getAttribute(name);
+		if (fieldIsNotPartOfObject( ret )) {
+			ret = createGenericField( name , description );
 		}
 		return ret;
+	}
+
+	private DataFieldConnector createLovFieldConnector(String name,
+			Object description) throws boRuntimeException {
+		String attributeName = new LovColumnNameExtractor( name ).extractName();
+		boDefAttribute attributeDefinition = this.oObjectList.getBoDef().getAttributeRef( attributeName );
+		LovValueGridDisplay displayLovValue = new LovValueGridDisplay( attributeDefinition );
+		return displayLovValue.getConnectorForValue( description );
+	}
+
+	private boolean isLov(String name, Object description) {
+		return LovColumnNameExtractor.isXeoLovColumn(name) && description != null;
+	}
+
+	private GenericFieldConnector createGenericField(String name,
+			Object description) {
+		return new XEOObjectConnector.GenericFieldConnector(name,
+						description != null ? String.valueOf(description) : null,
+						DataFieldTypes.VALUE_CHAR);
+	}
+
+	private boolean fieldIsNotPartOfObject(DataFieldConnector ret) {
+		return ret == null;
 	}
 	
 	
