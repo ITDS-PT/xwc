@@ -20,8 +20,12 @@ import static netgest.bo.xwc.components.HTMLTag.TR;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Map;
 
+import javax.el.ELException;
+import javax.el.ValueExpression;
+import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -34,6 +38,7 @@ import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.classic.AttributeAutoComplete;
+import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.AttributeAutoComplete.SearchType;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.JQueryBuilder;
@@ -43,10 +48,14 @@ import netgest.bo.xwc.components.classic.renderers.jquery.generators.WidgetFacto
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.util.ComponentRenderUtils;
+import netgest.bo.xwc.framework.XUIBaseProperty;
+import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
+import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 import netgest.utils.StringUtils;
 
 
@@ -54,6 +63,42 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 
 	private static final int NO_ITEMS_ALLOWED = 0;
 
+	@Override
+	public StateChanged wasStateChanged(XUIComponentBase component,
+			List< XUIBaseProperty< ? >> updateProperties) {
+		XUIBaseProperty<?> readOnly = component.getStateProperty( "readOnly" );
+	 	if (readOnly != null){
+	 			if (readOnly.wasChanged())
+	 				return StateChanged.FOR_RENDER; 
+	 	}
+	 
+	 	AttributeBase base = ( AttributeBase ) component;
+        if( super.wasStateChanged(component, updateProperties) == StateChanged.NONE ) {
+        	Object value;
+        	ValueExpression ve = component.getValueExpression("value");
+        	if (ve != null) {
+        	    try {
+        	    	XUIELContextWrapper context = new XUIELContextWrapper( getFacesContext().getELContext() , component );
+        			value = (ve.getValue(context));
+        		}
+    		    catch (ELException e) {
+        			throw new FacesException(e);
+    		    }
+        	}
+        	else {
+        		value = base.getValue();
+        	}
+        	
+            if (!XUIStateProperty.compareValues( base.getRenderedValue(), value )) {
+                return StateChanged.FOR_UPDATE;
+            }
+        }
+        else {
+            return StateChanged.FOR_UPDATE;
+        }
+        return StateChanged.NONE;
+	}
+	
 	@Override
 	public void encodeBegin(XUIComponentBase component) throws IOException {
 		encodeBegin( (AttributeAutoComplete) component, 
