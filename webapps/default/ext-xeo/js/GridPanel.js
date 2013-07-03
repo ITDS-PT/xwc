@@ -1600,20 +1600,28 @@ ExtXeo.grid.GridGroup = Ext.extend( ExtXeo.grid.GridGroup, {
 	        );
         this.groupStore.addListener("datachanged",this.groupLoaded, this );
         this.groupStore.load();
-    	this.toolBar = this.createGroupToolbar( this.elemId, this.groupStore );
+        this.toolBar = this.createGroupToolbar( this.elemId, this.groupStore );
 	},
 	groupLoaded : function() {
 		if( this.toolBar ) {
-			if( parseInt(this.count) > 50) {
-				this.toolBar.show();
+			var elementsInGroup = this.groupStore.getTotalCount();
+			var maxElementsInGroup = 50;
+			if( elementsInGroup >= maxElementsInGroup) {
+				this.showPagingToolBar();
 			}
 			else {
-				this.toolBar.hide();
+				this.hidePagingToolBar();
 			}
 			this.groupingView.parentView.groupLoaded( this );
 		}
-	},
-	collapseGroup : function() {
+	}
+	, showPagingToolBar : function(){
+		this.toolBar.show();
+	}
+	, hidePagingToolBar : function(){
+		this.toolBar.hide();
+	}
+	,collapseGroup : function() {
     	if( this.toolBar ) {
     		this.toolBar.destroy();
     		this.toolBar = null;
