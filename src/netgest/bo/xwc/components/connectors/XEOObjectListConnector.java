@@ -19,12 +19,15 @@ import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boObjectList.SqlField;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
 import netgest.bo.xwc.components.connectors.helper.CardIDParser;
+import netgest.bo.xwc.components.connectors.helper.CardIDSearch;
+import netgest.bo.xwc.components.connectors.helper.CardIDSearchQueryCreator;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
 import netgest.utils.StringUtils;
@@ -32,6 +35,8 @@ import netgest.utils.StringUtils;
 public class XEOObjectListConnector implements GroupableDataList, AggregableDataList, List {
 
 	boObjectList oObjectList;
+	
+	private static final Logger logger = Logger.getLogger( XEOObjectListConnector.class );
 	
 	private HashMap<String, ArrayList<String>> aggregateFields;
 	
@@ -307,8 +312,11 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 					}
 				} else {
 					query.append( sqlExpr );
-					parVal = formatCardIdSearch( t.getDataField() , dutl );
-					pars.add( "%"+val+"%" );
+					CardIDSearch search = formatCardIdSearch( t.getDataField() , dutl, val ); 
+					parVal = search.getBoqlExpression();
+					for (Object param : search.getParameters() ){
+						pars.add( "%"+param+"%" );
+					}
 				}
 			} else {
 				if ( StringUtils.hasValue( sqlExpr ) ){
@@ -381,27 +389,19 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 	 * @param utils
 	 * @return
 	 */
-	protected String formatCardIdSearch(String columnName, DriverUtils utils)  {
+	protected CardIDSearch formatCardIdSearch(String columnName, DriverUtils utils, Object parameter)  {
+		String objectName = "Unknown";
 		try {
+			objectName = this.oObjectList.getBoDef().getName();
 			boDefAttribute attributeDef = this.oObjectList.getBoDef().getAttributeRef( columnName );
-			if (attributeDef != null){
-				boDefHandler handler = attributeDef.getReferencedObjectDef();
-				if (handler != null){
-					String cardId = handler.getCARDID();
-					CardIDParser parser = new CardIDParser( cardId );
-					List<String> parts = parser.getParts();
-					if (!parts.isEmpty()){
-						String concat = utils.concatColumnsWithSeparator( parts , "', '" );
-						String expression = "([SELECT BOUI FROM " + handler.getBoMasterTable() + " WHERE " + concat + " LIKE UPPER(?)])"; ;
-						return expression;
-					}
-				}
-			}
+			return new CardIDSearchQueryCreator( utils , attributeDef ).formatCardIdSearch( parameter );
 		} catch ( boRuntimeException e ) {
-			e.printStackTrace();
+			logger.warn( "Could not parse CardID search for %s of object %s", e, objectName, columnName );
 		}
-		return null;
+		return CardIDSearch.NULL;
 	}
+
+	
 
     public DataRecordConnector findByUniqueIdentifier(String sUniqueIdentifier) {
 		long boui;
