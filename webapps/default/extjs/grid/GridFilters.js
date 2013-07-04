@@ -8,7 +8,7 @@
 
 Ext.grid.GridFilters = function(config){
 	this.filters = new Ext.util.MixedCollection();
-	this.filters.getKey = function(o) {return o ? o.dataIndex : null};
+	this.filters.getKey = function(o) {return o ? o.dataIndex : null;};
 
 	for(var i=0, len=config.filters.length; i<len; i++) {
 		this.addFilter(config.filters[i]);

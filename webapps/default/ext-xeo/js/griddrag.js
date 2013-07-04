@@ -763,7 +763,7 @@ ExtXeo.sortGroupedColumn = function (ev, target, options ){
 	}
 	
 	
-}
+};
 
 /**
  * Destroys the button and the divider of a group

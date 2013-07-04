@@ -33,6 +33,9 @@ Ext.grid.filter.ListFilter = Ext.extend(Ext.grid.filter.Filter, {
 					case 'string':
 			            options.push([value, value]);
 			            break;
+		            default:
+		            		
+		            break;
 				}
 			}
 			

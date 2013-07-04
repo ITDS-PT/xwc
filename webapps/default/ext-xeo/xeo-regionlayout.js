@@ -23,7 +23,7 @@ XVW.appendPanels = function appendPanelsToForm(){
 		left.appendTo(form);
 	if (right)	
 		right.appendTo(form);
-}
+};
 
 /**
  * 
@@ -47,8 +47,8 @@ XEOLayout.onCloseTab = function( oTabCont, oComp ) {
 				}
 			}
 			catch(e) {
-				e=e;
+				
 			}
 		}
     }
-}
+};

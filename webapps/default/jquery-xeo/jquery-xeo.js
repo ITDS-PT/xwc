@@ -26,19 +26,19 @@ XVW.closeWindowJquery = function (sComponentId, sViewId){
 	}
 	
 	
-}
+};
 
 
 XVW.Wait = function( iWaitMode ) {
 	$.blockUI.defaults.overlayCSS = {backgroundColor:"transparent", opacity : 0}; //Should be placed somewhere else
 	$.blockUI.defaults.baseZ = 9000000; //Avoid Windows Stacking up
 	$.blockUI({ message: '<div id="xwc-ajax-loading"><span class="xwc-ajax-loading-image" /><p class="xwc-ajax-loading-message"> ' + ExtXeo.Messages.SENDING_DATA + '</p></div>' });
-}
+};
 
 
 XVW.NoWait = function() { 
 	$.unblockUI();
-}
+};
 
 /**
  * 
@@ -46,9 +46,9 @@ XVW.NoWait = function() {
  *  
  * */
 
-XVW.grid = function(){}
+XVW.grid = function(){};
 
-XVW.grid.utils = function(){}
+XVW.grid.utils = function(){};
 
 XVW.grid.utils.getInputValue = function ( inputId ){
 	var elem = $(XVW.get(inputId));
@@ -58,16 +58,16 @@ XVW.grid.utils.getInputValue = function ( inputId ){
 	else
 		selected = selected.split(",");
 	return selected;
-}
+};
 
 XVW.grid.utils.setInputValue = function ( inputId, value ){
 	var elem = $(XVW.get(inputId));
 	elem.val(value);	
-}
+};
 
 XVW.grid.utils.hasElement = function( inputId, id ){
 	return XVW.grid.utils.elementIndex( inputId, id ) > -1;
-}
+};
 
 XVW.grid.utils.elementIndex = function( inputId, id ){
 	var values = XVW.grid.utils.getInputValue( inputId );
@@ -76,7 +76,7 @@ XVW.grid.utils.elementIndex = function( inputId, id ){
 			return i;
 	}	
 	return -1;
-}
+};
 
 XVW.grid.utils.removeElement = function(inputId, id){
 	var values = XVW.grid.utils.getInputValue(inputId);
@@ -86,7 +86,7 @@ XVW.grid.utils.removeElement = function(inputId, id){
 		values.splice(index,1);
 		XVW.grid.utils.setInputValue( inputId , values );
 	}
-}	
+};	
 
 XVW.grid.utils.addElement = function(inputId, id){
 	var values = XVW.grid.utils.getInputValue(inputId);
@@ -95,7 +95,7 @@ XVW.grid.utils.addElement = function(inputId, id){
 		values.push(id);
 		XVW.grid.utils.setInputValue( inputId , values );
 	}
-}
+};
 
 XVW.grid.onSelectRow = function( rowId , status, e , grid){
 	
@@ -111,7 +111,7 @@ XVW.grid.onSelectRow = function( rowId , status, e , grid){
 	if (status == '1')
 		$(XVW.get(grid.id + "_act")).val(rowId);
 	
-}
+};
 
 XVW.grid.resize = function (elem){
 	var newElem = jQuery(XVW.get(elem.id + "_table")); 
@@ -135,12 +135,12 @@ XVW.grid.resize = function (elem){
 		}
 	}
 	
-}
+};
 
 ExtXeo.layoutMan.registerManager('fit-parent',XVW.grid.resize);
 
 //Override Ext-JS Version
 XVW.openCommandTab = function( sFrameName, sFormId, sActionId, sActionValue, sTabTitle, bClosable ) {
 	XVW.openViewOnElement(sFormId, sActionId, sActionValue, sActionValue);
-}
+};
 
