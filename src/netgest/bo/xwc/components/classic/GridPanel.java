@@ -1534,7 +1534,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * @return {@link DataRecordConnector} 
 	 */
 	public DataRecordConnector getCurrentSelectedRow() {
-		return null;
+		return getFirstSelectedOrActiveRow();
 	}
 	
 	/**
@@ -2482,6 +2482,16 @@ public class GridPanel extends ViewerInputSecurityBase {
 			}
 		}
 		return result;
+	}
+	
+	public DataRecordConnector getFirstSelectedOrActiveRow(){
+		DataRecordConnector activeRow = getActiveRow();
+		if (activeRow == null){
+			DataRecordConnector[] selectedRows = getSelectedRows();
+			if (selectedRows.length > 0 )
+				activeRow = selectedRows[0];
+		}
+		return activeRow;
 	}
 
 	
