@@ -149,32 +149,26 @@ public abstract class PaginatedList extends XUIComponentBase {
 		HttpServletRequest request = (HttpServletRequest)getRequestContext().getRequest();
 
 		pageUrl=request.getContextPath()+request.getServletPath();
-		String queryString=request.getQueryString();
-		
-		if (!StringUtils.isEmpty(queryString)) {
-			if (!StringUtils.isEmpty(request.getParameter(paramName)) || param.equals("pagesize")) {
-				queryString="";
-				Enumeration<?> params=request.getParameterNames();
-				int i =0 ;
-				while (params.hasMoreElements()) {
-					String currParam=(String)params.nextElement();
-					//If pagesize is present then we ommit page for the current list
-					if (!currParam.equals(paramName) && !currParam.equals(this.getName()+"page"))
-						queryString+=((i==0)?"":"&")+
-						currParam+"="+request.getParameter(currParam);
-					i++;
-				}
-			}
-		
-			pageUrl+="?"+(queryString.equals("")?"":queryString+"&")+paramName+"="+pageNumber;
+		String queryString="?";
+				
+		//Put all parameters except the new parameter to be generated and page parameter if pagesize is requested
+		Enumeration<String> en=request.getParameterNames();
+		while (en.hasMoreElements()) {
+			String pName=en.nextElement();
+			if (!pName.equals(paramName) && !(param.equals("pagesize") && 
+					!pName.equals(this.getName()+"page")))
+				queryString+=pName+"="+request.getParameter(pName)+"&";
 		}
-		else
-			pageUrl+="?"+this.getName()+param+"="+pageNumber;
-		//If the param is pagesize than the page goes to page one
-		if (param.equals("pagesize"))
-			pageUrl+="&"+this.getName()+"page=1";
+		//put the generated parameter
+		queryString+=paramName+"="+pageNumber+"&";
 		
-		return pageUrl;
+		if (param.equals("pagesize")) {
+			queryString+=this.getName()+page+"=1&";
+			
+		}	
+		queryString=queryString.substring(0,queryString.length()-1);
+		
+		return pageUrl+queryString;
 	}
 	
 	public String getNext() {
