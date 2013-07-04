@@ -68,6 +68,7 @@ public class AttributeNumberLookup extends AttributeBase {
     
     @Override
 	public void initComponent() {
+    	super.initComponent();
         // per component initializations.
         oLookupCommand = new XUICommand();
         oLookupCommand.setId( getId() + "_lk" );
@@ -90,6 +91,7 @@ public class AttributeNumberLookup extends AttributeBase {
     
     @Override
     public void preRender() {
+    	super.preRender();
         oLookupCommand = (XUICommand)getChild( 0 );
         oOpenCommand = (XUICommand)getChild( 1 );
         oFavoriteCommand = (XUICommand)getChild( 2 );
