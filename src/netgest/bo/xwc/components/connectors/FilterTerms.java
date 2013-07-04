@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchRow.JOIN_OPERATOR;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchRow.VALUE_OPERATOR;
 
@@ -120,7 +121,7 @@ public class FilterTerms {
 			this.operator  = operator;
 		}
 		public String getDataField() {
-			return dataField.replace( "__", "." );
+			return DataFieldDecoder.convertForBOQL( dataField );
 		}
 
 		public Object getValue() {

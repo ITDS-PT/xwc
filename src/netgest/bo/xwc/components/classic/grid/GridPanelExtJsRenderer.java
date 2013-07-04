@@ -28,6 +28,7 @@ import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
+import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts.ValueType;
 import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
@@ -37,6 +38,7 @@ import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
+import netgest.bo.xwc.components.connectors.decoder.XEOObjectAttributeDecoder;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.model.Menu;
@@ -335,7 +337,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	String[] groupByElements = oGrid.getGroupBy().split(",");
         	ExtConfigArray c = oLoadParams1.addChildArray( "groupBy" );
         	for( String g : groupByElements ) {
-        		c.addString( g.replaceAll("\\.", "__") );
+        		c.addString( DataFieldDecoder.convertForGridPanel( g ) );
         	}
         	oLoadParams1.add( "groupByLevel", 0 );
         	//oLoadParams1.addJSString( "groupField" , oGrid.getGroupBy() );
@@ -548,17 +550,12 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
         String actionURL = XUIRequestContext.getCurrentContext().getAjaxURL();
         
-//        if( oGrid.getEnableGroupBy() ) {
-//        	oDataStoreConfig = new ExtConfig("ExtXeo.data.GroupingStore");
-//        }
-//        else {
         oDataStoreConfig = new ExtConfig("ExtXeo.data.GroupingStore");
-//        }
         
         oFieldsConfig = oDataStoreConfig.addChildArray( "fields" );
         for (int i = 0; i < oGridColumns.length; i++) {
             oFieldConfig = oFieldsConfig.addChild();
-            oFieldConfig.addJSString( "name", oGridColumns[i].replaceAll("\\.", "__") );
+            oFieldConfig.addJSString( "name", DataFieldDecoder.convertForGridPanel( oGridColumns[i]) );
         }
         
         
@@ -581,7 +578,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	ExtConfigArray c = oDataStoreConfig.addChildArray( "groupField" );
         	for( String g : groupByElements ) {
         		if( g.trim().length() > 0 ) {
-        			c.addString( g.replaceAll("\\.", "__") );
+        			c.addString( DataFieldDecoder.convertForGridPanel( g ) );
         			hasGroupBy = true;
         		}
         	}
@@ -820,7 +817,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             String label = GridPanel.getColumnLabel( dataList, oGridColumns[ i ] );
             
             oColConfig.addJSString( "header", label );
-            oColConfig.addJSString( "dataIndex", oGridColumns[ i ].getDataField().replaceAll("\\.", "__") );
+            oColConfig.addJSString( "dataIndex", DataFieldDecoder.convertForGridPanel( oGridColumns[ i ].getDataField() ) );
             oColConfig.add( "resizable" , oGridColumns[ i ].isResizable() );
             oColConfig.add( "hideable" , oGridColumns[ i ].isHideable() );
             if (oGridColumns[ i ].wrapText()){
@@ -1109,7 +1106,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 				String dataField = col.getDataField();
 
 				oExtFiltersChild = oFiltersArray.addChild();
-            	oExtFiltersChild.addJSString( "dataIndex", dataField.replaceAll( "\\.", "__" ) );
+            	oExtFiltersChild.addJSString( "dataIndex", DataFieldDecoder.convertForGridPanel( dataField ) );
             	oExtFiltersChild.add( "active" , colFilter.getBoolean("active"));
             	oExtFiltersChild.add( "searchable", col.isSearchable() );
             	if (colFilter.has( "containsData" ))

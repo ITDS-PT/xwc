@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -103,7 +105,7 @@ public class SortTermsDecoder {
 		Iterator<String> it = getSortTerms();
 		while (it.hasNext()){
 			String fieldName = it.next();
-			b.append( fieldName.replaceAll("__", ".") );
+			b.append( DataFieldDecoder.convertForBOQL( fieldName) );
 			b.append("|");
 			b.append(getSortDirection( fieldName ).getName());
 			if (it.hasNext())
