@@ -1130,6 +1130,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	                    	ExtConfigArray valuesArray = oExtFiltersChild.addChildArray("options");
 	                    	StringBuilder values = new StringBuilder();
 	                    	boolean first = true;
+	                    	
+	                    	ColumnFilterLovAdapter lovMapAdapter = new ColumnFilterLovAdapter(metaData,col);
+	                    	if (lovMapAdapter.requiresConversion())
+	                    		lovMap = lovMapAdapter.convertMapToColumnFilterFormat( lovMap );
+	                    	
 	                    	for( Object key : lovMap.keySet() ) {
 	                    		String desc = lovMap.get( key );
 	                    		if( !first )
@@ -1137,10 +1142,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	                    		
 	                    		if( !(desc.length() == 0  && first) ) {
 	                    			ExtConfig c = valuesArray.addChild();
-	                    			if (col.useValueOnLov())
-	                    				c.addJSString("id", String.valueOf( key ));
-	                    			else
-	                    				c.addJSString("id", desc );
+	                    			c.addJSString("id", String.valueOf( key ));
 	                    			c.addJSString("text", desc);
 		                    		first = false;
 	                    		}

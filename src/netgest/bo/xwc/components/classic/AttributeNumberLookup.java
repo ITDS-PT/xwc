@@ -281,7 +281,7 @@ public class AttributeNumberLookup extends AttributeBase {
             oForm   = (Form)oComp.findComponent( sFormId );
 
             
-            //oInpConfig.add("maxLength", "32" );
+            oInpConfig.add("maxLength", "150" ); //To allow big  sentences
             oInpConfig.add("readOnly", true );
         	oInpConfig.add( "enableKeyEvents", true);
             oInpConfig.add("hideTrigger1", false);

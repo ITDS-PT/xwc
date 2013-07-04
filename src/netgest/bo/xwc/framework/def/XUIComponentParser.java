@@ -33,7 +33,9 @@ public class XUIComponentParser
     	InputStream systemsComponents = null;
     	try {
 			systemsComponents = Thread.currentThread().getContextClassLoader().getResourceAsStream( "XWVComponents.xml" );
-			if( systemsComponents != null ) 
+			if( systemsComponents != null )
+				if (log.isFinerEnabled())
+					log.fine( "Loading XWVComponents.xml" );
 				loadComponents( oXUIApplication, systemsComponents );
 		}
 		finally {
@@ -57,6 +59,8 @@ public class XUIComponentParser
 	        		componentsFileName = "XVWComponents_" + componentsFileName + ".xml";
 	    			InputStream moduleComponents = Thread.currentThread().getContextClassLoader().getResourceAsStream( componentsFileName );
 	    			if( moduleComponents != null ) {
+	    				if (log.isFinerEnabled())
+	    					log.fine( String.format( "Loading %s" , componentsFileName ) );
 	    				loadComponents( oXUIApplication, moduleComponents );
 	    				try {
 							moduleComponents.close();
@@ -335,6 +339,10 @@ public class XUIComponentParser
         component.setNameSpace( namespace );
         component.setClassName( getNodeText( xcomponent, "xwc:className" ) );
         component.setDescription( getNodeText( xcomponent, "xwc:description" ) );
+        
+        if (log.isFinerEnabled())
+			log.fine( String.format( "Parsed %s:%s" , component.getNameSpace(),component.getName() ) );
+        
         return component;
     }
      

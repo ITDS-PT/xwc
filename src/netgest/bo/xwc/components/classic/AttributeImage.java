@@ -78,7 +78,7 @@ public class AttributeImage extends ViewerOutputSecurityBase {
     public void preRender() {
     	super.preRender();
     	//WasStateChanged needs this value set, as such it needs to be set once per component render
-    	this.renderedValue.setValue( getValue() );
+    	//this.renderedValue.setValue( getValue() );
     }
     
     public void createChildComponents() {

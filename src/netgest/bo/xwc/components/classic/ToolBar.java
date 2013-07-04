@@ -207,16 +207,16 @@ public class ToolBar extends ViewerSecurityBase {
 	                	if( menuWasChanged( oMenuChild ) ) {
 	                		if (changed != StateChanged.FOR_RENDER)
 	                			changed = StateChanged.FOR_UPDATE;
-	                		if (oMenuChild.getChildCount() > 0)
-	                			recursiveWasStateChangedForChildren( oMenuChild, changed );
 	                	}
+	                	if (oMenuChild.getChildCount() > 0)
+	                		changed = recursiveWasStateChangedForChildren( oMenuChild, changed );
 	                }
                 }
             }
             return changed;
     	}
     	
-    	private void recursiveWasStateChangedForChildren(Menu m, StateChanged changed){
+    	private StateChanged recursiveWasStateChangedForChildren(Menu m, StateChanged changed){
     		Iterator<UIComponent> childs =  m.getChildren().iterator();
             while( childs.hasNext() ) {
             	UIComponent currChild = childs.next();
@@ -226,13 +226,14 @@ public class ToolBar extends ViewerSecurityBase {
 	                	if( menuWasChanged( oMenuChild ) ) {
 	                		if (changed != StateChanged.FOR_RENDER)
 	                			changed = StateChanged.FOR_UPDATE;
-	                		if (oMenuChild.getChildCount() > 0)
-	                			recursiveWasStateChangedForChildren( oMenuChild, changed );
 	                	}
+	                	if (oMenuChild.getChildCount() > 0)
+	                		changed = recursiveWasStateChangedForChildren( oMenuChild, changed );
 	                	
 	                }
                 }
             }
+            return changed;
     	}
     	
     	@Override
@@ -302,13 +303,12 @@ public class ToolBar extends ViewerSecurityBase {
             while( childs.hasNext() ) {
                 Menu oMenuChild = (Menu)childs.next();
                 if( oMenuChild.isRendered() ) {
-	            	if( oMenuChild.wasStateChanged2() == StateChanged.FOR_RENDER ) {
-	                	sb.startBlock();
-	                	//sb.w( " window.setTimeout( function(){ " );
-	                	generateUpdateScript(sb, oMenuChild );
-	                	//sb.w(" },0);");
-	                	sb.endBlock();
-	            	}
+                	sb.startBlock();
+                	//sb.w( " window.setTimeout( function(){ " );
+                	generateUpdateScript(sb, oMenuChild );
+                	//sb.w(" },0);");
+                	sb.endBlock();
+
                 }
             	if( oMenuChild.getChildCount() > 0 ) {
             		updateChildMenuItems(sb, oMenuChild);

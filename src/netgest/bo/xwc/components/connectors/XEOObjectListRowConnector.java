@@ -1,17 +1,18 @@
 package netgest.bo.xwc.components.connectors;
 
-import org.apache.commons.lang.StringUtils;
+
 
 import netgest.bo.data.DataSet;
 import netgest.bo.def.boDefAttribute;
-import netgest.bo.lovmanager.LovManager;
-import netgest.bo.lovmanager.lovObject;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.system.Logger;
 import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
+import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovValueGridDisplay;
 
 public class XEOObjectListRowConnector extends XEOObjectConnector {
 
+	private static final Logger logger = Logger.getLogger( XEOObjectListRowConnector.class );
 	int row;
 	boObjectList oObjectList;
 
@@ -24,66 +25,58 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 
 	@Override
 	public DataFieldConnector getAttribute(String name) {
-		preloadObject();
-		DataFieldConnector ret = null;
+		
+		Object description = null;
 		if (this.oObjectList.getRslt() != null) {
 			DataSet dataSet = this.oObjectList.getRslt().getDataSet();
-
 			int col = dataSet.findColumn(name);
 			if (col > 0) {
-				Object value = dataSet.rows(row).getObject(col);
-
-				if (LovColumnNameExtractor.isXeoLovColumn(name)) {
-					LovColumnNameExtractor lovExtractor = new LovColumnNameExtractor(
-							name);
-					String attname = lovExtractor.extractName();
-					String lovValue = getLovValue(attname, value);
-					if (lovValue != null) {
-						ret = new XEOObjectConnector.GenericFieldConnector(
-								name, lovValue, DataFieldTypes.VALUE_CHAR,
-								value != null ? String.valueOf(value) : null);
-					} else {
-						ret = new XEOObjectConnector.GenericFieldConnector(
-								name, value != null ? String.valueOf(value)
-										: null, DataFieldTypes.VALUE_CHAR);
-					}
-
-				} else
-					ret = new XEOObjectConnector.GenericFieldConnector(name,
-							value != null ? String.valueOf(value) : null,
-							DataFieldTypes.VALUE_CHAR);
+				description = dataSet.rows(row).getObject(col);
 			}
 		}
-		if (ret == null) {
-			ret = super.getAttribute(name);
+
+		if (isLov( name , description )) {
+			try{
+				return createLovFieldConnector( name , description );
+			} catch (boRuntimeException e){
+				logger.warn( "Could not read model definition", e );
+			}
+		} 
+	
+		preloadObject();
+		
+		DataFieldConnector ret = null;
+		ret = super.getAttribute(name);
+		if (fieldIsNotPartOfObject( ret )) {
+			ret = createGenericField( name , description );
 		}
 		return ret;
 	}
 
-	private String getLovValue(String name,Object value) {
-		String toRet=null;
-		try {
-			String lovName=null;
-			boDefAttribute defatt=this.oObjectList.getBoDef().getAttributeRef(name);
-			if (defatt!=null && !StringUtils.isEmpty(defatt.getLOVName()))
-				lovName=this.oObjectList.getBoDef().getAttributeRef(name).getLOVName();
-			
-			if (value!=null && lovName!=null) {
-				lovObject lovObj = LovManager.getLovObject(this.oObjectList.getEboContext(), lovName);
-				lovObj.beforeFirst();
-				boolean found=lovObj.findLovItemByDescription(String.valueOf( value ));
-				
-				if (found) {							
-					toRet=lovObj.getCode();
-				}
-			}
-		} catch (boRuntimeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return toRet;
+	private DataFieldConnector createLovFieldConnector(String name,
+			Object description) throws boRuntimeException {
+		String attributeName = new LovColumnNameExtractor( name ).extractName();
+		boDefAttribute attributeDefinition = this.oObjectList.getBoDef().getAttributeRef( attributeName );
+		LovValueGridDisplay displayLovValue = new LovValueGridDisplay( attributeDefinition );
+		return displayLovValue.getConnectorForValue( description );
 	}
 
+	private boolean isLov(String name, Object description) {
+		return LovColumnNameExtractor.isXeoLovColumn(name) && description != null;
+	}
+
+	private GenericFieldConnector createGenericField(String name,
+			Object description) {
+		return new XEOObjectConnector.GenericFieldConnector(name,
+						description != null ? String.valueOf(description) : null,
+						DataFieldTypes.VALUE_CHAR);
+	}
+
+	private boolean fieldIsNotPartOfObject(DataFieldConnector ret) {
+		return ret == null;
+	}
+	
+	
 	protected void preloadObject() {
 		// Force preload...
 		try {

@@ -2,9 +2,7 @@ package netgest.bo.xwc.components.classic;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedList;
 
-import javax.el.MethodExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -49,7 +47,6 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 import netgest.bo.xwc.xeo.components.List;
 import netgest.bo.xwc.xeo.components.ListToolBar;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
@@ -664,6 +661,7 @@ public class GridExplorer extends List {
 			//pvw.setText("Painel de Leitura");
 			pvw.setIcon("ext-xeo/images/gridexplorer/prev-bott.gif");
 			pvw.setId( getId() + "_mpvw" );
+			pvw.setToolTip( XEOComponentMessages.EXPLORER_TOOLBAR_PREVIEW_TOOLTIP.toString() );
 			
 			
 			
