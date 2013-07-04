@@ -1249,7 +1249,7 @@ public class XEOEditBean extends XEOBaseBean
         // e associa o objecto do parametro
         if( oAttDef != null ) {
 
-        	DataRecordConnector oSelectedRow = oGrid.getActiveRow();
+        	DataRecordConnector oSelectedRow = oGrid.getFirstSelectedOrActiveRow();
             if( oSelectedRow == null ) {
             	String value = (String)oCommand.getValue();
             	if( value != null ) {
