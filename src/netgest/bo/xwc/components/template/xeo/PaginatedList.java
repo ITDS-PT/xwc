@@ -8,7 +8,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 import javax.servlet.http.HttpServletRequest;
 
-
 import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
@@ -156,7 +155,8 @@ public abstract class PaginatedList extends XUIComponentBase {
 		while (en.hasMoreElements()) {
 			String pName=en.nextElement();
 			if (!pName.equals(paramName) && !(param.equals("pagesize") && 
-					!pName.equals(this.getName()+"page")))
+					!pName.equals(this.getName()+"page")) && 
+					!StringUtils.isEmpty(request.getParameter(pName)))
 				queryString+=pName+"="+request.getParameter(pName)+"&";
 		}
 		//put the generated parameter
