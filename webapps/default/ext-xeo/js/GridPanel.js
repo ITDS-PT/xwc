@@ -2015,10 +2015,11 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
         this.sortToggle[f.name] = dir;
         
         var nsinf =  [];
-    	for( var i=0;i<this.sortInfo.length;i++ )
-    		if( (this.sortInfo[i].field != f.name) && (this.groupField.indexOf( this.sortInfo[i].field ) > -1 ) ){
+    	for( var i=0;i<this.sortInfo.length;i++ ){
+    		if( this.sortInfo[i].field != f.name && this.groupField.indexOf( this.sortInfo[i].field ) > -1 ){
     			nsinf[nsinf.length] = this.sortInfo[i];
     		}
+    	}
     	
     	this.sortInfo = nsinf;
     	
@@ -2029,6 +2030,8 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
         if(!this.remoteSort){
             this.applySort();
             this.fireEvent("datachanged", this);
+        }else{
+            this.load(this.lastOptions);
         }
     }, 
     setSelectedPageRows: function() {	
