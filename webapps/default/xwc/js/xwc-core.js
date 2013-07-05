@@ -9,7 +9,7 @@ XVW.get = function (id ) {
  * 
  * Properties related to Ajax Requests
  * */
-XVW.ajax = function () {}
+XVW.ajax = function () {};
 /**
  * Whether an ajax request can be made
  * */
@@ -38,32 +38,32 @@ XVW.ajax.incrementAjaxCounter = function(){
  * */
 XVW.ajax.clearAjaxCounter = function(){
 	XVW.ajax.ajaxRequestCounter = 0;
-}
+};
 /**
  * Returns whether or not we're in conditions to issue a new Ajax Request
  * */
 XVW.ajax.canAjaxRequest = function(){
 	return XVW.ajax.ajaxRequestCounter < XVW.ajax.maxAjaxRequest && XVW.ajax.canMakeAjaxRequest;
-}
+};
 /**
  * Block new ajax requests until a response has arrived
  * */
 XVW.ajax.blockAjaxRequests = function(){
 	XVW.ajax.canMakeAjaxRequest = false;
-}
+};
 /**
  * Queue an AjaxRequest for later submission
  * */
 XVW.ajax.queueAjaxRequest = function( ajaxRequest ){
 	window.setTimeout( ajaxRequest , XVW.ajax.ajaxRequestWaitPeriod );
-}
+};
 /**
  * Enable Ajax Requests
  * */
 XVW.ajax.enableAjaxRequests = function(){
 	XVW.ajax.canMakeAjaxRequest = true;
 	XVW.ajax.clearAjaxCounter();	
-}
+};
 
 // Send command to server
 XVW.Command = function( sFormId, sActionId, sActionValue, iWaitScreen ) {
@@ -73,12 +73,12 @@ XVW.Command = function( sFormId, sActionId, sActionValue, iWaitScreen ) {
 		oForm.submit();
     } 
     XVW.prv.removeCommand( sFormId, sActionId );
-}
+};
 
 // Call server to render a component
 XVW.AjaxRenderComp = function( sFormId, sCompId, bSubmitValues ) {
 	return XVW.AjaxCommand( sFormId, ":xvw.render", sCompId, null, bSubmitValues );
-}
+};
 
 // Send Command via Ajax
 XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubmitValues, renderOnElement, queue ) {
@@ -170,7 +170,7 @@ XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubm
         submitAjax( sActionUrl, reqDoc, renderOnElement );
         
     }    
-}
+};
 
 function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
     var oXmlReq = XVW.createXMLHttpRequest(  );
@@ -201,7 +201,7 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
     }
     oXmlReq.send( reqDoc );
 	
-}
+};
 
 
 XVW.AjaxCommand.pFnParseNode = function( oNode, loParNames, loParValues ) {
@@ -265,7 +265,7 @@ XVW.AjaxCommand.pFnParseNode = function( oNode, loParNames, loParValues ) {
             XVW.AjaxCommand.pFnParseNode( oChild, loParNames, loParValues );
         }
     }
-}
+};
 
 
 // Is not in use for now... it maybe be need in the future
@@ -280,14 +280,14 @@ XVW.getViewForm = function( sViewId, sFormId ) {
         }
     }
     return null;    
-}
+};
 
 XVW.handleAjaxError = function( sErrorMessage, sDetails ) {
     XVW.ErrorDialog( XVW.Messages.AJAXERROR_TITLE, XVW.Messages.AJAXERROR_MESSAGE + "<br/>" + sErrorMessage, sDetails );
-}
+};
 
 // Must be overwriten ti handle error dialogs
-XVW.ErrorDialog = function( sTitle, sMessage ) {}
+XVW.ErrorDialog = function( sTitle, sMessage ) {};
 
 
 XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
@@ -506,7 +506,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
 
     
     XVW.ajax.enableAjaxRequests();
-}
+};
 
 
 XVW.ajaxResponse = function() {};
@@ -517,11 +517,11 @@ XVW.ajaxResponse.createScriptElement = function ( scriptId, scriptContent ){
 	scriptElement.type = 'text/javascript';
 	scriptElement.text = scriptContent;
 	return scriptElement;
-}
+};
 
 XVW.ajaxResponse.isXmlRequestReady = function ( xmlHttpRequest ){
 	return xmlHttpRequest.readyState == 4;
-}
+};
 
 XVW.ajaxResponse.includeScriptWithXmlHttp = function (oScriptId, pathToScript){
 	if( document.getElementById( oScriptId )==null ) {
@@ -536,7 +536,7 @@ XVW.ajaxResponse.includeScriptWithXmlHttp = function (oScriptId, pathToScript){
 	    }
 	    oXmlReq.send(null);
 	}
-}
+};
 
 /**
  * 
@@ -546,7 +546,7 @@ XVW.ajaxResponse.includeScriptWithXmlHttp = function (oScriptId, pathToScript){
  * */
 XVW.addScriptInclude = function( oScriptId, xsrc ) {
 	XVW.ajaxResponse.includeScriptWithXmlHttp(oScriptId,xsrc);
-}
+};
 
 
 
@@ -562,7 +562,7 @@ XVW.getViewInputById = function( sViewDivId, sInputId ) {
         }
     }
     return null;
-}
+};
 
 XVW.disposeView = function( oForm, async ) {
 	try {
@@ -574,7 +574,7 @@ XVW.disposeView = function( oForm, async ) {
 	} catch( e ) {
 		//debugger;
 	}
-}
+};
 
 XVW.disposeAll = function( oForm, async ) {
 	try {
@@ -585,7 +585,7 @@ XVW.disposeAll = function( oForm, async ) {
 	} catch( e ) {
 		//debugger;
 	}
-}
+};
 
 XVW.keepAlive = function( oForm ) {
 	try {
@@ -596,13 +596,13 @@ XVW.keepAlive = function( oForm ) {
 	} catch( e ) {
 //		debugger;
 	}
-}
+};
 
 XVW.syncView = function( sFormId, iWaitScreen, queue ) {
     XVW.AjaxCommand( sFormId, null, null, iWaitScreen, false, null, queue );
-}
+};
 
-XVW.prv = function() {}
+XVW.prv = function() {};
 
 XVW.prv.cmdCntr = 0;
 
@@ -617,7 +617,7 @@ XVW.prv.removeCommand = function( sFormId, sActionId ) {
             oButton.parentNode.removeChild( oButton );
         }
     }
-}
+};
 
 XVW.prv.getFormInput = function( oStartElement, sName ) {
 	var oInpElems = oStartElement.getElementsByTagName('input');
@@ -626,7 +626,7 @@ XVW.prv.getFormInput = function( oStartElement, sName ) {
 			return oInpElems[i];
 	}
 	return null; 
-}
+};
 
 XVW.prv.getViewStateInput = function( oElement ) {
     var oChilds = oElement.childNodes;
@@ -637,7 +637,7 @@ XVW.prv.getViewStateInput = function( oElement ) {
 
         XVW.prv.getViewStateInput( oChilds[i] )
     }
-}
+};
 
 
 
@@ -672,14 +672,14 @@ XVW.prv.createCommand = function( sFormId, sActionId, sActionValue ) {
         XVW.ErrorDialog( XVW.Messages.AJAXERROR_TITLE, 'Form ['+sFormId+'] not Found!!!', 'error' );
     }
     return oForm;
-}
+};
 
 /*
  * Put application in a wait Form
  * iWaitMode - 1 - Wait Dialog, 2 - Silent
  * Must be overwritten to the current look and feel
  */
-XVW.Wait = function( iWaitMode ) {}
+XVW.Wait = function( iWaitMode ) {};
 
 /*
  * Clear the wait state of the application
@@ -713,11 +713,11 @@ XVW.creatXMLDocument = function() {
         }
         catch(e) { XVW.ErrorDialog( XVW.SysMsg.XMLDOC_ERROR, e.message ); }
     }
-    if( xmlDoc != null ) {
+    if( xmlDoc !== null ) {
     	xmlDoc.createProcessingInstruction("xml", "version='1.0' encoding='UTF-8'");    	
     }
     return xmlDoc;
-}
+};
 
 XVW.createXMLHttpRequest = function()
 {
@@ -739,17 +739,17 @@ XVW.createXMLHttpRequest = function()
             }
         }
     }
-    if( req == null ) {
+    if( req === null ) {
         XVW.ErrorDialog( XVW.SysMsg.XMLHTTP_ERROR, e.message );
     }
     return req;
-}
+};
 
 XVW.beforeApplyHtml = function( oDNode ) {};
 
 
 // XVW Events ........
-XVW.events = function() {}
+XVW.events = function() {};
 XVW.events.beforeSubmit = [];
 XVW.events.afterSubmit = [];
 XVW.events.beforeAjaxRequest = [];
