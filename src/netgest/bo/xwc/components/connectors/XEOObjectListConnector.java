@@ -25,6 +25,7 @@ import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
+import netgest.bo.xwc.components.connectors.decoder.XEOObjectAttributeDecoder;
 import netgest.bo.xwc.components.connectors.helper.CardIDParser;
 import netgest.bo.xwc.components.connectors.helper.CardIDSearch;
 import netgest.bo.xwc.components.connectors.helper.CardIDSearchQueryCreator;
@@ -392,9 +393,11 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 	protected CardIDSearch formatCardIdSearch(String columnName, DriverUtils utils, Object parameter)  {
 		String objectName = "Unknown";
 		try {
-			objectName = this.oObjectList.getBoDef().getName();
-			boDefAttribute attributeDef = this.oObjectList.getBoDef().getAttributeRef( columnName );
-			return new CardIDSearchQueryCreator( utils , attributeDef ).formatCardIdSearch( parameter );
+			boDefHandler parentDefinition = this.oObjectList.getBoDef(); 
+			objectName = parentDefinition.getName();
+			boDefAttribute attributeDef = new XEOObjectAttributeDecoder(parentDefinition).decode( columnName );
+			if (attributeDef != null)
+				return new CardIDSearchQueryCreator( utils , attributeDef ).formatCardIdSearch( parameter );
 		} catch ( boRuntimeException e ) {
 			logger.warn( "Could not parse CardID search for %s of object %s", e, objectName, columnName );
 		}
@@ -460,51 +463,71 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 	}
 
 	public DataFieldMetaData getAttributeMetaData( String attributeName ) {
+		DataFieldMetaData result = null;
 		try {
-			boDefAttribute oAtt = this.oObjectList.getBoDef().getAttributeRef( attributeName );
+			boDefHandler parentDefinition = this.oObjectList.getBoDef(); 
+			boDefAttribute oAtt = parentDefinition.getAttributeRef( attributeName );
 			
 			if( oAtt != null ) {
-				return new XEOObjectAttributeMetaData( oAtt );
-			} else if ( attributeName.contains("__" )) {
-				//In the column definition for the attribute boql's dot syntax is used, but internal transformations
-				//use "__" instead of dot syntax, as such the comparison is done against the "__" string. 
-				return new XEOObjectAttributeMetaData(XEOObjectConnector.getAttributeDefinitionFromName(attributeName, this.oObjectList.getBoDef()));
-			} else if ( attributeName.contains("." )) {
-				//In the column definition for the attribute boql's dot syntax is used, but internal transformations
-				//use "__" instead of dot syntax, as such the comparison is done against the "." string.
-				boDefAttribute attributeMetadata = XEOObjectConnector.getAttributeDefinitionFromNameWithDotSeparator( attributeName, this.oObjectList.getBoDef());
-				if (attributeMetadata != null)
-					return new XEOObjectAttributeMetaData(attributeMetadata);
-			} else if ( LovColumnNameExtractor.isXeoLovColumn( attributeName) ) {
-				LovColumnNameExtractor extractor = new LovColumnNameExtractor( attributeName );
-				attributeName = extractor.extractName();
-				oAtt = this.oObjectList.getBoDef().getAttributeRef( attributeName );
-				if( oAtt != null ) {
-					return new XEOObjectAttributeMetaData( oAtt );
-				}
+				result = new XEOObjectAttributeMetaData( oAtt );
+			} else if ( attributeIsLov( attributeName ) ) {
+				result = findAttributeMetadataForLov( attributeName , result );
+			} else {
+				result = findAttributeMetadataInExternalObject( attributeName ,
+						result , parentDefinition );
 			}
-			
 			
 			if( this.oObjectList.getRslt() != null ) {
-				DataSet dataSet = this.oObjectList.getRslt().getDataSet();
-				int col = dataSet.findColumn( attributeName );
-				if( col > 0 ) {
-					return new XEOObjectConnector.GenericFieldConnector( attributeName, null, DataFieldTypes.VALUE_CHAR );
-				} else {
-					if ("SYS_CARDID".equalsIgnoreCase( attributeName )){
-						return new GenericFieldConnector( this.oObjectList.getBoDef().getLabel(), "", DataFieldTypes.VALUE_CHAR );
-					} else if ("SYS_ROWNUM".equalsIgnoreCase( attributeName )){
-						return new GenericFieldConnector( ConnectorsMessages.ROW_NUM.toString(), "", DataFieldTypes.VALUE_CHAR );
-					}
-				}
+				result = findAttributeMetadataInResultSet( attributeName ,
+						result );
 			}
 			
-			
-			return null;
+			return result;
 
 		} catch (boRuntimeException e) {
 			throw new RuntimeException( e );
 		}
+	}
+
+	private DataFieldMetaData findAttributeMetadataInResultSet(
+			String attributeName, DataFieldMetaData result)
+			throws boRuntimeException {
+		DataSet dataSet = this.oObjectList.getRslt().getDataSet();
+		int col = dataSet.findColumn( attributeName );
+		if( col > 0 ) {
+			result = new XEOObjectConnector.GenericFieldConnector( attributeName, null, DataFieldTypes.VALUE_CHAR );
+		} else {
+			if ("SYS_CARDID".equalsIgnoreCase( attributeName )){
+				result = new GenericFieldConnector( this.oObjectList.getBoDef().getLabel(), "", DataFieldTypes.VALUE_CHAR );
+			} else if ("SYS_ROWNUM".equalsIgnoreCase( attributeName )){
+				result =  new GenericFieldConnector( ConnectorsMessages.ROW_NUM.toString(), "", DataFieldTypes.VALUE_CHAR );
+			}
+		}
+		return result;
+	}
+
+	private DataFieldMetaData findAttributeMetadataInExternalObject(
+			String attributeName, DataFieldMetaData result,
+			boDefHandler parentDefinition) {
+		boDefAttribute oAttDefinition = new XEOObjectAttributeDecoder( parentDefinition ).decode( attributeName );
+		if (oAttDefinition != null)
+			result = new XEOObjectAttributeMetaData(oAttDefinition);
+		return result;
+	}
+
+	private DataFieldMetaData findAttributeMetadataForLov(String attributeName,
+			DataFieldMetaData result) throws boRuntimeException {
+		LovColumnNameExtractor extractor = new LovColumnNameExtractor( attributeName );
+		String newAttributeName = extractor.extractName();
+		boDefAttribute attributeDefinition = this.oObjectList.getBoDef().getAttributeRef( newAttributeName );
+		if( attributeDefinition != null ) {
+			result = new XEOObjectAttributeMetaData( attributeDefinition );
+		}
+		return result;
+	}
+
+	private boolean attributeIsLov(String attributeName) {
+		return LovColumnNameExtractor.isXeoLovColumn( attributeName);
 	}
 
 	public void refresh() {

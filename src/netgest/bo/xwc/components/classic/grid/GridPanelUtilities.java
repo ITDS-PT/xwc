@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import netgest.bo.xwc.components.classic.GridPanel;
+import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
 import netgest.bo.xwc.components.connectors.FilterTerms;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
@@ -39,7 +40,7 @@ public class GridPanelUtilities {
 	 */
 	protected Column getColumn( String name ){
 		if (gridPanel != null){
-			name = name.replaceAll( "__", "." );
+			name = DataFieldDecoder.convertForBOQL( name );
 			return gridPanel.getColumn( name );
 		}
 		return new Column() {

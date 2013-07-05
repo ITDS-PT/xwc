@@ -30,6 +30,7 @@ import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.grid.AggregateDecoder;
 import netgest.bo.xwc.components.classic.grid.GridPanelUtilities;
 import netgest.bo.xwc.components.classic.grid.GridTreeSelectorEditBean;
+import netgest.bo.xwc.components.classic.grid.groups.GroupDefinitionParser;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.connectors.AggregableDataList;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -643,6 +644,18 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public void resetState() {
 		super.resetState();
 		setRenderedOnClient( false );
+		setCurrentFilters( null );
+		setAdvancedFilters( null );
+		setCurrentColumnsConfig( null );
+		setCurrentExpandedGroups( null );
+		setCurrentFullTextSearch( null );
+		setCurrentSortTerms( null );
+		setCurrAggregateFieldCheckSet( null );
+		setCurrAggregateFieldDescSet( null );
+		setCurrAggregateFieldOpSet( null );
+		setCurrAggregateFieldSet( null );
+		setGroupBy( null );
+		
 		//setRendered(true);
 	}
 
@@ -1282,14 +1295,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * @return String with the dataField of the group by column
 	 */
 	public String getGroupBy() {
-		String groupBy =  this.groupBy.getEvaluatedValue();
-		if (StringUtils.hasValue( groupBy )){
-			Column c = getColumn( groupBy );
-			if (c == null){
-				return LovColumnNameExtractor.LOV_ID_PREFIX + groupBy;
-			}
-		}
-		return groupBy;
+		return new GroupDefinitionParser( this, this.groupBy.getEvaluatedValue() ).getGroupByExpression();
 	}
 	
 	/**
@@ -1528,7 +1534,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * @return {@link DataRecordConnector} 
 	 */
 	public DataRecordConnector getCurrentSelectedRow() {
-		return null;
+		return getFirstSelectedOrActiveRow();
 	}
 	
 	/**
@@ -2476,6 +2482,16 @@ public class GridPanel extends ViewerInputSecurityBase {
 			}
 		}
 		return result;
+	}
+	
+	public DataRecordConnector getFirstSelectedOrActiveRow(){
+		DataRecordConnector activeRow = getActiveRow();
+		if (activeRow == null){
+			DataRecordConnector[] selectedRows = getSelectedRows();
+			if (selectedRows.length > 0 )
+				activeRow = selectedRows[0];
+		}
+		return activeRow;
 	}
 
 	

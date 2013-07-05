@@ -12,6 +12,7 @@ import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.GridRowRenderClass;
+import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
@@ -127,7 +128,7 @@ public class JavaScriptArrayProvider {
                     oStringBuilder.append( ',' );
                 
 
-                oStringBuilder.append("\"").append( sDataFields[i].replaceAll("\\.", "__") ).append("\"");	
+                oStringBuilder.append("\"").append( DataFieldDecoder.convertForGridPanel( sDataFields[i] ) ).append("\"");	
                 oStringBuilder.append(':');
 
                 oDataField = oDataRecord.getAttribute( sDataFields[i] );

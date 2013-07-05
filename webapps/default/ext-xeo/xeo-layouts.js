@@ -7,7 +7,7 @@ XEOLayout = function()
 
 XEOLayout.closeWindow = function(  ) {
 	ExtXeo.destroyComponents( document.body );
-}
+};
 
 
 XEOLayout.ViewPort = function()
@@ -93,7 +93,7 @@ XEOLayout.ViewPort = function()
                 items: layoutItems
             }
         );
-    }
+    };
     
     
 Ext.extend(XEOLayout.ViewPort, Ext.Viewport, {
@@ -126,110 +126,30 @@ XEOLayout.onCloseTab = function( oTabCont, oComp ) {
 				}
 			}
 			catch(e) {
-				e=e;
+				
 			}
 		}
     }
-}
+};
 
 function xeodmToggleHandler( btn, state ) {
 	var oForm = document.getElementsByName("formMain")[0];
+	var sActionUrl = null;
+	var xmlReq = null;
 	if( state ) {
 		window.xeodmstate = true;
-		var sActionUrl = XVW.prv.getFormInput( oForm, 'xvw.ajax.resourceUrl').value;
-		var xmlReq = XVW.createXMLHttpRequest();
+		sActionUrl = XVW.prv.getFormInput( oForm, 'xvw.ajax.resourceUrl').value;
+		xmlReq = XVW.createXMLHttpRequest();
 	    xmlReq.open( "POST", sActionUrl+"netgest/bo/xwc/components/viewers/XEOViewerOperations.xvw?action=xeodmtoggler&xeodmstate=true", true );
 	    xmlReq.send();
 		btn.setText( ExtXeo.Messages.XEODM_ACTIVE );
 	}
 	else {
 		window.xeodmstate = false;
-		var sActionUrl = XVW.prv.getFormInput( oForm, 'xvw.ajax.resourceUrl').value;
-		var xmlReq = XVW.createXMLHttpRequest();
+		sActionUrl = XVW.prv.getFormInput( oForm, 'xvw.ajax.resourceUrl').value;
+		xmlReq = XVW.createXMLHttpRequest();
 	    xmlReq.open( "POST", sActionUrl+"netgest/bo/xwc/components/viewers/XEOViewerOperations.xvw?action=xeodmtoggler&xeodmstate=false", true );
 	    xmlReq.send();
 		btn.setText( ExtXeo.Messages.XEODM_INACTIVE );
 	}
 }
-
-/*var XApp = null;
-XEOLayoutInit = function() 
-{
-	if( window.xeodmstate ) {
-	} else {
-		xeodmstate = false;
-	}
-	
-	var viewState = document.getElementsByName('javax.faces.ViewState')[0].value;
-	var action = document.getElementsByName('formMain')[0].action;
-	
-	action += "?javax.faces.ViewState=" + viewState + "&xvw.servlet=formMain:tree";
-	
-	window.layoutTree = new Ext.tree.TreePanel({
-		id:'formMain:tree',
-	    border:false,
-	    useArrows:true,
-	    autoScroll:true,
-	    animate:true,
-	    enableDD:false,
-	    containerScroll: true,
-	    rootVisible: false,
-	    frame: false,
-	    layout: 'fit',
-		collapsed : false,
-	    root: {
-	        nodeType: 'async'
-	    },
-	    dataUrl: action,
-	    bbar: [ 
-		           {
-		        	   	xtype:'splitbutton',
-		        	   	icon:'ext-xeo/images/menus/logout.gif' ,
-		        	   	cls: "x-btn-text-icon",		        	
-		        	   	text: ExtXeo.Messages.LOGOUT_BTN,
-		        	   	tooltip: ExtXeo.Messages.LOGOUT_BTN,
-		        	   	handler: function() { document.location.href='LogoutXVW.jsp' },
-		           		menu: [{
-			        	   	xtype:'button',
-			        	 	icon:'ext-xeo/images/menus/logout.gif' ,			 
-			        	   	cls: "x-btn-text-icon",		        	
-			        	   	text: ExtXeo.Messages.LOGOUT_BTN,
-			        	   	handler: function() { document.location.href='LogoutXVW.jsp' }
-		        	   	},
-		        	   	
-		        	   	{//change user properties Button
-			        	   	xtype:'button',
-			        	   	icon:'ext-xeo/admin/users.gif' ,
-			        	   	cls: "x-btn-text-icon",		        	
-			        	   	text: ExtXeo.Messages.USER_PROPS,
-			        	   	handler: function(){XVW.AjaxCommand('formMain','showUserPropsCmd','showUserPropsCmd',2);}
-		        	   	},{
-			        	   	xtype:'button',
-			        	 	icon:'ext-xeo/admin/users.gif' ,			 
-			        	   	cls: "x-btn-text-icon",		        	
-			        	   	text: "Admin",
-			        	   	handler: function() { document.location.href='Login.xvw?action=change_profile&boui=11341' }
-		        	   	},
-		        	   	
-		        	   	{//change user properties Button
-			        	   	xtype:'button',
-			        	   	icon:'ext-xeo/admin/users.gif' ,
-			        	   	cls: "x-btn-text-icon",		        	
-			        	   	text: "Default",
-			        	   	handler: function(){ document.location.href='Login.xvw?action=change_profile&boui=11349' }
-		        	   	}
-		  
-		        	   	]
-		        	   	
-		        }
-	           ]
-	});
-
-	
-	XApp = new XEOLayout();
-    XApp.desktop.syncSize();
-    window.onunload = XEOLayout.closeWindow;
-    window.setInterval("XVW.keepAlive( document.getElementsByTagName('form')[0] );" ,7*60000);
-}
-
-Ext.onReady( XEOLayoutInit );*/

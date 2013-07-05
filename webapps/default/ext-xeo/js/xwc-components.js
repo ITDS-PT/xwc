@@ -645,7 +645,7 @@ ExtXeo.DateField.ProcessDot = function(field){
 		}
 		field.setValue(today);
 	}
-}
+};
 
 ExtXeo.switchLookup = function(elementToSwitch){
 	
@@ -682,7 +682,7 @@ ExtXeo.switchLookup = function(elementToSwitch){
 			}
 	);
 		
-}
+};
 
 /**
  * 
@@ -701,7 +701,7 @@ XVW.updateValue  = function( elementId, newValue ){
 	} 
 	
 	
-}
+};
 
 XVW.searchLookup = function(element){
 	var newElement = Ext.get(element);

@@ -15,7 +15,7 @@ XVW.getXApp = function() {
 			oRet = window.parent.XApp;
 	}
 	return oRet;
-}
+};
 
 ExtXeo.destroyComponents = function( oDNode, oWnd ){
 	var x = new Date();
@@ -23,8 +23,8 @@ ExtXeo.destroyComponents = function( oDNode, oWnd ){
 		ExtXeo.destroyComponents1( oDNode, oWnd );
 		if( oDNode )
 			oDNode.innerHTML="";
-	} catch( e ) {};
-}
+	} catch( e ) {}
+};
 
 ExtXeo.destroyComponents1 = function( oDNode, oWnd ) {
 
@@ -56,7 +56,7 @@ ExtXeo.destroyComponents1 = function( oDNode, oWnd ) {
 	        oExtComp.destroy();
 	    }
     } catch( e ) {}
-}
+};
 
 XVW.ErrorDialog = function( sTitle, sMessage, sDetails ) {
     Ext.MessageBox.show({
@@ -82,14 +82,14 @@ XVW.ErrorDialog = function( sTitle, sMessage, sDetails ) {
        buttons: {ok:'OK', cancel:'Details'},
        icon: 'error'
    });
-}
+};
 
 
 XVW.beforeApplyHtml = function( oDNode, destroyComponent ) {
 	if( destroyComponent ) {
 		ExtXeo.destroyComponents( oDNode );
 	}
-}
+};
 
 XVW.Wait = function( iWaitMode ) {
     if( iWaitMode == '1' )
@@ -99,18 +99,18 @@ XVW.Wait = function( iWaitMode ) {
     	}
     	ExtXeo.loadMask.show();
     }
-}
+};
 
 
 XVW.NoWait = function() { 
 	if( ExtXeo.loadMask ) {
 		window.setTimeout( "ExtXeo.loadMask.hide();", 50 );
 	}
-}
+};
 
 XVW.openViewOnElement = function( sFormId, sActionId, sActionValue, renderOnElementId ) {
 	XVW.AjaxCommand( sFormId, sActionId, sActionValue, '0', true, document.getElementById( renderOnElementId ) );
-}
+};
 
 XVW.openCommandTab = function( sFrameName, sFormId, sActionId, sActionValue, sTabTitle, bClosable ) {
     // Create new Tab
@@ -140,7 +140,7 @@ XVW.openCommandTab = function( sFrameName, sFormId, sActionId, sActionValue, sTa
 		// Redirect the page to complete the action if the viewer is not integrated with an application
 	    XVW.Command( sFormId, sActionId, sActionValue );
 	}	
-}
+};
 
 //var tabdividx = 0;
 
@@ -173,7 +173,7 @@ XVW.openTab = function( sFrameName, sTitle, bClosable ) {
 	    tabs = null;
 	    formLayout = null;
     }
-}
+};
 
 XVW.OpenCommandFrame = function( sFrameName, sFormId, sActionId, sActionValue){
     var oForm = document.getElementById( sFormId );
@@ -181,7 +181,7 @@ XVW.OpenCommandFrame = function( sFrameName, sFormId, sActionId, sActionValue){
     oForm.target = sFrameName; 
 	XVW.Command( sFormId, sActionId, sActionValue );
     oForm.target = sOldTarget;
-}
+};
 
 XVW.openUrlTab = function( sURL, sTitle ) {
     var tabs;
@@ -210,11 +210,11 @@ XVW.openUrlTab = function( sURL, sTitle ) {
 	    tabs = null;
 	    formLayout = null;
     }
-}
+};
 
 
 XVW.OpenCommandWindow = function( sFrameName, sFormId, sActionId, sActionValue, sWidth, sHeight, sTitle ){
-	sFrameName += (new Date() - 1)
+	sFrameName += (new Date() - 1);
     var win = new Ext.Window({
         layout:'fit',
         width: Number(sWidth),
@@ -249,12 +249,12 @@ ExtXeo.layoutMan.register = function( sViewId, sDomId, sLayoutType ) {
 		compArray = ExtXeo.layoutMan.comp[ sViewId ] = [];
 	}
 	compArray[ sDomId ] = sLayoutType;
-}
+};
 
 ExtXeo.layoutMan.unRegister = function( sDomId ) {
 	var compArray = ExtXeo.layoutMan.comp;
 	delete compArray[ sDomId ];
-}
+};
 
 ExtXeo.layoutMan.layoutTimeoutId = null;
 ExtXeo.layoutMan.doLayout = function( sViewId ) {
@@ -269,7 +269,7 @@ ExtXeo.layoutMan.doLayout = function( sViewId ) {
 			}
 		}
 		else if( sViewId ) {
-			ExtXeo.layoutMan.doLayout1( sViewId )
+			ExtXeo.layoutMan.doLayout1( sViewId );
 		}
 		else {
 			if( ExtXeo.layoutMan.layoutTimeoutId  != null )
@@ -280,7 +280,7 @@ ExtXeo.layoutMan.doLayout = function( sViewId ) {
 	catch(e) {
 		//TODO: Handle do layout errors
 	}
-}
+};
 
 
 
@@ -322,7 +322,7 @@ ExtXeo.layoutMan.doLayout1 = function( sViewId )
 		}
 	}
 
-}
+};
 
 ExtXeo.layoutMan.doFitParent = function( oElem )
 {
@@ -467,7 +467,7 @@ ExtXeo.layoutMan.doFitParent = function( oElem )
 			oElem.style.height = (oElem.offsetHeight + oElem.offsetTop + 2) + "px";
 //		}
 	}
-}
+};
 
 ExtXeo.layoutMan.doFitWindow = function( oElem )
 {
@@ -480,7 +480,7 @@ ExtXeo.layoutMan.doFitWindow = function( oElem )
 		if( iNewH > 0 )
 		oElem.style.height = iNewH + "px";
 	}
-}
+};
 
 ExtXeo.layoutMan.doForm = function( oElem )
 {
@@ -495,7 +495,7 @@ ExtXeo.layoutMan.doForm = function( oElem )
 			ExtXeo.layoutMan.doForm( oc[i] );
 		}
 	}
-}
+};
 
 ExtXeo.layoutMan.managers = 
 	new Array(	['fit-window',[ExtXeo.layoutMan.doFitWindow]],
@@ -509,7 +509,7 @@ ExtXeo.layoutMan.registerManager = function (id, funct){
 			ExtXeo.layoutMan.managers[i][1].push(funct);
 		}
 	}
-}
+};
 
 ExtXeo.resizeLayoutExtComp = function( oElem, c ) {
 	var x=oElem.parentNode;
@@ -520,7 +520,7 @@ ExtXeo.resizeLayoutExtComp = function( oElem, c ) {
 		c.lastSize = { width:0, height:0 };
 	c.setWidth( x.clientWidth );
 
-}
+};
 
 ExtXeo.getAbsoulteOffsetTop = function( o ) {
 	var t = 0;
@@ -529,18 +529,18 @@ ExtXeo.getAbsoulteOffsetTop = function( o ) {
 	}
 	t += o.offsetTop;
 	return t;
-}
+};
 
-window.onresize = function() {ExtXeo.layoutMan.doLayout() };
+window.onresize = function() {ExtXeo.layoutMan.doLayout(); };
 
 Ext.ns('ExtXeo','ExtXeo.comp');
 
 ExtXeo.comp.BoxComponent = function( config ) {
 	this.initialConfig = config;
-}
+};
 ExtXeo.comp.BoxComponent.prototype.syncSize = function() {
 	return;
-}
+};
 
 XVW.setTitle = function( sTitle ) {
 	if( XVW.getXApp() != null ) {
@@ -558,13 +558,13 @@ XVW.setTitle = function( sTitle ) {
 	    	}
 		}
 	}
-}
+};
 
 
 XVW.canCloseTab = function( sFormId, sCmdId ) {
 	XVW.AjaxCommand( sFormId, sCmdId, "" , 1 , true );
 	return false;
-}
+};
 
 XVW.closeView = function( sId ) {
 	var xapp = XVW.getXApp();
@@ -588,7 +588,7 @@ XVW.closeView = function( sId ) {
 	    	}
 		}
 	}
-}
+};
 
 
 
@@ -598,10 +598,10 @@ XVW.downloadFile = function( sUrl ) {
 	document.body.appendChild(iFrame);
 //	iFrame.onreadystatechange=function(){ try { alert( document.readyState ); iFrame.parentNode.removeChild( iFrame )  }catch(e) { } };
 	iFrame.src = sUrl;
-}
+};
 
 XVW.CommandDownloadFrame = function( sFrameName, sFormId, sActionId, sActionValue ){
-    sFrameName += (new Date() - 1)
+    sFrameName += (new Date() - 1);
     //html: '<iframe name="'+sFrameName+'" src="about:blank" frameBorder="0" width="100%" height="100%"></iframe>'
     var iFrame = document.createElement("iframe");
     iFrame.style.display='none';
@@ -624,7 +624,7 @@ XVW.syncView = function( sFormId, iWaitScreen ) {
 	if( wnd ) {
 		wnd.XVW.AjaxCommand( sFormId, null, null, iWaitScreen, false );
 	}
-}
+};
 
 XVW.closeWindow = function( sFormId, sWindowId ) {
 	
@@ -655,7 +655,7 @@ XVW.closeWindow = function( sFormId, sWindowId ) {
 		 if (!XVW.ajax.canAjaxRequest())
 				XVW.ajax.enableAjaxRequests();
 	}
-}
+};
 
 
 XVW.findFormWindow = function ( sFormId ) {
@@ -686,7 +686,7 @@ XVW.findFormWindow = function ( sFormId ) {
 		}
 	}
 	return ret;
-}
+};
 
 
 XVW.findTabByFrameName = function ( sFrameName ) {
@@ -705,7 +705,7 @@ XVW.findTabByFrameName = function ( sFrameName ) {
 		}
 	}
 	return null;
-}
+};
 
 XVW.findTabByFormId = function ( sFormId ) {
 	var ret;
@@ -732,26 +732,27 @@ XVW.findTabByFormId = function ( sFormId ) {
 		}
 	}
 	return ret;
-}
+};
 
 
 // Disable back
 // window.history.forward(1);
 
 //Disable back
-window.history.forward(1);XVW.MenuCounter = {
+window.history.forward(1);
+XVW.MenuCounter = {
 	counterRefreshId : 0,
 	counters : {},
 	registerCounter : function( sUrl, sContId, sNodeId, interval ) {
 		this.counters[sNodeId] = { url: sUrl, containerId: sContId, nodeId: sNodeId, interval: interval, lastUpdate: (new Date())-0 };
-		window.setInterval( function() { XVW.MenuCounter.updateCounter( sNodeId, interval ) }, interval*1000 )
+		window.setInterval( function() { XVW.MenuCounter.updateCounter( sNodeId, interval ); }, interval*1000 );
 	},
 	updateCounter : function( sNodeId, loop ) {
 		var x = null;
 		x = this.counters[sNodeId];
 		if( !x ) {
 			if( !loop && window.parent.XVW.MenuCounter )
-				x = window.parent.XVW.MenuCounter.updateCounter( sNodeId, true )
+				x = window.parent.XVW.MenuCounter.updateCounter( sNodeId, true );
 		} else {
 			
 			var el = document.getElementById( "extxeo-refresh-counters-img" );
@@ -784,7 +785,7 @@ window.history.forward(1);XVW.MenuCounter = {
 						}
 					}
 				}
-			}
+			};
 			xh.send();
 		}
 	},
@@ -792,12 +793,13 @@ window.history.forward(1);XVW.MenuCounter = {
 		for( x in this.counters ) {
 			XVW.MenuCounter.updateCounter( x );
 		}
-		if( !loop )
+		if( !loop ){
 			if( window.parent.XVW.MenuCounter ) {
 				window.parent.XVW.MenuCounter.updateCounters( true );
 			}
+		}	
 	}
-}
+};
 
 
 
@@ -818,7 +820,7 @@ shortcut = {
 			'disable_in_input':false,
 			'target':document,
 			'keycode':false
-		}
+		};
 		if(!opt) opt = default_options;
 		else {
 			for(var dfo in default_options) {
@@ -877,7 +879,7 @@ shortcut = {
 				".":">",
 				"/":"?",
 				"\\":"|"
-			}
+			};
 			//Special Keys - and their codes
 			var special_keys = {
 				'esc':27,
@@ -931,7 +933,7 @@ shortcut = {
 				'f10':121,
 				'f11':122,
 				'f12':123
-			}
+			};
 	
 			var modifiers = { 
 				shift: { wanted:false, pressed:false},
@@ -945,7 +947,7 @@ shortcut = {
 			if(e.altKey)	modifiers.alt.pressed = true;
 			if(e.metaKey)   modifiers.meta.pressed = true;
                         
-			for(var i=0; k=keys[i],i<keys.length; i++) {
+			for(var i=0, k=keys[i]; i<keys.length; i++) {
 				//Modifiers
 				if(k == 'ctrl' || k == 'control') {
 					kp++;
@@ -998,7 +1000,7 @@ shortcut = {
 					return false;
 				}
 			}
-		}
+		};
 		this.all_shortcuts[shortcut_combination] = {
 			'callback':func, 
 			'target':ele, 
@@ -1014,7 +1016,7 @@ shortcut = {
 	'remove':function(shortcut_combination) {
 		shortcut_combination = shortcut_combination.toLowerCase();
 		var binding = this.all_shortcuts[shortcut_combination];
-		delete(this.all_shortcuts[shortcut_combination])
+		delete(this.all_shortcuts[shortcut_combination]);
 		if(!binding) return;
 		var type = binding['event'];
 		var ele = binding['target'];
@@ -1024,7 +1026,7 @@ shortcut = {
 		else if(ele.removeEventListener) ele.removeEventListener(type, callback, false);
 		else ele['on'+type] = false;
 	}
-}
+};
 
 Ext.form.ToolBarLabel = Ext.extend(Ext.form.Label,  {
 	

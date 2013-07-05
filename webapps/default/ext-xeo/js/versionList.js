@@ -25,7 +25,7 @@ XVW.checkButtons = function(field){
 			buttonActual.disabled = false;
 		
 	}
-}
+};
 				
 XVW.openDiffWindow = function( field ){
 	
@@ -47,7 +47,7 @@ XVW.openDiffWindow = function( field ){
 	
 	XVW.AjaxCommand( 'listVersionForm','listVersionForm:showDiff',version,2);
 	XVW.NoWait();
-}
+};
 				
 /*
 
@@ -61,4 +61,4 @@ XVW.openLogWindow  = function (bouiVersion)
 {
 	if ( bouiVersion > 0 )
 		XVW.AjaxCommand( 'listVersionForm' , 'listVersionForm:showLogs' , bouiVersion , 2 );
-}
+};

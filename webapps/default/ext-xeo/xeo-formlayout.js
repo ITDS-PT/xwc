@@ -100,7 +100,7 @@ XEOFormLayout = function( parentComponent )
                 } 
     );
     this.doLayout();
-}
+};
 
 Ext.extend(XEOFormLayout, Ext.Panel,
 {                 

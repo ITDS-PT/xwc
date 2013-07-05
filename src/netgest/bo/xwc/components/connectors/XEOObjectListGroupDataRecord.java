@@ -5,6 +5,7 @@ import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.Logger;
+import netgest.bo.xwc.components.connectors.decoder.XEOObjectAttributeDecoder;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
 import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovValueGridDisplay;
@@ -51,8 +52,9 @@ public class XEOObjectListGroupDataRecord implements DataRecordConnector {
 				//In the column definition for the attribute boql's dot syntax is used, but internal transformations
 				//use "__" instead of dot syntax, as such the comparison is done against the "__" string. 
 				//The "__value" and "__count" expressions are special to the grid's datastore
-				return new XEOObjectListGroupAttribute( 
-						XEOObjectConnector.getAttributeDefinitionFromName(name, objDef), this.row, this.parent, true );
+				defAtt = new XEOObjectAttributeDecoder( objDef ).decode( name );
+				if (defAtt != null)
+					return new XEOObjectListGroupAttribute( defAtt, this.row, this.parent, true );
 				}
 			else {
 				if (this.parent.getDataSet() != null) {

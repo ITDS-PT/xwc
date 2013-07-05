@@ -414,31 +414,12 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		String boqlField = this.groupAttribute;
 		String boqlGroupBy = this.groupAttribute;
 		
-		// ML - 06-10-2011
 		if(this.groupAttribute != null && this.groupAttribute.equalsIgnoreCase("/*DUMMY_AGGREGATE*/"))
 		{
 			boqlField = nativeQlTag1 + "'ALL' as DUMMY_VALUE "  + nativeQlTag2;
 			boqlGroupBy = null ;
 		}
-		// END ML - 06-10-2011
 		
-//		boolean needFieldAlias = false;
-//		String[] relatedAtt = this.groupAttribute.split("__");
-//		if( relatedAtt.length > 1 ) {
-//			needFieldAlias = true;
-//			boqlField = "";
-//			boqlGroupBy = "";
-//			boolean first = true;
-//			for( String att : relatedAtt ) {
-//				if( !first ) { 
-//					boqlField += ".";
-//					boqlGroupBy += ".";
-//				}
-//				boqlField += att;
-//				boqlGroupBy += att;
-//				first = false;
-//			}
-//		}
 		String groupByExpression = boqlField;
 		String groupFieldExpression = boqlField;
 		

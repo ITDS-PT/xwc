@@ -24,7 +24,7 @@ Ext.App = function(config) {
     Ext.onReady(this.onReady, this);
 
     Ext.App.superclass.constructor.apply(this, arguments);
-}
+};
 Ext.extend(Ext.App, Ext.util.Observable, {
 
     /***
@@ -169,6 +169,9 @@ Ext.extend(Ext.App, Ext.util.Observable, {
             case false:
                 title = this.STATUS_ERROR;
                 break;
+            default:
+            	title = this.STATUS_OK;
+            	break;
         }
         return [
             '<div class="app-msg">',
@@ -200,6 +203,9 @@ Ext.extend(Ext.App, Ext.util.Observable, {
             case this.STATUS_HELP:
                 iconCls = this.ICON_HELP;
                 break;
+            default:
+            	iconCls = this.ICON_OK;
+            	break;
         }
         return iconCls;
     },

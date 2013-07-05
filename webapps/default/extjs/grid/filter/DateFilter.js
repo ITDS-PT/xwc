@@ -69,7 +69,7 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
       date.on('checkchange', function(){
         this.setActive(this.isActivatable());
 			}, this);
-		};
+		}
 	},
   
 	onSelect: function(date, menuItem, value, picker) {
@@ -139,8 +139,8 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
 	},
 	deSerialize: function( data ) {
 		this.setActive( data.active );
-		if( data.value )
-			for( var i=0; i < data.value.length; i ++ ) {
+		if( data.value ){
+			for( var i=0; i < data.value.length; i++ ) {
 				var d = data.value[i];
 				var dt = Date.parseDate( d.value, 'd/m/Y');
 				if( "eq" == d.comparison )
@@ -150,6 +150,7 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
 				if( "gt" == d.comparison )
 					this.setValue( { after : dt } );
 			}
+		}	
 	},
 	serialize: function() {
 		var args = [];

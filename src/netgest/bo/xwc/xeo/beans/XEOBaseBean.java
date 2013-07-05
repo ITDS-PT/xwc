@@ -30,6 +30,7 @@ import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.classic.grid.GridDatesBetweenFilterBean;
 import netgest.bo.xwc.components.classic.grid.GridPanelJSonFiltersBuilder;
+import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.FilterTerms;
@@ -325,6 +326,7 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
     	
     	try {
     		String column = (String)lookupBean.getAttribute( "lookupColumn" );
+    		column = DataFieldDecoder.convertForGridPanel( column) ;
     		JSONArray  values = new JSONArray ( oRowsColl ); 
     		
     		JSONObject jObj = new JSONObject( gridPanel.getCurrentFilters() );

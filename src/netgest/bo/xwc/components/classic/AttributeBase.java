@@ -275,8 +275,22 @@ public class AttributeBase extends ViewerInputSecurityBase {
     public void initComponent() {
         super.initComponent();
         setAttributeProperties( );
-        this.renderedValue.setValue( getValue() );
+        setRenderedValueForModelUpdate();
     }
+    
+    @Override
+    public void preRender() {
+    	super.preRender();
+    }
+
+	/**
+	 * Sets the rendered value to the current value, so that the {@link #updateModel()}
+	 * method can work correctly when it need to compare the rendered and current value
+	 */
+	private void setRenderedValueForModelUpdate() {
+		this.renderedValue.setValue( getValue() );
+	}
+    
     
     public void initSpecificSettings(){
     	

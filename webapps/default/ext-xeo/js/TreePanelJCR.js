@@ -1,4 +1,4 @@
-ExtXeo.TreeJCR = function() {}
+ExtXeo.TreeJCR = function() {};
 
 ExtXeo.TreeJCR.nodeSelection = function( node, event, inputId ) {
 	
@@ -11,8 +11,7 @@ ExtXeo.TreeJCR.nodeSelection = function( node, event, inputId ) {
         alert('Cannot store selected node!');
     }
     
-}
-
+};
 
 ExtXeo.TreeJCR.treeContextHandler = function( node ) {
 	node.select();
@@ -22,29 +21,4 @@ ExtXeo.TreeJCR.treeContextHandler = function( node ) {
 		contextMenuFolder.show(node.ui.getAnchor());
 	
 	
-}
-
-/*ExtXeo.TreeJCR.removeElementsFromList = function( inputId ) {
-	
-	var elSel = document.getElementById( inputId );
-	var i;
-	var selected = false;
-    for (i = elSel.length - 1; i>=0; i--) {
-      if (elSel.options[i].selected) {
-        elSel.remove(i);
-        selected = true;
-      }
-    }
-    
-    if (!selected)
-	{
-    	Ext.MessageBox.show({
-            title: 'Error',
-            msg: 'You must select an element to remove',
-            buttons: Ext.MessageBox.OK,
-            icon: Ext.MessageBox.ERROR
-        });
-
-	}
-    
-}*/
+};

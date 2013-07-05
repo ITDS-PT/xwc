@@ -143,7 +143,7 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         	var groupedColumns = this.getGroups();
         	for ( i = 0; i < groupedColumns.length; i++ ){
         		var columnId = groupedColumns[ i ];
-        		this.showColumn( columnId )
+        		this.showColumn( columnId );
         	}
         }
         , sortColumn : function ( columnId, sortDirection ){
@@ -367,6 +367,7 @@ ExtXeo.grid.GridView = Ext.extend(Ext.grid.GridView, {
                     }
                     cm.setHidden(index, item.checked);
                 }
+            break;    
         }
         return true;
     },
@@ -655,7 +656,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     	elem.set( { id : ddGroupId, style : 'width:100%;height:35px;display:none;' } );
     	
     	var messageInvite = Ext.get( document.createElement( 'span' ) );
-    	messageInvite.set({ id : this.grid.id+"_groupInvite" , style : 'position:absolute' })
+    	messageInvite.set({ id : this.grid.id+"_groupInvite" , style : 'position:absolute' });
     	messageInvite.addClass('xwc-group_warning');
     	messageInvite.update(ExtXeo.Messages.INVITE_MESSAGE);
     	
@@ -753,7 +754,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         }else{
         	var columnId = this.cm.getDataIndex( this.hdCtxIndex );
         	this.grid.store.removeGroupBy( columnId );
-        	this.grid.removeGroupButton( columnId )
+        	this.grid.removeGroupButton( columnId );
         	if(this.grid.store.groupField.length == 0 
             		&& this.grid.store.aggregateFieldsOn.length > 0){ 			 
 	      		this.grid.store.addGroupBy("/*DUMMY_AGGREGATE*/");		       	  	     	
@@ -807,7 +808,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         }
     },
     onDataChanged : function( store ) {
-    	this.groupLoaded( store.grpIdx, store )
+    	this.groupLoaded( store.grpIdx, store );
     },
     groupLoaded : function( gridGroup ) {
         var buf = [];
@@ -841,7 +842,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
 	    		return;
 	    	
 	        var eg = this.grid.getStore().getExpandedGroups();
-	        var g = eg[gid]
+	        var g = eg[gid];
 	        if( g ) {
 	        	for(var k in g ) {
 	        		var group = this.rootView.getGroupView(k);
@@ -863,7 +864,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     		this.expandedGroupDeepClear( eg, k );
         	delete eg[k];
     	}
-    	delete eg[a]
+    	delete eg[a];
     },
     toggleAllGroups : function(expanded){
         var groups = this.getGroups();
@@ -1080,7 +1081,7 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
             for(var i = 0; i < colCount; i++){
                 c = cs[i];
                 p.id = c.id;
-                p.css = [ alt[2], ( i == 0 ? 'x-grid3-cell-first ' : (i == last ? 'x-grid3-cell-last ' : '') )].join();;
+                p.css = [ alt[2], ( i == 0 ? 'x-grid3-cell-first ' : (i == last ? 'x-grid3-cell-last ' : '') )].join();
                 p.attr = p.cellAttr = "";
                 p.value = c.renderer(r.data[c.name], p, r, rowIndex, i, ds);
                 p.style = c.style;
@@ -1124,7 +1125,7 @@ ExtXeo.grid.ViewGroup = function( opts ) {
 	this.style = null;
 	Ext.apply( this, opts );
 	this.initTemplates();
-}
+};
 
 ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
     aggregateTbField    : 'Agregar Valores',
@@ -1205,7 +1206,7 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
  
     for (replace in histogram) {
         search = histogram[replace]; // Switch order when decoding
-        ret = replacer(search, replace, ret) // Custom replace. No regexing   
+        ret = replacer(search, replace, ret); // Custom replace. No regexing   
     }
  
     // End with decodeURIComponent, which most resembles PHP's encoding functions
@@ -1456,7 +1457,7 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
             for(var i = 0; i < colCount; i++){
                 c = cs[i];
                 p.id = c.id;
-                p.css = [ alt[2], ( i == 0 ? 'x-grid3-cell-first ' : (i == last ? 'x-grid3-cell-last ' : '') )].join();;
+                p.css = [ alt[2], ( i == 0 ? 'x-grid3-cell-first ' : (i == last ? 'x-grid3-cell-last ' : '') )].join();
                 p.attr = p.cellAttr = "";
                 p.value = c.renderer(r.data[c.name], p, r, rowIndex, i, ds);
                 p.style = c.style;
@@ -1485,7 +1486,7 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
     	return this._getGroupView( groupId );
     },
     _getGroupView : function( groupId ) {
-    	var gv = this.rows[ groupId ]
+    	var gv = this.rows[ groupId ];
     	if ( !gv ) {
 	        var g, gs, gsIdx = this.rowsIndex;
 	        for(var i=0;i<this.rowsIndex.length; i++ ){
@@ -1552,7 +1553,7 @@ ExtXeo.grid.GridGroup = function( opts ) {
 	this.groupUniqueId = null;
 	ExtXeo.grid.GridGroup.uniqueId++;
 	Ext.apply( this, opts );
-}
+};
 
 ExtXeo.grid.GridGroup = Ext.extend( ExtXeo.grid.GridGroup, {
 	uniqueId : 0,
@@ -1590,7 +1591,7 @@ ExtXeo.grid.GridGroup = Ext.extend( ExtXeo.grid.GridGroup, {
 		}
         this.groupStore = pgs.createGroupStore( 
 	    		function(i,s) { 
-	    			scope.groupLoaded( i, s ) 
+	    			scope.groupLoaded( i, s ); 
 	    		},
 	    		this.rowIndex,
 	    		parentValues,
@@ -1600,20 +1601,28 @@ ExtXeo.grid.GridGroup = Ext.extend( ExtXeo.grid.GridGroup, {
 	        );
         this.groupStore.addListener("datachanged",this.groupLoaded, this );
         this.groupStore.load();
-    	this.toolBar = this.createGroupToolbar( this.elemId, this.groupStore );
+        this.toolBar = this.createGroupToolbar( this.elemId, this.groupStore );
 	},
 	groupLoaded : function() {
 		if( this.toolBar ) {
-			if( parseInt(this.count) > 50) {
-				this.toolBar.show();
+			var elementsInGroup = this.groupStore.getTotalCount();
+			var maxElementsInGroup = 50;
+			if( elementsInGroup >= maxElementsInGroup) {
+				this.showPagingToolBar();
 			}
 			else {
-				this.toolBar.hide();
+				this.hidePagingToolBar();
 			}
 			this.groupingView.parentView.groupLoaded( this );
 		}
-	},
-	collapseGroup : function() {
+	}
+	, showPagingToolBar : function(){
+		this.toolBar.show();
+	}
+	, hidePagingToolBar : function(){
+		this.toolBar.hide();
+	}
+	,collapseGroup : function() {
     	if( this.toolBar ) {
     		this.toolBar.destroy();
     		this.toolBar = null;
@@ -1857,7 +1866,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
         }    
     },
     isGroupByField : function( fieldName ) {
-    	return this.groupField.indexOf( fieldName ) > -1
+    	return this.groupField.indexOf( fieldName ) > -1;
     },
     getGroupState : function(){
         return this.groupOnSort && this.groupField.length > 0 ?
@@ -2003,16 +2012,13 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
             }
         }
         
-        /*
-        var st = (this.sortToggle) ? this.sortToggle[f.name] : null;
-        var si = (this.sortInfo) ? this.sortInfo : null;
-        */
         this.sortToggle[f.name] = dir;
         
         var nsinf =  [];
     	for( var i=0;i<this.sortInfo.length;i++ )
-    		if( this.sortInfo[i].field != f.name && this.groupField.indexOf( this.sortInfo[i].field ) > -1 )
+    		if( (this.sortInfo[i].field != f.name) && (this.groupField.indexOf( this.sortInfo[i].field ) > -1 ) ){
     			nsinf[nsinf.length] = this.sortInfo[i];
+    		}
     	
     	this.sortInfo = nsinf;
     	
@@ -2023,17 +2029,6 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
         if(!this.remoteSort){
             this.applySort();
             this.fireEvent("datachanged", this);
-        }else{
-            if (!this.load(this.lastOptions)) {
-            	/*
-                if (st) {
-                    this.sortToggle[f.name] = st;
-                }
-                if (si) {
-                    this.sortInfo = si;
-                }
-                */
-            }
         }
     }, 
     setSelectedPageRows: function() {	
@@ -2252,7 +2247,7 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
             this.field.dom.value = pageNum;
         }else if (k == e.UP || k == e.PAGEUP || k == e.DOWN || k == e.PAGEDOWN){
             e.stopEvent();
-            if(pageNum = this.readPage(d)){
+            if(pageNum == this.readPage(d)){
                 var increment = e.shiftKey ? 10 : 1;
                 if(k == e.DOWN || k == e.PAGEDOWN){
                     increment *= -1;
@@ -2310,6 +2305,9 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
             case "refresh":
                 this.doLoad(this.cursor);
             break;
+            default :
+            	this.doLoad(this.cursor);
+            break;
         }
     },
     unbind : function(store){
@@ -2345,7 +2343,7 @@ ExtXeo.grid.rowClickHndlr = function( oGrid, rowIndex, oEvent, sGridInputId, sRo
         sSelRecs = oSelRec.get( sRowIdentifier );
         oInput.value = sSelRecs;
     }
-}
+};
 
 ExtXeo.grid.activeRowHndlr = function( oSelModel, oGridInputSelId, rowIdentifier ) {
 	var oInput = document.getElementById( oGridInputSelId );
@@ -2357,7 +2355,7 @@ ExtXeo.grid.activeRowHndlr = function( oSelModel, oGridInputSelId, rowIdentifier
         }
         oInput.value = activeRow;
     }
-}
+};
 
 
 /**
@@ -2383,7 +2381,7 @@ ExtXeo.grid.beforeRowSelectionHndlr = function (oSelModel){
 	
 	return false;
 	
-}
+};
 
 /**
  * 
@@ -2413,7 +2411,7 @@ ExtXeo.grid.updateCounter = function (oSelModel){
        	else
        		label.setText("<span style='color:red'>" + countItems + "</span>",false);
 	}
-}
+};
 
 ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentifier) {
 	
@@ -2475,9 +2473,9 @@ ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentif
 					
 					var tempSelectRecs = "";
 					var selectedControl = false;
-					for (var k = 0; k < oSelModel.grid.recordIds.length; k++)  {
-						if(k>0) tempSelectRecs += "|";
-						tempSelectRecs += oSelModel.grid.recordIds[k];
+					for (var n = 0; n < oSelModel.grid.recordIds.length; n++)  {
+						if(n>0) tempSelectRecs += "|";
+						tempSelectRecs += oSelModel.grid.recordIds[n];
 						selectedControl = true;
 					}
 					if(selectedControl)
@@ -2497,7 +2495,7 @@ ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentif
     else {
         alert('Select rows input not found!!');
     }
-}
+};
 
 /**
  * 
@@ -2514,7 +2512,7 @@ ExtXeo.grid.destroyGroupDDSupport  = function (grid){
 	            Ext.get(elid).remove();
 			}
         }
-}
+};
 
 /**
  * 
@@ -2523,4 +2521,4 @@ ExtXeo.grid.destroyGroupDDSupport  = function (grid){
  * */
 ExtXeo.grid.nowrap = function(text){
     return '<div style="white-space:normal !important;">'+ text +'</div>';
-}
+};

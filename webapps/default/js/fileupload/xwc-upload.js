@@ -14,7 +14,7 @@ XVW.uploadManager = {
 			return this.components[componentId];
 		return null;
 	}
-}
+};
 
 
 
@@ -134,7 +134,7 @@ qq.extend(qq.FineUploaderXEO.prototype, {
     	this.errorMessage(errors,errorReason);
     }
 
-	, isDisabled : function() {return this._options.disabled }	
+	, isDisabled : function() {return this._options.disabled; }	
 	
 	, disable : function (){
 		this._options.disabled = true;
@@ -152,7 +152,7 @@ qq.extend(qq.FineUploaderXEO.prototype, {
 	}
     
     , isVisible : function(){
-    	return this._options.visible 
+    	return this._options.visible; 
     }
     , show : function(){
     	this.getWrapperElem().style.display = '';
@@ -326,7 +326,7 @@ qq.extend(qq.FineUploaderXEO.prototype, {
 		
 		var span = document.createElement('span');
 		span.id = fileName;
-		span.className = 'file' 
+		span.className = 'file';
 		span.appendChild(link);
 		span.appendChild(remove);
 		var first = fileContainer.childNodes[0];

@@ -222,7 +222,7 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 			includeHeaderCss( "autoComplete_css", "ext-xeo/autocomplete/style.css" );
 			includeHeaderScript( "autoComplete_js","ext-xeo/autocomplete/jquery.fcbkcomplete.js" );
 		}
-		this.renderedValue.setValue( getValue() );
+		
 	}
 	
 	@Override

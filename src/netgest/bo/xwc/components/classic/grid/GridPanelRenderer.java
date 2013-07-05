@@ -23,6 +23,7 @@ import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.grid.Aggregate.AggregateAction;
 import netgest.bo.xwc.components.classic.grid.WebRequest.GridParameter;
 import netgest.bo.xwc.components.classic.grid.metadata.GridPanelGroupJSONRendererMetadata;
+import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataGroupConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
@@ -248,7 +249,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         
         if( groupBy != null ) {
         	for( int i=0; i < groupBy.length; i++ ) {
-        		groupBy[i] = groupBy[i].replaceAll("__", ".").trim();
+        		groupBy[i] = DataFieldDecoder.convertForBOQL( groupBy[i] );
         	}
         }
         
