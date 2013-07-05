@@ -275,12 +275,12 @@ public class AttributeBase extends ViewerInputSecurityBase {
     public void initComponent() {
         super.initComponent();
         setAttributeProperties( );
+        setRenderedValueForModelUpdate();
     }
     
     @Override
     public void preRender() {
     	super.preRender();
-    	setRenderedValueForModelUpdate();
     }
 
 	/**
