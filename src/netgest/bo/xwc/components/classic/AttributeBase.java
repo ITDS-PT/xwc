@@ -16,6 +16,7 @@ import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.jsf.XUIELResolver;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
+import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 /**
  * This component is not usable in the viewers,
  * is the base of all attribute Type Components
@@ -275,7 +276,6 @@ public class AttributeBase extends ViewerInputSecurityBase {
     public void initComponent() {
         super.initComponent();
         setAttributeProperties( );
-        setRenderedValueForModelUpdate();
     }
     
     @Override
@@ -1107,9 +1107,20 @@ public class AttributeBase extends ViewerInputSecurityBase {
 	 */
     @Override
     public Object saveState() {
-        
+    	
+    	checkAndUpdateRenderedValue();
+    	
         return super.saveState();
     }
+
+	/**
+	 * Update the rendered value (if not saving in cache, because
+	 * when saving in cache the value of the component is not yet ready)
+	 */
+	private void checkAndUpdateRenderedValue() {
+		if (!XUIViewHandler.isSavingInCache())
+    		setRenderedValueForModelUpdate();
+	}
 
 	/**
 	 * Save the object property of this component 
@@ -1166,7 +1177,8 @@ public class AttributeBase extends ViewerInputSecurityBase {
     }
 
     /**
-     * Update the XEO Model with the submited value
+     * Update the XEO Model with the submited value (depends on the {@link #saveState()}
+     * method correctly setting the renderedValue property with the last rendered value
      */
 	@Override
 	public void updateModel() {
@@ -1176,8 +1188,8 @@ public class AttributeBase extends ViewerInputSecurityBase {
         Object oCurrentValue  = this.getLocalValue();
 		 
 		// Se estivermos a comparar strings troca null por ""
-		// Quando os valores null vao para o cliente, ao serem submetidos v�m sempre
-		// como string vazia. Iria submeter + vezes que as necess�rias ao modelo o valor
+		// Quando os valores null vao para o cliente, ao serem submetidos vem sempre
+		// como string vazia. Iria submeter + vezes que as necessarias ao modelo o valor
 		if( oCurrentValue == null && oRenderedValue instanceof String ) {
 		        oCurrentValue = "";
 		}
