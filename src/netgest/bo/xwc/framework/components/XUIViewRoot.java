@@ -605,6 +605,11 @@ public class XUIViewRoot extends UIViewRoot {
 	public String getClientId() {
 		return getViewId() + ":" + sInstanceId;
 	}
+	
+	@Override
+	public String getClientId(FacesContext context) {
+		return getClientId();
+	}
 
 	public boolean isPostBack() {
 		return isPostBack;
