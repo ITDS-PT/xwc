@@ -258,6 +258,9 @@ public class AttributeNumberLookup extends AttributeBase {
 					}
 				}
 			}
+			if (component.getStateProperty( "enableCardIdLink" ).wasChanged()){
+				state = StateChanged.FOR_RENDER;
+			}
 			return state;
 		}
 		
@@ -411,8 +414,8 @@ public class AttributeNumberLookup extends AttributeBase {
 			}
         	if( oComp.getStateProperty("visible").wasChanged() )
         		sb.w("c.setVisible(").writeValue( oComp.isVisible() ).w(")").endStatement();
-        		
-    		sb.w("c.setDisabled(").writeValue( disabled ).w(")").endStatement();
+        	
+        	sb.w("c.setDisabled(").writeValue( disabled ).w(")").endStatement();
 			
 			sb.endBlock();
 			return sb;
