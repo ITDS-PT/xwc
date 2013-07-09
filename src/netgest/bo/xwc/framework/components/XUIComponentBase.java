@@ -343,11 +343,18 @@ public abstract class XUIComponentBase extends UIComponentBase
 	            oStateProperyState = EMPTY_OBJECT_ARRAY;
 	        }
 	        
+	        dontSaveClientIdInState();
+	        
 	        // Call super to allow him to save her state;
 	        return new Object[] { super.saveState( getFacesContext() ), oStateProperyState, wasRendererTypeSet };
     	}
     	return null;
     }
+
+	private void dontSaveClientIdInState() {
+		//Uses the side effect of setId cleaning the clientId
+		setId( getId() );
+	}
     
     public void restoreState( Object oState ) {
     	if( isRendered() && oState != null ) {
