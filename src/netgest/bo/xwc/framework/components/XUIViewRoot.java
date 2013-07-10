@@ -990,6 +990,7 @@ public class XUIViewRoot extends UIViewRoot {
 
 	public void resetState() {
 		isPostBack = false;
+		setRendered( true );
 		resetStateOnComponents();
 		
 	}
