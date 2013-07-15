@@ -118,7 +118,7 @@ public class GenericTag extends XUIComponentBase {
 					w.startElement( tagName, component );
 					Set<String> props = t.properties.keySet();
 					for( String propName : props ) {
-						if( !propName.equals( "__tagName" ) ) {
+						if( !propName.equals( "__tagName" ) && !propName.equals( "beanId" ) ) {
 							w.writeAttribute( propName , t.properties.get( propName ), null );
 						}
 					}
