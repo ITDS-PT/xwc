@@ -33,6 +33,7 @@ import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 import netgest.io.iFile;
 /**
  * This component bind to a AttributeBinnaryData from the XEO Model a instead of render the value
@@ -77,8 +78,6 @@ public class AttributeImage extends ViewerOutputSecurityBase {
     @Override
     public void preRender() {
     	super.preRender();
-    	//WasStateChanged needs this value set, as such it needs to be set once per component render
-    	//this.renderedValue.setValue( getValue() );
     }
     
     public void createChildComponents() {
@@ -242,10 +241,31 @@ public class AttributeImage extends ViewerOutputSecurityBase {
         return StateChanged.NONE;
     }
 
+    /**
+	 * Save the object property of this component 
+	 */
     @Override
     public Object saveState() {
+    	checkAndUpdateRenderedValue();
         return super.saveState();
     }
+
+	/**
+	 * Update the rendered value (if not saving in cache, because
+	 * when saving in cache the value of the component is not yet ready)
+	 */
+	private void checkAndUpdateRenderedValue() {
+		if (!XUIViewHandler.isSavingInCache())
+    		setRenderedValueForModelUpdate();
+	}
+	
+	/**
+	 * Sets the rendered value to the current value, so that the {@link #updateModel()}
+	 * method can work correctly when it need to compare the rendered and current value
+	 */
+	private void setRenderedValueForModelUpdate() {
+		this.renderedValue.setValue( getValue() );
+	}
     
 	
 	@Override
