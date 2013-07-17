@@ -23,6 +23,7 @@ import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 
+import netgest.bo.system.Logger;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
@@ -39,6 +40,9 @@ import org.w3c.dom.NodeList;
 
 public class XUIViewerDefinitonParser
 {
+	
+	private static final Logger logger = Logger
+			.getLogger( XUIViewerDefinitonParser.class );
 	
 	public static final String DEFAULT_VIEWERS_ROOT = "viewers";
 	public static final String DEFAULT_BEAN_ID = "viewBean";
@@ -288,6 +292,9 @@ public class XUIViewerDefinitonParser
             			xwvr.setDateLastUpdate( wrapper.getTime() );
             		}
             		viewCache.put( viewerName, xwvr );
+            	} catch (Exception e ){
+	            		logger.warn( "Could not parse %s", e , viewerName );
+	            		throw new RuntimeException( e );
             	} finally {
             		if( is != null )
 						try {
