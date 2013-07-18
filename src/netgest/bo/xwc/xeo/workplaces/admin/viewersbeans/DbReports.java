@@ -85,6 +85,8 @@ public class DbReports extends XEOBaseBean {
 		if (selected!=null) {			
 			this.packageReport = createHtmlReport(selected,null);
 		}
+		else
+			this.packageReport = createHtmlReport(null,null);
 	}
 
 	private void createObjectReport() throws boRuntimeException {
@@ -94,6 +96,8 @@ public class DbReports extends XEOBaseBean {
 		if (selected!=null) {
 			this.objectReport = createHtmlReport(packageName,selected); 
 		}
+		else
+			this.objectReport = createHtmlReport(null,null); 
 	}
 
 	public boolean getHasPackageReport() {
@@ -141,45 +145,35 @@ public class DbReports extends XEOBaseBean {
 		try
 		{
 			boBuildRepository repository = new boBuildRepository(getEboContext().getBoSession().getRepository());
-			boRepository rep = boRepository.getDefaultRepository( boApplication.getApplicationFromConfig("XEO") );
-			boBuildRepository brep = new boBuildRepository( rep );
-
-			boDefHandler defs[] = boBuilder.listUndeployedDefinitions( brep, null );
-			ArrayList toReport = new ArrayList();            
+			boRepository rep = boRepository.getDefaultRepository( boApplication.getApplicationFromConfig("XEO") );						
+			ArrayList<boDefHandler> toReport = new ArrayList<boDefHandler>();            
 
 
 			File[] xfiles = repository.getXMLFilesFromDefinition();
 
 			if ((packageName != null) && !"".equals(packageName))
 			{
-				out:
-				for (int i = 0; i < defs.length; i++)
+				for (int i = 0; i < xfiles.length; i++)
 				{
 					if (xfiles[i].getName().toLowerCase().endsWith(".xeomodel"))
 					{
 						int pos = xfiles[i].getName().indexOf(".xeomodel");
 						if (xfiles[i].getAbsolutePath().indexOf(packageName) != -1)
 						{
-							for (int x = 0; x < defs.length; x++) 
-							{
-								if(defs[x].getName().equals(xfiles[i].getName().substring(0, pos)))
-								{
-									if (objName==null)
-										toReport.add(defs[x]);
-									else if (objName!=null && defs[x].getName().equals(objName)) {
-										toReport.add(defs[x]);
-										//break out;
-									}
-										
-								}
-							}
+							String objNameFromFile=xfiles[i].getName().substring(0, pos);
+							boDefHandler objDef=boDefHandler.getBoDefinition(objNameFromFile);
+							if (objDef!=null && objName==null)
+								toReport.add(objDef);
+							else if (objName!=null && objDef.getName().equals(objNameFromFile))
+								toReport.add(objDef);
 						}
 					}
 				}
 			}
 			else
-			{
-				toReport.addAll( Arrays.asList( defs ) );
+			{				
+				boBuildRepository brep = new boBuildRepository( rep );
+				toReport.addAll( Arrays.asList( boBuilder.listUndeployedDefinitions( brep, null ) ) );
 			}
 
 			toRet = createHtmlReport(toReport);
@@ -194,7 +188,7 @@ public class DbReports extends XEOBaseBean {
 		return toRet;
 	}
 
-	private String createHtmlReport(ArrayList files) throws Exception
+	private String createHtmlReport(ArrayList<boDefHandler> files) throws Exception
 	{
 		boDefHandler bodef;
 		ArrayList<XMLObject> objList = new ArrayList<XMLObject>();
@@ -202,7 +196,7 @@ public class DbReports extends XEOBaseBean {
 
 		for (int i = 0; i < files.size(); i++)
 		{
-			bodef = (boDefHandler)files.get( i );
+			bodef = files.get( i );
 
 			if ((bodef.getClassType() != boDefHandler.TYPE_ABSTRACT_CLASS) &&
 					(bodef.getClassType() != boDefHandler.TYPE_INTERFACE))
@@ -232,16 +226,16 @@ public class DbReports extends XEOBaseBean {
 		for (int i = 0; i < arr.size(); i++)
 		{
 			if ((lastTable == null) ||
-					!((XMLObject) arr.get(i)).getTableName().equals(lastTable))
+					!arr.get(i).getTableName().equals(lastTable))
 			{
-				((XMLObject) arr.get(i)).setCap(getCap(lastCap));
-				((XMLObject) arr.get(i)).setAnchor(getAnchor(lastCap));
-				lastTable = ((XMLObject) arr.get(i)).getTableName();
+				arr.get(i).setCap(getCap(lastCap));
+				arr.get(i).setAnchor(getAnchor(lastCap));
+				lastTable = arr.get(i).getTableName();
 				lastCap++;
 			}
 			else
 			{
-				((XMLObject) arr.get(i)).setAnchor(getAnchor(lastCap));
+				arr.get(i).setAnchor(getAnchor(lastCap));
 			}
 		}
 	}
