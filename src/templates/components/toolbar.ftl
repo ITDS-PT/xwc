@@ -28,8 +28,8 @@
 			 	</#if>
 			 	
 			 	<#-- Draw the icons -->	
-			 	<#if menu.icon?? > 
-		 			$( '#${menu.id!}_btn' )
+			 	<#if ( menu.icon!?length > 1 ) >
+			 		$( '#${menu.id!}_btn' )
 						.children('.ui-button-text')
 						<#if this.iconPosition == 'left'> 
 							.prepend( '<img src="${menu.icon!}" style="display:inline;padding:2px;vertical-align:middle" />');   
