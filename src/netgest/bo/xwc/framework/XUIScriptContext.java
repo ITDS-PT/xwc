@@ -371,6 +371,8 @@ public class XUIScriptContext {
         }
 
 		private boolean isExternalScript( CharSequence sContent ) {
+			if (sContent == null)
+				return false;
 			return sContent.toString().startsWith( "http" ) || sContent.toString().startsWith( "//" );
 		}
 
