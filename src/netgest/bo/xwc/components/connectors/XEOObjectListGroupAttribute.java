@@ -77,7 +77,8 @@ public class XEOObjectListGroupAttribute extends XEOObjectAttributeMetaData impl
 				{
 					if( lovMap.containsKey( value ) ) {
 						return lovMap.get( value );
-					}
+					} else if (lovMap.containsKey( value.toString() ))
+						return lovMap.get( value.toString() );
 					sRetValue = String.valueOf( value ); 
 				}
 			} else if ( getDataType() == DataFieldTypes.VALUE_DATE || getDataType() == DataFieldTypes.VALUE_DATETIME ) {
@@ -85,8 +86,6 @@ public class XEOObjectListGroupAttribute extends XEOObjectAttributeMetaData impl
 				if( oDate != null ) {
 					SimpleDateFormat sdfD = new SimpleDateFormat("dd/MM/yyyy");
 					sRetValue = sdfD.format( oDate );
-				} else {
-					sRetValue = null;
 				}
 			} else if ( getDataType() == DataFieldTypes.VALUE_NUMBER ) {
 				BigDecimal oValue = (BigDecimal)attValue;
