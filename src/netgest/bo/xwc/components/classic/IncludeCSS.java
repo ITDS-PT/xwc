@@ -9,7 +9,7 @@ public class IncludeCSS extends XUIComponentBase {
 	/**
 	 * Path to the CSS file
 	 */
-	private XUIBindProperty<String> source = new XUIBindProperty<String>("source", this, String.class);
+	private XUIBindProperty<String> source = new XUIBindProperty<String>("source", this, String.class, "");
 	
 	public void setSource(String sourceExpr){
 		this.source.setExpressionText( sourceExpr );
