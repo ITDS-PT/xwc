@@ -10,7 +10,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -48,7 +47,6 @@ import netgest.bo.def.boDefHandler;
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
-import netgest.bo.system.boSession;
 import netgest.bo.transaction.XTransaction;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
@@ -72,7 +70,6 @@ import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl.TreeNode;
 import netgest.bo.xwc.framework.jsf.cache.CacheEntry;
 import netgest.bo.xwc.framework.jsf.utils.LRUCache;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
-import netgest.bo.xwc.framework.localization.XUILocalizedMessage;
 import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
 import netgest.bo.xwc.xeo.beans.SystemViewer;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
@@ -479,9 +476,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     	return true;
     }
     
-    
-    public UIViewRoot createView(FacesContext context, String viewId, InputStream viewerInputStream, String sTransactionId, XUIViewerDefinition viewerDefinition ) 
-    {
+    public UIViewRoot createView(FacesContext context, String viewId, InputStream viewerInputStream, String sTransactionId, XUIViewerDefinition viewerDefinition ){
+    	
         XUIViewerBuilder oViewerBuilder;
         XUIRequestContext      oContext;
         XUIApplicationContext  oApp;
@@ -685,6 +681,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        		try{
 	        			savingInCache.set( Boolean.TRUE );
 	        			saveViewToCache( context , result , cacheKey , oViewerDef );
+	        			
 	        		} finally {
 	        			savingInCache.set( Boolean.FALSE );
 	        		}
@@ -692,9 +689,11 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        }
 	        
 	        
-	        if (!createNew){
-	        	restoreTreeStateFromCache( context , result , cacheKey );
-	        }
+	        //Always restore state from cache in any situation
+	        //!Important because if not, component instances where being reused (XUIInput/XUIOutput-derivatives 
+	        //which save (and keep) their state in internal properties)
+	        restoreTreeStateFromCache( context , result , cacheKey );
+	        
 	        
 	        // Initialize security
 	        initializeSecurity( result, beanIds, context );
@@ -720,8 +719,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 			.append(XUIMessagesLocalization.getThreadCurrentLocale().getLanguage());
 			String country = XUIMessagesLocalization.getThreadCurrentLocale().getCountry();
 			if (StringUtils.hasValue( country )){
-			b.append("_")
-			.append(country);
+				b.append("_")
+				.append(country);
 			}
 		return b.toString();
 	}
@@ -885,6 +884,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 			restoreTransient = true;
 		}
 		Object state = result.processSaveState( context );
+		
 		List<TreeNode> treeList = new ArrayList<TreeNode>( 32 );
 		XUIStateManagerImpl.captureChild( treeList, 0, result );        
 		Object[] tree = treeList.toArray();
