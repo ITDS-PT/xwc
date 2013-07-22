@@ -104,6 +104,7 @@ public class AttributeDate extends AttributeBase {
           	}
     		ExtConfig oInpDateConfig = super.getExtJsFieldConfig( oAttr );
             oInpDateConfig.addJSString("format", "d/m/Y");
+            oInpDateConfig.addJSString("altFormats", "d-m-Y");
             
             if( oAttrDate.isDisabled() || !oAttrDate.getEffectivePermission(SecurityPermissions.WRITE) ) {
             	oInpDateConfig.addJSString("name", "" );
