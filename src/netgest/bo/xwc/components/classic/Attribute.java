@@ -193,7 +193,10 @@ public class Attribute extends AttributeBase
                     sRet = "attributeBoolean";
                     break;
                 case DataFieldTypes.VALUE_CLOB:
-                    sRet = "attributeTextArea";
+                	switch( getInputRenderType() ) {
+	                	case DataFieldTypes.RENDER_HTMLEDITOR : sRet = "attributeHtmlEditor"; break;
+	                	default : sRet = "attributeTextArea"; break;
+                	}
                     break;
                 case DataFieldTypes.VALUE_DATE:
                     sRet = "attributeDate";
@@ -328,8 +331,9 @@ public class Attribute extends AttributeBase
             oAttr.setDisplayValue( getValueExpression("displayValue").getExpressionString() );
         
 
-		if( getValueExpression("dataFieldConnector") != null )
-            oAttr.dataFieldConnector.setExpressionText( getValueExpression("dataFieldConnector").getExpressionString() );
+		if( getValueExpression("dataFieldConnector") != null ){
+			oAttr.setDataFieldConnector( getValueExpression("dataFieldConnector").getExpressionString() );
+		}
         
 
         if (StringUtils.hasValue( lookupResults.getExpressionString( ) ) )
@@ -426,6 +430,10 @@ public class Attribute extends AttributeBase
 
     public String getInputType() {
         return inputType.getEvaluatedValue();
+    }
+    @Override
+    public Object saveState() {
+    	return super.saveState();
     }
 
     public static  class XEOHTMLRenderer extends XUIRenderer {

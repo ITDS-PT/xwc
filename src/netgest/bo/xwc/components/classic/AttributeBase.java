@@ -476,6 +476,10 @@ public class AttributeBase extends ViewerInputSecurityBase {
         return this.dataFieldConnector.getEvaluatedValue();
     }
     
+    public void setDataFieldConnector(String dataFieldExpr){
+    	this.dataFieldConnector.setExpressionText( dataFieldExpr );
+    }
+    
     /**
      * 
      * Returns the the value of the property valid
