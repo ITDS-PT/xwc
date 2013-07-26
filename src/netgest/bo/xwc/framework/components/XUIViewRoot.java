@@ -1,5 +1,21 @@
 package netgest.bo.xwc.framework.components;
 
+import netgest.bo.system.Logger;
+import netgest.bo.xwc.components.classic.Form;
+import netgest.bo.xwc.components.classic.Layouts;
+import netgest.bo.xwc.framework.XUIELContextWrapper;
+import netgest.bo.xwc.framework.XUIRenderer;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUISessionContext;
+import netgest.bo.xwc.framework.XUITheme;
+import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
+import netgest.bo.xwc.framework.jsf.XUIPhaseEvent;
+import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl;
+
+import netgest.utils.StringUtils;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -27,22 +43,6 @@ import javax.faces.lifecycle.LifecycleFactory;
 import javax.faces.render.Renderer;
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.http.HttpServletRequest;
-
-import netgest.bo.system.Logger;
-import netgest.bo.xwc.components.classic.Form;
-import netgest.bo.xwc.components.classic.Layouts;
-import netgest.bo.xwc.components.classic.TemplateInclude;
-import netgest.bo.xwc.framework.XUIELContextWrapper;
-import netgest.bo.xwc.framework.XUIRenderer;
-import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.XUISessionContext;
-import netgest.bo.xwc.framework.XUITheme;
-import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
-import netgest.bo.xwc.framework.jsf.XUIPhaseEvent;
-import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl;
-import netgest.utils.StringUtils;
 
 import com.sun.faces.util.LRUMap;
 import com.sun.faces.util.RequestStateManager;
@@ -310,7 +310,7 @@ public class XUIViewRoot extends UIViewRoot {
 		Object[] oMyState;
 
 		oSuperState = super.saveState(context);
-		oMyState = new Object[9];
+		oMyState = new Object[10];
 
 		if (logger.isFineEnabled())
 			logger.fine( "Saving state for %s - %s - %s", this.sInstanceId, sStateId ,this.sParentViewState );
@@ -325,6 +325,7 @@ public class XUIViewRoot extends UIViewRoot {
 		oMyState[6] = oSuperState;
 		oMyState[7] = localizationClasses;
 		oMyState[8] = beanMapping;
+		oMyState[9] = beanId;
 
 		return oMyState;
 	}
@@ -346,6 +347,7 @@ public class XUIViewRoot extends UIViewRoot {
 		super.restoreState(context, oMyState[6]);
 		localizationClasses = (String[]) oMyState[7];
 		beanMapping = (Map<String,String>) oMyState[8];
+		beanId = (String) oMyState[9];
 		
 		if (logger.isFineEnabled())
 			logger.fine( "Restoring for %s - %s - %s", this.sInstanceId, sStateId ,this.sParentViewState );
@@ -419,6 +421,8 @@ public class XUIViewRoot extends UIViewRoot {
 				return (XUIComponentBase) component;
 			}
 			found = findComponent( component , clientId );
+			if ( found != null )
+				break;
 		}
 		return (XUIComponentBase) found ;
 	}
