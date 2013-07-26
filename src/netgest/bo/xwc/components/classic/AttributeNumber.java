@@ -1,15 +1,16 @@
 package netgest.bo.xwc.components.classic;
 
-import java.math.BigDecimal;
-
-import javax.faces.context.FacesContext;
-
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
+
+import java.math.BigDecimal;
+
+import javax.faces.context.FacesContext;
 /**
  * This component reders a only number's input
  * @author jcarreira
@@ -33,6 +34,7 @@ public class AttributeNumber extends AttributeBase {
         Object      oSubmitedValue = getSubmittedValue();
         String      sSubmitedValue = null;
         BigDecimal  oSubmitedBigDecimal;
+        Object oldValue = getValue();
         
         if( oSubmitedValue != null )
         {
@@ -72,6 +74,10 @@ public class AttributeNumber extends AttributeBase {
                     	setValid(true);
                     	setValue( oSubmitedBigDecimal );
                     	setInvalidText( null );
+                    	//Since we're overriding  the validate, we need to 
+                        //activate the value change listeners
+                        if (!compareValue(oldValue, oSubmitedValue))
+                        	queueEvent(new XUIValueChangeEvent(this, oldValue, oSubmitedValue));
                     }
                 }
                 catch( NumberFormatException ex ) {
