@@ -8,12 +8,6 @@ import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
 
 public class JQueryBaseRenderer extends XUIRenderer {
 
-	protected void addScriptFooter(String id, String script){
-		getRequestContext().getScriptContext().add( XUIScriptContext.POSITION_FOOTER,
-				id, 
-				script );
-	}
-	
 	protected void includeHeaderScript(String id, String scriptPath){
 		getRequestContext().getScriptContext().addInclude( XUIScriptContext.POSITION_FOOTER,
 				id, 
