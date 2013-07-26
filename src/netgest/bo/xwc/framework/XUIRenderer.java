@@ -1,4 +1,9 @@
 package netgest.bo.xwc.framework;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -8,11 +13,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.ConverterException;
 import javax.faces.render.Renderer;
-
-import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
-import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 
 public class XUIRenderer extends Renderer
 {
@@ -306,6 +306,10 @@ public class XUIRenderer extends Renderer
     
     public XUISessionContext getSessionContext() {
     	return getRequestContext().getSessionContext();
+    }
+    
+    public void addScriptFooter(String id, String script){
+    	getRequestContext().getScriptContext().add( XUIScriptContext.POSITION_FOOTER , id , script );
     }
     
     public static final class Util
