@@ -1,5 +1,40 @@
 package netgest.bo.xwc.framework.jsf;
 
+import netgest.bo.def.boDefHandler;
+import netgest.bo.localizations.MessageLocalizer;
+import netgest.bo.system.Logger;
+import netgest.bo.system.boApplication;
+import netgest.bo.transaction.XTransaction;
+import netgest.bo.xwc.components.classic.Layouts;
+import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
+import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder.SecurityMode;
+import netgest.bo.xwc.framework.PackageIAcessor;
+import netgest.bo.xwc.framework.XUIApplicationContext;
+import netgest.bo.xwc.framework.XUIRendererServlet;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUISessionContext;
+import netgest.bo.xwc.framework.XUIViewBean;
+import netgest.bo.xwc.framework.annotations.XUIWebCommand;
+import netgest.bo.xwc.framework.annotations.XUIWebDefaultCommand;
+import netgest.bo.xwc.framework.annotations.XUIWebParameter;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.def.XUIViewerDefinition;
+import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
+import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl.TreeNode;
+import netgest.bo.xwc.framework.jsf.cache.CacheEntry;
+import netgest.bo.xwc.framework.jsf.utils.LRUCache;
+import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
+import netgest.bo.xwc.xeo.beans.SystemViewer;
+import netgest.bo.xwc.xeo.beans.XEOBaseBean;
+import netgest.bo.xwc.xeo.beans.XEOSecurityBaseBean;
+
+import netgest.utils.StringUtils;
+import netgest.utils.ngtXMLUtils;
+
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
 import java.io.IOException;
@@ -43,39 +78,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import netgest.bo.def.boDefHandler;
-import netgest.bo.localizations.MessageLocalizer;
-import netgest.bo.system.Logger;
-import netgest.bo.system.boApplication;
-import netgest.bo.transaction.XTransaction;
-import netgest.bo.xwc.components.classic.Layouts;
-import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
-import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder.SecurityMode;
-import netgest.bo.xwc.framework.PackageIAcessor;
-import netgest.bo.xwc.framework.XUIApplicationContext;
-import netgest.bo.xwc.framework.XUIRendererServlet;
-import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.XUISessionContext;
-import netgest.bo.xwc.framework.XUIViewBean;
-import netgest.bo.xwc.framework.annotations.XUIWebCommand;
-import netgest.bo.xwc.framework.annotations.XUIWebDefaultCommand;
-import netgest.bo.xwc.framework.annotations.XUIWebParameter;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.framework.def.XUIViewerDefinition;
-import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
-import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl.TreeNode;
-import netgest.bo.xwc.framework.jsf.cache.CacheEntry;
-import netgest.bo.xwc.framework.jsf.utils.LRUCache;
-import netgest.bo.xwc.framework.localization.XUICoreMessages;
-import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
-import netgest.bo.xwc.xeo.beans.SystemViewer;
-import netgest.bo.xwc.xeo.beans.XEOBaseBean;
-import netgest.bo.xwc.xeo.beans.XEOSecurityBaseBean;
-import netgest.utils.StringUtils;
-import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
 
 import org.apache.commons.logging.Log;
@@ -477,6 +479,17 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     }
     
     public UIViewRoot createView(FacesContext context, String viewId, InputStream viewerInputStream, String sTransactionId, XUIViewerDefinition viewerDefinition ){
+    	String cacheKey = createCacheIdFromViewAndLanguage( viewId );
+    	XUIApplicationContext oApp = XUIRequestContext.getCurrentContext().getApplicationContext();
+    	//The purpose of the following instruction is to make sure that save and restore
+    	//are not executed in the same instances of the components. When a new view is created
+    	//save is run, right after, the view is restored from cache  
+    	if (!canReadFromCache( oApp , cacheKey, viewId ))
+    		_createView( context , viewId , viewerInputStream , sTransactionId , viewerDefinition );
+    	return _createView( context , viewId , viewerInputStream , sTransactionId , viewerDefinition );
+    }
+    
+    public UIViewRoot _createView(FacesContext context, String viewId, InputStream viewerInputStream, String sTransactionId, XUIViewerDefinition viewerDefinition ){
     	
         XUIViewerBuilder oViewerBuilder;
         XUIRequestContext      oContext;
@@ -692,7 +705,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        //Always restore state from cache in any situation
 	        //!Important because if not, component instances where being reused (XUIInput/XUIOutput-derivatives 
 	        //which save (and keep) their state in internal properties)
-	        restoreTreeStateFromCache( context , result , cacheKey );
+	        if (!createNew)
+	        	restoreTreeStateFromCache( context , result , cacheKey );
 	        
 	        
 	        // Initialize security
