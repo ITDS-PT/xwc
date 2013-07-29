@@ -702,9 +702,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        }
 	        
 	        
-	        //Always restore state from cache in any situation
-	        //!Important because if not, component instances where being reused (XUIInput/XUIOutput-derivatives 
-	        //which save (and keep) their state in internal properties)
 	        if (!createNew)
 	        	restoreTreeStateFromCache( context , result , cacheKey );
 	        
