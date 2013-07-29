@@ -1,15 +1,16 @@
 package netgest.bo.xwc.components.classic;
 
-import java.io.IOException;
-
-import javax.el.ValueExpression;
-import javax.faces.context.ResponseWriter;
-
+import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+
+import java.io.IOException;
+
+import javax.el.ValueExpression;
+import javax.faces.context.ResponseWriter;
 
 /**
  * 
@@ -25,6 +26,7 @@ public class Section extends ViewerSecurityBase {
     /**
      * The label to display in the section
      */
+	@Localize
     private XUIViewStateBindProperty<String> label = new XUIViewStateBindProperty<String>( "label", this, String.class );
     
     /**

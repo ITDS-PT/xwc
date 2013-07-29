@@ -1,12 +1,6 @@
 package netgest.bo.xwc.components.classic;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.el.ValueExpression;
-import javax.faces.el.MethodBinding;
-
+import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -17,6 +11,13 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.jsf.XUIELResolver;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 import netgest.bo.xwc.framework.jsf.XUIViewHandler;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.el.ValueExpression;
+import javax.faces.el.MethodBinding;
 /**
  * This component is not usable in the viewers,
  * is the base of all attribute Type Components
@@ -189,6 +190,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
     /**
      * The label of this attribute
      */
+    @Localize
     private XUIViewStateBindProperty<String> label          	= 
     	new XUIViewStateBindProperty<String>( "label", this, String.class );
 

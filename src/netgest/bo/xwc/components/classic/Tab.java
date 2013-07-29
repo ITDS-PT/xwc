@@ -1,16 +1,17 @@
 package netgest.bo.xwc.components.classic;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.faces.event.ActionEvent;
-
+import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.faces.event.ActionEvent;
 
 /**
  * 
@@ -24,6 +25,7 @@ public class Tab extends ViewerCommandSecurityBase
     /**
      * The display name of the tab
      */
+	@Localize
     protected XUIViewStateProperty<String> 		label 	= new XUIViewStateProperty<String>( "label", this );
     /**
      * Whether or not this tab is visible

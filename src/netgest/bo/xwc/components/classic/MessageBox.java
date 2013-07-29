@@ -3,12 +3,7 @@
  */
 package netgest.bo.xwc.components.classic;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.faces.component.UIComponent;
-
+import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
@@ -22,6 +17,12 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIInput;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.component.UIComponent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -144,6 +145,7 @@ public class MessageBox extends XUIInput {
 	/**
 	 * The title of the message box
 	 */
+	@Localize
 	private XUIBindProperty<String> title 
 		= new XUIBindProperty<String>("title", this, "Title!", String.class );
 
@@ -151,6 +153,7 @@ public class MessageBox extends XUIInput {
 	/**
 	 * The content of the message box
 	 */
+	@Localize
 	private XUIBindProperty<String> message 
 		= new XUIBindProperty<String>("message", this, "Message!", String.class );
 

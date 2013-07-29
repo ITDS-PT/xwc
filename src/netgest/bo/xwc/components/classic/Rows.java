@@ -8,8 +8,6 @@ import static netgest.bo.xwc.components.HTMLTag.COLGROUP;
 import static netgest.bo.xwc.components.HTMLTag.TABLE;
 import static netgest.bo.xwc.components.HTMLTag.TBODY;
 
-import java.io.IOException;
-
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -17,6 +15,8 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+
+import java.io.IOException;
 
 
 /**
@@ -68,6 +68,29 @@ public class Rows extends XUIComponentBase
      * The width of the rendered labels inside the {@link Rows} component
      */
     XUIViewProperty<Integer> labelWidth 	= new XUIViewProperty<Integer>( "labelWidth", this, 100 );
+    
+    public enum LabelPosition {
+		LEFT("left"), 
+		TOP("top");
+
+		private String name;
+
+		private LabelPosition(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return this.name;
+		}
+
+		public static LabelPosition fromString(String value) {
+			for ( LabelPosition curr : values() ) {
+				if ( curr.getName().equals( value ) )
+					return curr;
+			}
+			return LEFT;
+		}
+	}
     
     @Override
 	public boolean getRendersChildren()

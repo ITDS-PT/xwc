@@ -1,8 +1,6 @@
 package netgest.bo.xwc.components.classic;
 
-import java.io.IOException;
-import java.util.List;
-
+import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsBaseRenderer;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
@@ -13,7 +11,11 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+
 import netgest.utils.StringUtils;
+
+import java.io.IOException;
+import java.util.List;
 /**
  * This component renders a label for a input component
  * @author jcarreira
@@ -21,11 +23,13 @@ import netgest.utils.StringUtils;
  */
 public class AttributeLabel extends ViewerOutputSecurityBase {
 
+	@Localize
     public XUIViewStateProperty<String> text 		= new XUIViewStateProperty<String>("text", this, " Label Text ");
     
     private XUIViewStateBindProperty<Boolean> 	visible        = new XUIViewStateBindProperty<Boolean>( "visible", this, Boolean.class );
     private XUIViewStateBindProperty<Boolean> 		modelRequired  = new XUIViewStateBindProperty<Boolean>( "modelRequired", this, Boolean.class );
     private XUIViewStateBindProperty<Boolean> 		recommended    = new XUIViewStateBindProperty<Boolean>( "recommended", this, Boolean.class );
+    @Localize
     private XUIViewStateBindProperty<String> 		toolTip    = new XUIViewStateBindProperty<String>( "toolTip", this, String.class );
     
     public void setText( String sText ) {

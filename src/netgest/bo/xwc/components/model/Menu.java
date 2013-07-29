@@ -1,12 +1,8 @@
 package netgest.bo.xwc.components.model;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.el.ValueExpression;
-
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
+import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.classic.TreePanel;
@@ -25,6 +21,11 @@ import netgest.bo.xwc.xeo.components.BridgeToolBar;
 import netgest.bo.xwc.xeo.components.EditToolBar;
 import netgest.bo.xwc.xeo.components.ListToolBar;
 import netgest.bo.xwc.xeo.components.LookupListToolBar;
+
+import java.util.Arrays;
+import java.util.List;
+
+import javax.el.ValueExpression;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,10 +68,12 @@ public class Menu extends ViewerCommandSecurityBase {
     /**
      * The text to be shown as label of the menu
      */
+	@Localize
     public XUIViewStateProperty<String> text 	= new XUIViewStateProperty<String>( "text", this );
     /**
      * The text to be presented as a tool tip (when mouse is over the menu)
      */
+	@Localize
     public XUIViewStateProperty<String> toolTip = new XUIViewStateProperty<String>( "toolTip", this );
     /**
      * CSS class to apply to the icon(requires that the icon property is used)

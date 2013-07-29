@@ -1,10 +1,7 @@
 package netgest.bo.xwc.components.classic;
 
-import java.math.BigDecimal;
-
-import javax.faces.context.FacesContext;
-
 import netgest.bo.def.boDefAttribute;
+import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.framework.XUIBaseProperty;
@@ -13,6 +10,10 @@ import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
+
+import java.math.BigDecimal;
+
+import javax.faces.context.FacesContext;
 
 public class AttributeAutoComplete extends AttributeNumberLookup {
 	
@@ -25,6 +26,7 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 	 * Search type - word or character based
 	 * default is character based
 	 */
+	@Values({"WORD","CHARACTER"})
 	private XUIBaseProperty<String> searchType = 
 		new XUIBaseProperty<String>( "searchType", this, SearchType.CHARACTER.toString() );
 	
@@ -128,7 +130,7 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 		new XUIBaseProperty<Integer>( "minSearchChars", this, Integer.valueOf(3) );
 	
 	public Integer getMinSearchChars(){
-		//The component uses < instted of <= to decide the number of characters
+		//The component uses < instead of <= to decide the number of characters
 		return minSearchChars.getValue( ) - 1;
 	}
 	

@@ -1,29 +1,10 @@
 package netgest.bo.xwc.components.classic;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
-import javax.faces.component.UIComponent;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ActionListener;
-import javax.servlet.http.HttpServletRequest;
-
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.preferences.Preference;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.annotations.ObjectAttribute;
 import netgest.bo.xwc.components.annotations.Required;
 import netgest.bo.xwc.components.annotations.Values;
@@ -63,11 +44,27 @@ import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
-import netgest.bo.xwc.framework.properties.XUIProperty;
-import netgest.bo.xwc.framework.properties.XUIPropertyVisibility;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
-import netgest.utils.StringUtils;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.el.MethodExpression;
+import javax.el.ValueExpression;
+import javax.faces.component.UIComponent;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ActionListener;
+import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -228,6 +225,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	/**
 	 * Defines the title of the GridPanel
 	 */
+	@Localize
 	private XUIViewBindProperty<String> title = new XUIViewBindProperty<String>(
 			"title", this, String.class );
 

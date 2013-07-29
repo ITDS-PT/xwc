@@ -3,10 +3,9 @@ package netgest.bo.xwc.components.classic;
 import static netgest.bo.xwc.components.HTMLAttr.ID;
 import static netgest.bo.xwc.components.HTMLTag.DIV;
 
-import java.io.IOException;
-
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBaseProperty;
@@ -16,6 +15,8 @@ import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+
+import java.io.IOException;
 
 /**
  * 
@@ -37,6 +38,7 @@ public class Panel extends ViewerSecurityBase {
 	/**
 	 * The title of the panel
 	 */
+    @Localize
 	private XUIViewStateBindProperty<String> title = new XUIViewStateBindProperty<String>( "title", this, String.class );
 	/**
 	 * The layout of the panel (not in used at the moment)

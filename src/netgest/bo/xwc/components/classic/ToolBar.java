@@ -1,17 +1,8 @@
 package netgest.bo.xwc.components.classic;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.faces.component.UIComponent;
-
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
@@ -31,6 +22,16 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.def.XUIComponentStore;
 import netgest.bo.xwc.framework.def.XUIRendererDefinition;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.faces.component.UIComponent;
 
 
 /**
@@ -80,7 +81,7 @@ public class ToolBar extends ViewerSecurityBase {
         return this.visible.getEvaluatedValue();
     }
     
-    
+    @Values({"left","top"})
     private XUIBaseProperty<String> iconPosition = new XUIBaseProperty<String>( "iconPosition", this, "left" );
     
     public void setIconPosition(String position){

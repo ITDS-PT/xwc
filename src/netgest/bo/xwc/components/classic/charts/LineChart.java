@@ -1,5 +1,24 @@
 package netgest.bo.xwc.components.classic.charts;
 
+import netgest.bo.runtime.EboContext;
+import netgest.bo.system.Logger;
+import netgest.bo.system.boApplication;
+import netgest.bo.xwc.components.HTMLAttr;
+import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.components.annotations.Localize;
+import netgest.bo.xwc.components.classic.charts.configurations.ILineChartConfiguration;
+import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSet;
+import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSetSQL;
+import netgest.bo.xwc.components.util.ComponentRenderUtils;
+import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIRenderer;
+import netgest.bo.xwc.framework.XUIRendererServlet;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.IOException;
@@ -21,23 +40,6 @@ import jofc2.model.Chart;
 import jofc2.model.Text;
 import jofc2.model.axis.XAxis;
 import jofc2.model.elements.LineChart.Dot;
-import netgest.bo.runtime.EboContext;
-import netgest.bo.system.Logger;
-import netgest.bo.system.boApplication;
-import netgest.bo.xwc.components.HTMLAttr;
-import netgest.bo.xwc.components.HTMLTag;
-import netgest.bo.xwc.components.classic.charts.configurations.ILineChartConfiguration;
-import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSet;
-import netgest.bo.xwc.components.classic.charts.datasets.SeriesDataSetSQL;
-import netgest.bo.xwc.components.util.ComponentRenderUtils;
-import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIRenderer;
-import netgest.bo.xwc.framework.XUIRendererServlet;
-import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -121,6 +123,7 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 	/**
 	 * A label for the chart
 	 */
+	@Localize
 	private XUIBindProperty<String> label = 
 		new XUIBindProperty<String>("label", this, String.class);
 	
