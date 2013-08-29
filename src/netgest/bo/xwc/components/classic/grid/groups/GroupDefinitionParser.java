@@ -27,23 +27,28 @@ public class GroupDefinitionParser {
 	
 	public String getGroupByExpression(){
 		if (StringUtils.hasValue( groupByExpression )){
-			groupByExpression = matchPartsWithColumns();
-			if (cannotMatchWithColumns()){
-				groupByExpression = createGroupExpressionAsLov();
-			} 
+			String[] groups = groupByExpression.split( "," );
+			groupByExpression = "";
+			for (String group : groups){
+				
+				if( groupByExpression.length() > 0 ) {
+					groupByExpression += ",";
+				}
+				
+				groupByExpression += matchPartsWithColumns( group );
+				if (cannotMatchWithColumns()){
+					groupByExpression = createGroupExpressionAsLov();
+				}
+			}
 		}
 		return groupByExpression;
 	}
 
 
-
-	private String matchPartsWithColumns() {
-		String[] groups = groupByExpression.split( "," );
-		for (String group : groups){
-			columnOfGroup = grid.getColumn( group );
-			if (columnOfGroup != null)
-				return group;
-		}
+	private String matchPartsWithColumns( String group ) {
+		columnOfGroup = grid.getColumn( group );
+		if (columnOfGroup != null)
+			return group;
 		return null;
 	}
 

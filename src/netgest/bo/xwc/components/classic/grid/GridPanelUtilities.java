@@ -217,8 +217,12 @@ public class GridPanelUtilities {
 						}
 
 					} else if ("string".equals(submitedType)) {
-						if (StringUtils.hasValue( currRow.getString("value") ))
-							value = currRow.getString("value");
+//						if (StringUtils.hasValue( currRow.getString("value") ))
+//							value = currRow.getString("value");
+						String val = currRow.getString("value");
+						if ( val != null && val.length() > 0 ) {
+							value = val;
+						}
 					} else if ("date".equals(submitedType)) {
 						if (StringUtils.hasValue( currRow.getString("value") )){
 							value = currRow.getString("value");
@@ -390,8 +394,14 @@ public class GridPanelUtilities {
 								terms = addFilterTerm(terms, nameCol, getColumn( nameCol ).getSqlExpression(),operator, value, FilterTerms.JOIN_AND);
 	
 						} else if ("string".equals(submitedType)) {
-							if (StringUtils.hasValue( jsonColDef.getString("value") ))
-								value = jsonColDef.getString("value");
+//							if (StringUtils.hasValue( jsonColDef.getString("value") ))
+//								value = jsonColDef.getString("value");
+							
+							String val = jsonColDef.getString("value") ;
+							if ( val != null && val.length() > 0 ) {
+								value = val;
+							}
+							
 							operator = FilterTerms.OPERATOR_LIKE;
 							operator = checkForContainsOperator( jsonColDef , operator );
 						} else if ("date".equals(submitedType)) {

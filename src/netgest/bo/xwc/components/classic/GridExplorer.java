@@ -567,10 +567,11 @@ public class GridExplorer extends List {
 			super.setAutoSaveGridState( Boolean.toString( true ) );
 		}
 		
-		super.initComponent();
-
 		Preference expPref = getExplorerUserSatePreference();
 		restoreUserExplorerState( expPref );
+		
+		super.initComponent();
+
 		// Preview Command 
 		XUICommand previewCmd = new XUICommand();
 		previewCmd.setId( getId() + "_pvwcmd" );

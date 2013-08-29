@@ -2066,11 +2066,22 @@ public class GridPanel extends ViewerInputSecurityBase {
 		}
 		
 		if( getEnableGroupBy() ) {
+//			String groupBy = preference.getString("groupBy");
+//			if ( getColumn( groupBy ) != null ){
+//				if (connector.getAttributeMetaData( groupBy ) != null)
+//					this.setGroupBy( groupBy );
+//			}
+			boolean valid = true;
 			String groupBy = preference.getString("groupBy");
-			if ( getColumn( groupBy ) != null ){
-				if (connector.getAttributeMetaData( groupBy ) != null)
-					this.setGroupBy( groupBy );
+			String[] groupByA = groupBy != null?groupBy.split(","):new String[0];
+			for( String groupByAux : groupByA ) {
+				if ( getColumn( groupByAux ) == null ) {
+					valid = false;
+				}
 			}
+			if( valid ) {
+				setGroupBy( groupBy );
+			}		
 		}
 		
 		if( getEnableColumnSort() ) {

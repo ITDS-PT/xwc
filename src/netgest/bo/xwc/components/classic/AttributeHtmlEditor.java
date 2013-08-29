@@ -64,6 +64,10 @@ public class AttributeHtmlEditor extends AttributeBase {
 	
 	@Override
 	public void initComponent() {
+		
+		if( this.getStateProperty("height").isDefaultValue() ) {
+			super.setHeight("auto");
+		}
 
 		XUIRequestContext req = XUIRequestContext.getCurrentContext();
 
@@ -85,7 +89,9 @@ public class AttributeHtmlEditor extends AttributeBase {
 	}
 
 	public AttributeHtmlEditor() {
-		super.setHeight("auto");
+		
+		//super.setHeight("auto");
+		
 	}
 
 	public static class XEOHTMLRenderer extends XUIRenderer implements
@@ -93,10 +99,14 @@ public class AttributeHtmlEditor extends AttributeBase {
 
 		@Override
 		public StateChanged wasStateChanged( XUIComponentBase component, List<XUIBaseProperty<?>> updateProperties ) {
-			updateProperties.add( component.getStateProperty( "disabled" ) );
+			
+			updateProperties.add( component.getStateProperty( "displayValue" ) );
 			updateProperties.add( component.getStateProperty( "visible" ) );
 			updateProperties.add( component.getStateProperty( "readOnly" ) );
+			
 			return super.wasStateChanged( component, updateProperties );
+			
+			
 		}
 		
 		
@@ -110,25 +120,24 @@ public class AttributeHtmlEditor extends AttributeBase {
 			script.append("var c=Ext.getCmp('");
 			script.append(component.getClientId());
 			script.append("_editor');\n");
-			script.append("if(c) { c.setValue('");
-			script.append(JavaScriptUtils.safeJavaScriptWrite( oHtmlComp.getDisplayValue(), '\''));
-			script.append("');\n");
+			script.append("if(c) { ");
+			
 			
 			for (XUIBaseProperty<?> prop : propertiesWithChangedState){
-				if ("disabled".equalsIgnoreCase( prop.getName() ) ){
+				if ("readOnly".equalsIgnoreCase( prop.getName() ) ){
 					script.append( "c.setReadOnly(" );
-					script.append( prop.getValue() );
-					script.append( ");" );
-				}
-				else if ("readOnly".equalsIgnoreCase( prop.getName() ) ){
-					script.append( "c.setReadOnly(" );
-					script.append( prop.getValue() );
+					script.append( oHtmlComp.isReadOnly() );
 					script.append( ");" );
 				}
 				else if ("visible".equalsIgnoreCase( prop.getName() ) ){
 					script.append( "c.setVisible(" );
-					script.append( prop.getValue() );
+					script.append( oHtmlComp.isVisible() );
 					script.append( ");" );
+				}
+				else if ("displayValue".equalsIgnoreCase( prop.getName() )) {
+					script.append("c.setValue('");
+					script.append(JavaScriptUtils.safeJavaScriptWrite( oHtmlComp.getDisplayValue(), '\''));
+					script.append("');\n");
 				}
 			}
 			
