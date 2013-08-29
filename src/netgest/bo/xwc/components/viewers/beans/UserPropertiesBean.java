@@ -1,12 +1,5 @@
 package netgest.bo.xwc.components.viewers.beans;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
 import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
@@ -15,15 +8,27 @@ import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.system.Logger;
+import netgest.bo.system.XEO;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boSession;
 import netgest.bo.system.boSessionUser;
+import netgest.bo.system.locale.LocaleSettings;
+import netgest.bo.system.login.LocalePreferenceSerialization;
 import netgest.bo.utils.IProfileUtils;
 import netgest.bo.xeomodels.system.Theme;
 import netgest.bo.xeomodels.system.ThemeIncludes;
+import netgest.bo.xwc.components.viewers.beans.localization.LocaleSettingsBean;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.localization.XUILocalization;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -34,14 +39,14 @@ import netgest.bo.xwc.xeo.beans.XEOEditBean;
  */
 public class UserPropertiesBean extends XEOEditBean {
 	
-	private static Logger logger = Logger.getLogger("netgest.bo.xwc.components.viewers.beans.UserPropertiesBean");
+	private static final Logger logger = Logger.getLogger(UserPropertiesBean.class);
 	
 	private String profile = "";
 	
 	public UserPropertiesBean() {
 		boSession session = getEboContext().getBoSession();
 		Properties prop = new Properties();
-		setPofilesMap();
+		setProfilesMap();
 		setProfile(session.getPerformerIProfileBouiAsString());
 		prop.putAll(getProfilesLovMap());
 	}
@@ -53,7 +58,7 @@ public class UserPropertiesBean extends XEOEditBean {
 		boDefHandler defHandler = boDefHandler.getBoDefinition("Ebo_Perf");
 		String objLabel = defHandler.getLabel();
 		String descc = defHandler.getDescription();
-		setPofilesMap();
+		setProfilesMap();
 
 		return objLabel + " ____ " + descc;
 	}
@@ -83,7 +88,7 @@ public class UserPropertiesBean extends XEOEditBean {
 		return oProfilesMap;
 	}
 
-	public void setPofilesMap() {
+	public void setProfilesMap() {
 		profileLovMap = getProfilesLovMap();
 	}
 
@@ -92,11 +97,14 @@ public class UserPropertiesBean extends XEOEditBean {
 	}
 
 	public String getProfile() {
-		String performerProfile = String.valueOf(getEboContext().getBoSession().getPerformerIProfileBoui());
-		if (profile != null && !"".equalsIgnoreCase(performerProfile))
-			return profile;
-		else 	
-			return String.valueOf(getEboContext().getBoSession().getPerformerIProfileBoui());
+		if (profile == null) {
+			String performerProfile = String.valueOf(getEboContext().getBoSession().getPerformerIProfileBoui());
+			if (performerProfile != null && !"".equalsIgnoreCase(performerProfile) && Long.valueOf( performerProfile ) > 0) {
+				profile = performerProfile;
+			}
+		}
+		return profile;
+		
 	}
 
 	public void updateUser() {
@@ -106,48 +114,32 @@ public class UserPropertiesBean extends XEOEditBean {
 			boSession sess = getEboContext().getBoSession();
 			boSessionUser bouser = sess.getUser();
 			
-			boObject themeObj;
-			try {
-				if (user.getAttribute("theme").getValueLong()  > 0){
-					themeObj = user.getAttribute("theme").getObject();
-
-					bridgeHandler filesIncludeHandler = themeObj.getBridge(Theme.FILES);
-					Map<String,String> files = new HashMap<String, String>();
-					filesIncludeHandler.beforeFirst();
-					while(filesIncludeHandler.next()){
-						boObject currentFileInclude = filesIncludeHandler.getObject();
-						String id = currentFileInclude.getAttribute(ThemeIncludes.ID).getValueString();
-						String path = currentFileInclude.getAttribute(ThemeIncludes.FILEPATH).getValueString();
-						files.put(id, path);
-					}
-					bouser.setThemeFiles(files);
-				}
-		    	
-			}
-	    	catch (boRuntimeException e) {
-				logger.severe("Could not change the user theme", e);
-			}
+			setTheme( user , bouser );
 			
 			if (!sess.getPerformerIProfileBouiAsString().equals( profile) ) {
 				sess.setPerformerIProfileBoui(profile);
 			}	
 			
 			AttributeHandler languageAtt = user.getAttribute("user_language");
-			EboContext cntxt = getEboContext();
-
 			if ( languageAtt != null ) {
-				boObjectList list = boObjectList.list(cntxt,
-						"select XeoApplicationLanguage where boui= ?", new Object[]{languageAtt.getValueLong()});
-				list.beforeFirst();
-				boObject languageObj = list.getObject();
+				
+				boObject languageObj = XEO.loadWithQuery( 
+						"select XeoApplicationLanguage where boui= ?" , languageAtt.getValueLong() );
 				if (languageObj != null){
 					String language = languageObj.getAttribute("code").getValueString();
 					bouser.setLanguage(language);
+					
 				}
 			} else{
-				bouser.setLanguage(boApplication.getDefaultApplication()
-						.getApplicationLanguage());
+				bouser.setLanguage(boApplication.getXEO().getApplicationLanguage());
 			}
+			
+			LocaleSettingsBean localeSettingsBean = (LocaleSettingsBean) getViewRoot().getBean( "localeBean" );
+			LocaleSettings settings = localeSettingsBean.createLocaleSettings();
+			
+			LocalePreferenceSerialization.save( settings , getEboContext() );
+			XUILocalization.setCurrentLocale( settings.getLocale() );
+			
 
 			save();
 			XUIRequestContext oRequestContext = getRequestContext();
@@ -165,7 +157,31 @@ public class UserPropertiesBean extends XEOEditBean {
 		}
 	}
 
-	public String getMainViewer(boSession oXeoSession) {
+	private void setTheme(boObject user, boSessionUser bouser) {
+		boObject themeObj;
+		try {
+			if (user.getAttribute("theme").getValueLong()  > 0){
+				themeObj = user.getAttribute("theme").getObject();
+
+				bridgeHandler filesIncludeHandler = themeObj.getBridge(Theme.FILES);
+				Map<String,String> files = new HashMap<String, String>();
+				filesIncludeHandler.beforeFirst();
+				while(filesIncludeHandler.next()){
+					boObject currentFileInclude = filesIncludeHandler.getObject();
+					String id = currentFileInclude.getAttribute(ThemeIncludes.ID).getValueString();
+					String path = currentFileInclude.getAttribute(ThemeIncludes.FILEPATH).getValueString();
+					files.put(id, path);
+				}
+				bouser.setThemeFiles(files);
+			}
+			
+		}
+		catch (boRuntimeException e) {
+			logger.severe("Could not change the user theme", e);
+		}
+	}
+
+	private String getMainViewer(boSession oXeoSession) {
 
 		String mainViewer;
 

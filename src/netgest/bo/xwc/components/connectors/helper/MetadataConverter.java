@@ -20,6 +20,7 @@ public class MetadataConverter {
 			case DataFieldTypes.VALUE_DATE: return "date";
 			case DataFieldTypes.VALUE_DATETIME: return "date";
 			case DataFieldTypes.VALUE_NUMBER: return decodeNumberAttribute();
+			case DataFieldTypes.VALUE_CURRENCY: return "numeric";
 			case DataFieldTypes.VALUE_UNKNOWN: return "string";
 			
 			default : return "string";	

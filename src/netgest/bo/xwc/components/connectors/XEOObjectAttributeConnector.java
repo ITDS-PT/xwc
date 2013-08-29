@@ -1,20 +1,5 @@
 package netgest.bo.xwc.components.connectors;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.el.ExpressionFactory;
-import javax.el.MethodExpression;
-import javax.faces.context.FacesContext;
-
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefXeoCode;
 import netgest.bo.localizations.MessageLocalizer;
@@ -34,11 +19,27 @@ import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIELContextWrapper;
-import netgest.bo.xwc.framework.def.XUIComponentParser;
+import netgest.bo.xwc.framework.localization.XUILocalization;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+
 import netgest.io.FSiFile;
 import netgest.io.iFile;
 import netgest.utils.StringUtils;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.el.ExpressionFactory;
+import javax.el.MethodExpression;
+import javax.faces.context.FacesContext;
 
 public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData implements DataFieldConnector {
 
@@ -56,7 +57,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
         }
     };
 
-    private static final Logger log = Logger.getLogger( XUIComponentParser.class.getName() );
+    private static final Logger log = Logger.getLogger( XEOObjectAttributeConnector.class );
  
     private AttributeHandler    oAttHandler;
     
@@ -178,10 +179,10 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 				Date oDate = oAttHandler.getValueDate();
 				if( oDate != null ) {
 					if( getDataType() == DataFieldTypes.VALUE_DATE ) {
-						sRetValue = sdfD.get().format( oDate );
+						sRetValue = XUILocalization.formatDate( oDate );
 					}
 					else {
-						sRetValue = sdfDT.get().format( oDate );
+						sRetValue = XUILocalization.formatDateTime( oDate );
 					}
 				} else {
 					sRetValue = null;
@@ -189,15 +190,26 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 			} else if ( getDataType() == DataFieldTypes.VALUE_NUMBER ) {
 				BigDecimal oValue = (BigDecimal)oAttHandler.getValueObject();
 				if( oValue != null ) {
-					NumberFormat nf = NumberFormat.getInstance();
+					DecimalFormat format = XUILocalization.getNumberFormatter();
 					boDefAttribute oDefAtt = oAttHandler.getDefAttribute();
-					nf.setMinimumFractionDigits( oDefAtt.getMinDecimals() );
-					nf.setMaximumFractionDigits( oDefAtt.getDecimals() );
-					nf.setGroupingUsed( "Y".equals( oDefAtt.getGrouping() ) );
-					sRetValue = nf.format( oValue );
+					format.setMinimumFractionDigits( oDefAtt.getMinDecimals() );
+					format.setMaximumFractionDigits( oDefAtt.getDecimals() );
+					format.setGroupingUsed( "Y".equals( oDefAtt.getGrouping() ) );
+					sRetValue = format.format( oValue );
 				}
 				else {
 					sRetValue = null;
+				}
+			}
+			else if ( getDataType() == DataFieldTypes.VALUE_CURRENCY ) {
+				BigDecimal oValue = (BigDecimal)oAttHandler.getValueObject();
+				if( oValue != null ) {
+					DecimalFormat format = XUILocalization.getCurrencyFormatter();
+					boDefAttribute oDefAtt = oAttHandler.getDefAttribute();
+					format.setMinimumFractionDigits( oDefAtt.getMinDecimals() );
+					format.setMaximumFractionDigits( oDefAtt.getDecimals() );
+					format.setGroupingUsed( "Y".equals( oDefAtt.getGrouping() ) );
+					sRetValue = format.format( oValue );
 				}
 			}
 			

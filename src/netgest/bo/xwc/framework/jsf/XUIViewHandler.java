@@ -27,7 +27,7 @@ import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl.TreeNode;
 import netgest.bo.xwc.framework.jsf.cache.CacheEntry;
 import netgest.bo.xwc.framework.jsf.utils.LRUCache;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
-import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
+import netgest.bo.xwc.framework.localization.XUILocalization;
 import netgest.bo.xwc.xeo.beans.SystemViewer;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.bo.xwc.xeo.beans.XEOSecurityBaseBean;
@@ -727,12 +727,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 		StringBuilder b = new StringBuilder();
 			b.append(viewId)
 			.append("_")
-			.append(XUIMessagesLocalization.getThreadCurrentLocale().getLanguage());
-			String country = XUIMessagesLocalization.getThreadCurrentLocale().getCountry();
-			if (StringUtils.hasValue( country )){
-				b.append("_")
-				.append(country);
-			}
+			.append(XUILocalization.getCurrentLocale().toString());
 		return b.toString();
 	}
 

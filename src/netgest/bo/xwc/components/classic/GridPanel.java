@@ -2224,7 +2224,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 	
 								if (fieldType == DataFieldTypes.VALUE_DATE
 										|| fieldType == DataFieldTypes.VALUE_DATETIME
-										|| fieldType == DataFieldTypes.VALUE_NUMBER) {
+										|| fieldType == DataFieldTypes.VALUE_NUMBER
+										|| fieldType == DataFieldTypes.VALUE_CURRENCY) {
 	
 									sLeft = (Comparable) leftField.getValue();
 									sRight = (Comparable) right.getAttribute(sSort)

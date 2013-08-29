@@ -1,13 +1,5 @@
 package netgest.bo.xwc.components.classic;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-
-import javax.faces.context.FacesContext;
-
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.localization.ComponentMessages;
@@ -15,6 +7,15 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.localization.JavaToJavascriptPatternConverter;
+import netgest.bo.xwc.framework.localization.XUILocalization;
+
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Map;
+
+import javax.faces.context.FacesContext;
 
 /**
  * This attribute represents a Date Field
@@ -25,9 +26,6 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  *
  */
 public class AttributeDate extends AttributeBase {
-
-    protected static final SimpleDateFormat oFormatDate = new SimpleDateFormat( "dd/MM/yyyy" );
-
 
     @Override
     public void initComponent() {
@@ -56,7 +54,7 @@ public class AttributeDate extends AttributeBase {
             if( sSubmitedValue.length() > 0 )
             {
                 try {
-                    oSubmitedDate = oFormatDate.parse( String.valueOf( oSubmitedValue ) );
+                    oSubmitedDate = XUILocalization.parseDate( String.valueOf( oSubmitedValue ) );
                     setValue( new Timestamp( oSubmitedDate.getTime() ) );
     
                 }
@@ -100,11 +98,15 @@ public class AttributeDate extends AttributeBase {
             String sValue = "";
             
             if( sJsValue != null )  {
-        	  	sValue = oFormatDate.format( sJsValue );
+            	sValue = XUILocalization.formatDate( sJsValue );
           	}
     		ExtConfig oInpDateConfig = super.getExtJsFieldConfig( oAttr );
-            oInpDateConfig.addJSString("format", "d/m/Y");
-            oInpDateConfig.addJSString("altFormats", "d-m-Y");
+    		String format = XUILocalization.getDateFormat();
+    		String javascriptPattern = 
+    				JavaToJavascriptPatternConverter.convertDatePatternToJavascript( format);
+    		oInpDateConfig.addJSString("format", javascriptPattern );
+            oInpDateConfig.addJSString("altFormats", 
+            		JavaToJavascriptPatternConverter.getAlternativeDateFormats( javascriptPattern ));
             
             if( oAttrDate.isDisabled() || !oAttrDate.getEffectivePermission(SecurityPermissions.WRITE) ) {
             	oInpDateConfig.addJSString("name", "" );
@@ -127,16 +129,15 @@ public class AttributeDate extends AttributeBase {
     	
     	@Override
     	public ScriptBuilder getEndComponentScript(AttributeBase oComp) {
-    		// TODO Auto-generated method stub
     		ScriptBuilder s = new ScriptBuilder();
     		s.startBlock();
     		
     		super.writeExtContextVar(s, oComp);
     		
-            Object sJsValue = (Timestamp)oComp.getValue(); 
+    		Timestamp sJsValue = (Timestamp)oComp.getValue(); 
             String sValue = "";
             if( sJsValue != null )  {
-        	  	sValue = oFormatDate.format( sJsValue );
+        	  	sValue = XUILocalization.formatDate( sJsValue );
           	}
             
             s.w( "c.setValue('" ).writeValue( sValue ).l( "');" );

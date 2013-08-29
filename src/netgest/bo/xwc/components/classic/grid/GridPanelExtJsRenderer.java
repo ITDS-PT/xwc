@@ -6,20 +6,6 @@ import static netgest.bo.xwc.components.HTMLAttr.TYPE;
 import static netgest.bo.xwc.components.HTMLTag.DIV;
 import static netgest.bo.xwc.components.HTMLTag.INPUT;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.render.Renderer;
-
 import netgest.bo.xwc.components.classic.ActionButton;
 import netgest.bo.xwc.components.classic.GridNavBar;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -38,7 +24,6 @@ import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
-import netgest.bo.xwc.components.connectors.decoder.XEOObjectAttributeDecoder;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.model.Menu;
@@ -51,6 +36,20 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.render.Renderer;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
@@ -810,6 +809,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	autoExpadColumn = null;
         }
         for (int i = 0; i < oGridColumns.length; i++) {
+        	String dataField = oGridColumns[i].getDataField();
+        	DataFieldMetaData metaData = oGrid.getDataSource().getAttributeMetaData( dataField );
             oColConfig = oColsConfig.addChild();
             oColConfig.addJSString( "id", oGridColumns[ i ].getDataField() );
             oColConfig.add( "width", oGridColumns[ i ].getWidth() );
@@ -822,6 +823,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             oColConfig.add( "hideable" , oGridColumns[ i ].isHideable() );
             if (oGridColumns[ i ].wrapText()){
             	oColConfig.add( "renderer" , "ExtXeo.grid.nowrap" );
+            } else if ( isNumberColumn( metaData )){
+            	oColConfig.add( "renderer" , "ExtXeo.grid.numberStyle" );
             }
 
 			JSONObject colCfg = map.get( oGridColumns[ i ].getDataField() );
@@ -838,15 +841,15 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             oColConfig.add( "groupable", oGridColumns[ i ].isGroupable() );
             
             
-        	// BEGIN ML: 19-09-2011 - Number Type Columns/And aggregate Enable
-			DataFieldMetaData metaData = null;
-
-			String dataField = oGridColumns[i].getDataField();
 			
-			metaData = oGrid.getDataSource().getAttributeMetaData( dataField );
+
+			
+			
+			
 
 			if (metaData != null) {
-				if (metaData.getDataType() == DataFieldTypes.VALUE_NUMBER
+				if ( (metaData.getDataType() == DataFieldTypes.VALUE_NUMBER 
+						|| metaData.getDataType() == DataFieldTypes.VALUE_CURRENCY)
 						&& !metaData.getIsLov()
 						&& !(metaData.getInputRenderType() == DataFieldTypes.RENDER_OBJECT_LOOKUP)
 						&& oGridColumns[i].isEnableAggregate()
@@ -1060,6 +1063,10 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         return oGridConfig;
     }
+
+	private boolean isNumberColumn(DataFieldMetaData metaData) {
+		return metaData != null && (metaData.getDataType() == DataFieldTypes.VALUE_CURRENCY || metaData.getDataType() == DataFieldTypes.VALUE_NUMBER) ;
+	}
     
 	
     public ExtConfig buildFiltersConfig( GridPanel oGrid ) {
@@ -1171,8 +1178,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	            			oExtFiltersChild.addJSString( "type", "string" );
 	            			colFilter.put("type", "string");
 	            			
-	            			ExtConfigArray valuesArray = oExtFiltersChild.addChildArray("options");
-	            			
 	            			filters = colFilter.optJSONArray("filters");
 	            			if( filters != null && filters.length() > 0 ) {
 		            			String value = filters.getJSONObject(0).getJSONArray("value").toString();
@@ -1252,6 +1257,18 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		            				}
 		            			}
 		                    	break;
+		            		case DataFieldTypes.VALUE_CURRENCY:
+		                    	oExtFiltersChild.addJSString( "type", "numeric" );
+		            			colFilter.put("type", "numeric");
+		            			filters = colFilter.optJSONArray("value");
+		            			if( filters != null && filters.length() > 0 ) {
+		            				ExtConfig values = oExtFiltersChild.addChild("value");
+		            				for( int i=0; i < filters.length(); i++ ) {
+		            					JSONObject fltObj = filters.getJSONObject( i );
+		            					values.addJSString( fltObj.optString("comparison"), fltObj.optString("value") );
+		            				}
+		            			}
+		                    	break;	
 		            	}
 	            	}
             	}
