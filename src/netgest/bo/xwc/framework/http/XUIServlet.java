@@ -1,5 +1,15 @@
 package netgest.bo.xwc.framework.http;
 
+import netgest.bo.runtime.EboContext;
+import netgest.bo.system.boApplication;
+import netgest.bo.system.boSession;
+import netgest.bo.xwc.components.util.JavaScriptUtils;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.bo.xwc.framework.localization.XUILocalization;
+
+import netgest.utils.StringUtils;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
@@ -14,15 +24,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import netgest.bo.runtime.EboContext;
-import netgest.bo.system.boApplication;
-import netgest.bo.system.boSession;
-import netgest.bo.xwc.components.util.JavaScriptUtils;
-import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.localization.XUICoreMessages;
-import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
-import netgest.utils.StringUtils;
 
 import org.apache.log4j.Logger;
 
@@ -121,27 +122,14 @@ public class XUIServlet extends HttpServlet
 			boApplication.currentContext().addEboContext( oEboContext );
 		}
 		
-		Locale userLocale = XUIMessagesLocalization.getUserLanguageLocale();
-		Locale localeForRequest = null;
-		if ( userLocale != null )
-			localeForRequest = userLocale;
-		else{
-			if ( useBrowserLanguage ){
-				Locale browserLocale = oRequest.getLocale();
-				if (browserLocale != null){
-					localeForRequest = browserLocale;
-				} 
-			} else {
-				Locale appLocale = XUIMessagesLocalization.getApplicationLocale();
-				if ( appLocale != null ){ 
-					localeForRequest = appLocale;
-				}
-				else{
-					localeForRequest = defaultLocale;
-				}
-			}
-		}
-		XUIMessagesLocalization.setThreadCurrentLocale( localeForRequest );
+		Locale localeForRequest = XUILocalization.getCurrentLocale();
+		if ( useBrowserLanguage ){
+			Locale browserLocale = oRequest.getLocale();
+			if (browserLocale != null){
+				localeForRequest = browserLocale;
+				XUILocalization.setCurrentLocale( localeForRequest );
+			} 
+		} 
 		if( oXEOSession != null ) {
 			oXEOSession.setDefaultLocale( localeForRequest );
 		}

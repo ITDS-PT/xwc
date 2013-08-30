@@ -212,5 +212,24 @@ public interface BeansMessages {
 	public static final XUILocalizedMessage EBO_LOV_LIST_CHOOSE_LOV = new XUILocalizedMessage(
 			BeansMessages.class.getName() , "EBO_LOV_LIST_CHOOSE_LOV" );
 	 
-	  
+	public static final XUILocalizedMessage LOCALE_SETTINGS_LOV_ENTRY_DAY = new XUILocalizedMessage(
+			BeansMessages.class.getName() , "LOCALE_SETTINGS_LOV_ENTRY_DAY" );
+	
+	public static final XUILocalizedMessage LOCALE_SETTINGS_LOV_ENTRY_MONTH = new XUILocalizedMessage(
+			BeansMessages.class.getName() , "LOCALE_SETTINGS_LOV_ENTRY_MONTH" );
+	
+	public static final XUILocalizedMessage LOCALE_SETTINGS_LOV_ENTRY_YEAR =  new XUILocalizedMessage(
+			BeansMessages.class.getName() , "LOCALE_SETTINGS_LOV_ENTRY_YEAR" );
+	
+	public static final XUILocalizedMessage LOCALE_SETTINGS_LOV_ENTRY_24_HOURS =  new XUILocalizedMessage(
+			BeansMessages.class.getName() , "LOCALE_SETTINGS_LOV_ENTRY_24_HOURS" );
+	
+	public static final XUILocalizedMessage LOCALE_SETTINGS_LOV_ENTRY_AM_PM_HOURS =  new XUILocalizedMessage(
+			BeansMessages.class.getName() , "LOCALE_SETTINGS_LOV_ENTRY_AM_PM_HOURS" );
+	
+	public static final XUILocalizedMessage LOCALE_SETTINGS_LOV_ENTRY_CURRENCY_RIGHT =  new XUILocalizedMessage(
+			BeansMessages.class.getName() , "LOCALE_SETTINGS_LOV_ENTRY_CURRENCY_RIGHT" );
+	
+	public static final XUILocalizedMessage LOCALE_SETTINGS_LOV_ENTRY_CURRENCY_LEFT =  new XUILocalizedMessage(
+			BeansMessages.class.getName() , "LOCALE_SETTINGS_LOV_ENTRY_CURRENCY_LEFT" );
 }

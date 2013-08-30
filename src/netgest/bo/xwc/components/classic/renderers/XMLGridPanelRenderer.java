@@ -1,13 +1,5 @@
 package netgest.bo.xwc.components.classic.renderers;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -17,6 +9,14 @@ import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.localization.XUILocalization;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * 
@@ -27,15 +27,6 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  */
 public class XMLGridPanelRenderer extends XMLBasicRenderer {
 
-	/**
-	 * Syntactic format for Date instances
-	 */
-	private final SimpleDateFormat oDateFormater = new SimpleDateFormat( "dd/MM/yyyy" );
-    /**
-     * Syntactic format for DateTime instances
-     */
-    private final SimpleDateFormat oDateTimeFormater = new SimpleDateFormat( "dd/MM/yyyy hh:MM:ss" );
-	
     
 	@Override
 	public void encodeBegin(XUIComponentBase component) throws IOException {
@@ -129,28 +120,34 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 			                                // Don't passe to JavaScript
 			                                break;
 			                            case DataFieldTypes.VALUE_BOOLEAN:
-			                            	 w.writeAttribute("displayValue",  oDataFieldValue , null);
-			                            	 w.writeText(sDisplayValue,null);
+			                            	 w.writeAttribute("displayValue",  oDataFieldValue );
+			                            	 w.write(sDisplayValue);
 			                                break;
 			                            case DataFieldTypes.VALUE_CHAR: 
-			                            	w.writeAttribute("displayValue",  oDataFieldValue , null);
-			                            	w.writeText(sDisplayValue,null);
+			                            	w.writeAttribute("displayValue",  oDataFieldValue );
+			                            	w.write(sDisplayValue);
 			                            	break;
 			                            case DataFieldTypes.VALUE_CLOB:
-			                            	w.writeAttribute("displayValue",  oDataFieldValue , null);
-			                            	w.writeText(sDisplayValue,null);
+			                            	w.writeAttribute("displayValue",  oDataFieldValue );
+			                            	w.write(sDisplayValue);
 			                            	break;
 			                            case DataFieldTypes.VALUE_NUMBER:
-			                            	w.writeAttribute("displayValue",((BigDecimal)oDataFieldValue).toString(),null );
-			                            	w.writeText(sDisplayValue,null);
+			                            	w.writeAttribute("displayValue", XUILocalization.formatNumber( ((BigDecimal)oDataFieldValue).longValue() ));
+			                            	w.write(sDisplayValue);
 			                                break;
+			                            case DataFieldTypes.VALUE_CURRENCY:
+			                            	w.writeAttribute("displayValue",XUILocalization.formatCurrency( ((BigDecimal)oDataFieldValue).longValue() ) );
+			                            	w.write(sDisplayValue);
+			                                break;    
 			                            case DataFieldTypes.VALUE_DATE:
-			                            	w.writeAttribute("displayValue",  oDateFormater.format((Timestamp)oDataFieldValue) , null);
-			                            	w.writeText(oDateFormater.format((Timestamp)oDataFieldValue),null);
+			                            	String date = XUILocalization.formatDate( (Timestamp)oDataFieldValue );
+			                            	w.writeAttribute("displayValue",  date );
+			                            	w.write(date);
 			                                break;
 			                            case DataFieldTypes.VALUE_DATETIME:
-			                            	w.writeAttribute("displayValue",  oDateTimeFormater.format((Timestamp)oDataFieldValue) , null);
-			                            	w.writeText(oDateTimeFormater.format((Timestamp)oDataFieldValue), null);
+			                            	String datetime = XUILocalization.formatDateTime( (Timestamp)oDataFieldValue );
+			                            	w.writeAttribute("displayValue",  datetime );
+			                            	w.write(datetime);
 			                            	break;
 			                        }
 			                   }

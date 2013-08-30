@@ -6,16 +6,6 @@ import static netgest.bo.xwc.components.localization.ComponentMessages.USER_TOOL
 import static netgest.bo.xwc.components.localization.ComponentMessages.USER_TOOLBAR_PROFILES_GRP_BTN_LBL;
 import static netgest.bo.xwc.components.localization.ComponentMessages.USER_TOOLBAR_PROPERTIES_BTN_LBL;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.faces.component.UIComponent;
-
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
@@ -35,6 +25,16 @@ import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.faces.component.UIComponent;
 
 /**
  * 
@@ -400,7 +400,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			arrayChild2
 					.add(
 							"handler",
-							"function() {XVW.AjaxCommand('formMain','showUserPropsCmd','showUserPropsCmd',2);}");
+							"function() {XVW.AjaxCommand('formMain','showUserPropsCmd','showUserPropsCmd',1);}");
 		}
 		
 		//Add the user profiles

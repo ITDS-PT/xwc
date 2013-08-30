@@ -42,6 +42,9 @@ ExtXeo.form.NumberField = Ext.extend(Ext.form.TextField,  {
     decimalSeparator : ",",
     groupSeparator : ".",
     decimalPrecision : 2,
+    currencySymbol : '€',
+    moneyField : false ,
+    moneyPosition : 'right',
     minDecimalPrecision : 2,
     allowNegative : true,
     minValue : Number.NEGATIVE_INFINITY,
@@ -63,6 +66,10 @@ ExtXeo.form.NumberField = Ext.extend(Ext.form.TextField,  {
         
         if(this.allowNegative){
             allowed += "-";
+        }
+        
+        if (this.moneyField){
+        	allowed += this.currencySymbol;
         }
         this.stripCharsRe = new RegExp('[^'+allowed+']', 'gi');
         var keyPress = function(e){
@@ -133,26 +140,35 @@ ExtXeo.form.NumberField = Ext.extend(Ext.form.TextField,  {
     formatNumber : function(nStr) {
 		nStr += '';
 		if( nStr.length > 0 ) {
-			var x = nStr.split(',');
-			var x1 = x[0];
-			var x2 = x.length > 1 ? ',' + x[1] : '';
+			var x = nStr.split(this.decimalSeparator);
+			var integerData = x[0];
+			var decimalData = x.length > 1 ? this.decimalSeparator + x[1] : '';
 			
-			var y = (x2.length == 0)?0:x2.length-1;
+			var y = (decimalData.length == 0)?0:decimalData.length-1;
 			
+			//Format the decimal part
 			while ( y < this.minDecimalPrecision ) {
-				if( x2.length == 0 ) 
-					x2 = this.decimalSeparator;
-				x2 += '0';
-				y = x2.length-1;
+				if( decimalData.length == 0 ) 
+					decimalData = this.decimalSeparator;
+				decimalData += '0';
+				y = decimalData.length-1;
 			}
 	
+			//Format numeric part if grouped 
 			if( this.group ) {
 				var rgx = /(\d+)(\d{3})/;
-				while (rgx.test(x1)) {
-					x1 = x1.replace(rgx, '$1' + '.' + '$2');
+				while (rgx.test(integerData)) {
+					integerData = integerData.replace(rgx, '$1' + this.groupSeparator + '$2');
 				}
 	    	}
-			return x1 + x2;
+			if (this.moneyField){
+				if (this.moneyPosition == 'right')
+					return integerData + decimalData + ' ' +this.currencySymbol;
+				else
+					return this.currencySymbol + ' ' + integerData + decimalData;
+			} else {
+				return integerData + decimalData;
+			}
 		}
 		return nStr;
     },

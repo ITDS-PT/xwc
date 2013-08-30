@@ -1,19 +1,5 @@
 package netgest.bo.xwc.components.classic.grid;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
 import netgest.bo.runtime.boConvertUtils;
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
@@ -37,7 +23,22 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.beans.XEOBaseList;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
+
 import netgest.utils.StringUtils;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -286,6 +287,9 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        			else{ //Special situation for Lov columns that are numeric columns
 	        				serviceParameterValues.add(sParent);
 	        			}
+	        			break;
+	        		case DataFieldTypes.VALUE_CURRENCY:
+	        				serviceParameterValues.add(StringUtils.hasValue( sParent ) ? new BigDecimal(sParent) : null);
 	        			break;
 	        		case DataFieldTypes.VALUE_DATE:
 	        			Date result = boConvertUtils.convertToDate(sParent, null);

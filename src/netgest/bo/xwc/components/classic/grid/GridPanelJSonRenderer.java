@@ -1,21 +1,5 @@
 package netgest.bo.xwc.components.classic.grid;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
@@ -34,6 +18,23 @@ import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
 import netgest.bo.xwc.components.data.JavaScriptArrayProvider;
 import netgest.bo.xwc.components.model.Column;
+import netgest.bo.xwc.framework.localization.XUILocalization;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 public class GridPanelJSonRenderer {
 	
@@ -211,8 +212,6 @@ public class GridPanelJSonRenderer {
 		Object[]	parentValues = null;
 		if( oParentValues != null ) {
 			parentValues = new Object[ oParentValues.length ];
-	        final SimpleDateFormat datetime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	        final SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
 	    	for( int i = 0;oParentValues != null && i < oParentValues.length; i++ ) {
 	    		
 	    		byte fieldType = DataFieldTypes.VALUE_CHAR;
@@ -224,12 +223,12 @@ public class GridPanelJSonRenderer {
 	    		switch ( fieldType ) {
 	    			case DataFieldTypes.VALUE_DATE:
 	    				try {
-	    					parentValues[i] = date.parse( (String)oParentValues[i] );
+	    					parentValues[i] = XUILocalization.parseDate( (String)oParentValues[i] );
 	    				} catch( ParseException e ) {}
 	    				break;
 	    			case DataFieldTypes.VALUE_DATETIME:
 	    				try {
-	    					parentValues[i] = datetime.parse( (String)oParentValues[i] );
+	    					parentValues[i] = XUILocalization.parseDate( (String)oParentValues[i] );
 	    				} catch( ParseException e ) {}
 	    				break;
 	    			case DataFieldTypes.VALUE_BOOLEAN:
@@ -245,6 +244,12 @@ public class GridPanelJSonRenderer {
 		    					parentValues[i] = new BigDecimal( oParentValues[i].toString() );
 		    			}
 	    				break;
+	    			case DataFieldTypes.VALUE_CURRENCY:
+	    				if (oParentValues[i] != null){
+		    				if( (oParentValues[i]).toString().length() > 0 )
+		    					parentValues[i] = new BigDecimal( oParentValues[i].toString() );
+		    			}
+	    				break;	
 	    		}
 	    	}
 		}

@@ -2525,3 +2525,7 @@ ExtXeo.grid.destroyGroupDDSupport  = function (grid){
 ExtXeo.grid.nowrap = function(text){
     return '<div style="white-space:normal !important;">'+ text +'</div>';
 };
+
+ExtXeo.grid.numberStyle = function(text){
+    return '<div style="text-align:right">'+ text +'</div>';
+};

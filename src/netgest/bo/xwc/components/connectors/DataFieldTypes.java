@@ -15,6 +15,8 @@ public class DataFieldTypes {
     public static final byte VALUE_BRIDGE = 8;
     //public static final byte VALUE_SEQUENCE = 11;
     //public static final byte VALUE_IFILELINK = 10;
+    
+    public static final byte VALUE_CURRENCY = 12;
 
     public static final byte RENDER_DEFAULT = 0;
     public static final byte RENDER_LOV = 1;

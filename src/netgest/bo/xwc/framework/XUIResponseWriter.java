@@ -1,12 +1,20 @@
 package netgest.bo.xwc.framework;
 
+import netgest.bo.localizations.MessageLocalizer;
+import netgest.bo.xwc.framework.jsf.XUIWriterAttributeConst;
+import netgest.bo.xwc.framework.jsf.XUIWriterElementConst;
+
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
@@ -14,17 +22,8 @@ import com.sun.faces.RIConstants;
 import com.sun.faces.config.WebConfiguration;
 import com.sun.faces.config.WebConfiguration.BooleanWebContextInitParameter;
 import com.sun.faces.io.FastStringWriter;
-import com.sun.faces.renderkit.html_basic.HtmlResponseWriter;
 import com.sun.faces.util.HtmlUtils;
 import com.sun.faces.util.MessageUtils;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import javax.faces.context.ExternalContext;
-
-import netgest.bo.localizations.MessageLocalizer;
-import netgest.bo.xwc.framework.jsf.XUIWriterAttributeConst;
-import netgest.bo.xwc.framework.jsf.XUIWriterElementConst;
 
 
 /**
@@ -671,7 +670,7 @@ public class XUIResponseWriter extends ResponseWriter {
             scriptOrStyleSrc = true;
         }
 
-        Class valueClass = value.getClass();
+        Class<?> valueClass = value.getClass();
 
         // Output Boolean values specially
         if (valueClass == Boolean.class) {

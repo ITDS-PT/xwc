@@ -1,16 +1,5 @@
 package netgest.bo.xwc.xeo.beans;
 
-import java.io.IOException;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-//import com.sun.xml.internal.bind.v2.runtime.unmarshaller.Loader;
-
 import netgest.bo.def.boDefHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
@@ -27,7 +16,17 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
+
 import netgest.utils.StringUtils;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+//import com.sun.xml.internal.bind.v2.runtime.unmarshaller.Loader;
 
 public class XEOLoginBean extends XEOSecurityLessBean {
 
@@ -236,6 +235,10 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 			} else {
 				if ( this.userName != null && this.password != null ) {
 					oXeoSession = bApp.boLogin( this.userName , this.password );
+					
+					
+					oXeoSession.loadUserLocaleSettings();
+					
 					HttpSession session = getHttpSession( true );
 					XUIRequestContext oRequestContext = XUIRequestContext
 							.getCurrentContext();

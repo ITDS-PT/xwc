@@ -1,11 +1,5 @@
 package netgest.bo.xwc.components.template.xeo.wrappers;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URLEncoder;
-import java.sql.Timestamp;
-import java.util.Date;
-
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -15,6 +9,12 @@ import netgest.bo.xwc.components.connectors.XEOBridgeRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListRowConnector;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.util.Date;
+
 import freemarker.template.SimpleDate;
 import freemarker.template.SimpleNumber;
 import freemarker.template.SimpleScalar;
@@ -150,6 +150,9 @@ public class TemplateDataFieldConnectorWrapper implements TemplateHashModel {
 			return new SimpleDate(dateValue);
 		}
 		else if (value!=null && field.getDataType() == DataFieldTypes.VALUE_NUMBER) {
+			return getValueForNumber(value);
+		}
+		else if (value!=null && field.getDataType() == DataFieldTypes.VALUE_CURRENCY) {
 			return getValueForNumber(value);
 		}
 		else if (value!=null && field.getDataType() == DataFieldTypes.VALUE_CHAR || 

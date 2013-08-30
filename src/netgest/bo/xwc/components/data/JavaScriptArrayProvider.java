@@ -1,13 +1,5 @@
 package netgest.bo.xwc.components.data;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
@@ -18,8 +10,16 @@ import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Column;
-import netgest.bo.xwc.components.util.DateUtils;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
+import netgest.bo.xwc.framework.localization.XUILocalization;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class JavaScriptArrayProvider {
     
@@ -192,16 +192,19 @@ public class JavaScriptArrayProvider {
 			                                break;
 			                        
 			                            case DataFieldTypes.VALUE_NUMBER:
-			                                oStringBuilder.append( ((BigDecimal)oDataFieldValue).toString() );
+			                                oStringBuilder.append( XUILocalization.formatNumber( ((BigDecimal)oDataFieldValue).longValue()) );
 			                                break;
+			                            case DataFieldTypes.VALUE_CURRENCY:
+			                                oStringBuilder.append( XUILocalization.formatCurrency( ((BigDecimal)oDataFieldValue).longValue()) );
+			                                break;    
 			                            case DataFieldTypes.VALUE_DATE:
 			                                oStringBuilder.append("\"");
-			                                DateUtils.formatTimestampToDate( oStringBuilder, (Timestamp)oDataFieldValue );
+			                                oStringBuilder.append(XUILocalization.formatDate( (Timestamp)oDataFieldValue ));
 			                                oStringBuilder.append("\"");
 			                                break;
 			                            case DataFieldTypes.VALUE_DATETIME:
 			                                oStringBuilder.append("\"");
-			                                DateUtils.formatTimestampToDateTime( oStringBuilder, (Timestamp)oDataFieldValue );
+			                                oStringBuilder.append( XUILocalization.formatDateTime( (Timestamp)oDataFieldValue ));
 			                                oStringBuilder.append("\"");
 			                                break;
 			                            case DataFieldTypes.VALUE_CHAR:
@@ -322,13 +325,16 @@ public class JavaScriptArrayProvider {
                                 oStringBuilder.append( "\"" );
                                 break;
                             case DataFieldTypes.VALUE_NUMBER:
-                                oStringBuilder.append( ((BigDecimal)oDataFieldValue).toString() );
+                                oStringBuilder.append( XUILocalization.formatNumber( ((BigDecimal)oDataFieldValue).longValue()) );
                                 break;
+                            case DataFieldTypes.VALUE_CURRENCY:
+                                oStringBuilder.append( XUILocalization.formatCurrency( ((BigDecimal)oDataFieldValue).longValue()) );
+                                break;    
                             case DataFieldTypes.VALUE_DATE:
-                                DateUtils.formatTimestampToDate( oStringBuilder, (Timestamp)oDataFieldValue );
+                            	oStringBuilder.append(XUILocalization.formatDate( (Timestamp)oDataFieldValue ));
                                 break;
                             case DataFieldTypes.VALUE_DATETIME:
-                                DateUtils.formatTimestampToDateTime( oStringBuilder, (Timestamp)oDataFieldValue );
+                            	oStringBuilder.append( XUILocalization.formatDateTime( (Timestamp)oDataFieldValue ));
                                 break;
                         }
                     }

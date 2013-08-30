@@ -8,17 +8,6 @@ import static netgest.bo.xwc.components.HTMLTag.DIV;
 import static netgest.bo.xwc.components.HTMLTag.INPUT;
 import static netgest.bo.xwc.components.HTMLTag.TABLE;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.faces.component.UIComponent;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.grid.GridPanelJSonRenderer.JsonFormat;
@@ -47,7 +36,19 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.ColumnAttribute;
+
 import netgest.utils.StringUtils;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.faces.component.UIComponent;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -445,6 +446,7 @@ public class GridPanelJqueryRenderer extends JQueryBaseRenderer implements XUIRe
 		
 		switch (metadata.getDataType()){
 			case DataFieldTypes.VALUE_NUMBER : builder.searchDataType( "integer" ); break;
+			case DataFieldTypes.VALUE_CURRENCY : builder.searchDataType( "integer" ); break;
 			case DataFieldTypes.VALUE_DATE : builder.searchDataType( "date" ); break;
 			case DataFieldTypes.VALUE_DATETIME : builder.searchDataType( "date" ); break;
 			default : builder.searchDataType( "text" );
