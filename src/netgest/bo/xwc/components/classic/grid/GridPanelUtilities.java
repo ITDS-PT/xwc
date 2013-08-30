@@ -1,13 +1,5 @@
 package netgest.bo.xwc.components.classic.grid;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
 import netgest.bo.xwc.components.connectors.FilterTerms;
@@ -15,7 +7,16 @@ import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.framework.XUIRequestContext;
+
 import netgest.utils.StringUtils;
+
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -324,7 +325,7 @@ public class GridPanelUtilities {
 	public FilterTerms createSimpleFilterTerms( String currentFilters ) {
 		FilterTerms terms = null;
 		
-		if (currentFilters == null)
+		if (StringUtils.isEmpty(  currentFilters ) )
 			return terms;
 		
 		try {
