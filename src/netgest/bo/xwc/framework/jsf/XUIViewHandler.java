@@ -1265,7 +1265,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         newWriter = null;
 
         // Scan components that need to be rendered
-        // Phase 1... determinde what element should be renderered;
+        // Phase 1... determine what element should be renderered;
         ArrayList<XUIComponentBase> oToRenderList = new ArrayList<XUIComponentBase>();
         
         if( oViewToRender.isPostBack() && oViewToRender.isRendered() ) {
