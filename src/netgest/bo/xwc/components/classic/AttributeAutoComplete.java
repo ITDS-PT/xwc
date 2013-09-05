@@ -4,6 +4,7 @@ import netgest.bo.def.boDefAttribute;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
+import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMessage;
@@ -240,13 +241,13 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
      * @return True if the component is visible and enabled, false otherwise (disabled, readOnly, not write permissions)
      */
     public boolean isUsable(){
-    	/*boolean disabled = isDisabled();
+    	boolean disabled = isDisabled();
 		boolean read = isReadOnly();
 		boolean writePermissions = getEffectivePermission(SecurityPermissions.WRITE);
 		boolean visible = isVisible();
 		if (disabled || read || !writePermissions || !visible){
 			return false;
-		}*/
+		}
 		return true;
     }
     
