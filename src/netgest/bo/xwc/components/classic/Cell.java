@@ -1,11 +1,11 @@
 package netgest.bo.xwc.components.classic;
 
-import java.io.IOException;
-
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+
+import java.io.IOException;
 
 /**
  * The Cell component creates a column within a row of a table. 
@@ -27,7 +27,7 @@ public class Cell extends XUIComponentBase
 		this.colSpan.setValue( colSpan );
 	}
 	
-	protected int getColSpan() {
+	public int getColSpan() {
 		return this.colSpan.getValue();
 	}
 	
