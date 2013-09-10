@@ -1,15 +1,17 @@
 package netgest.bo.xwc.components.html;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+
 import netgest.utils.StringUtils;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class GenericTag extends XUIComponentBase {
 
@@ -82,7 +84,7 @@ public class GenericTag extends XUIComponentBase {
 		if( tagName != null ) {
 			Set<String> props = properties.keySet();
 			for( String propName : props ) {
-				if( !propName.equals( "__tagName" ) ) {
+				if( !propName.equals( "__tagName" ) && !propName.equals( "beanId" ) ) {
 					b.append( " " + propName+"='"+properties.get( propName )+"' " );
 				}
 			}
@@ -146,6 +148,11 @@ public class GenericTag extends XUIComponentBase {
 			
 		}
 		
+		@Override
+		public StateChanged wasStateChanged(XUIComponentBase component,
+				List< XUIBaseProperty< ? >> updateProperties) {
+			return super.wasStateChanged( component , updateProperties );
+		}
 		
 	}
 	

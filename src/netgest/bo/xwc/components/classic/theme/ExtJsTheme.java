@@ -1,16 +1,5 @@
 package netgest.bo.xwc.components.classic.theme;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.lowagie.text.html.HtmlTags;
-
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boBridgeIterator;
 import netgest.bo.runtime.boObject;
@@ -25,7 +14,6 @@ import netgest.bo.utils.XeoUserThemeFile;
 import netgest.bo.xeomodels.system.Theme;
 import netgest.bo.xeomodels.system.ThemeIncludes;
 import netgest.bo.xwc.components.HTMLAttr;
-import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -33,8 +21,21 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStyleContext;
 import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.framework.localization.XUIMessagesLocalization;
+import netgest.bo.xwc.framework.localization.XUILocalization;
+
 import netgest.utils.StringUtils;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.lowagie.text.html.HtmlTags;
 
 
 /**
@@ -230,35 +231,10 @@ public class ExtJsTheme implements XUITheme {
 
 	protected String getApplicationLanguage() {
 		
-		String lang = null;
-		lang = boApplication.getDefaultApplication().getApplicationLanguage();
-
-		EboContext ctx = getEboContext(); 
-		if ( ctx != null) {
-			boSessionUser user = ctx.getBoSession().getUser();
-			try {
-				if (user.getLanguage() != null) {
-					lang = user.getLanguage().toLowerCase();
-					if (lang.length() > 3) {
-						lang = lang.substring(0, 2);
-					}
-				}
-			} catch (Exception e) {
-				if (lang == null){
-					lang = XUIMessagesLocalization.getThreadCurrentLocale()
-							.getLanguage();
-					logger.warn(" Could not retrieve the language, using system language '%s' ",e,lang);
-				}
-			}
-		}
-
-		if (lang == null){
-			lang = XUIMessagesLocalization.getThreadCurrentLocale()
-					.getLanguage();
-		}
+		Locale lang = XUILocalization.getCurrentLocale();
 		
-		lang = lang.toLowerCase();
-		return lang;
+		String result = lang.getLanguage().toLowerCase();
+		return result;
 	}
 
 

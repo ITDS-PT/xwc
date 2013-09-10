@@ -1,5 +1,7 @@
 package netgest.bo.xwc.framework.localization;
 
+import netgest.utils.StringUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,87 +14,12 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 
-import netgest.bo.runtime.EboContext;
-import netgest.bo.system.boApplication;
-import netgest.bo.system.boSessionUser;
-import netgest.utils.StringUtils;
-
 public class XUIMessagesLocalization {
 
 	private static UTF8Control control = new UTF8Control();
 	
-	public static Locale getApplicationLocale(){
-		String appLocale = getApplicationLanguage();
-		if (StringUtils.hasValue( appLocale ))
-			return new Locale(appLocale);
-		return null;
-	}
 	
-	public static String getApplicationLanguage() {
-		try{
-			boApplication bo = boApplication.currentContext().getApplication();
-			String ret = bo.getApplicationLanguage();
-			return ret;
-		}catch (Exception e){
-			return "";
-		}
-	}
 	
-	public static Locale getUserLanguageLocale(){
-		String language = getUserLanguage( false );
-		if (StringUtils.hasValue( language ))
-			return new Locale( getUserLanguage() );
-		else
-			return null;
-	}
-
-	protected static String getUserLanguage(boolean useApplicationOnMiss){
-		String ret = null;
-		if ( useApplicationOnMiss )
-			ret = getApplicationLanguage();
-		try {
-			if (boApplication.currentContext() != null) 
-			{
-				EboContext ctx = boApplication.currentContext().getEboContext();
-				if (ctx != null)
-				{
-					boSessionUser boUser = ctx.getSysUser();
-					if (boUser != null){
-						if (StringUtils.hasValue( boUser.getLanguage() )) {
-							ret = boUser.getLanguage();
-						}
-					}
-				}
-			}
-			return ret;
-		} catch (Exception e )
-		{
-			//e.printStackTrace();
-		}
-		return ret;
-	}
-	
-	public static String getUserLanguage() {
-		return getUserLanguage( true );
-	}
-	
-	/**
-	 * 
-	 * Retrieves the current locale associated to the user/application
-	 * 
-	 * @return
-	 */
-	public static Locale getCurrentLocale(){
-		String language = getUserLanguage();
-		Locale locale = null;
-		if ( StringUtils.isEmpty( language ) ){
-			language = getApplicationLanguage();
-		}
-		if ( StringUtils.hasValue( language ) ){
-			locale = new Locale( language );
-		} 
-		return locale;
-	}
 
 	public static String getMessage(String lang, Locale local, String bundle,
 			String key, Object... args) {
@@ -111,12 +38,7 @@ public class XUIMessagesLocalization {
 		return getMessage(local, bundle, key, args);
 	}
 
-	// ////////////////////////////////
-	static ThreadLocal<Locale> threadLocal = new ThreadLocal<Locale>() {
-		protected Locale initialValue() {
-			return Locale.getDefault();
-		};
-	};
+	
 
 	private static final Hashtable<Locale, Hashtable<String, ResourceBundle>> resourceBundles = new Hashtable<Locale, Hashtable<String, ResourceBundle>>();
 
@@ -135,22 +57,7 @@ public class XUIMessagesLocalization {
 	}
 	public static String getMessage(Locale locale, String bundle, String key, HandleMissingResource missingResource,
 			Object... args ) {
-		// ///////
-		String lang = locale.getLanguage();
-		if (!lang.equalsIgnoreCase(getUserLanguage())) {
-			locale = new Locale(getUserLanguage());
-		}
-
-		lang = locale.getLanguage();
-		if (lang.length() > 2)
-			if (lang.charAt(2) == '_') {
-
-				String string1 = lang.substring(0, 2);
-				String string2 = lang.substring(3, 5);
-				locale = new Locale(string1, string2);
-			}
-
-		// ////////
+		
 		String localizedMessage = null;
 
 		Hashtable<String, ResourceBundle> localeBundles;
@@ -231,15 +138,11 @@ public class XUIMessagesLocalization {
 	}
 
 	public static void setThreadCurrentLocale(Locale local) {
-
-		threadLocal.set(local);
-
+		XUILocalization.setCurrentLocale( local );
 	}
 
 	public static Locale getThreadCurrentLocale() {
-
-		return threadLocal.get();
-
+		return XUILocalization.getCurrentLocale();
 	}
 	
 	public static class UTF8Control extends Control {

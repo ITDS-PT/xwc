@@ -1,15 +1,16 @@
 package netgest.bo.xwc.components.classic;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Map;
-
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.localization.JavaToJavascriptPatternConverter;
+import netgest.bo.xwc.framework.localization.XUILocalization;
+
+import java.sql.Timestamp;
+import java.util.Map;
 
 /**
  * This component renders a combo with day hour's. It can be bind to a {@link DataFieldConnector} and
@@ -18,7 +19,6 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
  *
  */
 public class AttributeTime extends AttributeBase {
-    private static final SimpleDateFormat oTimeFormat       = new SimpleDateFormat( "HH:mm" );
 
 	public static class XEOHTMLRenderer extends ExtJsFieldRendeder {
 
@@ -30,7 +30,9 @@ public class AttributeTime extends AttributeBase {
 		@Override
 		public ExtConfig getExtJsFieldConfig(AttributeBase oAttr) {
 	        ExtConfig oInpTimeConfig = super.getExtJsFieldConfig( oAttr );
-	        oInpTimeConfig.addJSString("format", "H:i");
+	        String timeFormat= XUILocalization.getHourMinuteFormat();
+	        String javascriptFormat = JavaToJavascriptPatternConverter.convertTimePatternToJavascript( timeFormat );
+	        oInpTimeConfig.addJSString("format", javascriptFormat);
 	        oInpTimeConfig.add("width", 95 );
             oInpTimeConfig.addJSString("value", formatValue( oAttr ) );
             if( oAttr.isReadOnly() ) {
@@ -70,7 +72,7 @@ public class AttributeTime extends AttributeBase {
             oValue = attBase.getValue();
             if( oValue != null ) {
 	            if( oValue instanceof Timestamp ) {
-	            	jsValue = JavaScriptUtils.writeValue( oTimeFormat.format( oValue ) );
+	            	jsValue = JavaScriptUtils.writeValue( XUILocalization.formatHourMinute( (Timestamp)oValue ) );
 	            }
 	            else {
 	            	jsValue = JavaScriptUtils.writeValue( oValue );

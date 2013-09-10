@@ -54,7 +54,12 @@ public class CardIDSearchQueryCreator {
 			}
 			b.append("])");
 			cardIdSearchResult = new CardIDSearch( b.toString() , parameters );
+		} else {
+			//Can't find proper situation, return a value that will not make any harm
+			boDefHandler handler = attributeDefinition.getBoDefHandler();
+			cardIdSearchResult = new CardIDSearch( "([select BOUI from "+handler.getBoMasterTable()+" where 0=1])" , new LinkedList< Object >() );
 		}
+		
 	}
 
 	private boolean hasMoreObjects(boDefHandler[] relations, int k) {
@@ -63,7 +68,7 @@ public class CardIDSearchQueryCreator {
 
 	private List< String > getCardIdComponents(boDefHandler current) {
 		String cardId = current.getCARDID();
-		CardIDParser parser = new CardIDParser( cardId );
+		CardIDParser parser = new CardIDParser( cardId, current );
 		List<String> parts = parser.getParts();
 		return parts;
 	}

@@ -1,15 +1,18 @@
 package netgest.bo.xwc.components.classic;
 
-import java.io.IOException;
-
-import javax.faces.component.UIComponent;
-
 import netgest.bo.xwc.components.html.GenericTag;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+
 import netgest.utils.StringUtils;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.faces.component.UIComponent;
 
 public class Header extends XUIComponentBase {
 	
@@ -44,7 +47,10 @@ public class Header extends XUIComponentBase {
 				headerWriter.write( content );
 			for (UIComponent child: header.getChildren()){
 				if (child instanceof GenericTag){
-					headerWriter.write( ((GenericTag)child).serialize() );
+					GenericTag tag = ( GenericTag ) child;
+					tag.setRenderedOnClient( true ); //Since we're not encoding the component
+					//through the standard means we must set the renderedOnClinet value
+					headerWriter.write( tag.serialize() );
 				}
 			}
 			
@@ -53,9 +59,19 @@ public class Header extends XUIComponentBase {
 		@Override
 		public void encodeChildren(XUIComponentBase component)
 				throws IOException {
-			
+			//Do nothing
 		}
 		
+		@Override
+		public boolean getRendersChildren() {
+			return true;
+		}
+		
+		@Override
+		public StateChanged wasStateChanged(XUIComponentBase component,
+				List< XUIBaseProperty< ? >> updateProperties) {
+			return super.wasStateChanged( component , updateProperties );
+		}
 		
 		
 	}

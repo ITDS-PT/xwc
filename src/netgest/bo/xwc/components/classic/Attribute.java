@@ -7,10 +7,6 @@ import static netgest.bo.xwc.components.HTMLTag.TABLE;
 import static netgest.bo.xwc.components.HTMLTag.TD;
 import static netgest.bo.xwc.components.HTMLTag.TR;
 
-import java.io.IOException;
-
-import javax.faces.component.UIComponent;
-
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -22,7 +18,12 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIMethodBindingValueChangeListener;
+
 import netgest.utils.StringUtils;
+
+import java.io.IOException;
+
+import javax.faces.component.UIComponent;
 
 /**
  * This components renders a label and the input component for a {@link DataFieldConnector}
@@ -207,6 +208,9 @@ public class Attribute extends AttributeBase
                 case DataFieldTypes.VALUE_BRIDGE:
                 	sRet = "bridgeLookup";
                 	break;
+                case DataFieldTypes.VALUE_CURRENCY:
+                	sRet = "attributeNumber"; 
+                	break;	
             }
 
             setInputType( sRet );

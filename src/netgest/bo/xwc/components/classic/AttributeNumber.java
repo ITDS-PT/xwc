@@ -2,17 +2,20 @@ package netgest.bo.xwc.components.classic;
 
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
+import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
+import netgest.bo.xwc.framework.localization.XUILocalization;
 
 import java.math.BigDecimal;
+import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
 /**
- * This component reders a only number's input
+ * This component renders only number's input
  * @author jcarreira
  *
  */
@@ -102,7 +105,6 @@ public class AttributeNumber extends AttributeBase {
 
 		@Override
 		public String getExtComponentType( XUIComponentBase oComp ) {
-			// TODO Auto-generated method stub
 			return "ExtXeo.form.NumberField";
 		}
     	
@@ -117,6 +119,14 @@ public class AttributeNumber extends AttributeBase {
 			
 			config.add( "maxValue", oAttr.getMaxValue() );
 			config.add( "minValue", oAttr.getMinValue() );
+			
+			config.addJSString( "decimalSeparator", String.valueOf( XUILocalization.getDecimalSeparator()  ));
+			config.addJSString( "groupSeparator", String.valueOf( XUILocalization.getGroupSeparator()) );
+			
+			if (oAttr.getDataType() == DataFieldTypes.VALUE_CURRENCY ) {
+				config.add( "moneyField", true);
+				config.addJSString( "currencySymbol", XUILocalization.getCurrencySymbol() );
+			}
 			
 			boolean g = oAttr.getGroupNumber();
 			config.add( "group" , g );
@@ -153,8 +163,10 @@ public class AttributeNumber extends AttributeBase {
             if( !oAttrComp.isDisabled() && !oAttrComp.isReadOnly() && oAttrComp.isVisible() ) {
 	            String value = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get( oAttrComp.getClientId() );
 	            if( value != null ) {
-	            	value = value.replaceAll("\\.", "");
-	            	value = value.replace(',', '.');
+	            	value = value.replaceAll(  Pattern.quote( String.valueOf( XUILocalization.getGroupSeparator() ) ), "") ;
+	            	value = value.replace( XUILocalization.getDecimalSeparator(), '.');
+	            	value = value.replace(XUILocalization.getCurrencySymbol(), "");
+	            	value = value.trim();
 	            }
 	            oAttrComp.setSubmittedValue( value );
             }

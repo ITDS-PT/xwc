@@ -18,7 +18,7 @@ public class AttributeBoolean extends AttributeBase {
 	
 	XUIBaseProperty<Boolean> useBooleanValues = new XUIBaseProperty<Boolean>( "useBooleanValues", this, false ); 
 	
-	private boolean getUseBooleanValues() {
+	public boolean getUseBooleanValues() {
 		return useBooleanValues.getValue();
 	}
 

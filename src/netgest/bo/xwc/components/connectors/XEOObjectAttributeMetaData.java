@@ -1,15 +1,5 @@
 package netgest.bo.xwc.components.connectors;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import netgest.bo.system.Logger;
-
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.lovmanager.LovManager;
@@ -18,9 +8,19 @@ import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObjectList;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.security.securityRights;
+import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class XEOObjectAttributeMetaData implements DataFieldMetaData {
 	
@@ -41,10 +41,8 @@ public class XEOObjectAttributeMetaData implements DataFieldMetaData {
         if ( boDefAttribute.ATTRIBUTE_BOOLEAN.equals( sValueType ) )
             return DataFieldTypes.VALUE_BOOLEAN;
 
-        if ( boDefAttribute.ATTRIBUTE_DURATION.equals( sValueType ) )
-            return DataFieldTypes.VALUE_NUMBER;
         if ( boDefAttribute.ATTRIBUTE_CURRENCY.equals( sValueType ) )
-            return DataFieldTypes.VALUE_NUMBER;
+            return DataFieldTypes.VALUE_CURRENCY;
 
         if ( boDefAttribute.ATTRIBUTE_DATE.equals( sValueType ) )
                 return DataFieldTypes.VALUE_DATE;

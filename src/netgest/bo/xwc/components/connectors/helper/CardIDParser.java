@@ -1,5 +1,8 @@
 package netgest.bo.xwc.components.connectors.helper;
 
+import netgest.bo.def.boDefAttribute;
+import netgest.bo.def.boDefHandler;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,13 +20,15 @@ import org.apache.commons.lang.StringUtils;
 public class CardIDParser {
 	
 	private String cardId;
+	private boDefHandler definition;
 	/**
 	 * Taken from another XEO class
 	 */
 	Pattern p = Pattern.compile( "\\[(([A-Za-z0-9_])*[^\\]*])\\]" );
 	
-	public CardIDParser(String cardId){
+	public CardIDParser(String cardId, boDefHandler definition){
 		this.cardId = cardId;
+		this.definition = definition;
 	}
 	
 	/**
@@ -38,13 +43,30 @@ public class CardIDParser {
 			return new ArrayList< String >();
 		
 		Matcher m = p.matcher( cardId );
-		List<String> attributes = new ArrayList< String >();
+		List<String> result = new ArrayList< String >();
 		while (m.find()){
-			String attribute = m.group( 1 );
-			if (!attribute.contains( "." )) //For now don't add attributes of children
-				attributes.add( attribute ); 
+			String attributeInCardId = m.group( 1 );
+			addNonObjectAttribute( attributeInCardId , result );
 		}
-		return attributes; 
+		return result; 
+	}
+
+	private void addNonObjectAttribute(String attributeInCardId, List< String > attributes
+			) {
+		if (!isAttributeOfObjectRelation( attributeInCardId )) {
+			if (!isAttributeObject( attributeInCardId ) ) {
+				attributes.add( definition.getBoMasterTable()+"."+attributeInCardId ); 
+			}
+		}
+	}
+
+	private boolean isAttributeObject(String attributeInCardId) {
+		return boDefAttribute.ATTRIBUTE_OBJECT.equals( 
+				definition.getAttributeRef( attributeInCardId ).getAtributeDeclaredType());
+	}
+
+	private boolean isAttributeOfObjectRelation(String attributeInCardId) {
+		return attributeInCardId.contains( "." );
 	}
 	
 	
