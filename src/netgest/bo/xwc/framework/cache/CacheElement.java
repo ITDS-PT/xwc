@@ -35,6 +35,16 @@ public class CacheElement implements CacheEntry {
 		
 		@Override
 		public Object getContent() { return NULL_CONTENT ; }
+
+		@Override
+		public int getLength() {
+			return 0;
+		}
+
+		@Override
+		public void invalidate() {
+		}
+		
 	}; 
 			
 
@@ -89,6 +99,20 @@ public class CacheElement implements CacheEntry {
 	@Override
 	public Date getDateAdded() {
 		return dateAdded;
+	}
+
+
+	@Override
+	public int getLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public void invalidate() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	
