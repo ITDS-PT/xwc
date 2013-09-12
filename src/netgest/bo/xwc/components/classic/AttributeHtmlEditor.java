@@ -3,16 +3,6 @@ package netgest.bo.xwc.components.classic;
 import static netgest.bo.xwc.components.HTMLAttr.ID;
 import static netgest.bo.xwc.components.HTMLTag.DIV;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
@@ -31,6 +21,16 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
  * This component represents a HtmlEditor.
@@ -102,7 +102,6 @@ public class AttributeHtmlEditor extends AttributeBase {
 			
 			updateProperties.add( component.getStateProperty( "displayValue" ) );
 			updateProperties.add( component.getStateProperty( "visible" ) );
-			updateProperties.add( component.getStateProperty( "readOnly" ) );
 			
 			return super.wasStateChanged( component, updateProperties );
 			
@@ -119,17 +118,12 @@ public class AttributeHtmlEditor extends AttributeBase {
 			StringBuilder script = new StringBuilder(200);
 			script.append("var c=Ext.getCmp('");
 			script.append(component.getClientId());
-			script.append("_editor');\n");
+			script.append("');\n");
 			script.append("if(c) { ");
 			
 			
 			for (XUIBaseProperty<?> prop : propertiesWithChangedState){
-				if ("readOnly".equalsIgnoreCase( prop.getName() ) ){
-					script.append( "c.setReadOnly(" );
-					script.append( oHtmlComp.isReadOnly() );
-					script.append( ");" );
-				}
-				else if ("visible".equalsIgnoreCase( prop.getName() ) ){
+				if ("visible".equalsIgnoreCase( prop.getName() ) ){
 					script.append( "c.setVisible(" );
 					script.append( oHtmlComp.isVisible() );
 					script.append( ");" );
