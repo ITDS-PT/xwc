@@ -3,6 +3,8 @@ package netgest.bo.xwc.framework.messages;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.localization.XUILocalizedMessage;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 
 /**
  * 
@@ -129,9 +131,14 @@ public class XUIMessageSender {
 				XUIPopupMessageFactory.createError( title, message ) );
 	}
 	
+	private static AtomicLong sequence = new AtomicLong();  
+	
+	private static long getNewId() {
+		return sequence.incrementAndGet();
+	}
 	
 	protected static String generateId(){
-		return "A" + System.currentTimeMillis();
+		return "A" + getNewId();
 	}
 	
 	
