@@ -146,16 +146,26 @@
 
       //Adicionei estes hooks aqui
       function disable(){
-    	  $(XVW.get(elemid + "_input")).attr('disabled', 'disabled');
+    	  var elem = $(XVW.get(elemid + "_input"));
+    	  elem.attr('disabled', 'disabled');
+    	  elem.parent().parent().addClass('auto-disabled');
       }
       
       function enable(){
-    	  $(XVW.get(elemid + "_input")).removeAttr('disabled');
+    	  var elem = $(XVW.get(elemid + "_input"));
+    	  elem.removeAttr('disabled');
+    	  elem.parent().parent().removeClass('auto-disabled');
       }
       
       function getCardIdLinkCall(){
     	  return 'XVW.AjaxCommand( "' + options.formId +  '","' + options.componentId + '","' + options.componentId + '","1")';
       }
+      
+      function onChangeSubmitCall(){
+    	  if (options.onChangeSubmit)
+    		  XVW.AjaxCommand( options.formId,null,null,"1");
+      }
+      
       //Adicionei estes hooks aqui
       
       function addItem(title, value, preadded, locked, focusme) {
@@ -192,6 +202,7 @@
         }
         holder.children("li.bit-box.deleted").removeClass("deleted");
         clear_feed(1);
+        onChangeSubmitCall();
         return id;
       }
 
@@ -209,6 +220,7 @@
             element.children('option[value="' + item.attr("rel") + '"]').remove();
           }
           item.remove();
+          onChangeSubmitCall();
           element.change();
           deleting = 0;
           enable();
@@ -596,7 +608,8 @@
         selectedItemClass : '',
     	defaultTextClass : 'xwc-initial-text' ,
         defaultResultTextClass : 'xwc-lookup-element' ,
-        defaultElementClass : 'xwc-selected-element'	
+        defaultElementClass : 'xwc-selected-element',
+        onChangeSubmit : false
         
       },
       opt);
