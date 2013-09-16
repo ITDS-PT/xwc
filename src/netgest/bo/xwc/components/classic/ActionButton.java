@@ -88,6 +88,8 @@ public class ActionButton extends XUICommand
     @Values({ "left","top" })
     private XUIBaseProperty<String>			iconPosition = new XUIBaseProperty<String>( "iconPosition", this, "left" );
     
+    private XUIBaseProperty<String>			cssClass = new XUIBaseProperty<String>( "cssClass", this, "left" );
+    
     public String getIconPosition(){
     	return iconPosition.getValue();
     }
@@ -281,6 +283,13 @@ public class ActionButton extends XUICommand
         return target.getValue();
     }
 
+    public String getCssClass() {
+    	return cssClass.getValue();
+    }
+    
+    public void setCssClass(String cssClass) {
+    	this.cssClass.setValue( cssClass );
+    }
     
     
     public static class XEOHTMLRenderer extends XUIRenderer implements ExtJsRenderer {
