@@ -3,6 +3,7 @@ package netgest.bo.xwc.framework.localization;
 import netgest.bo.system.XEO;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.locale.LocaleFormatter;
+import netgest.bo.system.locale.LocaleFormatter.CurrencyPosition;
 import netgest.bo.system.locale.LocaleFormatter.DateTimeLengh;
 
 import java.text.DecimalFormat;
@@ -122,6 +123,10 @@ public class XUILocalization  {
 	
 	public static DecimalFormat getCurrencyFormatter() {
 		return getLocaleProvider().getCurrencyFormatter();
+	}
+	
+	public static CurrencyPosition getCurrencyPosition() {
+		return getLocaleProvider().getCurrencyPosition();
 	}
 	
 	

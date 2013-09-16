@@ -1,9 +1,5 @@
 package netgest.bo.xwc.components.classic.scripts;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.render.Renderer;
-
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.MessageBox.MessageBoxButtons;
@@ -17,7 +13,12 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+
 import netgest.utils.StringUtils;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.render.Renderer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
