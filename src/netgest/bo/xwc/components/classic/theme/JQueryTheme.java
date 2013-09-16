@@ -34,7 +34,7 @@ public class JQueryTheme extends ExtJsTheme {
 		
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jquery",
 				composeUrl("//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"));
-		String jQueryFallback = "!window.jQuery && document.write(unescape(\"%3Cscript src='jquery-xeo/js/jquery-1.7.2.min.js' type='text/javascript'%3E%3C/script%3E\"));";
+		String jQueryFallback = "!window.jQuery && document.write(unescape(\"%3Cscript src='jquery-xeo/js/jquery-1.8.2.min.js' type='text/javascript'%3E%3C/script%3E\"));";
 		scriptContext.add( XUIScriptContext.POSITION_HEADER, "jquery_fallback",jQueryFallback );
 		
 		scriptContext.addInclude(XUIScriptContext.POSITION_HEADER, "jquery-ui",
