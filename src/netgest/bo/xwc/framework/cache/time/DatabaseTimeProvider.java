@@ -18,7 +18,13 @@ import netgest.bo.xwc.framework.cache.provider.ConnectionProvider;
  */
 public class DatabaseTimeProvider implements TimeProvider {
 	
+	private static final long VALIDITY_OF_OS_TIME = 24 * 60 * 60 * 1000;
+	
 	private ConnectionCleanup cleanup;
+	
+	private long gapBetweenOsAndDb;
+	private long lastDbTime;
+	
 	
 	private DriverUtils dbUtils;
 	private ConnectionProvider databaseProvider;
@@ -31,28 +37,30 @@ public class DatabaseTimeProvider implements TimeProvider {
 	
 	@Override
 	public Date getCurrentTime() {
-		Connection conn = databaseProvider.getConnection();
 		
-		String query = dbUtils.getSelectTimeQuery();
+		long currentTime = System.currentTimeMillis();
 		
-		Statement st = null;
-		ResultSet rs = null;
-		try {
-			st = conn.createStatement();
-			rs = st.executeQuery( query );
-			if (rs.next()){
-				Timestamp time = rs.getTimestamp( 1 );
-				return new Date(time.getTime());
+		if(  currentTime - lastDbTime > VALIDITY_OF_OS_TIME ) {
+			
+			lastDbTime = currentTime;
+			Connection conn = databaseProvider.getConnection();
+			String query = dbUtils.getSelectTimeQuery();
+			
+			Statement st = null;
+			ResultSet rs = null;
+			try {
+				st = conn.createStatement();
+				rs = st.executeQuery( query );
+				if (rs.next()){
+					Timestamp time = rs.getTimestamp( 1 );
+					gapBetweenOsAndDb = (time.getTime() - System.currentTimeMillis());
+				}
+			} catch ( SQLException e ) {
+				e.printStackTrace();
+			} finally {
+				cleanup.closeAll( conn , st , rs );
 			}
-		} catch ( SQLException e ) {
-			e.printStackTrace();
-		} finally {
-			cleanup.closeAll( conn , st , rs );
 		}
-		
-		return null;
+		return new Date( currentTime + gapBetweenOsAndDb );
 	}
-	
-	
-	
 }

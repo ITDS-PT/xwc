@@ -41,15 +41,21 @@ public class TriggerBasedCacheProvider implements CacheEngine {
 	 * The default time to expire when none is provided (in seconds)
 	 */
 	public static final int DEFAULT_EXPIRE_TIME = 60;
+	
 	/**
 	 * Default cache size 
 	 */
-	private static final int CACHE_DEFAULT_SIZE = 100;
+	private static final int DEFAULT_CACHE_SIZE = 100;
+
+	/**
+	 * Default max cache size in bytes 
+	 */
+	private static final int DEFAULT_CACHE_MAX_MEM = 40000000;
 	
 	/**
 	 * The cache
 	 */
-	private static LRUCache<String,CacheEntry> cache = new LRUCache<String,CacheEntry>( CACHE_DEFAULT_SIZE ); 
+	private static LRUCache<String,CacheEntry> cache;// = new LRUCache<String,CacheEntry>( CACHE_DEFAULT_SIZE ); 
 	/**
 	 * Provider for the Time
 	 */
@@ -63,7 +69,21 @@ public class TriggerBasedCacheProvider implements CacheEngine {
 	 */
 	private ConnectionCleanup cleanup;
 	
-	public TriggerBasedCacheProvider(TimeProvider provider, ConnectionProvider dbConnectionProvider) { 
+	private int maxCacheSize;
+	
+	private int maxCacheItens;
+	
+	private int actualSize;
+	
+	public TriggerBasedCacheProvider(TimeProvider provider, ConnectionProvider dbConnectionProvider, int maxCacheBytes, int maxCacheItens) {
+		
+		// Not implemented
+		this.maxCacheSize = maxCacheBytes < 0 ? DEFAULT_CACHE_MAX_MEM : maxCacheBytes;
+		
+		this.maxCacheItens = maxCacheItens < 0 ? DEFAULT_CACHE_SIZE : maxCacheItens;
+		
+		cache = new LRUCache<String, CacheEntry>( this.maxCacheItens );
+		
 		this.time = provider;
 		this.dbConnectionProvider = dbConnectionProvider;
 		cleanup = new ConnectionCleanup();

@@ -30,6 +30,7 @@ public class CacheProviderFactory {
 		CacheEngine defaultProvider = new TriggerBasedCacheProvider(
 				  TimeProviderFactory.getTimeProvider()
 				, ConnectionProviderFactory.getConnectionProvider()
+				, -1, -1 
 		);
 		defaultProvider.init();
 		engines.put( CacheType.TRIGGER_BASED.name() , defaultProvider );
@@ -55,7 +56,7 @@ public class CacheProviderFactory {
 		if (CacheType.TRIGGER_BASED == type){
 			CacheEngine newProvider = new TriggerBasedCacheProvider( 
 					  TimeProviderFactory.getTimeProvider( TimeProviderFactory.DATABASE )
-					, ConnectionProviderFactory.getConnectionProvider( ) ); 
+					, ConnectionProviderFactory.getConnectionProvider( ), -1, -1  ); 
 			newProvider.init();
 			engines.put( CacheType.TRIGGER_BASED.name() , newProvider );
 			return newProvider;
@@ -63,7 +64,7 @@ public class CacheProviderFactory {
 		
 		CacheEngine defaultProvider = new TriggerBasedCacheProvider( 
 				TimeProviderFactory.getTimeProvider()
-				, ConnectionProviderFactory.getConnectionProvider() );
+				, ConnectionProviderFactory.getConnectionProvider(), -1, -1  );
 		defaultProvider.init();
 		engines.put( type.name() , defaultProvider );
 		return defaultProvider; 

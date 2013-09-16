@@ -8,6 +8,10 @@ import java.util.Date;
  * 
  *
  */
+/**
+ * @author jcarreira
+ *
+ */
 public interface CacheEntry {
 	
 	
@@ -53,5 +57,20 @@ public interface CacheEntry {
 	 * @return True if the resource is expired and false otherwise
 	 */
 	public boolean isExpired();
+	
+	
+	
+	/**
+	 * Return the size of the content of the CacheEntry
+	 * @return
+	 */
+	public int getLength();
+	
+	
+	/**
+	 * Mark cache entry invalid
+	 */
+	public void invalidate();
+	
 	
 }

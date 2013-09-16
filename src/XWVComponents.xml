@@ -183,6 +183,11 @@
 			<xwc:render for="cache">netgest.bo.xwc.components.cache.CacheRenderer</xwc:render>
 			<xwc:render for="asyncRegion">netgest.bo.xwc.components.assync.AsyncRenderer</xwc:render>
 			<xwc:render for="viewerComponent">netgest.bo.xwc.components.classic.ViewerAsComponent$XEOHTMLRenderer</xwc:render>
+			
+			
+			<!-- TEMPLATE COMPONENTS -->
+			<xwc:render for="template">netgest.bo.xwc.components.template.base.TemplateComponentRenderer</xwc:render>
+			<!-- /TEMPLATE COMPONENTS -->
 
         </xwc:renderKit>
         
