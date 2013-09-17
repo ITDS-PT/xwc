@@ -11,6 +11,7 @@ import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
@@ -36,9 +37,6 @@ import javax.faces.component.UIComponent;
  * 		<xvw:attribute objectAttribute='att1' inputType='attributePassword'/>
  * 		<!-- In this case the attribute is forced to render as a password -->
  * </code>
- * 
- * Can't have children
- * 
  * 
  * @author jcarreira
  *
@@ -220,16 +218,24 @@ public class Attribute extends AttributeBase
         
     }
     
+    private boolean isPropertyDefaultValue(AttributeLabel label, String propertyName) {
+    	XUIBaseProperty< ? > prop = label.getStateProperty( propertyName );
+    	if (prop != null) {
+    		return prop.isDefaultValue();
+    	}
+    	return true;
+    	
+    }
     
     protected void propagateLabelProperties( AttributeLabel label ) {
-        if( getValueExpression("visible") != null )
+        if( getValueExpression("visible") != null  && isPropertyDefaultValue( label , "visible" ))
         	label.setVisible( getValueExpression("visible").getExpressionString() );
 
-        if( getValueExpression("modelRequired") != null ) {
+        if( getValueExpression("modelRequired") != null  && isPropertyDefaultValue( label , "modelRequired" )) {
             label.setModelRequired( getValueExpression("modelRequired").getExpressionString() );
         }
         
-        if( getValueExpression("recommended") != null )
+        if( getValueExpression("recommended") != null && isPropertyDefaultValue( label , "recommended" ) )
         	label.setRecommended( getValueExpression("recommended").getExpressionString() );
         
         if( getValueExpression( "securityPermissions" )!=null )
@@ -238,7 +244,7 @@ public class Attribute extends AttributeBase
         if( getValueExpression( "viewerSecurityPermissions" )!=null )
         	label.setViewerSecurityPermissions( getValueExpression("viewerSecurityPermissions").getExpressionString() );
 
-        if (getValueExpression( "toolTip" ) != null )
+        if (getValueExpression( "toolTip" ) != null  && isPropertyDefaultValue( label , "toolTip" ))
         	label.setToolTip( getValueExpression( "toolTip" ).getExpressionString() );
         
         label.setInstanceId( getInstanceId() );
@@ -333,6 +339,9 @@ public class Attribute extends AttributeBase
 
         if( getValueExpression("displayValue") != null )
             oAttr.setDisplayValue( getValueExpression("displayValue").getExpressionString() );
+        
+        if( getValueExpression("dataType") != null )
+            oAttr.setDataType( getValueExpression("dataType").getExpressionString() );
         
 
 		if( getValueExpression("dataFieldConnector") != null ){
