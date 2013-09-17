@@ -135,8 +135,12 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 		return minSearchChars.getValue( ) - 1;
 	}
 	
-	public void setMinSearchChars(Integer value){
+	public void setMinSearchChars(int value){
 		minSearchChars.setValue(value);
+	}
+	
+	public void setMinSearchChars(String value){
+		minSearchChars.setValue(Integer.valueOf( value ) );
 	}
 	
 	/**
@@ -195,8 +199,12 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 		return searchDelay.getValue( );
 	}
 
-	public void setSearchDelay(Integer value) {
+	public void setSearchDelay(int value) {
 		searchDelay.setValue( value );
+	}
+	
+	public void setSearchDelay(String value) {
+		searchDelay.setValue(Integer.valueOf( value) );
 	}
 	
 	/**
