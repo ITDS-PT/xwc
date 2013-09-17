@@ -95,7 +95,7 @@
 	  
 		var uploader = new qq.FineUploaderXEO({
 	      	button: XVW.get('${this.clientId}_attatch')
-	      , maxFiles : ${this.maxFiles}
+	      , maxFiles : ${this.maxFiles?c}
 	      ,	disabled : ${this.disabled?string}
 		  , visible : ${this.visible?string}
 		  , readOnly : ${this.readOnly?string}
@@ -123,6 +123,9 @@
 							return false;
 						}
 					}
+		  		}
+		  		, onError: function(id, fileName, reason) {
+		  			alert(fileName + " " + reason);
 		  		}
 		  	}
 		  , classes : {
