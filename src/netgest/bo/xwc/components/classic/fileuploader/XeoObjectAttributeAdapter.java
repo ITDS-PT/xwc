@@ -7,6 +7,7 @@ import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
+
 import netgest.io.iFile;
 
 /**
@@ -70,7 +71,18 @@ public class XeoObjectAttributeAdapter implements FileUploaderApi {
 
 	@Override
 	public int getFileCount() {
-		return 1;
+		Object value;
+		try {
+			value = getAttributeHandler().getValueObject();
+			if (value == null || "".equals( value )) {
+				return 0;
+			}
+			return 1;
+		} catch ( boRuntimeException e ) {
+			logger.warn("Could not count the files ",e);
+		}
+		
+		return 0;
 	}
 
 	public String toString() {
