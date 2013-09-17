@@ -43,12 +43,17 @@ public class BridgeUpload extends FileUpload {
 			if (connector instanceof XEOObjectAttributeConnector){
 				XEOObjectAttributeConnector attConnector = ( XEOObjectAttributeConnector ) connector;
 				boui = attConnector.getAttributeHandler().getParent().getBoui();
+				setMaxFiles( getMaxFiles( attConnector ) );
 			}
 		}
 		
 		files.setValue( new BridgeFileApi( boui , getObjectAttribute() , getFileAttribute() ) );
 		multiple.setValue( Boolean.TRUE );
-		super.initComponent();
+		
+	}
+
+	protected int getMaxFiles(XEOObjectAttributeConnector attConnector) {
+		return attConnector.getAttributeHandler().getDefAttribute().getMaxOccurs();
 	}
 
 }
