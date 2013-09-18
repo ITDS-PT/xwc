@@ -187,8 +187,11 @@ public class FileUpload extends AttributeBase {
 	/**
 	 * A list of the valid extensions (defaults to anything).
 	 * Note that is only supported in HTML5 enabled browsers. IE7 and IE8 do not
-	 * support this. IE9 supports but since it's used in IE7 standards mode it
+	 * support this. IE9 supports but since if it's used in IE7 standards mode it
 	 * does not work
+	 * 
+	 * It's a comma separated list (pdf,jpg)
+	 * 
 	 */
 	protected XUIBindProperty< String > validExtensions = 
 			new XUIBindProperty< String >( "validExtensions" , this , String.class );
@@ -218,7 +221,7 @@ public class FileUpload extends AttributeBase {
 		JSONArray extensions = new JSONArray();
 		if (values != null){
 			for (String extension : values){
-				extensions.put( extension );
+				extensions.put( extension.trim() );
 			}
 		}
 		return extensions.toString();
