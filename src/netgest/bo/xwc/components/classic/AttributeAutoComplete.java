@@ -199,7 +199,7 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 		return searchDelay.getValue( );
 	}
 
-	public void setSearchDelay(int value) {
+	public void setSearchDelay(Integer value) {
 		searchDelay.setValue( value );
 	}
 	
@@ -233,13 +233,6 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 			includeHeaderCss( "autoComplete_css", "ext-xeo/autocomplete/style.css" );
 			includeHeaderScript( "autoComplete_js","ext-xeo/autocomplete/jquery.fcbkcomplete.js" );
 		}
-		
-	}
-	
-	@Override
-	public void preRender() {
-		super.preRender();
-		
 	}
 	
 	/**
@@ -318,10 +311,5 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 		this.dataFieldConnector.setExpressionText( connectorExpr );
 	}
 	
-	@Override
-	public void updateModel() {
-		// TODO Auto-generated method stub
-		super.updateModel();
-	}
 
 }
