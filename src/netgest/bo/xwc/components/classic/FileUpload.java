@@ -1,8 +1,5 @@
 package netgest.bo.xwc.components.classic;
 
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ActionListener;
-
 import netgest.bo.xwc.components.classic.fileuploader.FileUploaderApi;
 import netgest.bo.xwc.components.classic.fileuploader.UploadValidation;
 import netgest.bo.xwc.components.classic.fileuploader.XeoObjectAttributeAdapter;
@@ -15,8 +12,12 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.messages.XUIMessageBuilder;
+
 import netgest.io.iFile;
 import netgest.utils.StringUtils;
+
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ActionListener;
 
 import org.json.JSONArray;
 
@@ -63,14 +64,16 @@ public class FileUpload extends AttributeBase {
 	 * Maximum file size for upload in megabytes (defaults to 5 Megabytes)
 	 * 0.5 is a valid option
 	 */
-	protected XUIBindProperty<Integer> maxFileSize = new
-		XUIBindProperty< Integer >( "maxFileSize" , this, Integer.class, "5" );
+	protected XUIBindProperty<Double> maxFileSize = new
+		XUIBindProperty< Double >( "maxFileSize" , this, Double.class, "5" );
 	
 	public String getMaxFileSize() {
-		return String.valueOf( maxFileSize.getEvaluatedValue() * 1024 * 1024 );
+		Double value = maxFileSize.getEvaluatedValue() * 1024 * 1024;
+		long result = value.longValue();
+		return String.valueOf( result );
 	}
 	
-	public void setMaxFileSize(Integer maxFileSize) {
+	public void setMaxFileSize(double maxFileSize) {
 		this.maxFileSize.setValue( maxFileSize );
 	}
 	
@@ -83,18 +86,18 @@ public class FileUpload extends AttributeBase {
 	 * Value is given in megabytes
 	 * 
 	 */
-	protected XUIBindProperty<Integer> minFileSize = new
-		XUIBindProperty< Integer >( "minFileSize" , this, Integer.class );
+	protected XUIBindProperty<Double> minFileSize = new
+		XUIBindProperty< Double >( "minFileSize" , this, Double.class );
 	
 	public String getMinFileSize() {
-		Integer value = minFileSize.getEvaluatedValue();
+		Double value = minFileSize.getEvaluatedValue();
 		if (value != null){
-			return String.valueOf( minFileSize.getEvaluatedValue() * 1024 * 1024 );
+			return String.valueOf( Double.valueOf( value * 1024 * 1024 ).longValue() );
 		}
 		return "";
 	}
 	
-	public void setMixFileSize(Integer minFileSize) {
+	public void setMinFileSize(Double minFileSize) {
 		this.minFileSize.setValue( minFileSize );
 	}
 	
@@ -187,11 +190,15 @@ public class FileUpload extends AttributeBase {
 	 * support this. IE9 supports but since it's used in IE7 standards mode it
 	 * does not work
 	 */
-	protected XUIBindProperty< String[] > validExtensions = 
-			new XUIBindProperty< String[] >( "validExtensions" , this , String.class );
+	protected XUIBindProperty< String > validExtensions = 
+			new XUIBindProperty< String >( "validExtensions" , this , String.class );
 			
 	public String[] getValidExtensions(){
-		return validExtensions.getEvaluatedValue();
+		String result = validExtensions.getEvaluatedValue();
+		if (StringUtils.hasValue( result )) {
+			return result.split( "," );
+		}
+		return new String[0];
 	}
 	
 	public void setValidExtensions(String extensionsExpr){
