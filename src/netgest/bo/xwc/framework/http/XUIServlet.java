@@ -5,6 +5,7 @@ import netgest.bo.system.boApplication;
 import netgest.bo.system.boSession;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
 import netgest.bo.xwc.framework.localization.XUILocalization;
 
@@ -71,6 +72,14 @@ public class XUIServlet extends HttpServlet
     	String useBrowserLanguage = servletConfig.getInitParameter("UseBrowserLanguage");
     	if (StringUtils.hasValue( useBrowserLanguage )){
     		this.useBrowserLanguage = Boolean.parseBoolean( useBrowserLanguage );
+    	}
+    	
+    	String useCacheParameter = servletConfig.getInitParameter("UseViewerCache");
+    	if (StringUtils.hasValue( useCacheParameter )){
+    		boolean useCache = Boolean.parseBoolean( useCacheParameter );
+    		if (!useCache) {
+    			XUIViewHandler.disableCache();
+    		}
     	}
     	
     	renderKit = servletConfig.getInitParameter("renderKit");

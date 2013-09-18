@@ -122,6 +122,13 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 		viewerCache.clear();
 	}
 	
+	
+	private static boolean useCache = Boolean.TRUE ;
+
+	public static void disableCache() {
+		useCache = Boolean.FALSE;
+	}
+	
 	static ThreadLocal< Boolean > savingInCache = new ThreadLocal< Boolean >(){
         protected Boolean initialValue() {
             return Boolean.FALSE;
@@ -459,7 +466,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     
     boolean canReadFromCache(XUIApplicationContext applicationCtx, String cacheKey, String viewerId){
     	
-    	if ( !viewerCache.contains( ( cacheKey ) ) )
+    	if ( !viewerCache.contains( ( cacheKey ) )  || !useCache)
     		return false;
     	//Check if we're in development mode
     	boolean development = boApplication.getDefaultApplication().inDevelopmentMode();
@@ -483,8 +490,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     	XUIApplicationContext oApp = XUIRequestContext.getCurrentContext().getApplicationContext();
     	//The purpose of the following instruction is to make sure that save and restore
     	//are not executed in the same instances of the components. When a new view is created
-    	//save is run, right after, the view is restored from cache  
-    	if (!canReadFromCache( oApp , cacheKey, viewId ))
+    	//save is run and , right after, the view is restored from cache  
+    	if (!canReadFromCache( oApp , cacheKey, viewId ) && useCache)
     		_createView( context , viewId , viewerInputStream , sTransactionId , viewerDefinition );
     	return _createView( context , viewId , viewerInputStream , sTransactionId , viewerDefinition );
     }
@@ -526,7 +533,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         //cleanCache();
         XUISessionContext session = oContext.getSessionContext();
         //viewerCache.clear();
-        if ( canReadFromCache( oApp , cacheKey, viewId ) ){
+        if ( canReadFromCache( oApp , cacheKey, viewId ) && useCache){
         	result = ( XUIViewRoot ) restoreTreeStructureFromCache( context , cacheKey );
         	String newState = generateId( viewId , session.getSessionMap() );
         	String initialComponentId = generateInitialComponentId( viewId , newState, session.getSessionMap() );
@@ -837,6 +844,10 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
 
 	protected boolean canAddViewToCache(String viewerCacheId, Timestamp current) {
+		
+		if (useCache)
+			return false;
+		
 		if ( !viewerCache.contains( viewerCacheId ) )
 			return true;
 			
