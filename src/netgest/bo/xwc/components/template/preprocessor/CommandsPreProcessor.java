@@ -1,5 +1,11 @@
 package netgest.bo.xwc.components.template.preprocessor;
 
+import netgest.bo.xwc.components.template.TemplateCommand;
+import netgest.bo.xwc.components.template.TemplateInput;
+import netgest.bo.xwc.framework.components.XUICommand;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIInput;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.LinkedList;
@@ -11,12 +17,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import netgest.bo.xwc.components.template.Template;
-import netgest.bo.xwc.components.template.TemplateCommand;
-import netgest.bo.xwc.components.template.TemplateInput;
-import netgest.bo.xwc.framework.components.XUICommand;
-import netgest.bo.xwc.framework.components.XUIInput;
-
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -27,10 +27,10 @@ import freemarker.core.TemplateObject;
 public class CommandsPreProcessor {
 
 	private freemarker.template.Template template = null;
-	private Template component;
+	private XUIComponentBase component;
 	private DocumentBuilder docBuilder;
 	
-	public CommandsPreProcessor(freemarker.template.Template template, Template component) {
+	public CommandsPreProcessor(freemarker.template.Template template, XUIComponentBase component) {
 		this.template = template;
 		this.component = component;
 		DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();

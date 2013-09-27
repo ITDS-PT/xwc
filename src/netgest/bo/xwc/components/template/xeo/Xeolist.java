@@ -5,8 +5,15 @@ import netgest.bo.runtime.boObjectList;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
+import netgest.bo.xwc.components.template.loader.TemplateLoaderFactory;
+import netgest.bo.xwc.components.template.preprocessor.CommandsPreProcessor;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.faces.component.UIComponent;
 
 
 public class Xeolist extends PaginatedConnectorList {
@@ -66,6 +73,24 @@ public class Xeolist extends PaginatedConnectorList {
 	@Override
 	public DataListConnector getConnector() {
 		return this.connector;
+	}  
+	
+	@Override
+	public void initComponent() {
+		super.initComponent();
+		if (!this.template.isDefaultValue( )){
+			CommandsPreProcessor p = new CommandsPreProcessor( loadTemplate( getTemplate() ), this );
+			List<UIComponent> list = p.createComponents( );
+				getChildren( ).addAll( list );
+		}
+	}
+	
+	protected freemarker.template.Template loadTemplate(String name){
+		try {
+			return TemplateLoaderFactory.loadTemplate( name );
+		} catch ( IOException e ) {
+			throw new RuntimeException( String.format(" Could not load template %s ", name ) , e );
+		}
 	}
 
 	@Override
