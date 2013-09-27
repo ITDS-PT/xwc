@@ -145,6 +145,19 @@ public class Menu extends ViewerCommandSecurityBase {
      */
     private XUIStateBindProperty<String> profile = new XUIStateBindProperty<String>( "profile", this, String.class );
     
+    
+	XUIBindProperty< String > cssClass = new XUIBindProperty< String >(
+			"cssClass" , this , String.class );
+
+	public String getCssClass() {
+		return cssClass.getEvaluatedValue();
+	}
+
+	public void setCssClass(String newValExpr) {
+		cssClass.setExpressionText( newValExpr );
+	}
+	
+    
     public Menu() {
     	
     }
