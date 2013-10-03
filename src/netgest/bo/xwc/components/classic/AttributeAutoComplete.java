@@ -230,8 +230,8 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 		}
 		
 		if (!isRenderedOnClient()){
-			includeHeaderCss( "autoComplete_css", "ext-xeo/autocomplete/style.css" );
-			includeHeaderScript( "autoComplete_js","ext-xeo/autocomplete/jquery.fcbkcomplete.js" );
+			//includeHeaderCss( "autoComplete_css", "ext-xeo/autocomplete/style.css" );
+			//includeHeaderScript( "autoComplete_js","ext-xeo/autocomplete/jquery.fcbkcomplete.js" );
 		}
 	}
 	

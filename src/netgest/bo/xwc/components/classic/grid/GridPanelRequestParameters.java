@@ -13,6 +13,7 @@ public class GridPanelRequestParameters {
 	private String[] groupBy;
 	private String aggregateParameter;
 	private int 	 groupByLevel;
+	private boolean allRowsSelected;
 	
 	/**
 	 * Whether the toolbar displaying the currents groups is hidden or not
@@ -121,6 +122,14 @@ public class GridPanelRequestParameters {
 	
 	public boolean isDataSourceChanged(){
 		return dataSourceChanged;
+	}
+
+	public boolean isAllRowsSelected() {
+		return allRowsSelected;
+	}
+
+	public void setAllRowsSelected(boolean allRowsSelected) {
+		this.allRowsSelected = allRowsSelected;
 	}
 	
 	

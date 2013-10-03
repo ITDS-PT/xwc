@@ -56,6 +56,9 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         }
         , groupByColumn : function ( columnId ){
         	this.store.addGroupByWithoutReload( columnId );
+        	if (this.store.allRowsSelected){
+        		ExtXeo.activateSelectAllRows(this.id);
+        	}
         } 
         , groupByColumnWithReload : function ( columnId ){
         	this.store.addGroupBy( columnId );
@@ -276,6 +279,7 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 		, markDataSourceChange : function (){
 			this.store.markDataSourceChange();
 		}
+		
 		
 		
 	}
@@ -1615,6 +1619,9 @@ ExtXeo.grid.GridGroup = Ext.extend( ExtXeo.grid.GridGroup, {
 			}
 			this.groupingView.parentView.groupLoaded( this );
 		}
+		if (this.groupStore.isAllRowsSelected()){
+			this.groupingView.grid.selModel.selectAll();
+		}
 	}
 	, showPagingToolBar : function(){
 		this.toolBar.show();
@@ -1639,6 +1646,7 @@ ExtXeo.grid.GroupingView.GROUP_ID = 10000;
 ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 	  changePageControl: false 
     , grid : null
+    , allRowsSelected : false
 	, rowIdentifier : ''
 	, dataSourceChange : false //Represents a change in the datasource
 	, constructor: function( opts ) {
@@ -1892,6 +1900,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     	c.proxy  = new Ext.data.HttpProxy(this.reader.meta);
     	c.groupField = this.groupField;
     	c.expandedGroups = this.expandedGroups;
+    	c.allRowsSelected = this.allRowsSelected;
     	
     	var gs = new ExtXeo.data.GroupingStore( c );
     	gs.reader = this.reader;
@@ -1952,6 +1961,8 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     			p.groupByParentValues = this.groupByParentValues;
     		}
     	}
+    	
+    	p.allSelectedRows = Ext.encode(this.allRowsSelected);
     	
     	
     	
@@ -2045,7 +2056,8 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 					rows.push(index);
 				}
 			}
-			this.grid.getSelectionModel().selectRows(rows);
+			var keepExisting = true;
+			this.grid.getSelectionModel().selectRows(rows,keepExisting);
 		}
 		this.changePageControl = false; 
 	}
@@ -2056,6 +2068,23 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     
     , resetDataSourceChange : function () {
     	this.dataSourceChange = false;
+    }
+    , selectAllRows : function(){
+    	this.allRowsSelected = true;
+    	for (var i = 0 ; i < this.groupStores.length ; i++){
+    		this.groupStores[i].selectAllRows();
+    	}
+    }
+    
+    , deselectAllRows : function () {
+    	this.allRowsSelected = false;
+    	for (var i = 0 ; i < this.groupStores.length ; i++){
+    		this.groupStores[i].deselectAllRows();
+    	}
+    }
+    
+    , isAllRowsSelected : function () {
+    	return this.allRowsSelected;
     }
 });
 
@@ -2528,4 +2557,126 @@ ExtXeo.grid.nowrap = function(text){
 
 ExtXeo.grid.numberStyle = function(text){
     return '<div style="text-align:right">'+ text +'</div>';
+};
+
+Ext.grid.XeoCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel, {
+
+	/**
+	 * Override to allow correctly selecting all rows, even when groups are being used
+	 * The problem with our approach to having rows of the root store as groups if that
+	 * when you select all rows, it would expand the groups instead of selecting the rows of the
+	 * groups
+	 */
+	selectAll : function(){
+		if (this.grid.store.groupField !== null && this.grid.store.groupField.length == 0){
+			Ext.grid.XeoCheckboxSelectionModel.superclass.selectAll.call(this);
+		} else {
+			var gs = this.grid.store.groupStores;
+			var count = 0;
+			for (var i = 0 ; i < gs.length ; i++){
+				var records = gs[i].getRange(0,gs[i].getCount());
+				for (var k = 0 ; k < records.length ; k++){
+					this.grid.view.onRowSelect(count);
+					count++;
+				}
+			}
+		}
+		Ext.get(this.grid.id + "_allRows").set({value : true});
+		this.grid.store.selectAllRows();
+		
+	}
+
+	/**
+	 * Clears all selections including the information about all rows selection
+	 */
+	, clearSelectionsAll : function(supressEvent){
+		if (this.grid.store.groupField !== null && this.grid.store.groupField.length == 0){
+			Ext.grid.XeoCheckboxSelectionModel.superclass.clearSelections.call(this);
+		} else {
+			var gs = this.grid.store.groupStores;
+			var count = 0;
+			for (var i = 0 ; i < gs.length ; i++){
+				var records = gs[i].getRange(0,gs[i].getCount());
+				for (var k = 0 ; k < records.length ; k++){
+					this.grid.view.onRowDeselect(count);
+					count++;
+				}
+			}
+		}
+		Ext.get(this.grid.id + "_allRows").set({value : false});
+		this.grid.store.deselectAllRows();
+		
+	}
+	
+	, clearSelections : function(supressEvent){
+		Ext.grid.XeoCheckboxSelectionModel.superclass.clearSelections.call(this);
+	}
+	
+	//Needed to override this function in order to change the call to 
+	//clearSelections to another method - clearSelectionsAll()
+	//clearSelections is called by several other methods, as such
+	// it cannot remove the allRowsSelected flag
+	, onHdMouseDown : function(e, t){
+        if(t.className == 'x-grid3-hd-checker'){
+            e.stopEvent();
+            var hd = Ext.fly(t.parentNode);
+            var isChecked = hd.hasClass('x-grid3-hd-checker-on');
+            if(isChecked){
+                hd.removeClass('x-grid3-hd-checker-on');
+                this.clearSelectionsAll();
+            }else{
+                hd.addClass('x-grid3-hd-checker-on');
+                this.selectAll();
+            }
+        }
+    }
+	
+	, onRefresh : function(){
+        var ds = this.grid.store, index;
+        var s = this.getSelections();
+        //Override to allow refresh not to remove selections
+        if (!this.grid.store.isAllRowsSelected())
+        	this.clearSelections(true); 
+        else{
+        	this.selectAll();
+        }
+        //End override
+        for(var i = 0, len = s.length; i < len; i++){
+            var r = s[i];
+            if((index = ds.indexOfId(r.id)) != -1){
+                this.selectRow(index, true);
+            }
+        }
+       
+        
+        if(s.length != this.selections.getCount()){
+            this.fireEvent("selectionchange", this);
+        }
+    },
+
+
+});
+
+/**
+ * Marks the CheckBox for "Select/Deselect all rows" as checked for a given gridpanel
+ */
+ExtXeo.activateSelectAllRows = function(id){
+	var elem = Ext.query('.x-grid3-hd-checker',id)[0];
+	var hd = Ext.fly(elem);
+	var isChecked = hd.hasClass('x-grid3-hd-checker-on');
+	if(!isChecked){
+		hd.addClass('x-grid3-hd-checker-on');
+	}
+};
+
+/**
+ * Marks the CheckBox for "Select/Deselect all rows" as UNchecked for a given gridpanel
+ */
+ExtXeo.deactivateSelectAllRows = function(id){
+	var elem = Ext.query('.x-grid3-hd-checker','#'+id)[0];
+	var hd = Ext.fly(elem);
+	var isChecked = hd.hasClass('x-grid3-hd-checker-on');
+	if(isChecked){
+		hd.removeClass('x-grid3-hd-checker-on');
+	}
 };
