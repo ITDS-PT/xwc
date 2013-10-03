@@ -232,7 +232,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	                "}/*);*/"
 	            );
 	            
-	            
 	            if( "fit-parent".equalsIgnoreCase( oGrid.getLayout() ) ) {
 	            	Layouts.registerComponent( w, oComp, Layouts.LAYOUT_FIT_PARENT);
 	            }
@@ -247,16 +246,23 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         //Selected Rows
         w.startElement( INPUT , oComp);
-        w.writeAttribute( TYPE, "hidden", null );
-        w.writeAttribute( NAME, oComp.getClientId() +"_srs", null );
-        w.writeAttribute( ID, oComp.getClientId() +"_srs", null );
+	        w.writeAttribute( TYPE, "hidden" );
+	        w.writeAttribute( NAME, oComp.getClientId() +"_srs" );
+	        w.writeAttribute( ID, oComp.getClientId() +"_srs");
         w.endElement( INPUT );
 
         //Active Row
         w.startElement( INPUT , oComp);
-        w.writeAttribute( TYPE, "hidden", null );
-        w.writeAttribute( NAME, oComp.getClientId() +"_act", null );
-        w.writeAttribute( ID, oComp.getClientId() +"_act", null );
+	        w.writeAttribute( TYPE, "hidden" );
+	        w.writeAttribute( NAME, oComp.getClientId() +"_act" );
+	        w.writeAttribute( ID, oComp.getClientId() +"_act" );
+        w.endElement( INPUT );
+        
+        //Select All Rows
+        w.startElement( INPUT , oComp);
+	        w.writeAttribute( TYPE, "hidden" );
+	        w.writeAttribute( NAME, oComp.getClientId() +"_allRows" );
+	        w.writeAttribute( ID, oComp.getClientId() +"_allRows");
         w.endElement( INPUT );
         
     }
@@ -345,8 +351,9 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         StringBuilder sb = new StringBuilder();
         
         //Clears selections by demand or when the Grid is grouped, because groups start collapsed
-        boolean clearSelections = oGrid.getClearSelections() || 
-        			(netgest.utils.StringUtils.hasValue( oGrid.getGroupBy() ) && oGrid.getEnableGroupBy() );
+        boolean clearSelections = false;
+//        		oGrid.getClearSelections() || 
+//        			(netgest.utils.StringUtils.hasValue( oGrid.getGroupBy() ) && oGrid.getEnableGroupBy()  );
         
         if( GridPanel.SELECTION_CELL.equals( oGrid.getRowSelectionMode() ) ) {
         	DataRecordConnector d = oGrid.getActiveRow();
@@ -381,6 +388,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	    	
 	    	if( sb.length() > EMPTY_ARRAY_STRING_SIZE) {
 	    		//Select rows on datatore load event callback
+	    		String extra = "";
+	    		if (oGrid.getAllRowsSelected()){
+	    			extra = "ExtXeo.activateSelectAllRows('"+oGrid.getClientId()+"');";
+	    			extra += oGrid.getId() + "_selm.selectAll();";
+	    		} 
 		        oLoadParams.add("callback", 
 		        		"function(){" +
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
@@ -389,9 +401,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 			    			oGrid.getId() + "_selm.resumeEvents();" +
 			    			"try{ExtXeo.grid.rowSelectionHndlr(" + oGrid.getId() + "_selm," +
 			    			"'" + oGrid.getClientId() +"_srs','" + oGrid.getRowUniqueIdentifier() + "'" +
-			    			")}catch(e){}" +
+			    			");" +
+			    			extra + 
+			    			"}catch(e){}" +
 		    			"}"
-		        );
+		        ); 
 	    	}
         }
         
@@ -551,6 +565,12 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         oDataStoreConfig = new ExtConfig("ExtXeo.data.GroupingStore");
         
+        if (oGrid.getAllRowsSelected()){
+        	oDataStoreConfig.add("allRowsSelected", true);
+        } else {
+        	oDataStoreConfig.add("allRowsSelected", false);
+        }
+        
         oFieldsConfig = oDataStoreConfig.addChildArray( "fields" );
         for (int i = 0; i < oGridColumns.length; i++) {
             oFieldConfig = oFieldsConfig.addChild();
@@ -669,7 +689,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         sRowSelectionMode = oGrid.getRowSelectionMode();
         if (GridPanel.SELECTION_ROW.equals( sRowSelectionMode ) || GridPanel.SELECTION_MULTI_ROW.equals( sRowSelectionMode )) { 
-        	oSelModelConfig = new ExtConfig( "Ext.grid.CheckboxSelectionModel" );
+        	oSelModelConfig = new ExtConfig( "Ext.grid.XeoCheckboxSelectionModel" );
         }
         else {
         	oSelModelConfig = new ExtConfig( "Ext.grid.RowSelectionModel" );

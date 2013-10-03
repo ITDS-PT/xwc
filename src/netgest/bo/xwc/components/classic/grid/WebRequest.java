@@ -19,6 +19,7 @@ public interface WebRequest {
 		, SORT ("sort")
 		, FILTERS ("filters")
 		, DATASOURCE_CHANGE ("dataSourceChange") //Whether the DataSource was changed or not
+		, ALL_ROWS_SELECTED ("allSelectedRows")
 		;
 		
 		private String name;

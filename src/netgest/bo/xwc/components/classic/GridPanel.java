@@ -18,6 +18,7 @@ import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataListConnector;
+import netgest.bo.xwc.components.connectors.DataListIterator;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.FilterTerms;
 import netgest.bo.xwc.components.connectors.FilterTerms.FilterJoin;
@@ -1623,6 +1624,20 @@ public class GridPanel extends ViewerInputSecurityBase {
 		return getDataSource().findByUniqueIdentifier(rowIdentifier);
 	}
 	
+	
+	XUIBaseProperty< Boolean > allRowsSelected = new XUIBaseProperty< Boolean >(
+			"allRowsSelected" , this, Boolean.FALSE );
+
+	public Boolean getAllRowsSelected() {
+		return allRowsSelected.getValue();
+	}
+
+	public void setAllRowsSelected(Boolean newValue) {
+		allRowsSelected.setValue( newValue );
+	}
+	
+	
+	
 	/**
 	 * Return a {@link DataRecordConnector} Array with the selected rows   
 	 * @return {@link DataRecordConnector} Array
@@ -1633,20 +1648,27 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 		List<DataRecordConnector> oRetSelectRows = new ArrayList<DataRecordConnector>();
 		DataListConnector connector = getDataSource();
-		if (this.getSelectedRowsIdentifiers() != null) {
-			sUniqueIdentifier = getRowUniqueIdentifier();
+		
+		if (getAllRowsSelected()) {
+			DataListIterator it = connector.iterator();
+			while (it.hasNext()) {
+				oRetSelectRows.add(it.next());
+			}
+		} else {
+			if (this.getSelectedRowsIdentifiers() != null) {
+				sUniqueIdentifier = getRowUniqueIdentifier();
 
-			for (int i = 0; i < sSelectedRowsUniqueIdentifiers.length; i++) {
-				sUniqueIdentifier = sSelectedRowsUniqueIdentifiers[i];
-				oCurrentRecord = connector.findByUniqueIdentifier(
-						sUniqueIdentifier);
-				if (oCurrentRecord != null) {
-					oRetSelectRows.add(oCurrentRecord);
+				for (int i = 0; i < sSelectedRowsUniqueIdentifiers.length; i++) {
+					sUniqueIdentifier = sSelectedRowsUniqueIdentifiers[i];
+					oCurrentRecord = connector.findByUniqueIdentifier(
+							sUniqueIdentifier);
+					if (oCurrentRecord != null) {
+						oRetSelectRows.add(oCurrentRecord);
+					}
 				}
 			}
 		}
-		return oRetSelectRows.toArray(new DataRecordConnector[oRetSelectRows
-				.size()]);
+		return oRetSelectRows.toArray(new DataRecordConnector[oRetSelectRows.size()]);
 	}
 	
 	/**

@@ -78,16 +78,28 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         
         oGridComp = (GridPanel)oComp;
         
-        sGridSelectedIds = oComp.getRequestContext().getRequestParameterMap().get( oComp.getClientId() +"_srs" );
-        if( sGridSelectedIds != null && sGridSelectedIds.length() > 0 )
-        {
+        Map< String , String > parameters = oComp.getRequestContext().getRequestParameterMap();
+        
+        sGridSelectedIds = parameters.get( oComp.getClientId() +"_srs" );
+        if( sGridSelectedIds != null && sGridSelectedIds.length() > 0 ){
             oGridComp.setSelectedRowsByIdentifier( sGridSelectedIds.split("\\|") );
         }
         
-        sGridSelectedIds = oComp.getRequestContext().getRequestParameterMap().get( oComp.getClientId() +"_act" );
-        if( sGridSelectedIds != null && sGridSelectedIds.length() > 0 )
-        {
+        sGridSelectedIds = parameters.get( oComp.getClientId() +"_act" );
+        if( sGridSelectedIds != null && sGridSelectedIds.length() > 0 ){
             oGridComp.setActiveRowByIdentifier( sGridSelectedIds );
+        }
+        
+        String allRowsRaw = parameters.get( oComp.getClientId() +"_allRows" );
+        if( StringUtils.hasValue( allRowsRaw ) ){
+        	Boolean allRowsSelected = Boolean.valueOf(allRowsRaw);
+           if (allRowsSelected){
+        	   oGridComp.setAllRowsSelected(true);
+           } else {
+        	   oGridComp.setAllRowsSelected(false);
+           }
+        } else {
+        	oGridComp.setAllRowsSelected(false);
         }
     }
 
@@ -238,6 +250,20 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         String groupToolBarVisible = oRequest.getParameter( GridParameter.TOOLBAR_VISIBLE );
         
         GridPanelRequestParameters reqParam = new GridPanelRequestParameters();
+        
+        String allRowsSelected = oRequest.getParameter( GridParameter.ALL_ROWS_SELECTED );
+        if (StringUtils.hasValue( allRowsSelected )) {
+        	Boolean value = Boolean.parseBoolean( allRowsSelected );
+        	reqParam.setAllRowsSelected( value );
+        	if (value) {
+        		oGridPanel.setAllRowsSelected( Boolean.TRUE );
+        	} else {
+        		oGridPanel.setAllRowsSelected( Boolean.FALSE );
+        	}
+        } else {
+        	oGridPanel.setAllRowsSelected( Boolean.FALSE );
+        	reqParam.setAllRowsSelected( false );
+        }
         
         if (groupToolBarVisible != null){
         	Boolean groupToolBarVisibleValue = Boolean.parseBoolean( groupToolBarVisible );
