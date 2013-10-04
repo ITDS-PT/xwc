@@ -1085,7 +1085,10 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
     }
 
 	private boolean isNumberColumn(DataFieldMetaData metaData) {
-		return metaData != null && (metaData.getDataType() == DataFieldTypes.VALUE_CURRENCY || metaData.getDataType() == DataFieldTypes.VALUE_NUMBER) ;
+		return metaData != null 
+				&& (metaData.getDataType() == DataFieldTypes.VALUE_CURRENCY 
+					|| metaData.getDataType() == DataFieldTypes.VALUE_NUMBER) 
+				&& (metaData.getInputRenderType() != DataFieldTypes.RENDER_OBJECT_LOOKUP);
 	}
     
 	
