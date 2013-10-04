@@ -30,16 +30,13 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.system.XEO;
 import netgest.bo.xwc.components.classic.AttributeAutoComplete;
-import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.AttributeAutoComplete.SearchType;
+import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.Layouts;
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.JQueryBuilder;
 import netgest.bo.xwc.components.classic.renderers.jquery.generators.JQueryWidget;
@@ -54,9 +51,13 @@ import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
+import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.utils.StringUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements XUIRendererServlet {
@@ -147,13 +148,14 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 					.addOption( "delay" , component.getSearchDelay( ) )
 					.addOption( "height" , 5 )
 					.addOption( "width", "100%" )
+					.addOption( "disabled", component.isDisabled() )
 					.addOption( "firstselected", true );
 			
 			
 					if (component.isUsable())
 						widget.addOption("maxitems", component.getMaxItems());
-					else
-						widget.addOption("maxitems", NO_ITEMS_ALLOWED);
+//					else
+//						widget.addOption("maxitems", NO_ITEMS_ALLOWED);
 					
 			
 					if (component.getSearchType() == SearchType.WORD){
@@ -177,12 +179,19 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 			else
 				updater.hide();
 			
+			if (component.isXEOEnabled()){
+				setExistingValuesXEOConnector( component );
+			} else {
+				setExistingValues( component );
+			}
+			
 			JQueryBuilder status = new JQueryBuilder();
 			status.selectorById( getComponentId( component ) );
 			if (component.isUsable())
 				status.command( "trigger(\"enable\")" );
-			else
+			else{
 				status.command( "trigger(\"disable\")" );
+			}
 			
 			
 			addScriptFooter( component.getClientId() + "_visibility" , updater.build() );
@@ -202,13 +211,8 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 				updaterUsage.addClass( "x-item-disabled" );
 				updaterUsage.addClass( "search-lookup-trigger-disabled-hover" );
 			}
-			addScriptFooter( component.getClientId() + "_disabled", updaterUsage.build() );
+			//addScriptFooter( component.getClientId() + "_disabled", updaterUsage.build() );
 			
-			if (component.isXEOEnabled()){
-				setExistingValuesXEOConnector( component );
-			} else {
-				setExistingValues( component );
-			}
 			
 			Layouts.doLayout( w );
 			
@@ -272,7 +276,7 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
 				for (String object : values){
 						JSONArray itemHolder = new JSONArray();
 						JSONObject newItem = new JSONObject();
-						boObject loadedObject = boObject.getBoManager().loadObject( handler.getEboContext() , Long.valueOf( object ));
+						boObject loadedObject = XEO.load( handler.getEboContext() , Long.valueOf( object ));
 						String currDisplay = loadedObject.getTextCARDID().toString();
 						try {
 							newItem.put( "title" , currDisplay );

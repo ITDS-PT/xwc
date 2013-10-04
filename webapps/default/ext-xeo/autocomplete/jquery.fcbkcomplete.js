@@ -145,16 +145,19 @@
       }
 
       //Adicionei estes hooks aqui
-      function disable(){
+      function disable(disableElement){
     	  var elem = $(XVW.get(elemid + "_input"));
     	  elem.attr('disabled', 'disabled');
     	  elem.parent().parent().addClass('auto-disabled');
+    	  if (disableElement)
+    		  options.disabled = true;
       }
       
       function enable(){
     	  var elem = $(XVW.get(elemid + "_input"));
     	  elem.removeAttr('disabled');
     	  elem.parent().parent().removeClass('auto-disabled');
+    	  options.disabled = false;
       }
       
       function getCardIdLinkCall(){
@@ -197,8 +200,10 @@
             funCall(options.onselect, _item);
           }
           element.change();
-          if (!maxItems())
-        	  disable();
+          if (!maxItems()){
+        	  var maxItemsButDontDisable = false;	
+        	  disable(maxItemsButDontDisable);
+          }
         }
         holder.children("li.bit-box.deleted").removeClass("deleted");
         clear_feed(1);
@@ -207,24 +212,26 @@
       }
 
       function removeItem(item) {
-    	if (!item.hasClass('locked')) {
-          item.fadeOut("fast");
-          var id = item.attr('id');
-          if (options.onremove) {
-            var _item = id ?  $("#o" + id + "") : element.children("option[value=" + item.attr("rel") + "]");
-            funCall(options.onremove, _item);
-          }
-          if (id) {
-             $("#o" + id + "").remove();
-          } else {
-            element.children('option[value="' + item.attr("rel") + '"]').remove();
-          }
-          item.remove();
-          onChangeSubmitCall();
-          element.change();
-          deleting = 0;
-          enable();
-        }
+    	  if (!options.disabled){
+    		  if (!item.hasClass('locked')) {
+    			  item.fadeOut("fast");
+    			  var id = item.attr('id');
+    			  if (options.onremove) {
+    				  var _item = id ?  $("#o" + id + "") : element.children("option[value=" + item.attr("rel") + "]");
+    				  funCall(options.onremove, _item);
+    			  }
+    			  if (id) {
+    				  $("#o" + id + "").remove();
+    			  } else {
+    				  element.children('option[value="' + item.attr("rel") + '"]').remove();
+    			  }
+    			  item.remove();
+    			  onChangeSubmitCall();
+    			  element.change();
+    			  deleting = 0;
+    			  enable();
+    		  }
+    	  }
       }
 
       function addInput(focusme) {
@@ -255,12 +262,14 @@
           if (options.input_min_size < 0 && feed.length) {
             load_feed(xssPrevent(input.val(), 1));
           }
-          input.focus();
-          if (feed.length && input.val().length > options.input_min_size) {
-            feed.show();
-          } else {
-            clear_feed(1);
-            complete.children(".default").show();
+          if (!options.disabled){
+	          input.focus();
+	          if (feed.length && input.val().length > options.input_min_size) {
+	            feed.show();
+	          } else {
+	            clear_feed(1);
+	            complete.children(".default").show();
+	          }
           }
         });
         
@@ -609,8 +618,8 @@
     	defaultTextClass : 'xwc-initial-text' ,
         defaultResultTextClass : 'xwc-lookup-element' ,
         defaultElementClass : 'xwc-selected-element',
-        onChangeSubmit : false
-        
+        onChangeSubmit : false ,
+        disabled : false
       },
       opt);
 
