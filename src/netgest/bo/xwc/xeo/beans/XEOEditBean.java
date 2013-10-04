@@ -43,8 +43,8 @@ import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
 import netgest.bo.system.Logger;
+import netgest.bo.system.XEO;
 import netgest.bo.system.boApplication;
-import netgest.bo.utils.XEOObjectUtils;
 import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.annotations.Visible;
 import netgest.bo.xwc.components.classic.AttributeAutoComplete;
@@ -56,7 +56,6 @@ import netgest.bo.xwc.components.classic.MessageBox;
 import netgest.bo.xwc.components.classic.Tab;
 import netgest.bo.xwc.components.classic.Tabs;
 import netgest.bo.xwc.components.classic.Window;
-import netgest.bo.xwc.components.classic.autocomplete.FindAttributesInTemplate;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -80,6 +79,7 @@ import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.messages.XUIMessageSender;
 import netgest.bo.xwc.framework.messages.XUIPopupMessageFactory;
+import netgest.bo.xwc.xeo.beans.lookup.SplitLookupSearchBean;
 import netgest.bo.xwc.xeo.components.Bridge;
 import netgest.bo.xwc.xeo.components.BridgeLookup;
 import netgest.bo.xwc.xeo.components.BridgeToolBar;
@@ -878,6 +878,10 @@ public class XEOEditBean extends XEOBaseBean
     }
     
     /**
+     * 
+     * Opens the lookup viewer to allow selecting a certain instance. Used by lookup component)
+     * Not by bridge components, see {@link #lookupBridge()}
+     * 
      * @throws boRuntimeException
      */
     public void lookupAttribute( String sCompId ) throws boRuntimeException {
@@ -1114,6 +1118,9 @@ public class XEOEditBean extends XEOBaseBean
     }
 
     /**
+     * 
+     * Opens the lookup viewer to add an element to a bridge
+     * 
      */
     @Visible
     public void lookupBridge() throws boRuntimeException {
@@ -1215,6 +1222,9 @@ public class XEOEditBean extends XEOBaseBean
         oRequestContext.renderResponse();
     }
     
+    /**
+     * Opens the edit viewer when an element is double clicked in a bridge
+     */
     @Visible
     public void editBridge() {
         XUIRequestContext   oRequestContext;
@@ -1968,6 +1978,9 @@ public class XEOEditBean extends XEOBaseBean
 		}
 	}
 	
+	/**
+	 * Opens the viewer when a user clicks a CardIDLink
+	 */
 	public void openLookupObject() {
 		XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
 		XUISessionContext oSessionContext = oRequestContext.getSessionContext();
@@ -2196,9 +2209,24 @@ public class XEOEditBean extends XEOBaseBean
 			else {
 				ql.setWherePart( "(" + wherePart + ")" + " AND (" + myWhere.append( ')' ).toString() );
 			}
-			boObjectList list = boObjectList.list( getEboContext(), ql.toBOQL(emptyArray),params.toArray(), 1, 1, "" );
-			if( list.next() ) {
-				retValue = new BigDecimal( list.getCurrentBoui() );
+			
+			boObjectList list = boObjectList.list( getEboContext(), ql.toBOQL(emptyArray),params.toArray(), 1, 50, "" );
+			list.beforeFirst();
+			List<String> bouis = new ArrayList<String>();
+			
+			long records = list.getRowCount();
+			if (records > 1){ 
+				while (list.next()){
+					boObject current = list.getObject();
+					bouis.add( String.valueOf(current.getBoui()) );
+				}
+				retValue = bouis;
+			} else if ( records == 0){
+				retValue = bouis;
+			} else {
+				if( list.next() ) {
+					retValue = new BigDecimal( list.getCurrentBoui() );
+				}
 			}
 		}
 		return retValue;
@@ -2779,6 +2807,31 @@ public class XEOEditBean extends XEOBaseBean
       	  	getRequestContext().renderResponse();
     	} else {
     		lookupAttribute(lookupId);
+    	}
+    }
+    
+    public void searchLookup(String lookupId, List<String> bouis) throws boRuntimeException{
+    	AttributeBase oAtt = (AttributeBase)getViewRoot().findComponent( lookupId );
+    	AttributeHandler    oAttHandler = ((XEOObjectAttributeConnector)oAtt.getDataFieldConnector()).getAttributeHandler();
+    	String targetObjectToSearch = oAttHandler.getDefAttribute().getReferencedObjectName();
+    	if (bouis.size() == 1){
+    		oAttHandler.setValueString( bouis.get(0) );
+    	} else if (bouis.size() > 1){
+    		XUIViewRoot oViewRoot = getRequestContext().getSessionContext().createChildView( "netgest/bo/xwc/xeo/viewers/SplitLookupSearchResults.xvw" );
+            SplitLookupSearchBean oBaseBean = (SplitLookupSearchBean)oViewRoot.getBean( "viewBean" );
+            oBaseBean.setParentBean( this ); 
+            oBaseBean.setParentAttributeName( oAttHandler.getName() );
+            oBaseBean.setLookupObjects( getLookupObjectsMap( oAttHandler ) );
+            oBaseBean.setParentParentBeanId( getId() );
+            oBaseBean.setParentComponentId( oAtt.getClientId() );
+            oBaseBean.setMultiLookup(false);
+            //Order is important setParentComponentId must be called before setSelectObject
+            oBaseBean.setSelectedObject( targetObjectToSearch );
+            oBaseBean.setBouis(bouis);
+            getRequestContext().setViewRoot(oViewRoot);  
+      	  	getRequestContext().renderResponse();
+    	} else {
+    		lookupAttribute( lookupId );
     	}
     }
     

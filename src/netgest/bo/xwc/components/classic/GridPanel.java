@@ -2525,7 +2525,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 		}
 		return activeRow;
 	}
-
+	
+	public void resetColumns(){
+		this.oGridColumns = null;
+	}
 	
 
 }

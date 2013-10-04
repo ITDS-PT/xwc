@@ -418,10 +418,17 @@ public class SplitedLookup extends Attribute {
 					lookup.getLookupComponent().setValue(null);
 				}
 				else {
-					lookup.getInputComponent().clearInvalid();
-					AttributeBase lk = lookup.getLookupComponent();
-					lk.setValue( value );
-					lk.updateModel();
+					if (value instanceof java.util.List<?>){
+						@SuppressWarnings("unchecked")
+						java.util.List<String> values = (java.util.List<String>) value;
+						b.searchLookup(lookup.getLookupComponent().getClientId(), values);
+					
+					} else {
+						lookup.getInputComponent().clearInvalid();
+						AttributeBase lk = lookup.getLookupComponent();
+						lk.setValue( value );
+						lk.updateModel();
+					}
 				}
 			} catch (boRuntimeException e) {
 				throw new RuntimeException( e );

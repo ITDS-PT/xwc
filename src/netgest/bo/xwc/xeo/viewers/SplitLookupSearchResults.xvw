@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer localizationClasses='netgest.bo.xwc.xeo.localization.XEOViewersMessages'
+		beanClass='netgest.bo.xwc.xeo.beans.lookup.SplitLookupSearchBean' beanId='viewBean'>
+		<xeo:formLookupList id='search'>
+			<xvw:tabs renderTabBar="false">
+				<xvw:tab>
+					<xeo:lookupList dataSource='#{viewBean.dataSource}' rowSelectionMode="ROW">
+						<xvw:columns plugIn="#{viewBean.attributesColPlugIn}">
+						</xvw:columns>
+					</xeo:lookupList>
+				</xvw:tab>
+			</xvw:tabs>
+		</xeo:formLookupList>
+	</xvw:viewer>
+</xvw:root>
