@@ -2652,7 +2652,7 @@ Ext.grid.XeoCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel,
         if(s.length != this.selections.getCount()){
             this.fireEvent("selectionchange", this);
         }
-    },
+    }
 
 
 });
