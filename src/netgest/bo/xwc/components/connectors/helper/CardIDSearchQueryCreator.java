@@ -68,7 +68,7 @@ public class CardIDSearchQueryCreator {
 
 	private List< String > getCardIdComponents(boDefHandler current) {
 		String cardId = current.getCARDID();
-		CardIDParser parser = new CardIDParser( cardId, current );
+		CardIDParser parser = new CardIDParser( cardId, current, new ConcatAdapter(databaseUtils) );
 		List<String> parts = parser.getParts();
 		return parts;
 	}
