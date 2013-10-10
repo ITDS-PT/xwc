@@ -1,5 +1,7 @@
 package netgest.bo.xwc.components.classic;
 
+import javax.faces.context.FacesContext;
+
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
@@ -8,13 +10,11 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMessage;
+import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
-
-import java.math.BigDecimal;
-
-import javax.faces.context.FacesContext;
+import netgest.utils.StringUtils;
 
 public class AttributeAutoComplete extends AttributeNumberLookup {
 	
@@ -50,6 +50,11 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 	public void setLookupResults(String queryExpr) {
 		lookupResults.setExpressionText( queryExpr , new Class<?>[]{String.class, AttributeBase.class} );
 	}
+	
+
+    
+    
+    
 	
 	public XUICommand getLookupCommand(){
 		return super.getLookupCommand();
@@ -230,8 +235,8 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 		}
 		
 		if (!isRenderedOnClient()){
-			//includeHeaderCss( "autoComplete_css", "ext-xeo/autocomplete/style.css" );
-			//includeHeaderScript( "autoComplete_js","ext-xeo/autocomplete/jquery.fcbkcomplete.js" );
+			includeHeaderCss( "autoComplete_css", "ext-xeo/autocomplete/style.css" );
+			includeHeaderScript( "autoComplete_js","ext-xeo/autocomplete/jquery.fcbkcomplete.js" );
 		}
 	}
 	
@@ -270,9 +275,14 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 	public void validate( FacesContext context ) {
         Object      oSubmitedValue = getSubmittedValue();
         String      sSubmitedValue = null;
-        BigDecimal  oSubmitedBigDecimal;
         
         Object oldValue = getValue();
+       
+        validateValue(getFacesContext(), oSubmitedValue);
+        if (!isValid()){
+        	setValue(null);
+        	return;
+        }
         
         if( oSubmitedValue != null )
         {
@@ -280,14 +290,17 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
             if( sSubmitedValue.length() > 0 )
             {
                 try {
+                	
                 	//Esta validacao nao faz nada de momento, foi so para 
-                	//que não estoirasse com os bouis separados por virgula quando é mais do que um valor
+                	//que nao estoirasse com os bouis separados por virgula quando e mais do que um valor
                     //oSubmitedBigDecimal = new BigDecimal( String.valueOf( sSubmitedValue ) );
+                	//Valores tem de ser validados usando um validator
                     setValue( oSubmitedValue );
                     //Since we're overring  the validate, we need to send 
                     //activate the value change listeners
                     if (!compareValue(oldValue, oSubmitedValue))
                     	queueEvent(new XUIValueChangeEvent(this, oldValue, oSubmitedValue));
+                	
                 }
                 catch( NumberFormatException ex ) {
                     getRequestContext().addMessage( getClientId(), 
@@ -311,5 +324,4 @@ public class AttributeAutoComplete extends AttributeNumberLookup {
 		this.dataFieldConnector.setExpressionText( connectorExpr );
 	}
 	
-
 }

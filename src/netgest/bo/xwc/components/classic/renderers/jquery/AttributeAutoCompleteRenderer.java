@@ -416,13 +416,18 @@ public class AttributeAutoCompleteRenderer extends JQueryBaseRenderer implements
     }
 	
 	public void decodeValue(AttributeAutoComplete component, Map<String,String> parameters){
-		String value = parameters.get( component.getClientId() + "_input[]" );
-		if( "NaN".equals( value ) || StringUtils.isEmpty(value)) {
-			String valueWithNoMatch = parameters.get( component.getClientId() + "_input" );
-			if (StringUtils.hasValue(valueWithNoMatch)){
-				component.setSubmittedValue( valueWithNoMatch );
+		final String correctInputId = component.getClientId() + "_input[]";
+		final String inputWithNoMatch = component.getClientId() + "_input";
+		
+		String value = parameters.get( correctInputId );
+		String valueWithNoMatch = parameters.get( inputWithNoMatch );
+		
+		if( component.getValidators().length > 0 && StringUtils.hasValue( valueWithNoMatch ) ) {
+			if ( StringUtils.hasValue( value ) ){
+				String mergedValues = value.trim() + "," + valueWithNoMatch.trim();
+				component.setSubmittedValue( mergedValues );
 			} else {
-				component.setSubmittedValue( "" );
+				component.setSubmittedValue( valueWithNoMatch );
 			}
 		}
 		else {

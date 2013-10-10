@@ -101,6 +101,12 @@ public class ErrorMessages extends XUIComponentBase {
             	return true;
             }
         }
+        
+        for ( Iterator<FacesMessage> it = getRequestContext().getFacesContext().getMessages(); it.hasNext() ; ){
+        	return true;
+        }
+        
+        
         return false;
         
     }
@@ -133,17 +139,16 @@ public class ErrorMessages extends XUIComponentBase {
             
             w = getResponseWriter();
             w.startElement( DIV , component );
-            w.writeAttribute( ID, component.getClientId(), null );
+            w.writeAttribute( ID, component.getClientId() );
             if( !oErrorMessagesComp.haveMessagesToRender() )
             {
-                w.writeAttribute( HTMLAttr.STYLE, "display:none", null );
+                w.writeAttribute( HTMLAttr.STYLE, "display:none" );
             }
             w.startElement( HTMLTag.INPUT, component );
-            w.writeAttribute( HTMLAttr.TYPE, "hidden", null);
-            w.writeAttribute( HTMLAttr.NAME, "__isChanged", null);
+            w.writeAttribute( HTMLAttr.TYPE, "hidden");
+            w.writeAttribute( HTMLAttr.NAME, "__isChanged");
             w.writeAttribute( HTMLAttr.VALUE,
-            		component.getChild(0).getClientId( getFacesContext() )
-            		, null);
+            		component.getChild(0).getClientId( getFacesContext() ));
             w.endElement( HTMLTag.INPUT );
             w = getResponseWriter();
             oItMessages = getFacesContext().getMessages();
@@ -152,20 +157,20 @@ public class ErrorMessages extends XUIComponentBase {
             while( oItMessages.hasNext() ) {
                 oFacesMessage = oItMessages.next();
                 w.startElement( DIV, component );
-                w.writeAttribute( HTMLAttr.STYLE, "color:red", null );
+                w.writeAttribute( HTMLAttr.STYLE, "color:red" );
 
                 if( oFacesMessage.getSummary() != null || oFacesMessage.getDetail() != null )
                 {
                     if( oFacesMessage.getSummary() != null )
                     {
-                        w.writeText( oFacesMessage.getSummary(), null );
-                        w.writeText( "-", null );
+                        w.write( oFacesMessage.getSummary() );
+                        w.write( "-" );
                     }
                     if( oFacesMessage.getDetail() != null )
-                        w.writeText( oFacesMessage.getDetail(), null );
+                        w.write( oFacesMessage.getDetail() );
                 }
                 else {
-                    w.writeText( oFacesMessage.getSeverity().toString(), null  );
+                    w.write( oFacesMessage.getSeverity().toString()  );
                 }
                 
                 w.endElement( DIV );
@@ -201,19 +206,19 @@ public class ErrorMessages extends XUIComponentBase {
                 switch( oXuiMessage.getType() ) {
                 	case XUIMessage.TYPE_MESSAGE: 
 	                    w.startElement( DIV , component );
-	                    w.writeAttribute( HTMLAttr.STYLE, "color:red", null );
+	                    w.writeAttribute( HTMLAttr.STYLE, "color:red" );
 	                    if( oXuiMessage.getMessage() != null || oXuiMessage.getDetail() != null )
 	                    {
 	                        if( oXuiMessage.getMessage() != null )
 	                        {
-	                            w.writeText( oXuiMessage.getMessage(), null );
-	                            w.writeText( "-", null );
+	                            w.write( oXuiMessage.getMessage() );
+	                            w.write( "-" );
 	                        }
 	                        if( oXuiMessage.getDetail() != null )
-	                            w.writeText( oXuiMessage.getDetail(), null );
+	                            w.write( oXuiMessage.getDetail() );
 	                    }
 	                    else {
-	                        w.writeText( oXuiMessage.getMessage().toString(), null  );
+	                        w.write( oXuiMessage.getMessage().toString() );
 	                    }
 	                    w.endElement( DIV );
 	                    break;

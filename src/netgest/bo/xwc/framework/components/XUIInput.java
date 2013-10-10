@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.el.ELException;
+import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 import javax.faces.FacesException;
 import javax.faces.application.Application;
@@ -31,6 +32,7 @@ import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 
 import com.sun.faces.util.MessageFactory;
+import com.sun.faces.util.TypedCollections;
 
 
 /**
@@ -519,6 +521,13 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
         }
         addValidator(new XUIMethodBindingValidator(validatorBinding));
 
+    }
+    
+    public void setValidator(String validatorExpr){
+    	Application app = FacesContext.getCurrentInstance().getApplication();
+    	MethodBinding mb = app.createMethodBinding(validatorExpr, new Class<?>[]{FacesContext.class, UIComponent.class, Object.class});
+    	addValidator(new XUIMethodBindingValidator(mb));
+    	
     }
 
     @Deprecated
@@ -1207,7 +1216,7 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
         values[5] = validatorMessage;
         values[6] = valid;
         values[7] = immediate;
-//        values[8] = saveAttachedState(context, validators);
+        values[8] = saveAttachedState(context, validators);
         return (values);
 
     }
@@ -1227,20 +1236,20 @@ public class XUIInput extends XUIOutput implements XUIEditableValueHolder {
         List<Validator> restoredValidators;
         Iterator<Validator> iter;
 
-//        if (null != (restoredValidators = TypedCollections.dynamicallyCastList((List)
-//             restoreAttachedState(context, values[8]), Validator.class))) {
-//            // if there were some validators registered prior to this
-//            // method being invoked, merge them with the list to be
-//            // restored.
-//            if (null != validators) {
-//                iter = restoredValidators.iterator();
-//                while (iter.hasNext()) {
-//                    validators.add(iter.next());
-//                }
-//            } else {
-//                validators = restoredValidators;
-//            }
-//        }
+        if (null != (restoredValidators = TypedCollections.dynamicallyCastList((List)
+             restoreAttachedState(context, values[8]), Validator.class))) {
+            // if there were some validators registered prior to this
+            // method being invoked, merge them with the list to be
+            // restored.
+            if (null != validators) {
+                iter = restoredValidators.iterator();
+                while (iter.hasNext()) {
+                    validators.add(iter.next());
+                }
+            } else {
+                validators = restoredValidators;
+            }
+        }
 
     }
 

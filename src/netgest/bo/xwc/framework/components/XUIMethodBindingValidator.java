@@ -17,7 +17,7 @@ import javax.faces.context.FacesContext;
  * object identified by the {@link MethodBinding}.</p>
  */
 
-class XUIMethodBindingValidator extends XUIMethodBindingAdapterBase implements Validator, StateHolder {
+public class XUIMethodBindingValidator extends XUIMethodBindingAdapterBase implements Validator, StateHolder {
 
 
     // ------------------------------------------------------ Instance Variables
