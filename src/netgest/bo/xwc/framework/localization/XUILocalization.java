@@ -13,12 +13,17 @@ import java.util.Locale;
 
 public class XUILocalization  {
 	
-	public static void setCurrentLocale(Locale local) {
-		boApplication.currentContext().setLocale( local );
+	public static void setCurrentLocale(Locale locale) {
+		boApplication.currentContext().setLocale( locale );
 	}
+	
 
 	public static Locale getCurrentLocale() {
 		return XEO.getCurrentLocale();
+	}
+	
+	public static Locale getUserLocale() {
+		return XEO.getUserLocale();
 	}
 	
 

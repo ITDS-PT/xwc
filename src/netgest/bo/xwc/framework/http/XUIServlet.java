@@ -131,16 +131,17 @@ public class XUIServlet extends HttpServlet
 			boApplication.currentContext().addEboContext( oEboContext );
 		}
 		
-		Locale localeForRequest = XUILocalization.getCurrentLocale();
+		Locale userLocale = XUILocalization.getUserLocale();
+		Locale requestLocale = XUILocalization.getCurrentLocale();
 		if ( useBrowserLanguage ){
 			Locale browserLocale = oRequest.getLocale();
-			if (browserLocale != null){
-				localeForRequest = browserLocale;
-				XUILocalization.setCurrentLocale( localeForRequest );
+			if (browserLocale != null && userLocale == null){
+				requestLocale = browserLocale;
+				XUILocalization.setCurrentLocale( requestLocale );
 			} 
 		} 
 		if( oXEOSession != null ) {
-			oXEOSession.setDefaultLocale( localeForRequest );
+			oXEOSession.setDefaultLocale( requestLocale );
 		}
 		
     	if (StringUtils.hasValue( renderKit )){
