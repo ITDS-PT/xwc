@@ -30,9 +30,11 @@ XVW.closeWindowJquery = function (sComponentId, sViewId){
 
 
 XVW.Wait = function( iWaitMode ) {
-	$.blockUI.defaults.overlayCSS = {backgroundColor:"transparent", opacity : 0}; //Should be placed somewhere else
-	$.blockUI.defaults.baseZ = 9000000; //Avoid Windows Stacking up
-	$.blockUI({ message: '<div id="xwc-ajax-loading"><span class="xwc-ajax-loading-image" /><p class="xwc-ajax-loading-message"> ' + ExtXeo.Messages.SENDING_DATA + '</p></div>' });
+	if (iWaitMode == 1){
+		$.blockUI.defaults.overlayCSS = {backgroundColor:"transparent", opacity : 0}; //Should be placed somewhere else
+		$.blockUI.defaults.baseZ = 9000000; //Avoid Windows Stacking up
+		$.blockUI({ message: '<div id="xwc-ajax-loading"><span class="xwc-ajax-loading-image" /><p class="xwc-ajax-loading-message"> ' + ExtXeo.Messages.SENDING_DATA + '</p></div>' });
+	}
 };
 
 
