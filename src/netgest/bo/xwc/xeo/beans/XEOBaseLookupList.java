@@ -29,6 +29,7 @@ import netgest.bo.xwc.framework.def.XUIViewerDefinitonParser;
 import netgest.bo.xwc.xeo.components.Bridge;
 import netgest.bo.xwc.xeo.components.ColumnAttribute;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
+import netgest.utils.StringUtils;
 
 
 public class XEOBaseLookupList extends XEOBaseList {
@@ -359,11 +360,67 @@ public class XEOBaseLookupList extends XEOBaseList {
 					for (int i = 0, n = cols.size(); i < n; i++){
 						ColumnAttribute ca = new ColumnAttribute();
 						XUIViewerDefinitionNode node = cols.get(i);
-						ca.setDataField(node.getProperty("dataField"));
-						ca.setWidth("100");
-						if (node.getProperty("hidden") != null){
-							ca.setHidden(node.getProperty("hidden"));
+						String dataField = node.getProperty("dataField");
+						if (StringUtils.hasValue(dataField)){
+							ca.setDataField(dataField);
 						}
+						
+						String width = node.getProperty("width");
+						if (StringUtils.hasValue( width )){
+							ca.setWidth(width);
+							
+						}
+						
+						String sqlExpression = node.getProperty("sqlExpression"); 
+						if (StringUtils.hasValue(sqlExpression)){
+							ca.setSqlExpression(sqlExpression);
+						}
+						
+						String label = node.getProperty("label"); 
+						if (StringUtils.hasValue(label)){
+							ca.setLabel(label);
+						}
+						
+						String hidden = node.getProperty("hidden"); 
+						if (StringUtils.hasValue(hidden)){
+							ca.setHidden(hidden);
+						}
+						
+						String searchable = node.getProperty("searchable"); 
+						if (StringUtils.hasValue(searchable)){
+							ca.setSearchable(searchable);
+						}
+						
+						String renderTemplate = node.getProperty("renderTemplate"); 
+						if (StringUtils.hasValue(renderTemplate)){
+							ca.setRenderTemplate(renderTemplate);
+						}
+						
+						String lookupViewer = node.getProperty("lookupViewer"); 
+						if (StringUtils.hasValue(lookupViewer)){
+							ca.setLookupViewer(lookupViewer);
+						}
+						
+						String align = node.getProperty("align"); 
+						if (StringUtils.hasValue(align)){
+							ca.setAlign(align);
+						}
+						
+						String wrap = node.getProperty("wrapText"); 
+						if (StringUtils.hasValue(wrap)){
+							ca.setWrapText(wrap);
+						}
+						
+						String contentHtml = node.getProperty("contentHtml"); 
+						if (StringUtils.hasValue(contentHtml)){
+							ca.setContentHtml(contentHtml);
+						}
+						
+						String renderer = node.getProperty("renderer"); 
+						if (StringUtils.hasValue(renderer)){
+							ca.setRenderer(renderer);
+						}
+						
 						getComponent().getChildren().add(ca);
 					}
 			}
