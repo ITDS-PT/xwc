@@ -9,6 +9,7 @@ import netgest.bo.system.locale.LocaleFormatter.DateTimeLengh;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class XUILocalization  {
@@ -132,6 +133,10 @@ public class XUILocalization  {
 	
 	public static CurrencyPosition getCurrencyPosition() {
 		return getLocaleProvider().getCurrencyPosition();
+	}
+	
+	public static List<Locale> getAvailableLocales(){
+		return XEO.getAvailableLocales();
 	}
 	
 	
