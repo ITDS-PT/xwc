@@ -20,6 +20,7 @@ import netgest.bo.utils.IProfileUtils;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
 import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
+import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
@@ -70,14 +71,15 @@ public class MainLayout extends XUIComponentBase {
 	}
 
 	public void initComponent() {
-		XUICommand showUserPropsCmd = (XUICommand) this
+		Menu showUserPropsCmd = (Menu) this
 				.findComponent("showUserPropsCmd");
 
 		if (showUserPropsCmd == null) {
-			showUserPropsCmd = new XUICommand();
+			showUserPropsCmd = new Menu();
 			showUserPropsCmd.setId("showUserPropsCmd");
 			showUserPropsCmd
 					.setActionExpression(createMethodBinding("#{" + getBeanId() + ".showUserProperties}"));
+			showUserPropsCmd.setServerActionWaitMode("DIALOG");
 			this.getChildren().add(showUserPropsCmd);
 		}
 	}
@@ -162,7 +164,7 @@ public class MainLayout extends XUIComponentBase {
 			arrayChild2
 					.add(
 							"handler",
-							"function() {XVW.AjaxCommand('formMain','showUserPropsCmd','showUserPropsCmd',2);}");
+							"function() {XVW.AjaxCommand('formMain','formMain:showUserPropsCmd','showUserPropsCmd',1);}");
 		}
 
 		if ( getRenderProfilesList() ) {

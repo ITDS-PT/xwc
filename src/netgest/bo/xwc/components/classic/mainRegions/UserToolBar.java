@@ -400,7 +400,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			arrayChild2
 					.add(
 							"handler",
-							"function() {XVW.AjaxCommand('formMain','showUserPropsCmd','showUserPropsCmd',1);}");
+							"function() {XVW.AjaxCommand('formMain','formMain:showUserPropsCmd','showUserPropsCmd',1);}");
 		}
 		
 		//Add the user profiles
@@ -554,7 +554,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			menuUserProps.setText(USER_TOOLBAR_PROPERTIES_BTN_LBL.toString());
 			menuUserProps.setIcon("ext-xeo/admin/users.gif");
 			menuUserProps.setServerAction("#{" + getBeanId() + ".showUserProperties}");
-			menuUserProps.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString( ));
+			menuUserProps.setServerActionWaitMode( "DIALOG");
 			
 			list.add(menuUserProps);
 			list.add(SEPARATOR);
@@ -568,7 +568,7 @@ public class UserToolBar extends XUIComponentBase implements IToolbarGroup {
 			showUserFavsCmd.setServerAction("#{" + getBeanId() + ".openViewer}");
 			showUserFavsCmd.setValue("{viewerName:'netgest/bo/xwc/xeo/viewers/UserFavorites.xvw',boui:'"+ctx.getBoSession().getPerformerBoui()+"'}");
 			showUserFavsCmd.setTarget("tab");
-			showUserFavsCmd.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString( ));
+			showUserFavsCmd.setServerActionWaitMode( "DIALOG");
 			
 			list.add(showUserFavsCmd);
 			list.add(SEPARATOR);
