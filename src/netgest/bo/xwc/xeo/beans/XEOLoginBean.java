@@ -208,6 +208,7 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 				showProfiles = false;
 				invalidCredentials = false;
 				oXeoSession.setPerformerIProfileBoui( this.profile );
+				oXeoSession.loadUserLocaleSettings();
 				XUIRequestContext oRequestContext = XUIRequestContext
 						.getCurrentContext();
 				HttpServletResponse oHttpResponse = ( HttpServletResponse ) oRequestContext

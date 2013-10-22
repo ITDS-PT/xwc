@@ -3,6 +3,7 @@ package netgest.bo.xwc.framework.http;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boSession;
+import netgest.bo.system.locale.Localization;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.jsf.XUIViewHandler;
@@ -63,7 +64,7 @@ public class XUIServlet extends HttpServlet
 
     	defaultLang = servletConfig.getInitParameter("DefaultLanguage");
     	if( defaultLang != null && defaultLang.length() > 0 ) {
-        	defaultLocale = new Locale( defaultLang ); 
+        	defaultLocale = Localization.createLocaleFromString(defaultLang);
     	}
     	else {
     		defaultLocale = Locale.getDefault();

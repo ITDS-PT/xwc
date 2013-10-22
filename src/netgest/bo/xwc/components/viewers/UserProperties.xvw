@@ -24,7 +24,7 @@
 			</xvw:toolBar>
 			<xvw:window width="800" height="650">
 				<xvw:tabs>
-					<xvw:tab label='Informacoes Pessoais'>
+					<xvw:tab label='@{PERSONAL_INFORMATION}'>
 						<xvw:rows>
 							<xvw:row>
 								<xvw:cell>
@@ -43,6 +43,13 @@
 									<xvw:attribute objectAttribute="theme" />
 								</xvw:cell>
 							</xvw:row>
+							
+							<xvw:row>
+								<xvw:cell>
+									<xvw:attribute objectAttribute="user_language" />
+								</xvw:cell>
+							</xvw:row>
+							
 							<xvw:row>
 								<xvw:cell>
 									<xvw:attribute lovMap='#{viewBean.profilesLovMap}'
@@ -63,7 +70,7 @@
 							<xvw:attributeLabel text='@{changewarning}'></xvw:attributeLabel>
 						</font>
 					</xvw:tab>
-					<xvw:tab label='Localizacao'>
+					<xvw:tab label='@{LOCALIZATION}'>
 						<xvw:include
 							src='netgest/bo/xwc/components/viewers/LocaleSettings.xvw' />
 					</xvw:tab>

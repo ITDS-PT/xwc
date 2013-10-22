@@ -26,7 +26,6 @@ public class XUIMessagesLocalization {
 		Locale language;
 		if (StringUtils.hasValue( lang )) {
 			if (lang.charAt(2) == '_') {
-
 				String s1 = lang.substring(0, 2);
 				String s2 = lang.substring(3, 5);
 				language = new Locale(s1, s2);
@@ -118,7 +117,7 @@ public class XUIMessagesLocalization {
 	
 	/**
 	 * 
-	 * Attemps to retrieve the message if it exits, if it does not exist return null
+	 * Attempts to retrieve the message if it exits, if it does not exist return null
 	 * 
 	 * @param bundle
 	 * @param id

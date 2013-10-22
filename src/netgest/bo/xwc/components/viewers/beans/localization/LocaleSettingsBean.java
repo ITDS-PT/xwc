@@ -1,14 +1,5 @@
 package netgest.bo.xwc.components.viewers.beans.localization;
 
-import netgest.bo.system.Logger;
-import netgest.bo.system.locale.LocaleFormatter.CurrencyPosition;
-import netgest.bo.system.locale.LocaleSettings;
-import netgest.bo.system.login.LocalePreferenceSerialization;
-import netgest.bo.xwc.xeo.beans.XEOBaseBean;
-import netgest.bo.xwc.xeo.localization.BeansMessages;
-
-import netgest.utils.StringUtils;
-
 import java.text.Collator;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -22,6 +13,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+
+import netgest.bo.boConfig;
+import netgest.bo.system.Logger;
+import netgest.bo.system.locale.LocaleFormatter.CurrencyPosition;
+import netgest.bo.system.locale.LocaleSettings;
+import netgest.bo.system.login.LocalePreferenceSerialization;
+import netgest.bo.xwc.xeo.beans.XEOBaseBean;
+import netgest.bo.xwc.xeo.localization.BeansMessages;
+import netgest.utils.StringUtils;
 
 public class LocaleSettingsBean extends XEOBaseBean {
 	
@@ -82,18 +82,22 @@ public class LocaleSettingsBean extends XEOBaseBean {
 		
 		Map< Locale , String > result = new HashMap< Locale , String >();
 		Map< String , Locale > inverseQuery = new HashMap< String , Locale >();
+		LocaleSettings defaultSettings = boConfig.getLocaleSettings();
 		
-		Locale[] localesArray = Locale.getAvailableLocales();
+		List<Locale> locales = defaultSettings.getAvailableLocales();
 		List<String> sortedLocales = new LinkedList< String >(); 
 		Locale currentLocale = getCurrentLocale();
-		for ( Locale locale : localesArray ) {
+		for ( Locale locale : locales ) {
+			String localeDisplayName = "";
 			if (StringUtils.hasValue( locale.getDisplayCountry( currentLocale ))) {
-				String localeDisplayName = locale.getDisplayLanguage( currentLocale ) 
+				localeDisplayName = locale.getDisplayLanguage( currentLocale ) 
 						+ " ( " +locale.getDisplayCountry( currentLocale ) + " ) ";
-				sortedLocales.add( localeDisplayName );
-				result.put( locale , localeDisplayName );
-				inverseQuery.put( localeDisplayName , locale );
+			} else {
+				localeDisplayName = locale.getDisplayLanguage( currentLocale ); 
 			}
+			sortedLocales.add( localeDisplayName );
+			result.put( locale , localeDisplayName );
+			inverseQuery.put( localeDisplayName , locale );
 		}
 		
 		Collections.sort( sortedLocales, Collator.getInstance( currentLocale ) );
@@ -155,6 +159,12 @@ public class LocaleSettingsBean extends XEOBaseBean {
 			currencySymbol = settings.getCurrencySymbol();
 			currencyPosition = settings.getCurrencyPosition().name();
 			locale = settings.getLocale();
+			
+			Map<String,String> locales =  getLocaleList();
+			if (!locales.containsKey(locale.toString())){
+				this.locale = new Locale(this.locale.getLanguage());
+			}
+			
 			timeZone = settings.getTimezone().getID();
 			
 			String datePattern = settings.getDatePattern();
@@ -350,10 +360,18 @@ public class LocaleSettingsBean extends XEOBaseBean {
 				getGroupSeparator() , 
 				getDecimalSeparator() , 
 				getCurrencySymbol() , 
-				position );
+				position
+				, getAvailableLocales() );
 		return settings;
 		
 	}
+
+	private List<Locale> getAvailableLocales() {
+		return boConfig.getLocaleSettings().getAvailableLocales();
+	}
+
+
+
 
 	public String getDateTimeSeparator() {
 		return dateTimeSeparator;

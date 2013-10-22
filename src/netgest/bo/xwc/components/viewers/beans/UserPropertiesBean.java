@@ -25,6 +25,7 @@ import netgest.bo.xwc.xeo.beans.XEOEditBean;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -120,22 +121,15 @@ public class UserPropertiesBean extends XEOEditBean {
 				sess.setPerformerIProfileBoui(profile);
 			}	
 			
-			AttributeHandler languageAtt = user.getAttribute("user_language");
-			if ( languageAtt != null ) {
-				
-				boObject languageObj = XEO.loadWithQuery( 
-						"select XeoApplicationLanguage where boui= ?" , languageAtt.getValueLong() );
-				if (languageObj != null){
-					String language = languageObj.getAttribute("code").getValueString();
-					bouser.setLanguage(language);
-					
-				}
-			} else{
-				bouser.setLanguage(boApplication.getXEO().getApplicationLanguage());
-			}
-			
 			LocaleSettingsBean localeSettingsBean = (LocaleSettingsBean) getViewRoot().getBean( "localeBean" );
 			LocaleSettings settings = localeSettingsBean.createLocaleSettings();
+			
+			Locale userLocale = settings.getLocale();
+			if (userLocale != null){
+				bouser.setLanguage(userLocale.getLanguage());
+				//Backward compatibilty change old user language
+				user.getAttribute("user_language").setValueString(userLocale.getLanguage().toUpperCase());
+			}
 			
 			LocalePreferenceSerialization.save( settings , getEboContext() );
 			XUILocalization.setCurrentLocale( settings.getLocale() );
