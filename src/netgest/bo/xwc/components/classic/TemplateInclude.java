@@ -37,6 +37,10 @@ public class TemplateInclude extends XUIComponentBase implements NamingContainer
 		if( this.viewRoot == null )
 			this.viewRoot = view.getEvaluatedValue();
 		
+		if (this.viewRoot == null){
+			throw new IllegalStateException(String.format("TemplateInclude %s cannot have a null view",this.getClientId()));
+		}
+		
 		this.getChildren().clear();
 		
 		this.getChildren().add( viewRoot );
