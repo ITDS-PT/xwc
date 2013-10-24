@@ -119,6 +119,10 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 			                            case DataFieldTypes.VALUE_BLOB:
 			                                // Don't passe to JavaScript
 			                                break;
+			                            case DataFieldTypes.VALUE_BRIDGE:
+			                            	w.writeAttribute("displayValue",  oDataFieldValue );
+			                            	 w.write(sDisplayValue);
+			                            	break;
 			                            case DataFieldTypes.VALUE_BOOLEAN:
 			                            	 w.writeAttribute("displayValue",  oDataFieldValue );
 			                            	 w.write(sDisplayValue);

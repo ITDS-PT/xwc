@@ -261,21 +261,6 @@
 
     <!-- Atributos do tipo texto longo -->
     <xsl:template match="attributeTextArea" priority="-1">
-        <td  xsl:use-attribute-sets="tableMainValueColumn">
-            <xsl:call-template name="checkColSpan">
-                <xsl:with-param name="count">
-                    <xsl:value-of select="count(../../cell)"/>
-                </xsl:with-param>
-                <xsl:with-param name="total">
-                    <xsl:value-of select="../../../@columns"/>
-                </xsl:with-param>
-            </xsl:call-template>
-            <xsl:value-of select="./text()"/>
-        </td>
-    </xsl:template>
-
-    <!-- Atributos do tipo número -->
-    <xsl:template match="attributeNumber" priority="-1">
         <td xsl:use-attribute-sets="tableMainValueColumn">
             <xsl:call-template name="checkColSpan">
                 <xsl:with-param name="count">
@@ -288,6 +273,38 @@
             <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
+
+
+	
+    <!-- Atributos do tipo número -->
+    <xsl:template match="attributeNumber" priority="-1">
+        <td xsl:use-attribute-sets="tableMainValueColumn">
+            <xsl:call-template name="checkColSpan">
+                <xsl:with-param name="count">
+                    <xsl:value-of select="count(../../cell)"/>
+                </xsl:with-param>
+                <xsl:with-param name="total">
+                    <xsl:value-of select="../../../@columns"/>
+                </xsl:with-param>
+            </xsl:call-template>
+            <xsl:value-of select="./@displayValue"/>
+        </td>
+    </xsl:template>
+    
+    <xsl:template match="bridgeLookup" priority="-1">
+        <td xsl:use-attribute-sets="tableMainValueColumn">
+            <xsl:call-template name="checkColSpan">
+                <xsl:with-param name="count">
+                    <xsl:value-of select="count(../../cell)"/>
+                </xsl:with-param>
+                <xsl:with-param name="total">
+                    <xsl:value-of select="../../../@columns"/>
+                </xsl:with-param>
+            </xsl:call-template>
+            <xsl:value-of select="./@displayValue"/>
+        </td>
+    </xsl:template>
+    
 
     <!-- Atributos do tipo ficheiro -->
     <xsl:template match="attributeFile" priority="-1">
@@ -411,7 +428,7 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayvalue" disable-output-escaping="yes"/>
+            <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
 
@@ -444,10 +461,10 @@
     
     <xsl:template match="gridcolumn" priority="-1">
         <td>
-            <xsl:if test="string-length(*//text()) > 0">
-                <xsl:value-of select="*//text()"/>    
+            <xsl:if test="string-length(./text()) > 0">
+                <xsl:value-of select="./text()"/>    
             </xsl:if>
-            <xsl:if test="string-length(*//text()) = 0">
+            <xsl:if test="string-length(./text()) = 0">
                 <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>    
             </xsl:if>
         </td>

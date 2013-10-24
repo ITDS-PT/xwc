@@ -473,9 +473,9 @@
     <!-- Atributos do tipo número -->
     <xsl:template match="attributeNumber" priority="-1">
         <xsl:choose>
-            <xsl:when test="string-length(text()) > 0">
+            <xsl:when test="string-length(./@displayValue) > 0">
                 <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                    <xsl:value-of select="text()"/>
+                    <xsl:value-of select="./@displayValue"/>
                 </fo:block>
             </xsl:when>
             <xsl:otherwise>
@@ -1065,6 +1065,21 @@
     
     <!-- Atributos do tipo object -->
     <xsl:template match="attributeNumberLookup" priority="-1">
+        <xsl:choose>
+            <xsl:when test="string-length(@displayValue) > 0">
+                <fo:block xsl:use-attribute-sets="attributeTextFormatting">
+                    <xsl:value-of select="./@displayValue"/>
+                </fo:block>
+            </xsl:when>
+            <xsl:otherwise>
+                <fo:block xsl:use-attribute-sets="attributeEmptyFormatting">
+                    <xsl:value-of select="string('_')"/>
+                </fo:block>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+     <xsl:template match="bridgeLookup" priority="-1">
         <xsl:choose>
             <xsl:when test="string-length(@displayValue) > 0">
                 <fo:block xsl:use-attribute-sets="attributeTextFormatting">

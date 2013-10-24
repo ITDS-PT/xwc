@@ -461,9 +461,10 @@
 			
         </xwc:renderKit>
         <xwc:renderKit name="XEOXML" componentNamespace="xeo" >
-      		<xwc:render for='splitedLookup'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-      		<xwc:render for='formEdit'>netgest.bo.xwc.components.classic.renderers.XMLFormEditRenderer</xwc:render>
-      		<xwc:render for='bridge'>netgest.bo.xwc.components.classic.renderers.XMLGridPanelRenderer</xwc:render>
+	        <xwc:render for='bridgeLookup'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+	        <xwc:render for='splitedLookup'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+	      	<xwc:render for='formEdit'>netgest.bo.xwc.components.classic.renderers.XMLFormEditRenderer</xwc:render>
+	      	<xwc:render for='bridge'>netgest.bo.xwc.components.classic.renderers.XMLGridPanelRenderer</xwc:render>
         </xwc:renderKit>
     </xwc:renderKits>
     

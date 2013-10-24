@@ -378,7 +378,13 @@
     <!-- Atributos do tipo número -->
     <xsl:template match="attributeNumber" priority="-1">
         <td class="value">
-           <xsl:value-of select="./text()"/>
+           <xsl:value-of select="./@displayValue"/>
+        </td>
+    </xsl:template>
+    
+     <xsl:template match="bridgeLookup" priority="-1">
+        <td class="value">
+           <xsl:value-of select="./@displayValue"/>
         </td>
     </xsl:template>
     
@@ -514,12 +520,37 @@
     
     <xsl:template match="gridcolumn" priority="-1">
         <td>
-            <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>
+            <xsl:if test="string-length(./text()) > 0">
+                <xsl:value-of select="./text()"/>    
+            </xsl:if>
+            <xsl:if test="string-length(./text()) = 0">
+                <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>    
+            </xsl:if>
         </td>
     </xsl:template>
     
     <!-- Charts -->
     <xsl:template match="pieChart">
+        <div>
+            <img>
+                <xsl:attribute name="src">
+                    <xsl:value-of select="./@urlHtml"/>
+                </xsl:attribute>
+            </img>
+        </div>
+    </xsl:template>
+    
+    <xsl:template match="barChart">
+        <div>
+            <img>
+                <xsl:attribute name="src">
+                    <xsl:value-of select="./@urlHtml"/>
+                </xsl:attribute>
+            </img>
+        </div>
+    </xsl:template>
+    
+    <xsl:template match="lineChart">
         <div>
             <img>
                 <xsl:attribute name="src">
