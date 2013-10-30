@@ -744,7 +744,12 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 				}
 			}
 			else {
-				return ListToolBar.getObjectsForNewMenu( refDef );
+				if (defAttribute.getChildIsOrphan()) {
+					subClassesDef.add( refDef );
+				}
+				else {
+					return ListToolBar.getObjectsForNewMenu( refDef );
+				}
 //				boDefHandler[] subDefs = refDef.getTreeSubClasses();
 //				if( refDef.getBoCanBeOrphan() )
 //					subClassesDef.add( refDef );
