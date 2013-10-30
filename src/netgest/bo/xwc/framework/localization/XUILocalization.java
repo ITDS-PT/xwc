@@ -71,6 +71,10 @@ public class XUILocalization  {
 		return getLocaleProvider().parseDate( date );
 	}
 	
+	public static Date parseDateNoTimezone(String date) throws ParseException{
+		return getLocaleProvider().parseDateWithoutTimezone(date);
+	}
+	
 	public static Date parseDateHourMinute(String date) throws ParseException{
 		return getLocaleProvider().parseDateHourMinute( date );
 	}
