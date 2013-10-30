@@ -128,6 +128,10 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 			                            	 w.write(sDisplayValue);
 			                                break;
 			                            case DataFieldTypes.VALUE_CHAR: 
+			                            	//No cardId's on XML
+			                            	if (sDisplayValue.indexOf("<img style='cursor:hand' hspace='3' border='0' align='absmiddle'")>-1) {
+			                            		sDisplayValue=sDisplayValue.replaceAll("\\<.*?>","");
+			                            	}
 			                            	w.writeAttribute("displayValue",  oDataFieldValue );
 			                            	w.write(sDisplayValue);
 			                            	break;
