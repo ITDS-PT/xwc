@@ -422,14 +422,20 @@ public class AttributeNumberLookup extends AttributeBase {
 		}
 
         public String getClearCode( Form oForm, AttributeBase oAttr ) {
-            if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
-            	XUIForm form = (XUIForm) oAttr.findParent( XUIForm.class );
-	            return "XVW.AjaxCommand( '" + form.getClientId() +  "','" + oAttr.getClientId() + "_clear','true',0);";
-            }
-            else {
-            	return "Ext.ComponentMgr.get('" + getExtComponentId(oAttr) + "').setValue('');\n" + 
-	            	   "document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';";
-            }
+        	//This code and the comments are the resolution for bug 431
+        	//this is not the ideal situation, when there is no OnChangeSubmit or depends defined,
+        	//the clear on the Input should not make a request to the server
+        	
+        	XUIForm form = (XUIForm) oAttr.findParent( XUIForm.class );
+            return "XVW.AjaxCommand( '" + form.getClientId() +  "','" + oAttr.getClientId() + "_clear','true',0);";
+//            if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
+//            	XUIForm form = (XUIForm) oAttr.findParent( XUIForm.class );
+//	            return "XVW.AjaxCommand( '" + form.getClientId() +  "','" + oAttr.getClientId() + "_clear','true',0);";
+//            }
+//            else {            
+//            	return "Ext.ComponentMgr.get('" + getExtComponentId(oAttr) + "').setValue('');\n" + 
+//	            	   "document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';";
+          //  }
         }
 
         @Override
