@@ -44,11 +44,11 @@
 								</xvw:cell>
 							</xvw:row>
 							
-							<xvw:row>
+							<!-- <xvw:row>
 								<xvw:cell>
 									<xvw:attribute objectAttribute="user_language" />
 								</xvw:cell>
-							</xvw:row>
+							</xvw:row> -->
 							
 							<xvw:row>
 								<xvw:cell>
