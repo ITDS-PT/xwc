@@ -323,6 +323,17 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 		}
 	}
 
+	
+	public boolean getConfigDisabled() {
+		if (getIsLoggedIn() && StringUtils.isEmpty(getProfile()) ) {
+			return true;
+		}
+		else {
+			return false;
+		}
+			
+	}
+	
 	public void logout() {
 		HttpSession session = getHttpSession( true );
 		XUIRequestContext oRequestContext = XUIRequestContext

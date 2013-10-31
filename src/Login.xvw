@@ -62,7 +62,7 @@
 											<xvw:row>
 												<xvw:cell>
 													<xvw:attribute lovMap='#{viewBean.profileLovMap}'
-														visible='#{viewBean.showProfilesLov}' valueExpression='#{viewBean.profile}'
+														visible='#{viewBean.showProfilesLov}' onChangeSubmit="true" valueExpression='#{viewBean.profile}'
 														id='profile' inputType='attributeLov' label='@{LOGIN_PROFILE}'
 														maxLength='20'></xvw:attribute>
 												</xvw:cell>
@@ -70,7 +70,7 @@
 											<xvw:row>
 												<xvw:cell>
 													<xvw:actionButton id='confirmBtn' label='@{BTN_CONFIRM}'
-														action='#{viewBean.login}' width='80'></xvw:actionButton>
+														action='#{viewBean.login}' disabled="#{viewBean.configDisabled}" width='80'></xvw:actionButton>
 												</xvw:cell>
 												<xvw:cell>
 													<xvw:actionButton id='logoutBtn'
