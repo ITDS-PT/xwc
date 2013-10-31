@@ -9,12 +9,15 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import com.lowagie.text.Paragraph;
+
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
+import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.model.Column;
@@ -107,11 +110,25 @@ public class GridPanelExcelRenderer {
 	        			}
 	        		
 	        			if( sValue != null ) {
+	        				boolean write=true;
 	        				if( oGridColumns[i].isContentHtml() ) {
 	        					sValue = sValue.replaceAll( "<[a-zA-Z\\/][^>]*>", "");
 	        					sValue = HTMLEntityDecoder.htmlEntityToChar( sValue );
 	        				}
-	    					w.writeText( sValue, null );
+	        				else if(oAtt.getDataType()==DataFieldTypes.VALUE_BRIDGE) {	   
+	        					String [] values=sValue.split("<br></br>");
+	        					for (int j=0;j<values.length;j++) {
+	        						if (j>0)
+	        							w.startElement( HTMLTag.BR );
+	        						w.writeText( values[j], null );
+	        						if (j>0)
+	        							w.endElement( HTMLTag.BR );
+	        					}
+	        					write=false;
+	    					}
+	        				
+	    					if (write)
+	    						w.writeText( sValue, null );
 	        			}
 	        			w.endElement( HTMLTag.TD );
     				}

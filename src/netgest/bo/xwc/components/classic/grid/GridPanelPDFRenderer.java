@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
+import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
@@ -167,7 +168,7 @@ public class GridPanelPDFRenderer {
         				
     					cell = new PdfPCell();
         				
-    					if(	oGridColumns[i].isContentHtml() ) {
+    					if(	oGridColumns[i].isContentHtml()) {
 	    					sValue = HTMLEntityDecoder.htmlEntityToChar( sValue );
 	    					List<Element> s = (List<Element>)
 	    						HTMLWorker.parseToList(new StringReader(sValue), null, htmlWorkerProps );
@@ -176,6 +177,14 @@ public class GridPanelPDFRenderer {
 		        					cell.addElement( elem );
 		        				}
 	        				}
+    					}
+    					else if(oAtt.getDataType()==DataFieldTypes.VALUE_BRIDGE) {
+    						cell.addElement(
+    								new Paragraph(
+    	    								sValue.replaceAll("<br></br>", "\n"), 
+    	        							fontB
+    	    							)
+    							);
     					}
         				else {
         					cell.addElement(

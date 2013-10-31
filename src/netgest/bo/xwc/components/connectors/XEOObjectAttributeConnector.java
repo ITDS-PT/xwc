@@ -111,7 +111,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
                     try {
                     	 sb.append(append);
                     	 sb.append(bh.getObject().getTextCARDID());
-                    	 append = ", ";
+                    	 append = "<br></br> ";
                     } catch (boRuntimeException e) {
                     	e.printStackTrace();
                     }
