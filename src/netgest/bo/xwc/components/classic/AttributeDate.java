@@ -54,7 +54,7 @@ public class AttributeDate extends AttributeBase {
             if( sSubmitedValue.length() > 0 )
             {
                 try {
-                    oSubmitedDate = XUILocalization.parseDateNoTimezone( String.valueOf( oSubmitedValue ) );
+                    oSubmitedDate = XUILocalization.parseDateDefaultTimezone( String.valueOf( oSubmitedValue ) );
                     setValue( new Timestamp( oSubmitedDate.getTime() ) );
     
                 }
