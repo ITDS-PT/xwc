@@ -221,7 +221,7 @@ public class AttributeDateTime extends AttributeBase {
 		                sTime = reqMap.get( timeClientId );                
 		                
 		                if( sTime != null ) {
-		                    sDate += " " + sTime;
+		                    sDate += XUILocalization.getDateTimeSeparator() + sTime;
 		                }
 		                component.setSubmittedValue( sDate );
 	                }

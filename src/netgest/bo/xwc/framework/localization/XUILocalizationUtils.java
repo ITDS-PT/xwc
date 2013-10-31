@@ -1,19 +1,29 @@
 package netgest.bo.xwc.framework.localization;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class XUILocalizationUtils {
 	
-	private static final SimpleDateFormat sdfdt = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-	private static final SimpleDateFormat sdfd = new SimpleDateFormat("dd/MM/yyyy");
-	
+	/**
+	 * 
+	 * Formats a date to string
+	 * 
+	 * @deprecated See {@link XUILocalization#formatDate(Date)}
+	 */
+	@Deprecated
 	public static final String dateToString( Date date ) {
-		return sdfd.format( date );
+		return XUILocalization.formatDate(date);
 	}
 
+	/**
+	 * 
+	 * Formats a date to string with time
+	 * 
+	 * @deprecated See {@link XUILocalization#formatDateTime(Date)}
+	 */
+	@Deprecated
 	public static final String dateTimeToString( Date date ) {
-		return sdfdt.format( date );
+		return XUILocalization.formatDateTime(date);
 	}
 
 }

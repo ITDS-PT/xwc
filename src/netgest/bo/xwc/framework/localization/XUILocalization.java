@@ -71,6 +71,10 @@ public class XUILocalization  {
 		return getLocaleProvider().parseDate( date );
 	}
 	
+	public static Date parseDateDefaultTimezone(String date) throws ParseException{
+		return getLocaleProvider().parseDateDefaultTimezone(date);
+	}
+	
 	public static Date parseDateHourMinute(String date) throws ParseException{
 		return getLocaleProvider().parseDateHourMinute( date );
 	}
@@ -120,6 +124,10 @@ public class XUILocalization  {
 	
 	public static char getDecimalSeparator() {
 		return getLocaleProvider().getDecimalSeparator();
+	}
+	
+	public static char getDateTimeSeparator(){
+		return getLocaleProvider().getDateTimeSeparator();
 	}
 	
 	
