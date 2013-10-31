@@ -7,6 +7,7 @@ import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.localization.XUILocalization;
 import netgest.bo.xwc.framework.localization.XUILocalizationUtils;
 import netgest.bo.xwc.xeo.components.FormEdit;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
@@ -72,7 +73,7 @@ public class XMLFormEditRenderer extends XMLBasicRenderer {
 		try {
 			Date date = getXEOObject().getAttribute("SYS_DTCREATE").getValueDate();
 			if( date != null ) {
-				return XUILocalizationUtils.dateTimeToString( date );
+				return XUILocalization.formatDateTime(date);
 			}
 			
 		} catch (boRuntimeException e) {
@@ -90,7 +91,7 @@ public class XMLFormEditRenderer extends XMLBasicRenderer {
 		try {
 			Date date = getXEOObject().getAttribute("SYS_DTSAVE").getValueDate();
 			if( date != null ) {
-				return XUILocalizationUtils.dateTimeToString( date );
+				return XUILocalization.formatDateTime(date);
 			}
 			
 		} catch (boRuntimeException e) {

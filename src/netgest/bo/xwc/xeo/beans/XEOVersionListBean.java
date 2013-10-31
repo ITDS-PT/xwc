@@ -17,6 +17,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.localization.XUILocalization;
 import netgest.bo.xwc.framework.localization.XUILocalizationUtils;
 import netgest.bo.xwc.xeo.components.FormEdit;
 import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
@@ -212,7 +213,7 @@ public class XEOVersionListBean extends XEOEditBean
 		    			 	getAttribute("SYS_DTCREATE").getValueDate();
 		    			 String createDateString = "";
 		    			 if (createDate != null)
-		    			 	 createDateString = XUILocalizationUtils.dateTimeToString( createDate );
+		    			 	 createDateString = XUILocalization.formatDateTime(createDate);
 		    			 		
 		    			 String creatorUser = currentObjectVersion.getAttribute("CREATOR").getValueString();
 		    			 if (creatorUser != null)

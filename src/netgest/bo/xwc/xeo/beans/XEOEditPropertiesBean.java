@@ -9,6 +9,7 @@ import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.localization.XUILocalization;
 import netgest.bo.xwc.framework.localization.XUILocalizationUtils;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 
@@ -157,7 +158,7 @@ public class XEOEditPropertiesBean extends XEOEditBean {
 	public String getCreationDate() throws boRuntimeException {
 		Date date = getXEOObject().getAttribute("SYS_DTCREATE").getValueDate();
 		if( date != null ) {
-			return XUILocalizationUtils.dateTimeToString( date );
+			return XUILocalization.formatDateTime(date);
 		}
 		return "";
 	}
@@ -165,7 +166,7 @@ public class XEOEditPropertiesBean extends XEOEditBean {
 	public String getLastModificationDate() throws boRuntimeException {
 		Date date = getXEOObject().getAttribute("SYS_DTSAVE").getValueDate();
 		if( date != null ) {
-			return XUILocalizationUtils.dateTimeToString( date );
+			return XUILocalization.formatDateTime(date);
 		}
 		return "";
 	}
