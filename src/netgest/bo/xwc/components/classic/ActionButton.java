@@ -61,7 +61,7 @@ public class ActionButton extends XUICommand
      * The target where the action will be executed
      */
     @Values({ "blank","window","self","top","download","tab" })
-    private XUIStateProperty<String> 		target 	= new XUIStateProperty<String>( "target", this );
+    private XUIStateProperty<String> 		target 	= new XUIStateProperty<String>( "target", this , "self" );
 
     /**
      * Whether or not the button is disabled (can't be clicked)

@@ -10,7 +10,7 @@
 		 $(function() { 
 		 
 		 	<#-- Add The Javascript to create the button -->
-		 	$( XVW.get('${this.clientId}_btn') ).button().click( function () { ${xvw.js.ajaxCommand(this)}; return false; })
+		 	$( XVW.get('${this.clientId}_btn') ).button().click( function () { ${xvw.js.command(this.getTarget(),this)}; return false; })
 		 		<#if this.disabled>
 		 			.attr('disabled', 'disabled') 
 		 		<#else>	

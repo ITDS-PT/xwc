@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.template.wrappers;
 
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts.ValueType;
+import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 /**
@@ -44,6 +45,9 @@ public class XVWScriptsWrapper {
 		return XVWScripts.getAjaxCommandScript( component, value, XVWScripts.WAIT_DIALOG, valueType );
 	}
 	
+	public String command(XUIComponentBase component){
+		return XVWScripts.getCommandScript(component, XVWScripts.WAIT_DIALOG);
+	}
 	
 	public String command(String target, XUIComponentBase component){
 		return XVWScripts.getCommandScript(target, component, XVWScripts.WAIT_DIALOG);
