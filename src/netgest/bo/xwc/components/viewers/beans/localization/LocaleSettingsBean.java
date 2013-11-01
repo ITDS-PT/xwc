@@ -18,6 +18,7 @@ import netgest.bo.boConfig;
 import netgest.bo.system.Logger;
 import netgest.bo.system.locale.LocaleFormatter.CurrencyPosition;
 import netgest.bo.system.locale.LocaleSettings;
+import netgest.bo.system.locale.LocaleSettings.Type;
 import netgest.bo.system.login.LocalePreferenceSerialization;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
@@ -361,7 +362,8 @@ public class LocaleSettingsBean extends XEOBaseBean {
 				getDecimalSeparator() , 
 				getCurrencySymbol() , 
 				position
-				, getAvailableLocales() );
+				, getAvailableLocales()
+				, Type.FROM_PREFERENCE);
 		return settings;
 		
 	}
