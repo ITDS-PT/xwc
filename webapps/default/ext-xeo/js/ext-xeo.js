@@ -543,6 +543,8 @@ ExtXeo.comp.BoxComponent.prototype.syncSize = function() {
 };
 
 XVW.setTitle = function( sTitle ) {
+	//Remove HTML Tags for the alt title
+	var altTitle = sTitle.replace(/(<([^>]+)>)/ig,"");
 	if( XVW.getXApp() != null ) {
 		var tabs = XVW.getXApp().desktop.tabPanel;
 		var tabItems = tabs.items;
@@ -551,7 +553,7 @@ XVW.setTitle = function( sTitle ) {
 	    	if( oFrames.length > 0 ) {
 	    		for ( var k = 0; k < oFrames.length; k++) {
 					if( oFrames[k].contentWindow == window ) {
-						tabItems.get(i).setTitle( "<div title='"+sTitle.replace(/'/g,"")+"' >" + sTitle + "</div>" );
+						tabItems.get(i).setTitle( "<div title='"+altTitle+"' >" + sTitle + "</div>" );
 						return;
 					}
 				}
