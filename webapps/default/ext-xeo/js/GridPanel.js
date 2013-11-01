@@ -364,7 +364,11 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 		}
 		
 		, clearAllRows : function () {
-			this.getSelectionModel().clearSelectionsAll();	
+			var selModel = this.getSelectionModel();
+			if (selModel.clearSelectionsAll)
+				selModel.clearSelectionsAll();	
+			else
+				selModel.selectAll();
 		}
 		
 		, getSelectedRows : function(){
@@ -2952,7 +2956,9 @@ ExtXeo.grid.rowDeselect = function( selectionModel, rowIndex, record){
 	
 	
 	if (!grid.isGrouped()){
-		selectionModel.removeSelectedPage(grid.getCurrentPageNumber());
+		if (selectionModel.removeSelectedPage){
+			selectionModel.removeSelectedPage(grid.getCurrentPageNumber());
+		}
 		ExtXeo.deactivateSelectAllRows(grid.id);
 	}
 	
