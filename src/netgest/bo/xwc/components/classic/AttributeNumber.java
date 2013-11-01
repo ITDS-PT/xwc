@@ -145,7 +145,7 @@ public class AttributeNumber extends AttributeBase {
 			.s( "	fldVal = fldVal.replace(/\\./g,'')" )
 			.l( "	if( fldVal.length >= fld.maxLength ) {" )
 			.l( "		if( '8,9,13,16,17,18,19,20,27,33,34,35,36,37,38,39,40,45,46'.indexOf(''+event.keyCode) == -1 && '01234556789'.indexOf(String.fromCharCode(event.keyCode))>-1 ) {")
-			.l("			event.returnValue=false; ")
+			.l("			event.stopEvent(); ")
 			.l("		}")
 			.l("	}")
 			.l("}");
