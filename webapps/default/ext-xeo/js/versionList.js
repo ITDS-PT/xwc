@@ -45,8 +45,7 @@ XVW.openDiffWindow = function( field ){
 			version = field.value;
 	}
 	
-	XVW.AjaxCommand( 'listVersionForm','listVersionForm:showDiff',version,2);
-	XVW.NoWait();
+	XVW.AjaxCommand( 'listVersionForm','listVersionForm:showDiff',version,1);
 };
 				
 /*
@@ -60,5 +59,5 @@ Opens a window with the specified URL
 XVW.openLogWindow  = function (bouiVersion)
 {
 	if ( bouiVersion > 0 )
-		XVW.AjaxCommand( 'listVersionForm' , 'listVersionForm:showLogs' , bouiVersion , 2 );
+		XVW.AjaxCommand( 'listVersionForm' , 'listVersionForm:showLogs' , bouiVersion , 1 );
 };
