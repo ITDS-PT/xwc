@@ -1,3 +1,5 @@
+
+
 Ext.ns('ExtXeo','ExtXeo.grid');
 Ext.ns('ExtXeo','ExtXeo.data'); 
 
@@ -5,6 +7,7 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 	{
 		 recordIds : null
 		, suspendUploadCondig : false
+		, rowIdentifier : 'BOUI'
 		, minHeight : 0
 		, gridDragDrop : null
 		, toolBarVisible : false
@@ -48,6 +51,10 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         , getColumnIndex : function ( columnId ){
         	return this.getColumnModel().getIndexById( columnId );
         }
+        , getRowIdentifier : function () {
+        	return this.rowIdentifier;
+        }
+        
         , getGroups : function (){
         	return this.store.groupField;
         }
@@ -245,6 +252,11 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 		, getActiveRowInputId : function(){
 			return this.id + "_act";
 		}
+		//Return the Id of the selected pages hidden input
+		, getSelectedPagesInputId : function(){
+			return this.id + "_pages";
+		}
+		
 		//Return the Id of the label with the number of selected elements
 		, getNumberSelectionsCounterId : function(){
 			return this.id + "_selections";
@@ -256,11 +268,17 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 			this.recordIds = [];
 			var selectedRecorsdInput = Ext.get(this.getSelectedRowsInputId());
 			var activeRecorsdInput = Ext.get(this.getActiveRowInputId());
+			var selectedPages = Ext.get(this.getSelectedPagesInputId());
 			
-			if (selectedRecorsdInput !== undefined && selectedRecorsdInput !== null)
+			if (selectedRecorsdInput !== undefined && selectedRecorsdInput !== null){
 				selectedRecorsdInput.set({value:''});
-			if (activeRecorsdInput !== undefined && activeRecorsdInput !== null)
+			}
+			if (activeRecorsdInput !== undefined && activeRecorsdInput !== null){
 				activeRecorsdInput.set({value:''});
+			}
+			if (selectedPages !== undefined && selectedPages !== null){
+				selectedPages.set({value:''});
+			}
 			
 			var selectionModel = this.getSelectionModel();
 			if (selectionModel !== undefined && selectionModel !== null){
@@ -280,7 +298,89 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 			this.store.markDataSourceChange();
 		}
 		
+		, getNavBar : function () {
+			return Ext.getCmp(this.id + "_navbar");
+		}
 		
+		, getCurrentPageNumber : function () {
+			var navBar = this.getNavBar();
+			return navBar.getCurrentPageNumber();
+		}
+		
+		, isAllRowsSelected : function (options) {
+			
+			var start; 
+			var pageSize;
+			var currentPage;
+			
+			if (options !== undefined){
+				var start = options.start;
+				var pageSize = options.limit;
+				
+				if (start === undefined){
+					start = options.params.start;
+				}
+				
+				if (pageSize === undefined){
+					pageSize = options.params.limit;
+				}
+				
+				currentPage = (start / pageSize) + 1;
+			} else {
+				currentPage = this.getCurrentPageNumber();
+				if (currentPage === null || currentPage === undefined){
+					currentPage = 1;
+				}
+			}
+			
+			var selectedPages = ExtXeo.getSelectedPages(this.id);
+			var found = false;
+			for (var k = 0 ; k < selectedPages.length ; k++){
+				if (currentPage == parseInt(selectedPages[k])){
+					found = true;
+					break;
+				}
+			}
+			return found;
+	    }
+		
+		, markSelectedRows : function (options) {
+			if (this.getMultiSelections()){
+				if (this.isAllRowsSelected(options)){
+					ExtXeo.activateSelectAllRows(this.id);
+					this.selectAllRows();
+				}
+				else {
+					ExtXeo.deactivateSelectAllRows(this.id);
+				}
+			} else {
+				this.clearAllRows();
+				ExtXeo.deactivateSelectAllRows(this.id);
+			}
+		}
+		
+		, selectAllRows : function () {
+			this.getSelectionModel().selectAll();
+		}
+		
+		, clearAllRows : function () {
+			this.getSelectionModel().clearSelectionsAll();	
+		}
+		
+		, getSelectedRows : function(){
+			var id = this.getSelectedRowsInputId();
+			var input = XVW.get(id);
+			var value = input.value.trim();
+			var selections = value.split("|");
+			var result = [];
+			for (var i = 0 ; i < selections.length ; i++){
+				var raw = selections[i];
+				if (raw.indexOf("!") == -1 && raw != ""){
+					result.push(raw);
+				}
+			}
+			return result;
+		}
 		
 	}
 );
@@ -1127,6 +1227,7 @@ ExtXeo.grid.ViewGroup = function( opts ) {
 	this.groupId = null;
 	this.cls = null;
 	this.style = null;
+	this.gridId = null;
 	Ext.apply( this, opts );
 	this.initTemplates();
 };
@@ -1408,6 +1509,7 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
 	            	groupUniqueId : "GID"+this.uniqueId, 
 	            	elemId : gidPrefix + gid + this.uniqueId,
 	            	groupId : gid,
+	            	gridId : ds.gridId,
 	        		rawValue : value,
 	        		cls : 'x-grid-group-collapsed',
 	        		groupLevel : level,
@@ -1619,8 +1721,12 @@ ExtXeo.grid.GridGroup = Ext.extend( ExtXeo.grid.GridGroup, {
 			}
 			this.groupingView.parentView.groupLoaded( this );
 		}
-		if (this.groupStore.isAllRowsSelected()){
-			this.groupingView.grid.selModel.selectAll();
+		
+		var grid = this.groupingView.grid;
+		if (grid.isAllRowsSelected()){
+			grid.selModel.selectAll();
+		} else {
+			grid.selModel.onRefresh(this.groupStore);
 		}
 	}
 	, showPagingToolBar : function(){
@@ -1636,18 +1742,19 @@ ExtXeo.grid.GridGroup = Ext.extend( ExtXeo.grid.GridGroup, {
     	}
 	},
     createGroupToolbar : function( elemId, store ) {
-    	var ret = new ExtXeo.PagingToolbar( { beforePageText:'', style:'border:1px solid lightgray;padding-top:0px;padding-bottom:0px;', cls:'x-grid-group-tb', hidden:true ,ctCls:'x-grid-group-tb' ,autoWidth:false, width:270,renderTo:elemId + '-tb', store: store } );
+    	var ret = new ExtXeo.PagingToolbar( { beforePageText:'', style:'border:1px solid lightgray;padding-top:0px;padding-bottom:0px;', cls:'x-grid-group-tb', hidden:true ,ctCls:'x-grid-group-tb' ,autoWidth:false, width:270,renderTo:elemId + '-tb', store: store, gridId : store.gridId } );
     	return ret;
     }
 });
 
 ExtXeo.grid.GroupingView.GROUP_ID = 10000;
-
+// ******************* GroupingStore ***********************
 ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 	  changePageControl: false 
     , grid : null
-    , allRowsSelected : false
-	, rowIdentifier : ''
+    , pageSize : null
+    , gridId : null
+	, rowIdentifier : 'BOUI'
 	, dataSourceChange : false //Represents a change in the datasource
 	, constructor: function( opts ) {
 		this.groupStores = [];
@@ -1668,6 +1775,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 			aggregateField : null,
 			aggregateFieldsOn : []
 		});
+		this.gridId = opts.gridId;
 		this.storeId = (ExtXeo.grid.GroupingView.GROUP_ID++);
 		ExtXeo.data.GroupingStore.superclass.constructor.apply(this, arguments);
 	},
@@ -1689,6 +1797,31 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 	        }
 	    }
 		this.clearExpandedGroups();
+	}
+	
+	, getPageSize : function () {
+		return this.pageSize;
+	}
+	
+		
+	, findRecursive : function (property, value, grouped){
+		if (!grouped){
+			return this.find( property, value);
+		}
+		var count = 0;
+		for (var i = 0 ; i < this.groupStores.length ; i++){
+			if (this.groupStores[i]){
+				var currentStore = this.groupStores[i];
+				var index = currentStore.find( property, value );
+				if (index == -1){
+					count += this.groupStores[i].getTotalCount();
+				} else {
+					count += index;
+					break;
+				} 
+			}
+		}
+		return count;
 	}
 	
 	, clearExpandedGroups : function () {
@@ -1871,7 +2004,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
             return true;
         } else {
           return false;
-        }    
+        }
     },
     isGroupByField : function( fieldName ) {
     	return this.groupField.indexOf( fieldName ) > -1;
@@ -1900,7 +2033,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     	c.proxy  = new Ext.data.HttpProxy(this.reader.meta);
     	c.groupField = this.groupField;
     	c.expandedGroups = this.expandedGroups;
-    	c.allRowsSelected = this.allRowsSelected;
+    	c.gridId = this.gridId;
     	
     	var gs = new ExtXeo.data.GroupingStore( c );
     	gs.reader = this.reader;
@@ -1909,6 +2042,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     	gs.callback = callback;
     	gs.groupByParentValues = parentValues;
     	gs.loading = true;
+    	gs.gridId = this.gridId;
     	if( !this.rootStore ) {
     		gs.rootStore = this;
     	}
@@ -1962,7 +2096,8 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     		}
     	}
     	
-    	p.allSelectedRows = Ext.encode(this.allRowsSelected);
+    	var pageNumbersAllSelections = XVW.get(this.gridId + "_pages").value;
+    	p.pagesAllSelected = Ext.encode(pageNumbersAllSelections);
     	
     	
     	
@@ -2044,23 +2179,23 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
         }else{
             this.load(this.lastOptions);
         }
-    }, 
-    setSelectedPageRows: function() {	
-		this.changePageControl = true; 
-		if(this.grid) 
-		{	
-			var rows = [];
-			for(var i = 0, len = this.grid.recordIds.length; i < len; i++){
-				var index = this.find(this.rowIdentifier, this.grid.recordIds[i]);
-				if(index >= 0){
-					rows.push(index);
-				}
-			}
-			var keepExisting = true;
-			this.grid.getSelectionModel().selectRows(rows,keepExisting);
-		}
-		this.changePageControl = false; 
-	}
+    }
+//    , setSelectedPageRows: function() {	
+//		this.changePageControl = true; 
+//		if(this.grid) 
+//		{	
+//			var rows = [];
+//			for(var i = 0, len = this.grid.recordIds.length; i < len; i++){
+//				var index = this.find(this.rowIdentifier, this.grid.recordIds[i]);
+//				if(index >= 0){
+//					rows.push(index);
+//				}
+//			}
+//			var keepExisting = true;
+//			this.grid.getSelectionModel().selectRows(rows,keepExisting);
+//		}
+//		this.changePageControl = false; 
+//	}
     
     , markDataSourceChange : function () {
     	this.dataSourceChange = true;
@@ -2070,26 +2205,29 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     	this.dataSourceChange = false;
     }
     , selectAllRows : function(){
-    	this.allRowsSelected = true;
+    	
     	for (var i = 0 ; i < this.groupStores.length ; i++){
+    		if (this.groupStores[i]){
     		this.groupStores[i].selectAllRows();
     	}
     }
+    }
     
     , deselectAllRows : function () {
-    	this.allRowsSelected = false;
+    	
     	for (var i = 0 ; i < this.groupStores.length ; i++){
+    		if (this.groupStores[i]){
     		this.groupStores[i].deselectAllRows();
     	}
     }
-    
-    , isAllRowsSelected : function () {
-    	return this.allRowsSelected;
     }
+    
+    
 });
-
+//******************* Paging Toolbar ***********************
 ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
     pageSize:50,
+    gridId : null,
     displayMsg : 'Mostrando {0} - {1} de {2}',
     emptyMsg : 'Sem dados para mostrar',
     beforePageText : "P&aacute;gina",
@@ -2225,6 +2363,7 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
 		this.loading.enable();
 		this.updateInfo();
 		this.fireEvent('change', this, d);
+		
     }
     
     , getMetadataValue : function(param){
@@ -2355,39 +2494,14 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
         store.on("load", this.onLoad, this);
         store.on("loadexception", this.onLoadError, this);
         this.store = store;
-    },
-	listeners: {
-        change: {
-            fn: function(){		
-                this.store.setSelectedPageRows();	
-            }
-        },
-        scope:this
     }
+
+    , getCurrentPageNumber : function () {
+		var page =  this.cursor / this.pageSize;
+		return page + 1;
+	}
     
 });
-
-ExtXeo.grid.rowClickHndlr = function( oGrid, rowIndex, oEvent, sGridInputId, sRowIdentifier ) {
-    var sSelRecs = "";
-    var oInput = document.getElementById( sGridInputId );
-    if( oInput != null ) {
-        var oSelRec = oGrid.getStore().getAt( rowIndex );
-        sSelRecs = oSelRec.get( sRowIdentifier );
-        oInput.value = sSelRecs;
-    }
-};
-
-ExtXeo.grid.activeRowHndlr = function( oSelModel, oGridInputSelId, rowIdentifier ) {
-	var oInput = document.getElementById( oGridInputSelId );
-    var activeRow = "";
-    if( oInput != null ) {
-        var oSelRecs = oSelModel.getSelections();
-        for (var i = 0; i < oSelRecs.length; i++)  {
-            activeRow = oSelRecs[i].get( rowIdentifier );
-        }
-        oInput.value = activeRow;
-    }
-};
 
 
 /**
@@ -2422,112 +2536,20 @@ ExtXeo.grid.beforeRowSelectionHndlr = function (oSelModel){
  * */
 ExtXeo.grid.updateCounter = function (oSelModel){
 	
-	
 	var gridPanel = oSelModel.grid;
 	var label = Ext.getCmp(gridPanel.getNumberSelectionsCounterId());
-	var oSelRecs = oSelModel.getSelections();
 	var maxSelections = gridPanel.getMaxSelections();
 	if (gridPanel.getMultiSelections()){
 		
-		var countItems = 0;
-		
-		if (gridPanel.getMultiPageSelections()){
-			countItems = gridPanel.recordIds.length; 
-		}
-		else{
-			countItems = oSelRecs.length;
-		}
-		
-		if (countItems <= maxSelections - 1 || maxSelections == -1)
-       		label.setText(countItems);
-       	else
-       		label.setText("<span style='color:red'>" + countItems + "</span>",false);
+	var countItems = gridPanel.getSelectedRows().length; 
+	
+	if (countItems <= maxSelections - 1 || maxSelections == -1)
+   		label.setText(countItems);
+   	else
+   		label.setText("<span style='color:red'>" + countItems + "</span>",false);
 	}
 };
 
-ExtXeo.grid.rowSelectionHndlr = function( oSelModel, oGridInputSelId, rowIdentifier) {
-	
-	
-	var sSelRecs = "";
-    var oInput = document.getElementById( oGridInputSelId );
-    
-    if( oInput != null ) {
-        var oSelRecs = oSelModel.getSelections();
-        for (var i = 0; i < oSelRecs.length; i++)  {
-            if(i>0) sSelRecs += "|";
-            sSelRecs += oSelRecs[i].get( rowIdentifier );
-        }
-       	oInput.value = sSelRecs;
-        
-       	var gridPanel = oSelModel.grid;
-       	
-       	if (gridPanel.getMultiPageSelections())
-       	{
-	        try
-	        {
-		        if(oSelModel.grid.getStore().changePageControl == false)
-				{
-					oSelModel.grid.getStore().rowIdentifier = rowIdentifier;
-					for(var j = 0; j < oSelModel.grid.getStore().getCount(); j++)
-					{
-						var currRow = oSelModel.grid.getStore().getAt(j);
-						var rId = currRow.get( rowIdentifier );				
-						var isRowSelected = false;
-						 
-						for (var k = 0; k < oSelRecs.length; k++)  {
-							var tempId = oSelRecs[k].get( rowIdentifier );
-							
-							if(tempId == rId)
-							{
-								isRowSelected = true;
-								break;
-							}
-						} 
-						if(isRowSelected == true)
-						{
-							var curIdx = oSelModel.grid.recordIds.indexOf(rId);
-							
-							if(curIdx < 0)
-							{
-								oSelModel.grid.recordIds[oSelModel.grid.recordIds.length] = rId;
-							}					
-						}
-						else
-						{ 
-							var curIdx = oSelModel.grid.recordIds.indexOf(rId);
-							
-							if(curIdx >= 0)
-							{			
-								oSelModel.grid.recordIds.splice(curIdx, 1);
-							}
-						}				 
-					}
-					
-					var tempSelectRecs = "";
-					var selectedControl = false;
-					for (var n = 0; n < oSelModel.grid.recordIds.length; n++)  {
-						if(n>0) tempSelectRecs += "|";
-						tempSelectRecs += oSelModel.grid.recordIds[n];
-						selectedControl = true;
-					}
-					if(selectedControl)
-					{
-						oInput.value = tempSelectRecs;
-					}
-				}
-	        }
-	        catch(err)
-	        {}
-       	}
-       	
-       	//Update Counter
-       	ExtXeo.grid.updateCounter(oSelModel);
-       	
-    }
-    else {
-        alert('Select rows input not found!!');
-    }
-};
 
 /**
  * 
@@ -2559,31 +2581,70 @@ ExtXeo.grid.numberStyle = function(text){
     return '<div style="text-align:right">'+ text +'</div>';
 };
 
+//******************* CheckBox Selection Model ***********************
 Ext.grid.XeoCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel, {
 
+	  selectingAll : false	
+	, clearingAll : false
+	, selectedPages : null
+	, id : null 
+	
+	, getRowIdentifier : function () {
+		return this.grid.store.rowIdentifier;
+	}
 	/**
 	 * Override to allow correctly selecting all rows, even when groups are being used
-	 * The problem with our approach to having rows of the root store as groups if that
+	 * The problem with our approach to having rows of the root store as groups is that
 	 * when you select all rows, it would expand the groups instead of selecting the rows of the
 	 * groups
 	 */
-	selectAll : function(){
+	, selectAll : function(){
 		if (this.grid.store.groupField !== null && this.grid.store.groupField.length == 0){
 			Ext.grid.XeoCheckboxSelectionModel.superclass.selectAll.call(this);
 		} else {
+			this.selectingAll = true;
+			var negated = this.getNegatedSelections();
 			var gs = this.grid.store.groupStores;
 			var count = 0;
 			for (var i = 0 ; i < gs.length ; i++){
-				var records = gs[i].getRange(0,gs[i].getCount());
-				for (var k = 0 ; k < records.length ; k++){
-					this.grid.view.onRowSelect(count);
-					count++;
+				if (gs[i]){
+					var records = gs[i].getRange(0,gs[i].getCount());
+					for (var k = 0 ; k < records.length ; k++){
+						var boui = records[k].data[this.getRowIdentifier()];
+						var skip = false;
+						for (var j = 0 ; j < negated.length ; j++){ 
+							//Remove the ! 
+							var raw = negated[j];
+							var value = raw.slice(1);
+							if ( value == boui ){
+								skip = true;
+								break;
+							}
+						}
+						if (!skip){
+							this.grid.view.onRowSelect(count);
+							this.selectRow(count,true,true);
+							count++;
+						}
+					}
 				}
 			}
+			this.selectingAll = false;
 		}
-		Ext.get(this.grid.id + "_allRows").set({value : true});
 		this.grid.store.selectAllRows();
-		
+	}
+
+	, getNegatedSelections : function () {
+		var input = XVW.get(this.grid.id + "_srs");
+		var value = input.value;
+		var records = value.split(",");
+		var results = [];
+		for (var i = 0 ; i < records.length ; i++){
+			if (records[i].indexOf("!") == 0){
+				results.push(records[i]);
+			}
+		}
+		return results
 	}
 
 	/**
@@ -2591,25 +2652,108 @@ Ext.grid.XeoCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel,
 	 */
 	, clearSelectionsAll : function(supressEvent){
 		if (this.grid.store.groupField !== null && this.grid.store.groupField.length == 0){
+			this.clearingAll = true;
 			Ext.grid.XeoCheckboxSelectionModel.superclass.clearSelections.call(this);
+			this.clearingAll = false;
 		} else {
+			this.clearingAll = true;
 			var gs = this.grid.store.groupStores;
 			var count = 0;
 			for (var i = 0 ; i < gs.length ; i++){
-				var records = gs[i].getRange(0,gs[i].getCount());
-				for (var k = 0 ; k < records.length ; k++){
-					this.grid.view.onRowDeselect(count);
-					count++;
+				if (gs[i]){
+					var records = gs[i].getRange(0,gs[i].getCount());
+					for (var k = 0 ; k < records.length ; k++){
+						this.grid.view.onRowDeselect(count);
+						this.deselectRow(count,true);
+						count++;
+					}
 				}
 			}
+			this.clearingAll = false;
 		}
-		Ext.get(this.grid.id + "_allRows").set({value : false});
 		this.grid.store.deselectAllRows();
+		
+	}
+	
+	/**
+	 * Get the current page number
+	 */
+	, getCurrentPageNumber : function () {
+		return this.grid.getCurrentPageNumber();
+	}
+	
+	, addSelectedPage : function(pageNum) {
+		var input = XVW.get(this.grid.id + "_pages");
+		var value = input.value;
+		var pages = value.split(",");
+		
+		var foundPage = false;
+		for (var i = 0 ; i < pages.length ; i++){
+			if (pageNum === pages[i]){
+				foundPage = true;
+			}
+		}
+		if (!foundPage){
+			var result = "";
+			for (var i = 0 ; i < pages.length ; i++){
+				if (pages[i] && pages[i] != ""){
+					if (i > 0 && result.length > 0 ){
+						result += ",";
+					}
+					result += pages[i];
+				}
+			}
+			if (pages == ""){
+				result = pageNum;
+			} else {
+				result += "," + pageNum;
+			}
+			input.value = result;
+		}
+		
+	} 
+	
+	, removeSelectedPages : function () {
+		var input = XVW.get(this.grid.id + "_pages");
+		input.value = "";
+	}
+	
+	, setSelectedPage : function (pageNum){
+		var input = XVW.get(this.grid.id + "_pages");
+		input.value = pageNum;
+	}
+	
+	, removeSelectedPage : function(pageNum){
+		var input = XVW.get(this.grid.id + "_pages");
+		var value = input.value;
+		var pages = value.split(",");
+		
+		var foundPage = false;
+		for (var i = 0 ; i < pages.length ; i++){
+			if (pageNum == parseInt(pages[i])){
+				delete pages[i];
+			}
+		}
+		
+		var result = "";
+		for (var i = 0 ; i < pages.length ; i++){
+			if (pages[i] && pages[i] != ""){
+				if (i > 0 && result.length > 0 ){
+					result += ",";
+				}
+				result += pages[i];
+			}
+		}
+		input.value = result;
 		
 	}
 	
 	, clearSelections : function(supressEvent){
 		Ext.grid.XeoCheckboxSelectionModel.superclass.clearSelections.call(this);
+	}
+	
+	, isMultiSelection : function () {
+		return this.grid.getMultiPageSelections();
 	}
 	
 	//Needed to override this function in order to change the call to 
@@ -2624,48 +2768,209 @@ Ext.grid.XeoCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel,
             if(isChecked){
                 hd.removeClass('x-grid3-hd-checker-on');
                 this.clearSelectionsAll();
+                if (this.isMultiSelection()){
+                	this.removeSelectedPage(this.getCurrentPageNumber());
+                } else {
+                	this.removeSelectedPages();
+                }
             }else{
                 hd.addClass('x-grid3-hd-checker-on');
                 this.selectAll();
+                if (this.isMultiSelection())
+                	this.addSelectedPage(this.getCurrentPageNumber());
+                else
+                	this.setSelectedPage(this.getCurrentPageNumber());
             }
         }
     }
 	
-	, onRefresh : function(){
-        var ds = this.grid.store, index;
-        var s = this.getSelections();
-        //Override to allow refresh not to remove selections
-        if (!this.grid.store.isAllRowsSelected())
-        	this.clearSelections(true); 
-        else{
-        	this.selectAll();
-        }
+	, onRefresh : function(store){
+		
+		store = this.grid.store;
+			
+		var index = -1;
+        var selections = this.grid.getSelectedRows();
+      
         //End override
-        for(var i = 0, len = s.length; i < len; i++){
-            var r = s[i];
-            if((index = ds.indexOfId(r.id)) != -1){
-                this.selectRow(index, true);
+        for(var i = 0, len = selections.length; i < len; i++){
+            var record = selections[i];
+            var value = '';
+            if (record.data){
+            	value = record.data[this.getRowIdentifier()];
+            } else {
+            	value = record;
             }
+            if (store.indexOf){
+            	index = store.indexOf(record);
+            }
+            if (index == -1){
+            	if (store.find){
+            		if (this.grid.isGrouped())
+            			index = store.findRecursive(this.getRowIdentifier(),value,true);
+            		else
+            			index = store.findRecursive(this.getRowIdentifier(),value,false);
+            	}
+            }
+            if (index != -1){
+            	this.selectRow(index,true);
+             }
+          
         }
        
         
-        if(s.length != this.selections.getCount()){
+        if(selections.length != this.selections.getCount()){
             this.fireEvent("selectionchange", this);
+        }
+        
+    }
+	
+	, selectRowsOnDemad : function(rows, records, options, store){
+		if (store === undefined) 
+			store = this.grid.store;	
+        for(var i = 0, len = rows.length; i < len; i++){
+        	var index = store.find(this.getRowIdentifier(),rows[i]);
+            this.selectRow(index, true);
         }
     }
 
 
 });
 
+ExtXeo.grid.removeSelected = function(gridId, rowId){
+	var oInput = document.getElementById( gridId + "_srs" );
+	var value = oInput.value.trim();
+	
+	var rows = value.split("|");
+	var totalRows = rows.length;
+	
+	if (totalRows > 0 && rows[0] != ""){
+		for (var i = 0 ; i < totalRows ; i++){
+			if (rows[i] == rowId){
+				delete rows[i];
+			}
+			var negated = "!" + rowId;
+			if (rows[i] == negated){
+				delete rows[i];
+			}
+		}
+	}
+	
+	var result = "";
+	for (var i = 0 ; i < rows.length ; i++){
+		if (rows[i] && rows[i] != ""){
+			if (i > 0 && result.length > 0 ){
+				result += "|";
+			}
+			result += rows[i];
+		}
+	}
+	
+	oInput.value = result;
+	
+};
+
+ExtXeo.grid.addSelected = function(gridId, rowId, negated){
+	var oInput = document.getElementById( gridId + "_srs" );
+	var value = oInput.value.trim();
+	
+	var rows = value.split("|");
+	var totalRows = rows.length;
+	var found = false;
+	
+	if (value == ""){
+		rows[0] = rowId;
+		found = true; 
+	} else {
+		if (totalRows > 0){
+			for (var i = 0 ; i < totalRows ; i++){
+				if (rows[i] == rowId){
+					if (negated){
+						rows[i] = "!" + rowId;
+						found = true;
+						break;
+					} else{
+						found = true;
+						break;					
+					}
+				}
+				var negatedValue = "!" +rowId;
+				if (rows[i] == negatedValue){
+					rows[i] = rowId;
+					found = true;
+					break;
+				}
+			}
+		}
+	}
+	
+	if (!found){
+		rows.push(rowId);
+	}
+	
+	
+	var result = "";
+	for (var i = 0 ; i < rows.length ; i++){
+		if (rows[i]){
+			if (i > 0){
+				result += "|";
+			}
+			result += rows[i];
+		}
+			
+	}
+	
+	oInput.value = result;
+};
+ 
+
+/**
+ * On Row Select, affect the input with the row Identifiers
+ */
+ExtXeo.grid.rowSelect = function( oSelModel, rowIndex, record){
+	var oInput = document.getElementById( oSelModel.grid.id + "_act" );
+	var rowIdentifier = oSelModel.grid.getRowIdentifier();
+	oInput.value = record.data[rowIdentifier];
+	ExtXeo.grid.addSelected(oSelModel.grid.id,record.data[rowIdentifier],false);
+	ExtXeo.grid.updateCounter(oSelModel);
+	
+	
+}
+
+/**
+ * On Row DeSelect, affect the input with the row Identifiers (remove or 
+ * mark them
+ */
+ExtXeo.grid.rowDeselect = function( selectionModel, rowIndex, record){
+	var grid = selectionModel.grid;
+	var oInput = document.getElementById( grid.id + "_act" );
+	oInput.value = "";
+	var rowIdentifier = grid.getRowIdentifier();
+	if (!selectionModel.clearingAll)
+		ExtXeo.grid.addSelected(grid.id,record.data[rowIdentifier],true);
+	else
+		ExtXeo.grid.removeSelected(grid.id,record.data[rowIdentifier]);
+	
+	
+	if (!grid.isGrouped()){
+		selectionModel.removeSelectedPage(grid.getCurrentPageNumber());
+		ExtXeo.deactivateSelectAllRows(grid.id);
+	}
+	
+	ExtXeo.grid.updateCounter(selectionModel);
+
+};
+
 /**
  * Marks the CheckBox for "Select/Deselect all rows" as checked for a given gridpanel
  */
 ExtXeo.activateSelectAllRows = function(id){
 	var elem = Ext.query('.x-grid3-hd-checker',id)[0];
-	var hd = Ext.fly(elem);
-	var isChecked = hd.hasClass('x-grid3-hd-checker-on');
-	if(!isChecked){
-		hd.addClass('x-grid3-hd-checker-on');
+	if (elem){
+		var hd = Ext.get(elem).parent();
+		var isChecked = hd.hasClass('x-grid3-hd-checker-on');
+		if(!isChecked){
+			hd.addClass('x-grid3-hd-checker-on');
+		} 
 	}
 };
 
@@ -2674,9 +2979,20 @@ ExtXeo.activateSelectAllRows = function(id){
  */
 ExtXeo.deactivateSelectAllRows = function(id){
 	var elem = Ext.query('.x-grid3-hd-checker','#'+id)[0];
-	var hd = Ext.fly(elem);
-	var isChecked = hd.hasClass('x-grid3-hd-checker-on');
-	if(isChecked){
-		hd.removeClass('x-grid3-hd-checker-on');
+	if (elem){
+		var hd = Ext.get(elem).parent();
+		var isChecked = hd.hasClass('x-grid3-hd-checker-on');
+		if(isChecked){
+			hd.removeClass('x-grid3-hd-checker-on');
+		}
 	}
 };
+
+ExtXeo.getSelectedPages = function(id){
+	var input = XVW.get(id + "_pages");
+	var inputValue = input.value;
+	var value = inputValue.trim();
+	var result = value.split(",");
+	return result;
+};
+

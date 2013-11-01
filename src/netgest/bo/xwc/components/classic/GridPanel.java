@@ -46,9 +46,11 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+import netgest.utils.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -213,7 +215,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	private XUIBaseProperty<String> currentExpandedGroups = new XUIBaseProperty<String>(
 			"currentExpandedGroups", this);
 
-	private String[] sSelectedRowsUniqueIdentifiers;
+	private String[] sSelectedRowsUniqueIdentifiers = new String[0];
 
 	private transient Column[] oGridColumns;
 
@@ -1581,8 +1583,19 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * Return a String Array with all the unique identifiers of the columns
 	 * @return String Array
 	 */
-	private String[] getSelectedRowsIdentifiers() {
+	public String[] getSelectedRowsIdentifiers() {
 		return sSelectedRowsUniqueIdentifiers;
+	}
+	
+	private int[] selectedPages = new int[0];
+	
+	
+	public int[] getSelectedPages(){
+		return selectedPages;
+	}
+	
+	public void setSelectedPages(int[] pages){
+		this.selectedPages = pages;
 	}
 	
 	/**
@@ -1624,19 +1637,20 @@ public class GridPanel extends ViewerInputSecurityBase {
 		return getDataSource().findByUniqueIdentifier(rowIdentifier);
 	}
 	
-	
-	XUIBaseProperty< Boolean > allRowsSelected = new XUIBaseProperty< Boolean >(
-			"allRowsSelected" , this, Boolean.FALSE );
 
-	public Boolean getAllRowsSelected() {
-		return allRowsSelected.getValue();
-	}
-
-	public void setAllRowsSelected(Boolean newValue) {
-		allRowsSelected.setValue( newValue );
-	}
 	
-	
+	public String[] getUnselectedRows(){
+		List<String> result = new ArrayList<String>();
+		if (this.getSelectedRowsIdentifiers() != null) {
+			for (int i = 0; i < sSelectedRowsUniqueIdentifiers.length; i++) {
+				if (sSelectedRowsUniqueIdentifiers[i].startsWith("!")){
+					result.add(sSelectedRowsUniqueIdentifiers[i]);
+				}
+			}
+		}
+		return result.toArray(new String[result.size()]);
+		
+	}
 	
 	/**
 	 * Return a {@link DataRecordConnector} Array with the selected rows   
@@ -1646,29 +1660,56 @@ public class GridPanel extends ViewerInputSecurityBase {
 		String sUniqueIdentifier;
 		DataRecordConnector oCurrentRecord;
 
-		List<DataRecordConnector> oRetSelectRows = new ArrayList<DataRecordConnector>();
 		DataListConnector connector = getDataSource();
 		
-		if (getAllRowsSelected()) {
-			DataListIterator it = connector.iterator();
-			while (it.hasNext()) {
-				oRetSelectRows.add(it.next());
+		Map<String,DataRecordConnector> result = new HashMap<String, DataRecordConnector>();
+		
+		Map<String,String> nonSelectableIdentifiers = new HashMap<String, String>();
+		if (this.getSelectedRowsIdentifiers() != null) {
+			sUniqueIdentifier = getRowUniqueIdentifier();
+			for (int i = 0; i < sSelectedRowsUniqueIdentifiers.length; i++) {
+				if (sSelectedRowsUniqueIdentifiers[i].startsWith("!")){
+					nonSelectableIdentifiers.put(sSelectedRowsUniqueIdentifiers[i].replace("!", ""), sSelectedRowsUniqueIdentifiers[i]);
+				}
 			}
-		} else {
-			if (this.getSelectedRowsIdentifiers() != null) {
-				sUniqueIdentifier = getRowUniqueIdentifier();
+		}
+		
+		int[] selectedPages = getSelectedPages();
+		if (selectedPages.length > 0){
+			for (int k = 0 ; k < selectedPages.length ; k++){
+				if (selectedPages[k] > 0){
+					connector.setPage(selectedPages[k]);
+					connector.refresh();
+					DataListIterator it = connector.iterator();
+					while (it.hasNext()) {
+						DataRecordConnector record = it.next();
+						String rowId = record.getAttribute(this.getRowUniqueIdentifier()).getValue().toString(); 
+						if (!nonSelectableIdentifiers.containsKey(rowId))
+							result.put(rowId, record);
+					}
+				}
+			}
+		} 
+		if (this.getSelectedRowsIdentifiers() != null) {
+			sUniqueIdentifier = getRowUniqueIdentifier();
 
-				for (int i = 0; i < sSelectedRowsUniqueIdentifiers.length; i++) {
-					sUniqueIdentifier = sSelectedRowsUniqueIdentifiers[i];
-					oCurrentRecord = connector.findByUniqueIdentifier(
-							sUniqueIdentifier);
-					if (oCurrentRecord != null) {
-						oRetSelectRows.add(oCurrentRecord);
+			for (int i = 0; i < sSelectedRowsUniqueIdentifiers.length; i++) {
+				sUniqueIdentifier = sSelectedRowsUniqueIdentifiers[i];
+
+				if (!sUniqueIdentifier.startsWith("!")){
+					if (StringUtils.hasValue(sUniqueIdentifier)){
+						oCurrentRecord = connector.findByUniqueIdentifier(
+								sUniqueIdentifier);
+						if (oCurrentRecord != null) {
+							result.put(sUniqueIdentifier, oCurrentRecord);
+						}
 					}
 				}
 			}
 		}
-		return oRetSelectRows.toArray(new DataRecordConnector[oRetSelectRows.size()]);
+		
+		return result.values().toArray(new DataRecordConnector[result.size()]);
+		
 	}
 	
 	/**
@@ -1927,7 +1968,14 @@ public class GridPanel extends ViewerInputSecurityBase {
 		setAggregateData(null);
 		setAggregateFieldsFromString(getAggregateData());
 		resetRecordCount();
+		resetSelections();
 		forceRenderOnClient();
+	}
+	
+	public void resetSelections(){
+		this.selectedPages = new int[0];
+		this.sSelectedRowsUniqueIdentifiers = new String[0];
+		this.sActiveRow =  null;
 	}
 	
 	

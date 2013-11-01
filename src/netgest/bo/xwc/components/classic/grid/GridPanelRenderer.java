@@ -90,17 +90,21 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
             oGridComp.setActiveRowByIdentifier( sGridSelectedIds );
         }
         
-        String allRowsRaw = parameters.get( oComp.getClientId() +"_allRows" );
-        if( StringUtils.hasValue( allRowsRaw ) ){
-        	Boolean allRowsSelected = Boolean.valueOf(allRowsRaw);
-           if (allRowsSelected){
-        	   oGridComp.setAllRowsSelected(true);
-           } else {
-        	   oGridComp.setAllRowsSelected(false);
-           }
-        } else {
-        	oGridComp.setAllRowsSelected(false);
-        }
+        String pagesAllSelected = parameters.get( oComp.getClientId() +"_pages" );
+        if (StringUtils.hasValue( pagesAllSelected )) {
+        	String[] valuesRaw = pagesAllSelected.trim().split(",");
+        	int[] values = new int[valuesRaw.length];
+        	int count = 0;
+        	final int invalidPage = -1;
+        	for (String pageNumCandidate : valuesRaw){
+        		try {
+					values[count] = Integer.parseInt(pageNumCandidate);
+				} catch (Exception e) {
+					values[count] = invalidPage ;
+				}
+        	}
+        	oGridComp.setSelectedPages(values);
+        } 
     }
 
     @Override
@@ -251,19 +255,21 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         
         GridPanelRequestParameters reqParam = new GridPanelRequestParameters();
         
-        String allRowsSelected = oRequest.getParameter( GridParameter.ALL_ROWS_SELECTED );
-        if (StringUtils.hasValue( allRowsSelected )) {
-        	Boolean value = Boolean.parseBoolean( allRowsSelected );
-        	reqParam.setAllRowsSelected( value );
-        	if (value) {
-        		oGridPanel.setAllRowsSelected( Boolean.TRUE );
-        	} else {
-        		oGridPanel.setAllRowsSelected( Boolean.FALSE );
+        String pagesAllSelected = oRequest.getParameter( GridParameter.PAGES_ALL_SELECTED );
+        if (StringUtils.hasValue( pagesAllSelected )) {
+        	String[] valuesRaw = pagesAllSelected.trim().split(",");
+        	int[] values = new int[valuesRaw.length];
+        	int count = 0;
+        	final int invalidPage = -1;
+        	for (String pageNumCandidate : valuesRaw){
+        		try {
+					values[count] = Integer.parseInt(pageNumCandidate);
+				} catch (Exception e) {
+					values[count] = invalidPage ;
+				}
         	}
-        } else {
-        	oGridPanel.setAllRowsSelected( Boolean.FALSE );
-        	reqParam.setAllRowsSelected( false );
-        }
+        	oGridPanel.setSelectedPages(values);
+        } 
         
         if (groupToolBarVisible != null){
         	Boolean groupToolBarVisibleValue = Boolean.parseBoolean( groupToolBarVisible );

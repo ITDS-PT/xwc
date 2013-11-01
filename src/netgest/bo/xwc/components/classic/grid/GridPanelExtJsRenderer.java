@@ -3,6 +3,7 @@ package netgest.bo.xwc.components.classic.grid;
 import static netgest.bo.xwc.components.HTMLAttr.ID;
 import static netgest.bo.xwc.components.HTMLAttr.NAME;
 import static netgest.bo.xwc.components.HTMLAttr.TYPE;
+import static netgest.bo.xwc.components.HTMLAttr.VALUE;
 import static netgest.bo.xwc.components.HTMLTag.DIV;
 import static netgest.bo.xwc.components.HTMLTag.INPUT;
 
@@ -242,6 +243,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
     public void encodeGridHiddenInputs( XUIComponentBase oComp ) throws IOException {
         XUIResponseWriter w;
         
+        GridPanel grid = (GridPanel) oComp;
+        
         w = getResponseWriter();
         
         //Selected Rows
@@ -249,6 +252,16 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	        w.writeAttribute( TYPE, "hidden" );
 	        w.writeAttribute( NAME, oComp.getClientId() +"_srs" );
 	        w.writeAttribute( ID, oComp.getClientId() +"_srs");
+	        String[] records = grid.getSelectedRowsIdentifiers();
+	        String pipeSeparator = "";
+	        StringBuilder b = new StringBuilder();
+	        
+	        for (int k = 0 ; k < records.length ; k++){
+	        	b.append(pipeSeparator);
+	        	b.append(records[k]);
+	        	pipeSeparator = "|";
+	        }
+	        w.writeAttribute( VALUE, b.toString());
         w.endElement( INPUT );
 
         //Active Row
@@ -258,11 +271,21 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	        w.writeAttribute( ID, oComp.getClientId() +"_act" );
         w.endElement( INPUT );
         
-        //Select All Rows
+        //Select All Rows from a given page
         w.startElement( INPUT , oComp);
 	        w.writeAttribute( TYPE, "hidden" );
-	        w.writeAttribute( NAME, oComp.getClientId() +"_allRows" );
-	        w.writeAttribute( ID, oComp.getClientId() +"_allRows");
+	        w.writeAttribute( NAME, oComp.getClientId() +"_pages" );
+	        w.writeAttribute( ID, oComp.getClientId() +"_pages");
+	        
+	        int[] pages = grid.getSelectedPages();
+	        String separator = "";
+	        StringBuilder pagesValues = new StringBuilder();
+	        for (int k = 0 ; k < pages.length ; k++){
+	        	pagesValues.append(separator);
+	        	pagesValues.append(pages[k]);
+	        	separator = ",";
+	        }
+	        w.writeAttribute( VALUE, pagesValues.toString());
         w.endElement( INPUT );
         
     }
@@ -345,7 +368,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         		c.addString( DataFieldDecoder.convertForGridPanel( g ) );
         	}
         	oLoadParams1.add( "groupByLevel", 0 );
-        	//oLoadParams1.addJSString( "groupField" , oGrid.getGroupBy() );
         }
 
         StringBuilder sb = new StringBuilder();
@@ -372,12 +394,12 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	}
         }
         else {
-	    	int[] selPos = oGrid.getSelectedRowsPos();
+	    	DataRecordConnector[] records = oGrid.getSelectedRows();
 	    	sb.append( "[");
-	    	for( int sel : selPos ) {
+	    	for( DataRecordConnector sel : records ) {
 	    		if( sb.length() > 1 )
 	    			sb.append(',');
-	    		sb.append( sel - 1 );
+	    		sb.append( sel.getAttribute(oGrid.getRowUniqueIdentifier()).getValue().toString() );
 	    	}
 	    	sb.append( "]");
 	    	
@@ -387,23 +409,14 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	    		sb = new StringBuilder("");
 	    	
 	    	if( sb.length() > EMPTY_ARRAY_STRING_SIZE) {
-	    		//Select rows on datatore load event callback
-	    		String extra = "";
-	    		if (oGrid.getAllRowsSelected()){
-	    			extra = "ExtXeo.activateSelectAllRows('"+oGrid.getClientId()+"');";
-	    			extra += oGrid.getId() + "_selm.selectAll();";
-	    		} 
 		        oLoadParams.add("callback", 
-		        		"function(){" +
+		        		"function(r, options, sucess){" +
+		        			"console.log('**** Callback start');" +	 
+		        			"var store = this;"+
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
-			    			oGrid.getId() + "_selm.clearSelections();" +
-			    			oGrid.getId() + "_selm.selectRows(" + sb + ");" + 
+			    			oGrid.getId() + "_selm.selectRowsOnDemad(" + sb + ", r, options, store);" + 
 			    			oGrid.getId() + "_selm.resumeEvents();" +
-			    			"try{ExtXeo.grid.rowSelectionHndlr(" + oGrid.getId() + "_selm," +
-			    			"'" + oGrid.getClientId() +"_srs','" + oGrid.getRowUniqueIdentifier() + "'" +
-			    			");" +
-			    			extra + 
-			    			"}catch(e){}" +
+			    			"console.log('**** Callback end');" +
 		    			"}"
 		        ); 
 	    	}
@@ -422,6 +435,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
         oPagingConfig.setComponentType( "ExtXeo.PagingToolbar" );
         oPagingConfig.add( "store", oGrid.getId() + "_store" );
+        oPagingConfig.addJSString( "id", oGrid.getClientId() + "_navbar" );
+        oPagingConfig.addJSString( "gridId", oGrid.getClientId() );
         oPagingConfig.add( "pageSize", oGrid.getPageSize() );
         oPagingConfig.add( "displayInfo", true );
         oPagingConfig.addJSString("displayMsg", "" );
@@ -565,12 +580,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         oDataStoreConfig = new ExtConfig("ExtXeo.data.GroupingStore");
         
-        if (oGrid.getAllRowsSelected()){
-        	oDataStoreConfig.add("allRowsSelected", true);
-        } else {
-        	oDataStoreConfig.add("allRowsSelected", false);
-        }
-        
         oFieldsConfig = oDataStoreConfig.addChildArray( "fields" );
         for (int i = 0; i < oGridColumns.length; i++) {
             oFieldConfig = oFieldsConfig.addChild();
@@ -579,6 +588,8 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         
         oDataStoreConfig.addJSString( "url", actionURL );
+        oDataStoreConfig.addJSString( "rowIdentifier", oGrid.getRowUniqueIdentifier() );
+        oDataStoreConfig.addJSString( "gridId", oGrid.getClientId() );
         oDataStoreConfig.add( "showCounters", oGrid.getShowCounters() );
         oDataStoreConfig.add("reader","new Ext.data.JsonReader({remoteSort:true, url:'"+actionURL+"',root:'" + oGrid.getId() + "',totalProperty:'totalCount'}," 
         		+ oFieldsConfig.renderExtConfig() + ")");
@@ -590,6 +601,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         
         oDataStoreConfig.add( "remoteGroup", true );
+        oDataStoreConfig.add( "pageSize", oGrid.getPageSize() );
         String sGroupBy = oGrid.getGroupBy();
         boolean hasGroupBy = false;
         if( sGroupBy != null ) {
@@ -646,14 +658,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         		"	if( x ) this.baseParams.activeRow = x.value;\n" +
         		"}" );
 
-        /*
-        ExtConfig oSelLoad = oExtListeners.addChild( "'load'");
-        oSelLoad.add( "fn", "function() { \n" +
-        		"var ogrid = '" + oGrid.getId() + "_sm';\n" + 
-        		//"window.setTimeout(ogrid+'.selectFirst();alert(1);',1000);\n" + 
-        		"}");
-        */
-        
         ExtConfig oSelException = oExtListeners.addChild( "'loadexception'");
         oSelException.add( "fn", "function() { debugger; alert('" + ComponentMessages.GRID_ERROR_LOADING_DATA.toString() + "\\n ' + " +
         		"arguments[2].responseText" + 
@@ -662,23 +666,16 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         
         ExtConfig onLoad = oExtListeners.addChild( "'load'");
         onLoad.add( "fn", 
-                "function(store) {" +
+                "function(store, records, options) {" +
                 "	var c = Ext.getCmp(\"" + oGrid.getClientId() +"\");\n" +
                 "	if( c && c.loadMask ) { " +
                 "		if( c.loadMask.xwc_wtout ) {window.clearTimeout(c.loadMask.xwc_wtout);}\n" + 		                
                 "		c.loadMask.onLoad();\n" +
         		"	} " +
+                " store.grid.markSelectedRows(options); " +
                 " store.resetDataSourceChange(); " +
         		"}" );
         
-/*        
-        onLoad.add( "fn", 
-        "function() {" +
-        "var c = Ext.getCmp(\"" + oGrid.getClientId() +"\");\n" +
-        "if( c && c.loadMask && c.loadMask.xwc_wtout ) { window.clearTimeout(c.loadMask.xwc_wtout); c.loadMask.onLoad(); }\n" + 		                
-//        "if( " + loadMaskVar +") {" +loadMaskVar +".onLoad();}\n" + 		                
-		" }" );
-        */
         return oDataStoreConfig;
     }
 
@@ -695,9 +692,15 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	oSelModelConfig = new ExtConfig( "Ext.grid.RowSelectionModel" );
         }
         oSelModelConfig.add( "singleSelect", !GridPanel.SELECTION_MULTI_ROW.equals( sRowSelectionMode ) );
-        
+        oSelModelConfig.add( "width", 25 );
+        oSelModelConfig.addJSString("id", oGrid.getId());
         ExtConfig oExtListeners = oSelModelConfig.addChild( "listeners" );
-        ExtConfig oSelChange = oExtListeners.addChild( "'selectionchange'");
+        //ExtConfig oSelChange = oExtListeners.addChild( "'selectionchange'");
+        ExtConfig oRowDeselect = oExtListeners.addChild( "'rowdeselect'");
+        oRowDeselect.add("fn", "function (selectionModel, rowIndex, record){ ExtXeo.grid.rowDeselect(selectionModel,rowIndex,record);}");
+        
+        ExtConfig oRowSelect = oExtListeners.addChild( "'rowselect'");
+        oRowSelect.add("fn", "function (selectionModel, rowIndex, record){ ExtXeo.grid.rowSelect(selectionModel,rowIndex,record);}");
         
         String rowSelChangeCode = "";
         XUICommand oSelChangeComp = (XUICommand)oGrid.findComponent( oGrid.getId() + "_selChange" );
@@ -710,21 +713,16 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                 	);
         }
         
-        oSelChange.add( "fn",
-                            "function(oSelModel){" +
-                                "ExtXeo.grid.rowSelectionHndlr(" +
-                                    "oSelModel," +
-                                    "'" + oGrid.getClientId() +"_srs'," +
-                                    "'" + oGrid.getRowUniqueIdentifier() + "'" +
-                                ");\n" +
-                                "ExtXeo.grid.activeRowHndlr(" + 
-                                    "oSelModel," +
-	                                "'" + oGrid.getClientId() +"_act'," +
-	                                "'" + oGrid.getRowUniqueIdentifier() + "'" +
-	                            ");\n" +
-                                rowSelChangeCode +
-                            "}" 
-                        );
+//        oSelChange.add( "fn",
+//                            "function(oSelModel){" +
+//                                "ExtXeo.grid.activeRowHndlr(" + 
+//                                    "oSelModel," +
+//	                                "'" + oGrid.getClientId() +"_act'," +
+//	                                "'" + oGrid.getRowUniqueIdentifier() + "'" +
+//	                            ");\n" +
+//                                rowSelChangeCode +
+//                            "}" 
+//                        );
         
         if ( oGrid.getMaxSelections() > 0 || 
         		oGrid.isMultiSelection() ){
@@ -746,6 +744,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oGridConfig = new ExtConfig( "ExtXeo.grid.GridPanel" );
 
         oGridConfig.add( "store", oGrid.getId() + "_store" );
+        oGridConfig.addJSString( "rowIdentifier", oGrid.getRowUniqueIdentifier() );
         oGridConfig.add( "maxSelections", oGrid.getMaxSelections() );
         oGridConfig.add( "toolBarVisible", oGrid.getShowGroupToolBar() );
         oGridConfig.add( "multiPagePreserve", oGrid.getEnableSelectionAcrossPages() );
@@ -927,13 +926,6 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         if( !oGrid.getEnableHeaderMenu() )
             oGridConfig.add( "enableHdMenu", false );
 
-        /*
-        new Ext.grid.GroupingView({
-            forceFit:oGrid.getForceColumnsFitWidth(),
-            groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
-        })
-        */
-        
         ExtConfig oView;
         if( oGrid.getEnableGroupBy() ) {
             oView =  oGridConfig.addChild( "view" );
