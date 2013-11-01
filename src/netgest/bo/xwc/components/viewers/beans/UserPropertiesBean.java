@@ -128,7 +128,7 @@ public class UserPropertiesBean extends XEOEditBean {
 			if (userLocale != null){
 				bouser.setLanguage(userLocale.getLanguage());
 				//Backward compatibilty change old user language
-				boObject lang =XEO.loadWithQuery("select XEOApplicationLanguage where code = ?",userLocale.getLanguage().toUpperCase());
+				boObject lang =XEO.loadWithQuery("select XeoApplicationLanguage where code = ?",userLocale.getLanguage().toUpperCase());
 				if (lang.exists()){
 					user.getAttribute("user_language").setValueLong(lang.getBoui());
 				}
