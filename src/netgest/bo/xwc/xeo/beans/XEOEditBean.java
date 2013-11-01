@@ -2049,7 +2049,7 @@ public class XEOEditBean extends XEOBaseBean
 		UIComponent form = getViewRoot().findComponent(XUIForm.class);
 		XUICommand cmd = (XUICommand) getViewRoot().findComponent(form.getId() + ":" + form.getId() + "_showDiffCmd");
 		if (cmd != null){
-			return XVWScripts.getAjaxCommandScript(cmd, XVWScripts.WAIT_STATUS_MESSAGE);
+			return XVWScripts.getAjaxCommandScript(cmd, XVWScripts.WAIT_DIALOG);
 		}
 		return "";
 	}
@@ -2121,23 +2121,6 @@ public class XEOEditBean extends XEOBaseBean
 			String cliendID = ((XUIForm)viewRoot.findComponent(XUIForm.class)).getClientId();
 			url += "&xvw.servlet="+ cliendID;
 			
-			String openWindowScript = "function openDiffWindow() {" +
-					"var winDiff = new Ext.Window({ " +
-                	" title:' "+XEOViewersMessages.VIEW_DIFFS_WINDOW_TITLE.toString()+" '" +
-                	",width       : 800" +
-                	",autoScroll : true" +
-                	",height      : 550" +
-                	",html : '<iframe src=\""+url+"\" width=\"100%\" height=\"520\" frameborder=\"0\">'" +
-                	"});" +
-            		"winDiff.show();}";
-			
-			//Add the function to open a new Window
-			if (getIsChanged()){
-			oRequestContext.getScriptContext().add(  
-					XUIScriptContext.POSITION_HEADER,
-					"openDifferencesWindow",openWindowScript
-					);
-			}
 			String configMsgBox = messageBoxConfig.renderExtConfig().toString(); 	
 			oRequestContext.getScriptContext().add(  
 					XUIScriptContext.POSITION_HEADER,
