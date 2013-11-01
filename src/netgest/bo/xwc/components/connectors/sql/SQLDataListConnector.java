@@ -112,7 +112,7 @@ public class SQLDataListConnector implements DataListConnector {
 		finally {
 			try {
 				this.sqlQueryCount  = sqlOriginalQuery;
-				this.parsCount = null;
+				this.parsCount = new ArrayList<Object>();
 				if (rs!=null)
 					rs.close();
 				if (ps!=null)
@@ -506,7 +506,7 @@ public class SQLDataListConnector implements DataListConnector {
 		
 		finally {
 			sqlQuery = sqlOriginalQuery;
-			pars = null;
+			pars = new ArrayList<Object>();
 			try {
 				if (rs!=null)
 					rs.close();

@@ -76,6 +76,8 @@ public class MultiPurposeFieldConnector implements DataFieldConnector {
 	}
 
 	public String getDisplayValue() {
+		if (value == null)
+			return "";
 		return value.toString();
 	}
 

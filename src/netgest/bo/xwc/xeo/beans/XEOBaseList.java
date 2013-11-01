@@ -26,6 +26,7 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.localization.BeansMessages; 
+import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
 import netgest.utils.StringUtils;
 public class XEOBaseList extends XEOBaseBean {
     
@@ -177,7 +178,10 @@ public class XEOBaseList extends XEOBaseBean {
 	    		}
     		}
     	}
-    	return sTitle;
+    	if (StringUtils.hasValue(sTitle))
+    		return sTitle;
+    	else
+    		return BeansMessages.LIST_OF.toString();
     }
     
     public GridRowRenderClass getRowClass() {

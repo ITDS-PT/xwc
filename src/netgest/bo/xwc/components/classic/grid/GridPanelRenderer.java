@@ -23,6 +23,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.beans.XEOBaseList;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
+import netgest.bo.xwc.xeo.localization.BeansMessages;
 
 import netgest.utils.StringUtils;
 
@@ -602,7 +603,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
     		sTitle = ((XEOBaseList)viewBean).getTitle();
     	}
     	else {
-    		sTitle = "Listagem";
+    		sTitle = BeansMessages.LIST_OF.toString();
     	}
     	Tab t = (Tab)oGrid.findParentComponent( Tab.class );
     	if( t != null ) {
