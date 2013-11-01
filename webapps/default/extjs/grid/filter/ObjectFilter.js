@@ -40,12 +40,9 @@ Ext.grid.filter.ObjectFilter = Ext.extend(Ext.grid.filter.Filter, {
 			this.options[i].on('checkchange', this.fireUpdate, this);
 		}
 		
-		this.cardIdSearch = new Ext.menu.EditableItem({icon: this.icon});
-		this.cardIdSearch.on('keyup', this.onKeyUp, this);
-		
 		this.updateTask = new Ext.util.DelayedTask(this.fireUpdate, this);
 		
-		this.menu.add(this.cardIdSearch);
+		
 	}
 	
 	, onKeyUp : function (event ){
@@ -108,5 +105,12 @@ Ext.grid.filter.ObjectFilter = Ext.extend(Ext.grid.filter.Filter, {
 	
 	validateRecord: function(record) {
 		return record.get(this.dataIndex) == this.getValue();
+	}
+	
+	, afterPresenceFilters : function() {
+		
+		this.cardIdSearch = new Ext.menu.EditableItem({icon: this.icon});
+		this.cardIdSearch.on('keyup', this.onKeyUp, this);
+		this.menu.add(this.cardIdSearch);
 	}
 });

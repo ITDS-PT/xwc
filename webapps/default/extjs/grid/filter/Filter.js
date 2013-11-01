@@ -42,6 +42,7 @@ Ext.grid.filter.Filter = function(config){
 	this.menu = new Ext.menu.Menu();
 	this.init();
 	this.createDataPresenceFilters(config);
+	this.afterPresenceFilters();
 	if(config && config.value) {
 		this.setValue(config.value);
 		this.setActive(config.active !== false, true);
@@ -169,6 +170,10 @@ Ext.extend(Ext.grid.filter.Filter, Ext.util.Observable, {
 		
 		
 	} 
+
+	, afterPresenceFilters : function (){
+		
+	}
 
 	, clearValue : Ext.emptyFn
 
