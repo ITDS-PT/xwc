@@ -615,47 +615,48 @@ public class EditToolBar extends ToolBar {
 	}
 	
 	public void initNonOrphanComponent() { 
+		int pos = 0;
 		boObject xeoObject = getTargetObject();
 		// Render ToolBar Methods
 		if( getRenderConfirmBtn() ) {
-			getChildren().add( Menu.getMenuSpacer() );
-			createNonOrphanViewerBeanMethod( 
+			getChildren().add( pos++, Menu.getMenuSpacer() );
+			createNonOrphanViewerBeanMethod( pos++,
 					XEOComponentMessages.EDITTB_CONFIRM.toString(), 
 					XEOComponentMessages.EDITTB_CONFIRM_TTIP.toString(),
 					"ext-xeo/images/menus/confirmar.gif", "confirm", null );
 		}
 		
 		if( getRenderValidateBtn() ) {
-			getChildren().add( Menu.getMenuSpacer() );
-			createNonOrphanViewerBeanMethod( null, 
+			getChildren().add( pos++,Menu.getMenuSpacer() );
+			createNonOrphanViewerBeanMethod( pos++,null, 
 					XEOComponentMessages.EDITTB_VALIDATE_TTIP.toString(),
 					"ext-xeo/images/menus/confirmar.gif", 
 					"processValidate", null );
 		}
 		
 		if( getRenderCancelBtn() ) {
-			getChildren().add( Menu.getMenuSpacer() );
-			createNonOrphanViewerBeanMethod( 
+			getChildren().add( pos++,Menu.getMenuSpacer() );
+			createNonOrphanViewerBeanMethod(pos++, 
 					XEOComponentMessages.EDITTB_CANCEL.toString(), 
 					XEOComponentMessages.EDITTB_CANCEL_TTIP.toString(), 
 					"ext-xeo/images/menus/applications.gif", "cancel", null );
 		}
 		
 		if( getRenderPropertiesBtn() ) {
-			getChildren().add( Menu.getMenuSpacer() );
-			createNonOrphanViewerBeanMethod( 
+			getChildren().add( pos++,Menu.getMenuSpacer() );
+			createNonOrphanViewerBeanMethod( pos++,
 					null, 
 					XEOComponentMessages.EDITTB_VIEW_PROPERTIES_TTIP.toString() , 
 					"extjs/resources/images/default/tree/leaf.gif", 
 					"showProperties", "self" );
-			getChildren().add( Menu.getMenuSpacer() );
+			getChildren().add( pos++, Menu.getMenuSpacer() );
 		}
 		
 		if( getRenderObjectMethodBtns() ) {
 			boDefMethod[] methods = xeoObject.getToolbarMethods();
 			for( boDefMethod m : methods ) {
 				if( !staticNonOrphanMethods.contains( m.getName() ) ) {
-					createNonOrphanMenuMethod( m.getLabel(), m.getLabel(), m.getName() );
+					createNonOrphanMenuMethod( pos++, m.getLabel(), m.getLabel(), m.getName() );
 				}
 			}
 		}
@@ -666,14 +667,14 @@ public class EditToolBar extends ToolBar {
 			|| 	getRenderListVersionBtn()
 			||  (getTargetObject().getBoDefinition().implementsSecurityRowObjects() && getRenderOplBtn())
 			||  getRenderInformationMenu()){
-					getChildren().add( Menu.getMenuSpacer( ) );
-					getChildren().add( createInformationMenu());
+					getChildren().add( pos++, Menu.getMenuSpacer( ) );
+					getChildren().add( pos++, createInformationMenu());
 				}
 		
 		super.initComponent();
 	}
 	
-	private ViewerMethod createNonOrphanViewerBeanMethod( String label, String toolTip, String icon, String methodName, String target ) {
+	private ViewerMethod createNonOrphanViewerBeanMethod( int pos, String label, String toolTip, String icon, String methodName, String target ) {
 		ViewerMethod xeoMethod;
 	
 		xeoMethod = new ViewerMethod();
@@ -686,12 +687,15 @@ public class EditToolBar extends ToolBar {
 		xeoMethod.setIcon( icon );
 		xeoMethod.setToolTip( toolTip );
 		xeoMethod.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
-		getChildren().add( xeoMethod );
+		if (pos > 0)
+			getChildren().add( pos, xeoMethod );
+		else
+			getChildren().add( xeoMethod );
 	
 		return xeoMethod;
 	}
 	
-	private ModelMethod createNonOrphanMenuMethod( String label, String toolTip, String methodName ) {
+	private ModelMethod createNonOrphanMenuMethod( int pos, String label, String toolTip, String methodName ) {
 		
 		ModelMethod xeoMethod;
 		
@@ -702,8 +706,11 @@ public class EditToolBar extends ToolBar {
 		xeoMethod.setTargetMethod( methodName );
 		xeoMethod.setToolTip( toolTip );
 		xeoMethod.setServerActionWaitMode(XVWServerActionWaitMode.DIALOG.toString());
-		getChildren().add( xeoMethod );
-		
+		if (pos > 0)
+			getChildren().add(pos++, xeoMethod );
+		else
+			getChildren().add( xeoMethod );
+			
 		return xeoMethod;
 	}
 	
