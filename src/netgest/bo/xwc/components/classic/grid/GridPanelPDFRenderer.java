@@ -105,14 +105,16 @@ public class GridPanelPDFRenderer {
 				
 				Column current = oGridColumns[i];
 				if (!current.isHidden()){
+					int iWidth=100;
 					String s = oGridColumns[i].getWidth();
 					try {
-						int iWidth = Integer.parseInt( s );
-						iWidths[i] = (int)(iWidth/1.8);
-						iTableWidth += iWidths[i]; 
+						iWidth = Integer.parseInt( s );
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
+					iWidths[i] = (int)(iWidth/1.8);
+					iTableWidth += iWidths[i]; 
+					
 					
 	    			String sLabel = GridPanel.getColumnLabel( oDataSource, oGridColumns[i] );
 	    			if (StringUtils.isEmpty( sLabel )){
