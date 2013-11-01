@@ -22,6 +22,7 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.def.XUIComponentStore;
 import netgest.bo.xwc.framework.def.XUIRendererDefinition;
+import netgest.utils.StringUtils;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -490,7 +491,7 @@ public class ToolBar extends ViewerSecurityBase {
             String icon = oMenuChild.getIcon(); 
             if( icon != null && icon.length() > 0 ) {
             	oItemCfg.addJSString( "icon", renderer.composeUrlWithWebContext( icon ) );
-            	if( oMenuChild.getText() == null ) {
+            	if( StringUtils.isEmpty(oMenuChild.getText())) {
                 	oItemCfg.addJSString("cls", "x-btn-icon");
             	}
             	else {
