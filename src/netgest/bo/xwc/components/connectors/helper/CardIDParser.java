@@ -82,7 +82,10 @@ public class CardIDParser {
 			List<String> concatedAttributes = new LinkedList<String>();
 			while (m.find()){
 				String newAttribute = m.group( 1 );
-				concatedAttributes.add( newAttribute );
+				if (handler.getAttributeRef(newAttribute).getAtributeDeclaredType().equals(boDefAttribute.ATTRIBUTE_OBJECT))
+					concatedAttributes.add( newAttribute + "$" );
+				else
+					concatedAttributes.add( newAttribute );
 			}
 			attributeNameOfTargetObject = adapter.concatColumnsWithSeparator(concatedAttributes, "','");
 		}
