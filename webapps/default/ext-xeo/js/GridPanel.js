@@ -41,8 +41,8 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         	return 'gridHeader' + this.getGridEl().id;
         }
         , calculateColumnId : function(columnId){
-        	if (columnId.indexOf("__") > 0)
-        		return columnId.replace("__",".");
+        	//if (columnId.indexOf("__") > 0)
+        	//	return columnId.replace("__",".");
         	return columnId;
         }
         , getColumnLabel : function ( columnId ){
@@ -2933,8 +2933,10 @@ ExtXeo.grid.addSelected = function(gridId, rowId, negated){
 ExtXeo.grid.rowSelect = function( oSelModel, rowIndex, record){
 	var oInput = document.getElementById( oSelModel.grid.id + "_act" );
 	var rowIdentifier = oSelModel.grid.getRowIdentifier();
-	oInput.value = record.data[rowIdentifier];
-	ExtXeo.grid.addSelected(oSelModel.grid.id,record.data[rowIdentifier],false);
+	if (record.data){
+		oInput.value = record.data[rowIdentifier];
+		ExtXeo.grid.addSelected(oSelModel.grid.id,record.data[rowIdentifier],false);
+	}
 	ExtXeo.grid.updateCounter(oSelModel);
 	
 	
@@ -2949,10 +2951,12 @@ ExtXeo.grid.rowDeselect = function( selectionModel, rowIndex, record){
 	var oInput = document.getElementById( grid.id + "_act" );
 	oInput.value = "";
 	var rowIdentifier = grid.getRowIdentifier();
-	if (!selectionModel.clearingAll)
-		ExtXeo.grid.addSelected(grid.id,record.data[rowIdentifier],true);
-	else
-		ExtXeo.grid.removeSelected(grid.id,record.data[rowIdentifier]);
+	if (record.data){
+		if (!selectionModel.clearingAll)
+			ExtXeo.grid.addSelected(grid.id,record.data[rowIdentifier],true);
+		else
+			ExtXeo.grid.removeSelected(grid.id,record.data[rowIdentifier]);
+	}
 	
 	
 	if (!grid.isGrouped()){

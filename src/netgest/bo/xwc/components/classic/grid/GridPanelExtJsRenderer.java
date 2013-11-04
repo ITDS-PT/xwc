@@ -829,7 +829,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	String dataField = oGridColumns[i].getDataField();
         	DataFieldMetaData metaData = oGrid.getDataSource().getAttributeMetaData( dataField );
             oColConfig = oColsConfig.addChild();
-            oColConfig.addJSString( "id", oGridColumns[ i ].getDataField() );
+            oColConfig.addJSString( "id", DataFieldDecoder.convertForGridPanel( oGridColumns[ i ].getDataField() ) );
             oColConfig.add( "width", oGridColumns[ i ].getWidth() );
             
             String label = GridPanel.getColumnLabel( dataList, oGridColumns[ i ] );
