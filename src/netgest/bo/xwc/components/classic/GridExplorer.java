@@ -1210,7 +1210,7 @@ public class GridExplorer extends List {
 			
 			XUIResponseWriter w = getResponseWriter();
 			w.startElement(DIV);
-			w.writeAttribute(ID, component.getClientId() + "_container");
+			w.writeAttribute(ID, component.getClientId());
 			
 			gridRenderer.get().encodeGridHiddenInputs(component);
 			
@@ -1346,30 +1346,6 @@ public class GridExplorer extends List {
 			
 			w.endElement(DIV);
 			
-			// Overwrite the main functions
-//			if( !exp.isRenderedOnClient() ) {
-//				getResponseWriter().getScriptContext()
-//				.add(XUIScriptContext.POSITION_FOOTER, "explorerFunctions" + component.getClientId() ,
-//						"XVW.canCloseTabExplorer = XVW.canCloseTab;\n" +
-//						"XVW.canCloseTab = function( sForm, sCmd ) {\n" +
-//						"	XVW.explorerIsClosingTab=true;\n" +
-//						"	XVW.canCloseTabExplorer( sForm, sCmd );\n" +
-//						"}\n" +
-//						"XVW.setTitleExplorer = XVW.setTitle;\n" +
-//						"XVW.setTitle = function( sTitle ) {\n" +
-//						"	XVW.explorerIsClosingTab=false;\n" +
-//						"	Ext.getCmp('"+ exp.getClientId() + "_panel').setTitle( sTitle );\n" +
-//						"};" +
-//						"XVW.closeViewExplorer = XVW.closeView;\n" +
-//						"XVW.closeView = function( sViewId ) {\n" +
-//							destryCompsJs + "\n" +
-//							"Ext.getCmp('"+ exp.getClientId() + "_panel').setTitle( '' );\n" +
-//							"if( XVW.explorerIsClosingTab ) {\n" +
-//							"	XVW.closeViewExplorer('" + XUIRequestContext.getCurrentContext().getViewRoot().getViewId() +  "');\n" +
-//							"}\n" +
-//						"}\n"
-//				);
-//			}
 		}
 
 		@Override
