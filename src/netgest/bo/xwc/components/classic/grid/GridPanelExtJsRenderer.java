@@ -80,9 +80,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         this.oExtToolbar = null;
         
         encodeChildren( oComp );
-        encodeGridHiddenInputs( oComp );
         ExtConfig ret = renderExtComponent( getResponseWriter(), oComp, true );
-        //encodeEnd(oComp);
         return ret;
     }
 

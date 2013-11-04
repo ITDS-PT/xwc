@@ -1,5 +1,8 @@
 package netgest.bo.xwc.components.classic;
 
+import static netgest.bo.xwc.components.HTMLAttr.ID;
+import static netgest.bo.xwc.components.HTMLTag.DIV;
+
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -1204,6 +1207,13 @@ public class GridExplorer extends List {
 		
 		@Override
 		public void encodeEnd(XUIComponentBase component) throws IOException {
+			
+			XUIResponseWriter w = getResponseWriter();
+			w.startElement(DIV);
+			w.writeAttribute(ID, component.getClientId() + "_container");
+			
+			gridRenderer.get().encodeGridHiddenInputs(component);
+			
 			GridExplorer exp = ((GridExplorer)component);
 			if( !exp.getRenderViewPort() ) {
 				gridRenderer.get().encodeEnd(component);
@@ -1226,7 +1236,6 @@ public class GridExplorer extends List {
 							"var c = Ext.getCmp('" + exp.getId() + "_vp'); if (c) {c.destroy();}");
 					
 					if( exp.isNew ) {
-						XUIResponseWriter w = getResponseWriter();
 						String hiddenName =  component.getClientId() + "_cvnh1";
 						w.startElement( HTMLTag.INPUT, component );
 						w.writeAttribute( HTMLAttr.TYPE , "hidden", null );
@@ -1334,6 +1343,9 @@ public class GridExplorer extends List {
 					
 				}
 			}
+			
+			w.endElement(DIV);
+			
 			// Overwrite the main functions
 //			if( !exp.isRenderedOnClient() ) {
 //				getResponseWriter().getScriptContext()
