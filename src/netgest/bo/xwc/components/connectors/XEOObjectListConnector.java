@@ -477,7 +477,7 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 						result , parentDefinition );
 			}
 			
-			if( this.oObjectList.getRslt() != null ) {
+			if( result == null && this.oObjectList.getRslt() != null ) {
 				result = findAttributeMetadataInResultSet( attributeName ,
 						result );
 			}
