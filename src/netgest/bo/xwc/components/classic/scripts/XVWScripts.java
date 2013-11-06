@@ -28,6 +28,21 @@ public class XVWScripts {
     public static final int WAIT_DIALOG = 1;
     public static final int WAIT_STATUS_MESSAGE= 2;
     
+    public enum WaitMode{
+    	LOCK_SCREEN(1),
+    	DONT_LOCK_SCREEN(0);
+    	
+    	private int waitMode;
+    	
+    	private WaitMode(int mode){
+    		this.waitMode = mode;
+    	}
+    	
+    	public int getWaitMode(){
+    		return this.waitMode;
+    	}
+    }
+    
     public static final int ALERT_ICON_INFO = 1;
     public static final int ALERT_ICON_ERROR = 2;
     public static final int ALERT_ICON_WARNING = 3;
@@ -153,8 +168,12 @@ public enum ValueType{LITERAL,
             "XVW.AjaxCommand( '" + containerId +  "','" + compId + "','" + value + "','"+WAIT_DIALOG+"')";
     }
 
-public static final String getAjaxCommandScript( XUIComponentBase oComponent, int iWaitMode ) {
+    public static final String getAjaxCommandScript( XUIComponentBase oComponent, int iWaitMode ) {
     	return getAjaxCommandScript( oComponent , iWaitMode, Queue.QUEUE_COMMAND );
+    }
+    
+    public static final String getAjaxCommandScript( XUIComponentBase oComponent, WaitMode mode ) {
+    	return getAjaxCommandScript( oComponent , mode.getWaitMode(), Queue.QUEUE_COMMAND );
     }
 
      
@@ -172,6 +191,10 @@ public static final String getAjaxCommandScript( XUIComponentBase oComponent, in
 
     public static final String getAjaxCommandScript( XUIComponentBase oComponent, String sValue, int iWaitMode ) {
         return getAjaxCommandScript( oComponent , sValue , iWaitMode, ValueType.LITERAL );
+    }
+    
+    public static final String getAjaxCommandScript( XUIComponentBase oComponent, String sValue, WaitMode waitMode ) {
+        return getAjaxCommandScript( oComponent , sValue , waitMode.getWaitMode(), ValueType.LITERAL );
     }
     
     public static final String getAjaxCommandScript( XUIComponentBase oComponent, String sValue, int iWaitMode, ValueType type ) {
