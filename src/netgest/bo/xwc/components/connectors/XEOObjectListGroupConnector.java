@@ -550,13 +550,13 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 			if( term != null ) {
 				outerSelectOrderBy = term.getExpression() + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"");
 				if( boql.startsWith( "{" ) ) {
-					q.setOrderByPart( term.getExpression() + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"") );
+					q.setOrderByPart( "1" + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC":"") );
 				}
 				else {
 					if ( createSubSelect )
 						q.setOrderByPart( "" );
 					else
-						q.setOrderByPart( "[" + term.getExpression() + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC]":"]") );
+						q.setOrderByPart( "[ 1" + (term.getOrderByDir()==OrderByDir.SORT_DESC?" DESC]":"]") );
 				}
 				q.getOrderByPartParameters().clear();
 			}
