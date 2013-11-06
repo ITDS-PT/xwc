@@ -30,7 +30,8 @@ public class CardIdLinkRenderer implements GridColumnRenderer {
 	public String render(GridPanel grid, DataRecordConnector record,
 			DataFieldConnector field) {
 		
-		String sRetValue = "";
+		
+		String sRetValue = field.getDisplayValue();
 		try{
 			
 			if (field instanceof XEOObjectAttributeConnector){
