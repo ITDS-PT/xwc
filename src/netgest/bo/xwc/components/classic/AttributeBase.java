@@ -270,6 +270,24 @@ public class AttributeBase extends ViewerInputSecurityBase {
 	public void setToolTip(String newValExpr) {
 		toolTip.setExpressionText( newValExpr );
 	}
+	
+	 /**
+     * Tooltip for this component
+     */
+    XUIBaseProperty< Boolean > onChangeSubmitLockScreen = new XUIBaseProperty< Boolean >(
+			"onChangeSubmitLockScreen" , this , Boolean.FALSE );
+
+	public Boolean getOnChangeSubmitLockScreen() {
+		return onChangeSubmitLockScreen.getValue();
+	}
+
+	public void setOnChangeSubmitLockScreen(String newValue) {
+		onChangeSubmitLockScreen.setValue(Boolean.parseBoolean(newValue ));
+	}
+	
+	public void setOnChangeSubmitLockScreen(Boolean newValue) {
+		onChangeSubmitLockScreen.setValue(newValue );
+	}
     
     /**
      * Initialize the component
@@ -292,8 +310,7 @@ public class AttributeBase extends ViewerInputSecurityBase {
 	private void setRenderedValueForModelUpdate() {
 		this.renderedValue.setValue( getValue() );
 	}
-    
-    
+	
     public void initSpecificSettings(){
     	
     }

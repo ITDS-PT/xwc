@@ -211,6 +211,10 @@ public enum ValueType{LITERAL,
         return 
             "XVW.AjaxCommand( '" + oComponent.findParentComponent(XUIForm.class).getClientId() +  "', null, null, '"+ iWaitMode +"')";
     }
+    
+    public static final String getAjaxUpdateValuesScript( XUIComponentBase oComponent, WaitMode iWaitMode ) {
+        return getAjaxUpdateValuesScript(oComponent,iWaitMode.getWaitMode());
+    }
 
     public static final String getAlertDialog( String sTitle, String sMessage, int icon ) {
     	

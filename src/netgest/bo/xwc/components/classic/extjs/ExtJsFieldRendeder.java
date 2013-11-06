@@ -3,6 +3,7 @@ package netgest.bo.xwc.components.classic.extjs;
 import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts.WaitMode;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIScriptContext;
@@ -89,8 +90,14 @@ public abstract class ExtJsFieldRendeder extends ExtJsBaseRenderer implements Ex
 
         ExtConfig listeners = new ExtConfig();
         if( oForm.haveDependents( oAtt.getObjectAttribute() ) || oAtt.isOnChangeSubmit()  ) {
+        	
+        	boolean lockScreen = oAtt.getOnChangeSubmitLockScreen();
+        	WaitMode mode = WaitMode.DONT_LOCK_SCREEN;
+        	if (lockScreen)
+        		mode = WaitMode.LOCK_SCREEN;
+        	
         	listeners.add( "'change'" , "function(fld,newValue,oldValue){fld.setValue(newValue);" 
-            + XVWScripts.getAjaxUpdateValuesScript( oAtt, 0 ) + "}" );
+            + XVWScripts.getAjaxUpdateValuesScript( oAtt, mode ) + "}" );
         }
         return listeners; 
     }

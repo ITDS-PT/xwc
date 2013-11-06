@@ -204,6 +204,7 @@ public class SplitedLookup extends Attribute {
         	input.setMaxLength( remAtt.getLen() );
         	
         input.setOnChangeSubmit( "true" );
+        input.setOnChangeSubmitLockScreen(Boolean.TRUE);
         
         
         input.addValueChangeListener( new ChangeListener() );
