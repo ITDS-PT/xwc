@@ -167,7 +167,6 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 							break;
 						}
 					} catch (boRuntimeException e) {
-						// TODO Auto-generated catch block
 						throw new RuntimeException(e);
 					}
 	    		}
