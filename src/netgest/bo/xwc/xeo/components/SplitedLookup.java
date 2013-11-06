@@ -26,6 +26,8 @@ import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.AttributeLabel;
 import netgest.bo.xwc.components.classic.AttributeNumberLookup;
 import netgest.bo.xwc.components.classic.Rows;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts.WaitMode;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMessage;
@@ -33,6 +35,7 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIViewProperty;
+import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
@@ -215,6 +218,18 @@ public class SplitedLookup extends Attribute {
 		numberLookup.setOnChangeSubmit( "true" );
 		numberLookup.addValueChangeListener( new AttributeChangeListener() );
 		getChildren().add( numberLookup );
+		
+		if (findComponent(getClientId() + "_searchCmd") == null){
+			XUICommand command = new XUICommand();
+			command.setId( getId() + "_searchCmd" );
+			command.setActionExpression( createMethodBinding( "#{"+getBeanId()+".searchLookup}" ) );
+	        getChildren().add( command );
+			
+		}
+	}
+	
+	public XUICommand getOpenSearchCommand(){
+		return (XUICommand) findComponent(getClientId() + "_searchCmd");
 	}
 	
 	@Override
@@ -396,14 +411,28 @@ public class SplitedLookup extends Attribute {
 	
 	public static class ChangeListener implements ValueChangeListener {
 		@Override
-		public void processValueChange(ValueChangeEvent arg0) throws AbortProcessingException {
+		public void processValueChange(ValueChangeEvent valEvent) throws AbortProcessingException {
 			try {
 				
+				Object newValue = valEvent.getNewValue();
+				Object oldValue = valEvent.getOldValue();
+				if (newValue != null){
+					if (newValue.equals(oldValue)){
+						return;
+					}
+				} 
+				if (oldValue != null){
+					if (oldValue.equals(newValue))
+						return;
+				}
+		
+				
 				SplitedLookup lookup = 
-					(SplitedLookup)((AttributeBase)arg0.getComponent())
+					(SplitedLookup)((AttributeBase)valEvent.getComponent())
 						.findParentComponent( SplitedLookup.class );
-
-				Object inputValue = lookup.getInputComponent().getValue(); 
+				AttributeBase input = lookup.getInputComponent(); 
+				Object inputValue = input.getValue(); 
+				
 				
 				boObject objAtt = lookup.getTargetObject();
 				XEOEditBean b = (XEOEditBean)XUIRequestContext.getCurrentContext().getViewRoot().getBean( lookup.getBeanId() );
@@ -421,8 +450,12 @@ public class SplitedLookup extends Attribute {
 					if (value instanceof java.util.List<?>){
 						@SuppressWarnings("unchecked")
 						java.util.List<String> values = (java.util.List<String>) value;
-						b.searchLookup(lookup.getLookupComponent().getClientId(), values);
-					
+						XUICommand cmd = lookup.getOpenSearchCommand();
+						String parameters = serializeValuesToString(values).toString();
+						
+						lookup.getRequestContext().addFooterScript(cmd.getClientId(),
+								XVWScripts.getAjaxCommandScript( cmd, parameters, WaitMode.LOCK_SCREEN ));
+						
 					} else {
 						lookup.getInputComponent().clearInvalid();
 						AttributeBase lk = lookup.getLookupComponent();
@@ -433,6 +466,18 @@ public class SplitedLookup extends Attribute {
 			} catch (boRuntimeException e) {
 				throw new RuntimeException( e );
 			}
+		}
+
+		private StringBuilder serializeValuesToString(
+				java.util.List<String> values) {
+			StringBuilder builder = new StringBuilder();
+			String separator = "";
+			for (String current : values){
+				builder.append(separator);
+				builder.append(current);
+				separator = ",";
+			}
+			return builder;
 		}
 	}
 	

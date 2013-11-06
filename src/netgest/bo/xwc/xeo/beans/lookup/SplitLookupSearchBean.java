@@ -26,6 +26,7 @@ public class SplitLookupSearchBean extends XEOBaseLookupList {
 		}
 	}
 	
+	
 	private long[] convertedBouis = new long[0];
 	
 	
@@ -85,6 +86,8 @@ public class SplitLookupSearchBean extends XEOBaseLookupList {
 	
 
 	}
+
+	
 	
 
 }

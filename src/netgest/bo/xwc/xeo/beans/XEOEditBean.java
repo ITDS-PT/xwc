@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +86,7 @@ import netgest.bo.xwc.xeo.components.BridgeLookup;
 import netgest.bo.xwc.xeo.components.BridgeToolBar;
 import netgest.bo.xwc.xeo.components.FormEdit;
 import netgest.bo.xwc.xeo.components.LookupList;
+import netgest.bo.xwc.xeo.components.SplitedLookup;
 import netgest.bo.xwc.xeo.components.utils.DefaultFavoritesSwitcherAlgorithm;
 import netgest.bo.xwc.xeo.components.utils.LookupFavorites;
 import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
@@ -2793,10 +2795,26 @@ public class XEOEditBean extends XEOBaseBean
     	}
     }
     
-    public void searchLookup(String lookupId, List<String> bouis) throws boRuntimeException{
+    public void searchLookup() throws boRuntimeException{
+    	
+    	XUICommand source = (XUICommand) getRequestContext().getEvent().getComponent();
+    	SplitedLookup lookup = (SplitedLookup)source.getParent();
+    	String list = source.getCommandArgument().toString().trim();
+    	String lookupId = lookup.getLookupComponent().getClientId();
+    	String inputId = lookup.getInputComponent().getClientId();
+    	
+    	List<String> bouis = new LinkedList<String>();
+    	String[] splitBouis = list.split(",");
+    	for (String current : splitBouis){
+    		if (StringUtils.hasValue(current))
+    			bouis.add(current);
+    	}
+    	
     	AttributeBase oAtt = (AttributeBase)getViewRoot().findComponent( lookupId );
+    	AttributeBase input = (AttributeBase)getViewRoot().findComponent( inputId );
     	AttributeHandler    oAttHandler = ((XEOObjectAttributeConnector)oAtt.getDataFieldConnector()).getAttributeHandler();
-    	String targetObjectToSearch = oAttHandler.getDefAttribute().getReferencedObjectName();
+    	String targetObjectToSearch = oAttHandler.getDefAttribute().getReferencedObjectName(); 
+    	input.setValue(null);
     	if (bouis.size() == 1){
     		oAttHandler.setValueString( bouis.get(0) );
     	} else if (bouis.size() > 1){
