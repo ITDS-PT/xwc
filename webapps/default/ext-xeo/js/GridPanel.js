@@ -41,8 +41,6 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
         	return 'gridHeader' + this.getGridEl().id;
         }
         , calculateColumnId : function(columnId){
-        	//if (columnId.indexOf("__") > 0)
-        	//	return columnId.replace("__",".");
         	return columnId;
         }
         , getColumnLabel : function ( columnId ){
