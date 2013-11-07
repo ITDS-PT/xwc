@@ -55,7 +55,7 @@ public class CardIdLinkRenderer implements GridColumnRenderer {
 							}
 						}
 					} else {
-						return field.getDisplayValue();
+						sRetValue = field.getDisplayValue();
 					}
 					
 				} 
@@ -63,6 +63,8 @@ public class CardIdLinkRenderer implements GridColumnRenderer {
 		}catch (boRuntimeException e ){
 			
 		}
+		if (sRetValue == null)
+			sRetValue = "";
 		return sRetValue;
 	}
 
