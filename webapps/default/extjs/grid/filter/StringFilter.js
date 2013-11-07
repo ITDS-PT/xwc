@@ -36,7 +36,7 @@ Ext.grid.filter.StringFilter = Ext.extend(Ext.grid.filter.Filter, {
 	,isActivatable: function() {
 		if (this.value){
 			if (this.value.getValue() != null){
-		return this.value.getValue().length > 0 || this.containsData !== null;
+				return this.value.getValue().length > 0 || this.containsData !== null;
 			}
 		}
 		return this.containsData != null;
