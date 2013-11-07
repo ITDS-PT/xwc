@@ -44,7 +44,7 @@ public class LeftRegion extends RightRegion implements ExtJSRegionRenderer {
 		ExtConfig leftRegion = new ExtConfig();
 		leftRegion.addJSString("region", "west");
 		leftRegion.addJSString("id", "west-panel");
-		leftRegion.addJSString("title",getTitle());
+		leftRegion.addJSString("title","<img id='extxeo-refresh-counters-img' onclick='XVW.MenuCounter.updateCounters(true);' style='cursor:pointer;position:relative;top:0px;width:16px;height:16px' align='right' src='extjs/resources/images/default/grid/refresh.gif'>" +getTitle());
 		leftRegion.add("split",getSplit());
 		leftRegion.add("width",getWidth());
 		leftRegion.add("minSize",175);
