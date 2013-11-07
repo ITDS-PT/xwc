@@ -7,10 +7,13 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.jsf.XUIViewHandler;
+import netgest.bo.xwc.framework.jsf.XUIViewHandler.PropertyEvaluation;
 
 import java.io.IOException;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 /**
@@ -75,6 +78,27 @@ public class Tab extends ViewerCommandSecurityBase
     	}
 		return super.isRendered();
 	}
+    
+    public boolean isActiveTab(){
+    	return getId().equals(((Tabs)getParent()).getActiveTab());
+    }
+    
+    @Override
+    public Object processSaveState(FacesContext context) {
+    	Object savedState = null;
+    	boolean isTopTab = ((Tabs)getParent()).isTopTabs();
+    	if (isActiveTab() && isTopTab){
+    		savedState = super.processSaveState(context);
+    	} else {
+    		try {
+    			XUIViewHandler.setPropertyEvaluationMode(PropertyEvaluation.DONT_EVALUATE);
+    			savedState = super.processSaveState(context);
+    		} finally { 
+    			XUIViewHandler.setPropertyEvaluationMode(PropertyEvaluation.EVALUATE);
+    		}
+    	}
+    	return savedState;
+    }
 
 	@Override
     public StateChanged wasStateChanged2() {
@@ -95,20 +119,11 @@ public class Tab extends ViewerCommandSecurityBase
 
         @Override
         public void encodeBegin(XUIComponentBase component) throws IOException {
-//        	super.encodeBegin(component);
-//            XUIResponseWriter w = getResponseWriter();
-//            w.startElement( "div", component );
-//            w.writeAttribute( "class", "", null );
-//            w.writeAttribute( "style", "width:100%", null );
             
         }
 
         @Override
         public void encodeEnd(XUIComponentBase component) throws IOException {
-//        	super.encodeEnd(component);
-        	
-//            XUIResponseWriter w = getResponseWriter();
-//            w.endElement("div");
         }
 
 		@Override

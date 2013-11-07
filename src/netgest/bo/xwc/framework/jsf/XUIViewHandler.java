@@ -1,40 +1,5 @@
 package netgest.bo.xwc.framework.jsf;
 
-import netgest.bo.def.boDefHandler;
-import netgest.bo.localizations.MessageLocalizer;
-import netgest.bo.system.Logger;
-import netgest.bo.system.boApplication;
-import netgest.bo.transaction.XTransaction;
-import netgest.bo.xwc.components.classic.Layouts;
-import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
-import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder.SecurityMode;
-import netgest.bo.xwc.framework.PackageIAcessor;
-import netgest.bo.xwc.framework.XUIApplicationContext;
-import netgest.bo.xwc.framework.XUIRendererServlet;
-import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.XUISessionContext;
-import netgest.bo.xwc.framework.XUIViewBean;
-import netgest.bo.xwc.framework.annotations.XUIWebCommand;
-import netgest.bo.xwc.framework.annotations.XUIWebDefaultCommand;
-import netgest.bo.xwc.framework.annotations.XUIWebParameter;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.framework.def.XUIViewerDefinition;
-import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
-import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl.TreeNode;
-import netgest.bo.xwc.framework.jsf.cache.CacheEntry;
-import netgest.bo.xwc.framework.jsf.utils.LRUCache;
-import netgest.bo.xwc.framework.localization.XUICoreMessages;
-import netgest.bo.xwc.framework.localization.XUILocalization;
-import netgest.bo.xwc.xeo.beans.SystemViewer;
-import netgest.bo.xwc.xeo.beans.XEOBaseBean;
-import netgest.bo.xwc.xeo.beans.XEOSecurityBaseBean;
-
-import netgest.utils.StringUtils;
-import netgest.utils.ngtXMLUtils;
-
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
 import java.io.IOException;
@@ -78,6 +43,38 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import netgest.bo.def.boDefHandler;
+import netgest.bo.localizations.MessageLocalizer;
+import netgest.bo.system.boApplication;
+import netgest.bo.transaction.XTransaction;
+import netgest.bo.xwc.components.classic.Layouts;
+import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
+import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder.SecurityMode;
+import netgest.bo.xwc.framework.PackageIAcessor;
+import netgest.bo.xwc.framework.XUIApplicationContext;
+import netgest.bo.xwc.framework.XUIRendererServlet;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUISessionContext;
+import netgest.bo.xwc.framework.XUIViewBean;
+import netgest.bo.xwc.framework.annotations.XUIWebCommand;
+import netgest.bo.xwc.framework.annotations.XUIWebDefaultCommand;
+import netgest.bo.xwc.framework.annotations.XUIWebParameter;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.def.XUIViewerDefinition;
+import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
+import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl.TreeNode;
+import netgest.bo.xwc.framework.jsf.cache.CacheEntry;
+import netgest.bo.xwc.framework.jsf.utils.LRUCache;
+import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.bo.xwc.framework.localization.XUILocalization;
+import netgest.bo.xwc.xeo.beans.SystemViewer;
+import netgest.bo.xwc.xeo.beans.XEOBaseBean;
+import netgest.bo.xwc.xeo.beans.XEOSecurityBaseBean;
+import netgest.utils.StringUtils;
+import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
 
 import org.apache.commons.logging.Log;
@@ -134,18 +131,44 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             return Boolean.FALSE;
         }
     };
+    
+    static ThreadLocal< Boolean > preventPropertyEval = new ThreadLocal< Boolean >(){
+        protected Boolean initialValue() {
+            return Boolean.FALSE;
+        }
+    };
+    
+    public static boolean evaluateStateProperties(){
+    	return preventPropertyEval.get();
+    }
+    
+    public enum PropertyEvaluation {
+    	EVALUATE(Boolean.TRUE),
+    	DONT_EVALUATE(Boolean.FALSE);
+    	
+    	private Boolean mode;
+    	private PropertyEvaluation(Boolean mode){
+    		this.mode = mode;
+    	}
+    	
+    	public Boolean getMode(){
+    		return mode;
+    	}
+    }
 	
+    public static void setPropertyEvaluationMode(PropertyEvaluation type){
+    	preventPropertyEval.set(type.getMode());
+    }
     
     public static boolean isSavingInCache(){
     	return savingInCache.get();
     }
+    
 	
     //
     // Private/Protected Constants
     //
     private static final Log log = LogFactory.getLog(netgest.bo.xwc.framework.jsf.XUIViewHandler.class);
-    
-    private static final Logger logger = Logger.getLogger( XUIViewHandler.class );
     
 	// 1. Instantiate a TransformerFactory.
 	 javax.xml.transform.TransformerFactory tFactory = 
@@ -1217,7 +1240,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             if (renderer != null) {
                 ((XUIRendererServlet)renderer).service( request, response, oComp );
             } else {
-                // TODO: i18n
                 log.warn(MessageLocalizer.getMessage("CANT_GET_RENDERER_FOR_TYPE")+" " + rendererType + " "+MessageLocalizer.getMessage("COMPONENT_SERVLET_REQUEST_ABORTED"));
             }
         }

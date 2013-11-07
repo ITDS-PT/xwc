@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
 import netgest.bo.xwc.components.HTMLAttr;
@@ -21,6 +22,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 import netgest.utils.StringUtils;
 
 /**
@@ -113,6 +115,15 @@ public class Tabs extends XUIComponentBase implements NavigatableComponent
         	k++;
         }
     }
+     
+    
+    public boolean isTopTabs(){
+    	XUIComponentBase component = findParentComponent(Tabs.class);
+    	if (component == null)
+    		return true;
+    	else
+    		return false;
+    }
 
     public void setActiveTab( Tab activeTab )
     {
@@ -149,6 +160,8 @@ public class Tabs extends XUIComponentBase implements NavigatableComponent
     		}
     	}
 	}
+    
+    
 
 	@Override
     public StateChanged wasStateChanged2() {

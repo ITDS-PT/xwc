@@ -38,15 +38,14 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
     	lastEvalValueWasSet = true;
     }
     
-    @SuppressWarnings("unchecked")
 	public Object saveState() {
     	if( !lastEvalValueWasSet ) {
 	        Object oValue = getValue();
 	        if( this instanceof XUIStateBindProperty ) {
-	        	if (XUIViewHandler.isSavingInCache())
+	        	if (XUIViewHandler.isSavingInCache()  || !XUIViewHandler.evaluateStateProperties())
 	        		lastEvalValue = oValue;
 	        	else
-	        		lastEvalValue = ((XUIStateBindProperty)this).evaluateValue( (ValueExpression)oValue );
+	        		lastEvalValue = ((XUIStateBindProperty<?>)this).evaluateValue( (ValueExpression)oValue );
 	        }
 	        else {
 	        	lastEvalValue = oValue;
