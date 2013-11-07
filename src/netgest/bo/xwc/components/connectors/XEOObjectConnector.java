@@ -116,25 +116,7 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 		}
         
         AttributeHandler oAttrHandlr = getXEOAttribute( name );
-        if( oAttrHandlr == null ) {
-//            String sObjectName = getXEOObject().getName();
-//            
-//            XUIRequestContext requestContext = XUIRequestContext.getCurrentContext();
-//            if( requestContext != null && requestContext.getViewRoot() != null ) {
-//            	log.severe(
-//            				"Error on viewer [%s] - XEOObjectConnector cannot found attribute [%s] on XEO Model [%s]",
-//            				requestContext.getViewRoot().getViewId(),
-//            				name,
-//            				sObjectName
-//            			);
-//            }
-//            else {
-//            	log.severe("XEOObjectConnector cannot found attribute [%s]. Is missing on object [%s]",
-//        				name,
-//        				sObjectName
-//            	);
-//            }
-        } else {
+        if( oAttrHandlr != null ) {
         	oRetAttribute = new XEOObjectAttributeConnector( this, oAttrHandlr );
         }
 
