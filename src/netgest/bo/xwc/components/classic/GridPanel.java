@@ -45,6 +45,7 @@ import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIInput;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 import netgest.utils.StringUtils;
 
@@ -1437,11 +1438,13 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * @return Column with the specified dataField
 	 */
 	public Column getColumn(String dataFieldName) {
+		
 		Column ret = null;
 		if (dataFieldName != null) {
 			Column[] columns = getColumns();
 			for (Column column : columns) {
-				if (dataFieldName.equals(column.getDataField())) {
+				if (dataFieldName.equals(column.getDataField()) 
+						) {
 					ret = column;
 					break;
 				}
@@ -2136,17 +2139,16 @@ public class GridPanel extends ViewerInputSecurityBase {
 		}
 		
 		if( getEnableGroupBy() ) {
-//			String groupBy = preference.getString("groupBy");
-//			if ( getColumn( groupBy ) != null ){
-//				if (connector.getAttributeMetaData( groupBy ) != null)
-//					this.setGroupBy( groupBy );
-//			}
 			boolean valid = true;
 			String groupBy = preference.getString("groupBy");
 			String[] groupByA = groupBy != null?groupBy.split(","):new String[0];
 			for( String groupByAux : groupByA ) {
 				if ( getColumn( groupByAux ) == null ) {
-					valid = false;
+					LovColumnNameExtractor extractor = new LovColumnNameExtractor(groupByAux);
+					String lovDataField = extractor.extractName();
+					if (getColumn(lovDataField) == null){
+						valid = false;
+					}
 				}
 			}
 			if( valid ) {

@@ -31,6 +31,7 @@ import netgest.bo.xwc.components.classic.grid.GridPanelRenderer;
 import netgest.bo.xwc.components.classic.gridexplorer.XVWGridExplorerViewEditBean;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts.WaitMode;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
@@ -549,11 +550,6 @@ public class GridExplorer extends List {
 		if( super.getStateProperty( "onRowDoubleClick" ).isDefaultValue() )
 			setOnRowDoubleClick( "#{" + getBeanId() + ".rowDoubleClick}" );
 
-//		if( super.getStateProperty( "forceColumnsFitWidth" ).isDefaultValue() ) {
-//			setForceColumnsFitWidth( "true" );
-//			setAutoExpandColumn(null);
-//		}
-		
 		ErrorMessages errM = (ErrorMessages)findParentComponent( ErrorMessages.class );
 		if( errM == null ) {
 			getParent().getChildren().add( new ErrorMessages() );
@@ -662,7 +658,6 @@ public class GridExplorer extends List {
 		if( getEnablePreviewPanel() && getRenderViewPort() ) {
 		
 			Menu pvw = new PreviewPositionMenu();
-			//pvw.setText("Painel de Leitura");
 			pvw.setIcon("ext-xeo/images/gridexplorer/prev-bott.gif");
 			pvw.setId( getId() + "_mpvw" );
 			pvw.setToolTip( XEOComponentMessages.EXPLORER_TOOLBAR_PREVIEW_TOOLTIP.toString() );
@@ -773,12 +768,6 @@ public class GridExplorer extends List {
 		
 		save.addActionListener( new SaveViewListener() );
 
-//		Menu autoSaveView = new Menu();
-//		autoSaveView.setId( getId() + "_autoSaveView" );
-//		autoSaveView.setText("Guardar Automaticamente");
-//		autoSaveView.setValue( true );
-//		autoSaveView.addActionListener( new SaveViewListener() );
-		
 		Menu deleteView = new Menu();
 		deleteView.setId( getId() + "_deleteView" );
 		deleteView.setIcon("ext-xeo/images/gridexplorer/delete.jpg");
@@ -806,10 +795,6 @@ public class GridExplorer extends List {
 			save.getChildren().add( saveNewView );
 		}
 		
-//		save.getChildren().add( autoSaveView );
-
-		
-		
 		return save;
 		
 	}
@@ -821,8 +806,6 @@ public class GridExplorer extends List {
 			GridExplorer explorer = (GridExplorer)action.getComponent().getParent();
 			XUIRequestContext oRequestContext 
 				= XUIRequestContext.getCurrentContext();
-			//v135_j_id0:v135_j_id3_cvnh
-			//v135_j_id0:v135_j_id3_cvnh			
 			String hiddeName = explorer.getClientId() + "_cvnh";
 			if( explorer.getRenderViewPort() ) {
 				hiddeName = explorer.getClientId() + "_cvnh1";
@@ -998,9 +981,10 @@ public class GridExplorer extends List {
             	listeners.add( "'select'" , 
             			"function(combo,record,index){\n" +
             				(getRenderViewPort()?
-							"var h = document.getElementById('" + hiddenName + "1');" +
+							"var h = XVW.get('" + hiddenName + "1');" +
+            				" if (h == null ){ h = XVW.get('" + hiddenName+"')}" + 		
 							"h.value = combo.getValue();":"") +
-            			 	XVWScripts.getAjaxCommandScript( setViewCmd, XVWScripts.WAIT_STATUS_MESSAGE ) + 
+            			 	XVWScripts.getAjaxCommandScript( setViewCmd, WaitMode.LOCK_SCREEN ) + 
             			 "}"
             	);
 			}
@@ -1235,12 +1219,12 @@ public class GridExplorer extends List {
 							"destroyCheck" + exp.getId(), 
 							"var c = Ext.getCmp('" + exp.getId() + "_vp'); if (c) {c.destroy();}");
 					
-					if( exp.isNew ) {
+					if( exp.getRenderViewPort() ) {
 						String hiddenName =  component.getClientId() + "_cvnh1";
 						w.startElement( HTMLTag.INPUT, component );
-						w.writeAttribute( HTMLAttr.TYPE , "hidden", null );
-						w.writeAttribute( HTMLAttr.NAME , hiddenName, null );
-						w.writeAttribute( HTMLAttr.ID , hiddenName, null );
+						w.writeAttribute( HTMLAttr.TYPE , "hidden" );
+						w.writeAttribute( HTMLAttr.NAME , hiddenName );
+						w.writeAttribute( HTMLAttr.ID , hiddenName );
 						w.endElement( HTMLTag.INPUT );
 					}
 				}

@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.classic.grid.groups;
 
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.model.Column;
+import netgest.bo.xwc.xeo.components.ColumnAttribute;
 import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
 import netgest.utils.StringUtils;
 
@@ -26,41 +27,54 @@ public class GroupDefinitionParser {
 	
 	
 	public String getGroupByExpression(){
+		String result = "";
 		if (StringUtils.hasValue( groupByExpression )){
 			String[] groups = groupByExpression.split( "," );
 			groupByExpression = "";
 			for (String group : groups){
 				
-				if( groupByExpression.length() > 0 ) {
-					groupByExpression += ",";
+				if( result.length() > 0 ) {
+					result += ",";
 				}
 				
-				groupByExpression += matchPartsWithColumns( group );
-				if (cannotMatchWithColumns()){
-					groupByExpression = createGroupExpressionAsLov();
+				if (!LovColumnNameExtractor.isXeoLovColumn(group)){
+					if (matchPartsWithColumns( group )){
+						result += group;
+					}
+					else {
+						result += createGroupExpressionAsLov(group);
+					}
+				} else {
+					result += group;
 				}
+				
 			}
 		}
-		return groupByExpression;
+		return result;
 	}
 
 
-	private String matchPartsWithColumns( String group ) {
+	private boolean matchPartsWithColumns( String group ) {
 		columnOfGroup = grid.getColumn( group );
-		if (columnOfGroup != null)
-			return group;
-		return null;
+		if (columnOfGroup != null){
+			if (columnOfGroup instanceof ColumnAttribute){
+				ColumnAttribute column = (ColumnAttribute) columnOfGroup; 
+				if (column.attributeIsLov()){
+					return false;
+				}
+			}
+		} else
+			return false;
+		
+		return true;
 	}
 
 
 
-	private String createGroupExpressionAsLov() {
-		return LovColumnNameExtractor.LOV_ID_PREFIX + groupByExpression;
+	private String createGroupExpressionAsLov(String group) {
+		return new LovColumnNameExtractor(group).prefixColumnName();
 	}
 
 
 
-	private boolean cannotMatchWithColumns() {
-		return columnOfGroup == null;
-	}
 }

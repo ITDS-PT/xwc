@@ -178,7 +178,7 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 		return extractor.extractName();
 	}
 	
-	private boolean attributeIsLov(){
+	public boolean attributeIsLov(){
 		GridPanel grid = (GridPanel) findParentComponent( GridPanel.class );
 		if (grid != null){
 			DataListConnector listConnector = grid.getDataSource();
