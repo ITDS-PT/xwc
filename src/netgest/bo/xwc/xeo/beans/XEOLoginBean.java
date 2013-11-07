@@ -347,7 +347,7 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 					XVWScripts.getCommandScript(
 							( XUIComponentBase ) oRequestContext.getViewRoot()
 									.findComponent( "login:logoutBtn" ) ,
-							XVWScripts.WAIT_STATUS_MESSAGE ) );
+							XVWScripts.WAIT_DIALOG ) );
 			oRequestContext.renderResponse();
 		} else {
 			try {

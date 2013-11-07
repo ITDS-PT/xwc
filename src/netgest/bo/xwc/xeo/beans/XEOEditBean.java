@@ -59,6 +59,7 @@ import netgest.bo.xwc.components.classic.Tabs;
 import netgest.bo.xwc.components.classic.Window;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts.WaitMode;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
@@ -2076,7 +2077,7 @@ public class XEOEditBean extends XEOBaseBean
 				if( xWnd.getOnClose() != null ) {
 					XUICommand closeCmd = (XUICommand)xWnd.findComponent( xWnd.getId() + "_closecmd" );
 		        	closeScript = 
-		        			XVWScripts.getAjaxCommandScript( closeCmd , XVWScripts.WAIT_STATUS_MESSAGE )+";";
+		        			XVWScripts.getAjaxCommandScript( closeCmd , WaitMode.LOCK_SCREEN )+";";
 	            }
 				else {
 					closeScript = 

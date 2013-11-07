@@ -43,6 +43,7 @@ public class GridTreeSelectorEditBean extends XEOEditBean {
 		ScriptBuilder sb = new ScriptBuilder();
 		
 		sb.l("function() {");
+		sb.s("	XVW.Wait(1);" );
 		sb.s("	toggleCheck(root, true)");
 		sb.s("	var unSelNodes = tree2.getChecked('id',root)");
 		
@@ -81,48 +82,8 @@ public class GridTreeSelectorEditBean extends XEOEditBean {
 		sb.l("		Ext.Msg.alert('"+BeansMessages.TREE_SHUTTLE_COLUMN_SELECTION.toString()+"'," +
 				" '"+BeansMessages.TREE_SHUTTLE_COLUMN_SELECTION_MUST_SELECT.toString()+"');");
 		sb.l("	}");
+		sb.l("	XVW.NoWait();");
 		sb.l("}");
-		/*
-		val.append("function(){\n");
-		val.append("						toggleCheck(root2, true);\n");
-		val.append("        				var selNodes = tree2.getChecked('id',root2);\n");
-		val.append("						var grid = Ext.getCmp('"+getGridPanelId()+"');\n"); 
-		val.append("						var cm = grid.getColumnModel();\n"); 
-		val.append("						var colsCount = cm.getColumnCount(false); \n"); 
-		// Esconde todas as colunas
-		val.append("						var i = 0;\n");
-		val.append("						for(i = 0; i <= colsCount; i++) {\n"); 				
-		val.append("							try{cm.setHidden(i, true);}catch(err){}\n"); 
-		val.append("						}\n");
-		val.append("						var cm2 = grid.getColumnModel();\n"); 
-		val.append("						colsCount = cm2.getColumnCount(false); \n"); 
-		// Mostra as colunas seleccionadas
-		val.append("       					for( k = 0; k<selNodes.length; k++){\n"); 
-		val.append("							var j = 0;						 			\n");
-		val.append("							var oldIndex = 0;						 			\n");
-		val.append("							var found = false;						 			\n");
-		val.append("							for(j = 0; j <= colsCount; j++) {\n");  
-		val.append("								var currId = ''; try{currId = cm2.getColumnId(j);}catch(err){currId = '';}\n");
-		val.append("								if(currId == selNodes[k]){\n"); 
-		val.append("									oldIndex = j;\n"); 
-		val.append("									found = true;\n"); 
-		val.append("									try{cm2.setHidden(j, false);}catch(err){}		 			\n"); 
-		val.append("								}\n"); 
-		val.append("							}\n");	
-		val.append("							if(found){\n"); 
-		val.append("								cm2.moveColumn(oldIndex, k);\n");
-		val.append("							}\n");	
-		val.append("      					}\n"); 
-		val.append("      					debugger;\n" +
-											"grid.updateColumnConfig( false );\n"); 
-		val.append("						grid.getStore().reload();\n"); 
-			
-		// Fecha a Popup
-		val.append("						var w = Ext.getCmp('" + getParentWindowId() + "');\n");
-		val.append("        				w.close();\n");
-		val.append("					}\n");
-		return val.toString();	
-		*/
 		return sb.toString();
 	}
 	

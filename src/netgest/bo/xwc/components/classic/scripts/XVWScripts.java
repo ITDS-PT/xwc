@@ -349,7 +349,7 @@ public enum ValueType{LITERAL,
 			"{var oForm=document.getElementById('" + oComponent.findParentComponent(XUIForm.class).getClientId() +"');\n" +
 			"var oldTrg=oForm.target;\n" +
 			"oForm.target='"+ sFrameName +"';\n" +
-			XVWScripts.getCommandScript( oComponent, XVWScripts.WAIT_STATUS_MESSAGE ) +";\n" +
+			XVWScripts.getCommandScript( oComponent, XVWScripts.WAIT_DIALOG ) +";\n" +
 			"oForm.target=oldTrg;\n}";
     }
     

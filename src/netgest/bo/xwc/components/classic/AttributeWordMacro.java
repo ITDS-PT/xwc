@@ -28,6 +28,7 @@ import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts.WaitMode;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
@@ -240,7 +241,7 @@ public class AttributeWordMacro extends AttributeBase {
 		            oInpConfig.add("onTrigger1Click", "function(){ if(!this.disabled){ " +
 		            		"Ext.ComponentMgr.get('" + oAttr.getClientId() + "_c').setValue('');\n" + 
 		            		"document.getElementById('" + oAttr.getClientId() + "_ci').value='NaN';\n" + 
-		            		XVWScripts.getAjaxCommandScript(oAttr,  XVWScripts.WAIT_STATUS_MESSAGE ) + 
+		            		XVWScripts.getAjaxCommandScript(oAttr,  XVWScripts.WaitMode.LOCK_SCREEN ) + 
 		            		"}}"
 		            );
 	            }

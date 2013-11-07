@@ -18,6 +18,7 @@ import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
 import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts.ValueType;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts.WaitMode;
 import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
@@ -707,7 +708,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	rowSelChangeCode += XVWScripts.getCommandScript( 
                 		"self",
                 		oSelChangeComp, 
-                		XVWScripts.WAIT_STATUS_MESSAGE 
+                		XVWScripts.WAIT_DIALOG 
                 	);
         }
         
@@ -1057,7 +1058,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
                     		,targetName
                     		,oRowDblClickComp
                     		,viewId
-                    		,"self".equals( dblTarget )?oGrid.getServerActionWaitMode().ordinal():XVWScripts.WAIT_STATUS_MESSAGE
+                    		,"self".equals( dblTarget )?oGrid.getServerActionWaitMode().ordinal():XVWScripts.WAIT_DIALOG
                     		,ValueType.LITERAL
                     	) 
                     +"}"

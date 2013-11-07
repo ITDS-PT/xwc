@@ -380,8 +380,10 @@ public class TreeShuttle extends AttributeBase {
 			if(cancelHandler == null || cancelHandler.length() == 0)
 			{
 				cancelHandler = "function(){\n" +
+								" XVW.Wait(1);" +
 								"	var w = Ext.getCmp('" + oAttr.getParentWindowId() + "');\n" +
 								"	w.close();\n" +
+								"XVW.NoWait();" + 
 								"	}";
 			}
 			

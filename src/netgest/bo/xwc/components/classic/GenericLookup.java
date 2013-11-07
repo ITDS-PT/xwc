@@ -9,6 +9,7 @@ import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts.WaitMode;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIMethodBindProperty;
@@ -197,7 +198,7 @@ public class GenericLookup extends AttributeBase {
             if( enableCardIdLink ) {
 	            oInpLsnr.add("'render'", "function(){ " +
 	            		"this.getEl().dom.onclick=function(event){" +
-	            			XVWScripts.getAjaxCommandScript( oAttLk.oOpenCommand ,  XVWScripts.WAIT_STATUS_MESSAGE ) +
+	            			XVWScripts.getAjaxCommandScript( oAttLk.oOpenCommand ,  WaitMode.LOCK_SCREEN ) +
 	            		"};" +
 	            		"}" );
             }
@@ -206,7 +207,7 @@ public class GenericLookup extends AttributeBase {
             if( !oAttr.isDisabled() && !oAttr.isReadOnly() ) {
 	            oInpLsnr.add("'keydown'", "function(f,e){ " +
 	            		"if(e.getKey()==13) {" +
-	            			XVWScripts.getAjaxCommandScript( oAttLk.getLookupCommand(),XVWScripts.WAIT_STATUS_MESSAGE ) +
+	            			XVWScripts.getAjaxCommandScript( oAttLk.getLookupCommand(),WaitMode.LOCK_SCREEN ) +
 	            			";\ne.stopEvent();" +
 	            		"} else if ( e.getKey() == 8 || e.getKey() == 46  ) {" +
 	            			getClearCode(oForm, oAttr) +

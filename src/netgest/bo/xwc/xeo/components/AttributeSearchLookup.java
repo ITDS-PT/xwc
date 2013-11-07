@@ -34,6 +34,7 @@ import netgest.bo.xwc.components.classic.AttributeBase;
 import netgest.bo.xwc.components.classic.AttributeNumberLookup;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts.WaitMode;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -526,7 +527,7 @@ public class AttributeSearchLookup extends AttributeNumberLookup {
 			//the html with a function cla
 			builder.append("openListTab"+att.getId()+" = function(){");
 			builder.append(XVWScripts.getAjaxCommandScript( att.getOpenCommand() ,  
-        			XVWScripts.WAIT_STATUS_MESSAGE));
+					WaitMode.LOCK_SCREEN));
 			builder.append("};");
 			
 			builder.append("Ext.onReady(function(){ ");
