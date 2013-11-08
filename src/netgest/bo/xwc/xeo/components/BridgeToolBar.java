@@ -19,7 +19,6 @@ import netgest.bo.xwc.components.classic.ToolBar;
 import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.XEOBridgeListConnector;
-import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Menu;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMessage;
@@ -28,7 +27,6 @@ import netgest.bo.xwc.framework.XUIStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.xeo.components.utils.XEOComponentStateLogic;
 import netgest.bo.xwc.xeo.localization.XEOComponentMessages;
 import netgest.utils.StringUtils;
@@ -211,9 +209,6 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 	
     private void orderUpBridge() throws boRuntimeException {
         
-	    XEOEditBean oXEOEditBean;
-        oXEOEditBean = (XEOEditBean)getRequestContext().getViewRoot().getBean( getBeanId() );
- 
         GridPanel oGrid = (GridPanel)this.findParentComponent(GridPanel.class);
         
         bridgeHandler oBridgeHandler  = ((XEOBridgeListConnector)oGrid.getDataSource()).getBridge();
@@ -263,10 +258,9 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 	            	 script = script + "indexesArray[" + index + "] = " + (arrayRowIndexes[index]-1) + ";";
 	            }
 	        }
-	        
-	        if(oXEOEditBean.getXEOObject() != null)
-	        {
-	        	oXEOEditBean.getXEOObject().setChanged(true);
+	        boObject currentObject = this.getTargetObject();
+	        if(currentObject != null){
+	        	currentObject.setChanged(true);
 	        }
 	        
 	        getRequestContext().getScriptContext().add(  
@@ -284,9 +278,6 @@ public class BridgeToolBar extends ToolBarMenuPositions {
      */
     public void orderDownBridge() throws boRuntimeException {
         
-    	XEOEditBean oXEOEditBean;
-        oXEOEditBean = (XEOEditBean)getRequestContext().getViewRoot().getBean( getBeanId() );
- 
         GridPanel oGrid = (GridPanel)this.findParentComponent(GridPanel.class);
         bridgeHandler oBridgeHandler  = ((XEOBridgeListConnector)oGrid.getDataSource()).getBridge();
         
@@ -339,9 +330,9 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 	            }
 	        }
 	        
-	        if(oXEOEditBean.getXEOObject() != null)
-	        {
-	        	oXEOEditBean.getXEOObject().setChanged(true);
+	        boObject currentObject = this.getTargetObject();
+	        if(currentObject != null){
+	        	currentObject.setChanged(true);
 	        }
 	                
 	        getRequestContext().getScriptContext().add(  
