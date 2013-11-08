@@ -835,8 +835,12 @@ public class LineChart extends XUIComponentBase implements netgest.bo.xwc.compon
 						currChart.setColour(rgb);
 						
 						//Set the width of the chart
-						if (chartConfigurations.getStrokeSize() > 0)
-							currChart.setWidth(chartConfigurations.getStrokeSize());
+						if (chartConfigurations != null){
+							if (chartConfigurations.getStrokeSize() > 0)
+								currChart.setWidth(chartConfigurations.getStrokeSize());
+							else 
+								currChart.setWidth(DEFAULT_STROKE_SIZE);
+						}
 						else
 							currChart.setWidth(DEFAULT_STROKE_SIZE);
 						
