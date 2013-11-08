@@ -8,13 +8,10 @@ ExtXeo.Messages = {
 	XEODM_ACTIVE	: "XEODM Activo",
 	XEODM_INACTIVE	: "XEODM Inactivo",
 	LOGOUT_BTN		: 'Cerrar sesi&oacute;n',
-	USER_PROPS		: 'Idioma'	
+	USER_PROPS		: 'Idioma',	
+	INVITE_MESSAGE 	: 'Arrastre un encabezado de la columna aqui para agrupar por ella'
 };
 
-ExtXeo.GridMessages = {
-		INVITE_MESSAGE 		: 'Arrastre un encabezado de la columna aquí para agrupar por ella'
-			
-};
 
 if(ExtXeo.PagingToolbar){
 	  Ext.apply(ExtXeo.PagingToolbar.prototype, {
