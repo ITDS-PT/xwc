@@ -21,6 +21,7 @@ import netgest.bo.system.boApplication;
 import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.connectors.OrderByTerms.OrderByDir;
 import netgest.bo.xwc.components.connectors.OrderByTerms.OrderByTerm;
+import netgest.utils.StringUtils;
 
 public class XEOObjectListGroupConnector implements DataGroupConnector {
 
@@ -274,7 +275,10 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 						if( qp.isObjectExtended() ) {
 							mTable = qp.getObjectDef().getBoExtendedTable();
 						}
-						mTable = mTable + "." + this.parentGroups[i];
+						if (!boql.startsWith("{"))
+							mTable = mTable + "." + this.parentGroups[i];
+						else 
+							mTable = this.parentGroups[i];
 						groupWhere += nativeQlTag1 + dutl.fnTruncateDate( mTable ) + nativeQlTag2 + "= " + nativeQlTag1 + dutl.fnTruncateDate( "?" ) + nativeQlTag2;
 					} else {
 						groupWhere += groupExpression + "= ?";
@@ -468,10 +472,11 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		isDate = isObject && isDateValue( qp.getObjectName() );
 		if ( !isDate ) {
 			fields += boqlField;
-//			if ( needFieldAlias )
-//				fields += " as " + this.groupAttribute +" ";
 		} else {
-			fields += nativeQlTag1 + dutl.fnTruncateDate( groupFieldExpression ) + " as " + this.groupAttribute + nativeQlTag2;
+			if ( boql.startsWith( "{" ) )
+				fields += nativeQlTag1 + dutl.fnTruncateDate( groupByExpression ) + " as " + this.groupAttribute + nativeQlTag2;
+			else
+				fields += nativeQlTag1 + dutl.fnTruncateDate( groupFieldExpression ) + " as " + this.groupAttribute + nativeQlTag2;
 		}
 		
 		if (!createSubSelect) {
