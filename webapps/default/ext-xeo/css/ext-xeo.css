@@ -108,6 +108,12 @@ ul.x-tab-strip {
 	overflow-y: scroll;
 }
 
+.xwc-bridge-Link {
+	color: blue;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
 a.xwc-search-trigger {
 	width: 16px;
 	height: 16px;

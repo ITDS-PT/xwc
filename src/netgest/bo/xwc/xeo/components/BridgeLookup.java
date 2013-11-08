@@ -1,13 +1,23 @@
 package netgest.bo.xwc.xeo.components;
 
+import static netgest.bo.xwc.components.HTMLAttr.CELLPADDING;
+import static netgest.bo.xwc.components.HTMLAttr.CELLSPACING;
+import static netgest.bo.xwc.components.HTMLAttr.CLASS;
 import static netgest.bo.xwc.components.HTMLAttr.ID;
 import static netgest.bo.xwc.components.HTMLAttr.NAME;
+import static netgest.bo.xwc.components.HTMLAttr.ONCLICK;
+import static netgest.bo.xwc.components.HTMLAttr.SRC;
+import static netgest.bo.xwc.components.HTMLAttr.STYLE;
 import static netgest.bo.xwc.components.HTMLAttr.TYPE;
 import static netgest.bo.xwc.components.HTMLAttr.VALUE;
+import static netgest.bo.xwc.components.HTMLTag.COL;
+import static netgest.bo.xwc.components.HTMLTag.COLGROUP;
 import static netgest.bo.xwc.components.HTMLTag.DIV;
 import static netgest.bo.xwc.components.HTMLTag.INPUT;
+import static netgest.bo.xwc.components.HTMLTag.TABLE;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
@@ -28,9 +38,11 @@ import netgest.bo.xwc.components.classic.extjs.ExtJsBaseRenderer;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.model.Menu;
+import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
+import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
@@ -38,7 +50,7 @@ import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIForm;	
+import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.xeo.components.utils.BridgeLookupFavoriteSwitcher;
 import netgest.bo.xwc.xeo.components.utils.DefaultFavoritesSwitcherAlgorithm;
@@ -205,7 +217,7 @@ public class BridgeLookup extends AttributeBase {
 					String openTabCmd = "XVW.openBridgeLookup(\""+formId+"\",\""+getId()+"\","+curr.getBoui()+","+!orphan+");";
 					String removeCmd = "XVW.removeBridgeLookup(\""+formId+"\",\""+getId()+"\","+curr.getBoui()+");";
 					if (getEnableCardIdLink())
-						b.append("<span href=\"javascript:void(0)\" onClick="+openTabCmd+">");
+						b.append("<span class=\"xwc-bridge-Link\" href=\"javascript:void(0)\" onClick="+openTabCmd+">");
 					b.append(curr.getTextCARDID());
 					if (getEnableCardIdLink())
 						b.append("</span>");
@@ -307,6 +319,44 @@ public class BridgeLookup extends AttributeBase {
 			return "Ext.form.BridgeLookup";
 		}
 		
+		@Override
+		public void encodeComponentChanges(XUIComponentBase oComp,
+				List<XUIBaseProperty<?>> propertiesWithChangedState)
+				throws IOException {
+
+			StringBuilder b = encodeChanges((BridgeLookup)oComp);
+			addScriptFooter(oComp.getClientId() + "_update", b.toString());
+			
+		}
+		
+		
+		private StringBuilder encodeChanges(BridgeLookup oAttr){
+		
+			StringBuilder b2 = new StringBuilder(200);
+			if (oAttr.isUsable()){ //Everything OK, show the buttons
+				b2.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setDisplayed('');");
+				b2.append("Ext.get('").append(oAttr.getClientId()).append("_colBtns').setDisplayed('');");
+				b2.append("Ext.get('").append(oAttr.getClientId()).append("_tdBtns').setDisplayed('');");
+			} else {
+				if( !oAttr.isVisible() ) {
+					b2.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setDisplayed('none');");
+				} else {
+					b2.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setDisplayed('');");
+					if (oAttr.isDisabled() || oAttr.isReadOnly() || oAttr.getEffectivePermission( SecurityPermissions.WRITE ) ) {
+						b2.append("Ext.get('").append(oAttr.getClientId()).append("_colBtns').setDisplayed('none');");
+						b2.append("Ext.get('").append(oAttr.getClientId()).append("_tdBtns').setDisplayed('none');");
+					}
+					else {
+						b2.append("Ext.get('").append(oAttr.getClientId()).append("_colBtns').setDisplayed('');");
+						b2.append("Ext.get('").append(oAttr.getClientId()).append("_tdBtns').setDisplayed('');");
+					}
+				}
+				
+			}return b2;
+			
+			
+		}
+		
 		
 		@Override
 		public void encodeBeginPlaceHolder(XUIComponentBase oComp )
@@ -318,20 +368,20 @@ public class BridgeLookup extends AttributeBase {
             String tableStyle = "width:100%;table-layout:fixed;" + (oAttr.isUsable()?"":"display:none;");
             
             w.startElement( HTMLTag.TABLE, oComp);
-        	w.writeAttribute( HTMLAttr.CELLPADDING, "0", null );
-        	w.writeAttribute( HTMLAttr.CELLSPACING, "0", null );
-        	w.writeAttribute( HTMLAttr.STYLE, tableStyle, null );
-        	w.writeAttribute( HTMLAttr.ID, oAttr.getClientId()+"_tblBtn", null );
+        	w.writeAttribute( HTMLAttr.CELLPADDING, "0" );
+        	w.writeAttribute( HTMLAttr.CELLSPACING, "0" );
+        	w.writeAttribute( HTMLAttr.STYLE, tableStyle );
+        	w.writeAttribute( HTMLAttr.ID, oAttr.getClientId()+"_tblBtn" );
             	
             w.startElement( HTMLTag.COLGROUP, oComp);
             
             w.startElement( HTMLTag.COL, oComp);
-            w.writeAttribute( HTMLAttr.STYLE, "width:100%;text-align:justify;", null );
-            w.writeAttribute( HTMLAttr.CLASS, "x-form-text", null );
+            w.writeAttribute( HTMLAttr.STYLE, "width:100%;text-align:justify;" );
+            w.writeAttribute( HTMLAttr.CLASS, "x-form-text" );
             w.endElement(HTMLTag.COL);
             
             w.startElement( HTMLTag.COL, oComp);
-        	w.writeAttribute( HTMLAttr.ID, oAttr.getClientId()+"_colBtns", null );
+        	w.writeAttribute( HTMLAttr.ID, oAttr.getClientId()+"_colBtns" );
     		w.writeAttribute( HTMLAttr.STYLE, 
     				"vertical-align:top;width:54px;1px solid #B5B8C8;"
     	            + (oAttr.isUsable()?"":"display:none;")
@@ -343,48 +393,48 @@ public class BridgeLookup extends AttributeBase {
             	
             w.startElement( HTMLTag.TR, oComp);
             w.startElement( HTMLTag.TD, oComp);
-    		w.writeAttribute( HTMLAttr.STYLE, "border:1px solid #9AB;vertical-align:top;padding-left: 4px;", null );
+    		w.writeAttribute( HTMLAttr.STYLE, "border:1px solid #9AB;vertical-align:top;padding-left: 4px;" );
             
             super.encodeBeginPlaceHolder( oComp );
             
             // Add the a style to the place holder DIV
-            w.writeAttribute( HTMLAttr.STYLE, "width:100%;display:inline;", null );
+            w.writeAttribute( HTMLAttr.STYLE, "width:100%;display:inline;" );
         	
             w.startElement( INPUT, oComp);
-            w.writeAttribute(TYPE, "hidden", null);
-            w.writeAttribute(VALUE, oAttr.getValue() , null);
+            w.writeAttribute(TYPE, "hidden");
+            //w.writeAttribute(VALUE, oAttr.getValue() );
 
-            w.writeAttribute(NAME, oComp.getClientId() + "_toEdit", null);
-            w.writeAttribute(ID, oComp.getClientId() + "_toEdit", null);
+            w.writeAttribute(NAME, oComp.getClientId() + "_toEdit");
+            w.writeAttribute(ID, oComp.getClientId() + "_toEdit");
             
             w.endElement(INPUT);
             
             w.startElement( INPUT, oComp);
-            w.writeAttribute(TYPE, "hidden", null);
-            w.writeAttribute(VALUE, oAttr.getValue() , null);
+            w.writeAttribute(TYPE, "hidden");
+            //w.writeAttribute(VALUE, oAttr.getValue() );
 
-            w.writeAttribute(NAME, oComp.getClientId() + "_toRemove", null);
-            w.writeAttribute(ID, oComp.getClientId() + "_toRemove", null);
+            w.writeAttribute(NAME, oComp.getClientId() + "_toRemove");
+            w.writeAttribute(ID, oComp.getClientId() + "_toRemove");
             
             w.endElement(INPUT);
             
             w.endElement(INPUT);
             
             w.startElement( INPUT, oComp);
-            w.writeAttribute(TYPE, "hidden", null);
-            w.writeAttribute(VALUE, "" , null);
+            w.writeAttribute(TYPE, "hidden");
+            w.writeAttribute(VALUE, "" );
 
-            w.writeAttribute(NAME, oComp.getClientId() + "_top", null);
-            w.writeAttribute(ID, oComp.getClientId() + "_top", null);
+            w.writeAttribute(NAME, oComp.getClientId() + "_top");
+            w.writeAttribute(ID, oComp.getClientId() + "_top");
             
             w.endElement(INPUT);
             
             w.startElement( INPUT, oComp);
-            w.writeAttribute(TYPE, "hidden", null);
-            w.writeAttribute(VALUE, "" , null);
+            w.writeAttribute(TYPE, "hidden");
+            w.writeAttribute(VALUE, "" );
 
-            w.writeAttribute(NAME, oComp.getClientId() + "_left", null);
-            w.writeAttribute(ID, oComp.getClientId() + "_left", null);
+            w.writeAttribute(NAME, oComp.getClientId() + "_left");
+            w.writeAttribute(ID, oComp.getClientId() + "_left");
             
             w.endElement(INPUT);
             
@@ -393,21 +443,32 @@ public class BridgeLookup extends AttributeBase {
 		}
 		
 		@Override
+		public StateChanged wasStateChanged(XUIComponentBase component,
+				List<XUIBaseProperty<?>> changedProperties) {
+			
+			if (component.getStateProperty("visible").wasChanged())
+				return StateChanged.FOR_UPDATE;
+			else{
+				return StateChanged.FOR_RENDER;
+			}
+			
+		}
+		
+		@Override
 		public ExtConfig getExtJsConfig(XUIComponentBase oComp) {
 			
             BridgeLookup oBridgeLookp = (BridgeLookup)oComp;
 
             ExtConfig config = super.getExtJsConfig(oComp);
-            
+            config.addJSString( "renderTo" , oComp.getClientId() + "_container" );
 			config.addString( "html" , JavaScriptUtils.writeValue( oBridgeLookp.getDislayList() ) );
 			
-//            if( !oBridgeLookp.isVisible() )
-//            	config.add("hidden",true);
+            if( !oBridgeLookp.isVisible() )
+            	config.add("hidden",true);
             
             config.addJSString("height", oBridgeLookp.getHeight() );
             
-//            if (oBridgeLookp.isVisible())
-            	config.addString("cls", "xwc-bridge-lookup" );
+            config.addString("cls", "xwc-bridge-lookup" );
             
             //Listeners, for the resize (handles resize to smaller width)
             //by some strange effect resize to bigger width works, but to small doesn't
@@ -439,8 +500,8 @@ public class BridgeLookup extends AttributeBase {
 			
 				s.w( "c.setText('" ).writeValue( oBridgeLkup.getDislayList() ).l("',false);");
 
-//				if( oComp.getStateProperty("visible").wasChanged() )
-//					s.w( "c.setVisible(" ).writeValue( oBridgeLkup.isVisible() ).l(");");
+				if( oComp.getStateProperty("visible").wasChanged() )
+					s.w( "c.setVisible(" ).writeValue( oBridgeLkup.isVisible() ).l(");");
 					
 				s.endBlock();
 			}
@@ -478,39 +539,87 @@ public class BridgeLookup extends AttributeBase {
         	XUIResponseWriter w = getResponseWriter();
             BridgeLookup oAttr = (BridgeLookup)oComp;
         	
-            super.encodeEnd(oComp);
+            // Write the field
+    		oComp.setDestroyOnClient( true );
+        	// Create a place holder for the field!
+
+    		w.startElement(DIV);
+    		w.writeAttribute(ID, oComp.getClientId());
+    		 w.writeAttribute( STYLE, "width:100%;display:inline;" );
+    		
+        	if( oComp instanceof SecurableComponent ) {
+        		if (!((SecurableComponent)oComp).getEffectivePermission(SecurityPermissions.READ) ) {
+        			return;
+        		}
+        	}
+        	
+        	//Start Table
+        	String tableStyle = "width:100%;table-layout:fixed;" + (oAttr.isUsable()?"":"display:none;");
+            
+            w.startElement( TABLE, oComp);
+        	w.writeAttribute( CELLPADDING, "0" );
+        	w.writeAttribute( CELLSPACING, "0" );
+        	w.writeAttribute( STYLE, tableStyle );
+        	w.writeAttribute( ID, oAttr.getClientId()+"_tblBtn" );
+            	
+            w.startElement( COLGROUP, oComp);
+            
+            w.startElement( COL, oComp);
+            w.writeAttribute( STYLE, "width:100%;text-align:justify;" );
+            w.writeAttribute( CLASS, "x-form-text" );
+            w.endElement(HTMLTag.COL);
+            
+            w.startElement( HTMLTag.COL, oComp);
+        	w.writeAttribute( ID, oAttr.getClientId()+"_colBtns" );
+    		w.writeAttribute( STYLE, 
+    				"vertical-align:top;width:54px;1px solid #B5B8C8;"
+    	            + (oAttr.isUsable()?"":"display:none;")
+    				,null 
+    		);
+            w.endElement(HTMLTag.COL);
+            
+            w.endElement( HTMLTag.COLGROUP );
+            	
+            w.startElement( HTMLTag.TR, oComp);
+            w.startElement( HTMLTag.TD, oComp);
+            w.writeAttribute( ID, oComp.getClientId() + "_container");
+    		w.writeAttribute( STYLE, "border:1px solid #9AB;vertical-align:top;padding-left: 4px;" );
+    		
+    		
+    		
+    		
+        	//End start table
         	 
-        	if (!oAttr.isRenderedOnClient()){
         		w.endElement(HTMLTag.TD);
         		w.startElement( HTMLTag.TD, oComp);
-            	w.writeAttribute( HTMLAttr.ID, oAttr.getClientId()+"_tdBtns", null );
+            	w.writeAttribute( ID, oAttr.getClientId()+"_tdBtns" );
         		w.writeAttribute( 
-        			HTMLAttr.STYLE, "vertical-align:top;"
+        			STYLE, "vertical-align:top;"
         	        + (oAttr.isUsable()?"":"display:none;")
-        			, null 
+        			 
         		);
         		
             	w.startElement( HTMLTag.TABLE, oComp);
-            	w.writeAttribute( HTMLAttr.CELLPADDING, "0", null );
-            	w.writeAttribute( HTMLAttr.CELLSPACING, "0", null );
+            	w.writeAttribute( CELLPADDING, "0" );
+            	w.writeAttribute( CELLSPACING, "0" );
         		w.startElement( HTMLTag.TR, oComp);
         		w.startElement( HTMLTag.TD, oComp);
-        		w.writeAttribute( HTMLAttr.STYLE, "vertical-align:top;", null );
+        		w.writeAttribute( STYLE, "vertical-align:top;" );
         		
-        		w.writeAttribute( HTMLAttr.STYLE, "vertical-align:top;", null );
+        		w.writeAttribute( STYLE, "vertical-align:top;" );
         		        		
         		//Div for the add button
             	w.startElement( DIV, oComp);
             	
-            		w.writeAttribute(ID, oComp.getClientId() + "_addButton", null);
-            		w.writeAttribute(HTMLAttr.STYLE, "display:inline", null);
+            		w.writeAttribute(ID, oComp.getClientId() + "_addButton");
+            		w.writeAttribute(STYLE, "display:inline");
             		
             		
-            		w.startElement(HTMLTag.A, null);
+            		w.startElement(HTMLTag.A);
             			
-		    			w.writeAttribute(HTMLAttr.SRC, "javascript:void(0)", null);
-		    			w.writeAttribute(HTMLAttr.ONCLICK, XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_DIALOG ), null);
-		    			w.writeAttribute(HTMLAttr.CLASS, "search-lookup-trigger", null);
+		    			w.writeAttribute(SRC, "javascript:void(0)");
+		    			w.writeAttribute(ONCLICK, XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_DIALOG ));
+		    			w.writeAttribute(CLASS, "search-lookup-trigger");
 	            		
 	    			w.endElement(HTMLTag.A);
 	    			
@@ -518,17 +627,17 @@ public class BridgeLookup extends AttributeBase {
     			
     			w.endElement(HTMLTag.TD);
     			w.startElement( HTMLTag.TD, oComp);
-        		w.writeAttribute( HTMLAttr.STYLE, "vertical-align:top;", null );
+        		w.writeAttribute( STYLE, "vertical-align:top;" );
         		
         		//Div for the Remove
             	w.startElement( DIV, oComp);
-            		w.writeAttribute(ID, oComp.getClientId() + "_rmButton", null);
-            		w.writeAttribute(HTMLAttr.STYLE, "display:inline", null);
+            		w.writeAttribute(ID, oComp.getClientId() + "_rmButton");
+            		w.writeAttribute(STYLE, "display:inline");
             		
-	            		w.startElement(HTMLTag.A, null);
-			    			w.writeAttribute(HTMLAttr.SRC, "javascript:void(0)", null);
-			    			w.writeAttribute(HTMLAttr.ONCLICK, XVWScripts.getAjaxCommandScript( oAttr.getCleanCommand(),XVWScripts.WAIT_DIALOG ), null);
-			    			w.writeAttribute(HTMLAttr.CLASS, "search-lookup-clean-trigger", null);
+	            		w.startElement(HTMLTag.A);
+			    			w.writeAttribute(SRC, "javascript:void(0)");
+			    			w.writeAttribute(ONCLICK, XVWScripts.getAjaxCommandScript( oAttr.getCleanCommand(),XVWScripts.WAIT_DIALOG ));
+			    			w.writeAttribute(CLASS, "search-lookup-clean-trigger");
 		    			w.endElement(HTMLTag.A);
 	    			
     			w.endElement(DIV);
@@ -537,11 +646,11 @@ public class BridgeLookup extends AttributeBase {
     			
     			
     			w.startElement( HTMLTag.TD, oComp);
-        		w.writeAttribute( HTMLAttr.STYLE, "vertical-align:top;", null );
+        		w.writeAttribute( STYLE, "vertical-align:top;" );
         		
             	w.startElement( DIV, oComp);
-            		w.writeAttribute(ID, oComp.getClientId() + "_favButton", null);
-            		w.writeAttribute(HTMLAttr.STYLE, "display:inline", null);
+            		w.writeAttribute(ID, oComp.getClientId() + "_favButton");
+            		w.writeAttribute(STYLE, "display:inline");
             		
             		if ( oAttr.getShowFavorites()){
             			StringBuilder b = new StringBuilder(300);
@@ -552,11 +661,11 @@ public class BridgeLookup extends AttributeBase {
         				.append("_top').dom.value=").append("fav.getY();");
             			b.append(XVWScripts.getAjaxCommandScript( oAttr.getFavoriteCommand(),XVWScripts.WAIT_DIALOG ));
             			
-	            		w.startElement(HTMLTag.A, null);
-	            			w.writeAttribute(HTMLAttr.ID, oAttr.getClientId()+"_fav", null);	
-			    			w.writeAttribute(HTMLAttr.SRC, "javascript:void(0)", null);
-			    			w.writeAttribute(HTMLAttr.ONCLICK, b.toString() , null);
-			    			w.writeAttribute(HTMLAttr.CLASS, "search-lookup-favorite-trigger", null);
+	            		w.startElement(HTMLTag.A);
+	            			w.writeAttribute(ID, oAttr.getClientId()+"_fav");	
+			    			w.writeAttribute(SRC, "javascript:void(0)");
+			    			w.writeAttribute(ONCLICK, b.toString() );
+			    			w.writeAttribute(CLASS, "search-lookup-favorite-trigger");
 		    			w.endElement(HTMLTag.A);
             		}
 	    			
@@ -573,6 +682,44 @@ public class BridgeLookup extends AttributeBase {
     			w.endElement(HTMLTag.TR);
     			w.endElement(HTMLTag.TABLE);
     			
+    			w.startElement( INPUT, oComp);
+                w.writeAttribute(TYPE, "hidden");
+                //w.writeAttribute(VALUE, oAttr.getValue() );
+
+                w.writeAttribute(NAME, oComp.getClientId() + "_toEdit");
+                w.writeAttribute(ID, oComp.getClientId() + "_toEdit");
+                
+                w.endElement(INPUT);
+                
+                w.startElement( INPUT, oComp);
+                w.writeAttribute(TYPE, "hidden");
+                //w.writeAttribute(VALUE, oAttr.getValue() );
+
+                w.writeAttribute(NAME, oComp.getClientId() + "_toRemove");
+                w.writeAttribute(ID, oComp.getClientId() + "_toRemove");
+                
+                w.endElement(INPUT);
+                
+                w.endElement(INPUT);
+                
+                w.startElement( INPUT, oComp);
+                w.writeAttribute(TYPE, "hidden");
+                w.writeAttribute(VALUE, "" );
+
+                w.writeAttribute(NAME, oComp.getClientId() + "_top");
+                w.writeAttribute(ID, oComp.getClientId() + "_top");
+                
+                w.endElement(INPUT);
+                
+                w.startElement( INPUT, oComp);
+                w.writeAttribute(TYPE, "hidden");
+                w.writeAttribute(VALUE, "" );
+
+                w.writeAttribute(NAME, oComp.getClientId() + "_left");
+                w.writeAttribute(ID, oComp.getClientId() + "_left");
+                
+                w.endElement(INPUT);
+    			
     			StringBuilder b = new StringBuilder(300);
     			b.append("var fav = Ext.get('").append(oComp.getClientId()).append("_fav');");
     			b.append("Ext.get('").append(oComp.getClientId())
@@ -581,45 +728,20 @@ public class BridgeLookup extends AttributeBase {
 				.append("_top').dom.value=").append("fav.getY();");
     			b.append(XVWScripts.getAjaxCommandScript( oAttr.getFavoriteCommand(),XVWScripts.WAIT_DIALOG ));
     			
-    			
-    			//String result = "Ext.onReady(function() { Ext.get('"+oAttr.getClientId()+"_fav').on('mouseover',function(){"+b.toString()+";},this,{delay:200}) });";
-    			
-    			//String result2 = "Ext.onReady(function() { Ext.getCmp('ext-"+oAttr.getClientId()+"').hover('"+oAttr.getClientId()+"')});";
-    			
-    			//getRequestContext().getScriptContext().add(XUIScriptContext.POSITION_FOOTER, "bridgeLookupWindowEvent" + oComp.getId(), 
-    			//		result);
-    			
-    			/*getRequestContext().getScriptContext().add(XUIScriptContext.POSITION_FOOTER, "bridgeLookupWindowEvent2" + oComp.getId(), 
-    					result2);*/
+    			StringBuilder b2 = encodeChanges(oAttr);
+    			getRequestContext().getScriptContext().add(XUIScriptContext.POSITION_FOOTER, "hideTbl" + oComp.getId(), 
+    					b2.toString());
 			
-            } else{ //Deal with Visible/ReadOnly and Disabled
-            	
-            	StringBuilder b = new StringBuilder(200);
-            	if (oAttr.isUsable()){ //Everything OK, show the buttons
-        			b.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setDisplayed('');");
-            		b.append("Ext.get('").append(oAttr.getClientId()).append("_colBtns').setDisplayed('');");
-            		b.append("Ext.get('").append(oAttr.getClientId()).append("_tdBtns').setDisplayed('');");
-            	} else {
-            		if( !oAttr.isVisible() ) {
-            			b.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setDisplayed('none');");
-            		} else {
-            			b.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setDisplayed('');");
-            			if (oAttr.isDisabled() || oAttr.isReadOnly() || oAttr.getEffectivePermission( SecurityPermissions.WRITE ) ) {
-                    		b.append("Ext.get('").append(oAttr.getClientId()).append("_colBtns').setDisplayed('none');");
-                    		b.append("Ext.get('").append(oAttr.getClientId()).append("_tdBtns').setDisplayed('none');");
-                		}
-            			else {
-                    		b.append("Ext.get('").append(oAttr.getClientId()).append("_colBtns').setDisplayed('');");
-                    		b.append("Ext.get('").append(oAttr.getClientId()).append("_tdBtns').setDisplayed('');");
-            			}
-            		}
-            		
-            	}
-            	getRequestContext().getScriptContext().add(XUIScriptContext.POSITION_FOOTER, "hideTbl" + oComp.getId(), 
-            			b.toString());
-            }
         	
+        	w.endElement(DIV);
+        	
+        	encodeExtJs( oComp );
+        	
+        	
+        	// Write Scripts
+        	encodeComponentScript( oComp );
         }
+        
         
         
 }

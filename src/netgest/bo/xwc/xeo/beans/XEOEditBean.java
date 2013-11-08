@@ -1736,6 +1736,11 @@ public class XEOEditBean extends XEOBaseBean
     	String bouiToRemove = getRequestContext().getRequestParameterMap().
     	get(((XUIComponentBase)oCommand.getParent()).getClientId()+"_toRemove");
     	
+    	BridgeLookup lookup = ((BridgeLookup)oCommand.getParent());
+    	if (lookup.isDisabled() || !lookup.isVisible()){
+    		return;
+    	}
+    	
     	AttributeHandler att = ((BridgeLookup)oCommand.getParent()).getAttributeHandler();
     	boObject parent = att.getParent();
     	String bridgeName = att.getName();
@@ -1757,6 +1762,11 @@ public class XEOEditBean extends XEOBaseBean
         // Get the src of the event
         XUICommand oCommand = (XUICommand)oEvent.getComponent();	
     	
+        BridgeLookup lookup = ((BridgeLookup)oCommand.getParent());
+    	if (lookup.isDisabled() || !lookup.isVisible()){
+    		return;
+    	}
+        
     	AttributeHandler att = ((BridgeLookup)oCommand.getParent()).getAttributeHandler();
     	boObject parent = att.getParent();
     	String bridgeName = att.getName();
