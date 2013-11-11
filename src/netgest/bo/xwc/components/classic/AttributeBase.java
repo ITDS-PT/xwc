@@ -1,5 +1,12 @@
 package netgest.bo.xwc.components.classic;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.el.ValueExpression;
+import javax.faces.el.MethodBinding;
+
 import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.framework.XUIBaseProperty;
@@ -11,13 +18,6 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.jsf.XUIELResolver;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 import netgest.bo.xwc.framework.jsf.XUIViewHandler;
-
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.el.ValueExpression;
-import javax.faces.el.MethodBinding;
 /**
  * This component is not usable in the viewers,
  * is the base of all attribute Type Components
@@ -274,8 +274,8 @@ public class AttributeBase extends ViewerInputSecurityBase {
 	 /**
      * Tooltip for this component
      */
-    XUIBaseProperty< Boolean > onChangeSubmitLockScreen = new XUIBaseProperty< Boolean >(
-			"onChangeSubmitLockScreen" , this , Boolean.FALSE );
+    private XUIBaseProperty< Boolean > onChangeSubmitLockScreen = new XUIBaseProperty< Boolean >(
+			"onChangeSubmitLockScreen" , this , Boolean.FALSE);
 
 	public Boolean getOnChangeSubmitLockScreen() {
 		return onChangeSubmitLockScreen.getValue();

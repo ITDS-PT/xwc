@@ -337,6 +337,10 @@ public class Attribute extends AttributeBase
         if( getValueExpression("onChangeSubmit") != null )
             oAttr.setOnChangeSubmit( getValueExpression("onChangeSubmit").getExpressionString() );
 
+        Boolean lockScreen = this.getOnChangeSubmitLockScreen();
+        if( lockScreen )
+            oAttr.setOnChangeSubmitLockScreen( Boolean.TRUE );
+
         if( getValueExpression("displayValue") != null )
             oAttr.setDisplayValue( getValueExpression("displayValue").getExpressionString() );
         
