@@ -365,8 +365,11 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 			var selModel = this.getSelectionModel();
 			if (selModel.clearSelectionsAll)
 				selModel.clearSelectionsAll();	
-			else
+			else{
+				selModel.suspendEvents();
 				selModel.selectAll();
+				selModel.resumeEvents();
+			}
 		}
 		
 		, getSelectedRows : function(){

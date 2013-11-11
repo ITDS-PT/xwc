@@ -384,10 +384,10 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
 			    			oGrid.getId() + "_selm.clearSelections();" +
 			    			oGrid.getId() + "_selm.selectRow(" + (d.getRowIndex()-1) + ");" + 
-			    			oGrid.getId() + "_selm.resumeEvents();" +
 			    			"try{ExtXeo.grid.rowSelectionHndlr(" + oGrid.getId() + "_selm," +
 			    			"'" + oGrid.getClientId() +"_srs','" + oGrid.getRowUniqueIdentifier() + "'" +
-			    			")}catch(e){}" +
+			    			");}catch(e){}" +
+			    			oGrid.getId() + "_selm.resumeEvents();" +
 		    			"}" 
 		        );
         	}
@@ -410,12 +410,10 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	    	if( sb.length() > EMPTY_ARRAY_STRING_SIZE) {
 		        oLoadParams.add("callback", 
 		        		"function(r, options, sucess){" +
-		        			"console.log('**** Callback start');" +	 
 		        			"var store = this;"+
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
 			    			oGrid.getId() + "_selm.selectRowsOnDemad(" + sb + ", r, options, store);" + 
 			    			oGrid.getId() + "_selm.resumeEvents();" +
-			    			"console.log('**** Callback end');" +
 		    			"}"
 		        ); 
 	    	}
