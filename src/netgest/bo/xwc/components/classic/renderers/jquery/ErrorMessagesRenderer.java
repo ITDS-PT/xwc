@@ -72,6 +72,9 @@ public class ErrorMessagesRenderer extends JQueryBaseRenderer {
                 case XUIMessage.TYPE_POPUP_MESSAGE:
                 	renderPopUpMessage( component, w, oErrorMessagesComp, oXuiMessage );
             		break;
+                case XUIMessage.TYPE_ALERT:
+                	renderPopUpMessage( component, w, oErrorMessagesComp, oXuiMessage );
+            		break;	
             	default:
             		renderFallback( component, w, oXuiMessage, iconType );
             }
