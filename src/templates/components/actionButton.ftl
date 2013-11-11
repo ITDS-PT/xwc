@@ -1,7 +1,7 @@
 
 <#if !this.renderedOnClient>
 	<div id='${this.clientId}'>
-		<button id='${this.clientId}_btn' class='xwc-actionbutton' style='min-width;${this.width}px'>
+		<button id='${this.clientId}_btn' class='xwc-actionbutton ${this.cssClass}' style='min-width;${this.width}px'>
 			${this.label}
 		</button>
 	</div>

@@ -88,7 +88,7 @@ public class ActionButton extends XUICommand
     @Values({ "left","top" })
     private XUIBaseProperty<String>			iconPosition = new XUIBaseProperty<String>( "iconPosition", this, "left" );
     
-    private XUIBaseProperty<String>			cssClass = new XUIBaseProperty<String>( "cssClass", this, "left" );
+    private XUIBaseProperty<String>			cssClass = new XUIBaseProperty<String>( "cssClass", this, "" );
     
     public String getIconPosition(){
     	return iconPosition.getValue();
@@ -348,7 +348,7 @@ public class ActionButton extends XUICommand
             String image = oActionButton.getImage();
             if (StringUtils.hasValue( image )){
             	oConfig.addJSString("icon", oActionButton.getImage() );
-            	oConfig.addJSString( "cls","x-btn-text-icon");
+            	oConfig.addJSString( "cls","x-btn-text-icon " + oActionButton.getCssClass());
             }
             
             
