@@ -45,6 +45,10 @@ public class XUIELResolver extends ELResolver {
         Object oResult;
         String sProperty = String.valueOf( property );
         
+        if (base != null){
+        	elContext.setPropertyResolved( false );
+        	return null;
+        }
         
         XUIRequestContext oRequestContext = XUIRequestContext.getCurrentContext();
         ELContext elContextc = null;
