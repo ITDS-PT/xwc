@@ -383,11 +383,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		        		"function(){" +
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
 			    			oGrid.getId() + "_selm.clearSelections();" +
+			    			oGrid.getId() + "_selm.resumeEvents();" +
 			    			oGrid.getId() + "_selm.selectRow(" + (d.getRowIndex()-1) + ");" + 
 			    			"try{ExtXeo.grid.rowSelectionHndlr(" + oGrid.getId() + "_selm," +
 			    			"'" + oGrid.getClientId() +"_srs','" + oGrid.getRowUniqueIdentifier() + "'" +
 			    			");}catch(e){}" +
-			    			oGrid.getId() + "_selm.resumeEvents();" +
 		    			"}" 
 		        );
         	}

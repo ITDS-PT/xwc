@@ -366,9 +366,15 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 			if (selModel.clearSelectionsAll)
 				selModel.clearSelectionsAll();	
 			else{
-				selModel.suspendEvents();
-				selModel.selectAll();
-				selModel.resumeEvents();
+				if (selModel instanceof Ext.grid.XeoCheckboxSelectionModel){
+					selModel.suspendEvents();
+					selModel.selectAll();
+					selModel.resumeEvents();
+				} else {
+					if (selModel.clearSelections){
+						selModel.clearSelections();
+					}
+				}
 			}
 		}
 		
