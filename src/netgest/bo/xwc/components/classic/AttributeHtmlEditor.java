@@ -101,7 +101,6 @@ public class AttributeHtmlEditor extends AttributeBase {
 		public StateChanged wasStateChanged( XUIComponentBase component, List<XUIBaseProperty<?>> updateProperties ) {
 			
 			updateProperties.add( component.getStateProperty( "displayValue" ) );
-			updateProperties.add( component.getStateProperty( "visible" ) );
 			
 			return super.wasStateChanged( component, updateProperties );
 			
@@ -123,12 +122,7 @@ public class AttributeHtmlEditor extends AttributeBase {
 			
 			
 			for (XUIBaseProperty<?> prop : propertiesWithChangedState){
-				if ("visible".equalsIgnoreCase( prop.getName() ) ){
-					script.append( "c.setVisible(" );
-					script.append( oHtmlComp.isVisible() );
-					script.append( ");" );
-				}
-				else if ("displayValue".equalsIgnoreCase( prop.getName() )) {
+					if ("displayValue".equalsIgnoreCase( prop.getName() )) {
 					script.append("c.setValue('");
 					script.append(JavaScriptUtils.safeJavaScriptWrite( oHtmlComp.getDisplayValue(), '\''));
 					script.append("');\n");
