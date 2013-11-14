@@ -868,7 +868,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
 	protected boolean canAddViewToCache(String viewerCacheId, Timestamp current) {
 		
-		if (useCache)
+		if (!useCache)
 			return false;
 		
 		if ( !viewerCache.contains( viewerCacheId ) )
