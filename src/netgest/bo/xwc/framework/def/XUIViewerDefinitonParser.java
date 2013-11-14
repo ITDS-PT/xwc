@@ -1,5 +1,13 @@
 package netgest.bo.xwc.framework.def;
 
+import netgest.bo.system.Logger;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+
+import netgest.utils.StringUtils;
+import netgest.utils.ngtXMLUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,12 +31,6 @@ import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 
-import netgest.bo.system.Logger;
-import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.localization.XUICoreMessages;
-import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
-import netgest.utils.StringUtils;
-import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.NSResolver;
 import oracle.xml.parser.v2.XMLDocument;
 import oracle.xml.parser.v2.XMLElement;
@@ -633,8 +635,13 @@ public class XUIViewerDefinitonParser
     			return findSuitableRootToInclude( root.getChildren().get( 0 ) );
     		else
     			return root.getChildren();
-    	} else if ("xvw:composition".equalsIgnoreCase( rootName ) || "xvw:container".equalsIgnoreCase( rootName ))
+    	} else if ("xvw:composition".equalsIgnoreCase( rootName ) || "xvw:container".equalsIgnoreCase( rootName )  )
     		return root.getChildren();
+    	else if (StringUtils.hasValue( rootName )){
+    		 List<XUIViewerDefinitionNode> result = new ArrayList< XUIViewerDefinitionNode >();
+    		 result.add( root );
+    		 return result;
+    	}
     	else
     		return new ArrayList< XUIViewerDefinitionNode >();
     }
