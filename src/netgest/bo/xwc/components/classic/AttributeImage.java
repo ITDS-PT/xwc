@@ -67,12 +67,9 @@ public class AttributeImage extends ViewerOutputSecurityBase {
     @Override
 	public void initComponent() {
     	
-    	if( beanProperty.isDefaultValue() )
-    		this.setBeanProperty(getBeanId() + ".currentData");
-    	
         createChildComponents();
         
-        
+        setAttributeProperties();
     }
     
     @Override
@@ -166,15 +163,14 @@ public class AttributeImage extends ViewerOutputSecurityBase {
 		this.renderLabel.setExpressionText( renderLabel ); 
 	}
 	
-	
-	public void setObjectAttribute( String sObjectAttribute ) {
-        
-
-        String sBeanExpression = "#{" + getBeanId()+ "." + getBeanProperty() + "." + sObjectAttribute;
-
-        this.objectAttribute.setExpressionText( sObjectAttribute );
-
-        // Value
+	protected void setAttributeProperties(){
+		String sBeanExpression = "";
+		if (getBeanProperty().startsWith("viewBean.")) //Backward compatibility
+    		sBeanExpression = "#{" + getBeanProperty() + "." + getObjectAttribute();
+    	else
+    		sBeanExpression = "#{" + getBeanId() + "." + getBeanProperty() + "." + getObjectAttribute();
+		
+		// Value
         this.setValueExpression(
             "value", createValueExpression( sBeanExpression +  ".value}", Object.class ) 
         );
@@ -191,16 +187,19 @@ public class AttributeImage extends ViewerOutputSecurityBase {
         this.dataFieldConnector.setValue( 
                 createValueExpression( sBeanExpression + "}", DataFieldConnector.class ) 
             );
+	}
+	
+	public void setObjectAttribute( String sObjectAttribute ) {
+        
+        this.objectAttribute.setExpressionText( sObjectAttribute );
+
+        
         
 	}
 	
 
     public void setBeanProperty(String beanProperty) {
         this.beanProperty.setValue( beanProperty ); 
-        
-        if( getObjectAttribute() != null )
-            setObjectAttribute( getObjectAttribute() );
-        
     }
     
     public void setDataType(String dataType) {
