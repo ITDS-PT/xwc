@@ -33,7 +33,7 @@ public class LovColumnNameExtractor {
 		if (decodeMap.containsKey(dataField))
 			return true;
 		if (dataField.length() > LOV_ID_PREFIX.length()){
-			String name = dataField.substring( 0, LOV_ID_PREFIX.length() - 1 );
+			String name = dataField.substring( 0, LOV_ID_PREFIX.length() );
 			return name.equalsIgnoreCase(LOV_ID_PREFIX);
 		}
 		return false;

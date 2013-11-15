@@ -12,6 +12,7 @@ import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.def.XUIComponentParser;
+import netgest.utils.StringUtils;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -132,8 +133,13 @@ public class XEOObjectAttributeMetaData implements DataFieldMetaData {
     public byte getInputRenderType() {
         String sValueType = defAtt.getAtributeDeclaredType();
 
-        if ( boDefAttribute.ATTRIBUTE_TEXT.equals( sValueType ) )
-            return DataFieldTypes.RENDER_DEFAULT;
+        if ( boDefAttribute.ATTRIBUTE_TEXT.equals( sValueType ) ){
+        	if (StringUtils.isEmpty(defAtt.getLOVName()))
+        		return DataFieldTypes.RENDER_DEFAULT;
+        	else
+        		return DataFieldTypes.RENDER_LOV;
+        }
+        
 
         if ( boDefAttribute.ATTRIBUTE_OBJECT.equals( sValueType ) ) {
             if( defAtt.renderAsLov() )
@@ -148,8 +154,12 @@ public class XEOObjectAttributeMetaData implements DataFieldMetaData {
         if ( boDefAttribute.ATTRIBUTE_DATE.equals( sValueType ) )
             return DataFieldTypes.RENDER_DEFAULT;
 
-        if ( boDefAttribute.ATTRIBUTE_NUMBER.equals( sValueType ) )
-            return DataFieldTypes.RENDER_DEFAULT;
+        if ( boDefAttribute.ATTRIBUTE_NUMBER.equals( sValueType ) ){
+        	if (StringUtils.isEmpty(defAtt.getLOVName()))
+        		return DataFieldTypes.RENDER_DEFAULT;
+        	else
+        		return DataFieldTypes.RENDER_LOV;
+        }
 
         if ( boDefAttribute.ATTRIBUTE_LONGTEXT.equals( sValueType ) )
         {
@@ -186,9 +196,10 @@ public class XEOObjectAttributeMetaData implements DataFieldMetaData {
     }
 
     public boolean getIsLov() {
-        if( defAtt.renderAsLov() )
-            return true;
 
+    	if( defAtt.renderAsLov() )
+            return true;
+    	
         String sLovName = defAtt.getLOVName();
         return  sLovName != null && sLovName.length() > 0;
 
