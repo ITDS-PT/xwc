@@ -1698,13 +1698,21 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 			for (int i = 0; i < sSelectedRowsUniqueIdentifiers.length; i++) {
 				sUniqueIdentifier = sSelectedRowsUniqueIdentifiers[i];
-
-				if (!sUniqueIdentifier.startsWith("!")){
+				
+				if (sUniqueIdentifier != null && !sUniqueIdentifier.startsWith("!")){
 					if (StringUtils.hasValue(sUniqueIdentifier)){
 						oCurrentRecord = connector.findByUniqueIdentifier(
 								sUniqueIdentifier);
 						if (oCurrentRecord != null) {
-							result.put(sUniqueIdentifier, oCurrentRecord);
+							try{
+								oCurrentRecord.getAttribute(getRowUniqueIdentifier());
+								result.put(sUniqueIdentifier, oCurrentRecord);
+							} catch (Exception e){
+								/** Ignore exception, remove value from list, this happended because the 
+								 * row was removed but the grid was not notified ot it*/
+								sSelectedRowsUniqueIdentifiers[i] = "";
+							}
+							
 						}
 					}
 				}

@@ -1720,6 +1720,7 @@ public class XEOEditBean extends XEOBaseBean
             if( oBridgeHandler.haveBoui( rowBoui ) )
                 oBridgeHandler.remove();
         }
+        oGrid.resetSelections();
         showObjectErrors();
     }
     
