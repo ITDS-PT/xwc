@@ -156,10 +156,13 @@ public class AttributeLov extends AttributeBase {
     		boolean first = true;
     		s.w("[");
     		
-    		if (lov.isDisabled()){
+    		if (lov.isDisabled() || lov.isReadOnly()){
     			String display = lov.getDisplayValue();
     			Object value = lov.getValue();
-    			s.w("['").writeValue( value ).w("','").writeValue( display ).w("']");
+    			if (value == null){
+    				s.w("['").writeValue( "" ).w("','").writeValue( "" ).w("']");
+    			} else
+    				s.w("['").writeValue( value ).w("','").writeValue( display ).w("']");
     		} else {
     			Map<Object,String> lovMap = lov.getLovMap();
     			if( lovMap != null ) {
