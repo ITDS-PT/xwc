@@ -82,13 +82,18 @@ public class XEOObjectListGroupAttribute extends XEOObjectAttributeMetaData impl
 						return lovMap.get( value.toString() );
 					sRetValue = String.valueOf( value ); 
 				}
-			} else if ( getDataType() == DataFieldTypes.VALUE_DATE || getDataType() == DataFieldTypes.VALUE_DATETIME ) {
+			} else if ( getDataType() == DataFieldTypes.VALUE_DATE ) {
 				Date oDate = new Date(((Timestamp)attValue).getTime());
 				if( oDate != null ) {
-					SimpleDateFormat sdfD = new SimpleDateFormat("dd/MM/yyyy");
-					sRetValue = sdfD.format( oDate );
+					sRetValue = XUILocalization.formatDateDefaultTimeZone(oDate);
 				}
-			} else if ( getDataType() == DataFieldTypes.VALUE_NUMBER ) {
+			} else if (getDataType() == DataFieldTypes.VALUE_DATETIME) {
+				Date oDate = new Date(((Timestamp)attValue).getTime());
+				if( oDate != null ) {
+					sRetValue = XUILocalization.formatDateTime(oDate);
+				}
+			}
+			else if ( getDataType() == DataFieldTypes.VALUE_NUMBER ) {
 				BigDecimal oValue = (BigDecimal)attValue;
 				if( oValue != null ) {
 					DecimalFormat nf = XUILocalization.getNumberFormatter();
