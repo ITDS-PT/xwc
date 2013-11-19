@@ -406,7 +406,7 @@ public class ViewerAccessPolicyBuilder {
 			iterator.beforeFirst();
 			while( iterator.next() ){
 				sb.append( "," );
-				sb.append( iterator.currentRow().getObject().getBoui() );
+				sb.append( iterator.currentRow().getValueLong() );
 			}
 		}
 		sb.append( ") and referenced='1' AND viewer=? order by policyDetails.PARENT, policyDetails.accessLevel" );
