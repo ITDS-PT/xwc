@@ -20,6 +20,7 @@ import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts.ValueType;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts.WaitMode;
 import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
+import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataListConnector;
@@ -396,9 +397,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	    	DataRecordConnector[] records = oGrid.getSelectedRows();
 	    	sb.append( "[");
 	    	for( DataRecordConnector sel : records ) {
-	    		if( sb.length() > 1 )
+	    		DataFieldConnector field = sel.getAttribute(oGrid.getRowUniqueIdentifier());
+	    		if( sb.length() > 1 && field != null)
 	    			sb.append(',');
-	    		sb.append( sel.getAttribute(oGrid.getRowUniqueIdentifier()).getValue().toString() );
+	    		if (field != null)
+	    			sb.append( field.getValue().toString() );
 	    	}
 	    	sb.append( "]");
 	    	

@@ -112,7 +112,7 @@
 		  , request: {
 	        	endpoint: '${this.servletUrl}'
 	        	,params: {
-				   'xwc-upload': 'true'
+	        	'xwc-upload': 'true'
 		   		}
 		  	}
 		  	, callbacks : {
