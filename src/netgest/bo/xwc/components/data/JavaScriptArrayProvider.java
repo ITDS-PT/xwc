@@ -199,7 +199,7 @@ public class JavaScriptArrayProvider {
 			                                break;    
 			                            case DataFieldTypes.VALUE_DATE:
 			                                oStringBuilder.append("\"");
-			                                oStringBuilder.append(XUILocalization.formatDate( (Timestamp)oDataFieldValue ));
+			                                oStringBuilder.append(XUILocalization.formatDateDefaultTimeZone( (Timestamp)oDataFieldValue ));
 			                                oStringBuilder.append("\"");
 			                                break;
 			                            case DataFieldTypes.VALUE_DATETIME:
@@ -331,7 +331,7 @@ public class JavaScriptArrayProvider {
                                 oStringBuilder.append( XUILocalization.formatCurrency( ((BigDecimal)oDataFieldValue).longValue()) );
                                 break;    
                             case DataFieldTypes.VALUE_DATE:
-                            	oStringBuilder.append(XUILocalization.formatDate( (Timestamp)oDataFieldValue ));
+                            	oStringBuilder.append(XUILocalization.formatDateDefaultTimeZone((Timestamp)oDataFieldValue ));
                                 break;
                             case DataFieldTypes.VALUE_DATETIME:
                             	oStringBuilder.append( XUILocalization.formatDateTime( (Timestamp)oDataFieldValue ));

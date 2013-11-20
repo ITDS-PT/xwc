@@ -148,7 +148,7 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 			                            	w.write(sDisplayValue);
 			                                break;    
 			                            case DataFieldTypes.VALUE_DATE:
-			                            	String date = XUILocalization.formatDate( (Timestamp)oDataFieldValue );
+			                            	String date = XUILocalization.formatDateDefaultTimeZone( (Timestamp)oDataFieldValue );
 			                            	w.writeAttribute("displayValue",  date );
 			                            	w.write(date);
 			                                break;

@@ -36,6 +36,10 @@ public class XUILocalization  {
 	public static String formatDate(Date toFormat) {
 		return getLocaleProvider().formatDate( toFormat );
 	}
+	
+	public static String formatDateDefaultTimeZone(Date toFormat) {
+		return getLocaleProvider().formatDateDefaultTimezone(toFormat);
+	}
 
 	
 	public static String formatDate(Date toFormat, DateTimeLengh length) {

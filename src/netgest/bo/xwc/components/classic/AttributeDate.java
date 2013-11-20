@@ -1,5 +1,12 @@
 package netgest.bo.xwc.components.classic;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Map;
+
+import javax.faces.context.FacesContext;
+
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.localization.ComponentMessages;
@@ -9,13 +16,6 @@ import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.localization.JavaToJavascriptPatternConverter;
 import netgest.bo.xwc.framework.localization.XUILocalization;
-
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.Map;
-
-import javax.faces.context.FacesContext;
 
 /**
  * This attribute represents a Date Field
@@ -42,19 +42,28 @@ public class AttributeDate extends AttributeBase {
 
     }
     
+    public boolean shouldUseTimezone(){
+    	if (getParent() instanceof AttributeDateTime){
+    		return true;
+    	} else return false;
+    }
+    
     @Override
 	public void validate( FacesContext context ) {
         String      sSubmitedValue = null;
         Object oSubmitedValue = getSubmittedValue();
         Date   oSubmitedDate;
-        
+        AttributeDate dateComponent = (AttributeDate) this;
         if( oSubmitedValue != null )
         {
             sSubmitedValue = (String)oSubmitedValue;     
             if( sSubmitedValue.length() > 0 )
             {
                 try {
-                    oSubmitedDate = XUILocalization.parseDateDefaultTimezone( String.valueOf( oSubmitedValue ) );
+                	if (!dateComponent.shouldUseTimezone())
+                		oSubmitedDate = XUILocalization.parseDateDefaultTimezone( String.valueOf( oSubmitedValue ) );
+                	else
+                		oSubmitedDate = XUILocalization.parseDate( String.valueOf( oSubmitedValue ) );
                     setValue( new Timestamp( oSubmitedDate.getTime() ) );
     
                 }
@@ -98,7 +107,10 @@ public class AttributeDate extends AttributeBase {
             String sValue = "";
             
             if( sJsValue != null )  {
-            	sValue = XUILocalization.formatDate( sJsValue );
+            	if (oAttrDate.shouldUseTimezone())
+            		sValue = XUILocalization.formatDate(sJsValue);
+            	else
+            		sValue = XUILocalization.formatDateDefaultTimeZone((sJsValue));
           	}
     		ExtConfig oInpDateConfig = super.getExtJsFieldConfig( oAttr );
     		String format = XUILocalization.getDateFormat();
@@ -131,13 +143,17 @@ public class AttributeDate extends AttributeBase {
     	public ScriptBuilder getEndComponentScript(AttributeBase oComp) {
     		ScriptBuilder s = new ScriptBuilder();
     		s.startBlock();
+    		AttributeDate dateCmp = (AttributeDate) oComp;
     		
     		super.writeExtContextVar(s, oComp);
     		
     		Timestamp sJsValue = (Timestamp)oComp.getValue(); 
             String sValue = "";
             if( sJsValue != null )  {
-        	  	sValue = XUILocalization.formatDate( sJsValue );
+            	if (dateCmp.shouldUseTimezone())
+            		sValue = XUILocalization.formatDate(sJsValue);
+            	else
+            		sValue = XUILocalization.formatDateDefaultTimeZone((sJsValue));
           	}
             
             s.w( "c.setValue('" ).writeValue( sValue ).l( "');" );

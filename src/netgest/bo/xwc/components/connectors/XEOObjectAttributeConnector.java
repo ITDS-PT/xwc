@@ -179,7 +179,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 				Date oDate = oAttHandler.getValueDate();
 				if( oDate != null ) {
 					if( getDataType() == DataFieldTypes.VALUE_DATE ) {
-						sRetValue = XUILocalization.formatDate( oDate );
+						sRetValue = XUILocalization.formatDateDefaultTimeZone(oDate);
 					}
 					else {
 						sRetValue = XUILocalization.formatDateTime( oDate );
