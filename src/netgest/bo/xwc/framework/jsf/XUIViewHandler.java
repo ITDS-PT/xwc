@@ -120,7 +120,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	}
 	
 	
-	private static boolean useCache = Boolean.TRUE ;
+	private static boolean useCache = Boolean.TRUE;
 
 	public static void disableCache() {
 		useCache = Boolean.FALSE;
@@ -444,7 +444,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        		((XUIViewBean)viewRoot.getBean("viewBean")).setViewRoot( viewRoot.getViewState() );
 	        }
 	        
-	        // Se existe view restora a transac磯 associada a view.
+	        // Se existe view restora a transac��� associada a view.
             String sTransactionId = viewRoot.getTransactionId();
             
             if( sTransactionId != null ) {
@@ -508,15 +508,31 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     	return true;
     }
     
+	long xxx = System.currentTimeMillis();
     public UIViewRoot createView(FacesContext context, String viewId, InputStream viewerInputStream, String sTransactionId, XUIViewerDefinition viewerDefinition ){
-    	String cacheKey = createCacheIdFromViewAndLanguage( viewId );
-    	XUIApplicationContext oApp = XUIRequestContext.getCurrentContext().getApplicationContext();
-    	//The purpose of the following instruction is to make sure that save and restore
-    	//are not executed in the same instances of the components. When a new view is created
-    	//save is run and , right after, the view is restored from cache  
-    	if (!canReadFromCache( oApp , cacheKey, viewId ) && useCache)
-    		_createView( context , viewId , viewerInputStream , sTransactionId , viewerDefinition );
-    	return _createView( context , viewId , viewerInputStream , sTransactionId , viewerDefinition );
+    	
+    	
+        // Arranja o viewId caso este comece por /
+        if( viewId.startsWith("/") ) {
+        	viewId = viewId.substring(1);
+        }
+ 	
+    	xxx = System.currentTimeMillis();
+    	try {
+    	
+	    	String cacheKey = createCacheIdFromViewAndLanguage( viewId );
+	    	XUIApplicationContext oApp = XUIRequestContext.getCurrentContext().getApplicationContext();
+	    	//The purpose of the following instruction is to make sure that save and restore
+	    	//are not executed in the same instances of the components. When a new view is created
+	    	//save is run and , right after, the view is restored from cache  
+	    	if (!canReadFromCache( oApp , cacheKey, viewId ) && useCache)
+	    		_createView( context , viewId , viewerInputStream , sTransactionId , viewerDefinition );
+    		System.out.println( "Pre Cache Phase:" +  (System.currentTimeMillis() - xxx) );
+	    	return _createView( context , viewId , viewerInputStream , sTransactionId , viewerDefinition );
+    	}
+    	finally {
+    		System.out.println( "Create View:" +  (System.currentTimeMillis() - xxx) );
+    	}
     }
     
     public UIViewRoot _createView(FacesContext context, String viewId, InputStream viewerInputStream, String sTransactionId, XUIViewerDefinition viewerDefinition ){
@@ -695,8 +711,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        	}
 	        }
 		    
-	        //
+    		System.out.println( "Pre Security:" +  (System.currentTimeMillis() - xxx) );
 	        initializeAndAssociateBeansToView(beanIds, beanList , result, viewId);
+    		System.out.println( "Post Security:" +  (System.currentTimeMillis() - xxx) );
 	        
 	        // Create a new instance of the view bean
 	        if (log.isDebugEnabled()) 
@@ -895,7 +912,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 		boolean ownsTransaction = result.getOwnsTransaction();
 		Object[] state = ( Object[] ) viewerCache.get( viewerCacheId ).getCacheContent()[0];
 		XUIStateManagerImpl oStateManagerImpl = ( XUIStateManagerImpl ) Util.getStateManager( context );
-		result.processRestoreState( context , oStateManagerImpl.handleRestoreState( state ) ); //Culpado est� aqui??????????
+		result.processRestoreState( context , oStateManagerImpl.handleRestoreState( state ) ); //Culpado est� aqui??????????
 		
 		
 		//Set the values as they were before, because the processRestoreState sets them again
@@ -1382,7 +1399,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                                                            null,
                                                            request.getCharacterEncoding());
                 
-            // Força o ScriptContext guardado da Writer anterior.
+            // For��a o ScriptContext guardado da Writer anterior.
             if( oSavedScriptContext != null ) {
                 //newWriter.setScriptContext( oSavedScriptContext );
                 PackageIAcessor.setScriptContextToWriter( newWriter, oSavedScriptContext );
@@ -1408,7 +1425,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             oCompBodyWriter.flushToWriter( false );
             oCompBodyWriter.release();
             
-            //TODO: Martelada por causa dos Layouts... este código não devia estar a este nivél.
+            //TODO: Martelada por causa dos Layouts... este c��digo n��o devia estar a este niv��l.
             if( newWriter != null && request.getAttribute("__skip.Layouts.doLayout") == null ) {
             	Layouts.doLayout( newWriter );
             }
@@ -1428,7 +1445,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                                                            null,
                                                            request.getCharacterEncoding());
             
-            // Força o ScriptContext guardado da Writer anterior.
+            // For��a o ScriptContext guardado da Writer anterior.
             if( oSavedScriptContext != null ) {
                 //newWriter.setScriptContext( oSavedScriptContext );
                 PackageIAcessor.setScriptContextToWriter( newWriter, oSavedScriptContext );
@@ -1498,7 +1515,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         	}
             
             // Verifica se foi criada uma Writer, se sim guarda o script context
-            // para passar à nova que é criada especificamente para 
+            // para passar �� nova que �� criada especificamente para 
             // este componente.
             if( newWriter != null ) {
                 oSavedScriptContext = newWriter.getScriptContext();
@@ -1507,7 +1524,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
         if (newWriter != null )
         	Layouts.doLayout( newWriter );
-        //TODO: Dá erro se não existir elementos para se efectuar o render do lado do cliente
+        //TODO: D�� erro se n��o existir elementos para se efectuar o render do lado do cliente
         if( oToRenderList.size() > 0 || !oViewToRender.isPostBack() )
         {
             
