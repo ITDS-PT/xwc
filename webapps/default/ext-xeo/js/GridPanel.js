@@ -280,7 +280,10 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 			
 			var selectionModel = this.getSelectionModel();
 			if (selectionModel !== undefined && selectionModel !== null){
-				selectionModel.clearSelections(true);
+				if (selectionModel.clearSelectionsAll)
+					selectionModel.clearSelectionsAll(true);
+				else
+					selectionModel.clearSelections(true);
 			}
 			//Reset the label with the counter if we have multi-selections
 			if (this.getMultiSelections()){
@@ -390,6 +393,7 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 					result.push(raw);
 				}
 			}
+			console.log(result.length + '*' + value + '*'); 
 			return result;
 		}
 		
@@ -2457,6 +2461,9 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
         }
     },
     changePage: function(page){
+    	if (!this.isMultiPageSelection()){
+        	this.resetSelections();
+        }
     	if (this.store.showCounters)
     		this.doLoad(((page-1) * this.pageSize).constrain(0, this.store.getTotalCount()));
     	else
@@ -2467,18 +2474,30 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
         var store = this.store;
         switch(which){
             case "first":
+            	if (!this.isMultiPageSelection()){
+            		this.resetSelections();
+            	}
                 this.doLoad(0);
             break;
             case "prev":
+            	if (!this.isMultiPageSelection()){
+            		this.resetSelections();
+            	}
                 this.doLoad(Math.max(0, this.cursor-this.pageSize));
             break;
             case "next":
+            	if (!this.isMultiPageSelection()){
+            		this.resetSelections();
+            	}
                 this.doLoad(this.cursor+this.pageSize);
             break;
             case "last":
                 var total = store.getTotalCount();
                 var extra = total % this.pageSize;
                 var lastStart = extra ? (total - extra) : total-this.pageSize;
+                if (!this.isMultiPageSelection()){
+                	this.resetSelections();
+                }
                 if (store.showCounters)
                 	this.doLoad(lastStart);
                 else
@@ -2488,6 +2507,9 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
                 this.doLoad(this.cursor);
             break;
             default :
+            	if (!this.isMultiPageSelection()){
+            		this.resetSelections();
+            	}
             	this.doLoad(this.cursor);
             break;
         }
@@ -2511,6 +2533,21 @@ ExtXeo.PagingToolbar = Ext.extend(Ext.Toolbar, {
 		var page =  this.cursor / this.pageSize;
 		return page + 1;
 	}
+    
+    , isMultiPageSelection : function () {
+    	var grid = Ext.getCmp(this.gridId);
+    	if (grid){
+    		return grid.getMultiPageSelections();
+    	} else 
+    		return false;
+    }
+    
+    , resetSelections : function () {
+    	var grid = Ext.getCmp(this.gridId);
+    	if (grid){
+    		grid.reset();
+    	}
+    }
     
 });
 
@@ -2551,13 +2588,11 @@ ExtXeo.grid.updateCounter = function (oSelModel){
 	var label = Ext.getCmp(gridPanel.getNumberSelectionsCounterId());
 	var maxSelections = gridPanel.getMaxSelections();
 	if (gridPanel.getMultiSelections()){
-		
-	var countItems = gridPanel.getSelectedRows().length; 
-	
-	if (countItems <= maxSelections - 1 || maxSelections == -1)
-   		label.setText(countItems);
-   	else
-   		label.setText("<span style='color:red'>" + countItems + "</span>",false);
+		var countItems = gridPanel.getSelectedRows().length; 
+		if (countItems <= maxSelections - 1 || maxSelections == -1)
+	   		label.setText(countItems);
+	   	else
+	   		label.setText("<span style='color:red'>" + countItems + "</span>",false);
 	}
 };
 
