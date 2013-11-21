@@ -393,7 +393,6 @@ ExtXeo.grid.GridPanel = Ext.extend(Ext.grid.GridPanel,
 					result.push(raw);
 				}
 			}
-			console.log(result.length + '*' + value + '*'); 
 			return result;
 		}
 		
