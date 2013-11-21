@@ -62,7 +62,12 @@ import org.json.JSONObject;
 
 public class GridPanelExtJsRenderer extends XUIRenderer  {
 
-    private ExtConfigArray oExtButtons;
+    private static final int MAX_ELEMENTS_TO_FETCH_GRID_FILTER_LOV = 20;
+	/**
+     * Maximmum number of elements in a column filter of type lov
+     */
+    private static final int MAX_ELEMENTS_TO_SHOW_GRID_FILTER_LOV = 18;
+	private ExtConfigArray oExtButtons;
     private ExtConfigArray oExtToolbar;
     
     /**
@@ -1137,22 +1142,10 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
         		if( metaData != null ) {
 	            	
-        			boolean renderAsLov = (metaData.getInputRenderType() == DataFieldTypes.RENDER_LOV);
-	            	if( metaData.getIsLov() ||  renderAsLov) { 
+	            	if( metaData.getIsLov()) { 
 	            		
-	            		if (renderAsLov){
-	            			if (metaData.getDataType() == DataFieldTypes.VALUE_NUMBER){
-		            			oExtFiltersChild.addJSString( "type", "object" );
-		            			colFilter.put("type", "object");
-			                	oExtFiltersChild.addJSString( "lookupInputName", oGrid.getFilterLookupInput().getClientId() );
-			                	oExtFiltersChild.add( "lookupCommand", 	            		
-			                			"function(){ " +
-			                				XVWScripts.getAjaxCommandScript( oGrid.getFilterLookupCommand(),col.getDataField(),XVWScripts.WAIT_DIALOG ) +
-			                			"}"
-			                	);	
-	            		} else { 
-	            			Map<Object,String> lovMap = metaData.getLovMap();
-		            		if( lovMap.size() < 30 ) {
+	            			Map<Object,String> lovMap = metaData.getLovMapWithLimit( MAX_ELEMENTS_TO_FETCH_GRID_FILTER_LOV );
+		            		if( lovMap.size() < MAX_ELEMENTS_TO_SHOW_GRID_FILTER_LOV ) {
 		                    	
 		            			oExtFiltersChild.addJSString( "type", "list" );
 		            			colFilter.put("type", "list");
@@ -1191,7 +1184,18 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		            			}
 		                    	
 		            			
-		            		}  else { //Really big lovs
+		            		} else if (metaData.getDataType() == DataFieldTypes.VALUE_NUMBER){
+		            			oExtFiltersChild.addJSString( "type", "object" );
+		            			colFilter.put("type", "object");
+			                	oExtFiltersChild.addJSString( "lookupInputName", oGrid.getFilterLookupInput().getClientId() );
+			                	oExtFiltersChild.add( "lookupCommand", 	            		
+			                			"function(){ " +
+			                				XVWScripts.getAjaxCommandScript( oGrid.getFilterLookupCommand(),col.getDataField(),XVWScripts.WAIT_DIALOG ) +
+			                			"}"
+			                	);	
+		            		}
+		            		
+		            		else { //Really big lovs
 		            			oExtFiltersChild.addJSString( "type", "string" );
 		            			colFilter.put("type", "string");
 		            			
@@ -1201,9 +1205,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 			            			oExtFiltersChild.add("value", value );
 		            			}
 		            		}
-	            		}          		
 	            		}
-	            	}
 	            	else if( metaData.getInputRenderType() == DataFieldTypes.RENDER_OBJECT_LOOKUP ) {
 	                	oExtFiltersChild.addJSString( "type", "object" );
             			colFilter.put("type", "object");

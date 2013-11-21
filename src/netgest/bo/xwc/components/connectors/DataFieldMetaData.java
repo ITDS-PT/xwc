@@ -22,5 +22,6 @@ public interface DataFieldMetaData {
     public byte		getSecurityPermissions();
     
     public Map<Object,String> getLovMap();
+    public Map<Object,String> getLovMapWithLimit(int maxRecords);
 	
 }

@@ -134,31 +134,19 @@ public class XEOObjectAttributeMetaData implements DataFieldMetaData {
         String sValueType = defAtt.getAtributeDeclaredType();
 
         if ( boDefAttribute.ATTRIBUTE_TEXT.equals( sValueType ) ){
-        	if (StringUtils.isEmpty(defAtt.getLOVName()))
-        		return DataFieldTypes.RENDER_DEFAULT;
-        	else
-        		return DataFieldTypes.RENDER_LOV;
+        	return DataFieldTypes.RENDER_DEFAULT;
         }
         
 
         if ( boDefAttribute.ATTRIBUTE_OBJECT.equals( sValueType ) ) {
-            if( defAtt.renderAsLov() )
-            {
-                return DataFieldTypes.RENDER_LOV;
-            }
-            else {
-                return DataFieldTypes.RENDER_OBJECT_LOOKUP;
-            }
+            return DataFieldTypes.RENDER_OBJECT_LOOKUP;
         }
 
         if ( boDefAttribute.ATTRIBUTE_DATE.equals( sValueType ) )
             return DataFieldTypes.RENDER_DEFAULT;
 
         if ( boDefAttribute.ATTRIBUTE_NUMBER.equals( sValueType ) ){
-        	if (StringUtils.isEmpty(defAtt.getLOVName()))
         		return DataFieldTypes.RENDER_DEFAULT;
-        	else
-        		return DataFieldTypes.RENDER_LOV;
         }
 
         if ( boDefAttribute.ATTRIBUTE_LONGTEXT.equals( sValueType ) )
@@ -204,8 +192,12 @@ public class XEOObjectAttributeMetaData implements DataFieldMetaData {
         return  sLovName != null && sLovName.length() > 0;
 
     }
+    
+    public Map<Object, String> getLovMap() {
+    	return getLovMapWithLimit(500);
+    }
 
-	public Map<Object, String> getLovMap() {
+	public Map<Object, String> getLovMapWithLimit(int maxRecords) {
         String           sLovName;
         sLovName = this.defAtt.getLOVName();
 
@@ -218,7 +210,7 @@ public class XEOObjectAttributeMetaData implements DataFieldMetaData {
                 	list.add( new Object[] { "", "" } );
 	                boObjectList oObjectList = 
 	                    boObjectList.list( boApplication.currentContext().getEboContext() , 
-	                                      "select " + defAtt.getReferencedObjectDef().getName(), 1, 500 );
+	                                      "select " + defAtt.getReferencedObjectDef().getName(), 1, maxRecords );
 	                while (oObjectList.next()) {
 	                    list.add( new Object[] { oObjectList.getCurrentBoui(), oObjectList.getObject().getCARDIDwNoIMG().toString() } );
 	                }

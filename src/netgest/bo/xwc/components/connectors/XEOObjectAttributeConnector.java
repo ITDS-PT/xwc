@@ -444,11 +444,14 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
     public boolean getNumberGrouping() {
         return "Y".equalsIgnoreCase( oAttHandler.getDefAttribute().getGrouping() );
     }
-
+    
     public Map<Object,String> getLovMap() {
+    	return getLovMapWithLimit(500);
+    }
+
+    public Map<Object,String> getLovMapWithLimit(int maxRecords) {
         String           sLovName;
         sLovName = oAttHandler.getDefAttribute().getLOVName();
-        long init = System.currentTimeMillis();
         Map<Object, String> lovMap = new LinkedHashMap<Object, String>();
 
         if( sLovName == null || sLovName.length() == 0 ) {
@@ -494,7 +497,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 	                    boObjectList.list(oAttHandler.getEboContext(), 
 	                                      //"select " + oAttHandler.getDefAttribute().getReferencedObjectDef().getName()
 	                    				  sql
-	                                      ,1,500
+	                                      ,1,maxRecords
 	                                     );
 	                
 	                
@@ -553,8 +556,6 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
             	}
             }
         }
-        long end = System.currentTimeMillis() - init;
-		//System.out.println("LovMap took " + end + " ms");
         return lovMap;
     }
 
