@@ -186,7 +186,7 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
                     XVW.handleAjaxResponse( oXmlReq, renderOnElement );
                 }
                 catch( e ) {
-                    XVW.handleAjaxError( e.description );
+                    XVW.handleAjaxError( e.message, e.stack  );
                 }
             }
             else if( oXmlReq.status == 401 && oXmlReq.getResponseHeader('login-url') != "" ) {
@@ -288,7 +288,6 @@ XVW.handleAjaxError = function( sErrorMessage, sDetails ) {
 
 // Must be overwriten ti handle error dialogs
 XVW.ErrorDialog = function( sTitle, sMessage ) {};
-
 
 XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
 	// Handle view Element -- Update ViewId
@@ -496,7 +495,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         }
         catch( e ) {
         		debugger;
-        		window.eval( sScriptToEval );
+        		XVW.reportAjaxErrorBlock(oFooterScriptNodeList);
 	            XVW.ErrorDialog( XVW.Messages.AJAXERROR_MESSAGE, "["+oScriptId+"]" +
 	                e.description + "\n" +
 	                sScriptToEval
@@ -508,6 +507,36 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
     XVW.ajax.enableAjaxRequests();
 };
 
+XVW.reportAjaxErrorBlock = function (oFooterScriptNodeList) {
+	var sScriptToEval = "";
+	for( var nl3=0;nl3<oFooterScriptNodeList.length; nl3++ )
+    {
+        var oScriptNodes = oFooterScriptNodeList.item(nl3).getElementsByTagName( 'script' );
+        for( var i=0; i < oScriptNodes.length; i++ ) {
+            var oScriptNode = oScriptNodes.item(i);
+            oScriptId = oScriptNode.getAttribute("id");
+            oScriptSrc = oScriptNode.getAttribute("src");
+            if( oScriptSrc == null ) {
+                if(oScriptNode.textContent /*Mozilla*/) { 
+                	sScriptToEval = oScriptNode.textContent; 
+                }
+	            else /*IE*/ { 
+	            	sScriptToEval = oScriptNode.text 
+	            };
+	            
+	            try {
+	            	window.eval(sScriptToEval);
+	            } catch (e) {
+	            	var url = location.href;
+	            	var errorMessage = e.message;
+	            	var jsBlock = sScriptToEval;
+            		var line = null;
+	            	XVW.logJsError(errorMessage,url,line,jsBlock);
+	            }
+            }
+        }            
+    }
+};
 
 XVW.ajaxResponse = function() {};
 
@@ -744,6 +773,30 @@ XVW.createXMLHttpRequest = function()
     }
     return req;
 };
+
+XVW.logJsError = function (errorMessage, url, line, jsBlock){
+	var loggerUrl = "/xeo/netgest/bo/xwc/framework/viewers/JsErrorLogOperations.xvw";
+	  var parameters = "?action=log&JS_ERROR_MESSAGE=" + encodeURI(errorMessage)
+	      + "&VIEW_ID=" + encodeURI(url)
+	      + "&LINE=" + encodeURI(line)
+	      + "&parent_url=" + encodeURI(document.location.href)
+	      + "&USER_AGENT=" + encodeURI(navigator.userAgent);
+	  
+	  if (jsBlock !== null && jsBlock !== undefined){
+		  parameters += ("&JS_ERROR_BLOCK=" + encodeURI(jsBlock));
+	  }
+	 
+	  /** Send error to server */
+	  var xhr = XVW.createXMLHttpRequest();
+	  xhr.open( "GET", loggerUrl + parameters, true );
+	  xhr.send();
+};
+
+window.onerror = function(errorMessage, url, line) {
+	  XVW.logJsError(errorMessage,url,line,null);
+	  return true;
+	};
+
 
 XVW.beforeApplyHtml = function( oDNode ) {};
 
