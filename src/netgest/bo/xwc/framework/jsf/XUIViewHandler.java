@@ -527,11 +527,9 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	    	//save is run and , right after, the view is restored from cache  
 	    	if (!canReadFromCache( oApp , cacheKey, viewId ) && useCache)
 	    		_createView( context , viewId , viewerInputStream , sTransactionId , viewerDefinition );
-    		System.out.println( "Pre Cache Phase:" +  (System.currentTimeMillis() - xxx) );
 	    	return _createView( context , viewId , viewerInputStream , sTransactionId , viewerDefinition );
     	}
     	finally {
-    		System.out.println( "Create View:" +  (System.currentTimeMillis() - xxx) );
     	}
     }
     
@@ -711,9 +709,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        	}
 	        }
 		    
-    		System.out.println( "Pre Security:" +  (System.currentTimeMillis() - xxx) );
 	        initializeAndAssociateBeansToView(beanIds, beanList , result, viewId);
-    		System.out.println( "Post Security:" +  (System.currentTimeMillis() - xxx) );
 	        
 	        // Create a new instance of the view bean
 	        if (log.isDebugEnabled()) 
@@ -733,9 +729,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	                  " " + viewId );
 	        }
 	        
-	        long end = System.currentTimeMillis() - init;
-	        //System.out.println( viewId + " " + end + " ms ("+((float)end/1000)+")" + " s");
-	
 	        if (createNew){
 	        	if ( canAddViewToCache( cacheKey, oViewerDef.getDateLastUpdate() ) ){
 	        		try{
@@ -1468,7 +1461,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             oCompBodyWriter.release();
             
             String sResult = oComponentWriter.toString();
-            //System.out.println(sResult);
             if( "XEOXML".equals( oViewToRender.getRenderKitId() ) ) {
             	
             	long init = System.currentTimeMillis();
