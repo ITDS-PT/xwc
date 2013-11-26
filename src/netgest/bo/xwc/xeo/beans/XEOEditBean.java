@@ -37,14 +37,12 @@ import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
-import netgest.bo.runtime.boObjectListBuilder;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.boThread;
 import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
 import netgest.bo.system.Logger;
-import netgest.bo.system.XEO;
 import netgest.bo.system.boApplication;
 import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.annotations.Visible;
@@ -914,7 +912,7 @@ public class XEOEditBean extends XEOBaseBean
         // Obtem a bean do objecto a ser editado
         // e associa o objecto do parametro
         
-        // Verifica o modo de edi��o do Objecto... se for orf�o
+        // Verifica o modo de edi������o do Objecto... se for orf���o
         // abre o edit para associar um novo
         
     	String lookupViewerName = oAtt.getLookupViewer();
@@ -977,7 +975,7 @@ public class XEOEditBean extends XEOBaseBean
             oBaseBean.executeBoql( sBoql );
         }
 
-        // Diz a que a view corrente � a criada.
+        // Diz a que a view corrente ��� a criada.
         oRequestContext.setViewRoot( oViewRoot );
         
         oRequestContext.renderResponse();
@@ -1377,7 +1375,7 @@ public class XEOEditBean extends XEOBaseBean
         }
 
         if( oViewRoot != null ) {
-	        // Diz a que a view corrente � a criada.
+	        // Diz a que a view corrente ��� a criada.
 	        oRequestContext.setViewRoot( oViewRoot );
 	        oRequestContext.getFacesContext().renderResponse();
         }
@@ -1497,7 +1495,7 @@ public class XEOEditBean extends XEOBaseBean
         }
 
         if( oViewRoot != null ) {
-	        // Diz a que a view corrente � a criada.
+	        // Diz a que a view corrente ��� a criada.
 	        oRequestContext.setViewRoot( oViewRoot );
 	        oRequestContext.getFacesContext().renderResponse();
         }
@@ -2026,7 +2024,7 @@ public class XEOEditBean extends XEOBaseBean
 							oRequestContext.getScriptContext().add( 
 									XUIScriptContext.POSITION_HEADER , 
 									"openObject", 
-									XVWScripts.getOpenCommandTab( srcComponent, "")
+									XVWScripts.getOpenCommandTab( "edit_" + boui,srcComponent, "")
 							);
 							oRequestContext.renderResponse();
 							return;
