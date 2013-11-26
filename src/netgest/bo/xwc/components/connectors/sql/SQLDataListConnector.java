@@ -62,6 +62,8 @@ public class SQLDataListConnector implements DataListConnector {
 	private String sqlOriginalQuery=null;
 	private String sqlQueryCount=null;
 	
+	private String rowUniqueIdentifier = null;
+	
 	private int pageSize = 30;
 	private int page = 1;
 	private EboContext ctx = null;
@@ -78,6 +80,13 @@ public class SQLDataListConnector implements DataListConnector {
 		this.sqlQuery = sqlQuery;
 		this.sqlOriginalQuery = sqlQuery;
 		this.sqlQueryCount = sqlQuery;
+	}
+	
+	public SQLDataListConnector(String sqlQuery,String rowUniqueIdentifier) {
+		this.sqlQuery = sqlQuery;
+		this.sqlOriginalQuery = sqlQuery;
+		this.sqlQueryCount = sqlQuery;
+		this.rowUniqueIdentifier = rowUniqueIdentifier;
 	}
 	
 	@Override
@@ -134,16 +143,72 @@ public class SQLDataListConnector implements DataListConnector {
 		return rows.size();
 	}
 
+	
 	@Override
 	public DataRecordConnector findByUniqueIdentifier(String sUniqueIdentifier) {
-		// TODO Auto-generated method stub
-		return null;
+		//Next Version use a SQL Query for performance optimization (possible problems with datatypes)
+		DataRecordConnector recConnector=null;
+		int currPage=this.getPage();		
+		boolean breakWhile=false;
+		while (this.getPage()<this.getPageSize()) {
+			this.setPage(currPage);
+			this.refresh();
+			if (rows!=null && !rows.isEmpty()) {
+				Iterator<SQLDataRecordConnector> itrows=rows.iterator();
+				while (itrows.hasNext()) {
+					SQLDataRecordConnector record=itrows.next();
+					
+					if (!StringUtils.isEmpty(sUniqueIdentifier)) {
+						DataFieldConnector field=record.getAttribute(rowUniqueIdentifier);
+						if (field!=null) {
+							if (sUniqueIdentifier.equals(field.getDisplayValue())) {
+								recConnector=record;
+								breakWhile=true;
+								break;
+							}
+						}
+					}
+				}
+			}
+			if (breakWhile) {
+				break;
+			}
+			currPage++;
+		}
+		return recConnector;
 	}
 
 	@Override
 	public int indexOf(String sUniqueIdentifier) {
-		// TODO Auto-generated method stub
-		return 0;
+		//Next Version use a SQL Query for performance optimization (possible problems with datatypes)
+		int indexOf=-1;
+		int currPage=this.getPage();		
+		boolean breakWhile=false;
+		while (this.getPage()<this.getPageSize()) {
+			this.setPage(currPage);
+			this.refresh();
+			if (rows!=null && !rows.isEmpty()) {
+				Iterator<SQLDataRecordConnector> itrows=rows.iterator();
+				while (itrows.hasNext()) {
+					indexOf++;
+					SQLDataRecordConnector record=itrows.next();					
+					if (!StringUtils.isEmpty(sUniqueIdentifier)) {
+						DataFieldConnector field=record.getAttribute(rowUniqueIdentifier);
+						if (field!=null) {
+							if (sUniqueIdentifier.equals(field.getDisplayValue())) {
+								breakWhile=true;
+								break;
+							}
+						}
+					}
+				}
+			}
+			if (breakWhile) {
+				break;
+			}
+			currPage++;
+		}
+		return indexOf;
 	}
 
 	@Override
