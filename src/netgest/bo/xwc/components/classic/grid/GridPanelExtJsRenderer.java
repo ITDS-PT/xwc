@@ -361,7 +361,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oLoadParams.add( "limit" , oGrid.getPageSize() );
         
         ExtConfig oLoadParams1 = oLoadParams.addChild( "params" );
-        if( oGrid.getGroupBy() != null ) {
+        if( oGrid.getGroupBy() != null && oGrid.getEnableGroupBy()) {
         	String[] groupByElements = oGrid.getGroupBy().split(",");
         	ExtConfigArray c = oLoadParams1.addChildArray( "groupBy" );
         	for( String g : groupByElements ) {
@@ -604,7 +604,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oDataStoreConfig.add( "pageSize", oGrid.getPageSize() );
         String sGroupBy = oGrid.getGroupBy();
         boolean hasGroupBy = false;
-        if( sGroupBy != null ) {
+        if( sGroupBy != null && oGrid.getEnableGroupBy() ) {
         	String[] groupByElements = oGrid.getGroupBy().split(",");
         	ExtConfigArray c = oDataStoreConfig.addChildArray( "groupField" );
         	for( String g : groupByElements ) {
