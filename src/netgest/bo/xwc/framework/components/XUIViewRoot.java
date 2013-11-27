@@ -148,7 +148,9 @@ public class XUIViewRoot extends UIViewRoot {
 		if( this.sBeanIds != null && this.sBeanIds.length() > 0 ) {
 			this.sBeanIds += "|";
 		}
-		this.sBeanIds += sBeanName;
+		if (!beanMapping.containsKey(sBeanName)){
+			this.sBeanIds += sBeanName;
+		}
 		this.beanId = sBeanName;
 		this.beanReference = oBean;
 		this.beanMapping.put( sBeanName , oBean.getClass().getName() );
