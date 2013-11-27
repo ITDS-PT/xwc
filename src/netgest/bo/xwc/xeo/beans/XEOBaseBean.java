@@ -183,6 +183,7 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
         String     sLookupViewer = oLookupColumn.getLookupViewer();
         
         
+        
         XEOObjectAttributeMetaData oFieldMeta = (XEOObjectAttributeMetaData)oGridPanel.getDataSource().
 			getAttributeMetaData( column );
         boDefAttribute oAttDef = oFieldMeta.getBoDefAttribute();
@@ -195,92 +196,41 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
 	    			className = objects[0];
 	    		}
 	    	}
-			sLookupViewer = "viewers/" + className + "/lookup.xvw";
+	    	if (!"boObject".equals(className))
+	    		sLookupViewer = "viewers/" + className + "/lookup.xvw";
         }
 		
-        oViewRoot = oSessionContext.createChildView( sLookupViewer );
+        if (StringUtils.hasValue(sLookupViewer)){
+        	oViewRoot = oSessionContext.createChildView( sLookupViewer );
 
-        XEOBaseLookupList   oBaseBean;
-        oBaseBean = (XEOBaseLookupList)oViewRoot.getBean( "viewBean" );
-        
-        oBaseBean.setAttribute( "lookupColumn" , column);
-        
-        Map<String, String> lookupObjs = getLookupObjectsMap( oAttDef );
-        
-        oBaseBean.setParentParentBeanId( "viewBean" );
-        oBaseBean.setParentComponentId( cmd.getClientId() );
-        oBaseBean.setMultiLookup( true );
-        oBaseBean.setFilterLookup( true );
-        oBaseBean.setLookupObjects( lookupObjs );
-        oBaseBean.setParentParentBeanId( "viewBean" );
-        oBaseBean.setParentAttributeName( column );
-        String objectSelected = lookupObjs.keySet().iterator().next();
-        oBaseBean.setSelectedObject( objectSelected );
-    	oBaseBean.executeBoql( "select " + objectSelected );
+        	XEOBaseLookupList   oBaseBean;
+        	oBaseBean = (XEOBaseLookupList)oViewRoot.getBean( "viewBean" );
 
-        // Diz a que a view corrente � a criada.
-        oRequestContext.setViewRoot( oViewRoot );
-        
-        oRequestContext.renderResponse();
-		
-		
-        
-/*
-		XUIRequestContext oRequestContext;
-    	XUISessionContext oSessionContext;
-    	XUIViewRoot		  oViewRoot;
-    	
-    	
-    	oRequestContext = XUIRequestContext.getCurrentContext();
-    	oSessionContext = oRequestContext.getSessionContext();
-    	
-    	XUIActionEvent e = oRequestContext.getEvent();
+        	oBaseBean.setAttribute( "lookupColumn" , column);
 
-    	XUICommand cmd = (XUICommand)e.getComponent();
-    	String column = (String)cmd.getValue();
-    	
-    	GridPanel  oGridPanel = (GridPanel)cmd.getParent();
-    	
-        Column     oLookupColumn = oGridPanel.getColumn( column );
-        
-        String     sLookupViewer = oLookupColumn.getLookupViewer();
-        
-        
-    	XEOObjectAttributeMetaData oFieldMeta = (XEOObjectAttributeMetaData)oGridPanel.getDataSource().
-    		getAttributeMetaData( column );
-    	
-    	boDefAttribute oAttDef = oFieldMeta.getBoDefAttribute();
-    	
-        // Verifica o modo de edi��o do Objecto... se for orf�o
-        // abre o edit para associar um novo
-        XEOBaseLookupList   oBaseBean;
-        
-        if( sLookupViewer == null || sLookupViewer.length() == 0 ) {
-            sLookupViewer =
-            	getViewerResolver().getViewer( oAttDef.getReferencedObjectName(), XEOViewerResolver.ViewerType.LOOKUP );
+        	Map<String, String> lookupObjs = getLookupObjectsMap( oAttDef );
+
+        	oBaseBean.setParentParentBeanId( "viewBean" );
+        	oBaseBean.setParentComponentId( cmd.getClientId() );
+        	oBaseBean.setMultiLookup( true );
+        	oBaseBean.setFilterLookup( true );
+        	oBaseBean.setLookupObjects( lookupObjs );
+        	oBaseBean.setParentParentBeanId( "viewBean" );
+        	oBaseBean.setParentAttributeName( column );
+        	String objectSelected = lookupObjs.keySet().iterator().next();
+        	oBaseBean.setSelectedObject( objectSelected );
+        	oBaseBean.executeBoql( "select " + objectSelected );
+
+        	// Diz a que a view corrente � a criada.
+        	oRequestContext.setViewRoot( oViewRoot );
+
+        	oRequestContext.renderResponse();
+        } else {
+        	XUIViewRoot root = (XUIViewRoot) oGridPanel.findParent(XUIViewRoot.class);
+        	logger.warn("XEOBaseBean :  Could not open Lookup viewer for " + oAttDef.getBoDefHandler().getName() + " -> " + oAttDef.getName() + " in "
+        		+ root.getViewId());
         }
-        
-        oViewRoot = oSessionContext.createChildView( sLookupViewer );
-        oBaseBean = (XEOBaseLookupList)oViewRoot.getBean( "viewBean" );
-        
-        oBaseBean.setAttribute( "lookupColumn" , column);
-        
-        Map<String, String> lookupObjs = getLookupObjectsMap( oAttDef );
-        
-        oBaseBean.setParentParentBeanId( "viewBean" );
-        oBaseBean.setParentComponentId( cmd.getClientId() );
-        oBaseBean.setMultiLookup( true );
-        oBaseBean.setFilterLookup( true );
-        oBaseBean.setLookupObjects( lookupObjs );
-        oBaseBean.setParentParentBeanId( "viewBean" );
-        oBaseBean.setParentAttributeName( column );
-    	oBaseBean.executeBoql( "select " + lookupObjs.keySet().iterator().next() );
-
-        // Diz a que a view corrente � a criada.
-        oRequestContext.setViewRoot( oViewRoot );
-        
-        oRequestContext.renderResponse();
-        */
+		
     }
 
 	public String getLookupQuery( String attribute, String selectObject ) {
