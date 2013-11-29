@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import netgest.bo.data.oracle.OracleDBM;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.XEO;
 import netgest.bo.system.boApplication;
@@ -34,7 +35,7 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 
 			HttpServletRequest request = (HttpServletRequest) getRequestContext().getRequest();
 			Map<?,?> parameters = request.getParameterMap();
-			insertRecords(ctx,(Map<String,String[]>)parameters);
+			insertRecords(ctx,(Map<String,String[]>)parameters,request);
 		} finally {
 			if (created){
 				if (ctx != null){
@@ -47,12 +48,12 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 		}
 	}
 
-	private void insertRecords(EboContext ctx, Map<String,String[]> parameters){
+	private void insertRecords(EboContext ctx, Map<String,String[]> parameters, HttpServletRequest request){
 		
 		long userBoui = ctx.getBoSession().getPerformerBoui();
 		long profileBoui = ctx.getBoSession().getPerformerIProfileBoui();
 		JsErrorLogger jsLogger = new JsErrorLogger(ctx.getConnectionData(), LoggerConstants.JS_ERROR_LOG_TABLE_NAME);
-		jsLogger.insertNewRecord(userBoui,profileBoui,parameters);
+		jsLogger.insertNewRecord(userBoui,profileBoui,parameters, request.getLocalName());
 		
 	}
 
@@ -63,7 +64,8 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 			if (!initialized){
 				connection = ctx.getConnectionData();
 				JsErrorLogger logger = new JsErrorLogger(connection, LoggerConstants.JS_ERROR_LOG_TABLE_NAME);
-				logger.init(LoggerConstants.getJSErrorsTableCreateScript());
+				OracleDBM dbm = ctx.getBoSession().getRepository().getDriver().getDBM();
+				logger.init(LoggerConstants.getJSErrorsTableCreateScript(dbm.getDatabase()));
 				initialized = Boolean.TRUE;
 			}
 		} finally {

@@ -1,6 +1,7 @@
 package netgest.bo.xwc.xeo.beans;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
@@ -25,9 +26,9 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
-import netgest.bo.xwc.xeo.localization.BeansMessages; 
-import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
+import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.utils.StringUtils;
+
 public class XEOBaseList extends XEOBaseBean {
     
     protected boObjectList currentObjectList;
@@ -202,4 +203,27 @@ public class XEOBaseList extends XEOBaseBean {
 		oRequestContext.getViewRoot().setRendered( false );
 		oRequestContext.renderResponse();
 	}
+    
+    @Override
+    public void addDebugInfo(List<String> errors) {
+    	String boql = currentObjectList.getBOQL();
+    	Object[] arguments = currentObjectList.getBOQLArgs();
+    	StringBuilder argumentsSerialized = new StringBuilder();
+    	String separator = "";
+    	if (arguments != null){
+    		for (Object arg : arguments){
+    			if (arg != null){
+    				argumentsSerialized.append(separator);
+    				argumentsSerialized.append(arg.toString());
+    				separator = ",";
+    			}
+    		}
+    	}
+    	String result = this.getClass().getName() + " BOQL:" + boql;
+    	
+    	if (arguments != null && arguments.length > 0 )
+    		result += ":ARGS:" + argumentsSerialized.toString();
+    	
+    	errors.add(result);
+    }
 }

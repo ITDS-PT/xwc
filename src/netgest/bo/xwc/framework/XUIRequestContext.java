@@ -2,9 +2,11 @@ package netgest.bo.xwc.framework;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import netgest.bo.transaction.XTransactionManager;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.errorLogging.DebugInfo;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.jsf.XUIPhaseEvent;
 import netgest.bo.xwc.framework.jsf.XUIViewHandlerImpl;
@@ -50,6 +53,7 @@ public class XUIRequestContext {
     private XUIPhaseEvent			oPhaseEvent;
 
     private LinkedHashMap<String, XUIMessage> oMessages;
+    private XUIRequestContextDebugInfo debugInfo = new XUIRequestContextDebugInfo();
 
     private static final Iterator<XUIMessage> EMPTY_INTERATOR = (new Vector<XUIMessage>()).iterator();
 
@@ -136,6 +140,8 @@ public class XUIRequestContext {
         if( bIsClosed ) throwCloseException();
         if( bIsAjax == null ) {
             bIsAjax = getFacesContext().getExternalContext().getRequest() instanceof XUIAjaxRequestWrapper;
+            debugInfo.setAjaxRequest(bIsAjax);
+            
         }
         return bIsAjax;
     }
@@ -225,7 +231,12 @@ public class XUIRequestContext {
     }
 
     public XUIViewRoot getViewRoot() {
-        return (XUIViewRoot)getFacesContext().getViewRoot();
+    	XUIViewRoot root = (XUIViewRoot)getFacesContext().getViewRoot();
+    	if (!debugInfo.hasViewInfo()){
+    		debugInfo.setMainViewId(root.getViewId());
+    		generateBeanDebugInfo(root);
+    	}
+        return root;
     }
 
     protected void setPostBack(boolean bIsPostBack) {
@@ -239,11 +250,42 @@ public class XUIRequestContext {
     public ServletContext getServletContext() {
     	return (ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext();
     }
+    
+    private void generateBeanDebugInfo(XUIViewRoot root){
+    	try {
+			String viewId = root.getViewId();
+			debugInfo.setMainViewId(viewId);
+			
+			String[] beanIds = root.getBeanIds();
+			List<String> debugInfos = new ArrayList<String>(5);
+			for (String beanId : beanIds ){
+				Object bean = root.getBean(beanId);
+				if (bean instanceof DebugInfo){
+					DebugInfo beanDebug = (DebugInfo) bean;
+					beanDebug.addDebugInfo(debugInfos);
+				}
+			}
+			StringBuilder debug = new StringBuilder();
+			String separator = "";
+			for (String debugItem : debugInfos){
+				debug.append(separator);
+				debug.append(debugItem);
+				separator = "|";
+			}
+			debugInfo.setBeanContext(debug.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
 
     public void setViewRoot( XUIViewRoot oViewRoot ) {
     	if (!oViewRoot.isTransient())
     		changedViews.put( oViewRoot.getViewId(), oViewRoot );
+    	
+    	generateBeanDebugInfo(oViewRoot);
+    	
     	getFacesContext().setViewRoot( oViewRoot );
+    	
     }
     
     
@@ -277,6 +319,9 @@ public class XUIRequestContext {
 
     public void setEvent(XUIActionEvent oEvent) {
         this.oEvent = oEvent;
+        if (oEvent != null){
+        	this.debugInfo.buildDebugInfoForEvent(oEvent.getComponent());
+        }
     }
 
     public XUIActionEvent getEvent() {
@@ -366,6 +411,16 @@ public class XUIRequestContext {
     	getScriptContext().add( XUIScriptContext.POSITION_FOOTER , scriptId , code );
     }
 
+	public XUIRequestContextDebugInfo getDebugInfo(){
+		return debugInfo;
+	}
 	
+	public void setDebugAjaxRequest(boolean isAjax){
+		this.debugInfo.setAjaxRequest(isAjax);
+	}
+	
+	void setRequestId(long requestId){
+		this.debugInfo.setRequestId(requestId);
+	}
 }
 

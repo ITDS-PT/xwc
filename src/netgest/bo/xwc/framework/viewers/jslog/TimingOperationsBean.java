@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import netgest.bo.data.oracle.OracleDBM;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.XEO;
 import netgest.bo.system.boApplication;
@@ -34,7 +35,7 @@ public class TimingOperationsBean extends XEOBaseBean {
 
 			HttpServletRequest request = (HttpServletRequest) getRequestContext().getRequest();
 			Map<?,?> parameters = request.getParameterMap();
-			insertRecords(ctx,(Map<String,String[]>)parameters);
+			insertRecords(ctx,(Map<String,String[]>)parameters,request);
 		} finally {
 			if (created){
 				if (ctx != null){
@@ -47,12 +48,13 @@ public class TimingOperationsBean extends XEOBaseBean {
 		}
 	}
 
-	private void insertRecords(EboContext ctx, Map<String,String[]> parameters){
+	private void insertRecords(EboContext ctx, Map<String,String[]> parameters, HttpServletRequest request){
 		
 		long userBoui = ctx.getBoSession().getPerformerBoui();
 		long profileBoui = ctx.getBoSession().getPerformerIProfileBoui();
 		JsTimmingLogger jsLogger = new JsTimmingLogger(ctx.getConnectionData(), LoggerConstants.JS_TIMMING_LOG_TABLE_NAME);
-		jsLogger.insertNewRecord(userBoui,profileBoui,parameters);
+		String hostname = request.getLocalName();
+		jsLogger.insertNewRecord(userBoui,profileBoui,parameters,hostname);
 		
 	}
 
@@ -62,8 +64,9 @@ public class TimingOperationsBean extends XEOBaseBean {
 		try {
 			if (!initialized){
 				connection = ctx.getConnectionData();
-				JsErrorLogger logger = new JsErrorLogger(connection, LoggerConstants.JS_ERROR_LOG_TABLE_NAME);
-				logger.init(LoggerConstants.getJSErrorsTableCreateScript());
+				JsErrorLogger logger = new JsErrorLogger(connection, LoggerConstants.JS_TIMMING_LOG_TABLE_NAME);
+				OracleDBM dbm = ctx.getBoSession().getRepository().getDriver().getDBM();
+				logger.init(LoggerConstants.getJSTimmingTableCreateScript(dbm.getDatabase()));
 				initialized = Boolean.TRUE;
 			}
 		} finally {

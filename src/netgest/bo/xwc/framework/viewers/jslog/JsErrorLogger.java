@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +31,11 @@ public class JsErrorLogger {
 		ResultSet result = connection.getMetaData().getTables(null, null, tableName , null);
 		try {
 			return result.next();
-		} finally {
+		} catch (SQLException e){
+			e.printStackTrace();
+			return false;
+		}
+		finally {
 			if (result != null){
 				result.close();
 			}
@@ -41,20 +44,23 @@ public class JsErrorLogger {
 	
 	
 	
-	public void init(String tableScript){
+	public boolean init(String tableScript){
 		Statement createTable = null;
 		try {
 			if (!isInitialized()){
 				createTable = connection.createStatement();
 				createTable.executeUpdate(tableScript);
 			}
+			return true;
 		} catch (SQLException e ){
 			e.printStackTrace();
 			logger.warn(e);
+			return false;
 		} finally {
 			closeStatement(createTable);
 		}
 	}
+	
 	
 	private void closeStatement(Statement st){
 		try {
@@ -68,7 +74,7 @@ public class JsErrorLogger {
 		}
 	}
 	
-	public void insertNewRecord(long userBoui, long profileBoui, Map<String,String[]> reqParameters){
+	public void insertNewRecord(long userBoui, long profileBoui, Map<String,String[]> reqParameters, String hostname){
 		
 		List<LogRecord> values = new ArrayList<LogRecord>(6);
 		String viewId = "";
@@ -96,6 +102,8 @@ public class JsErrorLogger {
 			lineNumberRaw = reqParameters.get("LINE")[0];
 		} 
 		
+		if (StringUtils.isEmpty(hostname))
+			hostname = "";
 		
 		Timestamp currentDate = new Timestamp(System.currentTimeMillis());
 		
@@ -119,6 +127,7 @@ public class JsErrorLogger {
 		values.add(new LogRecord("JS_ERROR_MESSAGE",jsErrorMessage));
 		values.add(new LogRecord("USER_AGENT",userAgent));
 		values.add(new LogRecord("LINE",lineNumber));
+		values.add(new LogRecord("HOST",hostname));
 		
 		StringBuilder s = new StringBuilder(200);
 		s.append("INSERT INTO ");

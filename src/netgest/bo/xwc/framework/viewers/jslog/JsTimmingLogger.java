@@ -15,10 +15,9 @@ import netgest.utils.StringUtils;
 
 public class JsTimmingLogger {
 	
+	static final int TEXT_COLUMN_SIZE = 250;
 	private Connection connection;
 	private String tableName = "";
-	
-	
 	
 	private static final Logger logger = Logger.getLogger(JsTimmingLogger.class);
 	
@@ -67,57 +66,104 @@ public class JsTimmingLogger {
 		}
 	}
 	
-	public void insertNewRecord(long userBoui, long profileBoui, Map<String,String[]> reqParameters){
+	public void insertNewRecord(long userBoui, long profileBoui, Map<String,String[]> reqParameters, String hostname){
+		
 		
 		List<LogRecord> values = new ArrayList<LogRecord>(6);
 		String viewId = "";
-		String jsErrorBlock = "";
-		String jsErrorMessage = "";
+		long navigationStart = -1;
+		long unloadEventStart = -1;
+		long unloadEventEnd = -1;
+		long redirectStart = -1;
+		long redirectEnd = -1;
+		long fetchStart = -1;
+		long domainLookupStart = -1;
+		long domainLookupEnd = -1;
+		long connectStart = -1;
+		long connectEnd = -1;
+		long secureConnectionStart = -1;
+		long requestStart = -1;
+		long responseStart = -1;
+		long responseEnd = -1;
+		long domLoading = -1;
+		long domInteractive = -1;
+		long domContentLoadedEventStart = -1;
+		long domContentLoadedEventEnd = -1;
+		long domComplete = -1;
+		long loadEventStart = -1;
+		long loadEventEnd = -1;
+		
 		String userAgent = "";
-		String lineNumberRaw = "";
 		
 		if (reqParameters.containsKey("VIEW_ID")){
-			viewId = getAndTruncateTo(reqParameters,"VIEW_ID",250);
+			viewId = getAndTruncateTo(reqParameters,"VIEW_ID",TEXT_COLUMN_SIZE);
 			if (!viewId.endsWith(".xvw")){
 				viewId = "";
 			}
 		}
-		if (reqParameters.containsKey("JS_ERROR_BLOCK")){
-			jsErrorBlock = reqParameters.get("JS_ERROR_BLOCK")[0];
-		} 
-		if (reqParameters.containsKey("JS_ERROR_MESSAGE")){
-			jsErrorMessage = reqParameters.get("JS_ERROR_MESSAGE")[0];
-		} 
-		if (reqParameters.containsKey("USER_AGENT")){
-			userAgent = getAndTruncateTo(reqParameters,"USER_AGENT",250);
-		} 
-		if (reqParameters.containsKey("LINE")){
-			lineNumberRaw = reqParameters.get("LINE")[0];
-		} 
 		
-		
-		Timestamp currentDate = new Timestamp(System.currentTimeMillis());
-		
-		long lineNumber = Long.valueOf(0);
-		if (StringUtils.hasValue(lineNumberRaw)){
-			try {
-				lineNumber = Long.valueOf(lineNumberRaw);
-			} catch (NumberFormatException e) {
-				lineNumber = -1;
-			}
+		if (StringUtils.isEmpty(hostname)){
+			hostname = "";
 		}
 		
-		if (StringUtils.isEmpty(viewId.toString()) || StringUtils.isEmpty(jsErrorMessage))
+		navigationStart = convertoToNumber(reqParameters.get("NAVIGATIONSTART"));
+		unloadEventStart = convertoToNumber(reqParameters.get("UNLOADEVENTSTART"));
+		unloadEventEnd = convertoToNumber(reqParameters.get("UNLOADEVENTEND"));
+		redirectStart = convertoToNumber(reqParameters.get("REDIRECTSTART"));
+		redirectEnd = convertoToNumber(reqParameters.get("REDIRECTEND"));
+		fetchStart = convertoToNumber(reqParameters.get("FETCHSTART"));
+		domainLookupStart = convertoToNumber(reqParameters.get("DOMAINLOOKUPSTART"));
+		domainLookupEnd = convertoToNumber(reqParameters.get("DOMAINLOOKUPEND"));
+		connectStart = convertoToNumber(reqParameters.get("CONNECTSTART"));
+		connectEnd = convertoToNumber(reqParameters.get("CONNECTEND"));
+		secureConnectionStart = convertoToNumber(reqParameters.get("SECURECONNECTIONSTART"));
+		requestStart = convertoToNumber(reqParameters.get("REQUESTSTART"));
+		responseStart = convertoToNumber(reqParameters.get("RESPONSESTART"));
+		responseEnd = convertoToNumber(reqParameters.get("RESPONSEEND"));
+		domLoading = convertoToNumber(reqParameters.get("DOMLOADING"));
+		domInteractive = convertoToNumber(reqParameters.get("DOMINTERACTIVE"));
+		domContentLoadedEventStart = convertoToNumber(reqParameters.get("DOMCONTENTLOADEDEVENTSTART"));
+		domContentLoadedEventEnd = convertoToNumber(reqParameters.get("DOMCONTENTLOADEDEVENTEND"));
+		domComplete = convertoToNumber(reqParameters.get("DOMCOMPLETE"));
+		loadEventStart = convertoToNumber(reqParameters.get("LOADEVENTSTART"));
+		loadEventEnd = convertoToNumber(reqParameters.get("LOADEVENTEND"));
+
+		if (reqParameters.containsKey("USER_AGENT")){
+			userAgent = getAndTruncateTo(reqParameters,"USER_AGENT",TEXT_COLUMN_SIZE);
+		} 
+		Timestamp currentDate = new Timestamp(System.currentTimeMillis());
+		
+		if (StringUtils.isEmpty(viewId.toString()))
 			return ;
 		
 		values.add(new LogRecord("USER_BOUI",userBoui));
 		values.add(new LogRecord("PROFILE_BOUI",profileBoui));
 		values.add(new LogRecord("VIEW_ID",viewId));
-		values.add(new LogRecord("DATE_EVENT",currentDate));
-		values.add(new LogRecord("JS_ERROR_BLOCK",jsErrorBlock));
-		values.add(new LogRecord("JS_ERROR_MESSAGE",jsErrorMessage));
 		values.add(new LogRecord("USER_AGENT",userAgent));
-		values.add(new LogRecord("LINE",lineNumber));
+		values.add(new LogRecord("DATE_EVENT",currentDate));
+		values.add(new LogRecord("NAVIGATIONSTART",navigationStart));
+		values.add(new LogRecord("UNLOADEVENTSTART",unloadEventStart));
+		values.add(new LogRecord("UNLOADEVENTEND",unloadEventEnd));
+		values.add(new LogRecord("REDIRECTSTART",redirectStart));
+		values.add(new LogRecord("REDIRECTEND",redirectEnd));
+		values.add(new LogRecord("FETCHSTART",fetchStart));
+		values.add(new LogRecord("DOMAINLOOKUPSTART",domainLookupStart));
+		values.add(new LogRecord("DOMAINLOOKUPEND",domainLookupEnd));
+		values.add(new LogRecord("CONNECTEND",connectEnd));
+		values.add(new LogRecord("CONNECTSTART",connectStart));
+		values.add(new LogRecord("SECURECONNECTIONSTART",secureConnectionStart));
+		values.add(new LogRecord("REQUESTSTART",requestStart));
+		values.add(new LogRecord("RESPONSESTART",responseStart));
+		values.add(new LogRecord("RESPONSEEND",responseEnd));
+		values.add(new LogRecord("DOMLOADING",domLoading));
+		values.add(new LogRecord("DOMINTERACTIVE",domInteractive));
+		values.add(new LogRecord("DOMCONTENTLOADEDEVENTSTART",domContentLoadedEventStart));
+		values.add(new LogRecord("DOMCONTENTLOADEDEVENTEND",domContentLoadedEventEnd));
+		values.add(new LogRecord("DOMCOMPLETE",domComplete));
+		values.add(new LogRecord("LOADEVENTSTART",loadEventStart));
+		values.add(new LogRecord("LOADEVENTEND",loadEventEnd));
+		values.add(new LogRecord("HOST",hostname));
+		
 		
 		StringBuilder s = new StringBuilder(200);
 		s.append("INSERT INTO ");
@@ -157,6 +203,16 @@ public class JsTimmingLogger {
 		}
 		
 		
+	}
+	
+	private long convertoToNumber(String[] number){
+		if (number == null)
+			return -1;
+		try {
+			return Long.valueOf(number[0]);
+		} catch (NumberFormatException e) {
+			return -1;
+		}
 	}
 
 	private String getAndTruncateTo(Map<String, String[]> reqParameters, String name, int max) {
