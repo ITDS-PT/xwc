@@ -14,6 +14,7 @@ import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 /*
  * This component renders a combobox base on a Map
@@ -120,7 +121,7 @@ public class AttributeLov extends AttributeBase {
     		ExtConfigArray fields = valuesConfig.addChildArray( "fields");
     		fields.addString( "i" );
     		fields.addString( "d" );
-    		valuesConfig.add( "data", getLovStoreData( lov.getLovMap() ) );
+    		valuesConfig.add( "data", getLovStoreData( lov ) );
     		valuesStore.w( valuesConfig.renderExtConfig() );
     		valuesStore.w( ")" );
     		
@@ -140,7 +141,7 @@ public class AttributeLov extends AttributeBase {
         		s.startBlock();
         		writeExtContextVar(s, oComp);
 	    		s.l( "c.getStore().loadData(" );
-	    		s.l( getLovStoreData( oComp.getLovMap() ) );
+	    		s.l( getLovStoreData( (AttributeLov)oComp ) );
 	    		s.l( ");" );
 	    		s.w( "c.setValue('" ).writeValue( jsValue ).l("');");
 	    		s.endBlock();
@@ -149,24 +150,37 @@ public class AttributeLov extends AttributeBase {
     		return s;
     	}
     	
-    	public ScriptBuilder getLovStoreData( Map<Object,String> lovMap ) {
+    	public ScriptBuilder getLovStoreData( AttributeLov lov ) {
+    		
     		ScriptBuilder s = new ScriptBuilder();
     		boolean first = true;
     		s.w("[");
-    		if( lovMap != null ) {
-	    		for( Entry<Object,String> entry : lovMap.entrySet() ) {
-	    			if( !first ) {
-	    				s.w(",");
-	    			}
-	    			String sdValue = entry.getValue();
-	    			if( sdValue == null || sdValue.length() == 0 ) {
-	    				sdValue = "";
-	    			}
-	    			
-	    			s.w("['").writeValue( entry.getKey() ).w("','").writeValue( sdValue ).w("']");
-	    			first = false;
-	    		}
+    		
+    		if (lov.isDisabled() || lov.isReadOnly()){
+    			String display = lov.getDisplayValue();
+    			Object value = lov.getValue();
+    			if (value == null){
+    				s.w("['").writeValue( "" ).w("','").writeValue( "" ).w("']");
+    			} else
+    				s.w("['").writeValue( value ).w("','").writeValue( display ).w("']");
+    		} else {
+    			Map<Object,String> lovMap = lov.getLovMap();
+    			if( lovMap != null ) {
+    				for( Entry<Object,String> entry : lovMap.entrySet() ) {
+    					if( !first ) {
+    						s.w(",");
+    					}
+    					String sdValue = entry.getValue();
+    					if( sdValue == null || sdValue.length() == 0 ) {
+    						sdValue = "";
+    					}
+    					
+    					s.w("['").writeValue( entry.getKey() ).w("','").writeValue( sdValue ).w("']");
+    					first = false;
+    				}
+    			}
     		}
+    		
     		s.w("]");
     		return s;
     	}
@@ -180,7 +194,7 @@ public class AttributeLov extends AttributeBase {
             Form                oForm;
             
             sFormId = oAtt.getNamingContainerId();
-            oForm   = (Form)oAtt.findComponent( sFormId );
+            oForm   = (Form)oAtt.findParent(XUIForm.class);
             if( oForm.haveDependents( oAtt.getObjectAttribute() ) || oAtt.isOnChangeSubmit()  ) {
             	listeners = new ExtConfig();
             	listeners.add( "'select'" , 

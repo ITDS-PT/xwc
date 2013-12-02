@@ -42,6 +42,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
 import netgest.bo.xwc.xeo.beans.FileBrowseBean;
@@ -195,11 +196,9 @@ public class AttributeWordMacro extends AttributeBase {
             AttributeWordMacro  oAttr;
             String              sJsValue;
             StringBuilder    	sOut;
-            String              sFormId;
             Form                oForm;
             
-            sFormId = oComp.getNamingContainerId();
-            oForm   = (Form)oComp.findComponent( sFormId );
+            oForm   = (Form)oComp.findParent(Form.class);
 
             sOut = new StringBuilder( 250 );
 

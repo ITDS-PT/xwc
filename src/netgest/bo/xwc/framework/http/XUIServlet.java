@@ -5,6 +5,7 @@ import netgest.bo.system.boApplication;
 import netgest.bo.system.boSession;
 import netgest.bo.system.locale.Localization;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
+import netgest.bo.xwc.framework.XUIErrorLogger;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 import netgest.bo.xwc.framework.localization.XUICoreMessages;
@@ -118,6 +119,8 @@ public class XUIServlet extends HttpServlet
         if( !bIsInitialized ) 
             initializeXeo();
         
+        
+        
         HttpSession oHttpSession = oRequest.getSession();
         boSession	oXEOSession = null;
         if( oHttpSession != null ) {
@@ -150,6 +153,9 @@ public class XUIServlet extends HttpServlet
     	}
     	
         try {
+        	
+        	
+        	
     		oResponse.setHeader("Pragma", "No-Cache");
     		oResponse.setHeader("cache-control", "max-age=0");
             if( oRequest.getContentType() != null && oRequest.getContentType().startsWith( "text/xml" )  )
@@ -166,10 +172,18 @@ public class XUIServlet extends HttpServlet
             }
         }
         catch( RuntimeException e ) {
+        	XUIErrorLogger logger = XUIErrorLogger.getLogger();
+        	XUIRequestContext reqCtx = XUIRequestContext.getCurrentContext();
+        	reqCtx.setDebugAjaxRequest(isAjax);
+        	logger.logViewError(oEboContext, reqCtx.getDebugInfo(), "", e);
         	throw e;
         }
         catch( ServletException e ) {
-        	
+        	XUIErrorLogger xuiLogger = XUIErrorLogger.getLogger();
+        	XUIRequestContext reqCtx = XUIRequestContext.getCurrentContext();
+        	reqCtx.setDebugAjaxRequest(isAjax);
+        	xuiLogger.logViewError(oEboContext, reqCtx.getDebugInfo(), "", e);
+        	//Log Error
         	if( e.getRootCause() != null )
         		logger.error( "", e.getRootCause() );
         	else

@@ -517,9 +517,9 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		rootMenu = null;
 
 		boObject 		targetObject = getTargetObject();
-		bridgeHandler 	targetBridge = targetObject.getBridge( getBridgeName() );
+		boDefAttribute bridgeMetadata = targetObject.getBoDefinition().getAttributeRef(getBridgeName());
 		
-		if( targetBridge.getDefAttribute().getChildIsOrphan() ) {
+		if( bridgeMetadata.getChildIsOrphan() ) {
 			
 			List<boDefHandler> subClassesDef = getObjectsForNewMenu();
 			
@@ -585,7 +585,8 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		boDefHandler subClasseDef;
 		
 		boObject 		targetObject = getTargetObject();
-		bridgeHandler 	targetBridge = targetObject.getBridge( getBridgeName() );
+		boDefAttribute bridgeMetadata = targetObject.getBoDefinition().getAttributeRef(getBridgeName());
+		//bridgeHandler 	targetBridge = targetObject.getBridge( getBridgeName() );
 		
 		
 		
@@ -599,7 +600,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 			rootMenu.setValue( subClasseDef.getName() );
 			rootMenu.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 			
-			if ( targetBridge.getDefAttribute().getChildIsOrphan( subClasseDef.getName() ) )
+			if ( bridgeMetadata.getChildIsOrphan( subClasseDef.getName() ) )
 			{
 				rootMenu.setId( getId() + "_add_" + subClasseDef.getName() );
 				rootMenu.setTargetMethod( "lookupBridge" );
@@ -657,8 +658,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 		}
 		
 		//Generate tooltip for minimum and maximum
-		boDefAttribute	defAttribute = targetBridge.getDefAttribute();
-		rootMenu.setToolTip(getTooltipForAddButton(rootMenu.getToolTip(),defAttribute));
+		rootMenu.setToolTip(getTooltipForAddButton(rootMenu.getToolTip(),bridgeMetadata));
 		
 		return rootMenu;
 		
@@ -695,11 +695,13 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 	
 	private List<boDefHandler> getObjectsForAddMenu() {
 		boObject 		targetObject = getTargetObject();
-		bridgeHandler 	targetBridge = targetObject.getBridge( getBridgeName() );
+		boDefAttribute bridgeMetadata = targetObject.getBoDefinition().getAttributeRef(getBridgeName());
 		
-		assert targetBridge != null : targetObject.getName() + " does not have a bridge with name " + getBridgeName();
+		//bridgeHandler 	targetBridge = targetObject.getBridge( getBridgeName() );
 		
-		boDefAttribute	defAttribute = targetBridge.getDefAttribute(); 
+		assert bridgeMetadata != null : targetObject.getName() + " does not have a bridge with name " + getBridgeName();
+		
+		boDefAttribute	defAttribute = targetObject.getBoDefinition().getAttributeRef(getBridgeName());
 		boDefHandler refDef = defAttribute.getReferencedObjectDef();
 
 		List<boDefHandler> subClassesDef = new ArrayList<boDefHandler>(1);
@@ -721,9 +723,8 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 
 	private List<boDefHandler> getObjectsForNewMenu() {
 		boObject 		targetObject = getTargetObject();
-		bridgeHandler 	targetBridge = targetObject.getBridge( getBridgeName() );
 		
-		boDefAttribute	defAttribute = targetBridge.getDefAttribute(); 
+		boDefAttribute	defAttribute = targetObject.getBoDefinition().getAttributeRef(getBridgeName());
 		boDefHandler refDef = defAttribute.getReferencedObjectDef();
 
 		List<boDefHandler> subClassesDef = new ArrayList<boDefHandler>(1);

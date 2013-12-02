@@ -735,6 +735,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 		
 	}
 	
+    private boolean preRender = false;
 	/**
 	 * Process a preRender Actions
 	 */
@@ -743,6 +744,90 @@ public class GridPanel extends ViewerInputSecurityBase {
 		
 		//Reload the DataSource
 		hasDataSourceBeenEvaluated = false;
+		long init = System.currentTimeMillis();
+				
+//		List<UIComponent> children = getChildren();
+//		Map<String,UIComponent> map = new HashMap<String, UIComponent>();
+//		for (Iterator<UIComponent> it = children.iterator() ; it.hasNext() ;){
+//			UIComponent c = it.next();
+//			map.put(c.getId(),c);
+//		}
+//		
+//		if (!map.containsKey(getId() + "_rowDblClick")){
+//			XUICommand rowDoubleClickCmd = new XUICommand();
+//			rowDoubleClickCmd.setId(getId() + "_rowDblClick");
+//			this.getChildren().add(rowDoubleClickCmd);
+//			rowDoubleClickCmd.setActionExpression( this.onRowDoubleClick.getValue() );
+//		}
+//			
+//		if (!map.containsKey(getId() + "_rowClick")){	
+//			XUICommand rowClickCmd = new XUICommand();
+//			rowClickCmd.setId(getId() + "_rowClick");
+//			this.getChildren().add(rowClickCmd);
+//			rowClickCmd.setActionExpression( this.onRowClick.getValue() );
+//		}
+//		
+//		if (!map.containsKey(getId() + "_selChange")){	
+//			XUICommand selChangeCmd = new XUICommand();
+//			selChangeCmd.setId(getId() + "_selChange");
+//			this.getChildren().add(selChangeCmd);
+//			selChangeCmd.setActionExpression( this.onSelectionChange.getValue() );
+//		}
+//		
+//		if (!map.containsKey(getId() + "_lookupCommand")){	
+//			if (filterLookupCommand == null){
+//				filterLookupCommand = new XUICommand();
+//				filterLookupCommand.setId(getId() + "_lookupCommand");
+//				filterLookupCommand.addActionListener(new FilterLookupListener());
+//				getChildren().add(filterLookupCommand);
+//			}
+//		} else {
+//			filterLookupCommand = (XUICommand) map.get(getId() + "_lookupCommand");
+//		}
+//		
+//		if (!map.containsKey(getId() + "_selectColumnsCommand")){	
+//			selectColumnsCommand = new XUICommand();
+//			selectColumnsCommand.setId(getId() + "_selectColumnsCommand");
+//			selectColumnsCommand.addActionListener(new SelectColumnsListener());
+//			getChildren().add(selectColumnsCommand);
+//		} else {
+//			selectColumnsCommand = (XUICommand) map.get(getId() + "_selectColumnsCommand");
+//		}	 
+//		
+//		if (!map.containsKey(getId() + "_resetDefaultsCommand")){	
+//			resetDefaultsCommand = new XUICommand();
+//			resetDefaultsCommand.setId(getId() + "_resetDefaultsCommand");
+//			resetDefaultsCommand.addActionListener(new ResetDefaultsListener());
+//			getChildren().add(resetDefaultsCommand);
+//		} else {
+//			resetDefaultsCommand = (XUICommand) map.get(getId() + "_resetDefaultsCommand");
+//		}	
+//		
+//		if (!map.containsKey(getId() + "_lookupInput")){	
+//			filterLookupInput = new XUIInput();
+//			filterLookupInput.setId(getId() + "_lookupInput");
+//			getChildren().add(filterLookupInput);
+//		}else {
+//			filterLookupInput = (XUIInput) map.get(getId() + "_lookupInput");
+//		}	
+//		
+//		if (!map.containsKey(getId() + "_selectDatesFilter")){		
+//			selectDatesFilterCommand = new XUICommand();
+//			selectDatesFilterCommand.setId(getId() + "_selectDatesFilter");
+//			selectDatesFilterCommand.addActionListener( new SelectDatesActionListener() );
+//			getChildren().add( selectDatesFilterCommand );
+//		}else {
+//			selectDatesFilterCommand = (XUICommand) map.get(getId() + "_selectDatesFilter");
+//		}
+//			
+//		
+//		String viewerSecurityId = getInstanceId();
+//		if (viewerSecurityId != null) {
+//			setViewerSecurityPermissions("#{"+getBeanId()+".viewerPermissions."
+//					+ viewerSecurityId + "}");
+//		}
+		
+		//*****************************************************
 		
 		if( this.onRowDoubleClick.getValue() != null ) {
 			XUICommand oRowDblClickComp = (XUICommand) this.findComponent(getId()
@@ -838,6 +923,10 @@ public class GridPanel extends ViewerInputSecurityBase {
 			setViewerSecurityPermissions("#{"+getBeanId()+".viewerPermissions."
 					+ viewerSecurityId + "}");
 		}
+		
+		long end = System.currentTimeMillis() - init;
+		//System.out.println("Grid PreRender took " + end + " ms");
+		
 	}
 
 	public static class FilterLookupListener implements ActionListener {

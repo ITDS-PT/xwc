@@ -262,8 +262,12 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
 			return label;
 		}
 
+		public Map<Object, String> getLovMapWithLimit(int maxRecords) {
+			return Collections.emptyMap();
+		}
+		
 		public Map<Object, String> getLovMap() {
-			return null;
+			return Collections.emptyMap();
 		}
 
 		public int getMaxLength() {
