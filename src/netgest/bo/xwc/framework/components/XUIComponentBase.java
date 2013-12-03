@@ -292,7 +292,7 @@ public abstract class XUIComponentBase extends UIComponentBase
 	
     @Override
 	public UIComponent findComponent(String expr) {
-    	UIComponent oComp= null;//super.findComponent(expr);
+    	UIComponent oComp= super.findComponent(expr);
 		
 		if (oComp == null){
 			UIComponent result = null;
