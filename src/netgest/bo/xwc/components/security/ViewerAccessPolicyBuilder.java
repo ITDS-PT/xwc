@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.faces.component.UIComponent;
@@ -150,6 +152,26 @@ public class ViewerAccessPolicyBuilder {
 			processComponent( viewerName, context, component, null, buildObjects );
 		}
 	}
+	
+	private static ConcurrentMap<String, String> secureViewers = createSecureViewersMap();
+	
+	private static ConcurrentMap<String, String> createSecureViewersMap(){
+		ConcurrentMap<String, String> viewersMap = new ConcurrentHashMap<String, String>();
+		List<String> viewers = new ArrayList<String>();
+		try {
+			viewers = getRegisteredViewers();
+		} catch (boRuntimeException e) {
+			e.printStackTrace();
+		}
+		for (String viewer : viewers){
+			viewersMap.putIfAbsent(viewer, viewer);
+		}
+		return viewersMap;
+	}
+	
+	public static boolean isViewerRegistered(String id){
+		return secureViewers.containsKey(id);
+	}
 
 	/**
 	 * Returns a list of application-specific viewers that support security policies 
@@ -172,7 +194,9 @@ public class ViewerAccessPolicyBuilder {
 		
 		try {
 			while( (line=bufferedReader.readLine())!=null ) {
-				registedViewers.add(line.trim());
+				String viewer = line.trim();
+				registedViewers.add(viewer);
+				secureViewers.putIfAbsent(viewer,viewer);
 			}
 		} catch (IOException e) {
 			throw new boRuntimeException("","",e);
