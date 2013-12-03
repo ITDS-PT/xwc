@@ -867,27 +867,28 @@ window.onerror = function(errorMessage, url, line) {
  * Associate the load event with the function to register performance timing
  * make it with a small delay after the load event
  * */
-(function(window){
-	
-	//Firefox, Chrome, IE9+
-	if (window.addEventListener){
-		if (window.performance){
-			window.addEventListener('load', function (){
-				window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
-				}, false);
-		}
-	} else {
-		//IE 7,8 or IE in compability mode
-		if (window.attachEvent){
-			window.attachEvent('onload', function (){
-				window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
-				}, false);
-		}
-	}
-	
-	
-	
-})(window);
+//Temporarilly Disabled
+//(function(window){
+//	
+//	//Firefox, Chrome, IE9+
+//	if (window.addEventListener){
+//		if (window.performance){
+//			window.addEventListener('load', function (){
+//				window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
+//				}, false);
+//		}
+//	} else {
+//		//IE 7,8 or IE in compability mode
+//		if (window.attachEvent){
+//			window.attachEvent('onload', function (){
+//				window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
+//				}, false);
+//		}
+//	}
+//	
+//	
+//	
+//})(window);
 
 XVW.beforeApplyHtml = function( oDNode ) {};
 
