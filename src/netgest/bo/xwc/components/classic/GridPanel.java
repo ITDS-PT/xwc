@@ -735,6 +735,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 		
 	}
 	
+    private boolean preRender = false;
 	/**
 	 * Process a preRender Actions
 	 */

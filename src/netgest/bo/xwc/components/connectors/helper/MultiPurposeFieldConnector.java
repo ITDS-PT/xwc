@@ -1,5 +1,6 @@
 package netgest.bo.xwc.components.connectors.helper;
 
+import java.util.Collections;
 import java.util.Map;
 
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
@@ -40,7 +41,11 @@ public class MultiPurposeFieldConnector implements DataFieldConnector {
 	}
 
 	public Map<Object, String> getLovMap() {
-		return null;
+		return Collections.emptyMap();
+	}
+	
+	public Map<Object, String> getLovMapWithLimit(int maxRecords) {
+		return Collections.emptyMap();
 	}
 
 	public int getMaxLength() {

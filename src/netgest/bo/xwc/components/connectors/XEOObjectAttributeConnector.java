@@ -9,6 +9,7 @@ import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.runtime.boObjectUtils;
 import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.security.securityOPL;
@@ -163,18 +164,37 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 				Map<Object,String> 	lovMap;
 				
 				value  = getValue();
-				lovMap = getLovMap();
 				
-				if( value != null && lovMap.size() > 0 )
-				{
-					if( !(value instanceof String) ) {
-						value = String.valueOf( value );
+				String lovDisplayValue = "";
+				boDefAttribute metadata = oAttHandler.getDefAttribute();
+				if (boDefAttribute.ATTRIBUTE_OBJECT.equals(metadata.getAtributeDeclaredType())){
+					lovDisplayValue = oAttHandler.getObject().getTextCARDID().toString();
+				} else if (StringUtils.hasValue(metadata.getLOVName())){
+					if (StringUtils.isEmpty(metadata.getLOVSql())){
+						lovDisplayValue = boObjectUtils.getLovDescription(oAttHandler.getEboContext(), metadata.getLOVName(), String.valueOf(value));
 					}
-					if( lovMap.containsKey( value ) ) {
-						return lovMap.get( value );
+				} 
+				
+				if (StringUtils.isEmpty(lovDisplayValue)){
+					lovMap = getLovMap();
+					Object displayValueRaw = lovMap.get(value);
+					if( !(displayValueRaw instanceof String) ) {
+						lovDisplayValue = String.valueOf( value );
 					}
-					sRetValue = String.valueOf( value ); 
 				}
+				
+				sRetValue = lovDisplayValue;
+				
+//				if( value != null && lovMap.size() > 0 )
+//				{
+//					if( !(value instanceof String) ) {
+//						value = String.valueOf( value );
+//					}
+//					if( lovMap.containsKey( value ) ) {
+//						return lovMap.get( value );
+//					}
+//					sRetValue = String.valueOf( value ); 
+//				}
 			} else if ( getDataType() == DataFieldTypes.VALUE_DATE || getDataType() == DataFieldTypes.VALUE_DATETIME ) {
 				Date oDate = oAttHandler.getValueDate();
 				if( oDate != null ) {
@@ -424,11 +444,14 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
     public boolean getNumberGrouping() {
         return "Y".equalsIgnoreCase( oAttHandler.getDefAttribute().getGrouping() );
     }
-
+    
     public Map<Object,String> getLovMap() {
+    	return getLovMapWithLimit(500);
+    }
+
+    public Map<Object,String> getLovMapWithLimit(int maxRecords) {
         String           sLovName;
         sLovName = oAttHandler.getDefAttribute().getLOVName();
-
         Map<Object, String> lovMap = new LinkedHashMap<Object, String>();
 
         if( sLovName == null || sLovName.length() == 0 ) {
@@ -474,7 +497,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 	                    boObjectList.list(oAttHandler.getEboContext(), 
 	                                      //"select " + oAttHandler.getDefAttribute().getReferencedObjectDef().getName()
 	                    				  sql
-	                                      ,1,500
+	                                      ,1,maxRecords
 	                                     );
 	                
 	                

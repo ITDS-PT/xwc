@@ -196,4 +196,8 @@ public class XUIApplicationContext {
     	return oXUIConfig;
     }
     
+    public static final long getAndIncrementRequestId(){
+    	return boApplication.incrementRequestId();
+    }
+    
 }

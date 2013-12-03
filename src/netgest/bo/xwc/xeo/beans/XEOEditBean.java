@@ -109,7 +109,7 @@ import org.w3c.dom.NodeList;
 
 /**
  */
-public class XEOEditBean extends XEOBaseBean 
+public class XEOEditBean extends XEOBaseBean
 {
 	
 	
@@ -2893,5 +2893,10 @@ public class XEOEditBean extends XEOBaseBean
     	}
 		return result.toString();
 		
+    }
+    
+    @Override
+    public void addDebugInfo(List<String> debug) {
+    	debug.add(this.getClass().getName() + " BOUI: " + oCurrentObjectKey);
     }
 }

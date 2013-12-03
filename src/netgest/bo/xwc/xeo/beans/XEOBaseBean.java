@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.faces.component.UIComponent;
@@ -46,6 +47,7 @@ import netgest.bo.xwc.framework.XUIViewBean;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.errorLogging.DebugInfo;
 import netgest.bo.xwc.xeo.beans.XEOViewerResolver.ViewerType;
 import netgest.utils.StringUtils;
 
@@ -53,7 +55,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUIViewBean {
+public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUIViewBean, DebugInfo {
 
 	protected String sViewStateId;
     private String sParentBeanId;
@@ -640,6 +642,10 @@ public class XEOBaseBean extends XEOSecurityBaseBean implements boPoolOwner, XUI
         oRequestContext.setViewRoot( oViewRoot );
         
     }
+
+	@Override
+	public void addDebugInfo(List<String> debug) {
+	}
 	
 }
 

@@ -1,5 +1,6 @@
 package netgest.bo.xwc.components.connectors;
 
+import java.util.Collections;
 import java.util.Map;
 
 import netgest.bo.xwc.components.security.SecurityPermissions;
@@ -84,8 +85,12 @@ public class XEOObjectListAttributeAggregate implements DataFieldConnector {
 		return null;
 	}
 
+	public Map<Object, String> getLovMapWithLimit(int maxRecords) {
+		return Collections.emptyMap();
+	}
+	
 	public Map<Object, String> getLovMap() {
-		return null;
+		return Collections.emptyMap();
 	}
 
 	public int getMaxLength() {

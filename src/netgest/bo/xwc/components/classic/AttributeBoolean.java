@@ -6,6 +6,7 @@ import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIForm;
 /**
  * This component renders a checkbox to represent a boolean value
  * 
@@ -71,7 +72,7 @@ public class AttributeBoolean extends AttributeBase {
             Form                oForm;
             
             sFormId = oComp.getNamingContainerId();
-            oForm   = (Form)oComp.findComponent( sFormId );
+            oForm   = (Form)oComp.findParent( Form.class );
             oAttrBoolean = (AttributeBoolean)oComp; 
 
             if( oAttrBoolean.getUseBooleanValues() )

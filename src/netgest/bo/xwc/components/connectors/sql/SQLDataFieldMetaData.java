@@ -1,5 +1,6 @@
 package netgest.bo.xwc.components.connectors.sql;
 
+import java.util.Collections;
 import java.util.Map;
 
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
@@ -44,13 +45,11 @@ public class SQLDataFieldMetaData implements DataFieldMetaData {
 
 	@Override
 	public int getMinDecimals() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public double getNumberMaxValue() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -79,14 +78,17 @@ public class SQLDataFieldMetaData implements DataFieldMetaData {
 
 	@Override
 	public byte getSecurityPermissions() {
-		// TODO Auto-generated method stub
 		return 0;
+	}
+	
+	@Override
+	public Map<Object, String> getLovMap() {
+		return Collections.emptyMap();
 	}
 
 	@Override
-	public Map<Object, String> getLovMap() {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<Object, String> getLovMapWithLimit(int maxRecords) {
+		return Collections.emptyMap();
 	}
 
 	public String getName() {
@@ -99,7 +101,7 @@ public class SQLDataFieldMetaData implements DataFieldMetaData {
 
 	@Override
 	public String getToolTip() {
-		return null;
+		return "";
 	}
 	
 
