@@ -196,7 +196,6 @@ public class ViewerAccessPolicyBuilder {
 			while( (line=bufferedReader.readLine())!=null ) {
 				String viewer = line.trim();
 				registedViewers.add(viewer);
-				secureViewers.putIfAbsent(viewer,viewer);
 			}
 		} catch (IOException e) {
 			throw new boRuntimeException("","",e);
