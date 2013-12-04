@@ -5,10 +5,40 @@ import netgest.bo.xwc.framework.XUIErrorLogger;
 
 public class LoggerConstants {
 	
-	static String JS_ERROR_LOG_TABLE_NAME = "XEO_JS_ERROR_LOGS";
+	/**
+	 * Name of the table where javascript error logs are stored
+	 */
+	static final String JS_ERROR_LOG_TABLE_NAME = "XEO_JS_ERROR_LOGS";
 	
-	static String JS_TIMMING_LOG_TABLE_NAME = "XEO_JS_TIMMING_LOGS";
+	/**
+	 * Name of the table where load times are logged (uses HTML5 Timing API from the browser)
+	 */
+	static final String JS_TIMMING_LOG_TABLE_NAME = "XEO_JS_TIMMING_LOGS";
 	
+	/**
+	 * Name of the property in boConfig which has the alternative datasource to use 
+	 * when logging timings / javascript errors and application errors
+	 */
+	public static final String LOGGING_ALTERNATIVE_DATASOURCE_PROPERTY = "AlternativeDataSource";
+	
+	/**
+	 * Name of the property which controls whether the javascript error log is active or not (values true/false)
+	 */
+	static final String JS_ERROR_LOG_ACTIVE_PROPERTY = "JavascriptErrorLogsActive";
+	
+	/**
+	 * Name of the property which controls whether the browser load time log is active or not (values true/false)
+	 */
+	static final String JS_TIMMING_LOG_ACTIVE_PROPERTY = "LoadTimeLogsActive";
+	
+	/**
+	 * 
+	 * Given a database returns the SQL Script  necessary to create the table to keep javascript error logs
+	 * 
+	 * @param db The current database
+	 * 
+	 * @return The SQL Script to create the table
+	 */
 	static String getJSErrorsTableCreateScript(Database db){
 		switch (db){
 			case ORACLE : 
@@ -94,6 +124,14 @@ public class LoggerConstants {
 		}
 	}
 	
+	/**
+	 * 
+	 * Given a database returns the SQL Script  necessary to create the table to keep load time logs
+	 * 
+	 * @param db The current database
+	 * 
+	 * @return The SQL Script to create the table
+	 */
 	static String getJSTimmingTableCreateScript(Database db){
 		switch (db){
 		case ORACLE : 
@@ -171,6 +209,12 @@ public class LoggerConstants {
 		}
 	}
 	
+	 /** 
+	 * Given a database returns the SQL Script  necessary to create the table to keep application logic errors
+	 * @param db The current database
+	 * 
+	 * @return The SQL Script to create the table
+	 */
 	public static String getDebugInfoTableCreateScript(Database db){
 		switch (db) {
 		case ORACLE : 

@@ -9,15 +9,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.sql.DataSource;
 
 import netgest.bo.data.oracle.OracleDBM.Database;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.Logger;
 import netgest.bo.system.boApplication;
+import netgest.bo.system.boApplicationConfig;
 import netgest.bo.system.boSession;
 import netgest.bo.xwc.framework.viewers.jslog.LogRecord;
 import netgest.bo.xwc.framework.viewers.jslog.LoggerConstants;
@@ -26,10 +29,25 @@ import netgest.utils.StringUtils;
 public class XUIErrorLogger {
 	
 	private static final Logger logger = Logger.getLogger(XUIErrorLogger.class);
+	private String dataSource = null;
+	
 	public static final XUIErrorLogger getLogger(){
-		return new XUIErrorLogger();
+			boApplicationConfig boconfig = boApplication.getXEO().getApplicationConfig();
+			String alternative = boconfig.getProperty(LoggerConstants.LOGGING_ALTERNATIVE_DATASOURCE_PROPERTY);
+			if (StringUtils.hasValue(alternative)){
+				return new XUIErrorLogger(alternative);
+			}else{
+				return new XUIErrorLogger();
+			}
 	}
 	
+	private XUIErrorLogger(String dataSource){
+		this.dataSource = dataSource;
+	}
+	
+	private XUIErrorLogger(){
+		this.dataSource = null;
+	}
 	
 	/**
 	 * 
@@ -43,12 +61,46 @@ public class XUIErrorLogger {
 	public void addDebugInfo(String customContext){
 		EboContext ctx = boApplication.currentContext().getEboContext();
 		XUIRequestContext request = XUIRequestContext.getCurrentContext();
-		if (ctx != null && request != null)
-			logViewError(ctx, request.getDebugInfo(), customContext, null);
+		if (ctx != null && request != null){
+			Connection con = getConnection(ctx);
+			logViewError(ctx, request.getDebugInfo(), customContext, null, con);
+		}
 	}
 	
+	/**
+	 * 
+	 * See {@link #addDebugInfo(String)} but this one uses a specific {@link EboContext} and
+	 * {@link XUIRequestContext}
+	 * 
+	 * @param ctx
+	 * @param request
+	 * @param customContext
+	 */
 	public void addDebugInfo(EboContext ctx, XUIRequestContext request, String customContext){
-		logViewError(ctx, request.getDebugInfo(), customContext, null);
+		Connection con = getConnection(ctx);
+		logViewError(ctx, request.getDebugInfo(), customContext,null,  con);
+	}
+	
+	private Connection getConnection(EboContext ctx){
+		if (StringUtils.isEmpty(dataSource)){
+			return ctx.getConnectionData();
+		} else {
+			try {
+				InitialContext ic = new InitialContext();
+				DataSource databaseSource = (DataSource) ic.lookup(dataSource);
+				return databaseSource.getConnection();
+			} catch (NamingException e) {
+				logger.warn("Could not find JNDI name %s" , dataSource, e);
+			} catch (SQLException e) {
+				logger.warn("Could not get new connection from JNDI name %s" , dataSource, e);
+			}
+		}
+		return null;
+	}
+	
+	public void logViewError(EboContext ctx, XUIRequestContextDebugInfo debug, String customContext, Exception e){
+		Connection conn = getConnection(ctx);
+		logViewError(ctx, debug, customContext, e, conn);
 	}
 	
 	/**
@@ -62,7 +114,7 @@ public class XUIErrorLogger {
 	 * @param customContext
 	 * @param e
 	 */
-	public void logViewError(EboContext ctx, XUIRequestContextDebugInfo debug, String customContext, Exception e){
+	public void logViewError(EboContext ctx, XUIRequestContextDebugInfo debug, String customContext, Exception e, Connection connection){
 		
 		long requestId = debug.getRequestId();
 		long userBoui = -1;
@@ -94,8 +146,12 @@ public class XUIErrorLogger {
 			customContext = "";
 		
 		try {
+			if (connection == null){
+				connection = ctx.getConnectionData();
+			}
+			
 			Database db = ctx.getBoSession().getRepository().getDriver().getDBM().getDatabase();
-			insertRecord(ctx.getConnectionData()
+			insertRecord(connection
 					, db
 					, userBoui
 					, profileBoui
@@ -109,6 +165,14 @@ public class XUIErrorLogger {
 					, s.toString());
 		} catch (SQLException e1) {
 			logger.warn("Could not insert new record into debug table", e1);
+		} finally {
+			if (connection != null){
+				try {
+					connection.close();
+				} catch (SQLException e1) {
+					logger.warn("Closing connection",e1);
+				}
+			}
 		}
 		
 	}

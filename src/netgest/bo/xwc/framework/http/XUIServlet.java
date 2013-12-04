@@ -1,18 +1,5 @@
 package netgest.bo.xwc.framework.http;
 
-import netgest.bo.runtime.EboContext;
-import netgest.bo.system.boApplication;
-import netgest.bo.system.boSession;
-import netgest.bo.system.locale.Localization;
-import netgest.bo.xwc.components.util.JavaScriptUtils;
-import netgest.bo.xwc.framework.XUIErrorLogger;
-import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.jsf.XUIViewHandler;
-import netgest.bo.xwc.framework.localization.XUICoreMessages;
-import netgest.bo.xwc.framework.localization.XUILocalization;
-
-import netgest.utils.StringUtils;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
@@ -27,6 +14,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import netgest.bo.runtime.EboContext;
+import netgest.bo.system.boApplication;
+import netgest.bo.system.boSession;
+import netgest.bo.system.locale.Localization;
+import netgest.bo.xwc.components.util.JavaScriptUtils;
+import netgest.bo.xwc.framework.XUIErrorLogger;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.jsf.XUIViewHandler;
+import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.bo.xwc.framework.localization.XUILocalization;
+import netgest.utils.StringUtils;
 
 import org.apache.log4j.Logger;
 
@@ -176,6 +175,7 @@ public class XUIServlet extends HttpServlet
         	XUIRequestContext reqCtx = XUIRequestContext.getCurrentContext();
         	reqCtx.setDebugAjaxRequest(isAjax);
         	logger.logViewError(oEboContext, reqCtx.getDebugInfo(), "", e);
+   
         	throw e;
         }
         catch( ServletException e ) {
