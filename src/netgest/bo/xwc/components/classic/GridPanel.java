@@ -1976,6 +1976,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 		setCurrentSortTerms( defaults.get("currentSortTerms") );
 		setCurrentColumnsConfig( defaults.get("currentColumnsConfig") );
 		setCurrentFilters( null );
+		setAdvancedFilters( null );
 		setAggregateData(null);
 		setAggregateFieldsFromString(getAggregateData());
 		resetRecordCount();
