@@ -178,15 +178,23 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
     oXmlReq.setRequestHeader('Content-Type', 'text/xml');
     oXmlReq.onreadystatechange = function() {
         if( oXmlReq.readyState == 4 ) {
+        	var requestEnd = new Date().getTime();
+        	var requestOk = false;
+        	var jsProcessingInit = 0;
+        	var jsProcessingEnd = 0;
             XVW.NoWait();
             if( oXmlReq.status == 200 ) {
                 try
                 {
                     window.ts2 = new Date();
+                    jsProcessingInit = new Date().getTime(); 
                     XVW.handleAjaxResponse( oXmlReq, renderOnElement );
+                    jsProcessingEnd = new Date().getTime();
+                    requestOk = true;
                 }
                 catch( e ) {
                     XVW.handleAjaxError( e.message, e.stack  );
+                    requestOk = false;
                 }
             }
             else if( oXmlReq.status == 401 && oXmlReq.getResponseHeader('login-url') != "" ) {
@@ -197,8 +205,16 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
             if (!XVW.ajax.canAjaxRequest()){
             	XVW.ajax.enableAjaxRequests();
             }
+            
+            var jsTime = 0;
+            if (requestOk){
+            	jsTime = jsProcessingEnd - jsProcessingInit;
+            }
+            var requestTime = requestEnd - requestStart;
+            XVW.logAjaxTiming(requestTime,jsTime);
         }
     }
+    var requestStart = new Date().getTime();
     oXmlReq.send( reqDoc );
 	
 };
@@ -386,8 +402,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         }
         catch( e ) {
             XVW.ErrorDialog( XVW.Messages.AJAXERROR_MESSAGE, "["+oScriptId+"]" +
-                e.description + "\n" +
-                sScriptToEval
+                e.description
             );
         }
         finally {
@@ -497,8 +512,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         		debugger;
         		XVW.reportAjaxErrorBlock(oFooterScriptNodeList);
 	            XVW.ErrorDialog( XVW.Messages.AJAXERROR_MESSAGE, "["+oScriptId+"]" +
-	                e.description + "\n" +
-	                sScriptToEval
+	                e.description
 	            );
         	}
         }
@@ -804,6 +818,38 @@ XVW.logJsError = function (errorMessage, url, line, jsBlock){
 	  var xhr = XVW.createXMLHttpRequest();
 	  xhr.open( "GET", loggerUrl + parameters, true );
 	  xhr.send();
+};
+
+/**
+ * Logs Ajax load times
+ */
+XVW.logAjaxTiming = function (requestTime, scriptProcessingTime){
+	if (requestTime == 0)
+		return ;
+	
+	var sActionUrl = "";
+	var sUrl = "";
+	var forms = document.getElementsByTagName('form');
+	
+	for (var i = 0 ; i < forms.length ; i++ ){
+		sActionUrl = XVW.prv.getFormInput( forms[i], 'xvw.ajax.resourceUrl').value;
+		sUrl = XVW.prv.getFormInput( forms[i], 'xvw.ajax.submitUrl').value;
+		if (sActionUrl !== null && sActionUrl !== undefined && sActionUrl.length > 0)
+			break;
+	}
+	var loggerUrl = sActionUrl + "netgest/bo/xwc/framework/viewers/AjaxTimingOperations.xvw";
+
+	var parameters = "?action=log"
+	      + "&VIEW_ID=" + encodeURI(sUrl)
+	      + "&USER_AGENT=" + encodeURI(navigator.userAgent)
+	      + "&REQUEST_TIME=" + parseInt(requestTime)
+	      + "&PROCESS_TIME=" + parseInt(scriptProcessingTime);
+	      
+	 //FALTA AQUI POR OS TEMPOS     
+	/** Send error to server */
+	var xhr = XVW.createXMLHttpRequest();
+	xhr.open( "GET", loggerUrl + parameters, true );
+	xhr.send();
 };
 
 /**
