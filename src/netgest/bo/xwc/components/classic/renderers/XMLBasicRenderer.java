@@ -80,7 +80,7 @@ public class XMLBasicRenderer extends XUIRenderer {
 					}
 				}
 				catch( Exception e ) {
-					logger.warn("Error reading property %s. Execption was %s - %s", s.getKey(), e.getClass().getName() ,e.getMessage() );
+					logger.warn("Error reading property %s. Exception was %s - %s", s.getKey(), e.getClass().getName() ,e.getMessage() );
 				}
 				
 			}
