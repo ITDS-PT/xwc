@@ -67,10 +67,10 @@ public class TimingOperationsBean extends XEOBaseBean {
 	
 	public void logError(){
 		
+		Connection connection = null;
 		try {
 			if (isActive){
 				EboContext ctx = boApplication.currentContext().getEboContext();
-				Connection connection = null;
 
 				connection = getDatabaseConnection(ctx, connection);
 				if (log)
@@ -80,6 +80,13 @@ public class TimingOperationsBean extends XEOBaseBean {
 		finally {
 			//Important, must dispose the view
 			disposeView();
+			if (connection != null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 
 		}
 		
@@ -106,9 +113,13 @@ public class TimingOperationsBean extends XEOBaseBean {
 	}
 
 	private void disposeView() {
-		XUIRequestContext rc = getRequestContext();
-		rc.responseComplete();
-		rc.getViewRoot().dispose();
+		try {
+			XUIRequestContext rc = getRequestContext();
+			rc.responseComplete();
+			rc.getViewRoot().dispose();
+		} catch (Exception e) {
+			logger.warn("Error while disposing of view ",e);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

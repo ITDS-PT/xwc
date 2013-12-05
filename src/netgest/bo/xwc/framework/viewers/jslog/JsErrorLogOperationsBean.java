@@ -47,10 +47,10 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 	
 	public void logError(){
 		
+		Connection connection = null;
 		try {
 			if (isActive){
 				EboContext ctx = boApplication.currentContext().getEboContext();
-				Connection connection = null;
 				boolean log = true;
 
 
@@ -64,11 +64,9 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 						connection = databaseSource.getConnection();
 					} catch (NamingException e) {
 						log = false;
-						e.printStackTrace();
 						logger.warn(e);
 					} catch (SQLException e) {
 						log = false;
-						e.printStackTrace();
 						logger.warn(e );
 					}
 				}
@@ -77,14 +75,25 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 			} 
 		} finally { 
 			disposeView();
+			if (connection != null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					logger.warn("Error Closing connection",e );
+				}
+			}
 		}
 		
 	}
 
-	private void disposeView() {
-		XUIRequestContext rc = getRequestContext();
-		rc.responseComplete();
-		rc.getViewRoot().dispose();
+	private void disposeView() { 
+		try {
+			XUIRequestContext rc = getRequestContext();
+			rc.responseComplete();
+			rc.getViewRoot().dispose();
+		} catch (Exception e) {
+			logger.warn("Error while disposing of view ",e);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
