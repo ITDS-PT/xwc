@@ -1768,6 +1768,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     , grid : null
     , pageSize : null
     , gridId : null
+    , resetCount : null
 	, rowIdentifier : 'BOUI'
 	, dataSourceChange : false //Represents a change in the datasource
 	, constructor: function( opts ) {
@@ -1776,7 +1777,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 			this.groupField = opts.groupField;
 		if( opts.expandedGroups ) 
 			this.groupField = opts.expandedGroups;
-			
+		this.resetCount = 0;	
 		Ext.apply( this, {
 			url : null,
 			groupByParentValues : null,
@@ -2015,10 +2016,13 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
                 p[pn["sort"]] = Ext.util.JSON.encode( this.sortInfo );
             }
             this.proxy.load(p, this.reader, this.loadRecords, this, options);
+            this.resetCount = 0;
             return true;
         } else {
+        	this.resetCount = 0;	
           return false;
         }
+        
     },
     isGroupByField : function( fieldName ) {
     	return this.groupField.indexOf( fieldName ) > -1;
@@ -3046,4 +3050,21 @@ ExtXeo.getSelectedPages = function(id){
 	var result = value.split(",");
 	return result;
 };
+
+ExtXeo.dealWithloadException = function(store){
+	if (store.resetCount !== undefined){
+		if (store.resetCount > 0){
+			XVW.ErrorDialog(ExtXeo.Messages.RESET_LIST_DEFAULT_TITLE,
+					ExtXeo.Messages.RESET_LIST_DEFAULT );
+		} else {
+			var grid = store.grid;
+			var count = store.resetCount;
+			store.resetCount = count++;
+			window.setTimeout(function(){grid.getView().onResetDefaults();},250);
+			XVW.ErrorDialog(ExtXeo.Messages.RESET_LIST_DEFAULT_TITLE,
+					ExtXeo.Messages.RESET_LIST_DEFAULT );
+		}
+		}
+}
+	
 

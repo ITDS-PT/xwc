@@ -10,7 +10,9 @@ ExtXeo.Messages = {
 	XEODM_INACTIVE	: "XEODM Disabled",
 	LOGOUT_BTN		: 'Logout',
 	USER_PROPS		: 'User settings',
-	INVITE_MESSAGE 	: 'Drag a column header here to group it'
+	INVITE_MESSAGE 	: 'Drag a column header here to group it',
+	RESET_LIST_DEFAULT_TITLE : 'Error Loading List',
+	RESET_LIST_DEFAULT :'An error occurred loading the list, list was reset to defaults'
 };
 
 

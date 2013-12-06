@@ -9,7 +9,9 @@ ExtXeo.Messages = {
 	XEODM_INACTIVE	: "XEODM Inactivo",
 	LOGOUT_BTN		: 'Cerrar sesi&oacute;n',
 	USER_PROPS		: 'Idioma',	
-	INVITE_MESSAGE 	: 'Arrastre un encabezado de la columna aqui para agrupar por ella'
+	INVITE_MESSAGE 	: 'Arrastre un encabezado de la columna aqui para agrupar por ella',
+	RESET_LIST_DEFAULT_TITLE : 'Error al cargar la lista',
+	RESET_LIST_DEFAULT :'Ha ocurrido un error cargar la lista, la lista se ha restablecido a los valores predeterminados'
 };
 
 

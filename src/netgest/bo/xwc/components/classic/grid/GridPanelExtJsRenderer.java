@@ -666,10 +666,13 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         		"}" );
 
         ExtConfig oSelException = oExtListeners.addChild( "'loadexception'");
-        oSelException.add( "fn", "function() { debugger; alert('" + ComponentMessages.GRID_ERROR_LOADING_DATA.toString() + "\\n ' + " +
-        		"arguments[2].responseText" + 
-        		"   );}" );
+//        oSelException.add( "fn", "function() { debugger; alert('" + ComponentMessages.GRID_ERROR_LOADING_DATA.toString() + "\\n ' + " +
+//        		"arguments[2].responseText" + 
+//        		"   );}" );
+        oSelException.add( "fn", "function() { ExtXeo.dealWithloadException(this);}" );
 
+        
+        
         
         ExtConfig onLoad = oExtListeners.addChild( "'load'");
         onLoad.add( "fn", 
