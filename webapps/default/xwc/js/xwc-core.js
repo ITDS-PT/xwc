@@ -172,8 +172,16 @@ XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubm
     }    
 };
 
-function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
+/**
+ * Maximum Number of retries for a request
+ */
+XVW.maxRetries = 2;
+
+function submitAjax( sActionUrl, reqDoc, renderOnElement, retryCount ) {
     var oXmlReq = XVW.createXMLHttpRequest(  );
+    if (retryCount === undefined){
+    	retryCount = 0;
+    }
     oXmlReq.open('POST', sActionUrl, true );
     oXmlReq.setRequestHeader('Content-Type', 'text/xml');
     oXmlReq.onreadystatechange = function() {
@@ -182,7 +190,6 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
         	var requestOk = false;
         	var jsProcessingInit = 0;
         	var jsProcessingEnd = 0;
-            XVW.NoWait();
             if( oXmlReq.status == 200 ) {
                 try
                 {
@@ -191,17 +198,45 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
                     XVW.handleAjaxResponse( oXmlReq, renderOnElement );
                     jsProcessingEnd = new Date().getTime();
                     requestOk = true;
+                    XVW.NoWait();
+                    if (retryCount){
+                    	if (retryCount > 0){
+                    		XVW.ResetWait();
+                    	}
+                    }
                 }
                 catch( e ) {
-                    XVW.handleAjaxError( e.message, e.stack  );
+                	XVW.handleAjaxError( e.message, e.stack  );
                     requestOk = false;
                 }
             }
             else if( oXmlReq.status == 401 && oXmlReq.getResponseHeader('login-url') != "" ) {
             	window.top.location.href = oXmlReq.getResponseHeader('login-url');
-            } else {
-                XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText )
+            } else if (oXmlReq.status == 0){
+            	if (retryCount <= XVW.maxRetries){
+            		retryCount++;
+            		if (retryCount == 1){
+            			XVW.StillWorking(XVW.Messages.AJAX_SECOND_TRY);
+            		} else if (retryCount == 2){
+            			XVW.StillWorking(XVW.Messages.AJAX_THIRD_TRY);
+            		}
+            		submitAjax(sActionUrl,reqDoc,renderOnElement,retryCount);
+            	} else {
+            		XVW.NoWait();
+            		XVW.ResetWait();
+            		XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText )
+            	}
             }
+            else {
+	           XVW.NoWait();
+	           if (retryCount){
+	        	   if (retryCount > 0){
+	        		   XVW.ResetWait();
+	        	   }
+	           }
+	           XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText )
+            }
+            
             if (!XVW.ajax.canAjaxRequest()){
             	XVW.ajax.enableAjaxRequests();
             }
@@ -210,6 +245,16 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
             if (requestOk){
             	jsTime = jsProcessingEnd - jsProcessingInit;
             }
+            
+            if (requestOk){
+            	XVW.NoWait();
+                if (retryCount){
+                	if (retryCount > 0){
+                		XVW.ResetWait();
+                	}
+                }
+            }
+             
             var requestTime = requestEnd - requestStart;
             XVW.logAjaxTiming(requestTime,jsTime);
         }
@@ -218,6 +263,9 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
     oXmlReq.send( reqDoc );
 	
 };
+
+
+
 
 
 XVW.AjaxCommand.pFnParseNode = function( oNode, loParNames, loParValues ) {
@@ -511,8 +559,11 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         catch( e ) {
         		debugger;
         		XVW.reportAjaxErrorBlock(oFooterScriptNodeList);
+        		var details = "";
+        		if (e.stack !== undefined)
+        			details = e.stack;
 	            XVW.ErrorDialog( XVW.Messages.AJAXERROR_MESSAGE, "["+oScriptId+"]" +
-	                e.description
+	            		e.message , details
 	            );
         	}
         }
@@ -724,6 +775,9 @@ XVW.prv.createCommand = function( sFormId, sActionId, sActionValue ) {
  */
 XVW.Wait = function( iWaitMode ) {};
 
+XVW.StillWorking = function ( message) {}; 
+
+XVW.ResetWait = function () {};
 /*
  * Clear the wait state of the application
  * Must be overwritten to the current look and feel
@@ -803,7 +857,7 @@ XVW.logJsError = function (errorMessage, url, line, jsBlock){
 			break;
 	}
 	
-	var loggerUrl = sActionUrl + "/netgest/bo/xwc/framework/viewers/JsErrorLogOperations.xvw";
+	var loggerUrl = sActionUrl + "netgest/bo/xwc/framework/viewers/JsErrorLogOperations.xvw";
 	  var parameters = "?action=log&JS_ERROR_MESSAGE=" + encodeURI(errorMessage)
 	      + "&VIEW_ID=" + encodeURI(sUrl)
 	      + "&LINE=" + encodeURI(line)
@@ -869,7 +923,7 @@ XVW.logTiming = function (timing){
 		if (sActionUrl !== null && sActionUrl !== undefined && sActionUrl.length > 0)
 			break;
 	}
-	var loggerUrl = sActionUrl + "/netgest/bo/xwc/framework/viewers/TimingOperations.xvw";
+	var loggerUrl = sActionUrl + "netgest/bo/xwc/framework/viewers/TimingOperations.xvw";
 	var parameters = "?action=log"
 	      + "&VIEW_ID=" + encodeURI(sUrl)
 	      + "&USER_AGENT=" + encodeURI(navigator.userAgent)
