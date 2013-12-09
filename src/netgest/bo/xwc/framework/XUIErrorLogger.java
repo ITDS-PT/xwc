@@ -19,6 +19,7 @@ import javax.sql.DataSource;
 import netgest.bo.data.oracle.OracleDBM.Database;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.Logger;
+import netgest.bo.system.XEO;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boApplicationConfig;
 import netgest.bo.system.boSession;
@@ -83,7 +84,8 @@ public class XUIErrorLogger {
 	
 	private Connection getConnection(EboContext ctx){
 		if (StringUtils.isEmpty(dataSource)){
-			return ctx.getConnectionData();
+			if (ctx != null)
+				return ctx.getConnectionData();
 		} else {
 			try {
 				InitialContext ic = new InitialContext();
@@ -119,6 +121,7 @@ public class XUIErrorLogger {
 		long requestId = debug.getRequestId();
 		long userBoui = -1;
 		long profileBoui = -1;
+		boolean createdContext = false;
 		
 		if (ctx != null){
 			boSession session = ctx.getBoSession();
@@ -126,6 +129,11 @@ public class XUIErrorLogger {
 				userBoui = session.getPerformerBoui();
 				profileBoui = session.getPerformerIProfileBoui();
 			}
+		} else {
+			boSession session = XEO.loginAs("ROBOT");
+			ctx = session.createEboContext();
+			userBoui = session.getPerformerBoui();
+			profileBoui = session.getPerformerIProfileBoui();
 		}
 		String viewId = debug.getMainViewId();
 		boolean isAjax = debug.isAjaxRequest();
@@ -171,6 +179,11 @@ public class XUIErrorLogger {
 					connection.close();
 				} catch (SQLException e1) {
 					logger.warn("Closing connection",e1);
+				}
+			}
+			if (createdContext){
+				if (ctx != null){
+					ctx.close();
 				}
 			}
 		}
