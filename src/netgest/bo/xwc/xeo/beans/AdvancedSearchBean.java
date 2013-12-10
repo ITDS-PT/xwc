@@ -1,6 +1,7 @@
 package netgest.bo.xwc.xeo.beans;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -54,6 +55,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.jsf.XUIViewerBuilder;
 import netgest.bo.xwc.framework.jsf.XUIWriterAttributeConst;
 import netgest.bo.xwc.framework.jsf.XUIWriterElementConst;
+import netgest.bo.xwc.framework.localization.XUILocalization;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchAttributeChooser;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchLovValueChooserBean;
 import netgest.bo.xwc.xeo.advancedSearch.AdvancedSearchRow.JOIN_OPERATOR;
@@ -1695,7 +1697,7 @@ public class AdvancedSearchBean extends XEOBaseBean {
 		StringBuilder b = new StringBuilder(90);
 		b.append("select ").append( getObjectName() ).append(" where ");
 		
-		
+		StringBuilder options = new StringBuilder();
 		for (AdvancedRowComponentIds row : rows){
 			String operator = "";
 			String attName = "";
@@ -1727,11 +1729,22 @@ public class AdvancedSearchBean extends XEOBaseBean {
 			}
 				
 			if ( StringUtils.hasValue( attName ) || StringUtils.hasValue( operator ) )
-				b.append( operator ).append(" ").append( attName ).append(" ").append( valueOperator );
+				options.append( operator ).append(" ").append( attName ).append(" ").append( valueOperator );
 			if ( attributeValues.containsKey( row.getValueId() ) && op != null && op != VALUE_OPERATOR.CONTAINS_DATA && op != VALUE_OPERATOR.NOT_CONTAINS_DATA )
-				b.append(" ? ");
+				options.append(" ? ");
+			
+			
+			
+			if (StringUtils.hasValue(attName) 
+					&& op != VALUE_OPERATOR.NOT_CONTAINS_DATA 
+					&& op != VALUE_OPERATOR.CONTAINS_DATA 
+					&& ( StringUtils.isEmpty(valueOperator) || !attributeValues.containsKey( row.getValueId() ))){
+				options = new StringBuilder();
+			}
+					
+			
 		}
-		
+		b.append(options);
 		return b.toString();
 	}
 
@@ -1779,8 +1792,13 @@ public class AdvancedSearchBean extends XEOBaseBean {
 					valueContent = getLovDisplayValue( lovName, con.toString() );
 				} else if (MetadataUtils.isObjectOrCollection( oAttDef )){
 					valueContent = getDisplayValueObjectType( con.toString() );
-				} else 
+				} else if (MetadataUtils.isDateTime( oAttDef )){
+					valueContent = XUILocalization.formatDateTime((Date)con);
+				} else if (MetadataUtils.isDate( oAttDef )){
+					valueContent = XUILocalization.formatDate((Date)con);
+				} else {
 					valueContent = con.toString();
+				}
 			}
 			
 			b.append(operator).append(" ").append(attName).append(" ").append(valueOperator).append(" ").append(valueContent.toString()).append(" ");
