@@ -979,9 +979,11 @@ window.onerror = function(errorMessage, url, line) {
 	} else {
 		//IE 7,8 or IE in compability mode
 		if (window.attachEvent){
-			window.attachEvent('onload', function (){
-				window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
+			if (window.performance){
+				window.attachEvent('onload', function (){
+					window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
 				}, false);
+			}
 		}
 	}
 	
