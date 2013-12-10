@@ -39,7 +39,11 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
     		getChildren().add( cmd );
 		}
 		
-		
+	}
+	
+	@Override
+	public void preRender() {
+		super.preRender();
 		if (attributeIsLov()){
 			GridPanel grid = (GridPanel) findParentComponent( GridPanel.class );
 			if (grid != null){
@@ -50,7 +54,9 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 					setLabel( label );
 				}
 			}
-			setDataField( new LovColumnNameExtractor( getDataField() ).prefixColumnName() );
+			String dataField = getDataField();
+			if (!LovColumnNameExtractor.isXeoLovColumn(dataField))
+				setDataField( new LovColumnNameExtractor( getDataField() ).prefixColumnName() );
 		}
 	}
 	
@@ -181,20 +187,24 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 	public boolean attributeIsLov(){
 		GridPanel grid = (GridPanel) findParentComponent( GridPanel.class );
 		if (grid != null){
-			DataListConnector listConnector = grid.getDataSource();
-			DataFieldMetaData metadata = listConnector.getAttributeMetaData( getDataField() ); 
-			if (metadata != null && metadata.getIsLov() ){
-				if (listConnector instanceof XEOObjectListConnector){
-					try {
-						boDefHandler handler = ((XEOObjectListConnector) listConnector).getObjectList().getBoDef();
-						boDefAttribute attribute = handler.getAttributeRef( extractLovName( getDataField() ) );
-						if (attribute != null && StringUtils.hasValue( attribute.getLOVName() ) ){
-							return true;
+			try {
+				DataListConnector listConnector = grid.getDataSource();
+				DataFieldMetaData metadata = listConnector.getAttributeMetaData( getDataField() ); 
+				if (metadata != null && metadata.getIsLov() ){
+					if (listConnector instanceof XEOObjectListConnector){
+						try {
+							boDefHandler handler = ((XEOObjectListConnector) listConnector).getObjectList().getBoDef();
+							boDefAttribute attribute = handler.getAttributeRef( extractLovName( getDataField() ) );
+							if (attribute != null && StringUtils.hasValue( attribute.getLOVName() ) ){
+								return true;
+							}
+						} catch (boRuntimeException e ){
+							e.printStackTrace();
 						}
-					} catch (boRuntimeException e ){
-						e.printStackTrace();
 					}
 				}
+			} catch (Exception e){
+				return false;
 			}
 		}
 		return false;
