@@ -1,8 +1,16 @@
 package netgest.bo.xwc.components.classic.renderers;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
+import netgest.bo.xwc.components.classic.grid.HTMLEntityDecoder;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
@@ -10,13 +18,6 @@ import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.localization.XUILocalization;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * 
@@ -53,10 +54,10 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 		for ( int k = 0; k < columns.length ; k++)
 		{
 			Column curr = columns[k];
-			w.startElement("gridheadercolumn", null);
+			w.startElement("gridheadercolumn");
 				String label = GridPanel.getColumnLabel( grid.getDataSource(), curr );
-				w.writeAttribute("datafield", curr.getDataField(), null);
-				w.writeAttribute("width", curr.getWidth(), null);
+				w.writeAttribute("datafield", HTMLEntityDecoder.charsToHtmlEntity(curr.getDataField()));
+				w.writeAttribute("width", curr.getWidth());
 				columnsUsed.add(label);
 				w.writeText(label==null?"":label,null);
 				w.endElement("gridheadercolumn");
@@ -113,9 +114,10 @@ public class XMLGridPanelRenderer extends XMLBasicRenderer {
 	                    		
 	                    		if (sDisplayValue != null)
 		                    	{
+	                    			//Prevent Illegal entities in 
+	                    			sDisplayValue = HTMLEntityDecoder.charsToHtmlEntity(sDisplayValue);
 		                    		oDataFieldType = oDataField.getDataType();
-			                        switch( oDataFieldType ) 
-			                        {
+			                        switch( oDataFieldType ){
 			                            case DataFieldTypes.VALUE_BLOB:
 			                                // Don't passe to JavaScript
 			                                break;
