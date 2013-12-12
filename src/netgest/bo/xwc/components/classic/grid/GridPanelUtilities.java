@@ -401,6 +401,8 @@ public class GridPanelUtilities {
 							String val = jsonColDef.getString("value") ;
 							if ( val != null && val.length() > 0 ) {
 								value = val;
+							} else {
+								bAddCodition = false;
 							}
 							
 							operator = FilterTerms.OPERATOR_LIKE;
