@@ -894,10 +894,14 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             oColConfig.addJSString( "tooltip", oGridColumns[ i ].getLabel() );
             
             if( gridIsSortable ){
-            	if (metaData.getDataType() == DataFieldTypes.VALUE_BRIDGE || 
-            			metaData.getDataType() == DataFieldTypes.VALUE_CLOB ) {
-            		oColConfig.add( "sortable", false );
-            	} else {
+            	if (metaData != null){
+            		if (metaData.getDataType() == DataFieldTypes.VALUE_BRIDGE || 
+            				metaData.getDataType() == DataFieldTypes.VALUE_CLOB ) {
+            			oColConfig.add( "sortable", false );
+            		} 
+
+            	}
+            	else {
             		oColConfig.add( "sortable", oGridColumns[ i ].isSortable() );
             	}
             }
