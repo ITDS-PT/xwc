@@ -898,8 +898,9 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             		if (metaData.getDataType() == DataFieldTypes.VALUE_BRIDGE || 
             				metaData.getDataType() == DataFieldTypes.VALUE_CLOB ) {
             			oColConfig.add( "sortable", false );
-            		} 
-
+            		} else {
+                		oColConfig.add( "sortable", oGridColumns[ i ].isSortable() );
+                	}
             	}
             	else {
             		oColConfig.add( "sortable", oGridColumns[ i ].isSortable() );
