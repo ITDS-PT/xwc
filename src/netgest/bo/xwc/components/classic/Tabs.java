@@ -151,6 +151,12 @@ public class Tabs extends XUIComponentBase implements NavigatableComponent
     @Override
 	public void preRender() {
     	if( getActiveTab() == null ) {
+    		findActiveTab();
+    	}
+	}
+    
+    void findActiveTab(){
+    	if( getActiveTab() == null ) {
     		List<UIComponent> tabs = getChildren();
     		for( UIComponent tab : tabs ) {
     			if(((Tab)tab).isVisible() ) {
@@ -159,9 +165,7 @@ public class Tabs extends XUIComponentBase implements NavigatableComponent
     			}
     		}
     	}
-	}
-    
-    
+    }
 
 	@Override
     public StateChanged wasStateChanged2() {

@@ -1,5 +1,12 @@
 package netgest.bo.xwc.components.classic;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+
 import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
@@ -9,12 +16,6 @@ import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.jsf.XUIViewHandler;
 import netgest.bo.xwc.framework.jsf.XUIViewHandler.PropertyEvaluation;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 
 /**
  * 
@@ -80,7 +81,10 @@ public class Tab extends ViewerCommandSecurityBase
 	}
     
     public boolean isActiveTab(){
-    	return getId().equals(((Tabs)getParent()).getActiveTab());
+    	Tabs parent = (Tabs) getParent();
+    	if (parent.getActiveTab() == null) 
+    		parent.findActiveTab();
+    	return getId().equals(parent.getActiveTab());
     }
     
     @Override
@@ -154,6 +158,42 @@ public class Tab extends ViewerCommandSecurityBase
 
 	public boolean isContainer() {
 		return true;
+	}
+	
+	
+	
+	@Override
+	public void processPreRender() {
+		
+		//super.processPreRender();
+		Tab topParent = null;
+		UIComponent possibleMatch = getParent();
+		while (possibleMatch != null){
+			if (possibleMatch instanceof Tab){
+				topParent = (Tab)possibleMatch;
+			}
+			possibleMatch = possibleMatch.getParent();
+		}
+		
+		if (topParent != null){
+			if (topParent.isActiveTab()){
+				List<UIComponent> children = getChildren();
+				for (UIComponent c : children){
+					if (c instanceof XUIComponentBase){
+						((XUIComponentBase) c).processPreRender();
+					}
+				}
+			}
+		} else {
+			if (isActiveTab()){
+				List<UIComponent> children = getChildren();
+				for (UIComponent c : children){
+					if (c instanceof XUIComponentBase){
+						((XUIComponentBase) c).processPreRender();
+					}
+				}
+			}
+		}
 	}
 	
 }
