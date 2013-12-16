@@ -1,8 +1,10 @@
-XVW.Messages = function() {};
+锘縓VW.Messages = function() {};
 XVW.Messages.AJAXERROR_TITLE 	= 'Error';
 XVW.Messages.AJAXERROR_MESSAGE 	= 'Hubo un error al procesar su solicitud.';
-XVW.Messages.AJAX_SECOND_TRY 	= 'Contin鷄 procesando su petici髇 ...';
-XVW.Messages.AJAX_THIRD_TRY 	= 'Por favor, espere... Contin鷄 procesando su petici髇...';
+XVW.Messages.AJAX_SECOND_TRY 	= 'Contin煤a procesando su petici贸n ...';
+XVW.Messages.AJAX_THIRD_TRY 	= 'Por favor, espere... Contin煤a procesando su petici贸n...';
+XVW.Messages.SESSION_EXPIRED_TITLE = 'La sesi贸n ha expirado';
+XVW.Messages.SESSION_EXPIRED_MESSAGE = 'Su sesi贸n ha expirado, se le redirige a la p谩gina de autenticaci贸n';
 
 XVW.SysMsg = function() {};
 XVW.SysMsg.XMLDOC_ERROR 		= 'Error al crear XMLDocument';

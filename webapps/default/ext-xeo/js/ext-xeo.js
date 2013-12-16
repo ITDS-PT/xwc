@@ -89,6 +89,12 @@ XVW.ErrorDialog = function( sTitle, sMessage, sDetails ) {
    });
 };
 
+XVW.ConfirmationDialog = function (sTitle, sMessage, okButtonHandler){
+	if (sTitle && sMessage){
+		Ext.MessageBox.alert(sTitle,sMessage,okButtonHandler);
+	}
+};
+
 
 XVW.beforeApplyHtml = function( oDNode, destroyComponent ) {
 	if( destroyComponent ) {
@@ -787,27 +793,33 @@ XVW.MenuCounter = {
 			
 			var x = this.counters[sNodeId];
 			var xh = XVW.createXMLHttpRequest();
-			xh.open( 'GET',x.url, true );
+			xh.open( 'GET',x.url + "&KeepAlive=true", true );
 			xh.onreadystatechange = function() {
 				if( xh.readyState==4 ) {
-					try {
-						eval( 'var r = ' + xh.responseText );
-						var c = Ext.getCmp( x.containerId );
-						if(c) {
-							var n = c.getNodeById( x.nodeId );
-							if(n) n.setText( r.counterHtml );
-			    		}
-						x.lastUpdate = (new Date())-0;
-					}
-					catch( e ) {
-					}
-					XVW.MenuCounter.counterRefreshId--;
-					if( XVW.MenuCounter.counterRefreshId == 0 ) {
-						var el = document.getElementById( "extxeo-refresh-counters-img" );
-						if( el ) {
-							el.src = 'extjs/resources/images/default/grid/refresh.gif';
+					if( xh.status == 401 && xh.getResponseHeader('login-url') != "" ){
+		            	XVW.NoWait();
+		            	XVW.ConfirmationDialog(XVW.Messages.SESSION_EXPIRED_TITLE,XVW.Messages.SESSION_EXPIRED_MESSAGE,
+		            		function (){window.top.location.href = xh.getResponseHeader('login-url');});
+		            } else {
+						try {
+							eval( 'var r = ' + xh.responseText );
+							var c = Ext.getCmp( x.containerId );
+							if(c) {
+								var n = c.getNodeById( x.nodeId );
+								if(n) n.setText( r.counterHtml );
+				    		}
+							x.lastUpdate = (new Date())-0;
 						}
-					}
+						catch( e ) {
+						}
+						XVW.MenuCounter.counterRefreshId--;
+						if( XVW.MenuCounter.counterRefreshId == 0 ) {
+							var el = document.getElementById( "extxeo-refresh-counters-img" );
+							if( el ) {
+								el.src = 'extjs/resources/images/default/grid/refresh.gif';
+							}
+						}
+		            }
 				}
 			};
 			xh.send();

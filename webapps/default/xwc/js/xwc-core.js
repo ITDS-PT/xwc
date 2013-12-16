@@ -210,8 +210,10 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement, retryCount ) {
                     requestOk = false;
                 }
             }
-            else if( oXmlReq.status == 401 && oXmlReq.getResponseHeader('login-url') != "" ) {
-            	window.top.location.href = oXmlReq.getResponseHeader('login-url');
+            else if( oXmlReq.status == 401 && oXmlReq.getResponseHeader('login-url') != "" ){
+            	XVW.NoWait();
+            	XVW.ConfirmationDialog(XVW.Messages.SESSION_EXPIRED_TITLE,XVW.Messages.SESSION_EXPIRED_MESSAGE,
+            		function (){window.top.location.href = oXmlReq.getResponseHeader('login-url');});
             } else if (oXmlReq.status == 0){
             	if (retryCount <= XVW.maxRetries){
             		retryCount++;
@@ -352,6 +354,8 @@ XVW.handleAjaxError = function( sErrorMessage, sDetails ) {
 
 // Must be overwriten ti handle error dialogs
 XVW.ErrorDialog = function( sTitle, sMessage ) {};
+
+XVW.ConfirmationDialog = function (sTitle, sMessage, okButtonHandler){};
 
 XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
 	// Handle view Element -- Update ViewId
@@ -685,7 +689,16 @@ XVW.keepAlive = function( oForm ) {
 	try {
 		var sActionUrl = XVW.prv.getFormInput( oForm, 'xvw.ajax.resourceUrl').value;
 		var xmlReq = XVW.createXMLHttpRequest();
-	    xmlReq.open( "POST", sActionUrl+"/netgest/bo/xwc/framework/viewers/SystemOperations.xvw", true );
+	    xmlReq.open( "POST", sActionUrl+"/netgest/bo/xwc/framework/viewers/SystemOperations.xvw?KeepAlive=true", true );
+	    xmlReq.onreadystatechange = function() {
+			if( xmlReq.readyState==4 ) {
+				if( xmlReq.status == 401 && xmlReq.getResponseHeader('login-url') != "" ){
+	            	XVW.NoWait();
+	            	XVW.ConfirmationDialog(XVW.Messages.SESSION_EXPIRED_TITLE,XVW.Messages.SESSION_EXPIRED_MESSAGE,
+	            		function (){window.top.location.href = xmlReq.getResponseHeader('login-url');});
+	            }
+			}
+	    }
 	    xmlReq.send();
 	} catch( e ) {
 //		debugger;
@@ -760,6 +773,14 @@ XVW.prv.createCommand = function( sFormId, sActionId, sActionValue ) {
             else
                 oButton.value = '';
             oForm.appendChild( oButton );
+            
+            var keepAlive = document.createElement( 'input' );
+            keepAlive.type='hidden';
+            keepAlive.name = 'CommandSubmit';
+            keepAlive.value = 'true';
+            oForm.appendChild( keepAlive );
+            
+            //Colocar uma input hidden com o KeepAlive
         }
     }
     else {

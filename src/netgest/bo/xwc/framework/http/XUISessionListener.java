@@ -25,6 +25,7 @@ public class XUISessionListener implements HttpSessionListener, ServletContextLi
 	        	oSessionContext.close();
 	        }
 		}
+		session.setAttribute("expired", true);
 	}
 
 	
