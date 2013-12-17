@@ -868,6 +868,7 @@ XVW.createXMLHttpRequest = function()
  * */
 XVW.logJsError = function (errorMessage, url, line, jsBlock){
 	
+	debugger; 
 	var sActionUrl = "";
 	var sUrl = "";
 	var forms = document.getElementsByTagName('form');
@@ -888,6 +889,8 @@ XVW.logJsError = function (errorMessage, url, line, jsBlock){
 	  if (jsBlock !== null && jsBlock !== undefined){
 		  parameters += ("&JS_ERROR_BLOCK=" + encodeURI(jsBlock));
 	  }
+	  
+	  XVW.NoWait();
 	 
 	  /** Send error to server */
 	  var xhr = XVW.createXMLHttpRequest();

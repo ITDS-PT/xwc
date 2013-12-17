@@ -231,14 +231,16 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	            
 	            triggerLoadData(w, oGrid);
 	            
-	            String loadMaskVar = oGrid.getId()+".loadMask";	            
-	            w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, 
-	                oComp.getClass().getName() + ":" + oComp.getId(),
-	                "/*Ext.onReady( function()*/{" + oGridConfig.renderExtConfig(  ) + ";" +
-	                oGrid.getId()+".render('" + JavaScriptUtils.safeJavaScriptWrite( oGrid.getClientId(), '\'') + "');\n" +
-	                "if( " + loadMaskVar +") { " + loadMaskVar + ".xwc_wtout = window.setTimeout('Ext.getCmp(\"" + oGrid.getClientId() +"\").loadMask.onBeforeLoad();',1000);}\n" + 		                
-	                "}/*);*/"
-	            );
+	            StringBuilder renderGridScript = new StringBuilder(500);
+	            renderGridScript.append(oGridConfig.renderExtConfig( ));
+	            renderGridScript.append(";");
+	            renderGridScript.append( oGrid.getId());
+	            renderGridScript.append(".render('");
+	            renderGridScript.append(JavaScriptUtils.safeJavaScriptWrite( oGrid.getClientId(), '\''));
+	            renderGridScript.append("')");
+	            
+	            w.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, oComp.getClass().getName() + ":" + oComp.getId(),
+	            		renderGridScript.toString());
 	            
 	            if( "fit-parent".equalsIgnoreCase( oGrid.getLayout() ) ) {
 	            	Layouts.registerComponent( w, oComp, Layouts.LAYOUT_FIT_PARENT);
@@ -389,6 +391,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	if( d != null  && !clearSelections) {
 		        oLoadParams.add("callback", 
 		        		"function(){" +
+		        			"XVW.NoWait();" + 	
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
 			    			oGrid.getId() + "_selm.clearSelections();" +
 			    			oGrid.getId() + "_selm.resumeEvents();" +
@@ -421,6 +424,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		        oLoadParams.add("callback", 
 		        		"function(r, options, sucess){" +
 		        			"var store = this;"+
+		        			"XVW.NoWait();" +
 			    			oGrid.getId() + "_selm.suspendEvents(false);" +
 			    			oGrid.getId() + "_selm.selectRowsOnDemad(" + sb + ", r, options, store);" + 
 			    			oGrid.getId() + "_selm.resumeEvents();" +
@@ -666,21 +670,12 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         		"}" );
 
         ExtConfig oSelException = oExtListeners.addChild( "'loadexception'");
-//        oSelException.add( "fn", "function() { debugger; alert('" + ComponentMessages.GRID_ERROR_LOADING_DATA.toString() + "\\n ' + " +
-//        		"arguments[2].responseText" + 
-//        		"   );}" );
         oSelException.add( "fn", "function() { ExtXeo.dealWithloadException(this);}" );
         
         ExtConfig onLoad = oExtListeners.addChild( "'load'");
         onLoad.add( "fn", 
                 "function(store, records, options) {" +
-                "	var c = Ext.getCmp(\"" + oGrid.getClientId() +"\");\n" +
-                "	if( c && c.loadMask ) { " +
-                "		if( c.loadMask.xwc_wtout ) {window.clearTimeout(c.loadMask.xwc_wtout);}\n" + 		                
-                "		c.loadMask.onLoad();\n" +
-        		"	} " +
-                " store.grid.markSelectedRows(options); " +
-                " store.resetDataSourceChange(); " +
+                "		ExtXeo.loadHandler(store,records,options); " +
         		"}" );
         
         return oDataStoreConfig;
@@ -928,10 +923,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         	oGridConfig.addJSString( "title", oGrid.getTitle() );
         
         oGridConfig.add( "frame", false );
-        //oGridConfig.add( "loadMask", "(Ext.isIE?false:new Ext.LoadMask(Ext.get('" + oGrid.getClientId() + "'), {msg:'" + ComponentMessages.GRID_REFRESHING_DATA.toString() + "'}))" );
-        //oGridConfig.add( "maskDisabled", "(Ext.isIE?false:true)" );
         oGridConfig.add( "maskDisabled", false );
-        oGridConfig.add( "loadMask", "new Ext.LoadMask(Ext.get('" + oGrid.getClientId() + "')!=null?Ext.get('" + oGrid.getClientId() + "'):document.body, {msg:'" + ComponentMessages.GRID_REFRESHING_DATA.toString() + "'})" );        
 
         oGridConfig.addJSString( "region", oGrid.getRegion() );
         

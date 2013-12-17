@@ -951,7 +951,8 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
 	        this.grid.view.processRows(0,true);
         }
         
-        this.autoExpandGroups( gridGroup.groupId );
+        this.autoExpandGroups( gridGroup.groupId ); 
+        XVW.NoWait();
     },
     autoExpandGroups : function( gid ) {
         // Expande automaticamente todos os grupos expandidos.
@@ -2015,6 +2016,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
                 var pn = this.paramNames;
                 p[pn["sort"]] = Ext.util.JSON.encode( this.sortInfo );
             }
+            XVW.Wait(1);
             this.proxy.load(p, this.reader, this.loadRecords, this, options);
             this.resetCount = 0;
             return true;
@@ -2072,6 +2074,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     	return gs;
     },
     groupLoaded : function( idx ) {
+    	XVW.NoWait();
     	var g = this.groupStores[ idx ];
     	// Groups arrays was reset... maybe because a refresh... cancel callback event
     	if( g != null ) {
@@ -3052,6 +3055,7 @@ ExtXeo.getSelectedPages = function(id){
 };
 
 ExtXeo.dealWithloadException = function(store){
+	XVW.NoWait();
 	if (store.resetCount !== undefined){
 		if (store.resetCount > 0){
 			XVW.ErrorDialog(ExtXeo.Messages.RESET_LIST_DEFAULT_TITLE,
@@ -3064,7 +3068,15 @@ ExtXeo.dealWithloadException = function(store){
 			XVW.ErrorDialog(ExtXeo.Messages.RESET_LIST_DEFAULT_TITLE,
 					ExtXeo.Messages.RESET_LIST_DEFAULT );
 		}
-		}
-}
+	}
+};
+
+ExtXeo.loadHandler = function (store, records, options) {
+	if (store.grid){
+		store.grid.markSelectedRows(options);
+	}
+    store.resetDataSourceChange();
+    XVW.NoWait(); 
+};
 	
 
