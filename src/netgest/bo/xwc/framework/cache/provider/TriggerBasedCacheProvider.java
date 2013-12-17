@@ -314,7 +314,7 @@ public class TriggerBasedCacheProvider implements CacheEngine {
 	void createInitialTable(Connection conn) {
 		try {
 			Statement statement = conn.createStatement();
-			statement.execute( "CREATE TABLE " + CACHE_TABLE_NAME + " (KEY VARCHAR(50) UNIQUE, LAST_UPDATE TIMESTAMP)"  );
+			statement.execute( "CREATE TABLE " + CACHE_TABLE_NAME + " (\"KEY\" VARCHAR(50) UNIQUE, LAST_UPDATE TIMESTAMP)"  );
 		} catch ( SQLException e ) {
 			e.printStackTrace();
 		}
