@@ -31,7 +31,7 @@ public class TriggerBasedCacheProvider implements CacheEngine {
 	/**
 	 * Name of the column representing the key
 	 */
-	public static final String CACHE_TABLE_KEY_COLUMN = "KEY";
+	public static final String CACHE_TABLE_KEY_COLUMN = "\"KEY\"";
 	/**
 	 * Name of the column representing the date
 	 */
@@ -99,8 +99,8 @@ public class TriggerBasedCacheProvider implements CacheEngine {
 			PreparedStatement deleteKeyStatement = null;
 			PreparedStatement deleteOtherKeysStatement = null;
 			try {
-				 deleteKeyStatement = conn.prepareStatement( String.format( "DELETE FROM %s WHERE KEY = ?", CACHE_TABLE_NAME )  );
-				 deleteOtherKeysStatement = conn.prepareStatement( String.format( "DELETE FROM %s WHERE KEY LIKE ?", CACHE_TABLE_NAME )  );
+				 deleteKeyStatement = conn.prepareStatement( String.format( "DELETE FROM %s WHERE \"KEY\" = ?", CACHE_TABLE_NAME )  );
+				 deleteOtherKeysStatement = conn.prepareStatement( String.format( "DELETE FROM %s WHERE \"KEY\" LIKE ?", CACHE_TABLE_NAME )  );
 				 deleteKeyStatement.setString( 1 , key );
 				 deleteOtherKeysStatement.setString( 1 , key + ".%" );
 				 deleteKeyStatement.execute();
@@ -150,7 +150,7 @@ public class TriggerBasedCacheProvider implements CacheEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			ps = con.prepareStatement( String.format( "SELECT * FROM %S WHERE KEY = ?" , CACHE_TABLE_NAME ) );
+			ps = con.prepareStatement( String.format( "SELECT * FROM %S WHERE \"KEY\" = ?" , CACHE_TABLE_NAME ) );
 			ps.setString( 1 , key );
 			rs = ps.executeQuery();
 			if (rs.next()){
@@ -229,7 +229,7 @@ public class TriggerBasedCacheProvider implements CacheEngine {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = con.prepareStatement( "SELECT KEY FROM " + CACHE_TABLE_NAME + " WHERE KEY = ?" );
+			st = con.prepareStatement( "SELECT \"KEY\" FROM " + CACHE_TABLE_NAME + " WHERE \"KEY\" = ?" );
 			st.setString( 1 , key );
 			rs = st.executeQuery();
 			if (!rs.next() ) {
