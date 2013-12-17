@@ -6,7 +6,6 @@ import java.util.List;
 import javax.faces.component.UIComponent;
 
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.jsf.XUIWriteBehindStateWriter;
 
 public class PackageIAcessor {
 
@@ -20,6 +19,7 @@ public class PackageIAcessor {
     
     public static final XUIRequestContext createRequestContext( XUIApplicationContext oApplicationContext ){
         XUIRequestContext oRequestContext = new XUIRequestContext( oApplicationContext );
+        oRequestContext.setRequestId(XUIApplicationContext.getAndIncrementRequestId());
         XUIRequestContext.oCurrentContext.set( oRequestContext );
         return oRequestContext;
     }

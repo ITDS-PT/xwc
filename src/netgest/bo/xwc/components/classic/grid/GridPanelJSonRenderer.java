@@ -662,6 +662,11 @@ public class GridPanelJSonRenderer {
 		public String getLabel() {
 			return mapEntryData.fieldConnector.getLabel();
 		}
+		
+		@Override
+		public Map<Object, String> getLovMapWithLimit(int maxRecords) {
+			return mapEntryData.fieldConnector.getLovMapWithLimit(maxRecords);
+		}
 
 		@Override
 		public Map<Object, String> getLovMap() {

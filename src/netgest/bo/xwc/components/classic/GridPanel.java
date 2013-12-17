@@ -133,7 +133,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	 * 
 	 * Users select multiple lines with the <i>Ctrl</i> button
 	 */
-	@Values({"ROW","MULTIROW","CELL"})
+	@Values({"ROW","MULTI_ROW","CELL"})
 	public XUIViewStateBindProperty<String> rowSelectionMode = new XUIViewStateBindProperty<String>(
 			"rowSelectionMode", this, String.class);
     
@@ -735,6 +735,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 		
 	}
 	
+    private boolean preRender = false;
 	/**
 	 * Process a preRender Actions
 	 */
@@ -742,8 +743,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public void preRender() {
 		
 		//Reload the DataSource
-		hasDataSourceBeenEvaluated = false;
-		
+		hasDataSourceBeenEvaluated = false;	
 		if( this.onRowDoubleClick.getValue() != null ) {
 			XUICommand oRowDblClickComp = (XUICommand) this.findComponent(getId()
 					+ "_rowDblClick");
@@ -2149,6 +2149,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 		if( getEnableGroupBy() ) {
 			boolean valid = true;
 			String groupBy = preference.getString("groupBy");
+			String fallBackGroupBy = "";
 			String[] groupByA = groupBy != null?groupBy.split(","):new String[0];
 			for( String groupByAux : groupByA ) {
 				if ( getColumn( groupByAux ) == null ) {
@@ -2156,11 +2157,21 @@ public class GridPanel extends ViewerInputSecurityBase {
 					String lovDataField = extractor.extractName();
 					if (getColumn(lovDataField) == null){
 						valid = false;
+					} else if (!lovDataField.equals(groupByAux)){
+						if (fallBackGroupBy.length() == 0)
+							fallBackGroupBy += lovDataField;
+						else 
+							fallBackGroupBy += ","+lovDataField;
 					}
+				} else {
+					if (fallBackGroupBy.length() == 0)
+						fallBackGroupBy += groupByAux;
+					else 
+						fallBackGroupBy += "," + groupByAux;
 				}
 			}
 			if( valid ) {
-				setGroupBy( groupBy );
+				setGroupBy( fallBackGroupBy );
 			}		
 		}
 		

@@ -1,5 +1,6 @@
 package netgest.bo.xwc.components.connectors.generic;
 
+import java.util.Collections;
 import java.util.Map;
 
 import netgest.bo.xwc.components.connectors.DataFieldMetaData;
@@ -72,7 +73,12 @@ public class GenericDataFieldMetaData implements DataFieldMetaData {
 
 	@Override
 	public Map<Object, String> getLovMap() {
-		return null;
+		return Collections.emptyMap();
+	}
+	
+	@Override
+	public Map<Object, String> getLovMapWithLimit(int maxRecords) {
+		return Collections.emptyMap();
 	}
 
 	@Override

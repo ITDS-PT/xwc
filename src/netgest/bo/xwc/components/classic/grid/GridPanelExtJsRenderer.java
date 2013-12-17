@@ -27,6 +27,8 @@ import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.connectors.SortTerms;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
+import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
+import netgest.bo.xwc.components.connectors.XEOObjectAttributeMetaData;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.model.Menu;
@@ -61,7 +63,12 @@ import org.json.JSONObject;
 
 public class GridPanelExtJsRenderer extends XUIRenderer  {
 
-    private ExtConfigArray oExtButtons;
+    private static final int MAX_ELEMENTS_TO_FETCH_GRID_FILTER_LOV = 20;
+	/**
+     * Maximmum number of elements in a column filter of type lov
+     */
+    private static final int MAX_ELEMENTS_TO_SHOW_GRID_FILTER_LOV = 18;
+	private ExtConfigArray oExtButtons;
     private ExtConfigArray oExtToolbar;
     
     /**
@@ -361,7 +368,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oLoadParams.add( "limit" , oGrid.getPageSize() );
         
         ExtConfig oLoadParams1 = oLoadParams.addChild( "params" );
-        if( oGrid.getGroupBy() != null ) {
+        if( oGrid.getGroupBy() != null && oGrid.getEnableGroupBy()) {
         	String[] groupByElements = oGrid.getGroupBy().split(",");
         	ExtConfigArray c = oLoadParams1.addChildArray( "groupBy" );
         	for( String g : groupByElements ) {
@@ -604,7 +611,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         oDataStoreConfig.add( "pageSize", oGrid.getPageSize() );
         String sGroupBy = oGrid.getGroupBy();
         boolean hasGroupBy = false;
-        if( sGroupBy != null ) {
+        if( sGroupBy != null && oGrid.getEnableGroupBy() ) {
         	String[] groupByElements = oGrid.getGroupBy().split(",");
         	ExtConfigArray c = oDataStoreConfig.addChildArray( "groupField" );
         	for( String g : groupByElements ) {
@@ -1123,10 +1130,9 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             	if( connector == null ) {
             		throw new RuntimeException( ComponentMessages.GRID_DATASOURCE_IS_NULL.toString() );
             	}
+            	String dataField = col.getDataField();
 				metaData = connector.getAttributeMetaData( col.getDataField() );
 				
-				String dataField = col.getDataField();
-
 				oExtFiltersChild = oFiltersArray.addChild();
             	oExtFiltersChild.addJSString( "dataIndex", DataFieldDecoder.convertForGridPanel( dataField ) );
             	oExtFiltersChild.add( "active" , colFilter.getBoolean("active"));
@@ -1139,68 +1145,70 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 
         		if( metaData != null ) {
 	            	
-	            	if( metaData.getIsLov() ) {
-	            		Map<Object,String> lovMap = metaData.getLovMap();
-	            		if( lovMap.size() < 30 ) {
-	                    	
-	            			oExtFiltersChild.addJSString( "type", "list" );
-	            			colFilter.put("type", "list");
-	            			
-	                    	ExtConfigArray valuesArray = oExtFiltersChild.addChildArray("options");
-	                    	StringBuilder values = new StringBuilder();
-	                    	boolean first = true;
-	                    	
-	                    	ColumnFilterLovAdapter lovMapAdapter = new ColumnFilterLovAdapter(metaData,col);
-	                    	if (lovMapAdapter.requiresConversion())
-	                    		lovMap = lovMapAdapter.convertMapToColumnFilterFormat( lovMap );
-	                    	
-	                    	for( Object key : lovMap.keySet() ) {
-	                    		String desc = lovMap.get( key );
-	                    		if( !first )
-	                    			values.append(',');
-	                    		
-	                    		if( !(desc.length() == 0  && first) ) {
-	                    			ExtConfig c = valuesArray.addChild();
-	                    			c.addJSString("id", String.valueOf( key ));
-	                    			c.addJSString("text", desc);
-		                    		first = false;
-	                    		}
-	                    	}
-	                    	
-	            			filters = colFilter.optJSONArray("filters");
-	            			if( filters != null && filters.length() > 0 ) {
-		            			String value = filters.getJSONObject(0).getJSONArray("value").toString();
-		            			oExtFiltersChild.add("value", value );
-	            			} else {
-	            				filters = colFilter.optJSONArray("value");
-	            				if( filters != null && filters.length() > 0 ) {
-	            					String value = filters.getString( 0 );
-			            			oExtFiltersChild.addJSString( "value", value );
-	            				}
-	            			}
-	                    	
-	            			
-	            		} else if (metaData.getDataType() == DataFieldTypes.VALUE_NUMBER){
-	            			oExtFiltersChild.addJSString( "type", "object" );
-	            			colFilter.put("type", "object");
-		                	oExtFiltersChild.addJSString( "lookupInputName", oGrid.getFilterLookupInput().getClientId() );
-		                	oExtFiltersChild.add( "lookupCommand", 	            		
-		                			"function(){ " +
-		                				XVWScripts.getAjaxCommandScript( oGrid.getFilterLookupCommand(),col.getDataField(),XVWScripts.WAIT_DIALOG ) +
-		                			"}"
-		                	);	
-	            		} else { //Really big lovs
-	            			oExtFiltersChild.addJSString( "type", "string" );
-	            			colFilter.put("type", "string");
-	            			
-	            			filters = colFilter.optJSONArray("filters");
-	            			if( filters != null && filters.length() > 0 ) {
-		            			String value = filters.getJSONObject(0).getJSONArray("value").toString();
-		            			oExtFiltersChild.add("value", value );
-	            			}
-	            		}
+	            	if( metaData.getIsLov()) { 
 	            		
-	            	}
+	            			Map<Object,String> lovMap = metaData.getLovMapWithLimit( MAX_ELEMENTS_TO_FETCH_GRID_FILTER_LOV );
+		            		if( lovMap.size() < MAX_ELEMENTS_TO_SHOW_GRID_FILTER_LOV ) {
+		                    	
+		            			oExtFiltersChild.addJSString( "type", "list" );
+		            			colFilter.put("type", "list");
+		            			
+		                    	ExtConfigArray valuesArray = oExtFiltersChild.addChildArray("options");
+		                    	StringBuilder values = new StringBuilder();
+		                    	boolean first = true;
+		                    	
+		                    	ColumnFilterLovAdapter lovMapAdapter = new ColumnFilterLovAdapter(metaData,col);
+		                    	if (lovMapAdapter.requiresConversion())
+		                    		lovMap = lovMapAdapter.convertMapToColumnFilterFormat( lovMap );
+		                    	
+		                    	for( Object key : lovMap.keySet() ) {
+		                    		String desc = lovMap.get( key );
+		                    		if( !first )
+		                    			values.append(',');
+		                    		
+		                    		if( !(desc.length() == 0  && first) ) {
+		                    			ExtConfig c = valuesArray.addChild();
+		                    			c.addJSString("id", String.valueOf( key ));
+		                    			c.addJSString("text", desc);
+			                    		first = false;
+		                    		}
+		                    	}
+		                    	
+		            			filters = colFilter.optJSONArray("filters");
+		            			if( filters != null && filters.length() > 0 ) {
+			            			String value = filters.getJSONObject(0).getJSONArray("value").toString();
+			            			oExtFiltersChild.add("value", value );
+		            			} else {
+		            				filters = colFilter.optJSONArray("value");
+		            				if( filters != null && filters.length() > 0 ) {
+		            					String value = filters.getString( 0 );
+				            			oExtFiltersChild.addJSString( "value", value );
+		            				}
+		            			}
+		                    	
+		            			
+		            		} else if (metaData.getDataType() == DataFieldTypes.VALUE_NUMBER){
+		            			oExtFiltersChild.addJSString( "type", "object" );
+		            			colFilter.put("type", "object");
+			                	oExtFiltersChild.addJSString( "lookupInputName", oGrid.getFilterLookupInput().getClientId() );
+			                	oExtFiltersChild.add( "lookupCommand", 	            		
+			                			"function(){ " +
+			                				XVWScripts.getAjaxCommandScript( oGrid.getFilterLookupCommand(),col.getDataField(),XVWScripts.WAIT_DIALOG ) +
+			                			"}"
+			                	);	
+		            		}
+		            		
+		            		else { //Really big lovs
+		            			oExtFiltersChild.addJSString( "type", "string" );
+		            			colFilter.put("type", "string");
+		            			
+		            			filters = colFilter.optJSONArray("filters");
+		            			if( filters != null && filters.length() > 0 ) {
+			            			String value = filters.getJSONObject(0).getJSONArray("value").toString();
+			            			oExtFiltersChild.add("value", value );
+		            			}
+		            		}
+	            		}
 	            	else if( metaData.getInputRenderType() == DataFieldTypes.RENDER_OBJECT_LOOKUP ) {
 	                	oExtFiltersChild.addJSString( "type", "object" );
             			colFilter.put("type", "object");
@@ -1286,15 +1294,15 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 		                    	break;	
 		            	}
 	            	}
-            	}
-            	else {
-                	oExtFiltersChild.addJSString( "type", "string" );
+            } 
+        		else {
+        			oExtFiltersChild.addJSString( "type", "string" );
         			colFilter.put("type", "string");
         			filterValue = colFilter.optString("value");
         			if( filterValue != null ) {
-            			oExtFiltersChild.addString("value", filterValue );
+        				oExtFiltersChild.addString("value", filterValue );
         			}
-            	}
+        		}
             }
     	}
     	catch( JSONException e ) {

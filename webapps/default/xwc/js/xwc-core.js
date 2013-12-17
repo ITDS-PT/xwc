@@ -186,7 +186,7 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
                     XVW.handleAjaxResponse( oXmlReq, renderOnElement );
                 }
                 catch( e ) {
-                    XVW.handleAjaxError( e.description );
+                    XVW.handleAjaxError( e.message, e.stack  );
                 }
             }
             else if( oXmlReq.status == 401 && oXmlReq.getResponseHeader('login-url') != "" ) {
@@ -288,7 +288,6 @@ XVW.handleAjaxError = function( sErrorMessage, sDetails ) {
 
 // Must be overwriten ti handle error dialogs
 XVW.ErrorDialog = function( sTitle, sMessage ) {};
-
 
 XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
 	// Handle view Element -- Update ViewId
@@ -496,7 +495,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         }
         catch( e ) {
         		debugger;
-        		window.eval( sScriptToEval );
+        		XVW.reportAjaxErrorBlock(oFooterScriptNodeList);
 	            XVW.ErrorDialog( XVW.Messages.AJAXERROR_MESSAGE, "["+oScriptId+"]" +
 	                e.description + "\n" +
 	                sScriptToEval
@@ -508,6 +507,36 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
     XVW.ajax.enableAjaxRequests();
 };
 
+XVW.reportAjaxErrorBlock = function (oFooterScriptNodeList) {
+	var sScriptToEval = "";
+	for( var nl3=0;nl3<oFooterScriptNodeList.length; nl3++ )
+    {
+        var oScriptNodes = oFooterScriptNodeList.item(nl3).getElementsByTagName( 'script' );
+        for( var i=0; i < oScriptNodes.length; i++ ) {
+            var oScriptNode = oScriptNodes.item(i);
+            oScriptId = oScriptNode.getAttribute("id");
+            oScriptSrc = oScriptNode.getAttribute("src");
+            if( oScriptSrc == null ) {
+                if(oScriptNode.textContent /*Mozilla*/) { 
+                	sScriptToEval = oScriptNode.textContent; 
+                }
+	            else /*IE*/ { 
+	            	sScriptToEval = oScriptNode.text 
+	            };
+	            
+	            try {
+	            	window.eval(sScriptToEval);
+	            } catch (e) {
+	            	var url = location.href;
+	            	var errorMessage = e.message;
+	            	var jsBlock = sScriptToEval;
+            		var line = null;
+	            	XVW.logJsError(errorMessage,url,line,jsBlock);
+	            }
+            }
+        }            
+    }
+};
 
 XVW.ajaxResponse = function() {};
 
@@ -745,7 +774,125 @@ XVW.createXMLHttpRequest = function()
     return req;
 };
 
+/**
+ * Logs Javascript Errors to the server
+ * */
+XVW.logJsError = function (errorMessage, url, line, jsBlock){
+	
+	var sActionUrl = "";
+	var sUrl = "";
+	var forms = document.getElementsByTagName('form');
+	for (var i = 0 ; i < forms.length ; i++ ){
+		sActionUrl = XVW.prv.getFormInput( forms[i], 'xvw.ajax.resourceUrl').value;
+		sUrl = XVW.prv.getFormInput( forms[i], 'xvw.ajax.submitUrl').value;
+		if (sActionUrl !== null && sActionUrl !== undefined && sActionUrl.length > 0)
+			break;
+	}
+	
+	var loggerUrl = sActionUrl + "/netgest/bo/xwc/framework/viewers/JsErrorLogOperations.xvw";
+	  var parameters = "?action=log&JS_ERROR_MESSAGE=" + encodeURI(errorMessage)
+	      + "&VIEW_ID=" + encodeURI(sUrl)
+	      + "&LINE=" + encodeURI(line)
+	      + "&parent_url=" + encodeURI(document.location.href)
+	      + "&USER_AGENT=" + encodeURI(navigator.userAgent);
+	  
+	  if (jsBlock !== null && jsBlock !== undefined){
+		  parameters += ("&JS_ERROR_BLOCK=" + encodeURI(jsBlock));
+	  }
+	 
+	  /** Send error to server */
+	  var xhr = XVW.createXMLHttpRequest();
+	  xhr.open( "GET", loggerUrl + parameters, true );
+	  xhr.send();
+};
+
+/**
+ * Logs Request Timing (uses performance.timing) to the server to register performance
+ * */
+XVW.logTiming = function (timing){
+	if (timing === null || timing === undefined){
+		return ;
+	}
+	
+	var sActionUrl = "";
+	var sUrl = "";
+	var forms = document.getElementsByTagName('form');
+	for (var i = 0 ; i < forms.length ; i++ ){
+		sActionUrl = XVW.prv.getFormInput( forms[i], 'xvw.ajax.resourceUrl').value;
+		sUrl = XVW.prv.getFormInput( forms[i], 'xvw.ajax.submitUrl').value;
+		if (sActionUrl !== null && sActionUrl !== undefined && sActionUrl.length > 0)
+			break;
+	}
+	var loggerUrl = sActionUrl + "/netgest/bo/xwc/framework/viewers/TimingOperations.xvw";
+	var parameters = "?action=log"
+	      + "&VIEW_ID=" + encodeURI(sUrl)
+	      + "&USER_AGENT=" + encodeURI(navigator.userAgent)
+	  	  + "&NAVIGATIONSTART="	+ parseInt(timing.navigationStart)
+		+ "&UNLOADEVENTSTART="+ parseInt(timing.unloadEventStart)
+		+ "&UNLOADEVENTEND="+ parseInt(timing.unloadEventEnd)
+		+ "&REDIRECTSTART="+ parseInt(timing.redirectStart)
+		+ "&REDIRECTEND="+ parseInt(timing.redirectEnd)
+		+ "&FETCHSTART="+ parseInt(timing.fetchStart)
+		+ "&DOMAINLOOKUPSTART="+ parseInt(timing.domainLookupStart)
+		+ "&DOMAINLOOKUPEND="+ parseInt(timing.domainLookupEnd)
+		+ "&CONNECTSTART="+ parseInt(timing.connectStart)
+		+ "&CONNECTEND="+ parseInt(timing.connectEnd)
+		+ "&SECURECONNECTIONSTART="+ parseInt(timing.secureConnectionStart)
+		+ "&REQUESTSTART="+ parseInt(timing.requestStart)
+		+ "&RESPONSESTART="+ parseInt(timing.responseStart)
+		+ "&RESPONSEEND="+ parseInt(timing.responseEnd)
+		+ "&DOMLOADING="+ parseInt(timing.domLoading)
+		+ "&DOMINTERACTIVE="+ parseInt(timing.domInteractive)
+		+ "&DOMCONTENTLOADEDEVENTSTART="+ parseInt(timing.domContentLoadedEventStart)
+		+ "&DOMCONTENTLOADEDEVENTEND="+ parseInt(timing.domContentLoadedEventEnd)
+		+ "&DOMCOMPLETE="+ parseInt(timing.domComplete)
+		+ "&LOADEVENTSTART="+ parseInt(timing.loadEventStart)
+		+ "&LOADEVENTEND="+ parseInt(timing.loadEventEnd);
+	 
+	  /** Send error to server */
+	  var xhr = XVW.createXMLHttpRequest();
+	  xhr.open( "GET", loggerUrl + parameters, true );
+	  xhr.send();
+}
+
+/**
+ * Attach the Error Logger to the onError event
+ * */
+window.onerror = function(errorMessage, url, line) {
+	  XVW.logJsError(errorMessage,url,line,null);
+	  return true;
+};
+
+/**
+ * Associate the load event with the function to register performance timing
+ * make it with a small delay after the load event
+ * */
+//Temporarilly Disabled
+//(function(window){
+//	
+//	//Firefox, Chrome, IE9+
+//	if (window.addEventListener){
+//		if (window.performance){
+//			window.addEventListener('load', function (){
+//				window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
+//				}, false);
+//		}
+//	} else {
+//		//IE 7,8 or IE in compability mode
+//		if (window.attachEvent){
+//			window.attachEvent('onload', function (){
+//				window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
+//				}, false);
+//		}
+//	}
+//	
+//	
+//	
+//})(window);
+
 XVW.beforeApplyHtml = function( oDNode ) {};
+
+
 
 
 // XVW Events ........

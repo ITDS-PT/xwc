@@ -292,13 +292,13 @@ public abstract class XUIComponentBase extends UIComponentBase
 	
     @Override
 	public UIComponent findComponent(String expr) {
-    	UIComponent oComp=super.findComponent(expr);
+    	UIComponent oComp= super.findComponent(expr);
 		
 		if (oComp == null){
 			UIComponent result = null;
 			for (Iterator<UIComponent> i = getFacetsAndChildren(); i.hasNext();) {
 				UIComponent kid =  i.next();
-					if ( expr.equals(kid.getClientId( getFacesContext() ))) {
+					if ( expr.equals(kid.getClientId( getFacesContext() )) || expr.equals(kid.getId())) {
 						result = kid;
 						oComp = result;
 						break;

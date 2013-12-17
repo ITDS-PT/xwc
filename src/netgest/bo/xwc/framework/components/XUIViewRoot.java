@@ -148,7 +148,9 @@ public class XUIViewRoot extends UIViewRoot {
 		if( this.sBeanIds != null && this.sBeanIds.length() > 0 ) {
 			this.sBeanIds += "|";
 		}
-		this.sBeanIds += sBeanName;
+		if (!beanMapping.containsKey(sBeanName)){
+			this.sBeanIds += sBeanName;
+		}
 		this.beanId = sBeanName;
 		this.beanReference = oBean;
 		this.beanMapping.put( sBeanName , oBean.getClass().getName() );
@@ -439,6 +441,10 @@ public class XUIViewRoot extends UIViewRoot {
 			UIComponent component = list.next();
 			if (component instanceof XUIComponentBase)
 			{
+				XUIComponentBase possibleResult = (XUIComponentBase) component;
+				if (clientId.equals(possibleResult.getClientId())  || clientId.equals(possibleResult.getId())){
+					return possibleResult;
+				}
 				found = ((XUIComponentBase) component).findComponent(clientId);
 				if (found != null) {
 					return (XUIComponentBase) found;

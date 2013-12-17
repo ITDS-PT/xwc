@@ -433,7 +433,7 @@ public class AdvancedSearchBean extends XEOBaseBean {
 	@Override
 	public void setLookupFilterResults( XEOBaseLookupList lookupBean, DataRecordConnector[] records ) {
 		XUIViewRoot oRoot = this.getViewRoot();
-    	XUICommand oCmd     = (XUICommand)oRoot.findComponent( ":" + lookupBean.getParentComponentId() );
+    	XUICommand oCmd     = (XUICommand)oRoot.findComponent( lookupBean.getParentComponentId() );
     	GenericLookup genericLookup = (GenericLookup) oCmd.getParent();
     	
     	List<String> values = new LinkedList<String>();
@@ -1013,7 +1013,9 @@ public class AdvancedSearchBean extends XEOBaseBean {
 				String displayValue = getLovDisplayValue( refAttribute.getLOVName(), value.toString() );
 				gl.setDisplayValue( displayValue );
 			} else if (MetadataUtils.isObjectOrCollection( refAttribute )){
-				String currentValue = value.toString();
+				String currentValue = "";
+				if (value != null)
+					currentValue = value.toString();
 				List<String> listOfValues = createListFromCommaString( currentValue );
 				String displayValue = getDisplayValueBridge( listOfValues );
 				gl.setDisplayValue( displayValue );

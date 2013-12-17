@@ -16,6 +16,7 @@ import netgest.bo.xwc.framework.XUIMethodBindProperty;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIForm;
 
 /**
  *
@@ -127,7 +128,6 @@ public class GenericLookup extends AttributeBase {
 		@Override
 		public ExtConfig getExtJsFieldConfig(AttributeBase oComp) {
             GenericLookup  	oAttr;
-            String              	sFormId;
             Form                	oForm;
 			
             oAttr = (GenericLookup)oComp; 
@@ -135,9 +135,7 @@ public class GenericLookup extends AttributeBase {
             ExtConfig oInpConfig = super.getExtJsFieldConfig(oComp);
 
 			boolean enableCardIdLink = oAttr.getEnableCardIdLink();
-			sFormId = oComp.getNamingContainerId();
-            oForm   = (Form)oComp.findComponent( sFormId );
-
+            oForm   = (Form)oComp.findParent(Form.class);
             
             oInpConfig.add("maxLength", "100" );
             oInpConfig.add("readOnly", true );
@@ -185,11 +183,9 @@ public class GenericLookup extends AttributeBase {
 		
 		@Override
 		public ExtConfig getExtJsFieldListeners(AttributeBase oAttr) {
-            String              sFormId;
             Form                oForm;
-			
-            sFormId = oAttr.getNamingContainerId();
-            oForm   = (Form)oAttr.findComponent( sFormId );
+            
+            oForm   = (Form)oAttr.findParent(Form.class);
 			
 			GenericLookup oAttLk = (GenericLookup)oAttr;
 			boolean enableCardIdLink = oAttr.getEnableCardIdLink();
