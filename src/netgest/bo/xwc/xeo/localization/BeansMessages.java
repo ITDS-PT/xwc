@@ -82,6 +82,12 @@ public interface BeansMessages {
 	public static final XUILocalizedMessage UPDATE_FAILED_KEY_VIOLATED_FOR_FIELDS = 
 			new XUILocalizedMessage( BeansMessages.class.getName(), "UPDATE_FAILED_KEY_VIOLATED_FOR_FIELDS" );
 	
+	public static final XUILocalizedMessage ROW_DOUBLE_CLICK_FAILED_TITLE = 
+			new XUILocalizedMessage( BeansMessages.class.getName(), "ROW_DOUBLE_CLICK_FAILED_TITLE" );
+	
+	public static final XUILocalizedMessage ROW_DOUBLE_CLICK_FAILED_MESSAGE = 
+			new XUILocalizedMessage( BeansMessages.class.getName(), "ROW_DOUBLE_CLICK_FAILED_MESSAGE" );
+	
 	// Messages for the Properties View
 	public static final XUILocalizedMessage OBJECT_TYPE = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "OBJECT_TYPE" );
