@@ -274,7 +274,7 @@
     </xsl:template>
     
     <xsl:template match="outputHtml">
-            <xsl:apply-templates select="./*|text()"/>
+            <xsl:apply-templates select="./@displayValue"  />
     </xsl:template>
     
     <xsl:template match="attributeLabel" priority="-1">
@@ -309,7 +309,7 @@
     <xsl:template match="attributeText" priority="-1">
         <!-- ignorei os outros atributos do HTML -->
         <td class="value">
-            <xsl:value-of select="./text()"/>
+            <xsl:value-of select="./@displayValue"/>
         </td>
     </xsl:template>
 
@@ -371,7 +371,7 @@
     <!-- Atributos do tipo texto longo -->
     <xsl:template match="attributeTextArea" priority="-1">
         <td class="value">
-           <xsl:value-of select="./text()"/>
+            <xsl:value-of select="./@displayValue"/>
         </td>
     </xsl:template>
 
@@ -488,7 +488,7 @@
     <!-- Editor HTML -->
     <xsl:template match="attributeHtmlEditor" priority="-1">
         <td class="value">
-            <xsl:copy-of select="./*|text()"/>
+            <xsl:copy-of select="./@displayValue"  />
         </td>
     </xsl:template>
     
@@ -508,7 +508,7 @@
     
     <xsl:template match="gridheadercolumn" priority="-1">
         <th>
-            <xsl:value-of select="text()"/>
+       	    <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>
         </th>
     </xsl:template>
     
@@ -519,12 +519,14 @@
     </xsl:template>
     
     <xsl:template match="gridcolumn" priority="-1">
-        <td>
+        <td>CC
             <xsl:if test="string-length(./text()) > 0">
-                <xsl:value-of select="./text()"/>    
+                <xsl:value-of select="./text()" disable-output-escaping="yes"/>    
             </xsl:if>
             <xsl:if test="string-length(./text()) = 0">
-                <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>    
+            	<xsl:text>
+                	<xsl:value-of select="./@displayValue" disable-output-escaping="yes" />    
+                </xsl:text>
             </xsl:if>
         </td>
     </xsl:template>

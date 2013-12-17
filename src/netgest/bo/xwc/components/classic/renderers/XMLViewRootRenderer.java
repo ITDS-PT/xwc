@@ -79,16 +79,11 @@ public class XMLViewRootRenderer extends XUIRenderer {
         	w.startElement( "div", component );
             w.writeAttribute( "id", ((XUIViewRoot)component).getClientId(), "id" );
             
-            // N�o sei se � necess�rio, foi criado a necessidade atrav�s 
             if( viewRoot.findComponent( Window.class ) != null ) {
             	w.writeAttribute( HTMLAttr.CLASS, "x-panel", "" );
             }
         	w.writeAttribute("style", "width:100%;height:100%", null);
         	
-        	if( t != null ) {
-                t.addScripts( w.getScriptContext() );
-                t.addStyle( w.getStyleContext() );
-        	}
         	
     }
 
@@ -112,16 +107,6 @@ public class XMLViewRootRenderer extends XUIRenderer {
     	Layouts.doLayout(w);
         XUIResponseWriter footerW = getResponseWriter().getFooterWriter();
         XUIResponseWriter headerW = getResponseWriter().getHeaderWriter();
-
-        //if( renderScripts() ) {
-
-            w.getScriptContext().render( headerW, w, footerW );
-            w.getStyleContext().render( headerW, w, footerW );
-            oRequestContext.getScriptContext().render( headerW, w, footerW );
-        //}
-
-        //if( renderHead() ) {
-            // Write footer Elements
         	
         	XUITheme t = getTheme();
         	if( t != null ) {
