@@ -2406,8 +2406,16 @@ public class GridPanel extends ViewerInputSecurityBase {
 							String sDisplayValue = dataRecordConnector
 									.getAttribute(column).getDisplayValue();
 							
-							String sColValue = (String)dataRecordConnector
-							.getAttribute(column).getValue();
+							Object oColValue = dataRecordConnector
+									.getAttribute(column).getValue();
+							String sColValue = "";
+
+							if (oColValue instanceof String){
+								sColValue = oColValue.toString();
+							} else {
+								addLine = false;
+								continue ; //Not supported probably a CardID Search on a Bridge
+							}
 							
 							String sColumnValue = sDisplayValue == null ? ""
 									: sDisplayValue.toUpperCase();
