@@ -13,17 +13,19 @@ public class XMLTabRenderer extends XUIRenderer {
 	@Override
 	public void encodeBegin(XUIComponentBase component) throws IOException {
 		
-			Tab tab = (Tab) component;
-			XUIResponseWriter rw = getResponseWriter();
+		Tab tab = (Tab) component;
+		XUIResponseWriter rw = getResponseWriter();
+		if (tab.getEffectivePermission(SecurityPermissions.READ) && tab.isVisible()){
 			rw.startElement( component.getRendererType(), component );
 			rw.writeAttribute("label", tab.getLabel());
+		}
 		
 	}
 	
 	@Override
 	public void encodeChildren(XUIComponentBase component) throws IOException {
 		Tab tab = (Tab) component;
-		if (tab.getEffectivePermission(SecurityPermissions.READ)){
+		if (tab.getEffectivePermission(SecurityPermissions.READ) && tab.isVisible()){
 			super.encodeChildren(component);
 		}
 	}
@@ -35,8 +37,11 @@ public class XMLTabRenderer extends XUIRenderer {
 
 	@Override
 	public void encodeEnd(XUIComponentBase component) throws IOException {
-		XUIResponseWriter rw = getResponseWriter();
-		rw.endElement( component.getRendererType() );
+		Tab tab = (Tab) component;
+		if (tab.getEffectivePermission(SecurityPermissions.READ) && tab.isVisible()){
+			XUIResponseWriter rw = getResponseWriter();
+			rw.endElement( component.getRendererType() );
+		}
 	}
 
 }

@@ -186,6 +186,17 @@
         </xsl:for-each>
     </xsl:template>
     
+     <xsl:template match="form/tabs" >
+        <xsl:for-each select="tab">
+         <div class="tab">
+             <h1>
+                 <xsl:value-of select="./@label"/>
+             </h1>
+         </div>
+         <xsl:apply-templates/>
+        </xsl:for-each>
+    </xsl:template>
+    
     <xsl:template match="tab/tabs" priority="-1">
         <xsl:for-each select="tab">
             <div class="tab">
@@ -454,7 +465,7 @@
     <!-- Atributos do tipo object -->
     <xsl:template match="attributeNumberLookup" priority="-1">
         <td class="value">
-            <xsl:value-of select="./@displayValue"/>
+             <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
     
@@ -473,7 +484,7 @@
     <!-- Attribute Lov -->
     <xsl:template match="attributeLov" priority="-1">
         <td class="value">
-            <xsl:value-of select="./@displayValue"/>
+             <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
     
