@@ -616,6 +616,12 @@ public class XUIResponseWriter extends ResponseWriter {
         writer.write(str, off, len);
 
     }   
+    
+    public void writeCDATA(String data) throws IOException {
+    	startElement("cdata");
+    	write(data);
+    	endElement("cdata");
+    }
 
     public void writeAttribute(XUIWriterAttributeConst oAttrName, Object value,
                                String componentPropertyName) throws IOException {
