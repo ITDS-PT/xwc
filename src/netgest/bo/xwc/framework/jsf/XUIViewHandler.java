@@ -301,6 +301,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	
 	    newWriter.startDocument();
 	    viewToRender.encodeAll( context );
+	    
 	    newWriter.endDocument();
 	
 	    // Write header part of document
@@ -317,12 +318,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	    
 	    String temp = w.toString();
 	    
-	    XMLDocument doc = ngtXMLUtils.loadXML( temp );
+	    XMLDocument doc = ngtXMLUtils.loadXMLPreserveCData(temp);
 	    String xmlContent =ngtXMLUtils.getXML(doc);
-	    
-	     
-	    
-	    
 	    
 		final String		HTML_TEMPLATES = "html_templates.xsl";
     	final String		PROJECT_HTML_TEMPLATES = "projectHtmlTemplates.xsl";
@@ -337,9 +334,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 				finalTransformer = 
 					Thread.currentThread().getContextClassLoader().getResourceAsStream( HTML_TEMPLATES );
 			}
-			
-			// JAXP reads data using the Source interface
-			//System.out.println(xmlContent);
 			
 		    Source xmlSource = new StreamSource(new StringReader(xmlContent));
 		    Source xsltSource = new StreamSource(finalTransformer);

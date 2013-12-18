@@ -380,80 +380,51 @@
         </xwc:renderKit>
         
 		<xwc:renderKit name='XEOXML' componentNamespace='xvw' >
-		    <xwc:render for='ajaxText'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for="form">netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='menu'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='areas'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='area'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='panel'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='tabs'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='tab'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='section'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='rows'>netgest.bo.xwc.components.classic.renderers.XMLRowsRenderer</xwc:render>
-            <xwc:render for='row'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='cell'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='actionButton'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-
-            <xwc:render for='attribute'>netgest.bo.xwc.components.classic.renderers.XMLAttributeRenderer</xwc:render>
-            <xwc:render for='attributeText'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributeTextArea'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributeLabel'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributeHtmlEditor'>netgest.bo.xwc.components.classic.renderers.XMLHtmlEditRenderer</xwc:render>
-            <xwc:render for='attributeDate'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributeTime'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributeDateTime'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributeLov'>netgest.bo.xwc.components.classic.renderers.XMLAttributeRenderer</xwc:render>
-            <xwc:render for='attributeBoolean'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributeNumber'>netgest.bo.xwc.components.classic.renderers.XMLAttributeRenderer</xwc:render>
-            <xwc:render for='attributeNumberLookup'>netgest.bo.xwc.components.classic.renderers.XMLAttributeRenderer</xwc:render>
-            <xwc:render for='attributeOutput'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributeFile'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='attributePassword'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-
-            <xwc:render for='mainLayout'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for="form">netgest.bo.xwc.components.classic.renderers.xml.XMLOnlyElementRenderer</xwc:render>
+            <xwc:render for='panel'>netgest.bo.xwc.components.classic.renderers.xml.XMLOnlyElementRenderer</xwc:render>
+            <xwc:render for='tabs'>netgest.bo.xwc.components.classic.renderers.xml.XMLOnlyElementRenderer</xwc:render>
+            <xwc:render for='tab'>netgest.bo.xwc.components.classic.renderers.xml.XMLTabRenderer</xwc:render>
+            <xwc:render for='section'>netgest.bo.xwc.components.classic.renderers.xml.XMLSectionRender</xwc:render>
+            <xwc:render for='rows'>netgest.bo.xwc.components.classic.renderers.xml.XMLRowsRender</xwc:render>
+            <xwc:render for='row'>netgest.bo.xwc.components.classic.renderers.xml.XMLOnlyElementRenderer</xwc:render>
+            <xwc:render for='cell'>netgest.bo.xwc.components.classic.renderers.xml.XMLCellRenderer</xwc:render>
             
-            <xwc:render for='gridPanel'>netgest.bo.xwc.components.classic.renderers.XMLGridPanelRenderer</xwc:render>
-            <xwc:render for='window'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-			<xwc:render for='HTMLFileBrowse'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-			<xwc:render for='title'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-			
+             <xwc:render for='menu'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
+             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
+             <xwc:render for='messageBox'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
+             <xwc:render for='errorMessages'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
+             <xwc:render for='title'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
+             <xwc:render for='viewerTitle'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
+             <xwc:render for='actionButton'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
+ 
+            <xwc:render for='attribute'>netgest.bo.xwc.components.classic.renderers.xml.XMLOnlyElementRenderer</xwc:render>
+            <xwc:render for='attributeText'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeLongTextRenderer</xwc:render>
+            <xwc:render for='attributeTextArea'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeLongTextRenderer</xwc:render>
+            <xwc:render for='attributeLabel'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeLabelRenderer</xwc:render>
+            <xwc:render for='attributeHtmlEditor'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeLongTextRenderer</xwc:render>
+            <xwc:render for='attributeDate'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeRenderer</xwc:render>
+            <xwc:render for='attributeTime'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeRenderer</xwc:render>
+            <xwc:render for='attributeDateTime'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeRenderer</xwc:render>
+            <xwc:render for='attributeLov'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeRenderer</xwc:render>
+            <xwc:render for='attributeNumber'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeRenderer</xwc:render>
+            <xwc:render for='attributeNumberLookup'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeRenderer</xwc:render>
+            <xwc:render for='attributeOutput'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeFile'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeRenderer</xwc:render>
+            <xwc:render for='attributePassword'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeRenderer</xwc:render>
 
+            <xwc:render for='attributeBoolean'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeBooleanRenderer</xwc:render>
+            
+            <xwc:render for='gridPanel'>netgest.bo.xwc.components.classic.renderers.xml.XMLGridPanelRenderer</xwc:render>
             <xwc:render for='treePanel'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
 
-			<!--- Dialogs Components -->
-			<xwc:render for='dialogProgress'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='attributeImage'>netgest.bo.xwc.components.classic.renderers.XMLAttributeImageRenderer</xwc:render>
 
-			<xwc:render for='progressBar'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+            <xwc:render for='outputHtml'>netgest.bo.xwc.components.classic.renderers.xml.XMLOutputHtmlRenderer</xwc:render>
 
-			<xwc:render for='messageBox'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-
-
-			<!--- HTML Graphics -->
-            	<xwc:render for='attributeImage'>netgest.bo.xwc.components.classic.renderers.XMLAttributeImageRenderer</xwc:render>
-            <!--- HTML Graphics -->
-
-			<!--- HTML Components -->
-			<xwc:render for='buttonHtml'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <xwc:render for='outputHtml'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-
-	        <!-- pcampos begin OE consolidar-->
-            <xwc:render for='fileBrowserHtml'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-            <!-- pcampos begin OE -->
-
-			<!-- FIM HTML Components -->
-
-			<!-- Generic Viewer Tag -->
 			<xwc:render for='genericTag'>netgest.bo.xwc.components.html.GenericTag$XEOHTMLRenderer</xwc:render>
-			<!-- FIM Viewer Tag -->
+			<xwc:render for='attributeWordMacro'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeRenderer</xwc:render>
+			<xwc:render for='attributeObjectLookup'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeRenderer</xwc:render>
 			
-			<xwc:render for='attributeWordMacro'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-
-			<xwc:render for='attributeObjectLookup'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
-			
-			<!-- Chart Components -->
 			<xwc:render for='pieChart'>netgest.bo.xwc.components.classic.renderers.XMLChartRenderer</xwc:render>
 			<xwc:render for='lineChart'>netgest.bo.xwc.components.classic.renderers.XMLChartRenderer</xwc:render>
 			<xwc:render for='barChart'>netgest.bo.xwc.components.classic.renderers.XMLChartRenderer</xwc:render>
@@ -461,11 +432,11 @@
 			
         </xwc:renderKit>
         <xwc:renderKit name="XEOXML" componentNamespace="xeo" >
-	        <xwc:render for='bridgeLookup'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
+	        <xwc:render for='bridgeLookup'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeRenderer</xwc:render>
 	        <xwc:render for='splitedLookup'>netgest.bo.xwc.components.classic.renderers.XMLBasicRenderer</xwc:render>
 	      	<xwc:render for='formEdit'>netgest.bo.xwc.components.classic.renderers.XMLFormEditRenderer</xwc:render>
 	      	<xwc:render for='bridge'>netgest.bo.xwc.components.classic.renderers.XMLGridPanelRenderer</xwc:render>
-        </xwc:renderKit>
+        </xwc:renderKit> 
     </xwc:renderKits>
     
     <xwc:components namespace='xvw' > 

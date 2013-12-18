@@ -3,7 +3,6 @@ package netgest.bo.xwc.components.classic.renderers.xml;
 import java.io.IOException;
 
 import netgest.bo.xwc.components.classic.OutputHtml;
-import netgest.bo.xwc.components.classic.grid.HTMLEntityDecoder;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -18,7 +17,7 @@ public class XMLOutputHtmlRenderer extends XUIRenderer {
 			rw.startElement( component.getRendererType(), component );
 			Object value = output.getValue();
 			if (value != null){
-				rw.writeAttribute( "displayValue", value.toString() );
+				rw.writeCDATA(value.toString());
 			}
 			
 			

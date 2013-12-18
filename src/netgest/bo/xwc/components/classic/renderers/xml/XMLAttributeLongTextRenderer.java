@@ -3,7 +3,6 @@ package netgest.bo.xwc.components.classic.renderers.xml;
 import java.io.IOException;
 
 import netgest.bo.xwc.components.classic.AttributeBase;
-import netgest.bo.xwc.components.classic.grid.HTMLEntityDecoder;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -16,7 +15,7 @@ public class XMLAttributeLongTextRenderer extends XUIRenderer {
 			AttributeBase attribute = (AttributeBase) component;
 			XUIResponseWriter rw = getResponseWriter();
 			rw.startElement( component.getRendererType(), component );
-			rw.writeAttribute( "displayValue", attribute.getDisplayValue());
+			rw.writeCDATA(attribute.getDisplayValue());
 		
 	}
 

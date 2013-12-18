@@ -10,7 +10,6 @@ import java.util.Map;
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
-import netgest.bo.xwc.components.classic.grid.HTMLEntityDecoder;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
@@ -117,14 +116,13 @@ public class XMLGridPanelRenderer extends XUIRenderer {
 	                    		if (sDisplayValue != null)
 		                    	{
 	                    			//Prevent Illegal entities in 
-	                    			sDisplayValue = HTMLEntityDecoder.charsToHtmlEntity(sDisplayValue);
 		                    		oDataFieldType = oDataField.getDataType();
 			                        switch( oDataFieldType ){
 			                            case DataFieldTypes.VALUE_BLOB:
 			                                // Don't passe to JavaScript
 			                                break;
 			                            case DataFieldTypes.VALUE_BRIDGE:
-			                            	 w.writeAttribute("displayValue", sDisplayValue);
+			                            	w.writeCDATA(sDisplayValue);
 			                            	break;
 			                            case DataFieldTypes.VALUE_BOOLEAN:
 			                            	w.writeAttribute("displayValue",sDisplayValue);
@@ -134,10 +132,10 @@ public class XMLGridPanelRenderer extends XUIRenderer {
 			                            	if (sDisplayValue.indexOf("<img style='cursor:hand' hspace='3' border='0' align='absmiddle'")>-1) {
 			                            		sDisplayValue=sDisplayValue.replaceAll("\\<.*?>","");
 			                            	}
-			                            	w.writeAttribute("displayValue",sDisplayValue);
+			                            	w.writeCDATA(sDisplayValue);
 			                            	break;
 			                            case DataFieldTypes.VALUE_CLOB:
-			                            	w.writeAttribute("displayValue",sDisplayValue);
+			                            	w.writeCDATA(sDisplayValue);
 			                            	break;
 			                            case DataFieldTypes.VALUE_NUMBER:
 			                            	w.writeAttribute("displayValue",XUILocalization.formatNumber( ((BigDecimal)oDataFieldValue).longValue() ));

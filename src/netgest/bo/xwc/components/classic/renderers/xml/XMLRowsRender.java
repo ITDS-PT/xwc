@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.classic.renderers.xml;
 
 import static netgest.bo.xwc.components.HTMLAttr.CELLPADDING;
 import static netgest.bo.xwc.components.HTMLAttr.CELLSPACING;
+import static netgest.bo.xwc.components.HTMLAttr.WIDTH;
 
 import java.io.IOException;
 
@@ -23,6 +24,8 @@ public class XMLRowsRender extends XUIRenderer {
 			
 			rw.writeAttribute(CELLPADDING, padding);
 			rw.writeAttribute(CELLSPACING, spacing);
+			rw.writeAttribute(WIDTH, rows.getWidth());
+			rw.writeAttribute("labelWidth", rows.getLabelWidth());
 			
 		
 	}
