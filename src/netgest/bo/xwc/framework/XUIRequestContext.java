@@ -422,5 +422,9 @@ public class XUIRequestContext {
 	void setRequestId(long requestId){
 		this.debugInfo.setRequestId(requestId);
 	}
+	
+	public void addCustomDebugContext(String context){
+		this.debugInfo.addCustomContext(context);
+	}
 }
 

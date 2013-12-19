@@ -60,27 +60,9 @@ public class XUIErrorLogger {
 	 * 
 	 * @param customContext
 	 */
-	public void addDebugInfo(String customContext){
-		EboContext ctx = boApplication.currentContext().getEboContext();
+	public static void addDebugInfo(String customContext){
 		XUIRequestContext request = XUIRequestContext.getCurrentContext();
-		if (ctx != null && request != null){
-			Connection con = getConnection(ctx);
-			logViewError(ctx, request.getDebugInfo(), customContext, null, con);
-		}
-	}
-	
-	/**
-	 * 
-	 * See {@link #addDebugInfo(String)} but this one uses a specific {@link EboContext} and
-	 * {@link XUIRequestContext}
-	 * 
-	 * @param ctx
-	 * @param request
-	 * @param customContext
-	 */
-	public void addDebugInfo(EboContext ctx, XUIRequestContext request, String customContext){
-		Connection con = getConnection(ctx);
-		logViewError(ctx, request.getDebugInfo(), customContext,null,  con);
+		request.addCustomDebugContext(customContext);
 	}
 	
 	private Connection getConnection(EboContext ctx){
@@ -117,7 +99,7 @@ public class XUIErrorLogger {
 	 * @param customContext
 	 * @param e
 	 */
-	public void logViewError(EboContext ctx, XUIRequestContextDebugInfo debug, String customContext, Exception e, Connection connection){
+	void logViewError(EboContext ctx, XUIRequestContextDebugInfo debug, String customContext, Exception e, Connection connection){
 		
 		long requestId = debug.getRequestId();
 		long userBoui = -1;
@@ -157,8 +139,15 @@ public class XUIErrorLogger {
 			e.printStackTrace(pw);
 		}
 		
-		if (StringUtils.isEmpty(customContext))
-			customContext = "";
+		List<String> customContextContent = debug.getCustomContext();
+		if (StringUtils.hasValue(customContext)){
+			customContextContent.add(customContext);
+		}
+		
+		String customContextToLog = "";
+		for (String currentContext : customContextContent){
+			customContextToLog += currentContext + ";";
+		}
 		
 		try {
 			if (connection == null){
@@ -176,7 +165,7 @@ public class XUIErrorLogger {
 					, viewId
 					, beanContext.toString()
 					, eventContext
-					, customContext
+					, customContextToLog
 					, s.toString()
 					, ipAddress);
 		} catch (SQLException e1) {
