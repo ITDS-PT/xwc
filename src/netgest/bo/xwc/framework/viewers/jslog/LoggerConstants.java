@@ -1,5 +1,6 @@
 package netgest.bo.xwc.framework.viewers.jslog;
 
+
 import netgest.bo.data.oracle.OracleDBM.Database;
 import netgest.bo.xwc.framework.XUIErrorLogger;
 
@@ -64,7 +65,9 @@ public class LoggerConstants {
 				oracle.append(" JS_ERROR_MESSAGE CLOB,");
 				oracle.append(" LINE NUMBER,");
 				oracle.append(" USER_AGENT VARCHAR(250),");
-				oracle.append(" HOST VARCHAR(250)");
+				oracle.append(" HOST VARCHAR(250),");
+				oracle.append(" IP_ADDRESS VARCHAR(100),");
+				oracle.append(" JS_FILE VARCHAR(250)");
 				oracle.append(")");
 				return oracle.toString();
 			case MYSQL : 
@@ -80,7 +83,9 @@ public class LoggerConstants {
 				mysql.append(" JS_ERROR_MESSAGE TEXT,");
 				mysql.append(" LINE BIGINT,");
 				mysql.append(" USER_AGENT VARCHAR(250),");
-				mysql.append(" HOST VARCHAR(250)");
+				mysql.append(" HOST VARCHAR(250),");
+				mysql.append(" IP_ADDRESS VARCHAR(100),");
+				mysql.append(" JS_FILE VARCHAR(250)");
 				mysql.append(")");
 				return mysql.toString();
 			case MSSQL :
@@ -96,7 +101,9 @@ public class LoggerConstants {
 				sqlserver.append(" JS_ERROR_MESSAGE TEXT,");
 				sqlserver.append(" LINE BIGINT,");
 				sqlserver.append(" USER_AGENT VARCHAR(250),");
-				sqlserver.append(" HOST VARCHAR(250)");
+				sqlserver.append(" HOST VARCHAR(250),");
+				sqlserver.append(" IP_ADDRESS VARCHAR(100),");
+				sqlserver.append(" JS_FILE VARCHAR(250)");
 				sqlserver.append(")");
 				return sqlserver.toString();
 			case POSTGRES : 
@@ -112,7 +119,9 @@ public class LoggerConstants {
 				postgres.append(" JS_ERROR_MESSAGE TEXT,");
 				postgres.append(" LINE BIGINT,");
 				postgres.append(" USER_AGENT VARCHAR(250),");
-				postgres.append(" HOST VARCHAR(250)");
+				postgres.append(" HOST VARCHAR(250),");
+				postgres.append(" IP_ADDRESS VARCHAR(100),");
+				postgres.append(" JS_FILE VARCHAR(250)");
 				postgres.append(")");
 				return postgres.toString();
 			default :
@@ -128,7 +137,9 @@ public class LoggerConstants {
 				defaultDb.append(" JS_ERROR_MESSAGE CLOB,");
 				defaultDb.append(" LINE BIGINT,");
 				defaultDb.append(" USER_AGENT VARCHAR(250),");
-				defaultDb.append(" HOST VARCHAR(250)");
+				defaultDb.append(" HOST VARCHAR(250),");
+				defaultDb.append(" IP_ADDRESS VARCHAR(100),");
+				defaultDb.append(" JS_FILE VARCHAR(250)");
 				defaultDb.append(")");
 				return defaultDb.toString();
 		}
@@ -157,7 +168,8 @@ public class LoggerConstants {
 			oracle.append(" LOAD_TIME NUMBER,");
 			oracle.append(" PROCESS_TIME NUMBER,");
 			oracle.append(" USER_AGENT VARCHAR(250),");
-			oracle.append(" HOST VARCHAR(250)");
+			oracle.append(" HOST VARCHAR(250),");
+			oracle.append(" IP_ADDRESS VARCHAR(100)");
 			oracle.append(")");
 			return oracle.toString();
 		case MYSQL : 
@@ -172,7 +184,8 @@ public class LoggerConstants {
 			mysql.append(" LOAD_TIME BIGINT,");
 			mysql.append(" PROCESS_TIME BIGINT,");
 			mysql.append(" USER_AGENT VARCHAR(250),");
-			mysql.append(" HOST VARCHAR(250)");
+			mysql.append(" HOST VARCHAR(250),");
+			mysql.append(" IP_ADDRESS VARCHAR(100)");
 			mysql.append(")");
 			return mysql.toString();
 		case MSSQL :
@@ -187,7 +200,8 @@ public class LoggerConstants {
 			sqlServer.append(" LOAD_TIME BIGINT,");
 			sqlServer.append(" PROCESS_TIME BIGINT,");
 			sqlServer.append(" USER_AGENT VARCHAR(250),");
-			sqlServer.append(" HOST VARCHAR(250)");
+			sqlServer.append(" HOST VARCHAR(250),");
+			sqlServer.append(" IP_ADDRESS VARCHAR(100)");
 			sqlServer.append(")");
 			return sqlServer.toString();
 		case POSTGRES : 
@@ -202,7 +216,8 @@ public class LoggerConstants {
 			postgres.append(" LOAD_TIME BIGINT,");
 			postgres.append(" PROCESS_TIME BIGINT,");
 			postgres.append(" USER_AGENT VARCHAR(250),");
-			postgres.append(" HOST VARCHAR(250)");
+			postgres.append(" HOST VARCHAR(250),");
+			postgres.append(" IP_ADDRESS VARCHAR(100)");
 			postgres.append(")");
 			return postgres.toString();
 		case UNKNOWN :
@@ -218,7 +233,8 @@ public class LoggerConstants {
 			defaultDatabase.append(" LOAD_TIME BIGINT,");
 			defaultDatabase.append(" PROCESS_TIME BIGINT,");
 			defaultDatabase.append(" USER_AGENT VARCHAR(250),");
-			defaultDatabase.append(" HOST VARCHAR(250)");
+			defaultDatabase.append(" HOST VARCHAR(250),");
+			defaultDatabase.append(" IP_ADDRESS VARCHAR(100)");
 			defaultDatabase.append(")");
 			return defaultDatabase.toString();
 		}
@@ -265,7 +281,8 @@ public class LoggerConstants {
 			oracle.append(" LOADEVENTSTART NUMBER,");
 			oracle.append(" LOADEVENTEND NUMBER,");
 			oracle.append(" USER_AGENT VARCHAR(250),");
-			oracle.append(" HOST VARCHAR(250)");
+			oracle.append(" HOST VARCHAR(250),");
+			oracle.append(" IP_ADDRESS VARCHAR(100)");
 			oracle.append(")");
 			return oracle.toString();
 		case MYSQL :
@@ -302,8 +319,8 @@ public class LoggerConstants {
 			defaultDb.append(" LOADEVENTSTART BIGINT,");
 			defaultDb.append(" LOADEVENTEND BIGINT,");
 			defaultDb.append(" USER_AGENT VARCHAR(250),");
-			defaultDb.append(" HOST VARCHAR(250)");
-
+			defaultDb.append(" HOST VARCHAR(250),");
+			defaultDb.append(" IP_ADDRESS VARCHAR(100)");
 			defaultDb.append(")");
 			return defaultDb.toString();
 		}
@@ -332,7 +349,8 @@ public class LoggerConstants {
 			oracle.append(" EVENT_CONTEXT CLOB,");
 			oracle.append(" CUSTOM_CONTEXT CLOB,");
 			oracle.append(" STACK_TRACE CLOB,");
-			oracle.append(" HOST VARCHAR(250)");
+			oracle.append(" HOST VARCHAR(250),");
+			oracle.append(" IP_ADDRESS VARCHAR(100)");
 			oracle.append(")");
 			return oracle.toString();
 		case MYSQL : 
@@ -350,7 +368,8 @@ public class LoggerConstants {
 			mysql.append(" EVENT_CONTEXT TEXT,");
 			mysql.append(" CUSTOM_CONTEXT TEXT,");
 			mysql.append(" STACK_TRACE TEXT,");
-			mysql.append(" HOST VARCHAR(250)");
+			mysql.append(" HOST VARCHAR(250),");
+			mysql.append(" IP_ADDRESS VARCHAR(100)");
 			mysql.append(")");
 			return mysql.toString();
 		case MSSQL :
@@ -368,7 +387,8 @@ public class LoggerConstants {
 			sqlserver.append(" EVENT_CONTEXT TEXT,");
 			sqlserver.append(" CUSTOM_CONTEXT TEXT,");
 			sqlserver.append(" STACK_TRACE TEXT,");
-			sqlserver.append(" HOST VARCHAR(250)");
+			sqlserver.append(" HOST VARCHAR(250),");
+			sqlserver.append(" IP_ADDRESS VARCHAR(100)");
 			sqlserver.append(")");
 			return sqlserver.toString();
 		case POSTGRES :
@@ -386,7 +406,8 @@ public class LoggerConstants {
 			postgres.append(" EVENT_CONTEXT TEXT,");
 			postgres.append(" CUSTOM_CONTEXT TEXT,");
 			postgres.append(" STACK_TRACE TEXT,");
-			postgres.append(" HOST VARCHAR(250)");
+			postgres.append(" HOST VARCHAR(250),");
+			postgres.append(" IP_ADDRESS VARCHAR(100)");
 			postgres.append(")");
 			return postgres.toString();
 		default :
@@ -404,7 +425,8 @@ public class LoggerConstants {
 			defaultDb.append(" EVENT_CONTEXT CLOB,");
 			defaultDb.append(" CUSTOM_CONTEXT CLOB,");
 			defaultDb.append(" STACK_TRACE CLOB,");
-			defaultDb.append(" HOST VARCHAR(250)");
+			defaultDb.append(" HOST VARCHAR(250),");
+			defaultDb.append(" IP_ADDRESS VARCHAR(100)");
 			defaultDb.append(")");
 			return defaultDb.toString();
 		}

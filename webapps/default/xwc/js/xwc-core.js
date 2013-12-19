@@ -868,6 +868,7 @@ XVW.createXMLHttpRequest = function()
  * */
 XVW.logJsError = function (errorMessage, url, line, jsBlock){
 	
+	debugger;
 	var sActionUrl = "";
 	var sUrl = "";
 	var forms = document.getElementsByTagName('form');
@@ -878,11 +879,19 @@ XVW.logJsError = function (errorMessage, url, line, jsBlock){
 			break;
 	}
 	
+	if (url == undefined || url == null){
+		url = "";
+	}
+	
+	if (sUrl == ""){
+		sUrl = document.location.href;
+	}
+	
 	var loggerUrl = sActionUrl + "netgest/bo/xwc/framework/viewers/JsErrorLogOperations.xvw";
 	  var parameters = "?action=log&JS_ERROR_MESSAGE=" + encodeURI(errorMessage)
 	      + "&VIEW_ID=" + encodeURI(sUrl)
 	      + "&LINE=" + encodeURI(line)
-	      + "&parent_url=" + encodeURI(document.location.href)
+	      + "&JS_FILE=" + encodeURI(url)
 	      + "&USER_AGENT=" + encodeURI(navigator.userAgent);
 	  
 	  if (jsBlock !== null && jsBlock !== undefined){

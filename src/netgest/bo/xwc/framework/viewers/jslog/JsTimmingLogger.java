@@ -66,7 +66,7 @@ public class JsTimmingLogger {
 		}
 	}
 	
-	public void insertNewRecord(long userBoui, long profileBoui, Map<String,String[]> reqParameters, String hostname){
+	public void insertNewRecord(long userBoui, long profileBoui, Map<String,String[]> reqParameters, String hostname, String ipAddress){
 		
 		
 		List<LogRecord> values = new ArrayList<LogRecord>(6);
@@ -163,6 +163,7 @@ public class JsTimmingLogger {
 		values.add(new LogRecord("LOADEVENTSTART",loadEventStart));
 		values.add(new LogRecord("LOADEVENTEND",loadEventEnd));
 		values.add(new LogRecord("HOST",hostname));
+		values.add(new LogRecord("IP_ADDRESS",ipAddress));
 		
 		
 		StringBuilder s = new StringBuilder(200);

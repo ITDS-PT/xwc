@@ -23,6 +23,7 @@ import netgest.bo.system.XEO;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boApplicationConfig;
 import netgest.bo.system.boSession;
+import netgest.bo.xwc.framework.http.XUIHttpRequest;
 import netgest.bo.xwc.framework.viewers.jslog.LogRecord;
 import netgest.bo.xwc.framework.viewers.jslog.LoggerConstants;
 import netgest.utils.StringUtils;
@@ -144,6 +145,9 @@ public class XUIErrorLogger {
 		String beanContext = debug.getBeanContext();
 		String eventContext = debug.getEventContext();
 		
+		String ipAddress = XUIHttpRequest.
+				getClientIpFromRequest(((HttpServletRequest) ctx.getRequest()));
+		
 		if (StringUtils.isEmpty(hostname))
 			hostname = "";
 		
@@ -173,7 +177,8 @@ public class XUIErrorLogger {
 					, beanContext.toString()
 					, eventContext
 					, customContext
-					, s.toString());
+					, s.toString()
+					, ipAddress);
 		} catch (SQLException e1) {
 			logger.warn("Could not insert new record into debug table", e1);
 		} finally {
@@ -236,7 +241,7 @@ public class XUIErrorLogger {
 	
 	void insertRecord(Connection connection, Database db, long userBoui, long profileBoui,
 			long requestId, String hostname, boolean isAjax, String viewId, String beanContext,
-			String eventContext, String customContext, String exceptionStack) throws SQLException{
+			String eventContext, String customContext, String exceptionStack, String ipAddress) throws SQLException{
 		
 		if (!isInit(connection)){
 			init(connection,LoggerConstants.getDebugInfoTableCreateScript(db));
@@ -258,6 +263,7 @@ public class XUIErrorLogger {
 		values.add(new LogRecord("CUSTOM_CONTEXT", customContext));
 		values.add(new LogRecord("STACK_TRACE", exceptionStack));
 		values.add(new LogRecord("HOST", truncateTo(hostname,TEXT_COLUMN_SIZE)));
+		values.add(new LogRecord("IP_ADDRESS", truncateTo(ipAddress,TEXT_COLUMN_SIZE)));
 		
 		StringBuilder s = new StringBuilder(200);
 		s.append("INSERT INTO ");

@@ -74,7 +74,7 @@ public class AjaxTimingLogger {
 		}
 	}
 	
-	public void insertNewRecord(long userBoui, long profileBoui, Map<String,String[]> reqParameters, String hostname){
+	public void insertNewRecord(long userBoui, long profileBoui, Map<String,String[]> reqParameters, String hostname, String ipAddress){
 		
 		List<LogRecord> values = new ArrayList<LogRecord>(6);
 		String viewId = "";
@@ -123,6 +123,7 @@ public class AjaxTimingLogger {
 		values.add(new LogRecord("PROCESS_TIME",processTime));
 		values.add(new LogRecord("USER_AGENT",userAgent));
 		values.add(new LogRecord("HOST",hostname));
+		values.add(new LogRecord("IP_ADDRESS",ipAddress));
 		
 		StringBuilder s = new StringBuilder(200);
 		s.append("INSERT INTO ");

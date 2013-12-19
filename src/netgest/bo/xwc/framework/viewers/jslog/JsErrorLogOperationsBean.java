@@ -18,6 +18,7 @@ import netgest.bo.system.boApplicationConfig;
 import netgest.bo.system.boSession;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.annotations.XUIWebDefaultCommand;
+import netgest.bo.xwc.framework.http.XUIHttpRequest;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.utils.StringUtils;
 
@@ -133,7 +134,8 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 		long userBoui = ctx.getBoSession().getPerformerBoui();
 		long profileBoui = ctx.getBoSession().getPerformerIProfileBoui();
 		JsErrorLogger jsLogger = new JsErrorLogger(connection, LoggerConstants.JS_ERROR_LOG_TABLE_NAME);
-		jsLogger.insertNewRecord(userBoui,profileBoui,parameters, request.getLocalName());
+		String ipAddress = XUIHttpRequest.getClientIpFromRequest(request);
+		jsLogger.insertNewRecord(userBoui,profileBoui,parameters, request.getLocalName(),ipAddress);
 		
 	}
 

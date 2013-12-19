@@ -18,6 +18,7 @@ import netgest.bo.system.boApplicationConfig;
 import netgest.bo.system.boSession;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.annotations.XUIWebDefaultCommand;
+import netgest.bo.xwc.framework.http.XUIHttpRequest;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.utils.StringUtils;
 
@@ -132,9 +133,9 @@ public class AjaxTimingOperationsBean extends XEOBaseBean {
 		
 		long userBoui = ctx.getBoSession().getPerformerBoui();
 		long profileBoui = ctx.getBoSession().getPerformerIProfileBoui();
-		JsErrorLogger jsLogger = new JsErrorLogger(connection, LoggerConstants.JS_AJAX_TIMMING_LOG_TABLE_NAME);
-		jsLogger.insertNewRecord(userBoui,profileBoui,parameters, request.getLocalName());
-		
+		AjaxTimingLogger ajaxLogger = new AjaxTimingLogger(connection, LoggerConstants.JS_AJAX_TIMMING_LOG_TABLE_NAME);
+		String ipAddress = XUIHttpRequest.getClientIpFromRequest(request);
+		ajaxLogger.insertNewRecord(userBoui,profileBoui,parameters, request.getLocalName(),ipAddress);
 	}
 
 	private synchronized void init(EboContext ctx, Connection connection) {

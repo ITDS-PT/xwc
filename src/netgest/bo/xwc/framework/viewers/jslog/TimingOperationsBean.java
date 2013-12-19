@@ -18,6 +18,7 @@ import netgest.bo.system.boApplicationConfig;
 import netgest.bo.system.boSession;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.annotations.XUIWebDefaultCommand;
+import netgest.bo.xwc.framework.http.XUIHttpRequest;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.utils.StringUtils;
 
@@ -167,7 +168,8 @@ public class TimingOperationsBean extends XEOBaseBean {
 		long profileBoui = ctx.getBoSession().getPerformerIProfileBoui();
 		JsTimmingLogger jsLogger = new JsTimmingLogger(con, LoggerConstants.JS_TIMMING_LOG_TABLE_NAME);
 		String hostname = request.getLocalName();
-		jsLogger.insertNewRecord(userBoui,profileBoui,parameters,hostname);
+		String ipAddress = XUIHttpRequest.getClientIpFromRequest(request);
+		jsLogger.insertNewRecord(userBoui,profileBoui,parameters,hostname,ipAddress);
 		
 	}
 

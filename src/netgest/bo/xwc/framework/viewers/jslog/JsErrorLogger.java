@@ -74,7 +74,7 @@ public class JsErrorLogger {
 		}
 	}
 	
-	public void insertNewRecord(long userBoui, long profileBoui, Map<String,String[]> reqParameters, String hostname){
+	public void insertNewRecord(long userBoui, long profileBoui, Map<String,String[]> reqParameters, String hostname, String ipAddress){
 		
 		List<LogRecord> values = new ArrayList<LogRecord>(6);
 		String viewId = "";
@@ -82,6 +82,7 @@ public class JsErrorLogger {
 		String jsErrorMessage = "";
 		String userAgent = "";
 		String lineNumberRaw = "";
+		String jsFile = "";
 		
 		if (reqParameters.containsKey("VIEW_ID")){
 			viewId = getAndTruncateTo(reqParameters,"VIEW_ID",250);
@@ -101,6 +102,9 @@ public class JsErrorLogger {
 		if (reqParameters.containsKey("LINE")){
 			lineNumberRaw = reqParameters.get("LINE")[0];
 		} 
+		if (reqParameters.containsKey("JS_FILE")){
+			jsFile = reqParameters.get("JS_FILE")[0];
+		}
 		
 		if (StringUtils.isEmpty(hostname))
 			hostname = "";
@@ -128,6 +132,9 @@ public class JsErrorLogger {
 		values.add(new LogRecord("USER_AGENT",userAgent));
 		values.add(new LogRecord("LINE",lineNumber));
 		values.add(new LogRecord("HOST",hostname));
+		values.add(new LogRecord("IP_ADDRESS",ipAddress));
+		values.add(new LogRecord("JS_FILE",jsFile));
+		
 		
 		StringBuilder s = new StringBuilder(200);
 		s.append("INSERT INTO ");
