@@ -141,7 +141,11 @@
 								
 						</xvw:menu>
 
-
+						<xvw:menu text='Logging' profile='admin' expanded='true'>
+							<xvw:menu icon='' text='Error Logger'
+								value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/errorLogger.xvw'}"
+								target='Tab' serverAction="#{viewBean.openViewer}" />
+						</xvw:menu>
 
 						<xvw:menu text='@{DEVELOPMENT}' profile='admin' expanded='true'>
 							<xvw:menu icon='ext-xeo/admin/xeoQL.gif' text='@{XEO_QL}'

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw" xmlns:xeo="http://www.netgest.net/xeo/xeo">
+	<xvw:viewer
+		beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.ErrorLoggerBean"
+		beanId="viewBean"
+		localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminViewerMessages'>
+		<xvw:form id="form">
+		<xvw:includeScript source='js/errorLogger.js'></xvw:includeScript>
+	
+		<style>
+			.scroll{
+				overflow-x: auto;
+			}
+		
+			.errors
+			{
+				font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+				font-size: 12px;
+				margin: 45px;
+				width: 480px;
+				text-align: left;
+				border-collapse: collapse;
+				
+			}
+			.errors th
+			{
+				font-size: 14px;
+				font-weight: normal;
+				padding: 12px 15px;
+				color: #039;
+			}
+			.errors td
+			{
+				padding: 10px 15px;
+				color: #669;
+				border-top: 1px solid #e8edff;
+			}
+			.oce-first
+			{
+				background: #d0dafd;
+				border-right: 10px solid transparent;
+				border-left: 10px solid transparent;
+			}
+			.errors tr:hover td
+			{
+				color: #339;
+				background: #eff2ff;
+			}
+
+		</style>
+		<xvw:title valueExpression='Error Logger'></xvw:title>
+			<xvw:tabs bodyStyle="overflow-x: auto;">
+				<xvw:tab label='Erros Aplicacionais'>
+						<xvw:gridPanel id='errorList' rowSelectionMode="SELECTION_ROW" enableGroupBy="true" autoSaveGridState="false" layout='' height='500' rowUniqueIdentifier="DATE_EVENT"
+							DataSource="#{viewBean.errorList}" enableColumnFilter="true" forceColumnsFitWidth="false" rowDblClickTarget="self" >
+							<xvw:columns >
+								<xvw:columnAttribute width="100" dataField="USERNAME" />
+								
+								<xvw:columnAttribute width="200" dataField="VIEW_ID" />
+								<xvw:columnAttribute width="80" dataField="DATE_EVENT" />
+								
+								<xvw:columnAttribute width="2000" dataField="STACK_TRACE" wrapText="true" groupable="false" />
+								<xvw:columnAttribute width="500" dataField="BEAN_CONTEXT" wrapText="true" groupable="false"/>
+								<xvw:columnAttribute width="500" dataField="EVENT_CONTEXT" wrapText="true" groupable="false"/>
+								<xvw:columnAttribute width="500" dataField="CUSTOM_CONTEXT" wrapText="true" groupable="false"/>
+								
+								<xvw:columnAttribute width="40" dataField="PROFILE_BOUI" hidden='true' /> 
+								<xvw:columnAttribute width="100" dataField="HOST" hidden='true'/>
+								 <xvw:columnAttribute width="10" dataField="IS_AJAX" hidden='true'/>
+								<xvw:columnAttribute width="100" dataField="REQUEST_ID"  hidden='true'/>
+								
+							</xvw:columns>
+						</xvw:gridPanel>
+						<div id='preview'>
+						
+						</div>
+				</xvw:tab>
+				<xvw:tab label='Queries Pré-Feitas'  >
+					<xvw:toolBar>
+						<xvw:menu text='Erros de hoje' serverAction="#{viewBean.todayErrors}" />
+						<xvw:menu text='Erros por dia' serverAction="#{viewBean.errorsByDay}" />
+						<xvw:menu text='Erros mais comuns' serverAction="#{viewBean.mostCommonErrors}" />
+				</xvw:toolBar>
+				<div class=''>
+					<xvw:outputHtml valueExpression="#{viewBean.preMadeQueryResult}"></xvw:outputHtml>
+				</div>
+				</xvw:tab>
+			</xvw:tabs>
+		</xvw:form>
+	</xvw:viewer>
+</xvw:root>
