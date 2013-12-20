@@ -15,7 +15,9 @@ public class XMLAttributeBooleanRenderer extends XUIRenderer {
 			AttributeBase attribute = (AttributeBase) component;
 			XUIResponseWriter rw = getResponseWriter();
 			rw.startElement( component.getRendererType(), component );
-			rw.write(attribute.getValue().toString());
+			Object value = attribute.getValue();
+			if (value != null)
+				rw.write(value.toString());
 		
 	}
 
