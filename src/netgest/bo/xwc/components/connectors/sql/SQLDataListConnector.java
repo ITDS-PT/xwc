@@ -1,7 +1,9 @@
 package netgest.bo.xwc.components.connectors.sql;
 
+import java.io.Reader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -604,6 +606,41 @@ public class SQLDataListConnector implements DataListConnector {
 		}
 	}
 	
+	private String readClob(Clob clob) throws SQLException{
+		
+		char[] buffer;
+	    int count = 0;
+	    int length = 0;
+	    String data = null;
+	    String[] type;
+	    if (clob == null)
+	    	return "";
+		Reader is = clob.getCharacterStream();
+		 
+        // Initialize local variables.
+        StringBuilder sb = new StringBuilder();
+       length = (int) clob.length();
+
+        // Check CLOB is not empty.
+        if (length > 0) {
+          // Initialize control structures to read stream.
+          buffer = new char[length];
+          count = 0;
+
+          // Read stream and append to StringBuffer.
+          try {
+            while ((count = is.read(buffer)) != -1)
+              sb.append(buffer);
+
+              // Assign StringBuffer to String.
+              data = new String(sb); }
+          catch (Exception e) {} }
+        else{
+        	return "";
+        }
+        return sb.toString();
+	}
+	
 	private void addRow(ResultSet rs, int rowIndex) {
 		if (rows==null)
 			rows = new ArrayList<SQLDataRecordConnector>();
@@ -618,8 +655,16 @@ public class SQLDataListConnector implements DataListConnector {
 			
 			MultiPurposeFieldConnector field=null;
 			try {
-				field = new MultiPurposeFieldConnector(sqlmdata.getLabel().toLowerCase(), 
-						rs.getObject(colIndex), sqlmdata.getDataType());
+				
+				if (sqlmdata.getDataType() == DataFieldTypes.VALUE_CLOB){
+					field = new MultiPurposeFieldConnector(sqlmdata.getLabel().toLowerCase(), 
+							readClob(rs.getClob(colIndex)), sqlmdata.getDataType());
+				} else {
+					field = new MultiPurposeFieldConnector(sqlmdata.getLabel().toLowerCase(), 
+							rs.getObject(colIndex), sqlmdata.getDataType());
+				}
+				
+				
 			} catch (SQLException e) {
 			}			
 			
@@ -651,8 +696,16 @@ public class SQLDataListConnector implements DataListConnector {
 				if (StringUtils.isEmpty(label))
 					label = rsMetaData.getColumnName(i);
 				
-				int maxLength = rsMetaData.getPrecision(i);
-				int decimalPrecision = rsMetaData.getScale(i);
+				int maxLength = 0;
+				int decimalPrecision = 0;
+				try {
+					maxLength = rsMetaData.getPrecision(i);
+				} catch (NumberFormatException e) {}
+				
+				try {
+					decimalPrecision = rsMetaData.getScale(i);
+				} catch (NumberFormatException e) {}
+				
 				
 				SQLDataFieldMetaData sqlmetadata=new SQLDataFieldMetaData(label,name,
 						dataType, maxLength, decimalPrecision);
