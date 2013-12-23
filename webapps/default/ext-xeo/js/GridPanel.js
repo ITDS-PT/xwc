@@ -932,26 +932,28 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         var buf = [];
 		var g = Ext.get( gridGroup.elemId );
         var gel = Ext.fly(g);
-        this.state[gel.dom.id] = true;
-        gel['removeClass']('x-grid-group-collapsed');
-		var store = gridGroup.groupStore;
-    	if( store.groupByLevel == store.groupField.length ) {
-    		// Render Lines
-	        buf[buf.length] = this.doRenderLines(
-	    		  this.cs, store.getRange(0,50), store, 0, this.colCount, this.stripe);
-    	}
-    	else {
-    		// Render SubGroup
-    		var gv = this.rootView.getGroupView( gridGroup.groupUniqueId );
-    		buf[buf.length] = gv.groupingView.doRender( gridGroup, this.cs, store.getRange(0,50), store, 0, this.colCount, this.stripe);    		
-    	}
-        
-        if( g ) {
-        	g.dom.firstChild.nextSibling.innerHTML = buf.join('');
-	        this.grid.view.processRows(0,true);
+        if (gel){
+	        this.state[gel.dom.id] = true;
+	        gel['removeClass']('x-grid-group-collapsed');
+			var store = gridGroup.groupStore;
+	    	if( store.groupByLevel == store.groupField.length ) {
+	    		// Render Lines
+		        buf[buf.length] = this.doRenderLines(
+		    		  this.cs, store.getRange(0,50), store, 0, this.colCount, this.stripe);
+	    	}
+	    	else {
+	    		// Render SubGroup
+	    		var gv = this.rootView.getGroupView( gridGroup.groupUniqueId );
+	    		buf[buf.length] = gv.groupingView.doRender( gridGroup, this.cs, store.getRange(0,50), store, 0, this.colCount, this.stripe);    		
+	    	}
+	        
+	        if( g ) {
+	        	g.dom.firstChild.nextSibling.innerHTML = buf.join('');
+		        this.grid.view.processRows(0,true);
+	        }
+	        
+	        this.autoExpandGroups( gridGroup.groupId );
         }
-        
-        this.autoExpandGroups( gridGroup.groupId );
     },
     autoExpandGroups : function( gid ) {
         // Expande automaticamente todos os grupos expandidos.
