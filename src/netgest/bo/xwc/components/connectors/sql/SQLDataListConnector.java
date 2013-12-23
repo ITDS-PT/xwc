@@ -638,7 +638,8 @@ public class SQLDataListConnector implements DataListConnector {
         else{
         	return "";
         }
-        return sb.toString();
+        
+        return data;
 	}
 	
 	private void addRow(ResultSet rs, int rowIndex) {

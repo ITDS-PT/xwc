@@ -88,12 +88,12 @@ public class ResultSetPrinter {
               sb.append(buffer);
 
               // Assign StringBuffer to String.
-              data = new String(sb); }
+              data = sb.toString(); }
           catch (Exception e) {} }
         else{
         	return "";
         }
-        return sb.toString();
+        return data;
 	}
 
 }

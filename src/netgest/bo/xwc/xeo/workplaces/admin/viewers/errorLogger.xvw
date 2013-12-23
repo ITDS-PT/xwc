@@ -16,7 +16,7 @@
 			{
 				font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
 				font-size: 12px;
-				margin: 45px;
+				margin: 10px;
 				width: 480px;
 				text-align: left;
 				border-collapse: collapse;
@@ -26,12 +26,12 @@
 			{
 				font-size: 14px;
 				font-weight: normal;
-				padding: 12px 15px;
+				padding: 5px 6px;
 				color: #039;
 			}
 			.errors td
 			{
-				padding: 10px 15px;
+				padding: 5px 6px;
 				color: #669;
 				border-top: 1px solid #e8edff;
 			}
@@ -48,10 +48,10 @@
 			}
 
 		</style>
-		<xvw:title valueExpression='Error Logger'></xvw:title>
+		<xvw:title valueExpression='@{ERROR_LOGGER_VIEWER_TITLE}'></xvw:title>
 			<xvw:tabs bodyStyle="overflow-x: auto;">
-				<xvw:tab label='Erros Aplicacionais'>
-						<xvw:gridPanel id='errorList' rowSelectionMode="SELECTION_ROW" enableGroupBy="true" autoSaveGridState="false" layout='' height='500' rowUniqueIdentifier="DATE_EVENT"
+				<xvw:tab label='@{ERROR_LOGGER_LIST_ERRORS_TAB_LABEL}'>
+						<xvw:gridPanel id='errorList' rowSelectionMode="SELECTION_ROW" enableGroupBy="true" autoSaveGridState="false" layout='' height='400' rowUniqueIdentifier="DATE_EVENT"
 							DataSource="#{viewBean.errorList}" enableColumnFilter="true" forceColumnsFitWidth="false" rowDblClickTarget="self" >
 							<xvw:columns >
 								<xvw:columnAttribute width="100" dataField="USERNAME" />
@@ -64,24 +64,51 @@
 								<xvw:columnAttribute width="500" dataField="EVENT_CONTEXT" wrapText="true" groupable="false"/>
 								<xvw:columnAttribute width="500" dataField="CUSTOM_CONTEXT" wrapText="true" groupable="false"/>
 								
-								<xvw:columnAttribute width="40" dataField="PROFILE_BOUI" hidden='true' /> 
-								<xvw:columnAttribute width="100" dataField="HOST" hidden='true'/>
-								 <xvw:columnAttribute width="10" dataField="IS_AJAX" hidden='true'/>
-								<xvw:columnAttribute width="100" dataField="REQUEST_ID"  hidden='true'/>
+								<xvw:columnAttribute width="40" dataField="PROFILE_BOUI"  /> 
+								<xvw:columnAttribute width="100" dataField="HOST" />
+								 <xvw:columnAttribute width="10" dataField="IS_AJAX" />
+								<xvw:columnAttribute width="100" dataField="REQUEST_ID"  />
 								
 							</xvw:columns>
 						</xvw:gridPanel>
 						<div id='preview'>
-						
+							<table class='errors'>
+								<tr>
+									<th>Username</th>
+									<th>View</th>
+									<th>RequestID</th>
+									<th>Date</th>
+									<th>Profile</th>
+									<th>Host</th>
+									<th>Ajax</th>
+									<th>Stack Trace</th>
+									<th>Bean Context</th>
+									<th>Event Context</th>
+									<th>Custom Context</th>
+								</tr>
+								<tr>
+									<td id='user'></td>
+									<td id='view'></td>
+									<td id='request'></td>
+									<td id='date'></td>
+									<td id='profile'></td>
+									<td id='host'></td>
+									<td id='ajax'></td>
+									<td id='stack'></td>
+									<td id='bean'></td>
+									<td id='event'></td>
+									<td id='custom'></td>
+								</tr>
+							</table>
 						</div>
 				</xvw:tab>
-				<xvw:tab label='Queries Pré-Feitas'  >
+				<xvw:tab label='@{ERROR_LOGGER_PRE_MADE_QUERIES_TAB_LABEL}'  >
 					<xvw:toolBar>
-						<xvw:menu text='Erros de hoje' serverAction="#{viewBean.todayErrors}" />
-						<xvw:menu text='Erros por dia' serverAction="#{viewBean.errorsByDay}" />
-						<xvw:menu text='Erros mais comuns' serverAction="#{viewBean.mostCommonErrors}" />
+						<xvw:menu text='@{ERROR_LOGGER_TODAY_ERRORS_BTN_LABEL}' serverAction="#{viewBean.todayErrors}" />
+						<xvw:menu text='@{ERROR_LOGGER_ERRORS_BY_DAY_BTN_LABEL}' serverAction="#{viewBean.errorsByDay}" />
+						<xvw:menu text='@{ERROR_LOGGER_COMMON_ERRORS_BTN_LABEL}' serverAction="#{viewBean.mostCommonErrors}" />
 				</xvw:toolBar>
-				<div class=''>
+				<div class='scroll'>
 					<xvw:outputHtml valueExpression="#{viewBean.preMadeQueryResult}"></xvw:outputHtml>
 				</div>
 				</xvw:tab>
