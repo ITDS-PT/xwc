@@ -252,6 +252,9 @@ public class MainAdminViewerMessages {
 	public static final XUILocalizedMessage THREADS_COLUMN_ACTIVE = 
 			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "THREADS_COLUMN_ACTIVE");
 	
+	public static final XUILocalizedMessage DEBUG_MENU_LABEL = 
+			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "DEBUG_MENU_LABEL");
+	
 	public static final XUILocalizedMessage ERROR_LOGGER_VIEWER_TITLE = 
 			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "ERROR_LOGGER_VIEWER_TITLE");
 	
@@ -269,5 +272,11 @@ public class MainAdminViewerMessages {
 	
 	public static final XUILocalizedMessage ERROR_LOGGER_COMMON_ERRORS_BTN_LABEL = 
 			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "ERROR_LOGGER_COMMON_ERRORS_BTN_LABEL");
+	
+	public static final XUILocalizedMessage ERROR_LOGGER_MENU_LABEL = 
+			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "ERROR_LOGGER_MENU_LABEL");
+	
+	public static final XUILocalizedMessage POOL_DUMP_MENU_LABEL = 
+			new XUILocalizedMessage( MainAdminViewerMessages.class.getName(), "POOL_DUMP_MENU_LABEL");
 	
 }
