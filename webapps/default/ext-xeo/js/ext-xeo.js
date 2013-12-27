@@ -61,7 +61,7 @@ ExtXeo.destroyComponents1 = function( oDNode, oWnd ) {
 XVW.ErrorDialog = function( sTitle, sMessage, sDetails ) {
 	var buttonsDefinition = {ok:'OK', cancel:'Details'};
 	if (sDetails === undefined || sDetails !== null || sDetails.length == 0){
-		buttonsDefinition = {ok:'OK'}
+		buttonsDefinition = {ok:'OK'};
 	} 
 	
     Ext.MessageBox.show({
@@ -122,7 +122,7 @@ XVW.StillWorking = function(message){
 	ExtXeo.WaitCounter = 0;
 	ExtXeo.loadMask = new Ext.LoadMask(document.body, {msg: message });
 	ExtXeo.loadMask.show();
-}
+};
 
 XVW.ResetWait = function () {
 	ExtXeo.WaitCounter = 0;
@@ -132,7 +132,7 @@ XVW.ResetWait = function () {
 		}
 	} , 50 );
 	
-}
+};
 
 
 XVW.NoWait = function() { 

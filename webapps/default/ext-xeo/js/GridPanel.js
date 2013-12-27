@@ -2696,7 +2696,7 @@ Ext.grid.XeoCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel,
 				results.push(records[i]);
 			}
 		}
-		return results
+		return results;
 	}
 
 	/**
@@ -2988,7 +2988,7 @@ ExtXeo.grid.rowSelect = function( oSelModel, rowIndex, record){
 	ExtXeo.grid.updateCounter(oSelModel);
 	
 	
-}
+};
 
 /**
  * On Row DeSelect, affect the input with the row Identifiers (remove or 
