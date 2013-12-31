@@ -856,24 +856,26 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	 */
 	String generateId(String viewerId, Map<String,Object> session) {
 		
-		@SuppressWarnings("unchecked")
-		Map<String,Integer> sequenceMap = (Map<String,Integer>) session.get( USER_SEQUENCE_MAP );
-		if (sequenceMap == null){
-			sequenceMap = new HashMap< String , Integer >();
-			session.put( USER_SEQUENCE_MAP , sequenceMap );
-		}
-		
-		Integer result = null;
-		if ( sequenceMap.containsKey( viewerId ) ){
-			result = sequenceMap.get( viewerId );
-		} else {
-			result = new Integer( 0 );
-			sequenceMap.put( viewerId , result );
-		}
-		result = result + 1;
-		sequenceMap.put( viewerId , result );
-		return result.toString();
+//		@SuppressWarnings("unchecked")
+//		Map<String,Integer> sequenceMap = (Map<String,Integer>) session.get( USER_SEQUENCE_MAP );
+//		if (sequenceMap == null){
+//			sequenceMap = new HashMap< String , Integer >();
+//			session.put( USER_SEQUENCE_MAP , sequenceMap );
+//		}
+//		
+//		Integer result = null;
+//		if ( sequenceMap.containsKey( viewerId ) ){
+//			result = sequenceMap.get( viewerId );
+//		} else {
+//			result = new Integer( 0 );
+//			sequenceMap.put( viewerId , result );
+//		}
+//		result = result + 1;
+//		sequenceMap.put( viewerId , result );
+//		return result.toString();
+		return String.valueOf(viewId.getAndIncrement() );
 	}
+	static AtomicInteger viewId = new AtomicInteger();
 
 
 	protected boolean canAddViewToCache(String viewerCacheId, Timestamp current) {
