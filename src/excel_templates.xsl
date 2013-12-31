@@ -154,7 +154,7 @@
     <!-- END Copy all html elements -->
     
     <xsl:template match="outputHtml">
-        <xsl:apply-templates></xsl:apply-templates>
+        <xsl:value-of select="./text()" disable-output-escaping="yes"/>
     </xsl:template>
 
 
@@ -204,7 +204,7 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>    
-            <xsl:value-of select="./text()"/>
+            <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
 
@@ -301,7 +301,7 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayValue"/>
+            <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
     
@@ -462,10 +462,10 @@
     <xsl:template match="gridcolumn" priority="-1">
         <td>
             <xsl:if test="string-length(./text()) > 0">
-                <xsl:value-of select="./text()"/>    
+                <xsl:value-of select="./text()" disable-output-escaping="yes"/>    
             </xsl:if>
             <xsl:if test="string-length(./text()) = 0">
-                <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>    
+                	<xsl:value-of select="./@displayValue" disable-output-escaping="yes" />    
             </xsl:if>
         </td>
     </xsl:template>

@@ -5,7 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,6 +71,7 @@ import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.components.model.ExportMenu;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIEditableValueHolder;
+import netgest.bo.xwc.framework.XUIErrorLogger;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
@@ -110,14 +113,8 @@ import org.w3c.dom.NodeList;
 
 /**
  */
-public class XEOEditBean extends XEOBaseBean
-{
+public class XEOEditBean extends XEOBaseBean{
 	
-	
-	
-	
-	
-    
 	public static final String VIEW_BEAN_ERRORS_ID = "viewBean_erros";
 
 
@@ -470,7 +467,7 @@ public class XEOEditBean extends XEOBaseBean
 		String s;
 		try {
 			s = sessionContext.renderViewToBuffer("XEOXML", requestContext.getViewRoot().getViewState()  ).toString();
-			doc = ngtXMLUtils.loadXML( s );
+			doc = ngtXMLUtils.loadXMLPreserveCData(s);
 			return ngtXMLUtils.getXML(doc);
 			//return result;
 		} catch (IOException e) {
@@ -1787,6 +1784,18 @@ public class XEOEditBean extends XEOBaseBean
      * @param oCurrentObjectKey
      */
     public void setCurrentObjectKey(Object oCurrentObjectKey) {
+    	if (oCurrentObjectKey == null){
+    		XUIErrorLogger logger = XUIErrorLogger.getLogger();
+    		String customContext = "";
+    		try {
+    			StringWriter w = new StringWriter();
+    			PrintWriter pw = new PrintWriter(w);
+    			new IllegalArgumentException("Cannot set null as BOUI").printStackTrace(pw);
+    			customContext = w.toString();
+    		} catch (Throwable e){ //Ignore exception so that things keep kunning		
+    		}
+    		logger.addDebugInfo(getEboContext(), getRequestContext(), customContext);
+    	}
         this.oCurrentObjectKey = oCurrentObjectKey;
         this.oBoObect = null;
         this.oCurrentData = null;

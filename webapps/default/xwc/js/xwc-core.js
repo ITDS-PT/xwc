@@ -1,4 +1,4 @@
-XVW = function() {}
+XVW = function() {};
 
 //Retrieve an HTML Element by id
 XVW.get = function (id ) {
@@ -32,7 +32,7 @@ XVW.ajax.ajaxRequestWaitPeriod = 300;
  * */
 XVW.ajax.incrementAjaxCounter = function(){
 	XVW.ajax.ajaxRequestCounter++;
-}
+};
 /**
  * Clear the ajax attempts counter
  * */
@@ -89,7 +89,7 @@ XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubm
 	if (!XVW.ajax.canAjaxRequest() && queue){
 		XVW.ajax.incrementAjaxCounter();
 		XVW.ajax.queueAjaxRequest( function () {
-				XVW.AjaxCommand(sFormId, sActionId, sActionValue, iWaitScreen, bSubmitValues, renderOnElement) 
+				XVW.AjaxCommand(sFormId, sActionId, sActionValue, iWaitScreen, bSubmitValues, renderOnElement); 
 		} );
 		return;
 	}
@@ -226,7 +226,7 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement, retryCount ) {
             	} else {
             		XVW.NoWait();
             		XVW.ResetWait();
-            		XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText )
+            		XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText );
             	}
             }
             else {
@@ -236,7 +236,7 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement, retryCount ) {
 	        		   XVW.ResetWait();
 	        	   }
 	           }
-	           XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText )
+	           XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText );
             }
             
             if (!XVW.ajax.canAjaxRequest()){
@@ -260,11 +260,11 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement, retryCount ) {
             var requestTime = requestEnd - requestStart;
             XVW.logAjaxTiming(requestTime,jsTime);
         }
-    }
+    };
     var requestStart = new Date().getTime();
     oXmlReq.send( reqDoc );
 	
-};
+}
 
 
 
@@ -439,8 +439,8 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
             	XVW.addScriptInclude( oScriptId, oScriptSrc );
             }
             else { 
-            	if(oScriptNode.textContent /*Mozilla*/) { sScriptToEval += oScriptNode.textContent + "\n" }
-            	else /*IE*/ { sScriptToEval += oScriptNode.text + "\n"  };
+            	if(oScriptNode.textContent /*Mozilla*/) { sScriptToEval += oScriptNode.textContent + "\n"; }
+            	else /*IE*/ { sScriptToEval += oScriptNode.text + "\n";  }
             }
 
         }            
@@ -548,7 +548,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
             }
             else { 
 	            if(oScriptNode.textContent /*Mozilla*/) { sScriptToEval += oScriptNode.textContent; }
-	            else /*IE*/ { sScriptToEval += oScriptNode.text };
+	            else /*IE*/ { sScriptToEval += oScriptNode.text; }
             }
             sScriptToEval += "\n";
         }            
@@ -590,8 +590,8 @@ XVW.reportAjaxErrorBlock = function (oFooterScriptNodeList) {
                 	sScriptToEval = oScriptNode.textContent; 
                 }
 	            else /*IE*/ { 
-	            	sScriptToEval = oScriptNode.text 
-	            };
+	            	sScriptToEval = oScriptNode.text; 
+	            }
 	            
 	            try {
 	            	window.eval(sScriptToEval);
@@ -631,7 +631,7 @@ XVW.ajaxResponse.includeScriptWithXmlHttp = function (oScriptId, pathToScript){
 	    	  var script = XVW.ajaxResponse.createScriptElement(oScriptId,oXmlReq.responseText);
 	    	  head.appendChild( script );
 	      }
-	    }
+	    };
 	    oXmlReq.send(null);
 	}
 };
@@ -655,7 +655,7 @@ XVW.getViewInputById = function( sViewDivId, sInputId ) {
         var oInputs = oViewDiv.getElementsByTagName("input");
         for (var i = 0; i < oInputs.length; i++)  {
             if( oInputs[i].id == sInputId ) {
-                return oInputs[i]
+                return oInputs[i];
             }
         }
     }
@@ -698,7 +698,7 @@ XVW.keepAlive = function( oForm ) {
 	            		function (){window.top.location.href = xmlReq.getResponseHeader('login-url');});
 	            }
 			}
-	    }
+	    };
 	    xmlReq.send();
 	} catch( e ) {
 //		debugger;
@@ -742,7 +742,7 @@ XVW.prv.getViewStateInput = function( oElement ) {
         if ( oChilds[i].name == 'javax.faces.ViewState' )
             return oChilds[i];
 
-        XVW.prv.getViewStateInput( oChilds[i] )
+        XVW.prv.getViewStateInput( oChilds[i] );
     }
 };
 
@@ -826,10 +826,7 @@ XVW.creatXMLDocument = function() {
 	}
     catch(e)
     {
-        try //Firefox, Mozilla, Opera, etc.
-        {
-        }
-        catch(e) { XVW.ErrorDialog( XVW.SysMsg.XMLDOC_ERROR, e.message ); }
+        XVW.ErrorDialog( XVW.SysMsg.XMLDOC_ERROR, e.message );
     }
     if( xmlDoc !== null ) {
     	xmlDoc.createProcessingInstruction("xml", "version='1.0' encoding='UTF-8'");    	
@@ -897,6 +894,8 @@ XVW.logJsError = function (errorMessage, url, line, jsBlock){
 	  if (jsBlock !== null && jsBlock !== undefined){
 		  parameters += ("&JS_ERROR_BLOCK=" + encodeURI(jsBlock));
 	  }
+	  
+	  XVW.NoWait();
 	 
 	  /** Send error to server */
 	  var xhr = XVW.createXMLHttpRequest();
@@ -983,7 +982,7 @@ XVW.logTiming = function (timing){
 	  var xhr = XVW.createXMLHttpRequest();
 	  xhr.open( "GET", loggerUrl + parameters, true );
 	  xhr.send();
-}
+};
 
 /**
  * Attach the Error Logger to the onError event
@@ -1003,7 +1002,7 @@ window.onerror = function(errorMessage, url, line) {
 	if (window.addEventListener){
 		if (window.performance){
 			window.addEventListener('load', function (){
-				window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
+				window.setTimeout( function(){XVW.logTiming(window.performance.timing);} , 300);
 				}, false);
 		}
 	} else {
@@ -1011,7 +1010,7 @@ window.onerror = function(errorMessage, url, line) {
 		if (window.attachEvent){
 			if (window.performance){
 				window.attachEvent('onload', function (){
-					window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
+					window.setTimeout( function(){XVW.logTiming(window.performance.timing);} , 300);
 				}, false);
 			}
 		}

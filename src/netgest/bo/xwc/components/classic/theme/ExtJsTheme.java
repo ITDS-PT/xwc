@@ -1,5 +1,21 @@
 package netgest.bo.xwc.components.classic.theme;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import javax.servlet.http.HttpServletRequest;
+
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boBridgeIterator;
 import netgest.bo.runtime.boObject;
@@ -22,18 +38,9 @@ import netgest.bo.xwc.framework.XUIStyleContext;
 import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.localization.XUILocalization;
-
 import netgest.utils.StringUtils;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.io.IOUtils;
 
 import com.lowagie.text.html.HtmlTags;
 
@@ -46,11 +53,17 @@ import com.lowagie.text.html.HtmlTags;
  */
 public class ExtJsTheme implements XUITheme {
 	
+	private static final String JAVASCRIPT_INCLUDES_FILE_NAME = "javascriptIncludes";
+	private static final String CSS_INCLUDES_FILE_NAME = "cssIncludes";
 	/**
 	 * The logger
 	 */
 	public static final Logger logger = Logger.getLogger(ExtJsTheme.class);
 	
+	private static ConcurrentMap<String, String> scriptHashes = new ConcurrentHashMap<String, String>();
+	
+	private static Map<String,String> scripts = null; 
+	private static Map<String,String> styles = null; 
 	
 	public ExtJsTheme() {	
 	}
@@ -74,16 +87,101 @@ public class ExtJsTheme implements XUITheme {
 			buildVersion = boApplication.getDefaultApplication().getBuildVersion(); 
 		return buildVersion;	
 	}
+	
+	private boolean inDevelopmentMode(){
+		return boApplication.getXEO().inDevelopmentMode();
+	}
+	
+	private String getMD5(String file, String path){
+		if (scriptHashes.containsKey(file)){
+			return scriptHashes.get(file);
+		} else {
+			try {
+				String fileToRead = path + File.separator + file + ".MD5";
+				String md5 = netgest.utils.IOUtils.readFileAsString(
+						new File(fileToRead));
+				if (!StringUtils.isEmpty(md5)){
+					scriptHashes.put(file, md5);
+					return md5;
+				}
+			} catch (IOException e) {
+				logger.warn("Could not read file %s", e, file);
+			}
+		}
+		return "";
+	}
+	
+	
+	
+	private Map<String,String> getScriptsToInclude(){
+		if (scripts != null)
+			return scripts;
+		scripts = new LinkedHashMap<String, String>();
+		
+		InputStream in = 
+				Thread.currentThread().getContextClassLoader().getResourceAsStream( JAVASCRIPT_INCLUDES_FILE_NAME );
+		try {
+			List<?> lines = IOUtils.readLines(in);
+			for (Object currentLine : lines){
+				String line = currentLine.toString();
+				if (org.apache.commons.lang.StringUtils.isNotEmpty(line)){
+					String[] parts = line.split(":");
+					String id = parts[0];
+					String nameFile = parts[1];
+					scripts.put(id, nameFile);
+				}
+			}
+		} catch (IOException e) {
+			logger.warn("Could not read file %s", e, JAVASCRIPT_INCLUDES_FILE_NAME);
+		}
+		return scripts;
+			
+	}
+	
+	private Map<String,String> getCssToInclude(){
+		if (styles != null)
+			return styles;
+		styles = new LinkedHashMap<String, String>();
+		
+		InputStream in = 
+				Thread.currentThread().getContextClassLoader().getResourceAsStream( CSS_INCLUDES_FILE_NAME );
+		try {
+			List<?> lines = IOUtils.readLines(in);
+			for (Object currentLine : lines){
+				String line = currentLine.toString();
+				if (org.apache.commons.lang.StringUtils.isNotEmpty(line)){
+					String[] parts = line.split(":");
+					String id = parts[0];
+					String nameFile = parts[1];
+					styles.put(id, nameFile);
+				}
+			}
+		} catch (IOException e) {
+			logger.warn("Could not read file %s", e, CSS_INCLUDES_FILE_NAME);
+		}
+		return styles;
+			
+	}
 
 	public void addStyle(XUIStyleContext styleContext) {
-		
-		styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "extjs_css",
+		String lang = getApplicationLanguage();
+		styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "extjs-css",
 				composeUrl(getResourceBaseUri() + "resources/css/ext-all.css"));
-		styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "extjs_css1",
-				composeUrl("ext-xeo/css/ext-xeo.css"));
-		styleContext.addInclude(XUIStyleContext.POSITION_HEADER,
-				"ext-xeo-nohtmleditor",
-				composeUrl("ext-xeo/css/ext-xeo-nohtmleditor.css"));
+		if (inDevelopmentMode() || useNormalInclude()){
+			
+			Map<String,String> scripts = getCssToInclude();
+			Iterator<String> it = scripts.keySet().iterator();
+			while (it.hasNext()){
+				String id = it.next();
+				String file = scripts.get(id);	
+				file = file.replace("%LANG%",lang);
+				styleContext.addInclude(XUIStyleContext.POSITION_HEADER, id,file);
+			}
+		}else {
+			String md5 = getMD5ForFile("concatenated-min.css");
+			styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "minified_css",
+					"minified/concatenated-min.css?hash=" + md5);
+		}
 		
 		Map<String,String> filesToInclude = themeFilesToInclude();
 		Set<Entry<String,String>> files = filesToInclude.entrySet();
@@ -96,6 +194,17 @@ public class ExtJsTheme implements XUITheme {
 		}
 		
 
+	}
+
+	private String getMD5ForFile(String file) {
+		XUIRequestContext context = XUIRequestContext.getCurrentContext();
+		String path = context.getServletContext().getRealPath("");
+		path = path + File.separator + ".xeodeploy" + File.separator + "minified";
+		String md5 = getMD5(file, path);
+		if (StringUtils.isEmpty(md5)){
+			md5 = getCurrentBuildVersion();
+		}
+		return md5;
 	}
 
 	/**
@@ -169,6 +278,15 @@ public class ExtJsTheme implements XUITheme {
 	protected JavaScriptIncluder createScriptIncluder(XUIScriptContext ctx, String currentBuild){
 		return new JavaScriptIncluder( ctx, currentBuild );
 	}
+	
+	private boolean useNormalInclude(){
+		String useNonMinified = System.getProperty("xeo.minified");
+		boolean normal = false;
+		if (StringUtils.isEmpty(useNonMinified)){
+			normal = Boolean.valueOf(useNonMinified);
+		}
+		return normal;
+	}
 
 	public void addScripts(XUIScriptContext scriptContext) {
 		String lang = getApplicationLanguage();
@@ -176,42 +294,22 @@ public class ExtJsTheme implements XUITheme {
 		if (logger.isFinerEnabled())
 			logger.finer("Using '%s' as language for the User ", lang);
 		
-		// Extjs
 		JavaScriptIncluder scriptIncluder = createScriptIncluder( scriptContext, getCurrentBuildVersion() );
-		scriptIncluder.includeRegular( "ext-base", getResourceBaseUri() + "adapter/ext/ext-base.js" );
-		scriptIncluder.includeRegular( "ext-all", getResourceBaseUri() + "ext-all.js" );
-		// xwc
-		
-		scriptIncluder.include( "xwc-core", "xwc/js/xwc-core.js" );
-		scriptIncluder.include( "xwc-messages", "xwc/js/localization/xwc-messages_"+ lang + ".js" );
-		
-		// Grid Search
-		
-		
-		scriptIncluder.include( "ext-xeo", "ext-xeo/js/ext-xeo.js" );
-		scriptIncluder.include( "gridDrag", "ext-xeo/js/griddrag.js" );
-		
-		
-		scriptIncluder.include( "ExtXeo.grid", "ext-xeo/js/GridPanel.js" );
-		scriptIncluder.include( "xwc-components", "ext-xeo/js/xwc-components.js" );
-		scriptIncluder.include( "ExtXeo.tabs", "ext-xeo/js/Tabs.js" );
-		scriptIncluder.include( "ExtXeo.TreePanelJCR", "ext-xeo/js/TreePanelJCR.js" );
-		// Grid Filters
-		scriptIncluder.include( "xwc-grid-filter", "extjs/grid/GridFilters.js" );
-		scriptIncluder.include( "xwc-grid-filter-filter", "extjs/grid/filter/Filter.js" );
-		scriptIncluder.include( "xwc-grid-filter-boolean", "extjs/grid/filter/BooleanFilter.js" );
-		scriptIncluder.include( "xwc-grid-filter-date", "extjs/grid/filter/DateFilter.js" );
-		scriptIncluder.include( "xwc-grid-filter-list", "extjs/grid/filter/ListFilter.js" );
-		scriptIncluder.include( "xwc-grid-filter-numeric", "extjs/grid/filter/NumericFilter.js" );
-		scriptIncluder.include( "xwc-grid-filter-string", "extjs/grid/filter/StringFilter.js" );
-		scriptIncluder.include( "xwc-grid-filter-object", "extjs/grid/filter/ObjectFilter.js" );
-		scriptIncluder.include( "xwc-grid-menu-editable", "extjs/grid/menu/EditableItem.js" );
-		scriptIncluder.include( "xwc-grid-menu-rangemenu", "extjs/grid/menu/RangeMenu.js" );
-		// Language files
-		scriptIncluder.include( "ext-all-lang", getResourceBaseUri() + "build/locale/ext-lang-" + lang + "-min.js" );
-		scriptIncluder.include( "ext-xeo-messages", "ext-xeo/js/localization/ext-xeo-messages_" + lang+ ".js" );
-		scriptIncluder.include( "ext-xeo-app", "ext-xeo/js/App.js" );
-		
+		if (inDevelopmentMode() || useNormalInclude()){
+			// Extjs
+			Map<String,String> scripts = getScriptsToInclude();
+			Iterator<String> it = scripts.keySet().iterator();
+			while (it.hasNext()){
+				String id = it.next();
+				String file = scripts.get(id);	
+				file = file.replace("%LANG%",lang);
+				scriptIncluder.includeRegular(id,file);
+			}
+			
+		} else {
+			String md5 = getMD5ForFile("concatenated_"+ lang +"-min.js");
+			scriptIncluder.includeRegular("minified-js", "minified/concatenated_"+ lang +"-min.js?hash=" + md5);
+		}
 		// Utility Scrits
 		scriptIncluder.addHeaderScript( "s.gif", "Ext.BLANK_IMAGE_URL = '" +
 				ExtJsTheme.composeUrl("extjs/resources/images/default/s.gif") + "';" ); 

@@ -61,7 +61,7 @@ ExtXeo.destroyComponents1 = function( oDNode, oWnd ) {
 XVW.ErrorDialog = function( sTitle, sMessage, sDetails ) {
 	var buttonsDefinition = {ok:'OK', cancel:'Details'};
 	if (sDetails === undefined || sDetails !== null || sDetails.length == 0){
-		buttonsDefinition = {ok:'OK'}
+		buttonsDefinition = {ok:'OK'};
 	} 
 	
     Ext.MessageBox.show({
@@ -102,12 +102,15 @@ XVW.beforeApplyHtml = function( oDNode, destroyComponent ) {
 	}
 };
 
+ExtXeo.WaitCounter = 0;
+
 XVW.Wait = function( iWaitMode ) {
     if( iWaitMode == '1' )
     {
     	if( !ExtXeo.loadMask ) {
     		ExtXeo.loadMask = new Ext.LoadMask(document.body, {msg: ExtXeo.Messages.SENDING_DATA });
     	}
+    	ExtXeo.WaitCounter++;
     	ExtXeo.loadMask.show();
     }
 };
@@ -116,23 +119,30 @@ XVW.StillWorking = function(message){
 	if( ExtXeo.loadMask ) {
 		ExtXeo.loadMask.hide();
 	}
+	ExtXeo.WaitCounter = 0;
 	ExtXeo.loadMask = new Ext.LoadMask(document.body, {msg: message });
 	ExtXeo.loadMask.show();
-}
+};
 
 XVW.ResetWait = function () {
+	ExtXeo.WaitCounter = 0;
 	window.setTimeout( function () {
 		if( ExtXeo.loadMask ) {
 			ExtXeo.loadMask = null;
 		}
 	} , 50 );
 	
-}
+};
 
 
 XVW.NoWait = function() { 
 	if( ExtXeo.loadMask ) {
-		window.setTimeout( "ExtXeo.loadMask.hide();", 50 );
+		if (ExtXeo.WaitCounter > 0){
+			ExtXeo.WaitCounter--;
+		} 
+		if (ExtXeo.WaitCounter == 0){
+			window.setTimeout( "ExtXeo.loadMask.hide();", 50 );
+		}
 	}
 };
 

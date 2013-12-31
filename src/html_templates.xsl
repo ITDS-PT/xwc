@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
-    <xsl:output method="html" indent="yes" encoding="UTF-8"/>
+    <xsl:output method="html" indent="yes" encoding="UTF-8"  />
 
     <!-- The base url for images -->
     <xsl:variable name="baseUrl">
@@ -186,6 +186,17 @@
         </xsl:for-each>
     </xsl:template>
     
+     <xsl:template match="form/tabs" >
+        <xsl:for-each select="tab">
+         <div class="tab">
+             <h1>
+                 <xsl:value-of select="./@label"/>
+             </h1>
+         </div>
+         <xsl:apply-templates/>
+        </xsl:for-each>
+    </xsl:template>
+    
     <xsl:template match="tab/tabs" priority="-1">
         <xsl:for-each select="tab">
             <div class="tab">
@@ -274,7 +285,7 @@
     </xsl:template>
     
     <xsl:template match="outputHtml">
-            <xsl:apply-templates select="./*|text()"/>
+            <xsl:value-of select="./text()" disable-output-escaping="yes"/>
     </xsl:template>
     
     <xsl:template match="attributeLabel" priority="-1">
@@ -309,7 +320,7 @@
     <xsl:template match="attributeText" priority="-1">
         <!-- ignorei os outros atributos do HTML -->
         <td class="value">
-            <xsl:value-of select="./text()"/>
+            <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
 
@@ -371,7 +382,7 @@
     <!-- Atributos do tipo texto longo -->
     <xsl:template match="attributeTextArea" priority="-1">
         <td class="value">
-           <xsl:value-of select="./text()"/>
+            <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
 
@@ -384,7 +395,7 @@
     
      <xsl:template match="bridgeLookup" priority="-1">
         <td class="value">
-           <xsl:value-of select="./@displayValue"/>
+           <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
     
@@ -454,7 +465,7 @@
     <!-- Atributos do tipo object -->
     <xsl:template match="attributeNumberLookup" priority="-1">
         <td class="value">
-            <xsl:value-of select="./@displayValue"/>
+             <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
     
@@ -473,7 +484,7 @@
     <!-- Attribute Lov -->
     <xsl:template match="attributeLov" priority="-1">
         <td class="value">
-            <xsl:value-of select="./@displayValue"/>
+             <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
     
@@ -488,7 +499,7 @@
     <!-- Editor HTML -->
     <xsl:template match="attributeHtmlEditor" priority="-1">
         <td class="value">
-            <xsl:copy-of select="./*|text()"/>
+            <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
     
@@ -508,7 +519,7 @@
     
     <xsl:template match="gridheadercolumn" priority="-1">
         <th>
-            <xsl:value-of select="text()"/>
+       	    <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>
         </th>
     </xsl:template>
     
@@ -521,10 +532,10 @@
     <xsl:template match="gridcolumn" priority="-1">
         <td>
             <xsl:if test="string-length(./text()) > 0">
-                <xsl:value-of select="./text()"/>    
+                <xsl:value-of select="./text()" disable-output-escaping="yes"/>    
             </xsl:if>
             <xsl:if test="string-length(./text()) = 0">
-                <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>    
+                	<xsl:value-of select="./@displayValue" disable-output-escaping="yes" />    
             </xsl:if>
         </td>
     </xsl:template>

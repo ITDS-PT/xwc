@@ -459,7 +459,7 @@
         <xsl:choose>
             <xsl:when test="string-length(text()) > 0">
                 <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                    <xsl:value-of select="./text()"/>
+                    <xsl:value-of select="./text()" disable-output-escaping="yes"/>
                 </fo:block>
             </xsl:when>
             <xsl:otherwise>
