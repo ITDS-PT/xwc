@@ -23,6 +23,8 @@ import netgest.bo.xwc.framework.localization.XUILocalization;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -223,12 +225,20 @@ public class GridPanelJSonRenderer {
 	    		switch ( fieldType ) {
 	    			case DataFieldTypes.VALUE_DATE:
 	    				try {
-	    					parentValues[i] = XUILocalization.parseDate( (String)oParentValues[i] );
+	    					if (oParentValues[i] instanceof String){
+	    						parentValues[i] = XUILocalization.parseDate( (String)oParentValues[i] );
+	    					} else {
+	    						parentValues[i] =  (Timestamp)oParentValues[i];
+	    					}
 	    				} catch( ParseException e ) {}
 	    				break;
 	    			case DataFieldTypes.VALUE_DATETIME:
 	    				try {
-	    					parentValues[i] = XUILocalization.parseDate( (String)oParentValues[i] );
+	    					if (oParentValues[i] instanceof String){
+	    						parentValues[i] = XUILocalization.parseDate( (String)oParentValues[i] );
+	    					} else {
+	    						parentValues[i] =  (Timestamp)oParentValues[i];
+	    					}
 	    				} catch( ParseException e ) {}
 	    				break;
 	    			case DataFieldTypes.VALUE_BOOLEAN:

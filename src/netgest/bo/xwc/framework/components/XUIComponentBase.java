@@ -776,7 +776,7 @@ public abstract class XUIComponentBase extends UIComponentBase
         changed = null;
     }
     
-    public final void processPreRender() {
+    public void processPreRender() {
         // Process this component itself
     	
     	XUIComponentBase component = this;

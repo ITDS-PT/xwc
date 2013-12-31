@@ -186,11 +186,9 @@ public class XUIServlet extends HttpServlet
         	//Log Error
         	if( e.getRootCause() != null )
         		logger.error( "", e.getRootCause() );
-        	else
-        		logger.error( "", e.getRootCause() );
         	
         	if( !Boolean.parseBoolean( (String)oRequest.getAttribute("xvw.portlet") ) ) {
-	        	if( e.getRootCause() instanceof ViewExpiredException && oRequest.getSession() != null && oRequest.getSession().isNew() ) {
+	        	if( e.getRootCause() instanceof ViewExpiredException && oRequest.getSession() != null ) {
 	        		// Handle expired view
             		StringBuilder sb = new StringBuilder();
             		if( oRequest.isSecure() ) { 
@@ -222,7 +220,7 @@ public class XUIServlet extends HttpServlet
 
             		if( isAjax ) {
 		        		oResponse.setHeader( "login-url" , sb.toString() );
-		        		oResponse.sendError(401);
+		        		oResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED); //401
 	        		}
 	        		else {
 	            		oResponse.reset();

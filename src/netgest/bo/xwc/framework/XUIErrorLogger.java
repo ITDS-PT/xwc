@@ -19,9 +19,11 @@ import javax.sql.DataSource;
 import netgest.bo.data.oracle.OracleDBM.Database;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.system.Logger;
+import netgest.bo.system.XEO;
 import netgest.bo.system.boApplication;
 import netgest.bo.system.boApplicationConfig;
 import netgest.bo.system.boSession;
+import netgest.bo.xwc.framework.http.XUIHttpRequest;
 import netgest.bo.xwc.framework.viewers.jslog.LogRecord;
 import netgest.bo.xwc.framework.viewers.jslog.LoggerConstants;
 import netgest.utils.StringUtils;
@@ -58,32 +60,15 @@ public class XUIErrorLogger {
 	 * 
 	 * @param customContext
 	 */
-	public void addDebugInfo(String customContext){
-		EboContext ctx = boApplication.currentContext().getEboContext();
+	public static void addDebugInfo(String customContext){
 		XUIRequestContext request = XUIRequestContext.getCurrentContext();
-		if (ctx != null && request != null){
-			Connection con = getConnection(ctx);
-			logViewError(ctx, request.getDebugInfo(), customContext, null, con);
-		}
-	}
-	
-	/**
-	 * 
-	 * See {@link #addDebugInfo(String)} but this one uses a specific {@link EboContext} and
-	 * {@link XUIRequestContext}
-	 * 
-	 * @param ctx
-	 * @param request
-	 * @param customContext
-	 */
-	public void addDebugInfo(EboContext ctx, XUIRequestContext request, String customContext){
-		Connection con = getConnection(ctx);
-		logViewError(ctx, request.getDebugInfo(), customContext,null,  con);
+		request.addCustomDebugContext(customContext);
 	}
 	
 	private Connection getConnection(EboContext ctx){
 		if (StringUtils.isEmpty(dataSource)){
-			return ctx.getConnectionData();
+			if (ctx != null)
+				return ctx.getConnectionData();
 		} else {
 			try {
 				InitialContext ic = new InitialContext();
@@ -114,11 +99,12 @@ public class XUIErrorLogger {
 	 * @param customContext
 	 * @param e
 	 */
-	public void logViewError(EboContext ctx, XUIRequestContextDebugInfo debug, String customContext, Exception e, Connection connection){
+	void logViewError(EboContext ctx, XUIRequestContextDebugInfo debug, String customContext, Exception e, Connection connection){
 		
 		long requestId = debug.getRequestId();
 		long userBoui = -1;
 		long profileBoui = -1;
+		boolean createdContext = false;
 		
 		if (ctx != null){
 			boSession session = ctx.getBoSession();
@@ -126,12 +112,23 @@ public class XUIErrorLogger {
 				userBoui = session.getPerformerBoui();
 				profileBoui = session.getPerformerIProfileBoui();
 			}
+		} else {
+			boSession session = XEO.loginAs("ROBOT");
+			ctx = session.createEboContext();
+			userBoui = session.getPerformerBoui();
+			profileBoui = session.getPerformerIProfileBoui();
 		}
 		String viewId = debug.getMainViewId();
 		boolean isAjax = debug.isAjaxRequest();
-		String hostname = ((HttpServletRequest) ctx.getRequest()).getLocalName();
+		String hostname = "";
+		if (ctx.getRequest() != null){
+			hostname = ((HttpServletRequest) ctx.getRequest()).getLocalName();
+		}
 		String beanContext = debug.getBeanContext();
 		String eventContext = debug.getEventContext();
+		
+		String ipAddress = XUIHttpRequest.
+				getClientIpFromRequest(((HttpServletRequest) ctx.getRequest()));
 		
 		if (StringUtils.isEmpty(hostname))
 			hostname = "";
@@ -142,8 +139,15 @@ public class XUIErrorLogger {
 			e.printStackTrace(pw);
 		}
 		
-		if (StringUtils.isEmpty(customContext))
-			customContext = "";
+		List<String> customContextContent = debug.getCustomContext();
+		if (StringUtils.hasValue(customContext)){
+			customContextContent.add(customContext);
+		}
+		
+		String customContextToLog = "";
+		for (String currentContext : customContextContent){
+			customContextToLog += currentContext + ";";
+		}
 		
 		try {
 			if (connection == null){
@@ -161,8 +165,9 @@ public class XUIErrorLogger {
 					, viewId
 					, beanContext.toString()
 					, eventContext
-					, customContext
-					, s.toString());
+					, customContextToLog
+					, s.toString()
+					, ipAddress);
 		} catch (SQLException e1) {
 			logger.warn("Could not insert new record into debug table", e1);
 		} finally {
@@ -171,6 +176,11 @@ public class XUIErrorLogger {
 					connection.close();
 				} catch (SQLException e1) {
 					logger.warn("Closing connection",e1);
+				}
+			}
+			if (createdContext){
+				if (ctx != null){
+					ctx.close();
 				}
 			}
 		}
@@ -220,7 +230,7 @@ public class XUIErrorLogger {
 	
 	void insertRecord(Connection connection, Database db, long userBoui, long profileBoui,
 			long requestId, String hostname, boolean isAjax, String viewId, String beanContext,
-			String eventContext, String customContext, String exceptionStack) throws SQLException{
+			String eventContext, String customContext, String exceptionStack, String ipAddress) throws SQLException{
 		
 		if (!isInit(connection)){
 			init(connection,LoggerConstants.getDebugInfoTableCreateScript(db));
@@ -242,6 +252,7 @@ public class XUIErrorLogger {
 		values.add(new LogRecord("CUSTOM_CONTEXT", customContext));
 		values.add(new LogRecord("STACK_TRACE", exceptionStack));
 		values.add(new LogRecord("HOST", truncateTo(hostname,TEXT_COLUMN_SIZE)));
+		values.add(new LogRecord("IP_ADDRESS", truncateTo(ipAddress,TEXT_COLUMN_SIZE)));
 		
 		StringBuilder s = new StringBuilder(200);
 		s.append("INSERT INTO ");

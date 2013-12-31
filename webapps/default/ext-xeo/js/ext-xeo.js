@@ -59,12 +59,17 @@ ExtXeo.destroyComponents1 = function( oDNode, oWnd ) {
 };
 
 XVW.ErrorDialog = function( sTitle, sMessage, sDetails ) {
+	var buttonsDefinition = {ok:'OK', cancel:'Details'};
+	if (sDetails === undefined || sDetails !== null || sDetails.length == 0){
+		buttonsDefinition = {ok:'OK'}
+	} 
+	
     Ext.MessageBox.show({
        title: sTitle,
        icon: Ext.MessageBox.ERROR,
        msg: sMessage,
        fn: function( btn, text ) {
-    		if (btn=='cancel') {
+    		if (btn=='cancel'  ) {
     			var wnd = new Ext.Window( {
         			title: sTitle,
     				layout:'fit',
@@ -79,9 +84,15 @@ XVW.ErrorDialog = function( sTitle, sMessage, sDetails ) {
     			wnd.show();
     		}
        },
-       buttons: {ok:'OK', cancel:'Details'},
+       buttons: buttonsDefinition,
        icon: 'error'
    });
+};
+
+XVW.ConfirmationDialog = function (sTitle, sMessage, okButtonHandler){
+	if (sTitle && sMessage){
+		Ext.MessageBox.alert(sTitle,sMessage,okButtonHandler);
+	}
 };
 
 
@@ -100,6 +111,23 @@ XVW.Wait = function( iWaitMode ) {
     	ExtXeo.loadMask.show();
     }
 };
+
+XVW.StillWorking = function(message){
+	if( ExtXeo.loadMask ) {
+		ExtXeo.loadMask.hide();
+	}
+	ExtXeo.loadMask = new Ext.LoadMask(document.body, {msg: message });
+	ExtXeo.loadMask.show();
+}
+
+XVW.ResetWait = function () {
+	window.setTimeout( function () {
+		if( ExtXeo.loadMask ) {
+			ExtXeo.loadMask = null;
+		}
+	} , 50 );
+	
+}
 
 
 XVW.NoWait = function() { 
@@ -765,27 +793,33 @@ XVW.MenuCounter = {
 			
 			var x = this.counters[sNodeId];
 			var xh = XVW.createXMLHttpRequest();
-			xh.open( 'GET',x.url, true );
+			xh.open( 'GET',x.url + "&KeepAlive=true", true );
 			xh.onreadystatechange = function() {
 				if( xh.readyState==4 ) {
-					try {
-						eval( 'var r = ' + xh.responseText );
-						var c = Ext.getCmp( x.containerId );
-						if(c) {
-							var n = c.getNodeById( x.nodeId );
-							if(n) n.setText( r.counterHtml );
-			    		}
-						x.lastUpdate = (new Date())-0;
-					}
-					catch( e ) {
-					}
-					XVW.MenuCounter.counterRefreshId--;
-					if( XVW.MenuCounter.counterRefreshId == 0 ) {
-						var el = document.getElementById( "extxeo-refresh-counters-img" );
-						if( el ) {
-							el.src = 'extjs/resources/images/default/grid/refresh.gif';
+					if( xh.status == 401 && xh.getResponseHeader('login-url') != "" ){
+		            	XVW.NoWait();
+		            	XVW.ConfirmationDialog(XVW.Messages.SESSION_EXPIRED_TITLE,XVW.Messages.SESSION_EXPIRED_MESSAGE,
+		            		function (){window.top.location.href = xh.getResponseHeader('login-url');});
+		            } else {
+						try {
+							eval( 'var r = ' + xh.responseText );
+							var c = Ext.getCmp( x.containerId );
+							if(c) {
+								var n = c.getNodeById( x.nodeId );
+								if(n) n.setText( r.counterHtml );
+				    		}
+							x.lastUpdate = (new Date())-0;
 						}
-					}
+						catch( e ) {
+						}
+						XVW.MenuCounter.counterRefreshId--;
+						if( XVW.MenuCounter.counterRefreshId == 0 ) {
+							var el = document.getElementById( "extxeo-refresh-counters-img" );
+							if( el ) {
+								el.src = 'extjs/resources/images/default/grid/refresh.gif';
+							}
+						}
+		            }
 				}
 			};
 			xh.send();

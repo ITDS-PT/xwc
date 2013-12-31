@@ -141,7 +141,13 @@
 								
 						</xvw:menu>
 
-
+						<xvw:menu text='@{DEBUG_MENU_LABEL}' profile='admin' expanded='true'>
+							<xvw:menu icon='' text='@{ERROR_LOGGER_MENU_LABEL}'
+								value="{viewerName:'netgest/bo/xwc/xeo/workplaces/admin/viewers/errorLogger.xvw'}"
+								target='Tab' serverAction="#{viewBean.openViewer}" />
+							<xvw:menu icon='' text='@{POOL_DUMP_MENU_LABEL}' value="dumpPool.jsp?detail=y"
+								target='Tab' serverAction="#{viewBean.openLink}" />	
+						</xvw:menu>
 
 						<xvw:menu text='@{DEVELOPMENT}' profile='admin' expanded='true'>
 							<xvw:menu icon='ext-xeo/admin/xeoQL.gif' text='@{XEO_QL}'

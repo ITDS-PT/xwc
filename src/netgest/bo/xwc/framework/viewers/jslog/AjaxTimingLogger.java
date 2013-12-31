@@ -13,16 +13,16 @@ import java.util.Map;
 import netgest.bo.system.Logger;
 import netgest.utils.StringUtils;
 
-public class JsErrorLogger {
+public class AjaxTimingLogger {
 	
 	private Connection connection;
 	private String tableName = "";
 	
 	
 	
-	private static final Logger logger = Logger.getLogger(JsErrorLogger.class);
+	private static final Logger logger = Logger.getLogger(AjaxTimingLogger.class);
 	
-	public JsErrorLogger(Connection conn, String tableName){
+	public AjaxTimingLogger(Connection conn, String tableName){
 		this.connection = conn;
 		this.tableName = tableName;
 	} 
@@ -78,11 +78,9 @@ public class JsErrorLogger {
 		
 		List<LogRecord> values = new ArrayList<LogRecord>(6);
 		String viewId = "";
-		String jsErrorBlock = "";
-		String jsErrorMessage = "";
+		long requestTime = 0;
+		long processTime = 0;
 		String userAgent = "";
-		String lineNumberRaw = "";
-		String jsFile = "";
 		
 		if (reqParameters.containsKey("VIEW_ID")){
 			viewId = getAndTruncateTo(reqParameters,"VIEW_ID",250);
@@ -90,51 +88,42 @@ public class JsErrorLogger {
 				viewId = "";
 			}
 		}
-		if (reqParameters.containsKey("JS_ERROR_BLOCK")){
-			jsErrorBlock = reqParameters.get("JS_ERROR_BLOCK")[0];
+		if (reqParameters.containsKey("REQUEST_TIME")){
+			try {
+				requestTime = Long.valueOf(reqParameters.get("REQUEST_TIME")[0]);
+			} catch (NumberFormatException e) {
+				requestTime = 0;
+			}
 		} 
-		if (reqParameters.containsKey("JS_ERROR_MESSAGE")){
-			jsErrorMessage = reqParameters.get("JS_ERROR_MESSAGE")[0];
+		if (reqParameters.containsKey("PROCESS_TIME")){
+			try {
+				processTime = Long.valueOf(reqParameters.get("PROCESS_TIME")[0]);
+			} catch (NumberFormatException e) {
+				processTime = 0;
+			}
 		} 
 		if (reqParameters.containsKey("USER_AGENT")){
 			userAgent = getAndTruncateTo(reqParameters,"USER_AGENT",250);
 		} 
-		if (reqParameters.containsKey("LINE")){
-			lineNumberRaw = reqParameters.get("LINE")[0];
-		} 
-		if (reqParameters.containsKey("JS_FILE")){
-			jsFile = reqParameters.get("JS_FILE")[0];
-		}
+		
 		
 		if (StringUtils.isEmpty(hostname))
 			hostname = "";
 		
 		Timestamp currentDate = new Timestamp(System.currentTimeMillis());
 		
-		long lineNumber = Long.valueOf(0);
-		if (StringUtils.hasValue(lineNumberRaw)){
-			try {
-				lineNumber = Long.valueOf(lineNumberRaw);
-			} catch (NumberFormatException e) {
-				lineNumber = -1;
-			}
-		}
-		
-		if (StringUtils.isEmpty(viewId.toString()) || StringUtils.isEmpty(jsErrorMessage))
+		if (StringUtils.isEmpty(viewId.toString()) || requestTime == 0)
 			return ;
 		
 		values.add(new LogRecord("USER_BOUI",userBoui));
 		values.add(new LogRecord("PROFILE_BOUI",profileBoui));
 		values.add(new LogRecord("VIEW_ID",viewId));
 		values.add(new LogRecord("DATE_EVENT",currentDate));
-		values.add(new LogRecord("JS_ERROR_BLOCK",jsErrorBlock));
-		values.add(new LogRecord("JS_ERROR_MESSAGE",jsErrorMessage));
+		values.add(new LogRecord("LOAD_TIME",requestTime));
+		values.add(new LogRecord("PROCESS_TIME",processTime));
 		values.add(new LogRecord("USER_AGENT",userAgent));
-		values.add(new LogRecord("LINE",lineNumber));
 		values.add(new LogRecord("HOST",hostname));
 		values.add(new LogRecord("IP_ADDRESS",ipAddress));
-		values.add(new LogRecord("JS_FILE",jsFile));
-		
 		
 		StringBuilder s = new StringBuilder(200);
 		s.append("INSERT INTO ");

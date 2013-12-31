@@ -172,36 +172,102 @@ XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubm
     }    
 };
 
-function submitAjax( sActionUrl, reqDoc, renderOnElement ) {
+/**
+ * Maximum Number of retries for a request
+ */
+XVW.maxRetries = 2;
+
+function submitAjax( sActionUrl, reqDoc, renderOnElement, retryCount ) {
     var oXmlReq = XVW.createXMLHttpRequest(  );
+    if (retryCount === undefined){
+    	retryCount = 0;
+    }
     oXmlReq.open('POST', sActionUrl, true );
     oXmlReq.setRequestHeader('Content-Type', 'text/xml');
     oXmlReq.onreadystatechange = function() {
         if( oXmlReq.readyState == 4 ) {
-            XVW.NoWait();
+        	var requestEnd = new Date().getTime();
+        	var requestOk = false;
+        	var jsProcessingInit = 0;
+        	var jsProcessingEnd = 0;
             if( oXmlReq.status == 200 ) {
                 try
                 {
                     window.ts2 = new Date();
+                    jsProcessingInit = new Date().getTime(); 
                     XVW.handleAjaxResponse( oXmlReq, renderOnElement );
+                    jsProcessingEnd = new Date().getTime();
+                    requestOk = true;
+                    XVW.NoWait();
+                    if (retryCount){
+                    	if (retryCount > 0){
+                    		XVW.ResetWait();
+                    	}
+                    }
                 }
                 catch( e ) {
-                    XVW.handleAjaxError( e.message, e.stack  );
+                	XVW.handleAjaxError( e.message, e.stack  );
+                    requestOk = false;
                 }
             }
-            else if( oXmlReq.status == 401 && oXmlReq.getResponseHeader('login-url') != "" ) {
-            	window.top.location.href = oXmlReq.getResponseHeader('login-url');
-            } else {
-                XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText )
+            else if( oXmlReq.status == 401 && oXmlReq.getResponseHeader('login-url') != "" ){
+            	XVW.NoWait();
+            	XVW.ConfirmationDialog(XVW.Messages.SESSION_EXPIRED_TITLE,XVW.Messages.SESSION_EXPIRED_MESSAGE,
+            		function (){window.top.location.href = oXmlReq.getResponseHeader('login-url');});
+            } else if (oXmlReq.status == 0){
+            	if (retryCount <= XVW.maxRetries){
+            		retryCount++;
+            		if (retryCount == 1){
+            			XVW.StillWorking(XVW.Messages.AJAX_SECOND_TRY);
+            		} else if (retryCount == 2){
+            			XVW.StillWorking(XVW.Messages.AJAX_THIRD_TRY);
+            		}
+            		submitAjax(sActionUrl,reqDoc,renderOnElement,retryCount);
+            	} else {
+            		XVW.NoWait();
+            		XVW.ResetWait();
+            		XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText )
+            	}
             }
+            else {
+	           XVW.NoWait();
+	           if (retryCount){
+	        	   if (retryCount > 0){
+	        		   XVW.ResetWait();
+	        	   }
+	           }
+	           XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText )
+            }
+            
             if (!XVW.ajax.canAjaxRequest()){
             	XVW.ajax.enableAjaxRequests();
             }
+            
+            var jsTime = 0;
+            if (requestOk){
+            	jsTime = jsProcessingEnd - jsProcessingInit;
+            }
+            
+            if (requestOk){
+            	XVW.NoWait();
+                if (retryCount){
+                	if (retryCount > 0){
+                		XVW.ResetWait();
+                	}
+                }
+            }
+             
+            var requestTime = requestEnd - requestStart;
+            XVW.logAjaxTiming(requestTime,jsTime);
         }
     }
+    var requestStart = new Date().getTime();
     oXmlReq.send( reqDoc );
 	
 };
+
+
+
 
 
 XVW.AjaxCommand.pFnParseNode = function( oNode, loParNames, loParValues ) {
@@ -288,6 +354,8 @@ XVW.handleAjaxError = function( sErrorMessage, sDetails ) {
 
 // Must be overwriten ti handle error dialogs
 XVW.ErrorDialog = function( sTitle, sMessage ) {};
+
+XVW.ConfirmationDialog = function (sTitle, sMessage, okButtonHandler){};
 
 XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
 	// Handle view Element -- Update ViewId
@@ -386,8 +454,7 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         }
         catch( e ) {
             XVW.ErrorDialog( XVW.Messages.AJAXERROR_MESSAGE, "["+oScriptId+"]" +
-                e.description + "\n" +
-                sScriptToEval
+                e.description
             );
         }
         finally {
@@ -496,9 +563,11 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         catch( e ) {
         		debugger;
         		XVW.reportAjaxErrorBlock(oFooterScriptNodeList);
+        		var details = "";
+        		if (e.stack !== undefined)
+        			details = e.stack;
 	            XVW.ErrorDialog( XVW.Messages.AJAXERROR_MESSAGE, "["+oScriptId+"]" +
-	                e.description + "\n" +
-	                sScriptToEval
+	            		e.message , details
 	            );
         	}
         }
@@ -620,7 +689,16 @@ XVW.keepAlive = function( oForm ) {
 	try {
 		var sActionUrl = XVW.prv.getFormInput( oForm, 'xvw.ajax.resourceUrl').value;
 		var xmlReq = XVW.createXMLHttpRequest();
-	    xmlReq.open( "POST", sActionUrl+"/netgest/bo/xwc/framework/viewers/SystemOperations.xvw", true );
+	    xmlReq.open( "POST", sActionUrl+"/netgest/bo/xwc/framework/viewers/SystemOperations.xvw?KeepAlive=true", true );
+	    xmlReq.onreadystatechange = function() {
+			if( xmlReq.readyState==4 ) {
+				if( xmlReq.status == 401 && xmlReq.getResponseHeader('login-url') != "" ){
+	            	XVW.NoWait();
+	            	XVW.ConfirmationDialog(XVW.Messages.SESSION_EXPIRED_TITLE,XVW.Messages.SESSION_EXPIRED_MESSAGE,
+	            		function (){window.top.location.href = xmlReq.getResponseHeader('login-url');});
+	            }
+			}
+	    }
 	    xmlReq.send();
 	} catch( e ) {
 //		debugger;
@@ -695,6 +773,14 @@ XVW.prv.createCommand = function( sFormId, sActionId, sActionValue ) {
             else
                 oButton.value = '';
             oForm.appendChild( oButton );
+            
+            var keepAlive = document.createElement( 'input' );
+            keepAlive.type='hidden';
+            keepAlive.name = 'CommandSubmit';
+            keepAlive.value = 'true';
+            oForm.appendChild( keepAlive );
+            
+            //Colocar uma input hidden com o KeepAlive
         }
     }
     else {
@@ -710,6 +796,9 @@ XVW.prv.createCommand = function( sFormId, sActionId, sActionValue ) {
  */
 XVW.Wait = function( iWaitMode ) {};
 
+XVW.StillWorking = function ( message) {}; 
+
+XVW.ResetWait = function () {};
 /*
  * Clear the wait state of the application
  * Must be overwritten to the current look and feel
@@ -779,6 +868,7 @@ XVW.createXMLHttpRequest = function()
  * */
 XVW.logJsError = function (errorMessage, url, line, jsBlock){
 	
+	debugger;
 	var sActionUrl = "";
 	var sUrl = "";
 	var forms = document.getElementsByTagName('form');
@@ -789,11 +879,19 @@ XVW.logJsError = function (errorMessage, url, line, jsBlock){
 			break;
 	}
 	
-	var loggerUrl = sActionUrl + "/netgest/bo/xwc/framework/viewers/JsErrorLogOperations.xvw";
+	if (url == undefined || url == null){
+		url = "";
+	}
+	
+	if (sUrl == ""){
+		sUrl = document.location.href;
+	}
+	
+	var loggerUrl = sActionUrl + "netgest/bo/xwc/framework/viewers/JsErrorLogOperations.xvw";
 	  var parameters = "?action=log&JS_ERROR_MESSAGE=" + encodeURI(errorMessage)
 	      + "&VIEW_ID=" + encodeURI(sUrl)
 	      + "&LINE=" + encodeURI(line)
-	      + "&parent_url=" + encodeURI(document.location.href)
+	      + "&JS_FILE=" + encodeURI(url)
 	      + "&USER_AGENT=" + encodeURI(navigator.userAgent);
 	  
 	  if (jsBlock !== null && jsBlock !== undefined){
@@ -804,6 +902,38 @@ XVW.logJsError = function (errorMessage, url, line, jsBlock){
 	  var xhr = XVW.createXMLHttpRequest();
 	  xhr.open( "GET", loggerUrl + parameters, true );
 	  xhr.send();
+};
+
+/**
+ * Logs Ajax load times
+ */
+XVW.logAjaxTiming = function (requestTime, scriptProcessingTime){
+	if (requestTime == 0)
+		return ;
+	
+	var sActionUrl = "";
+	var sUrl = "";
+	var forms = document.getElementsByTagName('form');
+	
+	for (var i = 0 ; i < forms.length ; i++ ){
+		sActionUrl = XVW.prv.getFormInput( forms[i], 'xvw.ajax.resourceUrl').value;
+		sUrl = XVW.prv.getFormInput( forms[i], 'xvw.ajax.submitUrl').value;
+		if (sActionUrl !== null && sActionUrl !== undefined && sActionUrl.length > 0)
+			break;
+	}
+	var loggerUrl = sActionUrl + "netgest/bo/xwc/framework/viewers/AjaxTimingOperations.xvw";
+
+	var parameters = "?action=log"
+	      + "&VIEW_ID=" + encodeURI(sUrl)
+	      + "&USER_AGENT=" + encodeURI(navigator.userAgent)
+	      + "&REQUEST_TIME=" + parseInt(requestTime)
+	      + "&PROCESS_TIME=" + parseInt(scriptProcessingTime);
+	      
+	 //FALTA AQUI POR OS TEMPOS     
+	/** Send error to server */
+	var xhr = XVW.createXMLHttpRequest();
+	xhr.open( "GET", loggerUrl + parameters, true );
+	xhr.send();
 };
 
 /**
@@ -823,7 +953,7 @@ XVW.logTiming = function (timing){
 		if (sActionUrl !== null && sActionUrl !== undefined && sActionUrl.length > 0)
 			break;
 	}
-	var loggerUrl = sActionUrl + "/netgest/bo/xwc/framework/viewers/TimingOperations.xvw";
+	var loggerUrl = sActionUrl + "netgest/bo/xwc/framework/viewers/TimingOperations.xvw";
 	var parameters = "?action=log"
 	      + "&VIEW_ID=" + encodeURI(sUrl)
 	      + "&USER_AGENT=" + encodeURI(navigator.userAgent)
@@ -867,28 +997,29 @@ window.onerror = function(errorMessage, url, line) {
  * Associate the load event with the function to register performance timing
  * make it with a small delay after the load event
  * */
-//Temporarilly Disabled
-//(function(window){
-//	
-//	//Firefox, Chrome, IE9+
-//	if (window.addEventListener){
-//		if (window.performance){
-//			window.addEventListener('load', function (){
-//				window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
-//				}, false);
-//		}
-//	} else {
-//		//IE 7,8 or IE in compability mode
-//		if (window.attachEvent){
-//			window.attachEvent('onload', function (){
-//				window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
-//				}, false);
-//		}
-//	}
-//	
-//	
-//	
-//})(window);
+(function(window){
+	
+	//Firefox, Chrome, IE9+
+	if (window.addEventListener){
+		if (window.performance){
+			window.addEventListener('load', function (){
+				window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
+				}, false);
+		}
+	} else {
+		//IE 7,8 or IE in compability mode
+		if (window.attachEvent){
+			if (window.performance){
+				window.attachEvent('onload', function (){
+					window.setTimeout( function(){XVW.logTiming(window.performance.timing)} , 300);
+				}, false);
+			}
+		}
+	}
+	
+	
+	
+})(window);
 
 XVW.beforeApplyHtml = function( oDNode ) {};
 

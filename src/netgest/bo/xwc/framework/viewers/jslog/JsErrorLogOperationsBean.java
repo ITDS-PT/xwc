@@ -18,6 +18,7 @@ import netgest.bo.system.boApplicationConfig;
 import netgest.bo.system.boSession;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.annotations.XUIWebDefaultCommand;
+import netgest.bo.xwc.framework.http.XUIHttpRequest;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.utils.StringUtils;
 
@@ -47,10 +48,10 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 	
 	public void logError(){
 		
+		Connection connection = null;
 		try {
 			if (isActive){
 				EboContext ctx = boApplication.currentContext().getEboContext();
-				Connection connection = null;
 				boolean log = true;
 
 
@@ -64,11 +65,9 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 						connection = databaseSource.getConnection();
 					} catch (NamingException e) {
 						log = false;
-						e.printStackTrace();
 						logger.warn(e);
 					} catch (SQLException e) {
 						log = false;
-						e.printStackTrace();
 						logger.warn(e );
 					}
 				}
@@ -77,14 +76,25 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 			} 
 		} finally { 
 			disposeView();
+			if (connection != null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					logger.warn("Error Closing connection",e );
+				}
+			}
 		}
 		
 	}
 
-	private void disposeView() {
-		XUIRequestContext rc = getRequestContext();
-		rc.responseComplete();
-		rc.getViewRoot().dispose();
+	private void disposeView() { 
+		try {
+			XUIRequestContext rc = getRequestContext();
+			rc.responseComplete();
+			rc.getViewRoot().dispose();
+		} catch (Exception e) {
+			logger.warn("Error while disposing of view ",e);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -124,7 +134,8 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 		long userBoui = ctx.getBoSession().getPerformerBoui();
 		long profileBoui = ctx.getBoSession().getPerformerIProfileBoui();
 		JsErrorLogger jsLogger = new JsErrorLogger(connection, LoggerConstants.JS_ERROR_LOG_TABLE_NAME);
-		jsLogger.insertNewRecord(userBoui,profileBoui,parameters, request.getLocalName());
+		String ipAddress = XUIHttpRequest.getClientIpFromRequest(request);
+		jsLogger.insertNewRecord(userBoui,profileBoui,parameters, request.getLocalName(),ipAddress);
 		
 	}
 

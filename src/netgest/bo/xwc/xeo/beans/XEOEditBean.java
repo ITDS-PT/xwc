@@ -43,6 +43,7 @@ import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.security.securityOPL;
 import netgest.bo.security.securityRights;
 import netgest.bo.system.Logger;
+import netgest.bo.system.XEO;
 import netgest.bo.system.boApplication;
 import netgest.bo.utils.XEOQLModifier;
 import netgest.bo.xwc.components.annotations.Visible;
@@ -1268,11 +1269,17 @@ public class XEOEditBean extends XEOBaseBean
             	}
             }
             
-    		sBridgeKeyToEdit = String.valueOf( oSelectedRow.getAttribute("BOUI").getValue() );
+            if (oSelectedRow != null){
+            	sBridgeKeyToEdit = String.valueOf( oSelectedRow.getAttribute("BOUI").getValue() );
+            } else {
+            	XUIMessageSender.alertWarning(
+            			BeansMessages.ROW_DOUBLE_CLICK_FAILED_TITLE, 
+            			BeansMessages.ROW_DOUBLE_CLICK_FAILED_MESSAGE );
+            	return;
+            }
     		
     		try {
-				boObject childObj = boObject.getBoManager().loadObject(
-						getEboContext(), Long.valueOf(sBridgeKeyToEdit));
+				boObject childObj = XEO.load(Long.valueOf(sBridgeKeyToEdit));
 				if (securityRights.canRead(getEboContext(), childObj.getName())) {
 					if (oAttDef.getChildIsOrphan( childObj.getName() ) ) {
 						if (oRequestContext.isAjaxRequest()) {

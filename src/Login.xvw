@@ -63,7 +63,7 @@
 												<xvw:cell>
 													<xvw:attribute lovMap='#{viewBean.profileLovMap}'
 														visible='#{viewBean.showProfilesLov}' onChangeSubmit="true" valueExpression='#{viewBean.profile}'
-														id='profile' inputType='attributeLov' label='@{LOGIN_PROFILE}'
+														id='profile' inputType='attributeLov' label='@{LOGIN_PROFILE}' onChangeSubmitLockScreen="true"
 														maxLength='20'></xvw:attribute>
 												</xvw:cell>
 											</xvw:row>

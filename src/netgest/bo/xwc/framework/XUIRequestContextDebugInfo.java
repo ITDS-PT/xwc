@@ -14,6 +14,7 @@ class XUIRequestContextDebugInfo {
 	boolean ajaxRequest = false;
 	long requestId;
 	List<String> innerViews = new ArrayList<String>();
+	List<String> customContext = new ArrayList<String>();
 	String hostname = "";
 	String beanContext = "";
 	String eventContext = "";
@@ -48,6 +49,10 @@ class XUIRequestContextDebugInfo {
 
 	void setDateError(Date dateError) {
 		this.dateError = dateError;
+	}
+	
+	void addCustomContext(String context){
+		customContext.add(context);
 	}
 	
 	boolean hasViewInfo(){
@@ -105,6 +110,8 @@ class XUIRequestContextDebugInfo {
 		return requestId;
 	}
 
-	
+	public List<String> getCustomContext(){
+		return customContext;
+	}
 	
 }

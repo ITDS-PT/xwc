@@ -666,10 +666,10 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         		"}" );
 
         ExtConfig oSelException = oExtListeners.addChild( "'loadexception'");
-        oSelException.add( "fn", "function() { debugger; alert('" + ComponentMessages.GRID_ERROR_LOADING_DATA.toString() + "\\n ' + " +
-        		"arguments[2].responseText" + 
-        		"   );}" );
-
+//        oSelException.add( "fn", "function() { debugger; alert('" + ComponentMessages.GRID_ERROR_LOADING_DATA.toString() + "\\n ' + " +
+//        		"arguments[2].responseText" + 
+//        		"   );}" );
+        oSelException.add( "fn", "function() { ExtXeo.dealWithloadException(this);}" );
         
         ExtConfig onLoad = oExtListeners.addChild( "'load'");
         onLoad.add( "fn", 
@@ -893,8 +893,19 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             oColConfig.add( "stateful", false );
             oColConfig.addJSString( "tooltip", oGridColumns[ i ].getLabel() );
             
-            if( gridIsSortable )
-            	oColConfig.add( "sortable", oGridColumns[ i ].isSortable() );
+            if( gridIsSortable ){
+            	if (metaData != null){
+            		if (metaData.getDataType() == DataFieldTypes.VALUE_BRIDGE || 
+            				metaData.getDataType() == DataFieldTypes.VALUE_CLOB ) {
+            			oColConfig.add( "sortable", false );
+            		} else {
+                		oColConfig.add( "sortable", oGridColumns[ i ].isSortable() );
+                	}
+            	}
+            	else {
+            		oColConfig.add( "sortable", oGridColumns[ i ].isSortable() );
+            	}
+            }
             else
             	oColConfig.add( "sortable", false );
             
@@ -1115,7 +1126,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
             Column[] cols = oGrid.getColumns();
             DataListConnector connector = oGrid.getDataSource();
             for( Column col : cols ) {
-
+ 
             	JSONObject colFilter = j.optJSONObject( col.getDataField() );
 
             	if( colFilter == null ) {

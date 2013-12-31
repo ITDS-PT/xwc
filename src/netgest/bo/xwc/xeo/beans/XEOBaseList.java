@@ -206,24 +206,30 @@ public class XEOBaseList extends XEOBaseBean {
     
     @Override
     public void addDebugInfo(List<String> errors) {
-    	String boql = currentObjectList.getBOQL();
-    	Object[] arguments = currentObjectList.getBOQLArgs();
-    	StringBuilder argumentsSerialized = new StringBuilder();
-    	String separator = "";
-    	if (arguments != null){
-    		for (Object arg : arguments){
-    			if (arg != null){
-    				argumentsSerialized.append(separator);
-    				argumentsSerialized.append(arg.toString());
-    				separator = ",";
-    			}
+    	if (currentObjectList != null){
+    		try {
+	    		String boql = currentObjectList.getBOQL();
+	    		Object[] arguments = currentObjectList.getBOQLArgs();
+	    		StringBuilder argumentsSerialized = new StringBuilder();
+	    		String separator = "";
+	    		if (arguments != null){
+	    			for (Object arg : arguments){
+	    				if (arg != null){
+	    					argumentsSerialized.append(separator);
+	    					argumentsSerialized.append(arg.toString());
+	    					separator = ",";
+	    				}
+	    			}
+	    		}
+	    		String result = this.getClass().getName() + " BOQL:" + boql;
+	
+	    		if (arguments != null && arguments.length > 0 )
+	    			result += ":ARGS:" + argumentsSerialized.toString();
+	
+	    		errors.add(result);
+    		} catch (Exception e ){
+    			//Do not log anything
     		}
     	}
-    	String result = this.getClass().getName() + " BOQL:" + boql;
-    	
-    	if (arguments != null && arguments.length > 0 )
-    		result += ":ARGS:" + argumentsSerialized.toString();
-    	
-    	errors.add(result);
     }
 }

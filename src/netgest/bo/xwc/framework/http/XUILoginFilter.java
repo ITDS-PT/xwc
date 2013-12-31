@@ -2,6 +2,7 @@ package netgest.bo.xwc.framework.http;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -15,6 +16,8 @@ import javax.servlet.http.HttpSession;
 
 import netgest.bo.xwc.components.security.ViewerAccessPolicyBuilder;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
+import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.utils.StringUtils;
 
 public class XUILoginFilter implements Filter {
 
@@ -45,26 +48,35 @@ public class XUILoginFilter implements Filter {
 			chain.doFilter( request , response );
 		}
 		else {
-			HttpSession oHttpSession = oRequest.getSession();
-			
+			HttpSession oHttpSession = oRequest.getSession(false);
 			if( oHttpSession != null && oHttpSession.getAttribute("boSession") != null ) {
 				chain.doFilter(request, response);
 			}
 			else {
 				String redirectUrl = loginPageUrl(oRequest);
-				if (oRequest.getContentType() != null && oRequest.getContentType().startsWith("text/xml")) {
+				if (isAjaxRequest(oRequest) || StringUtils.hasValue(oRequest.getParameter("KeepAlive"))) {
 				    oResponse.setHeader("login-url", redirectUrl + "?msg=1");
-				    oResponse.sendError(401);
+				    oResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED); //401
+				} else if (StringUtils.hasValue(oRequest.getParameter("CommandSubmit"))){
+					oResponse.reset();
+				    oResponse.resetBuffer();
+				    oResponse.setContentType("text/html;charset=utf-8");
+				    PrintWriter out = oResponse.getWriter();
+				    out.println("<script>alert('"+XUICoreMessages.SESSION_EXPIRED_REDIRECT.toString()+"');window.top.location.href='" + JavaScriptUtils.safeJavaScriptWrite(redirectUrl, '\'') + "';</script>");
 				} else {
 				    oResponse.reset();
 				    oResponse.resetBuffer();
 				    oResponse.setContentType("text/html;charset=utf-8");
 				    PrintWriter out = oResponse.getWriter();
-				    out.println("<script>parent.top.location.href='" + JavaScriptUtils.safeJavaScriptWrite(redirectUrl, '\'') + "';</script>");
+				    out.println("<script>window.top.location.href='" + JavaScriptUtils.safeJavaScriptWrite(redirectUrl, '\'') + "';</script>");
 				}
-				oResponse.sendRedirect( servletPath + "/" + loginPage );
+				
 			}
 		}
+	}
+
+	private boolean isAjaxRequest(HttpServletRequest oRequest) {
+		return oRequest.getContentType() != null && oRequest.getContentType().startsWith("text/xml");
 	}
 	
 	private String loginPageUrl(HttpServletRequest oRequest) {

@@ -22,43 +22,23 @@ import netgest.bo.xwc.framework.http.XUIHttpRequest;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.utils.StringUtils;
 
-public class TimingOperationsBean extends XEOBaseBean {
+public class AjaxTimingOperationsBean extends XEOBaseBean {
 	
-	/**
-	 * Whether the database table was initialized or not, once initialized its set to 
-	 * 
-	 */
 	private static boolean initialized = Boolean.FALSE;
-	/**
-	 * The name of an alternative datasource to use, in case its present in boConfig
-	 * with property name as {@link LoggerConstants#LOGGING_ALTERNATIVE_DATASOURCE_PROPERTY}
-	 */
 	private static String dataSource = null;
 	private static final Logger logger = Logger.getLogger(TimingOperationsBean.class);
-	/**
-	 * Whether the logger is active (controlled by the {@link LoggerConstants#JS_TIMMING_LOG_ACTIVE_PROPERTY} 
-	 * being present in boConfig)
-	 */
 	private boolean isActive = true;
-	/**
-	 * Whether to log the record or not. If an error occurs while preparing the log
-	 * this variable is set to false and log is prevented
-	 * 
-	 */
-	private boolean log = true;
-	
 	
 	@XUIWebDefaultCommand
 	public void init(){
 		boApplicationConfig boconfig = boApplication.getXEO().getApplicationConfig();
 		if (dataSource == null){
-			
 			String alternative = boconfig.getProperty(LoggerConstants.LOGGING_ALTERNATIVE_DATASOURCE_PROPERTY);
 			if (StringUtils.hasValue(alternative)){
 				dataSource = alternative;
 			}
 		}
-		String isActiveRaw = boconfig.getProperty(LoggerConstants.JS_TIMMING_LOG_ACTIVE_PROPERTY);
+		String isActiveRaw = boconfig.getProperty(LoggerConstants.JS_AJAX_TIMMING_LOG_ACTIVE_PROPERTY);
 		if (StringUtils.hasValue(isActiveRaw)){
 			if (!Boolean.parseBoolean( isActiveRaw )){
 				isActive = false;
@@ -72,45 +52,39 @@ public class TimingOperationsBean extends XEOBaseBean {
 		try {
 			if (isActive){
 				EboContext ctx = boApplication.currentContext().getEboContext();
+				boolean log = true;
 
-				connection = getDatabaseConnection(ctx, connection);
+
+				if (StringUtils.isEmpty(dataSource)){
+					if (ctx != null)
+						connection = ctx.getConnectionData();
+				} else {
+					try {
+						InitialContext ic = new InitialContext();
+						DataSource databaseSource = (DataSource) ic.lookup(dataSource);
+						connection = databaseSource.getConnection();
+					} catch (NamingException e) {
+						log = false;
+						logger.warn(e);
+					} catch (SQLException e) {
+						log = false;
+						logger.warn(e );
+					}
+				}
 				if (log)
 					logError(ctx, connection);
 			} 
-		} 
-		finally {
-			//Important, must dispose the view
-			disposeView();
+		} finally { 
 			if (connection != null){
 				try {
 					connection.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.warn("Error Closing Connection",e);
 				}
 			}
-
+			disposeView();
 		}
 		
-	}
-
-	private Connection getDatabaseConnection(EboContext ctx,
-			Connection connection) {
-		if (StringUtils.isEmpty(dataSource)){
-			connection = ctx.getConnectionData();
-		} else {
-			try {
-				InitialContext ic = new InitialContext();
-				DataSource databaseSource = (DataSource) ic.lookup(dataSource);
-				connection = databaseSource.getConnection();
-			} catch (NamingException e) {
-				log = false;
-				logger.warn("Could not find JNDI name %s" , dataSource, e);
-			} catch (SQLException e) {
-				log = false;
-				logger.warn("Could not get new connection from JNDI name %s" , dataSource, e);
-			}
-		}
-		return connection;
 	}
 
 	private void disposeView() {
@@ -124,7 +98,8 @@ public class TimingOperationsBean extends XEOBaseBean {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void logError(EboContext ctx, Connection connection){
+	public void logError(EboContext ctx, Connection connection){
+		
 		boSession session = null;
 		boolean created = false;
 		try {
@@ -133,12 +108,11 @@ public class TimingOperationsBean extends XEOBaseBean {
 				ctx = session.createEboContext();
 				created = true;
 			} 
+			
 			if (!initialized){
 				init(ctx,connection);
 			}
 			
-			if (connection == null)
-				connection = ctx.getConnectionData();
 
 			HttpServletRequest request = (HttpServletRequest) getRequestContext().getRequest();
 			Map<?,?> parameters = request.getParameterMap();
@@ -152,36 +126,27 @@ public class TimingOperationsBean extends XEOBaseBean {
 					session.closeSession();
 				}
 			}
-			if (connection != null){
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					logger.warn( e );
-				}
-			}
 		}
 	}
 
-	private void insertRecords(EboContext ctx, Connection con, Map<String,String[]> parameters, HttpServletRequest request){
+	private void insertRecords(EboContext ctx, Connection connection, Map<String,String[]> parameters, HttpServletRequest request){
 		
 		long userBoui = ctx.getBoSession().getPerformerBoui();
 		long profileBoui = ctx.getBoSession().getPerformerIProfileBoui();
-		JsTimmingLogger jsLogger = new JsTimmingLogger(con, LoggerConstants.JS_TIMMING_LOG_TABLE_NAME);
-		String hostname = request.getLocalName();
+		AjaxTimingLogger ajaxLogger = new AjaxTimingLogger(connection, LoggerConstants.JS_AJAX_TIMMING_LOG_TABLE_NAME);
 		String ipAddress = XUIHttpRequest.getClientIpFromRequest(request);
-		jsLogger.insertNewRecord(userBoui,profileBoui,parameters,hostname,ipAddress);
-		
+		ajaxLogger.insertNewRecord(userBoui,profileBoui,parameters, request.getLocalName(),ipAddress);
 	}
 
 	private synchronized void init(EboContext ctx, Connection connection) {
 		boolean initOk = false;
 		try {
-			if (connection != null){
-				JsErrorLogger logger = new JsErrorLogger(connection, LoggerConstants.JS_TIMMING_LOG_TABLE_NAME);
-				OracleDBM dbm = ctx.getBoSession().getRepository().getDriver().getDBM();
-				logger.init(LoggerConstants.getJSTimmingTableCreateScript(dbm.getDatabase()));
-				initOk = true;
-			}
+			 if (connection != null){
+				 JsErrorLogger logger = new JsErrorLogger(connection, LoggerConstants.JS_AJAX_TIMMING_LOG_TABLE_NAME);
+				 OracleDBM dbm = ctx.getBoSession().getRepository().getDriver().getDBM();
+				 logger.init(LoggerConstants.getJSAjaxTimingTableCreateScript(dbm.getDatabase()));
+				 initOk = true;
+			 }
 		} catch (Exception e){
 			initOk = false;
 		} finally {
@@ -189,7 +154,7 @@ public class TimingOperationsBean extends XEOBaseBean {
 				initialized = Boolean.TRUE;
 			}
 		}
-
+		
 		
 	}
 

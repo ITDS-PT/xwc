@@ -38,12 +38,12 @@ public class XUIStateProperty<V> extends XUIBaseProperty<V> {
     	lastEvalValueWasSet = true;
     }
     
-	public Object saveState() {
+    public Object saveState() {
     	if( !lastEvalValueWasSet ) {
 	        Object oValue = getValue();
 	        if( this instanceof XUIStateBindProperty ) {
 	        	if (XUIViewHandler.isSavingInCache()  || !XUIViewHandler.evaluateStateProperties())
-	        		lastEvalValue = oValue;
+	        		lastEvalValue = null;
 	        	else
 	        		lastEvalValue = ((XUIStateBindProperty<?>)this).evaluateValue( (ValueExpression)oValue );
 	        }

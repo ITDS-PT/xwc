@@ -1,5 +1,6 @@
 package netgest.bo.xwc.framework.viewers.jslog;
 
+
 import netgest.bo.data.oracle.OracleDBM.Database;
 import netgest.bo.xwc.framework.XUIErrorLogger;
 
@@ -16,6 +17,11 @@ public class LoggerConstants {
 	static final String JS_TIMMING_LOG_TABLE_NAME = "XEO_JS_TIMMING_LOGS";
 	
 	/**
+	 * Name of the table where ajax load times are logged
+	 */
+	static final String JS_AJAX_TIMMING_LOG_TABLE_NAME = "XEO_JS_AJAX_TIMMING_LOGS";
+	
+	/**
 	 * Name of the property in boConfig which has the alternative datasource to use 
 	 * when logging timings / javascript errors and application errors
 	 */
@@ -30,6 +36,11 @@ public class LoggerConstants {
 	 * Name of the property which controls whether the browser load time log is active or not (values true/false)
 	 */
 	static final String JS_TIMMING_LOG_ACTIVE_PROPERTY = "LoadTimeLogsActive";
+	
+	/**
+	 * Name of the property which controls whether the browser ajax load time log is active or not (values true/false)
+	 */
+	static final String JS_AJAX_TIMMING_LOG_ACTIVE_PROPERTY = "AjaxLoadTimeLogsActive";
 	
 	/**
 	 * 
@@ -54,7 +65,9 @@ public class LoggerConstants {
 				oracle.append(" JS_ERROR_MESSAGE CLOB,");
 				oracle.append(" LINE NUMBER,");
 				oracle.append(" USER_AGENT VARCHAR(250),");
-				oracle.append(" HOST VARCHAR(250)");
+				oracle.append(" HOST VARCHAR(250),");
+				oracle.append(" IP_ADDRESS VARCHAR(100),");
+				oracle.append(" JS_FILE VARCHAR(250)");
 				oracle.append(")");
 				return oracle.toString();
 			case MYSQL : 
@@ -70,7 +83,9 @@ public class LoggerConstants {
 				mysql.append(" JS_ERROR_MESSAGE TEXT,");
 				mysql.append(" LINE BIGINT,");
 				mysql.append(" USER_AGENT VARCHAR(250),");
-				mysql.append(" HOST VARCHAR(250)");
+				mysql.append(" HOST VARCHAR(250),");
+				mysql.append(" IP_ADDRESS VARCHAR(100),");
+				mysql.append(" JS_FILE VARCHAR(250)");
 				mysql.append(")");
 				return mysql.toString();
 			case MSSQL :
@@ -86,7 +101,9 @@ public class LoggerConstants {
 				sqlserver.append(" JS_ERROR_MESSAGE TEXT,");
 				sqlserver.append(" LINE BIGINT,");
 				sqlserver.append(" USER_AGENT VARCHAR(250),");
-				sqlserver.append(" HOST VARCHAR(250)");
+				sqlserver.append(" HOST VARCHAR(250),");
+				sqlserver.append(" IP_ADDRESS VARCHAR(100),");
+				sqlserver.append(" JS_FILE VARCHAR(250)");
 				sqlserver.append(")");
 				return sqlserver.toString();
 			case POSTGRES : 
@@ -102,7 +119,9 @@ public class LoggerConstants {
 				postgres.append(" JS_ERROR_MESSAGE TEXT,");
 				postgres.append(" LINE BIGINT,");
 				postgres.append(" USER_AGENT VARCHAR(250),");
-				postgres.append(" HOST VARCHAR(250)");
+				postgres.append(" HOST VARCHAR(250),");
+				postgres.append(" IP_ADDRESS VARCHAR(100),");
+				postgres.append(" JS_FILE VARCHAR(250)");
 				postgres.append(")");
 				return postgres.toString();
 			default :
@@ -118,9 +137,106 @@ public class LoggerConstants {
 				defaultDb.append(" JS_ERROR_MESSAGE CLOB,");
 				defaultDb.append(" LINE BIGINT,");
 				defaultDb.append(" USER_AGENT VARCHAR(250),");
-				defaultDb.append(" HOST VARCHAR(250)");
+				defaultDb.append(" HOST VARCHAR(250),");
+				defaultDb.append(" IP_ADDRESS VARCHAR(100),");
+				defaultDb.append(" JS_FILE VARCHAR(250)");
 				defaultDb.append(")");
 				return defaultDb.toString();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * Given a database returns the SQL Script  necessary to create the table to keep javascript ajax timing logs
+	 * 
+	 * @param db The current database
+	 * 
+	 * @return The SQL Script to create the table
+	 */
+	static String getJSAjaxTimingTableCreateScript(Database db){
+		switch (db){
+		case ORACLE : 
+			StringBuilder oracle = new StringBuilder(400);
+			oracle.append("CREATE TABLE ");
+			oracle.append(JS_AJAX_TIMMING_LOG_TABLE_NAME);
+			oracle.append(" (");
+			oracle.append(" USER_BOUI NUMBER,");
+			oracle.append(" PROFILE_BOUI NUMBER,");
+			oracle.append(" VIEW_ID VARCHAR(250),");
+			oracle.append(" DATE_EVENT DATE,");
+			oracle.append(" LOAD_TIME NUMBER,");
+			oracle.append(" PROCESS_TIME NUMBER,");
+			oracle.append(" USER_AGENT VARCHAR(250),");
+			oracle.append(" HOST VARCHAR(250),");
+			oracle.append(" IP_ADDRESS VARCHAR(100)");
+			oracle.append(")");
+			return oracle.toString();
+		case MYSQL : 
+			StringBuilder mysql = new StringBuilder(400);
+			mysql.append("CREATE TABLE ");
+			mysql.append(JS_AJAX_TIMMING_LOG_TABLE_NAME);
+			mysql.append(" (");
+			mysql.append(" USER_BOUI BIGINT,");
+			mysql.append(" PROFILE_BOUI BIGINT,");
+			mysql.append(" VIEW_ID VARCHAR(250),");
+			mysql.append(" DATE_EVENT DATE,");
+			mysql.append(" LOAD_TIME BIGINT,");
+			mysql.append(" PROCESS_TIME BIGINT,");
+			mysql.append(" USER_AGENT VARCHAR(250),");
+			mysql.append(" HOST VARCHAR(250),");
+			mysql.append(" IP_ADDRESS VARCHAR(100)");
+			mysql.append(")");
+			return mysql.toString();
+		case MSSQL :
+			StringBuilder sqlServer = new StringBuilder(400);
+			sqlServer.append("CREATE TABLE ");
+			sqlServer.append(JS_AJAX_TIMMING_LOG_TABLE_NAME);
+			sqlServer.append(" (");
+			sqlServer.append(" USER_BOUI BIGINT,");
+			sqlServer.append(" PROFILE_BOUI BIGINT,");
+			sqlServer.append(" VIEW_ID VARCHAR(250),");
+			sqlServer.append(" DATE_EVENT DATE,");
+			sqlServer.append(" LOAD_TIME BIGINT,");
+			sqlServer.append(" PROCESS_TIME BIGINT,");
+			sqlServer.append(" USER_AGENT VARCHAR(250),");
+			sqlServer.append(" HOST VARCHAR(250),");
+			sqlServer.append(" IP_ADDRESS VARCHAR(100)");
+			sqlServer.append(")");
+			return sqlServer.toString();
+		case POSTGRES : 
+			StringBuilder postgres = new StringBuilder(400);
+			postgres.append("CREATE TABLE ");
+			postgres.append(JS_AJAX_TIMMING_LOG_TABLE_NAME);
+			postgres.append(" (");
+			postgres.append(" USER_BOUI BIGINT,");
+			postgres.append(" PROFILE_BOUI BIGINT,");
+			postgres.append(" VIEW_ID VARCHAR(250),");
+			postgres.append(" DATE_EVENT DATE,");
+			postgres.append(" LOAD_TIME BIGINT,");
+			postgres.append(" PROCESS_TIME BIGINT,");
+			postgres.append(" USER_AGENT VARCHAR(250),");
+			postgres.append(" HOST VARCHAR(250),");
+			postgres.append(" IP_ADDRESS VARCHAR(100)");
+			postgres.append(")");
+			return postgres.toString();
+		case UNKNOWN :
+		default : 
+			StringBuilder defaultDatabase = new StringBuilder(400);
+			defaultDatabase.append("CREATE TABLE ");
+			defaultDatabase.append(JS_AJAX_TIMMING_LOG_TABLE_NAME);
+			defaultDatabase.append(" (");
+			defaultDatabase.append(" USER_BOUI BIGINT,");
+			defaultDatabase.append(" PROFILE_BOUI BIGINT,");
+			defaultDatabase.append(" VIEW_ID VARCHAR(250),");
+			defaultDatabase.append(" DATE_EVENT DATE,");
+			defaultDatabase.append(" LOAD_TIME BIGINT,");
+			defaultDatabase.append(" PROCESS_TIME BIGINT,");
+			defaultDatabase.append(" USER_AGENT VARCHAR(250),");
+			defaultDatabase.append(" HOST VARCHAR(250),");
+			defaultDatabase.append(" IP_ADDRESS VARCHAR(100)");
+			defaultDatabase.append(")");
+			return defaultDatabase.toString();
 		}
 	}
 	
@@ -165,7 +281,8 @@ public class LoggerConstants {
 			oracle.append(" LOADEVENTSTART NUMBER,");
 			oracle.append(" LOADEVENTEND NUMBER,");
 			oracle.append(" USER_AGENT VARCHAR(250),");
-			oracle.append(" HOST VARCHAR(250)");
+			oracle.append(" HOST VARCHAR(250),");
+			oracle.append(" IP_ADDRESS VARCHAR(100)");
 			oracle.append(")");
 			return oracle.toString();
 		case MYSQL :
@@ -202,8 +319,8 @@ public class LoggerConstants {
 			defaultDb.append(" LOADEVENTSTART BIGINT,");
 			defaultDb.append(" LOADEVENTEND BIGINT,");
 			defaultDb.append(" USER_AGENT VARCHAR(250),");
-			defaultDb.append(" HOST VARCHAR(250)");
-
+			defaultDb.append(" HOST VARCHAR(250),");
+			defaultDb.append(" IP_ADDRESS VARCHAR(100)");
 			defaultDb.append(")");
 			return defaultDb.toString();
 		}
@@ -232,7 +349,8 @@ public class LoggerConstants {
 			oracle.append(" EVENT_CONTEXT CLOB,");
 			oracle.append(" CUSTOM_CONTEXT CLOB,");
 			oracle.append(" STACK_TRACE CLOB,");
-			oracle.append(" HOST VARCHAR(250)");
+			oracle.append(" HOST VARCHAR(250),");
+			oracle.append(" IP_ADDRESS VARCHAR(100)");
 			oracle.append(")");
 			return oracle.toString();
 		case MYSQL : 
@@ -250,7 +368,8 @@ public class LoggerConstants {
 			mysql.append(" EVENT_CONTEXT TEXT,");
 			mysql.append(" CUSTOM_CONTEXT TEXT,");
 			mysql.append(" STACK_TRACE TEXT,");
-			mysql.append(" HOST VARCHAR(250)");
+			mysql.append(" HOST VARCHAR(250),");
+			mysql.append(" IP_ADDRESS VARCHAR(100)");
 			mysql.append(")");
 			return mysql.toString();
 		case MSSQL :
@@ -268,7 +387,8 @@ public class LoggerConstants {
 			sqlserver.append(" EVENT_CONTEXT TEXT,");
 			sqlserver.append(" CUSTOM_CONTEXT TEXT,");
 			sqlserver.append(" STACK_TRACE TEXT,");
-			sqlserver.append(" HOST VARCHAR(250)");
+			sqlserver.append(" HOST VARCHAR(250),");
+			sqlserver.append(" IP_ADDRESS VARCHAR(100)");
 			sqlserver.append(")");
 			return sqlserver.toString();
 		case POSTGRES :
@@ -286,7 +406,8 @@ public class LoggerConstants {
 			postgres.append(" EVENT_CONTEXT TEXT,");
 			postgres.append(" CUSTOM_CONTEXT TEXT,");
 			postgres.append(" STACK_TRACE TEXT,");
-			postgres.append(" HOST VARCHAR(250)");
+			postgres.append(" HOST VARCHAR(250),");
+			postgres.append(" IP_ADDRESS VARCHAR(100)");
 			postgres.append(")");
 			return postgres.toString();
 		default :
@@ -304,7 +425,8 @@ public class LoggerConstants {
 			defaultDb.append(" EVENT_CONTEXT CLOB,");
 			defaultDb.append(" CUSTOM_CONTEXT CLOB,");
 			defaultDb.append(" STACK_TRACE CLOB,");
-			defaultDb.append(" HOST VARCHAR(250)");
+			defaultDb.append(" HOST VARCHAR(250),");
+			defaultDb.append(" IP_ADDRESS VARCHAR(100)");
 			defaultDb.append(")");
 			return defaultDb.toString();
 		}

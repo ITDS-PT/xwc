@@ -1021,7 +1021,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     
     private void initializeSecurity(XUIViewRoot result, List<String> beanIds, FacesContext context){
     	try {
-        	
     		if (ViewerAccessPolicyBuilder.getSecurityMode() != SecurityMode.DISABLED){
     			for (String beanId: beanIds){
 
@@ -1029,12 +1028,13 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 
     				// Only activates viewerSecurity if the XVWAccessPolicy object is deployed.
     				if ( ViewerAccessPolicyBuilder.applyViewerSecurity ) {
-
-    					ViewerAccessPolicyBuilder.applyViewerSecurity = boDefHandler.getBoDefinition( "XVWAccessPolicy" ) != null;
-    					if ( bean!=null && bean instanceof XEOSecurityBaseBean ) {
-    						ViewerAccessPolicyBuilder viewerAccessPolicyBuilder = new ViewerAccessPolicyBuilder();
-    						viewerAccessPolicyBuilder.processViewer( result, boApplication.currentContext().getEboContext(), false );
-    						((XEOSecurityBaseBean)bean).initializeSecurityMap(viewerAccessPolicyBuilder, result.getViewId() );
+    					if (ViewerAccessPolicyBuilder.isViewerRegistered(result.getViewId())){
+    						ViewerAccessPolicyBuilder.applyViewerSecurity = boDefHandler.getBoDefinition( "XVWAccessPolicy" ) != null;
+    						if ( bean!=null && bean instanceof XEOSecurityBaseBean ) {
+    							ViewerAccessPolicyBuilder viewerAccessPolicyBuilder = new ViewerAccessPolicyBuilder();
+    							viewerAccessPolicyBuilder.processViewer( result, boApplication.currentContext().getEboContext(), false );
+    							((XEOSecurityBaseBean)bean).initializeSecurityMap(viewerAccessPolicyBuilder, result.getViewId() );
+    						}
     					}
     				}
     			}
@@ -1047,8 +1047,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             if( result == context.getViewRoot() && savedView != null  )
             	context.setViewRoot( savedView );
             
-    		
-    		
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -1,5 +1,19 @@
 package netgest.bo.xwc.components.connectors;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.el.ExpressionFactory;
+import javax.el.MethodExpression;
+import javax.faces.context.FacesContext;
+
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefXeoCode;
 import netgest.bo.localizations.MessageLocalizer;
@@ -22,42 +36,14 @@ import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIELContextWrapper;
 import netgest.bo.xwc.framework.localization.XUILocalization;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
-
 import netgest.io.FSiFile;
 import netgest.io.iFile;
 import netgest.utils.StringUtils;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.el.ExpressionFactory;
-import javax.el.MethodExpression;
-import javax.faces.context.FacesContext;
 
 public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData implements DataFieldConnector {
 
 	private final Class[] LOOKUPQUERY_ARGUMENTS = { AttributeHandler.class, String.class };
 	
-    private static ThreadLocal<SimpleDateFormat> sdfDT = new ThreadLocal<SimpleDateFormat>() {
-        protected synchronized SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"); 
-        }
-    };
-
-    private static ThreadLocal<SimpleDateFormat> sdfD = new ThreadLocal<SimpleDateFormat>() {
-        protected synchronized SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("dd/MM/yyyy");
-        }
-    };
-
     private static final Logger log = Logger.getLogger( XEOObjectAttributeConnector.class );
  
     private AttributeHandler    oAttHandler;
@@ -123,6 +109,14 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
     
     public String getDisplayValue() {
 
+    	if ("BOUI".equals( this.oAttHandler.getName() )){
+			try {
+				return String.valueOf(oAttHandler.getValueObject());
+			} catch (boRuntimeException e1) {
+				throw new RuntimeException(e1);
+			}
+    	}
+    	
     	if( (getSecurityPermissions()&SecurityPermissions.READ) != SecurityPermissions.READ ) {
         	return null;
     	}
@@ -404,6 +398,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
     	byte efectivePermissions = 0;
 
     	try {
+    		
 			efectivePermissions += 
 				securityRights
 					.canRead(ctx, clsName, attName)
@@ -422,6 +417,7 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 			if (efectivePermissions == 7) {
 				efectivePermissions = SecurityPermissions.FULL_CONTROL;
 			}
+			
 		} catch (Exception e) {
 			throw new RuntimeException( e );
 		}
@@ -594,4 +590,3 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 	}
 
 }
-

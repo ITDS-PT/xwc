@@ -9,7 +9,9 @@ ExtXeo.Messages = {
 		XEODM_INACTIVE	: "XEODM Inactivo",
 		LOGOUT_BTN		: 'Terminar Sess&atilde;o',
 		USER_PROPS		: "Utilizador",
-		INVITE_MESSAGE 	: "Arraste o cabeçalho de uma coluna para aqui para agrupar por ela" 
+		INVITE_MESSAGE 	: "Arraste o cabeçalho de uma coluna para aqui para agrupar por ela" ,
+		RESET_LIST_DEFAULT_TITLE : 'Erro a carregar a lista',
+		RESET_LIST_DEFAULT :'Ocorreu um erro a carregar a lista, foram restabelecidas as definições originais'
 };
 
 if(ExtXeo.PagingToolbar){

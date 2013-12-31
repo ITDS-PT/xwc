@@ -932,26 +932,28 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         var buf = [];
 		var g = Ext.get( gridGroup.elemId );
         var gel = Ext.fly(g);
-        this.state[gel.dom.id] = true;
-        gel['removeClass']('x-grid-group-collapsed');
-		var store = gridGroup.groupStore;
-    	if( store.groupByLevel == store.groupField.length ) {
-    		// Render Lines
-	        buf[buf.length] = this.doRenderLines(
-	    		  this.cs, store.getRange(0,50), store, 0, this.colCount, this.stripe);
-    	}
-    	else {
-    		// Render SubGroup
-    		var gv = this.rootView.getGroupView( gridGroup.groupUniqueId );
-    		buf[buf.length] = gv.groupingView.doRender( gridGroup, this.cs, store.getRange(0,50), store, 0, this.colCount, this.stripe);    		
-    	}
-        
-        if( g ) {
-        	g.dom.firstChild.nextSibling.innerHTML = buf.join('');
-	        this.grid.view.processRows(0,true);
+        if (gel){
+	        this.state[gel.dom.id] = true;
+	        gel['removeClass']('x-grid-group-collapsed');
+			var store = gridGroup.groupStore;
+	    	if( store.groupByLevel == store.groupField.length ) {
+	    		// Render Lines
+		        buf[buf.length] = this.doRenderLines(
+		    		  this.cs, store.getRange(0,50), store, 0, this.colCount, this.stripe);
+	    	}
+	    	else {
+	    		// Render SubGroup
+	    		var gv = this.rootView.getGroupView( gridGroup.groupUniqueId );
+	    		buf[buf.length] = gv.groupingView.doRender( gridGroup, this.cs, store.getRange(0,50), store, 0, this.colCount, this.stripe);    		
+	    	}
+	        
+	        if( g ) {
+	        	g.dom.firstChild.nextSibling.innerHTML = buf.join('');
+		        this.grid.view.processRows(0,true);
+	        }
+	        
+	        this.autoExpandGroups( gridGroup.groupId );
         }
-        
-        this.autoExpandGroups( gridGroup.groupId );
     },
     autoExpandGroups : function( gid ) {
         // Expande automaticamente todos os grupos expandidos.
@@ -1768,6 +1770,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     , grid : null
     , pageSize : null
     , gridId : null
+    , resetCount : null
 	, rowIdentifier : 'BOUI'
 	, dataSourceChange : false //Represents a change in the datasource
 	, constructor: function( opts ) {
@@ -1776,7 +1779,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 			this.groupField = opts.groupField;
 		if( opts.expandedGroups ) 
 			this.groupField = opts.expandedGroups;
-			
+		this.resetCount = 0;	
 		Ext.apply( this, {
 			url : null,
 			groupByParentValues : null,
@@ -2015,10 +2018,13 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
                 p[pn["sort"]] = Ext.util.JSON.encode( this.sortInfo );
             }
             this.proxy.load(p, this.reader, this.loadRecords, this, options);
+            this.resetCount = 0;
             return true;
         } else {
+        	this.resetCount = 0;	
           return false;
         }
+        
     },
     isGroupByField : function( fieldName ) {
     	return this.groupField.indexOf( fieldName ) > -1;
@@ -3046,4 +3052,21 @@ ExtXeo.getSelectedPages = function(id){
 	var result = value.split(",");
 	return result;
 };
+
+ExtXeo.dealWithloadException = function(store){
+	if (store.resetCount !== undefined){
+		if (store.resetCount > 0){
+			XVW.ErrorDialog(ExtXeo.Messages.RESET_LIST_DEFAULT_TITLE,
+					ExtXeo.Messages.RESET_LIST_DEFAULT );
+		} else {
+			var grid = store.grid;
+			var count = store.resetCount;
+			store.resetCount = count++;
+			window.setTimeout(function(){grid.getView().onResetDefaults();},250);
+			XVW.ErrorDialog(ExtXeo.Messages.RESET_LIST_DEFAULT_TITLE,
+					ExtXeo.Messages.RESET_LIST_DEFAULT );
+		}
+		}
+}
+	
 
