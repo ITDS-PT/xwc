@@ -1785,16 +1785,15 @@ public class XEOEditBean extends XEOBaseBean{
      */
     public void setCurrentObjectKey(Object oCurrentObjectKey) {
     	if (oCurrentObjectKey == null){
-    		XUIErrorLogger logger = XUIErrorLogger.getLogger();
     		String customContext = "";
     		try {
     			StringWriter w = new StringWriter();
     			PrintWriter pw = new PrintWriter(w);
     			new IllegalArgumentException("Cannot set null as BOUI").printStackTrace(pw);
     			customContext = w.toString();
-    		} catch (Throwable e){ //Ignore exception so that things keep kunning		
+    		} catch (Throwable e){ //Ignore exception so that things keep running		
     		}
-    		logger.addDebugInfo(getEboContext(), getRequestContext(), customContext);
+    		XUIErrorLogger.addDebugInfo( customContext);
     	}
         this.oCurrentObjectKey = oCurrentObjectKey;
         this.oBoObect = null;
