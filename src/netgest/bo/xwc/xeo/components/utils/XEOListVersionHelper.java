@@ -30,6 +30,7 @@ import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.xeo.components.FormEdit;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
+import netgest.utils.StringUtils;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
 import oracle.xml.parser.v2.XMLElement;
@@ -98,8 +99,13 @@ public class XEOListVersionHelper
 				{
 					String colSpan = ((Element) currentRowCell).getAttribute("colSpan");
 					Integer colSpanNumber = 0;
-					if (colSpan != null)
-						colSpanNumber = Integer.valueOf(colSpan);
+					if (StringUtils.hasValue(colSpan)){
+						try {
+							colSpanNumber = Integer.valueOf(colSpan);
+						} catch (NumberFormatException e) {
+							colSpanNumber = 0;
+						}
+					}
 					
 					NodeList cellNodes = currentRowCell.getChildNodes();
 					int numCellNodes = cellNodes.getLength();
