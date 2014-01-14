@@ -1,5 +1,6 @@
 package netgest.bo.xwc.components.template.loader;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class TemplateLoaderFactory {
 
 	public enum TemplateType{
 		FILE("file"),
+		FILEXEODEPLOY("filexeodeploy"),
 		CLASSPATH("class"),
 		STRING("string");
 		
@@ -43,9 +45,12 @@ public class TemplateLoaderFactory {
 	
 	private static volatile TemplateLoader defaultLoader = getDefaultLoader();
 	
+	private static volatile TemplateLoader xeoDeployLoader = getXEODeployLoader();
+	
 	static {
 		loaders.put( TemplateType.CLASSPATH.getName(), new ClassLoaderTemplate( new Configuration() ) );
 		loaders.put( TemplateType.FILE.getName(), defaultLoader );
+		loaders.put( TemplateType.FILEXEODEPLOY.getName(), xeoDeployLoader );
 	}
 	
 	private static final String TEMPLATES_ROOT = "templates";
@@ -136,6 +141,30 @@ public class TemplateLoaderFactory {
 			}
 		}
 		return defaultLoader;
+	}
+	
+	
+	/**
+	 * Retrieves the xeodeploy folder template loader
+	 * 
+	 * @return A template loader
+	 */
+	public static TemplateLoader getXEODeployLoader(){
+		if (xeoDeployLoader == null){
+			synchronized ( TemplateLoaderFactory.class ) {
+				if (xeoDeployLoader == null){
+					XUIRequestContext oReqCtx = XUIRequestContext.getCurrentContext();
+					if (oReqCtx != null){
+				    	ServletContext servletContext = 
+				    		(ServletContext)oReqCtx.getFacesContext().getExternalContext().getContext();
+				    	Configuration cfg = new Configuration();
+				    	xeoDeployLoader = new WebContextTemplateLoader( cfg, servletContext.getRealPath( ".xeodeploy"
+				    		+ File.separator + TEMPLATES_ROOT ) );
+					}
+			    }
+			}
+		}
+		return xeoDeployLoader;
 	}
 	
 	

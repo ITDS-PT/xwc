@@ -328,7 +328,7 @@ public class XUIViewerDefinitonParser
     }
 
     public StreamWrapper resolveViewerWithTime( String viewerName ) {
-    	StreamWrapper is = resolveViewerFromWebContext( viewerName );
+    	StreamWrapper is = resolveViewerFromWebContext( viewerName,false );
     	if( is == null ) {
     		is = resolveViewerFromClassLoader( viewerName );
     	}
@@ -408,10 +408,10 @@ public class XUIViewerDefinitonParser
     	return new StreamWrapper(is,time);
     }
     
-    private StreamWrapper resolveViewerFromWebContext( String viewerName ) {
+    private StreamWrapper resolveViewerFromWebContext( String viewerName, boolean fromModule ) {
     	
     	File viewerFile;
-    	 
+    	String xeodeploy=".xeodeploy" + File.separator; 
     	viewerFile = null; 
     	
     	XUIRequestContext oReqCtx = XUIRequestContext.getCurrentContext();
@@ -419,11 +419,17 @@ public class XUIViewerDefinitonParser
     	ServletContext servletContext = 
     		(ServletContext)oReqCtx.getFacesContext().getExternalContext().getContext();
     	
-    	String sRealPath = servletContext.getRealPath( viewerName );
+    	String sRealPath = servletContext.getRealPath(fromModule?xeodeploy+viewerName:viewerName );
     	if( sRealPath != null ) {
     		viewerFile = new File( sRealPath );
         	if( !viewerFile.exists() ) {
-            	sRealPath = servletContext.getRealPath( DEFAULT_VIEWERS_ROOT + File.separator + viewerName );
+        		
+        		String path=DEFAULT_VIEWERS_ROOT + File.separator + viewerName;
+        		if (fromModule) {
+        			path = xeodeploy+path;
+        		}
+        		
+            	sRealPath = servletContext.getRealPath( path );
         		viewerFile = new File( sRealPath );
             	if( !viewerFile.exists() ) {
             		viewerFile = null;
@@ -438,7 +444,12 @@ public class XUIViewerDefinitonParser
 				throw new RuntimeException(e);
 			}
     	}
-    	return null;
+    	if (!fromModule) {
+    		return resolveViewerFromWebContext(viewerName, true);
+    	}
+    	else { 
+    		return null;
+    	}
     }
     
     public XUIViewerDefinitionNode parseNode( XUIViewerDefinition root, XMLElement node, XUIViewerDefinitionNode parent, String beanId ){
