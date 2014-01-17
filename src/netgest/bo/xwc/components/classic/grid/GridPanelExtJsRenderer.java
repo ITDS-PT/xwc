@@ -7,41 +7,6 @@ import static netgest.bo.xwc.components.HTMLAttr.VALUE;
 import static netgest.bo.xwc.components.HTMLTag.DIV;
 import static netgest.bo.xwc.components.HTMLTag.INPUT;
 
-import netgest.bo.xwc.components.classic.ActionButton;
-import netgest.bo.xwc.components.classic.GridNavBar;
-import netgest.bo.xwc.components.classic.GridPanel;
-import netgest.bo.xwc.components.classic.Layouts;
-import netgest.bo.xwc.components.classic.ToolBar;
-import netgest.bo.xwc.components.classic.extjs.ExtConfig;
-import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
-import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
-import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
-import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.components.classic.scripts.XVWScripts.ValueType;
-import netgest.bo.xwc.components.classic.scripts.XVWScripts.WaitMode;
-import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
-import netgest.bo.xwc.components.connectors.DataFieldConnector;
-import netgest.bo.xwc.components.connectors.DataFieldMetaData;
-import netgest.bo.xwc.components.connectors.DataFieldTypes;
-import netgest.bo.xwc.components.connectors.DataListConnector;
-import netgest.bo.xwc.components.connectors.DataRecordConnector;
-import netgest.bo.xwc.components.connectors.SortTerms;
-import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
-import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
-import netgest.bo.xwc.components.connectors.XEOObjectAttributeMetaData;
-import netgest.bo.xwc.components.localization.ComponentMessages;
-import netgest.bo.xwc.components.model.Column;
-import netgest.bo.xwc.components.model.Menu;
-import netgest.bo.xwc.components.util.JavaScriptUtils;
-import netgest.bo.xwc.components.util.ScriptBuilder;
-import netgest.bo.xwc.framework.XUIRenderer;
-import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.components.XUICommand;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIViewRoot;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,6 +20,38 @@ import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.render.Renderer;
+
+import netgest.bo.xwc.components.classic.ActionButton;
+import netgest.bo.xwc.components.classic.GridNavBar;
+import netgest.bo.xwc.components.classic.GridPanel;
+import netgest.bo.xwc.components.classic.Layouts;
+import netgest.bo.xwc.components.classic.ToolBar;
+import netgest.bo.xwc.components.classic.extjs.ExtConfig;
+import netgest.bo.xwc.components.classic.extjs.ExtConfigArray;
+import netgest.bo.xwc.components.classic.extjs.ExtJsRenderer;
+import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts;
+import netgest.bo.xwc.components.classic.scripts.XVWScripts.ValueType;
+import netgest.bo.xwc.components.classic.theme.ExtJsTheme;
+import netgest.bo.xwc.components.connectors.DataFieldConnector;
+import netgest.bo.xwc.components.connectors.DataFieldMetaData;
+import netgest.bo.xwc.components.connectors.DataFieldTypes;
+import netgest.bo.xwc.components.connectors.DataListConnector;
+import netgest.bo.xwc.components.connectors.DataRecordConnector;
+import netgest.bo.xwc.components.connectors.SortTerms;
+import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
+import netgest.bo.xwc.components.localization.ComponentMessages;
+import netgest.bo.xwc.components.model.Column;
+import netgest.bo.xwc.components.model.Menu;
+import netgest.bo.xwc.components.util.JavaScriptUtils;
+import netgest.bo.xwc.components.util.ScriptBuilder;
+import netgest.bo.xwc.framework.XUIRenderer;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.components.XUICommand;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.components.XUIViewRoot;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
@@ -410,8 +407,11 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
 	    		DataFieldConnector field = sel.getAttribute(oGrid.getRowUniqueIdentifier());
 	    		if( sb.length() > 1 && field != null)
 	    			sb.append(',');
-	    		if (field != null)
+	    		if (field != null){
+	    			sb.append("'");
 	    			sb.append( field.getValue().toString() );
+	    			sb.append("'");
+	    		}
 	    	}
 	    	sb.append( "]");
 	    	
