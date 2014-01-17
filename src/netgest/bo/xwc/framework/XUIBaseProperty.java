@@ -84,7 +84,19 @@ public class XUIBaseProperty<V> {
     public boolean isDefaultValue() {
     	return bDefaultValue; 
     }
-    
+    @Override
+    public String toString() {
+    	String value = "";
+    	try{
+    		Object raw = getValue();
+    		if (raw != null){
+    			value = raw.toString();
+    		}
+    	} catch (Exception e ){
+    		
+    	}
+    	return getName() + " "  + value; 
+    }
     public XUIComponentBase getComponent() {
     	return this.oComponent;
     }
