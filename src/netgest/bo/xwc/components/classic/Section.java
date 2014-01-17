@@ -4,6 +4,7 @@ import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.security.SecurableComponent;
 import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.framework.XUIRenderer;
+import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
@@ -34,6 +35,16 @@ public class Section extends ViewerSecurityBase {
      */
     private XUIViewStateBindProperty<Boolean> visible = new XUIViewStateBindProperty<Boolean>( "visible", this, "true",Boolean.class );
 
+    private XUIViewProperty<String> css = new XUIViewProperty<String>("css", this, "");
+    
+    public void setCss(String css){
+		this.css.setValue(css);
+	}
+	
+	public String getCss(){
+		return css.getValue();
+	}
+    
     public void setLabel(String label)
     {
         this.label.setExpressionText( label );

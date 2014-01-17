@@ -17,6 +17,7 @@ import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.XUIViewProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 
 /**
@@ -38,6 +39,16 @@ public class Row extends XUIComponentBase
 	@Visible
 	private XUIStateBindProperty<Boolean> visible = 
 			new XUIStateBindProperty<Boolean>( "visible", this, "true", Boolean.class );
+	
+	private XUIViewProperty<String> css = new XUIViewProperty<String>("css", this);
+	
+	public void setCss(String css){
+		this.css.setValue(css);
+	}
+	
+	public String getCss(){
+		return css.getValue();
+	}
 	
 	/**
 	 * Set the row visibility

@@ -4,6 +4,11 @@ package netgest.bo.xwc.components.classic;
 import static netgest.bo.xwc.components.HTMLAttr.ID;
 import static netgest.bo.xwc.components.HTMLTag.DIV;
 
+import java.io.IOException;
+
+import javax.el.ValueExpression;
+import javax.faces.el.MethodBinding;
+
 import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.annotations.Values;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
@@ -19,13 +24,7 @@ import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-
 import netgest.utils.StringUtils;
-
-import java.io.IOException;
-
-import javax.el.ValueExpression;
-import javax.faces.el.MethodBinding;
 
 /**
  * 

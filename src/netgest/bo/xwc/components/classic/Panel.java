@@ -60,6 +60,37 @@ public class Panel extends ViewerSecurityBase {
      */
     private XUIViewStateProperty<String> icon = new XUIViewStateProperty<String>( "icon", this );
 	
+    private XUIViewProperty<String> css = new XUIViewProperty<String>("css", this, "");
+    
+    public void setCss(String css){
+		this.css.setValue(css);
+	}
+	
+	public String getCss(){
+		return css.getValue();
+	}
+	
+	private XUIViewProperty<String> headerCss = new XUIViewProperty<String>("headerCss", this, "");
+    
+    public void setHeaderCss(String css){
+		this.headerCss.setValue(css);
+	}
+	
+	public String getHeaderCss(){
+		return headerCss.getValue();
+	}
+	
+	private XUIViewProperty<String> contentCss = new XUIViewProperty<String>("contentCss", this, "");
+    
+    public void setContentCss(String css){
+		this.contentCss.setValue(css);
+	}
+	
+	public String getContentCss(){
+		return contentCss.getValue();
+	}
+    
+    
 	/**
 	 * Returns the title of the panel 
 	 * @return Title

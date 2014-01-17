@@ -22,6 +22,7 @@ public class Cell extends XUIComponentBase
 	
 	private XUIViewProperty<Integer> colSpan = new XUIViewProperty<Integer>("colSpan", this, 0 );
 	
+	private XUIViewProperty<String> css = new XUIViewProperty<String>("css", this);
 	
 	public void setColSpan( int colSpan ) {
 		this.colSpan.setValue( colSpan );
@@ -29,6 +30,14 @@ public class Cell extends XUIComponentBase
 	
 	public int getColSpan() {
 		return this.colSpan.getValue();
+	}
+	
+	public void setCss(String css){
+		this.css.setValue(css);
+	}
+	
+	public String getCss(){
+		return css.getValue();
 	}
 	
 	@Override
