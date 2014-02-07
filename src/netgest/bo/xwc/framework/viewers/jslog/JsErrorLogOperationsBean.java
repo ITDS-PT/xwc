@@ -149,10 +149,13 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 				 initOk = true;
 			 }
 		} catch (Exception e){
+			logger.warn("Error creating JavaScript Error Log table" , e);
 			initOk = false;
 		} finally {
 			if (initOk){
 				initialized = Boolean.TRUE;
+			} else {
+				initialized = Boolean.FALSE;
 			}
 		}
 		
