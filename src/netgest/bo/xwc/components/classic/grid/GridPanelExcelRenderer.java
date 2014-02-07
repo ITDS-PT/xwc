@@ -37,7 +37,7 @@ public class GridPanelExcelRenderer {
 
 		oResponse.setContentType("application/vnd.ms-excel");
 		
-    	((HttpServletResponse)oResponse).setHeader("Content-Disposition","attachment; filename="+ sTitle+".xls"  );
+    	((HttpServletResponse)oResponse).setHeader("Content-Disposition","attachment; filename=\""+ sTitle+".xls\""  );
     	
     	try {
         	PrintWriter pw = ((HttpServletResponse)oResponse).getWriter();
