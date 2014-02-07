@@ -26,7 +26,6 @@ import netgest.bo.xwc.components.connectors.FilterTerms.FilterTerm;
 import netgest.bo.xwc.components.connectors.SortTerms.SortTerm;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector.GenericFieldConnector;
 import netgest.bo.xwc.components.connectors.decoder.XEOObjectAttributeDecoder;
-import netgest.bo.xwc.components.connectors.helper.CardIDParser;
 import netgest.bo.xwc.components.connectors.helper.CardIDSearch;
 import netgest.bo.xwc.components.connectors.helper.CardIDSearchQueryCreator;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
@@ -195,8 +194,7 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
     	List<Object>  pars  = new ArrayList<Object>();
     	Iterator<FilterJoin> it = filterTerms.iterator();
     	
-    	for( ;it.hasNext();  ) 
-    	{ 
+    	for( ;it.hasNext();  ){ 
     		FilterJoin j = it.next();
     		
     		if( j.previous() != null ) {
@@ -312,11 +310,15 @@ public class XEOObjectListConnector implements GroupableDataList, AggregableData
 
 					}
 				} else {
-					query.append( sqlExpr );
 					CardIDSearch search = formatCardIdSearch( t.getDataField() , dutl, val ); 
-					parVal = search.getBoqlExpression();
-					for (Object param : search.getParameters() ){
-						pars.add( "%"+param+"%" );
+					if (StringUtils.hasValue(search.getBoqlExpression())){
+						query.append( sqlExpr );
+						parVal = search.getBoqlExpression();
+						for (Object param : search.getParameters() ){
+							pars.add( "%"+param+"%" );
+						}
+					} else {
+						operator = FilterTerms.OPERATOR_NONE;
 					}
 				}
 			} else {
