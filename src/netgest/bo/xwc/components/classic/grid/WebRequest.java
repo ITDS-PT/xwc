@@ -12,7 +12,7 @@ public interface WebRequest {
 		, AGGREGATE ("aggregateField")
 		, TOOLBAR_VISIBLE ("toolBarVisible")
 		, GROUP_BY_LEVEL ("groupByLevel")
-		, GROUP_BY_PARENT_LEVELS ("groupByParentValues")
+		, GROUP_BY_PARENT_VALUES ("groupByParentValues")
 		, COLUMNS_CONFIG ("columnsConfig")  
 		, EXPANDED_GROUPS ("expandedGroups")
 		, FULL_TEXT ("fullText")
