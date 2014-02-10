@@ -122,7 +122,11 @@ public class XUIErrorLogger {
 		boolean isAjax = debug.isAjaxRequest();
 		String hostname = "";
 		if (ctx.getRequest() != null){
-			hostname = ((HttpServletRequest) ctx.getRequest()).getLocalName();
+			try{
+				hostname = ((HttpServletRequest) ctx.getRequest()).getLocalName();
+			} catch (Exception e1){
+				hostname = ((HttpServletRequest) ctx.getRequest()).getServerName();
+			}
 		}
 		String beanContext = debug.getBeanContext();
 		String eventContext = debug.getEventContext();

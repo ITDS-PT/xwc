@@ -135,7 +135,13 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 		long profileBoui = ctx.getBoSession().getPerformerIProfileBoui();
 		JsErrorLogger jsLogger = new JsErrorLogger(connection, LoggerConstants.JS_ERROR_LOG_TABLE_NAME);
 		String ipAddress = XUIHttpRequest.getClientIpFromRequest(request);
-		jsLogger.insertNewRecord(userBoui,profileBoui,parameters, request.getLocalName(),ipAddress);
+		String hostname = "";
+		try{
+			hostname = request.getLocalName();
+		} catch (Exception e){
+			hostname = request.getServerName();
+		}
+		jsLogger.insertNewRecord(userBoui,profileBoui,parameters, hostname,ipAddress);
 		
 	}
 
