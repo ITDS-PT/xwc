@@ -362,34 +362,34 @@
     <!-- Atributos do tipo data -->
     <xsl:template match="attributeDate" priority="-1">
         <td class="value">
-            <xsl:value-of select="./@displayValue"/>
+            <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
     
     <xsl:template match="attributeWordMacro" priority="-1">
         <td class="value">
-           <xsl:value-of select="./@displayValue"/>
+           <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
     
     
     <xsl:template match="attributeDateTime" priority="-1">
         <td class="value">
-           <xsl:value-of select="./@displayValue"/>
+           <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
 
     <!-- Atributos do tipo texto longo -->
     <xsl:template match="attributeTextArea" priority="-1">
         <td class="value">
-            <xsl:value-of select="./text()" disable-output-escaping="yes"/>
+           <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
 
     <!-- Atributos do tipo número -->
     <xsl:template match="attributeNumber" priority="-1">
         <td class="value">
-           <xsl:value-of select="./@displayValue"/>
+           <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
     
@@ -457,7 +457,7 @@
     <xsl:template match="attributeFile" priority="-1">
         <td class="value">
             <a href="javascript:void(0)">
-                <xsl:value-of select="./@displayValue"/>
+                <xsl:value-of select="./text()"/>
             </a>
         </td>
     </xsl:template>

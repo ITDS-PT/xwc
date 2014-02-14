@@ -144,7 +144,7 @@
                   	
                   }
                </style>
-        	<xvw:window width='550' height='500' modal="true" title="" >
+        	<xvw:window width='550' height='500' modal="true" title="">
 				<xvw:tabs renderTabBar='false'>
 					<xvw:tab>
 						<xvw:outputHtml valueExpression="#{viewBean.showDifferences}"></xvw:outputHtml>

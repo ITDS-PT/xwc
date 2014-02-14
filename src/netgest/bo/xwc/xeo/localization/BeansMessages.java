@@ -123,6 +123,9 @@ public interface BeansMessages {
 	public static final XUILocalizedMessage LBL_DIFFERENCES_RESUME = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "LBL_DIFFERENCES_RESUME" );
 	
+	public static final XUILocalizedMessage ERROR_CANNOT_LOAD_VIEWER = 
+			new XUILocalizedMessage( BeansMessages.class.getName(), "ERROR_CANNOT_LOAD_VIEWER" );
+	
 	public static final XUILocalizedMessage MSG_ERROR_IN_DIFFERENCES_RENDER = 
 		new XUILocalizedMessage( BeansMessages.class.getName(), "MSG_ERROR_IN_DIFFERENCES_RENDER" );
 	
