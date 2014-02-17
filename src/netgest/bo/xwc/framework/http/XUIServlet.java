@@ -188,7 +188,9 @@ public class XUIServlet extends HttpServlet
         		logger.error( "", e.getRootCause() );
         	
         	if( !Boolean.parseBoolean( (String)oRequest.getAttribute("xvw.portlet") ) ) {
-	        	if( e.getRootCause() instanceof ViewExpiredException && oRequest.getSession() != null ) {
+	        	if( e.getRootCause() instanceof ViewExpiredException && 
+	        		(oRequest.getSession() == null || oRequest.getSession().getAttribute("boSession") == null ) 
+	        	) {
 	        		// Handle expired view
             		StringBuilder sb = new StringBuilder();
             		if( oRequest.isSecure() ) { 
