@@ -167,7 +167,12 @@ public class TimingOperationsBean extends XEOBaseBean {
 		long userBoui = ctx.getBoSession().getPerformerBoui();
 		long profileBoui = ctx.getBoSession().getPerformerIProfileBoui();
 		JsTimmingLogger jsLogger = new JsTimmingLogger(con, LoggerConstants.JS_TIMMING_LOG_TABLE_NAME);
-		String hostname = request.getLocalName();
+		String hostname = "";
+		try{
+			hostname = request.getLocalName();
+		} catch (Exception e){
+			hostname = request.getServerName();
+		}
 		String ipAddress = XUIHttpRequest.getClientIpFromRequest(request);
 		jsLogger.insertNewRecord(userBoui,profileBoui,parameters,hostname,ipAddress);
 		
@@ -183,11 +188,13 @@ public class TimingOperationsBean extends XEOBaseBean {
 				initOk = true;
 			}
 		} catch (Exception e){
+			logger.warn("Error creating Timing Operations Log table" , e);
 			initOk = false;
 		} finally {
 			if (initOk){
 				initialized = Boolean.TRUE;
-			}
+			} else 
+				initialized = Boolean.FALSE;
 		}
 
 		

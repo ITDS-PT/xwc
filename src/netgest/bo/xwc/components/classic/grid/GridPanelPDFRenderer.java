@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.classic.grid;
 
 import java.awt.Color;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +47,7 @@ public class GridPanelPDFRenderer {
     	
     	String sTitle = GridPanelRenderer.getExportTitle( oGrid );
     	sTitle = HTMLEntityDecoder.htmlEntityToChar( sTitle );
-    	((HttpServletResponse)oResponse).setHeader("Content-Disposition","attachment; filename="+ sTitle+".pdf"  );
+    	((HttpServletResponse)oResponse).setHeader("Content-Disposition","attachment; filename=\""+ sTitle+".pdf\""  );
     	
 		DataListConnector oDataSource = oGrid.getDataSource();
 		oDataSource.setPage(1);
@@ -95,18 +96,28 @@ public class GridPanelPDFRenderer {
 			document.open();
 
 			Column[] oGridColumns = oGrid.getColumns();
-			PdfPTable table = new PdfPTable( oGridColumns.length );
+			List<Column> visibleColumns = new ArrayList<Column>();
+			
+			for (int i=0;i < oGridColumns.length; i++){
+				if (!oGridColumns[i].isHidden()){
+					visibleColumns.add(oGridColumns[i]);
+				}
+			}
+			
+			
+			PdfPTable table = new PdfPTable( visibleColumns.size() );
 			//table.setWidthPercentage(100f);
 			table.setHorizontalAlignment( Element.ALIGN_LEFT );
 
-			int iWidths[] = new int[ oGridColumns.length ];
+			int iWidths[] = new int[ visibleColumns.size() ];
 			int iTableWidth = 0;
-			for( int i=0;i < oGridColumns.length; i++ ) {
+			//for (Column current : visibleColumns){
+			for( int i=0;i < visibleColumns.size(); i++ ) {
 				
-				Column current = oGridColumns[i];
+				Column current = visibleColumns.get(i);
 				if (!current.isHidden()){
 					int iWidth=100;
-					String s = oGridColumns[i].getWidth();
+					String s = current.getWidth();
 					try {
 						iWidth = Integer.parseInt( s );
 					} catch (Exception e) {
@@ -162,51 +173,55 @@ public class GridPanelPDFRenderer {
 					table.deleteBodyRows();
 					table.setSkipFirstHeader(true);
 				}
-    			for( int i=0;i < oGridColumns.length; i++ ) {
-    				DataFieldConnector oAtt;
-    				oAtt = oRecordConnector.getAttribute( oGridColumns[i].getDataField() );
-    				if( oAtt != null ) {
-    					String sValue = oAtt.getDisplayValue();
-        				
-    					cell = new PdfPCell();
-        				
-    					if(	oGridColumns[i].isContentHtml()) {
-	    					sValue = HTMLEntityDecoder.htmlEntityToChar( sValue );
-	    					List<Element> s = (List<Element>)
-	    						HTMLWorker.parseToList(new StringReader(sValue), null, htmlWorkerProps );
-	        				if( s.size() > 0 ) {
-		        				for( Element elem : s ) {
-		        					cell.addElement( elem );
-		        				}
-	        				}
+    			for( int i=0;i < visibleColumns.size(); i++ ) {
+    				
+    				if (!visibleColumns.get(i).isHidden()){
+    					
+    					DataFieldConnector oAtt;
+    					oAtt = oRecordConnector.getAttribute( oGridColumns[i].getDataField() );
+    					if( oAtt != null ) {
+    						String sValue = oAtt.getDisplayValue();
+    						
+    						cell = new PdfPCell();
+    						
+    						if(	oGridColumns[i].isContentHtml()) {
+    							sValue = HTMLEntityDecoder.htmlEntityToChar( sValue );
+    							List<Element> s = (List<Element>)
+    									HTMLWorker.parseToList(new StringReader(sValue), null, htmlWorkerProps );
+    							if( s.size() > 0 ) {
+    								for( Element elem : s ) {
+    									cell.addElement( elem );
+    								}
+    							}
+    						}
+    						else if(oAtt.getDataType()==DataFieldTypes.VALUE_BRIDGE) {
+    							cell.addElement(
+    									new Paragraph(
+    											sValue.replaceAll("<br></br>", "\n"), 
+    											fontB
+    											)
+    									);
+    						}
+    						else {
+    							cell.addElement(
+    									new Paragraph(
+    											sValue, 
+    											fontB
+    											)
+    									);
+    						}
     					}
-    					else if(oAtt.getDataType()==DataFieldTypes.VALUE_BRIDGE) {
-    						cell.addElement(
-    								new Paragraph(
-    	    								sValue.replaceAll("<br></br>", "\n"), 
-    	        							fontB
-    	    							)
-    							);
+    					else {
+    						cell = 
+    								new PdfPCell( 
+    										new Paragraph(
+    												ComponentMessages.GRID_INVALID_COLUMN.toString( oGridColumns[i].getDataField() ),
+    												fontB
+    												)
+    										);
     					}
-        				else {
-        					cell.addElement(
-								new Paragraph(
-	    								sValue, 
-	        							fontB
-	    							)
-							);
-        				}
+    					table.addCell(cell);
     				}
-    				else {
-        				cell = 
-        					new PdfPCell( 
-        							new Paragraph(
-        								ComponentMessages.GRID_INVALID_COLUMN.toString( oGridColumns[i].getDataField() ),
-	        							fontB
-        							)
-        						);
-    				}
-    				table.addCell(cell);
     			}
 			}
 			

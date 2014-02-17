@@ -135,7 +135,13 @@ public class AjaxTimingOperationsBean extends XEOBaseBean {
 		long profileBoui = ctx.getBoSession().getPerformerIProfileBoui();
 		AjaxTimingLogger ajaxLogger = new AjaxTimingLogger(connection, LoggerConstants.JS_AJAX_TIMMING_LOG_TABLE_NAME);
 		String ipAddress = XUIHttpRequest.getClientIpFromRequest(request);
-		ajaxLogger.insertNewRecord(userBoui,profileBoui,parameters, request.getLocalName(),ipAddress);
+		String hostname = "";
+		try{
+			hostname = request.getLocalName();
+		} catch (Exception e){
+			hostname = request.getServerName();
+		}
+		ajaxLogger.insertNewRecord(userBoui,profileBoui,parameters, hostname ,ipAddress);
 	}
 
 	private synchronized void init(EboContext ctx, Connection connection) {
@@ -148,11 +154,13 @@ public class AjaxTimingOperationsBean extends XEOBaseBean {
 				 initOk = true;
 			 }
 		} catch (Exception e){
+			logger.warn("Error creating AjaxTimming Log table",e);
 			initOk = false;
 		} finally {
 			if (initOk){
 				initialized = Boolean.TRUE;
-			}
+			} else
+				initialized = Boolean.FALSE;
 		}
 		
 		

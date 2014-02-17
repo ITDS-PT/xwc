@@ -1,5 +1,9 @@
 package netgest.bo.xwc.components.classic.scripts;
 
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.render.Renderer;
+
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.xwc.components.classic.Form;
 import netgest.bo.xwc.components.classic.MessageBox.MessageBoxButtons;
@@ -13,12 +17,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
-
 import netgest.utils.StringUtils;
-
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.render.Renderer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,6 +88,10 @@ public enum ValueType{LITERAL,
 
     public static final String getCommandScript( String target, String targetName, XUIComponentBase oComponent, int iWaitMode ) { 
     	return getCommandScript( target, targetName,oComponent, null, iWaitMode, ValueType.LITERAL );
+    }
+    
+    public static final String getCommandScript( String target, String targetName, XUIComponentBase oComponent, String actionValue , int iWaitMode ) {
+    	return getCommandScript(target, targetName ,oComponent, actionValue ,iWaitMode, ValueType.LITERAL);
     }
 
     public static final String getCommandScript( String target, XUIComponentBase oComponent, String actionValue , int iWaitMode ) {

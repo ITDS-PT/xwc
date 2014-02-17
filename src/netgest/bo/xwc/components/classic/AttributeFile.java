@@ -179,10 +179,8 @@ public class AttributeFile extends AttributeBase {
     	@Override
     	public ExtConfig getExtJsFieldConfig(AttributeBase oAttr) {
     		AttributeFile  		oAttFile;
-            String              sFormId;
             Form                oForm;
             
-            sFormId = oAttr.getNamingContainerId();
             oForm   = (Form)oAttr.findParentComponent( Form.class );
             
             oAttFile = (AttributeFile)oAttr;
@@ -367,8 +365,9 @@ public class AttributeFile extends AttributeBase {
 				            String mimetype = oCtx.getMimeType(sName.toLowerCase());
 	
 				            resp.setHeader("Cache-Control","private");               
-				            ServletOutputStream so = response.getOutputStream(); 
-			                resp.setHeader("Content-Disposition","attachment; filename="+sName);
+				            ServletOutputStream so = response.getOutputStream();
+				            
+			                resp.setHeader("Content-Disposition","attachment; filename=\""+sName+"\"");
 			                resp.setHeader("XEODM-FileName", sName );
 			                resp.setHeader("XEODM-ReadOnly", Boolean.toString( oFile.isDisabled() ) );
 	

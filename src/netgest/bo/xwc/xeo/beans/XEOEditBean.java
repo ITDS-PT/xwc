@@ -537,18 +537,16 @@ public class XEOEditBean extends XEOBaseBean{
     	}
     	
     	String xmlContent = this.getViewerContentAsXML();
-    	//System.out.print(xmlContent);
     	byte[] result = null;
     	if (customXSLT != null)
     		result = this.renderXSLT(customXSLT, null, xmlContent, parameters);
     	else
     		result = this.renderXSLT(HTML_TEMPLATES, PROJECT_HTML_TEMPLATES, xmlContent,parameters);
-    	try 
-    	{
+    	try{
     		HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
     		response.getOutputStream().write( result );
 			getRequestContext().responseComplete();
-		} 
+		}  
     	catch (IOException e) 
 		{
 			e.printStackTrace();
@@ -2334,7 +2332,7 @@ public class XEOEditBean extends XEOBaseBean{
         oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/xeo/viewers/ShowDifferences.xvw");
         
         String s =  getSessionContext().renderViewToBuffer("XEOXML", getViewRoot().getViewState() ).toString();
-		XMLDocument doc = ngtXMLUtils.loadXML(s);
+        XMLDocument doc = ngtXMLUtils.loadXML(s);
         
         String result = XEOListVersionHelper.renderDifferencesWithFlashBack( getXEOObject(), doc );
         

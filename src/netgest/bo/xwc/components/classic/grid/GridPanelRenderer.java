@@ -1,5 +1,19 @@
 package netgest.bo.xwc.components.classic.grid;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+
 import netgest.bo.runtime.boConvertUtils;
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridColumnRenderer;
@@ -24,22 +38,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.beans.XEOBaseList;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
-
 import netgest.utils.StringUtils;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -288,7 +287,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         }
         
         String 	 groupByLevelS 	= oRequest.getParameter( GridParameter.GROUP_BY_LEVEL );
-        String[] sParentValues	= oRequest.getParameterValues( GridParameter.GROUP_BY_PARENT_LEVELS );
+        String[] sParentValues	= oRequest.getParameterValues( GridParameter.GROUP_BY_PARENT_VALUES );
         
         
         //Decode parameters received as String into their native data types
@@ -343,7 +342,13 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	        				serviceParameterValues.add(sParent);
 	        			break;
 	        		case DataFieldTypes.VALUE_BOOLEAN:
-	        			serviceParameterValues.add(new BigDecimal( sParent )); break;
+	        			BigDecimal booleanResult = boConvertUtils.convertToBigDecimal(sParent, null);
+	        			if (booleanResult != null){
+	        				serviceParameterValues.add(booleanResult);
+	        			} else {
+	        				serviceParameterValues.add(sParent);
+	        			}
+	        			break;
 	        		//Default: Add as a String
 	        		default : serviceParameterValues.add(sParent); break;
 	        	}

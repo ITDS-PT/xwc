@@ -165,14 +165,16 @@ public class XEOObjectAttributeConnector extends XEOObjectAttributeMetaData impl
 					lovDisplayValue = oAttHandler.getObject().getTextCARDID().toString();
 				} else if (StringUtils.hasValue(metadata.getLOVName())){
 					if (StringUtils.isEmpty(metadata.getLOVSql())){
-						lovDisplayValue = boObjectUtils.getLovDescription(oAttHandler.getEboContext(), metadata.getLOVName(), String.valueOf(value));
+						if (value != null){
+							lovDisplayValue = boObjectUtils.getLovDescription(oAttHandler.getEboContext(), metadata.getLOVName(), String.valueOf(value));
+						}
 					}
 				} 
 				
 				if (StringUtils.isEmpty(lovDisplayValue)){
 					lovMap = getLovMap();
 					Object displayValueRaw = lovMap.get(value);
-					if( !(displayValueRaw instanceof String) ) {
+					if( !(displayValueRaw instanceof String) && value != null) {
 						lovDisplayValue = String.valueOf( value );
 					}
 				}

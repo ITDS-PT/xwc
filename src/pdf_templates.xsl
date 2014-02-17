@@ -425,9 +425,9 @@
     <xsl:template match="attributeDate" priority="-1">
         <xsl:if test="count(ancestor::attributeDatetime) = 0">
             <xsl:choose>
-                <xsl:when test="string-length(@displayValue) > 0">
+                <xsl:when test="string-length(./text()) > 0">
                     <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                        <xsl:value-of select="./@displayValue"/>
+                        <xsl:value-of select="./text()"/>
                     </fo:block>
                 </xsl:when>
                 <xsl:otherwise>
@@ -441,9 +441,9 @@
     
     <xsl:template match="attributeDateTime" priority="-1">
         <xsl:choose>
-            <xsl:when test="string-length(@displayValue) > 0">
+            <xsl:when test="string-length(./text()) > 0">
                 <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                    <xsl:value-of select="./@displayValue"/>
+                    <xsl:value-of select="./text()"/>
                 </fo:block>
             </xsl:when>
             <xsl:otherwise>
@@ -473,9 +473,9 @@
     <!-- Atributos do tipo número -->
     <xsl:template match="attributeNumber" priority="-1">
         <xsl:choose>
-            <xsl:when test="string-length(./@displayValue) > 0">
+            <xsl:when test="string-length(./text()) > 0">
                 <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                    <xsl:value-of select="./@displayValue"/>
+                    <xsl:value-of select="./text()"/>
                 </fo:block>
             </xsl:when>
             <xsl:otherwise>
@@ -489,9 +489,9 @@
     <!-- Atributos do tipo ficheiro -->
     <xsl:template match="attributeFile" priority="-1">
         <xsl:choose>
-            <xsl:when test="string-length(@displayValue) > 0">
+            <xsl:when test="string-length(./text()) > 0">
                 <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                    <xsl:value-of select="./@displayValue"/>
+                    <xsl:value-of select="./text()"/>
                 </fo:block>
             </xsl:when>
             <xsl:otherwise>
@@ -506,7 +506,7 @@
         <xsl:choose>
             <xsl:when test="string-length(text()) > 0">
                 <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                    <xsl:value-of select="./@displayValue"/>
+                    <xsl:value-of select="./text()"/>
                 </fo:block>
             </xsl:when>
             <xsl:otherwise>
@@ -1066,9 +1066,9 @@
     <!-- Atributos do tipo object -->
     <xsl:template match="attributeNumberLookup" priority="-1">
         <xsl:choose>
-            <xsl:when test="string-length(@displayValue) > 0">
+            <xsl:when test="string-length(./text()) > 0">
                 <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                    <xsl:value-of select="./@displayValue"/>
+                    <xsl:value-of select="./text()"/>
                 </fo:block>
             </xsl:when>
             <xsl:otherwise>
@@ -1081,9 +1081,9 @@
     
      <xsl:template match="bridgeLookup" priority="-1">
         <xsl:choose>
-            <xsl:when test="string-length(@displayValue) > 0">
+            <xsl:when test="string-length(./text()) > 0">
                 <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                    <xsl:value-of select="./@displayValue"/>
+                    <xsl:value-of select="./text()"/>
                 </fo:block>
             </xsl:when>
             <xsl:otherwise>
@@ -1097,14 +1097,14 @@
     <!-- Attribute whose value comes from a list of values -->
     <xsl:template match="attributeLov" priority="-1">
             <fo:block xsl:use-attribute-sets="attributeTextFormatting">
-                <xsl:value-of select="./@displayValue"/>
+                <xsl:value-of select="./text()"/>
             </fo:block>
     </xsl:template>
     
     <!-- Attribute with a password (to not show the value) -->
     <xsl:template match="attributePassword" priority="-1">
         <xsl:choose>
-            <xsl:when test="string-length(@displayValue) > 0">
+            <xsl:when test="string-length(./text()) > 0">
                 <fo:block xsl:use-attribute-sets="attributeTextFormatting">
                     <xsl:value-of select="string('•••••••••••')"/>
                 </fo:block>
@@ -1230,7 +1230,7 @@
     <xsl:template match="gridheadercolumn" priority="-1">
         <fo:table-cell>
             <fo:block>
-                <xsl:value-of select="./text()"/>
+                <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>
             </fo:block>
         </fo:table-cell>
     </xsl:template>

@@ -240,7 +240,7 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayValue"/>
+            <xsl:value-of select="./text()"/>
         </td>
         </xsl:if>
     </xsl:template>
@@ -255,7 +255,7 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayValue"/>
+            <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
 
@@ -287,7 +287,7 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayValue"/>
+            <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
     
@@ -317,7 +317,7 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayValue"/>
+            <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
     
@@ -331,7 +331,7 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayValue"/>
+            <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
     
@@ -365,7 +365,7 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayValue"/>
+            <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
 
@@ -380,7 +380,7 @@
                     <xsl:value-of select="../../../@columns"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="./@displayValue"/>
+            <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
     
@@ -448,8 +448,7 @@
     
     <xsl:template match="gridheadercolumn" priority="-1">
         <th xsl:use-attribute-sets="tableListHeaderStyle">
-            <xsl:apply-templates>
-            </xsl:apply-templates>
+            <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>
         </th>
     </xsl:template>
     

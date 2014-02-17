@@ -27,9 +27,7 @@ import netgest.bo.utils.RowGridFlashBack;
 import netgest.bo.utils.boVersioning;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.xeo.components.FormEdit;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
-import netgest.bo.xwc.xeo.localization.XEOViewersMessages;
 import netgest.utils.StringUtils;
 import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.XMLDocument;
@@ -120,9 +118,14 @@ public class XEOListVersionHelper
 							String attName = attributeLabel.getAttribute("text");
 							if (values.containsKey(attName))
 							{
+								ObjectAttributeValuePair pair   = values.get( attName );
 								added = true;
+								String oldVal = pair.getOldDisplayValue();
+								if (StringUtils.isEmpty( oldVal )){
+									oldVal = pair.getOldVal();
+								}
 								listOfCells[k] = 
-									versionHelper.new CellPositionValue(values.get(attName).getOldVal(),colSpanNumber);
+									versionHelper.new CellPositionValue(oldVal,colSpanNumber);
 							}
 						} //If we don't have an attribute
 						else if (currentCellNode.getNodeName().equalsIgnoreCase("attribute")){
@@ -134,11 +137,15 @@ public class XEOListVersionHelper
 								if (currentAttributeChild.getNodeName().equalsIgnoreCase("attributeLabel")){
 									Element attributeLabel = (Element) currentAttributeChild;
 									String attName = attributeLabel.getAttribute("text");
-									if (values.containsKey(attName))
-									{
+									if (values.containsKey(attName)){
+										ObjectAttributeValuePair pair   = values.get( attName );
 										added = true;
+										String oldVal = pair.getOldDisplayValue();
+										if (StringUtils.isEmpty( oldVal )){
+											oldVal = pair.getOldVal();
+										}
 										listOfCells[k] = 
-											versionHelper.new CellPositionValue(values.get(attName).getOldVal(),colSpanNumber);
+											versionHelper.new CellPositionValue(oldVal,colSpanNumber);
 									}
 								}
 							}
@@ -183,13 +190,11 @@ public class XEOListVersionHelper
 					newRow.appendChild(cellOfRow);
 				}
 				
-				if (currentRow.getNextSibling() != null)
-				{
+				if (currentRow.getNextSibling() != null){
 					Element node = (Element) currentRow;
 					node.getParentNode().insertBefore(newRow, currentRow.getNextSibling());
 				}
-				else
-				{
+				else{
 					currentRow.getParentNode().appendChild(newRow);
 				}
 			}
@@ -557,7 +562,7 @@ public class XEOListVersionHelper
     {
     	
     	if (doc == null){
-			return "Não foi possível aceder ao viewer, ocorreu um erro"; //FIXME: Internacionalizar
+			return BeansMessages.ERROR_CANNOT_LOAD_VIEWER.toString();
 		}
     	
     	/*
@@ -604,7 +609,7 @@ public class XEOListVersionHelper
 			//Update the XML tree with a sumary of differences
 			Iterator<String> itDiffAtts = diffAttributes.keySet().iterator();
 			Element differences = doc.createElement("differences");
-			String val = "Difference Summary";
+			String val = BeansMessages.LBL_DIFFERENCES_RESUME.toString();
 			differences.setAttribute("label", val);
 			while (itDiffAtts.hasNext())
 			{
@@ -612,14 +617,51 @@ public class XEOListVersionHelper
 				String attName = itDiffAtts.next();
 				ObjectAttributeValuePair pair = diffAttributes.get(attName);
 				attribute.setAttribute("name", pair.getAttName());
-				attribute.setAttribute("oldValue", pair.getOldVal());
-				attribute.setAttribute("newValue", pair.getNewVal());
+				
+				if (StringUtils.isEmpty( pair.getOldDisplayValue() )){
+					attribute.setAttribute("oldValue", pair.getOldVal());
+				}
+				else {
+					attribute.setAttribute("oldValue", pair.getOldDisplayValue());
+				}
+				if (StringUtils.isEmpty( pair.getNewDisplayValue() )){
+					attribute.setAttribute("newValue", pair.getNewVal());
+				} else {
+					attribute.setAttribute("newValue", pair.getNewDisplayValue());
+				}
 				differences.appendChild(attribute);
 			}
 			doc.getDocumentElement().appendChild(differences);
 			
+			Iterator<String> bridgeDifferenceIterator = diffBridges.keySet().iterator();
+			
+			while (bridgeDifferenceIterator.hasNext()){
+				String bridgeName = bridgeDifferenceIterator.next();
+				GridFlashBack bridgeDifference = diffBridges.get( bridgeName );
+				
+				Element attribute = doc.createElement("attribute");
+				attribute.setAttribute("name", bridgeName);
+				
+				StringBuilder newValues = new StringBuilder();
+				for (RowGridFlashBack rowAdded : bridgeDifference.getAddedRows()){
+					newValues.append( rowAdded.getRowValue( "SYS_CARDID" ) ).append(" ");
+				}
+				
+				StringBuilder oldValues = new StringBuilder();
+				for (RowGridFlashBack rowAdded : bridgeDifference.getDeletedRows()){
+					oldValues.append( rowAdded.getRowValue( "SYS_CARDID" ) ).append(" ");
+				}
+				
+				attribute.setAttribute("oldValue", oldValues.toString());
+				
+				attribute.setAttribute("newValue", newValues.toString());
+				
+				differences.appendChild(attribute);
+			}
+			
+			
 			//Update the XML tree with the differences in attributes and bridges
-			updateXMLTreeWithAttributeDifferences(doc, diffAttributes, diffBridges,differences);
+			updateXMLTreeWithAttributeDifferences(doc, diffAttributes, diffBridges , differences);
 			
 			String xmlSourceContent = ngtXMLUtils.getXML(doc);
 			

@@ -234,16 +234,16 @@
             <xsl:for-each select="./attribute">
                 <tr>
                     <td class="label">
-                        <xsl:value-of select="./@name"/>
+                        <xsl:value-of select="./@name" disable-output-escaping="yes"/>
                     </td>
                     <td class="oldvalue">
-                        <xsl:value-of select="./@oldValue"/>
+                        <xsl:value-of select="./@oldValue" disable-output-escaping="yes"/>
                     </td>
                 </tr>
                 <tr>
                     <td />
                     <td class="newvalue">
-                        <xsl:value-of select="./@newValue"/>
+                        <xsl:value-of select="./@newValue" disable-output-escaping="yes"/>
                     </td>
                 </tr>
             </xsl:for-each>
@@ -266,6 +266,8 @@
                 	body
                 	{
                 		background-color: white;
+                		font-family: tahoma;
+                		font-size: 11px;
                 	}
                     p {
                         color:#ff9900;
@@ -328,6 +330,7 @@
                     
                     table.main td.label {
                         color: #000000;
+                        font-size: 11px;
                     }
                     table.main td.boolean {
                         background-color: #FFFFFF;
@@ -491,6 +494,17 @@
         </xsl:for-each>
     </xsl:template>
     
+     <xsl:template match="form/tabs" >
+        <xsl:for-each select="tab">
+         <div class="tab">
+             <h1>
+                 <xsl:value-of select="./@label"/>
+             </h1>
+         </div>
+         <xsl:apply-templates/>
+        </xsl:for-each>
+    </xsl:template>
+    
     <xsl:template match="tab/tabs" priority="-1">
         <xsl:for-each select="tab">
             <div class="tab">
@@ -586,7 +600,7 @@
     </xsl:template>
     
     <xsl:template match="outputHtml">
-            <xsl:apply-templates select="./*|text()"/>
+            <xsl:value-of select="./text()" disable-output-escaping="yes"/>
     </xsl:template>
     
     <xsl:template match="attributeLabel" priority="-1">
@@ -621,7 +635,7 @@
     <xsl:template match="attributeText" priority="-1">
         <!-- ignorei os outros atributos do HTML -->
         <td class="value">
-            <xsl:value-of select="./text()"/>
+            <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
 
@@ -670,20 +684,20 @@
     <!-- Atributos do tipo data -->
     <xsl:template match="attributeDate" priority="-1">
         <td class="value">
-            <xsl:value-of select="./@displayValue"/>
+            <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
     
     <xsl:template match="attributeWordMacro" priority="-1">
         <td class="value">
-           <xsl:value-of select="./@displayValue"/>
+           <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
     
     
     <xsl:template match="attributeDateTime" priority="-1">
         <td class="value">
-           <xsl:value-of select="./@displayValue"/>
+           <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
 
@@ -698,6 +712,12 @@
     <xsl:template match="attributeNumber" priority="-1">
         <td class="value">
            <xsl:value-of select="./text()"/>
+        </td>
+    </xsl:template>
+    
+     <xsl:template match="bridgeLookup" priority="-1">
+        <td class="value">
+           <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
     
@@ -759,7 +779,7 @@
     <xsl:template match="attributeFile" priority="-1">
         <td class="value">
             <a href="javascript:void(0)">
-                <xsl:value-of select="./@displayValue"/>
+                <xsl:value-of select="./text()"/>
             </a>
         </td>
     </xsl:template>
@@ -767,7 +787,7 @@
     <!-- Atributos do tipo object -->
     <xsl:template match="attributeNumberLookup" priority="-1">
         <td class="value">
-            <xsl:value-of select="./@displayValue"/>
+            <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
     
@@ -786,7 +806,7 @@
     <!-- Attribute Lov -->
     <xsl:template match="attributeLov" priority="-1">
         <td class="value">
-            <xsl:value-of select="./@displayValue"/>
+            <xsl:value-of select="./text()"/>
         </td>
     </xsl:template>
     
@@ -801,7 +821,7 @@
     <!-- Editor HTML -->
     <xsl:template match="attributeHtmlEditor" priority="-1">
         <td class="value">
-            <xsl:copy-of select="./*|text()"/>
+            <xsl:value-of select="./text()" disable-output-escaping="yes"/>
         </td>
     </xsl:template>
     
@@ -821,7 +841,7 @@
     
     <xsl:template match="gridheadercolumn" priority="-1">
         <th>
-            <xsl:value-of select="./text()"/>
+            <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>
         </th>
     </xsl:template>
     
@@ -833,12 +853,37 @@
     
     <xsl:template match="gridcolumn" priority="-1">
         <td>
-            <xsl:value-of select="./@displayValue" disable-output-escaping="yes"/>
+            <xsl:if test="string-length(./text()) > 0">
+                <xsl:value-of select="./text()" disable-output-escaping="yes"/>    
+            </xsl:if>
+            <xsl:if test="string-length(./text()) = 0">
+                	<xsl:value-of select="./@displayValue" disable-output-escaping="yes" />    
+            </xsl:if>
         </td>
     </xsl:template>
     
     <!-- Charts -->
     <xsl:template match="pieChart">
+        <div>
+            <img>
+                <xsl:attribute name="src">
+                    <xsl:value-of select="./@urlHtml"/>
+                </xsl:attribute>
+            </img>
+        </div>
+    </xsl:template>
+    
+    <xsl:template match="barChart">
+        <div>
+            <img>
+                <xsl:attribute name="src">
+                    <xsl:value-of select="./@urlHtml"/>
+                </xsl:attribute>
+            </img>
+        </div>
+    </xsl:template>
+    
+    <xsl:template match="lineChart">
         <div>
             <img>
                 <xsl:attribute name="src">

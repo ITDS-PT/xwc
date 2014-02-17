@@ -3077,8 +3077,49 @@ ExtXeo.loadHandler = function (store, records, options) {
 	if (store.grid){
 		store.grid.markSelectedRows(options);
 	}
+	
+	//Attempt to fix the horizontal scroll without data bug
+	ExtXeo.fixHorizontalScrollbar(store);
+	
     store.resetDataSourceChange();
     XVW.NoWait(); 
+};
+
+/**
+ * Hack for Problem with Many Columns without Data, Grid does not render the horizontal scrollbar
+ * even though the grid header (with the columns) requires the scroll bar
+ */
+ExtXeo.fixHorizontalScrollbar = function(store){
+	//Bug happens when no data is shown
+	if (store.getTotalCount() == 0){
+		//Find the grid, to limit searches (when multiple grids are in play)
+		var grid = XVW.get(store.gridId);
+		//Find the table with the columns (we need its width)
+		var tables = Ext.query('.x-grid3-header-offset table',grid);
+		if (tables){
+			var table = tables[0];
+			var width = table.style.width;
+			
+			//Find the grid body to copy the width of the header
+			//with this trick, the GridBody now has a correct size
+			//which triggers the scrollbar
+			var grids = Ext.query('.x-grid3-body',grid);
+			var grid = grids[0];
+			//Set the width of the body equal to the width of the header
+			grid.style.width = width;
+			//Must set the height to some value, 
+			//else it stays with 0px and the scrollbar does not appear
+			grid.style.height = "400px";
+		}
+	} else {
+		//Reset the grid body to default values when data is present
+		var grids = Ext.query('.x-grid3-body',grid);
+		if (grids && grids.length > 0){
+			var grid = grids[0];
+			grid.style.width = null;
+			grid.style.hieght = null;
+		}
+	}
 };
 	
 
