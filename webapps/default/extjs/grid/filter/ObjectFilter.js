@@ -50,8 +50,7 @@ Ext.grid.filter.ObjectFilter = Ext.extend(Ext.grid.filter.Filter, {
 			this.menu.hide(true);
 			return;
 		}
-		this.clearData();
-		this.setActive(true);
+		
 		this.updateTask.delay(this.updateBuffer);
 		
 	}
@@ -70,9 +69,10 @@ Ext.grid.filter.ObjectFilter = Ext.extend(Ext.grid.filter.Filter, {
 		this.parentFilters.uploadConfig();
 		this.lookupCommand();
 	},
-	fireUpdate: function() {		
-		this.fireEvent("update", this);			
+	fireUpdate: function() {	
+		this.clearData();
 		this.setActive(true);
+		this.fireEvent("update", this);			
 	},
 	
 	setValue: function(value) {

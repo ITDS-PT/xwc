@@ -1770,6 +1770,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 	  changePageControl: false 
     , grid : null
     , pageSize : null
+    , isStoreLoading : false
     , gridId : null
     , resetCount : null
 	, rowIdentifier : 'BOUI'
@@ -2018,8 +2019,10 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
                 var pn = this.paramNames;
                 p[pn["sort"]] = Ext.util.JSON.encode( this.sortInfo );
             }
-            XVW.Wait(1);
+            if (!this.isStoreLoading)
+            	XVW.Wait(1);
             this.proxy.load(p, this.reader, this.loadRecords, this, options);
+            this.isStoreLoading = true;
             this.resetCount = 0;
             return true;
         } else {
@@ -3057,6 +3060,7 @@ ExtXeo.getSelectedPages = function(id){
 };
 
 ExtXeo.dealWithloadException = function(store){
+	store.isStoreLoading = false;
 	XVW.NoWait();
 	if (store.resetCount !== undefined){
 		if (store.resetCount > 0){
@@ -3077,6 +3081,8 @@ ExtXeo.loadHandler = function (store, records, options) {
 	if (store.grid){
 		store.grid.markSelectedRows(options);
 	}
+	
+	store.isStoreLoading = false;
 	
 	//Attempt to fix the horizontal scroll without data bug
 	ExtXeo.fixHorizontalScrollbar(store);
