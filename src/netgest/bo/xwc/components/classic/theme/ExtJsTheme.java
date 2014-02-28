@@ -303,7 +303,7 @@ public class ExtJsTheme implements XUITheme {
 				String id = it.next();
 				String file = scripts.get(id);	
 				file = file.replace("%LANG%",lang);
-				scriptIncluder.includeRegular(id,file);
+				scriptIncluder.include(id,file);
 			}
 			
 		} else {
