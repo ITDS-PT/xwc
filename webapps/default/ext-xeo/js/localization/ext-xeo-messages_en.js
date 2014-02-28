@@ -85,6 +85,7 @@ if( Ext.grid.filter.DateFilter) {
 		  beforeText: 'Before',
 		  afterText: 'After',
 		  onText: 'In'
+		  , betweenDatesText : 'Between dates'
 		  , containsDataText : 'Contains data'
 		  , notContainsDataText : "Doesn't contain data"	  
 	 });

@@ -33,6 +33,11 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
      * The text displayed for the "On" menu item
      */
     onText: 'Em',
+    
+    /**
+     * The text displayed for the "Between Dates"
+     */
+    betweenDatesText : 'Entre' ,
     /**
      * @cfg {Date} minDate
      * The minimum date allowed in the menu's {@link Ext.menu.DateMenu}
@@ -56,7 +61,7 @@ Ext.grid.filter.DateFilter = Ext.extend(Ext.grid.filter.Filter, {
 		};
 				
 		var between = new Ext.menu.Item({
-			  text: 'Entre datas'
+			  text: this.betweenDatesText
 					, handler : this.lookupCommand
 		});
 		
