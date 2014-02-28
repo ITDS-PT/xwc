@@ -45,6 +45,13 @@ public class ViewStateDebug {
 		log.error( debugInfo.generateDebugInfo(  adicionalInfo ) );
 	}
 	
+	public static void debugIfClosed( String adicionalInfo, String stateId ) {
+		ViewStateDebugInfo debugInfo = getDebugInfo(stateId);
+		if( debugInfo.getCloseTime() != 0 ) {
+			log.error( debugInfo.generateDebugInfo(  adicionalInfo ) );
+		}
+	}
+	
 	private static synchronized ViewStateDebugInfo getDebugInfo( String stateId ) {
 		Map<String,Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext()
 				.getSessionMap();

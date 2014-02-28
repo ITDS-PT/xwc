@@ -133,9 +133,9 @@ public class XUIViewRoot extends UIViewRoot {
 				bean = beanReference;
 			}
 		}
-		if( StringUtils.hasValue( sBeanName ) && bean == null ) {
-			ViewStateDebug.debugNotFound( "Getting Bean for viewer " + sBeanName,getViewState() );
-		}
+//		if( StringUtils.hasValue( sBeanName ) && bean == null ) {
+//			ViewStateDebug.debugIfClosed( "Getting Bean for viewer [" + sBeanName,getViewState() + "]" );
+//		}
 		return bean;
 	}
 	

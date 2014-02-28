@@ -31,6 +31,7 @@ public class ViewStateDebugInfo {
 		
 		StringBuilder createStackString = new StringBuilder();
 		StringBuilder closeStackString = new StringBuilder();
+		StringBuilder actualStackString = new StringBuilder();
 		
 		if( createStack != null ) {
 			for( StackTraceElement stackElement : this.createStack ) {
@@ -43,6 +44,11 @@ public class ViewStateDebugInfo {
 				closeStackString.append( "\t" + stackElement.toString() + "\n" );
 			}
 		}
+		
+		for( StackTraceElement stackElement : new Throwable().getStackTrace() ) {
+			actualStackString.append( "\t" + stackElement.toString() + "\n" );
+		}
+		
 		
 		HttpServletRequest request = (HttpServletRequest)XUIRequestContext.getCurrentContext().getRequest();
 		
@@ -88,6 +94,8 @@ public class ViewStateDebugInfo {
 		"Creation Stack:\n" + createStackString + "\n" +
 		"--------------------------------------------------------------------------------------" + "\n" +
 		"Close    Stack:\n" + closeStackString + "\n" +
+		"--------------------------------------------------------------------------------------" + "\n" +
+		"Actual   Stack:\n" + actualStackString + "\n" +
 		"======================================================================================\n";
 			
 		return debugString;
