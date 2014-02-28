@@ -83,9 +83,9 @@ public class XUIErrorLogger {
 		return null;
 	}
 	
-	public void logViewError(EboContext ctx, XUIRequestContextDebugInfo debug, String customContext, Exception e){
+	public void logViewError(HttpServletRequest request, EboContext ctx, XUIRequestContextDebugInfo debug, String customContext, Exception e){
 		Connection conn = getConnection(ctx);
-		logViewError(ctx, debug, customContext, e, conn);
+		logViewError(request, ctx, debug, customContext, e, conn);
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public class XUIErrorLogger {
 	 * @param customContext
 	 * @param e
 	 */
-	void logViewError(EboContext ctx, XUIRequestContextDebugInfo debug, String customContext, Exception e, Connection connection){
+	void logViewError(HttpServletRequest request, EboContext ctx, XUIRequestContextDebugInfo debug, String customContext, Exception e, Connection connection){
 		
 		long requestId = debug.getRequestId();
 		long userBoui = -1;
@@ -117,22 +117,23 @@ public class XUIErrorLogger {
 			ctx = session.createEboContext();
 			userBoui = session.getPerformerBoui();
 			profileBoui = session.getPerformerIProfileBoui();
+			createdContext = true;
 		}
 		String viewId = debug.getMainViewId();
 		boolean isAjax = debug.isAjaxRequest();
 		String hostname = "";
-		if (ctx.getRequest() != null){
+		String ipAddress = "";
+		if (request != null){
 			try{
-				hostname = ((HttpServletRequest) ctx.getRequest()).getLocalName();
+				hostname = request.getLocalName();
 			} catch (Exception e1){
-				hostname = ((HttpServletRequest) ctx.getRequest()).getServerName();
+				hostname = request.getServerName();
 			}
+			ipAddress = XUIHttpRequest.
+					getClientIpFromRequest(request);
 		}
 		String beanContext = debug.getBeanContext();
 		String eventContext = debug.getEventContext();
-		
-		String ipAddress = XUIHttpRequest.
-				getClientIpFromRequest(((HttpServletRequest) ctx.getRequest()));
 		
 		if (StringUtils.isEmpty(hostname))
 			hostname = "";

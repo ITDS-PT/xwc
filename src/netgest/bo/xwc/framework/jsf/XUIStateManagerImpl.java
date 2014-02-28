@@ -69,6 +69,7 @@ import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
+import netgest.bo.xwc.framework.errorLogging.ViewStateDebug;
 
 import com.sun.faces.RIConstants;
 import com.sun.faces.config.WebConfiguration;
@@ -204,8 +205,12 @@ public class XUIStateManagerImpl extends StateManager {
                               ": "
                               + viewId);
                     }
+                	ViewStateDebug.viewNotFound( String.valueOf( id ) );
                     return null;
                 }
+                
+            	ViewStateDebug.viewRestored( String.valueOf( id ) );
+                
 
                 // We need to clone the tree, otherwise we run the risk
                 // of being left in a state where the restored
@@ -222,7 +227,7 @@ public class XUIStateManagerImpl extends StateManager {
                 }
             }
         }
-
+        
         return viewRoot;
     }
 
@@ -235,6 +240,8 @@ public class XUIStateManagerImpl extends StateManager {
         //Object id;
     	
     	FacesContext context = FacesContext.getCurrentInstance();
+    	
+    	ViewStateDebug.viewClosed( idString );
     	
         String idInLogicalMap;
         String idInMap;

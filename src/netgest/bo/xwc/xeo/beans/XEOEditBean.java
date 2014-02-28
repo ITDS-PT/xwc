@@ -155,6 +155,7 @@ public class XEOEditBean extends XEOBaseBean{
      */
     private boolean					bRelationInOrphanMode = true;
     
+	private StackTraceElement[] createIn = (new Throwable()).getStackTrace();
     
     /**
      * @return	The current XEO Object associated to this bean
@@ -182,6 +183,21 @@ public class XEOEditBean extends XEOBaseBean{
 				}
 	            return oBoObect;
             }
+        	else {
+            	try {
+	        		StringBuilder sb = new StringBuilder();
+	        		sb.append( "\n======================================================================================\n" );
+	        		sb.append( "getXEOObject without currentObjectKey.\n" );
+	        		sb.append( "--------------------------------------------------------------------------------------" + "\n" );
+	        		sb.append(" Created in:" );
+	        		for( StackTraceElement stackElement : this.createIn ) {
+	        			sb.append( "\t" + stackElement.toString() + "\n" );
+	        		}
+	        		sb.append( "--------------------------------------------------------------------------------------" + "\n" );
+	        		log.warn( sb.toString() );
+            	}
+            	catch( Exception e ) { log.warn( e ); /*Ignore error generating debug info*/ }
+        	}
             return null;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -2905,11 +2921,21 @@ public class XEOEditBean extends XEOBaseBean{
     		}
     	}
 		return result.toString();
-		
     }
     
     @Override
     public void addDebugInfo(List<String> debug) {
-    	debug.add(this.getClass().getName() + " BOUI: " + oCurrentObjectKey);
+    	try {
+	    	StringBuilder sb = new StringBuilder();
+	    	sb.append(  this.getClass().getName() )
+	    		.append( " BOUI: " ).append( oCurrentObjectKey );
+	    	
+			sb.append(" Created in:" );
+			for( StackTraceElement stackElement : this.createIn ) {
+				sb.append( "\t" + stackElement.toString() + "\n" );
+			}
+			debug.add( sb.toString() );
+    	}
+    	catch( Exception e ) {  log.warn( e ); /* Ignore error creating debug info */ }
     }
 }

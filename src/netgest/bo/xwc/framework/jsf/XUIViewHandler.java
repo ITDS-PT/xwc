@@ -64,6 +64,7 @@ import netgest.bo.xwc.framework.annotations.XUIWebParameter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.def.XUIViewerDefinition;
+import netgest.bo.xwc.framework.errorLogging.ViewStateDebug;
 import netgest.bo.xwc.framework.http.XUIAjaxRequestWrapper;
 import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl.TreeNode;
 import netgest.bo.xwc.framework.jsf.cache.CacheEntry;
@@ -462,7 +463,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                 log.error(String.format("Could not restore %s",viewId));
             }
         }
-        
         return viewRoot;
     }
 
@@ -744,6 +744,8 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	        initializeSecurity( result, beanIds, context );
 	        
 	        processXUIWebAnnotations( result, beanIds, context );
+	        
+            ViewStateDebug.viewCreated( result.getViewId(),  result.getViewState() );
 	        
         }
         finally {

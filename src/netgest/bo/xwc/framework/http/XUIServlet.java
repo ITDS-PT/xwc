@@ -174,7 +174,7 @@ public class XUIServlet extends HttpServlet
         	XUIErrorLogger logger = XUIErrorLogger.getLogger();
         	XUIRequestContext reqCtx = XUIRequestContext.getCurrentContext();
         	reqCtx.setDebugAjaxRequest(isAjax);
-        	logger.logViewError(oEboContext, reqCtx.getDebugInfo(), "", e);
+        	logger.logViewError(oRequest, oEboContext, reqCtx.getDebugInfo(), "", e);
    
         	throw e;
         }
@@ -182,7 +182,7 @@ public class XUIServlet extends HttpServlet
         	XUIErrorLogger xuiLogger = XUIErrorLogger.getLogger();
         	XUIRequestContext reqCtx = XUIRequestContext.getCurrentContext();
         	reqCtx.setDebugAjaxRequest(isAjax);
-        	xuiLogger.logViewError(oEboContext, reqCtx.getDebugInfo(), "", e);
+        	xuiLogger.logViewError(oRequest, oEboContext, reqCtx.getDebugInfo(), "", e);
         	//Log Error
         	if( e.getRootCause() != null )
         		logger.error( "", e.getRootCause() );

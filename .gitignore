@@ -4,3 +4,5 @@ bin
 /.settings
 /.classpath
 /.apt_generated
+/xeo_xwc_ant.jardesc
+/xeoxwc.jar

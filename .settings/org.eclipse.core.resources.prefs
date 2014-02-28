@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/netgest/bo/xwc/framework/jsf/XUIViewHandler.java=UTF-8
+encoding//src/netgest/bo/xwc/xeo/beans/XEOEditBean.java=UTF-8
 encoding//src/netgest/bo/xwc/xeo/localization/BeansMessages.properties=UTF-8
 encoding//src/netgest/bo/xwc/xeo/localization/BeansMessages_es.properties=UTF-8
 encoding//src/netgest/bo/xwc/xeo/workplaces/admin/localization/MainAdminViewerMessages_en.properties=UTF-8

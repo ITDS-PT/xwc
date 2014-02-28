@@ -11,9 +11,9 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.XUITheme;
 import netgest.bo.xwc.framework.components.XUIComponentBase.StateChanged;
+import netgest.bo.xwc.framework.errorLogging.ViewStateDebug;
 import netgest.bo.xwc.framework.jsf.XUIPhaseEvent;
 import netgest.bo.xwc.framework.jsf.XUIStateManagerImpl;
-
 import netgest.utils.StringUtils;
 
 import java.io.IOException;
@@ -133,6 +133,9 @@ public class XUIViewRoot extends UIViewRoot {
 				bean = beanReference;
 			}
 		}
+		if( StringUtils.hasValue( sBeanName ) && bean == null ) {
+			ViewStateDebug.debugNotFound( "Getting Bean for viewer " + sBeanName,getViewState() );
+		}
 		return bean;
 	}
 	
@@ -227,7 +230,10 @@ public class XUIViewRoot extends UIViewRoot {
 	public Map<String,Object> getViewBeans() {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		for( String beanId : getBeanIds() ) {
-			map.put( beanId , getBean( beanId ) );
+			Object bean = getBean( beanId );
+			if( bean != null ) {
+				map.put( beanId , bean );
+			}
 		}
 		return map;
 	}
