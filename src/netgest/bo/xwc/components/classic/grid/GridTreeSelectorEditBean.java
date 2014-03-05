@@ -2,12 +2,13 @@ package netgest.bo.xwc.components.classic.grid;
 
 import netgest.bo.xwc.components.classic.ColumnAttribute;
 import netgest.bo.xwc.components.classic.GridPanel;
+import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.util.ScriptBuilder;
-import netgest.bo.xwc.xeo.beans.XEOEditBean;
+import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 
-public class GridTreeSelectorEditBean extends XEOEditBean {
+public class GridTreeSelectorEditBean extends XEOBaseBean {
 
 	private Column[] columns;
 	private String gridPanel;
@@ -39,52 +40,15 @@ public class GridTreeSelectorEditBean extends XEOEditBean {
 	
 	public String getSubmitAction()
 	{
-		
 		ScriptBuilder sb = new ScriptBuilder();
-		
 		sb.l("function() {");
-		sb.s("	XVW.Wait(1);" );
-		sb.s("	toggleCheck(root, true)");
-		sb.s("	var unSelNodes = tree2.getChecked('id',root)");
-		
-		sb.s("	toggleCheck(root2, true)");
-		sb.s("	var selNodes = tree2.getChecked('id',root2)");
-		
-		sb.s("	var grid = Ext.getCmp('"+getGridPanelId()+"')");
-		sb.s("	grid.suspendUploadCondig = true;");
-		sb.s("	var cm = grid.getColumnModel()");
-		//sb.s("	cm.suspendEvents();");
-		sb.s("	toggleCheck(root2, true)");
-		sb.s("	var colsCount = cm.getColumnCount(false)");
-		sb.l("	if( selNodes.length > 1 ) {");
-		sb.l("		for( k = 0; k < unSelNodes.length; k++){");
-		sb.s("			var i = cm.findColumnIndex( unSelNodes[k] )");
-		sb.s("			if(i>-1 && !cm.isHidden(i)) cm.setHidden(i,true)");
-		sb.l("		}");
-		sb.l("		for( k = 0; k < selNodes.length; k++){");
-		sb.s("			var i = cm.findColumnIndex( selNodes[k] )");
-		sb.s("			if(i>-1 && cm.isHidden(i)) cm.setHidden(i,false)");
-		sb.l("		}");
-
-		sb.s("  	// Ordernar Colunas");
-		sb.l("		for( k = 0; k < selNodes.length; k++){");
-		sb.s("			var i = cm.findColumnIndex( selNodes[k] )");
-		sb.l("			if( i > -1 )");
-		sb.l("				cm.moveColumn( i,k+1);");
-		sb.l("		}");
-		
-		sb.s("		grid.suspendUploadCondig = false;");
-		sb.s("		grid.updateColumnConfig(true);");
-		sb.s("		grid.getStore().reload();");
-		sb.s("		var w = Ext.getCmp('" + getParentWindowId() + "')");
-		sb.s("  	w.close()");
-		sb.l("	} else { ");
-		sb.l("		Ext.Msg.alert('"+BeansMessages.TREE_SHUTTLE_COLUMN_SELECTION.toString()+"'," +
-				" '"+BeansMessages.TREE_SHUTTLE_COLUMN_SELECTION_MUST_SELECT.toString()+"');");
-		sb.l("	}");
-		sb.l("	XVW.NoWait();");
+			sb.l(String.format("ExtXeo.grid.selectColumns('%s','%s',tree2,root,root2, '%s', '%s')", 
+					getGridPanelId(), getParentWindowId(),
+					BeansMessages.TREE_SHUTTLE_COLUMN_SELECTION.toString(),
+					BeansMessages.TREE_SHUTTLE_COLUMN_SELECTION_MUST_SELECT.toString()));
 		sb.l("}");
 		return sb.toString();
+		
 	}
 	
 	public void setColumns(Column[] cols)
@@ -112,7 +76,9 @@ public class GridTreeSelectorEditBean extends XEOEditBean {
 						{
 							availableCols.append(",");
 						}
-						availableCols.append("{\"checked\" : false, \"text\" : \"" + label + "\", \"id\" : \"" + c.getDataField() + "\", \"leaf\" : true, \"cls\" : \"file\"}");
+						String dataField = DataFieldDecoder.convertForGridPanel( c.getDataField() );
+						String dataFieldJson = String.format("{\"checked\" : false, \"text\" : \"%s\", \"id\" : \"%s\", \"leaf\" : true, \"cls\" : \"file\"}", label, dataField);
+						availableCols.append(dataFieldJson);
 						hidden = true;
 					}
 					else
@@ -121,8 +87,9 @@ public class GridTreeSelectorEditBean extends XEOEditBean {
 						{
 							selectedCols.append(",");
 						}
-						
-						selectedCols.append("{\"checked\" : false, \"text\" : \"" + label + "\", \"id\" : \"" + c.getDataField() + "\", \"leaf\" : true, \"cls\" : \"file\"}");
+						String dataField = DataFieldDecoder.convertForGridPanel( c.getDataField() );
+						String dataFieldJson = String.format("{\"checked\" : false, \"text\" : \"%s\", \"id\" : \"%s\", \"leaf\" : true, \"cls\" : \"file\"}", label, dataField);
+						selectedCols.append(dataFieldJson);
 						show = true;
 					}
 				}
@@ -147,7 +114,7 @@ public class GridTreeSelectorEditBean extends XEOEditBean {
 	
 	public void clearParentColumns()
 	{
-		GridPanel panel = (GridPanel) getParentBean().getViewRoot().findComponent(
+		GridPanel panel = (GridPanel) getParentView().findComponent(
 				GridPanel.class);
 		Column[] cols = panel.getColumns();
 		
@@ -163,7 +130,8 @@ public class GridTreeSelectorEditBean extends XEOEditBean {
 	
 	public void setParentColumn(String id)
 	{
-		GridPanel panel = (GridPanel) getParentBean().getViewRoot().findComponent(
+		
+		GridPanel panel = (GridPanel) getParentView().findComponent(
 				GridPanel.class);
 		Column[] cols = panel.getColumns();
 		

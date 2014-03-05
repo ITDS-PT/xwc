@@ -493,7 +493,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 				for( int i=0; i < colsConfig.length(); i++ ) {
 					JSONObject colConfig = colsConfig.getJSONObject(i);
 					boolean found = false;
-					String colDataField = colConfig.optString( "dataField" );
+					String colDataField = DataFieldDecoder.convertForBOQL( colConfig.optString( "dataField" ) );
 					
 					JSONObject savedCfg = null;
 					

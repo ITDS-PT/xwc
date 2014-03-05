@@ -3127,5 +3127,67 @@ ExtXeo.fixHorizontalScrollbar = function(store){
 		}
 	}
 };
+
+/**
+ * Function invoked when the user selects columns to display/hide
+ * 
+ * @param gridId - The grid to alter the columns
+ * @param parentWindowId - The Id of the window where the column list is being displayed
+ * @param tree2 - Reference to the tree with the selected columns
+ * @param root - Reference to the root menu of the tree with the available columns
+ * @param root2 - Reference to the root menu of the tree with the selected columns
+ * @param noColumnsTitle - Title to show in the message when no columns are selected
+ * @param noColumnsMessage - Content to show in the message when no columns are selected
+ */
+ExtXeo.grid.selectColumns = function (gridId, parentWindowId, tree2, root, root2, noColumnsTitle, noColumnsMessage){
 	
+	XVW.Wait(1);
+	
+	toggleCheck(root, true);
+	var unSelNodes = tree2.getChecked('id',root);
+	
+	toggleCheck(root2, true);
+	var selNodes = tree2.getChecked('id',root2);
+	
+	var grid = Ext.getCmp(gridId);
+	grid.suspendUploadCondig = true;
+	var cm = grid.getColumnModel();
+	//cm.suspendEvents();
+	toggleCheck(root2, true);
+	var colsCount = cm.getColumnCount(false);
+	if( selNodes.length > 1 ) {
+		for( k = 0; k < unSelNodes.length; k++){
+			var i = cm.findColumnIndex( unSelNodes[k] );
+			if(i>-1 && !cm.isHidden(i)){
+				cm.setHidden(i,true);
+			}
+		}
+		for( k = 0; k < selNodes.length; k++){
+			var i = cm.findColumnIndex( selNodes[k] );
+			if(i>-1 && cm.isHidden(i)) {
+				cm.setHidden(i,false);
+			}
+		}
+
+	 	// Ordernar Colunas;
+		for( k = 0; k < selNodes.length; k++){
+			var i = cm.findColumnIndex( selNodes[k] );
+			if( i > -1 ){
+				cm.moveColumn( i,k+1);
+			}
+		}
+	
+		grid.suspendUploadCondig = false;
+		grid.updateColumnConfig(true);
+		grid.getStore().reload();
+		var w = Ext.getCmp(parentWindowId);
+	  	w.close();
+	} else { ;
+		Ext.Msg.alert(noColumnsTitle,noColumnsMessage);
+	}
+	XVW.NoWait();
+	
+	
+	
+};
 
