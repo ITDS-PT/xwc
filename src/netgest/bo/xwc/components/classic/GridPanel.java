@@ -1,5 +1,25 @@
 package netgest.bo.xwc.components.classic;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.el.MethodExpression;
+import javax.el.ValueExpression;
+import javax.faces.component.UIComponent;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ActionListener;
+import javax.servlet.http.HttpServletRequest;
+
 import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.preferences.Preference;
 import netgest.bo.runtime.boObject;
@@ -48,27 +68,6 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtractor;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 import netgest.utils.StringUtils;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
-import javax.faces.component.UIComponent;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ActionListener;
-import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -284,7 +283,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 			"enableColumnSort", this, true, Boolean.class);
 
 	/**
-	 * FIXME: Does not work, 
+	 * Removes the filter menu of columns
 	 */
 	private XUIViewBindProperty<Boolean> enableColumnFilter = new XUIViewBindProperty<Boolean>(
 			"enableColumnFilter", this, true, Boolean.class);

@@ -78,7 +78,8 @@ public class ColumnAttribute extends netgest.bo.xwc.components.classic.ColumnAtt
 	}
     
 	/**
-	 *  Whether the column is Frozen or not
+	 *  Whether the column is Frozen or not (only available in the XEOJQUERY grid implementation
+	 *  not on the standard/default ExtJS Grid)
 	 */
 	private XUIViewProperty<Boolean> frozen = 
 			new XUIViewProperty<Boolean>( "frozen", this, false );
