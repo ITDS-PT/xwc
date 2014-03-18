@@ -66,6 +66,10 @@
 			<param-name>UseBrowserLanguage</param-name>
 			<param-value>false</param-value>
 		</init-param>
+		<init-param>
+			<param-name>UseViewerCache</param-name>
+			<param-value>false</param-value>
+		</init-param>
 	</servlet>
 	<filter>
 		<filter-name>DeployFilter</filter-name>
