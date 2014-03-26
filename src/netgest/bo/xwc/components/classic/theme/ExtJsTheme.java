@@ -283,7 +283,7 @@ public class ExtJsTheme implements XUITheme {
 		String useNonMinified = System.getProperty("xeo.minified");
 		boolean normal = false;
 		if (StringUtils.hasValue(useNonMinified)){
-			normal = Boolean.valueOf(useNonMinified);
+			normal = !Boolean.valueOf(useNonMinified);
 		}
 		return normal;
 	}
