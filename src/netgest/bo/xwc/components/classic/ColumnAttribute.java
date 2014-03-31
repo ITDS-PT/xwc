@@ -1,5 +1,10 @@
 package netgest.bo.xwc.components.classic;
 
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
+
+import javax.el.ValueExpression;
+
 import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.annotations.Values;
@@ -16,11 +21,6 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.xeo.components.Bridge;
 import netgest.bo.xwc.xeo.components.List;
 import netgest.bo.xwc.xeo.components.LookupList;
-
-import java.io.CharArrayWriter;
-import java.io.PrintWriter;
-
-import javax.el.ValueExpression;
 
 import org.json.JSONObject;
 
@@ -504,5 +504,10 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 	@Override
 	public boolean useValueOnLov() {
 		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return getDataField();
 	}
 }
