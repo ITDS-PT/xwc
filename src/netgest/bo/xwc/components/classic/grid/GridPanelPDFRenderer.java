@@ -127,7 +127,7 @@ public class GridPanelPDFRenderer {
 					iTableWidth += iWidths[i]; 
 					
 					
-	    			String sLabel = GridPanel.getColumnLabel( oDataSource, oGridColumns[i] );
+	    			String sLabel = GridPanel.getColumnLabel( oDataSource, current );
 	    			if (StringUtils.isEmpty( sLabel )){
 	    				sLabel = "";
 	    			} else
@@ -175,16 +175,16 @@ public class GridPanelPDFRenderer {
 				}
     			for( int i=0;i < visibleColumns.size(); i++ ) {
     				
-    				if (!visibleColumns.get(i).isHidden()){
+    					Column current = visibleColumns.get(i);
     					
     					DataFieldConnector oAtt;
-    					oAtt = oRecordConnector.getAttribute( oGridColumns[i].getDataField() );
+    					oAtt = oRecordConnector.getAttribute( current.getDataField() );
     					if( oAtt != null ) {
     						String sValue = oAtt.getDisplayValue();
     						
     						cell = new PdfPCell();
     						
-    						if(	oGridColumns[i].isContentHtml()) {
+    						if(	current.isContentHtml()) {
     							sValue = HTMLEntityDecoder.htmlEntityToChar( sValue );
     							List<Element> s = (List<Element>)
     									HTMLWorker.parseToList(new StringReader(sValue), null, htmlWorkerProps );
@@ -215,13 +215,12 @@ public class GridPanelPDFRenderer {
     						cell = 
     								new PdfPCell( 
     										new Paragraph(
-    												ComponentMessages.GRID_INVALID_COLUMN.toString( oGridColumns[i].getDataField() ),
+    												ComponentMessages.GRID_INVALID_COLUMN.toString( current.getDataField() ),
     												fontB
     												)
     										);
     					}
     					table.addCell(cell);
-    				}
     			}
 			}
 			
