@@ -29,15 +29,25 @@ public class JsErrorLogger {
 	
 	public boolean isInitialized() throws SQLException{
 		ResultSet result = connection.getMetaData().getTables(null, null, tableName , null);
+		ResultSet tableCount = null;
+		Statement tableStatement = null;
 		try {
-			return result.next();
+			result.next();
+			tableStatement = connection.createStatement(); 
+			tableCount = tableStatement.executeQuery( String.format("select count(*) from %s",tableName) );
+			return true;
 		} catch (SQLException e){
-			e.printStackTrace();
 			return false;
 		}
 		finally {
 			if (result != null){
 				result.close();
+			}
+			if (tableStatement != null){
+				tableStatement.close();
+			}
+			if (tableCount != null){
+				tableCount.close();
 			}
 		}
 	}

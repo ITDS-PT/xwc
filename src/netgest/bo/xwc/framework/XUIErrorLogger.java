@@ -196,12 +196,28 @@ public class XUIErrorLogger {
 	public static final String XEO_ERROR_WITH_CONTEXT_LOG = "XEO_DEBUG_INFO_ON_ERROR";
 	
 	boolean isInit(Connection connection) throws SQLException {
+			
 			ResultSet result = connection.getMetaData().getTables(null, null, XEO_ERROR_WITH_CONTEXT_LOG , null);
+			ResultSet tableCount = null;
+			Statement tableStatement = null;
 			try {
-				return result.next();
-			} finally {
+				result.next();
+				tableStatement = connection.createStatement(); 
+				tableCount = tableStatement.executeQuery( String.format("select count(*) from %s",XEO_ERROR_WITH_CONTEXT_LOG) );
+				return true;
+			} catch (SQLException e){
+				e.printStackTrace();
+				return false;
+			}
+			finally {
 				if (result != null){
 					result.close();
+				}
+				if (tableStatement != null){
+					tableStatement.close();
+				}
+				if (tableCount != null){
+					tableCount.close();
 				}
 			}
 		}
