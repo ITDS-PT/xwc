@@ -167,21 +167,14 @@ public class ExtJsTheme implements XUITheme {
 		String lang = getApplicationLanguage();
 		styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "extjs-css",
 				composeUrl(getResourceBaseUri() + "resources/css/ext-all.css"));
-		if (inDevelopmentMode() || useNormalInclude()){
-			
-			Map<String,String> scripts = getCssToInclude();
-			Iterator<String> it = scripts.keySet().iterator();
-			while (it.hasNext()){
-				String id = it.next();
-				String file = scripts.get(id);	
-				file = file.replace("%LANG%",lang);
-				styleContext.addInclude(XUIStyleContext.POSITION_HEADER, id,file);
-			}
-		}else {
-			String md5 = getMD5ForFile("concatenated-min.css");
-			styleContext.addInclude(XUIStyleContext.POSITION_HEADER, "minified_css",
-					"minified/concatenated-min.css?hash=" + md5);
+		Map<String,String> css = getCssToInclude();
+		for (Iterator<String> it = css.keySet().iterator(); it.hasNext();){
+			String id = it.next();
+			String file = css.get(id);	
+			file = file.replace("%LANG%",lang);
+			styleContext.addInclude(XUIStyleContext.POSITION_HEADER, id,file);
 		}
+		
 		
 		Map<String,String> filesToInclude = themeFilesToInclude();
 		Set<Entry<String,String>> files = filesToInclude.entrySet();
