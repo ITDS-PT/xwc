@@ -3182,7 +3182,7 @@ ExtXeo.grid.selectColumns = function (gridId, parentWindowId, tree2, root, root2
 		grid.getStore().reload();
 		var w = Ext.getCmp(parentWindowId);
 	  	w.close();
-	} else { ;
+	} else { 
 		Ext.Msg.alert(noColumnsTitle,noColumnsMessage);
 	}
 	XVW.NoWait();
