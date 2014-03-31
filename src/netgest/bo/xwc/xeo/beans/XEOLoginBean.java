@@ -256,7 +256,7 @@ public class XEOLoginBean extends XEOSecurityLessBean {
 		} catch ( boLoginException e ) {
 			if ( "BO-4000".equals( e.getErrorCode() ) ) {
 				getRequestContext().addMessage(
-						"LoginBean" ,
+						"wrongUsernameOrPassword" ,
 						new XUIMessage( XUIMessage.TYPE_ALERT ,
 								XUIMessage.SEVERITY_ERROR ,
 								ViewersMessages.LOGIN_TITLE_ERROR_LOGIN.toString() ,
