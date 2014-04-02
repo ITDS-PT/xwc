@@ -1,5 +1,11 @@
 package netgest.bo.xwc.components.connectors;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.util.Date;
+import java.util.Map;
+
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.runtime.EboContext;
 import netgest.bo.runtime.boObject;
@@ -7,13 +13,6 @@ import netgest.bo.runtime.boRuntimeException;
 import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.localization.ConnectorsMessages;
 import netgest.bo.xwc.framework.localization.XUILocalization;
-
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
 
 public class XEOObjectListGroupAttribute extends XEOObjectAttributeMetaData implements DataFieldConnector {
 
@@ -49,9 +48,11 @@ public class XEOObjectListGroupAttribute extends XEOObjectAttributeMetaData impl
     	try {
 			if ( super.getBoDefAttribute().getAtributeType() == boDefAttribute.TYPE_OBJECTATTRIBUTE ) {
 				
-				boObject obj = boObject.getBoManager().loadObject( getEboContext(), ((BigDecimal)attValue).longValue() );
-				if( obj != null ) {
-					sRetValue = obj.getCARDIDwNoIMG().toString();
+				if (attValue != null){
+					boObject obj = boObject.getBoManager().loadObject( getEboContext(), ((BigDecimal)attValue).longValue() );
+					if( obj != null ) {
+						sRetValue = obj.getCARDIDwNoIMG().toString();
+					}
 				}
 			} else if ( getDataType() == DataFieldTypes.VALUE_BOOLEAN ) {
 				sRetValue = (String)attValue;

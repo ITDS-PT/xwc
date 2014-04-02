@@ -1250,6 +1250,7 @@ ExtXeo.grid.ViewGroup = function( opts ) {
 };
 
 ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
+	groupIdAlternative : 0,
     aggregateTbField    : 'Agregar Valores',
     aggregateTbSumText  : 'Somat&oacute;rio' ,
     aggregateTbAvgText  : 'M&eacute;dia' ,
@@ -1375,6 +1376,14 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
             	gid = new Array(preFix, Ext.util.Format.htmlEncode(value)).join('|');
             else
             	gid = new Array(Ext.util.Format.htmlEncode(value)).join('|');
+            
+            //When the GroupId is empty (group by null values, for instance), reset the gid to something
+            //valid, if two groups are empty, it will enter a loop of loading values
+            if (gid === ""){
+            	if (groupField !== null && groupField !== undefined){
+            		gid = groupField + "|null";
+            	}
+            }
             
             var group = this.rows[gid]; 
             var aggregateGrid;
