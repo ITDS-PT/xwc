@@ -1,13 +1,5 @@
 package netgest.bo.xwc.framework.def;
 
-import netgest.bo.system.Logger;
-import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.localization.XUICoreMessages;
-import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
-
-import netgest.utils.StringUtils;
-import netgest.utils.ngtXMLUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,6 +23,12 @@ import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 
+import netgest.bo.system.Logger;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.localization.XUICoreMessages;
+import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
+import netgest.utils.StringUtils;
+import netgest.utils.ngtXMLUtils;
 import oracle.xml.parser.v2.NSResolver;
 import oracle.xml.parser.v2.XMLDocument;
 import oracle.xml.parser.v2.XMLElement;
@@ -422,20 +420,25 @@ public class XUIViewerDefinitonParser
     	String sRealPath = servletContext.getRealPath(fromModule?xeodeploy+viewerName:viewerName );
     	if( sRealPath != null ) {
     		viewerFile = new File( sRealPath );
-        	if( !viewerFile.exists() ) {
-        		
-        		String path=DEFAULT_VIEWERS_ROOT + File.separator + viewerName;
-        		if (fromModule) {
-        			path = xeodeploy+path;
-        		}
-        		
-            	sRealPath = servletContext.getRealPath( path );
+    		if( !viewerFile.exists() ) {
+    			viewerFile = null;
+    	    } 
+    	}
+    	
+    	if( viewerFile == null ) {
+    		String path=DEFAULT_VIEWERS_ROOT + File.separator + viewerName;
+    		if (fromModule) {
+    			path = xeodeploy+path;
+    		}
+        	sRealPath = servletContext.getRealPath( path );
+        	if( sRealPath != null ) {
         		viewerFile = new File( sRealPath );
             	if( !viewerFile.exists() ) {
             		viewerFile = null;
             	}
         	}
-    	} 
+    	}
+    	
     	if( viewerFile != null ) {
     		try {
     			Timestamp time = new Timestamp( viewerFile.lastModified() );
