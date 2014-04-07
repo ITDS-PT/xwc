@@ -228,9 +228,12 @@ public class XUIViewerDefinitonParser
     	Map<String,XMLElement> result = new HashMap< String , XMLElement >();
     	NodeList children = element.getChildNodes();
     	for (int k = 0 ; k < children.getLength(); k++){
-    		XMLElement child = (XMLElement) children.item( k );
-    		if ("xvw:define".equals(child.getNodeName())){
-    			result.put( child.getAttribute( "name" ) , child );
+    		Node childNode = children.item( k );
+    		if (childNode instanceof XMLElement){
+	    		XMLElement child = (XMLElement) childNode;
+	    		if ("xvw:define".equals(child.getNodeName())){
+	    			result.put( child.getAttribute( "name" ) , child );
+	    		}
     		}
     	}
     	return result;
