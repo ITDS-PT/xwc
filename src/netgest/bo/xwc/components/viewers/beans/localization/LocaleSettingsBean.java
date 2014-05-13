@@ -54,9 +54,9 @@ public class LocaleSettingsBean extends XEOBaseBean {
 
 	public Map< String , String > getDateParts() {
 		Map< String , String > parts = new HashMap< String , String >(3);
-		parts.put( YEAR , BeansMessages.LOCALE_SETTINGS_LOV_ENTRY_DAY.toString() );
+		parts.put( YEAR , BeansMessages.LOCALE_SETTINGS_LOV_ENTRY_YEAR.toString() );
 		parts.put( MONTH , BeansMessages.LOCALE_SETTINGS_LOV_ENTRY_MONTH.toString() );
-		parts.put( DAY , BeansMessages.LOCALE_SETTINGS_LOV_ENTRY_YEAR.toString() );
+		parts.put( DAY , BeansMessages.LOCALE_SETTINGS_LOV_ENTRY_DAY.toString() );
 		
 		return parts;
 	}
