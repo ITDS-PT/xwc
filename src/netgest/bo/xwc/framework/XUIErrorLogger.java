@@ -126,7 +126,7 @@ public class XUIErrorLogger {
 		if (request != null){
 			try{
 				hostname = request.getLocalName();
-			} catch (Exception e1){
+			} catch (Throwable e1){
 				hostname = request.getServerName();
 			}
 			ipAddress = XUIHttpRequest.

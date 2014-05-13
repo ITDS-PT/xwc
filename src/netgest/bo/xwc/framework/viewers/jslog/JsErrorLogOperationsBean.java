@@ -138,7 +138,7 @@ public class JsErrorLogOperationsBean extends XEOBaseBean {
 		String hostname = "";
 		try{
 			hostname = request.getLocalName();
-		} catch (Exception e){
+		} catch (Throwable e){
 			hostname = request.getServerName();
 		}
 		jsLogger.insertNewRecord(userBoui,profileBoui,parameters, hostname,ipAddress);

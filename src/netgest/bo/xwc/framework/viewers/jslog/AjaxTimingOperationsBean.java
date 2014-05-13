@@ -138,7 +138,7 @@ public class AjaxTimingOperationsBean extends XEOBaseBean {
 		String hostname = "";
 		try{
 			hostname = request.getLocalName();
-		} catch (Exception e){
+		} catch (Throwable e){
 			hostname = request.getServerName();
 		}
 		ajaxLogger.insertNewRecord(userBoui,profileBoui,parameters, hostname ,ipAddress);
