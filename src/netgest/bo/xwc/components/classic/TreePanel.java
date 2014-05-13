@@ -312,16 +312,20 @@ public class TreePanel extends XUIComponentBase implements ExtJSRegionRenderer {
                 if (comp instanceof Menu){
 	                Menu oMenuChild = (Menu)comp;
 	                
-	                if( oMenuChild.canAcess() ) {
+	                boolean visible = oMenuChild.isVisible();
+	                if( oMenuChild.canAcess() && visible ) {
 	                    if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
 			                oItemCfg = oItemsCfg.addChild();
 	                    	oItemCfg.addJSString( "id", oMenuChild.getClientId() );
 	                    	oItemCfg.addJSString( "text", oMenuChild.getText() );
-	                    	if( !oMenuChild.isVisible() )
-	                    		oItemCfg.add( "hidden", true );
+	                    	if( !visible )
+	                    		oItemCfg.add( "visible", true );
 	                    	
-	                    	if( oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
+	                    	boolean disabled = false;
+	                    	if( oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) ){
 	                    		oItemCfg.add( "disabled", true );
+	                    		disabled = true;
+	                    	}
 	                
 			
 			                oItemCfg.addJSString( "text", oMenuChild.getText() );
@@ -336,7 +340,7 @@ public class TreePanel extends XUIComponentBase implements ExtJSRegionRenderer {
 			                    oItemCfg.add( "checked", oMenuChild.getValue() );
 			                }
 			
-			                if( oMenuChild.getActionExpression() != null ) {
+			                if( oMenuChild.getActionExpression() != null && !disabled) {
 			                	ExtConfig oItemListeners = oItemCfg.addChild("listeners");
 			                	
 			                	int waitMode = XVWScripts.WAIT_DIALOG;
@@ -374,7 +378,6 @@ public class TreePanel extends XUIComponentBase implements ExtJSRegionRenderer {
             while( oSubChildren.hasNext() ) {
                 
                 ExtConfig oItemCfg;
-                
                 Menu oMenuChild = (Menu)oSubChildren.next();
                 if( oMenuChild.canAcess() && oMenuChild.isVisible() ) {
                     if ( oMenuChild.getEffectivePermission(SecurityPermissions.READ) ) {
@@ -382,10 +385,13 @@ public class TreePanel extends XUIComponentBase implements ExtJSRegionRenderer {
                     	oItemCfg.addJSString( "id", oMenuChild.getClientId() );
                     	oItemCfg.addJSString( "text", oMenuChild.getText() );
                     	if( !oMenuChild.isVisible() )
-                    		oItemCfg.add( "hidden", true );
-                    	
-                    	if( oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) )
                     		oItemCfg.add( "disabled", true );
+                    	
+                    	boolean disabled = false;
+                    	if( oMenuChild.isDisabled() || !oMenuChild.getEffectivePermission(SecurityPermissions.EXECUTE) ){
+                    		oItemCfg.add( "disabled", true );
+                    		disabled = true;
+                    	}
 	                
 		                oItemCfg.addJSString( "text", oMenuChild.getText() );
 		                oItemCfg.add( "expanded", oMenuChild.getExpanded() );
@@ -396,7 +402,7 @@ public class TreePanel extends XUIComponentBase implements ExtJSRegionRenderer {
 		                	oItemCfg.addJSString("cls", "x-btn-text-icon");
 		                }
 		
-		                if( oMenuChild.getActionExpression() != null ) {
+		                if( oMenuChild.getActionExpression() != null && !disabled) {
 		                	ExtConfig oItemListeners = oItemCfg.addChild("listeners");
 		                	
 		                	int waitMode = XVWScripts.WAIT_DIALOG;
