@@ -1,6 +1,7 @@
 package netgest.bo.xwc.xeo.beans;
 
 import netgest.bo.xwc.components.classic.HTMLFileBrowse;
+import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.components.XUIForm;
@@ -73,7 +74,7 @@ public class FileBrowseBean extends netgest.bo.xwc.xeo.beans.XEOBaseBean {
         if (oFileComp.getSubmitedFile() != null){
         	oRequestContext.getScriptContext().add(XUIScriptContext.POSITION_FOOTER, "_updateFile", 
 	        		"Ext.onReady( function() { " +
-	        		"window.parent.document.getElementById('" + id +"_ci').value='"+oFileComp.getSubmitedFile().getName()+"';"+
+	        		"window.parent.document.getElementById('" + id +"_ci').value='"+JavaScriptUtils.safeJavaScriptWrite( oFileComp.getSubmitedFile().getName() )+"';"+
 	        		"});\n");
         }
 		oRequestContext.setViewRoot(  

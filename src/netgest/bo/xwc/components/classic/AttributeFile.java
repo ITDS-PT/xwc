@@ -256,7 +256,7 @@ public class AttributeFile extends AttributeBase {
             }
             dmb.put( "httpp","javax.faces.ViewState=" + sViewState );
             dmb.put( "httpp", "xvw.servlet=" + sServletId );
-            dmb.put( "filename", String.valueOf( oAtt.getDisplayValue() ) );
+            dmb.put( "filename", JavaScriptUtils.safeJavaScriptWrite( String.valueOf( oAtt.getDisplayValue() ) ) );
             String link = 
             	(req.isSecure()?"https":"http") + "://" + 
             	req.getServerName() +
