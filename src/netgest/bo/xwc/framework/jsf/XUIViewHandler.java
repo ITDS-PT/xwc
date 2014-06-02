@@ -121,7 +121,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	}
 	
 	
-	private static boolean useCache = Boolean.TRUE;
+	private static boolean useCache = Boolean.FALSE;
 
 	public static synchronized void disableCache() {
 		useCache = Boolean.FALSE;
