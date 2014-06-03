@@ -910,7 +910,7 @@ public class GridPanelExtJsRenderer extends XUIRenderer  {
         }
         
         if( autoExpadColumn != null && validExpandColumn ) {
-            oGridConfig.addJSString( "autoExpandColumn", oGrid.getAutoExpandColumn() );
+            oGridConfig.addJSString( "autoExpandColumn", DataFieldDecoder.convertForGridPanel( oGrid.getAutoExpandColumn() ) );
         }
         
         oGridConfig.addJSString( "id", oGrid.getClientId() );
