@@ -290,7 +290,7 @@ public class LocaleSettingsBean extends XEOBaseBean {
 		decimalymbols.setGroupingSeparator( getGroupSeparator().charAt( 0 ) );
 		decimalymbols.setCurrencySymbol( getCurrencySymbol() );	
 		String pattern = "###,###.###";
-		if (getCurrencyPosition().equals( "left" ))
+		if (getCurrencyPosition().equalsIgnoreCase( "left" ))
 			pattern = '¤' + pattern;
 		else 
 			pattern = pattern + '¤';
