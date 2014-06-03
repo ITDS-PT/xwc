@@ -22,4 +22,6 @@ public interface Chart {
 	 */
 	public void outputChartAsImageToStream(OutputStream out, boolean force);
 	
+	public static final String FORCE_IMAGE_MODE = "forceImg";
+	
 }

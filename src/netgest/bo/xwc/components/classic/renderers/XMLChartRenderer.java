@@ -17,7 +17,8 @@ public class XMLChartRenderer extends XMLBasicRenderer {
 		
 		super.encodeBegin( component );
 		Chart 	chartComponent	= (Chart)component;
-		String servlet = ComponentRenderUtils.getCompleteServletURL(getRequestContext(), component.getClientId());
+		String servlet = ComponentRenderUtils.getCompleteServletURL(getRequestContext(), component.getClientId())
+				+ String.format("&%s=true", Chart.FORCE_IMAGE_MODE);
 		
 		String tmpFolder = netgest.bo.impl.document.Ebo_DocumentImpl.getTempDir();
 		if(tmpFolder.endsWith("\\") || tmpFolder.endsWith("/"))

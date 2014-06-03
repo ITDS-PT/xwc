@@ -1,26 +1,5 @@
 package netgest.bo.xwc.components.classic.charts;
 
-import netgest.bo.ql.QLParser;
-import netgest.bo.runtime.EboContext;
-import netgest.bo.system.Logger;
-import netgest.bo.system.boApplication;
-import netgest.bo.xwc.components.HTMLAttr;
-import netgest.bo.xwc.components.HTMLTag;
-import netgest.bo.xwc.components.annotations.Localize;
-import netgest.bo.xwc.components.classic.charts.configurations.IPieChartConfiguration;
-import netgest.bo.xwc.components.classic.charts.datasets.PieDataSet;
-import netgest.bo.xwc.components.util.ComponentRenderUtils;
-import netgest.bo.xwc.framework.XUIBindProperty;
-import netgest.bo.xwc.framework.XUIRenderer;
-import netgest.bo.xwc.framework.XUIRendererServlet;
-import netgest.bo.xwc.framework.XUIRequestContext;
-import netgest.bo.xwc.framework.XUIResponseWriter;
-import netgest.bo.xwc.framework.XUIScriptContext;
-import netgest.bo.xwc.framework.XUIStateBindProperty;
-import netgest.bo.xwc.framework.components.XUIComponentBase;
-
-import netgest.utils.StringUtils;
-
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,6 +18,25 @@ import javax.servlet.ServletResponse;
 
 import jofc2.model.Chart;
 import jofc2.model.Text;
+import netgest.bo.ql.QLParser;
+import netgest.bo.runtime.EboContext;
+import netgest.bo.system.Logger;
+import netgest.bo.system.boApplication;
+import netgest.bo.xwc.components.HTMLAttr;
+import netgest.bo.xwc.components.HTMLTag;
+import netgest.bo.xwc.components.annotations.Localize;
+import netgest.bo.xwc.components.classic.charts.configurations.IPieChartConfiguration;
+import netgest.bo.xwc.components.classic.charts.datasets.PieDataSet;
+import netgest.bo.xwc.components.util.ComponentRenderUtils;
+import netgest.bo.xwc.framework.XUIBindProperty;
+import netgest.bo.xwc.framework.XUIRenderer;
+import netgest.bo.xwc.framework.XUIRendererServlet;
+import netgest.bo.xwc.framework.XUIRequestContext;
+import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIScriptContext;
+import netgest.bo.xwc.framework.XUIStateBindProperty;
+import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.utils.StringUtils;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -754,8 +752,10 @@ private void applyChartConfigurations(JFreeChart chart){
 			PieChart component = (PieChart) oComp;
 			OutputStream out = oResponse.getOutputStream();
 
-			if (component.getType().equalsIgnoreCase(TYPE_CHART_IMG)) {
-				component.outputChartAsImageToStream(out, false);
+			String forceImageType = oRequest.getParameter( netgest.bo.xwc.components.classic.charts.Chart.FORCE_IMAGE_MODE );
+			boolean force = StringUtils.hasValue( forceImageType );
+			if (component.getType().equalsIgnoreCase(TYPE_CHART_IMG) || force ) {
+				component.outputChartAsImageToStream(out, force );
 			} else if (component.getType().equalsIgnoreCase(TYPE_CHART_FLASH)) {
 				// Create the chart with the default settings
 				Chart c = new Chart();

@@ -52,7 +52,7 @@ public class XMLGridPanelRenderer extends XUIRenderer {
 		w.startElement( component.getRendererType() );
 		
 		
-		w.startElement("gridheaderrow", null);
+		w.startElement("gridheaderrow");
 		for ( int k = 0; k < columns.length ; k++)
 		{
 			Column curr = columns[k];
@@ -70,7 +70,7 @@ public class XMLGridPanelRenderer extends XUIRenderer {
 			//Returns a line of data from the grid
             DataRecordConnector oDataRecord = oDataIterator.next();
             
-            w.startElement("gridrow", null);
+            w.startElement("gridrow");
             
             for (int i = 0; i < columns.length; i++) 
             { 
@@ -101,23 +101,20 @@ public class XMLGridPanelRenderer extends XUIRenderer {
 	                		if (oDataFieldValue == null)
 	                			oDataFieldValue = oDataField.getValue();
 	                		
-	                    	w.startElement("gridcolumn", null);
-		                    w.writeAttribute("width",current.getWidth(),null);
-		                    if( oDataFieldValue != null )
-		                    {
-		                    	w.writeAttribute("visible", oDataField.getDisabled(), null);
+	                    	w.startElement("gridcolumn");
+		                    w.writeAttribute("width",current.getWidth());
+		                    if( oDataFieldValue != null ){
+		                    	w.writeAttribute("visible", oDataField.getDisabled());
 		                    	
-		                    	
-	                    		if (hasCustomRender)
+		                    	if (hasCustomRender)
 	                    			sDisplayValue = sCustomRenderDisplay ;
 	                    		else
 	                    			sDisplayValue = oDataField.getDisplayValue();
 	                    		
-	                    		if (sDisplayValue != null)
-		                    	{
+	                    		if (sDisplayValue != null){
 	                    			//Prevent Illegal entities in 
 		                    		oDataFieldType = oDataField.getDataType();
-			                        switch( oDataFieldType ){
+		                    		switch( oDataFieldType ){
 			                            case DataFieldTypes.VALUE_BLOB:
 			                                // Don't passe to JavaScript
 			                                break;
@@ -138,7 +135,11 @@ public class XMLGridPanelRenderer extends XUIRenderer {
 			                            	w.writeCDATA(sDisplayValue);
 			                            	break;
 			                            case DataFieldTypes.VALUE_NUMBER:
-			                            	w.writeAttribute("displayValue",XUILocalization.formatNumber( ((BigDecimal)oDataFieldValue).longValue() ));
+			                            	if (DataFieldTypes.RENDER_OBJECT_LOOKUP == oDataField.getInputRenderType()){
+			                            		w.writeAttribute("displayValue", sDisplayValue );
+			                            	} else {
+			                            		w.writeAttribute("displayValue",XUILocalization.formatNumber( ((BigDecimal)oDataFieldValue).longValue() ));
+			                            	}
 			                                break;
 			                            case DataFieldTypes.VALUE_CURRENCY:
 			                            	w.writeAttribute("displayValue",XUILocalization.formatCurrency( ((BigDecimal)oDataFieldValue).longValue() ));
