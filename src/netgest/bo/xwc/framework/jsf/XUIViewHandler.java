@@ -487,7 +487,10 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
     
     boolean canReadFromCache(XUIApplicationContext applicationCtx, String cacheKey, String viewerId){
     	
-    	if ( !viewerCache.contains( ( cacheKey ) )  || !useCache)
+    	if (!useCache)
+    		return false;
+    	
+    	if ( !viewerCache.contains( ( cacheKey ) )  )
     		return false;
     	//Check if we're in development mode
     	boolean development = boApplication.getDefaultApplication().inDevelopmentMode();
