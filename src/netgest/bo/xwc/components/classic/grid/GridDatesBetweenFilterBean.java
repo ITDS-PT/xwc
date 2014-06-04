@@ -2,6 +2,7 @@ package netgest.bo.xwc.components.classic.grid;
 
 import java.sql.Timestamp;
 
+import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
 import netgest.bo.xwc.components.localization.ViewersMessages;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.messages.XUIMessageSender;
@@ -77,9 +78,9 @@ public class GridDatesBetweenFilterBean extends XEOBaseBean {
 			StringBuilder dateFilter = new StringBuilder("var f = Ext.getCmp('")
 				.append( gridId )
 				.append("').filters.getFilter('")
-				.append(column).append("');")
-				.append( "f.setBeforeValue("+formatDate(getEnd())+");" ) //Affect the Widgets with the value
-				.append( "f.setAfterValue("+formatDate(getStart())+");" )
+				.append( DataFieldDecoder.convertForGridPanel( column ) ).append("');")
+				.append( String.format("f.setBeforeValue(%s);",formatDate(getEnd())) ) //Affect the Widgets with the value
+				.append( String.format("f.setAfterValue(%s);",formatDate(getStart())) )
 				.append( "f.setBeforeCheck(true);" ) //Mark the widget as checked
 				.append( "f.setAfterCheck(true);" )
 				.append( "f.clearData();" ) //Clear the Is Null / Not is Null filters
