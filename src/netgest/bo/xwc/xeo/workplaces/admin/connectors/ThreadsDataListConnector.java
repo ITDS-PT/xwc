@@ -3,14 +3,18 @@ package netgest.bo.xwc.xeo.workplaces.admin.connectors;
 import java.rmi.RemoteException;
 
 import netgest.bo.runtime.robots.ejbtimers.xeoEJBTimer;
+import netgest.bo.system.IboAgentsController;
+import netgest.bo.system.Logger;
 import netgest.bo.system.boAgentsControllerEjbTimer;
 import netgest.bo.system.boApplication;
+import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
 
 
 public class ThreadsDataListConnector extends GenericDataListConnector {
 	ThreadType type;
 
+	private static final Logger logger = Logger.getLogger( ThreadsDataListConnector.class );
 
 	public ThreadsDataListConnector() {
 		super();
@@ -115,32 +119,51 @@ public class ThreadsDataListConnector extends GenericDataListConnector {
 		return isActive;
 	}
 
-	public void startThread(String name) {
+	public boolean startThread(String name, StringBuilder message) {
+		boolean result = true;
 		try {
-			this.getBoApplication().getBoAgentsController()
-			.chekAndStartThread(this.getThreadIndex(name));
+			IboAgentsController controller = this.getBoApplication().getBoAgentsController();
+			if (controller != null){
+				controller.chekAndStartThread(this.getThreadIndex(name));
+			} else {
+				result = false;
+				message.append(ComponentMessages.THREADS_CONTROLLER_NOT_FOUND.toString());
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			result = false;
+			message.append(e.getMessage());
+			logger.warn( String.format("Could not start thread %s", name ) , e );
 		}
+		return result;
 	}
 
 
-	public void stopThread(String name) {
-		try {
-			switch (this.type) {
-			case USER_THREADS:
-				Thread thread = 
-					(Thread) this.getBoApplication().getBoAgentsController().getThreadByName(name)[0];
-				thread.interrupt();
-				break;
-			case EJB_TIMERS:
-				((boAgentsControllerEjbTimer)this.getBoApplication().getBoAgentsController())
-				.suspendAgent(name);
-				break;
+	public boolean stopThread(String name, StringBuilder message) {
+		
+		IboAgentsController controller = this.getBoApplication().getBoAgentsController();
+		boolean result = true;
+		if (controller != null){
+			try {
+				switch (this.type) {
+				case USER_THREADS:
+					Thread thread = 
+						(Thread) controller.getThreadByName(name)[0];
+					thread.interrupt();
+					break;
+				case EJB_TIMERS:
+					((boAgentsControllerEjbTimer)controller).suspendAgent(name);
+					break;
+				}
+			} catch (Exception e) {
+				result = false;
+				message.append( e.getMessage() );
+				logger.warn( String.format("Could not stop thread %s",name) , e );
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} else {
+			message.append(ComponentMessages.THREADS_CONTROLLER_NOT_FOUND.toString());
+			result = false;
 		}
+		return result;
 	}
 
 

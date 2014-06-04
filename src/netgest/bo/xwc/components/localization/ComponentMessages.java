@@ -217,4 +217,7 @@ public interface ComponentMessages {
 	
 	public static final XUILocalizedMessage ASSYNCH_REGION_WAIT_MESSAGE = new XUILocalizedMessage(
 			ComponentMessages.class.getName() , "ASSYNCH_REGION_WAIT_MESSAGE" );
+	
+	public static final XUILocalizedMessage THREADS_CONTROLLER_NOT_FOUND = new XUILocalizedMessage(
+			ComponentMessages.class.getName() , "THREADS_CONTROLLER_NOT_FOUND" );
 }

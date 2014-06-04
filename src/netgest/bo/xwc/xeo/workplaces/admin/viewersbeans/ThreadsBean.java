@@ -11,6 +11,7 @@ import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.framework.XUIComponentPlugIn;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.components.XUICommand;
+import netgest.bo.xwc.framework.messages.XUIMessageSender;
 import netgest.bo.xwc.xeo.beans.XEOBaseBean;
 import netgest.bo.xwc.xeo.workplaces.admin.connectors.ThreadsDataListConnector;
 
@@ -49,7 +50,10 @@ public class ThreadsBean extends XEOBaseBean  {
 		String threadName = 
 			((HttpServletRequest)req.getRequest()).getParameter("form:startButton");
 		
-		this.threads.startThread(threadName);
+		StringBuilder errorMessage = new StringBuilder();
+		if (!this.threads.startThread(threadName,errorMessage)){
+			XUIMessageSender.alertCritical(  errorMessage.toString(),  errorMessage.toString() );
+		}
 		
 	}
 	
@@ -58,7 +62,10 @@ public class ThreadsBean extends XEOBaseBean  {
 		String threadName = 
 			((HttpServletRequest)req.getRequest()).getParameter("form:stopButton");
 		
-		this.threads.stopThread(threadName);
+		StringBuilder errorMessage = new StringBuilder();
+		if (!this.threads.stopThread(threadName,errorMessage)){
+			XUIMessageSender.alertCritical( errorMessage.toString() );
+		}
 	}
 	
 	public ButtonGridRendeder getButtonGridRenderer() {

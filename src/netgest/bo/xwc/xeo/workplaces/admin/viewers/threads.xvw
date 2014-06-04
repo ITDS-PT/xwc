@@ -4,6 +4,7 @@
 		beanClass="netgest.bo.xwc.xeo.workplaces.admin.viewersbeans.ThreadsBean"
 		beanId="viewBean" localizationClasses='netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages'>
 		<xvw:form id="form">
+			<xvw:errorMessages></xvw:errorMessages>
 			<xvw:title valueExpression='Background Threads'></xvw:title>
 			<xvw:toolBar>
 				<xvw:menu text="@{START_AGENTS}" serverAction="#{viewBean.startAgents}" serverActionWaitMode="DIALOG"></xvw:menu>
