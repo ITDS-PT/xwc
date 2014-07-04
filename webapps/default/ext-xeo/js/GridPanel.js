@@ -1833,10 +1833,13 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 	
 		
 	, findRecursive : function (property, value, grouped){
+		
 		if (!grouped){
-			return this.find( property, value);
+			var result = this.find( property, value);
+			return result;
 		}
 		var count = 0;
+		var found = false;
 		for (var i = 0 ; i < this.groupStores.length ; i++){
 			if (this.groupStores[i]){
 				var currentStore = this.groupStores[i];
@@ -1845,11 +1848,16 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 					count += this.groupStores[i].getTotalCount();
 				} else {
 					count += index;
+					found = true;
 					break;
 				} 
 			}
 		}
-		return count;
+		if (found){
+			return count;
+		}
+		else 
+			return -1;
 	}
 	
 	, clearExpandedGroups : function () {
@@ -2997,6 +3005,7 @@ ExtXeo.grid.rowSelect = function( oSelModel, rowIndex, record){
 	var rowIdentifier = oSelModel.grid.getRowIdentifier();
 	if (record.data){
 		oInput.value = record.data[rowIdentifier];
+		console.log("Selected " + record.data[rowIdentifier]);
 		ExtXeo.grid.addSelected(oSelModel.grid.id,record.data[rowIdentifier],false);
 	}
 	ExtXeo.grid.updateCounter(oSelModel);
