@@ -768,8 +768,10 @@ public class XEOEditBean extends XEOBaseBean{
     }
     @Visible
     public void destroy()  throws boRuntimeException {
+    	boObject xeoobject = null;
     	try {
-    		getXEOObject().destroy(); 
+    		xeoobject = getXEOObject();
+    		xeoobject.destroy(); 
 	        getRequestContext().addMessage(
 	                "Bean",
 	                new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, 
@@ -792,7 +794,7 @@ public class XEOEditBean extends XEOBaseBean{
     			}
     			else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
     				setValid(false);
-    				showObjectErrors();
+    				showObjectErrors(xeoobject);
     			}
         		else {
         			throw new RuntimeException( e );
