@@ -2672,17 +2672,21 @@ Ext.grid.XeoCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel,
 	 * when you select all rows, it would expand the groups instead of selecting the rows of the
 	 * groups
 	 */
-	, selectAll : function(){
+	, selectAll : function( gs ){
 		if (this.grid.store.groupField !== null && this.grid.store.groupField.length == 0){
 			Ext.grid.XeoCheckboxSelectionModel.superclass.selectAll.call(this);
 		} else {
 			this.selectingAll = true;
 			var negated = this.getNegatedSelections();
-			var gs = this.grid.store.groupStores;
+			if (gs === undefined || gs === null){
+				gs = this.grid.store.groupStores;
+			}
 			var count = 0;
 			for (var i = 0 ; i < gs.length ; i++){
 				if (gs[i]){
-					var records = gs[i].getRange(0,gs[i].getCount());
+					var store = gs[i];
+					console.log(store.storeId);
+					var records = store.getRange(0,gs[i].getCount());
 					for (var k = 0 ; k < records.length ; k++){
 						var boui = records[k].data[this.getRowIdentifier()];
 						var skip = false;
@@ -2701,11 +2705,51 @@ Ext.grid.XeoCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel,
 							count++;
 						}
 					}
+					var subStores = store.groupStores;
+					this.recursiveSelectRows(subStores, count, {});
 				}
 			}
 			this.selectingAll = false;
 		}
-		this.grid.store.selectAllRows();
+//		this.grid.store.selectAllRows();
+	}
+	
+	, recursiveSelectRows : function ( subStores, count, processed ){
+		if (subStores){
+			var negated = this.getNegatedSelections();
+			for (var k = 0 ; k < subStores.length ; k++){
+				var subStore = subStores[k];
+				if (subStore){
+					if (processed[subStore.storeId] === undefined ){
+						console.log(subStore.storeId);
+						if (subStore){
+							processed[subStore.storeId] = true;	
+							var records = subStore.getRange(0,subStore.getCount());
+							for (var k = 0 ; k < records.length ; k++){
+								var boui = records[k].data[this.getRowIdentifier()];
+								var skip = false;
+								for (var j = 0 ; j < negated.length ; j++){ 
+									//Remove the ! 
+									var raw = negated[j];
+									var value = raw.slice(1);
+									if ( value == boui ){
+										skip = true;
+										break;
+									}
+								}
+								if (!skip){
+									this.grid.view.onRowSelect(count);
+									this.selectRow(count,true,true);
+									count++;
+								}
+							}
+							var subSubStores = subStore.groupStores;
+							this.recursiveSelectRows(subSubStores, count, processed);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	, getNegatedSelections : function () {
@@ -2741,12 +2785,33 @@ Ext.grid.XeoCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel,
 						this.deselectRow(count,true);
 						count++;
 					}
+					var subStores = gs[i].groupStores;
+					this.recursiveDeselectRows(subStores, count, {});
 				}
 			}
 			this.clearingAll = false;
 		}
 		this.grid.store.deselectAllRows();
 		
+	}
+	
+	, recursiveDeselectRows : function (gs, count, processed){
+		for (var i = 0 ; i < gs.length ; i++){
+			var store = gs[i];
+			if (store){
+				if (processed[store.storeId] === undefined){
+					processed[store.storeId] = true;
+					var records = gs[i].getRange(0,gs[i].getCount());
+					for (var k = 0 ; k < records.length ; k++){
+						this.grid.view.onRowDeselect(count);
+						this.deselectRow(count,true);
+						count++;
+					}
+					var subStores = store.groupStores;
+					this.recursiveDeselectRows(subStores, count, processed);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -3005,7 +3070,6 @@ ExtXeo.grid.rowSelect = function( oSelModel, rowIndex, record){
 	var rowIdentifier = oSelModel.grid.getRowIdentifier();
 	if (record.data){
 		oInput.value = record.data[rowIdentifier];
-		console.log("Selected " + record.data[rowIdentifier]);
 		ExtXeo.grid.addSelected(oSelModel.grid.id,record.data[rowIdentifier],false);
 	}
 	ExtXeo.grid.updateCounter(oSelModel);
