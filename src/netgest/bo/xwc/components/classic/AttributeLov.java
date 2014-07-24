@@ -20,6 +20,28 @@ import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
  * This component renders a combobox base on a Map
  */
 public class AttributeLov extends AttributeBase {
+	
+	@Override
+	protected boolean compareValue( Object previous , Object value ) {
+		boolean equals =  super.compareValue( previous , value );
+		if (!equals){
+			String previousValue = "";
+			if (previous instanceof BigDecimal){
+				previousValue = ((BigDecimal) previous).toString();
+			}
+			String valueString = "";
+			if (value != null){
+				valueString = value.toString();
+			}
+			if (previousValue.equals( valueString )){
+				equals = true;
+			} else {
+				equals = false;
+			}
+		}
+		
+		return equals;
+	}
 
 	@Override
 	public void validate( FacesContext context ) {
