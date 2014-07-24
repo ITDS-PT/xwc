@@ -1127,7 +1127,10 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         var row = this.getRow(rowIndex);
         if(row && !row.offsetParent){
             var g = this.findGroup(row);
-            this.toggleGroup(g, true);
+            //Don't know why would we toggle group (expand) in a onBeforeRowSelect
+            //This causes some weird behaviours because the getRow and findGroup implementations
+            //are probably not very compatible with our Group implementation
+            //this.toggleGroup(g, true);
         }
     },
     processRows : function(startRow, skipStripe){
