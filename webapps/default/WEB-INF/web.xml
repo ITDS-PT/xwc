@@ -1,5 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<web-app>
+<web-app id="Refer" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<description>XEO Application</description>
 	<filter>
 		<filter-name>boCharsetFilter</filter-name>
@@ -9,18 +11,10 @@
 			<param-value>UTF-8</param-value>
 		</init-param>
 	</filter>
-	<filter-mapping>
-		<filter-name>boCharsetFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
 	<filter>
 		<filter-name>XEOBuilderFilter</filter-name>
 		<filter-class>netgest.bo.http.XEOBuilderFilter</filter-class>
 	</filter>
-	<filter-mapping>
-		<filter-name>XEOBuilderFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>	
 	<filter>
 		<filter-name>LoginFilter</filter-name>
 		<filter-class>netgest.bo.xwc.framework.http.XUILoginFilter</filter-class>
@@ -38,18 +32,37 @@
 		</init-param>
 		<init-param>
 			<param-name>ViewerSecurityMode</param-name>
-			<param-value>MORE_RESTRICTED</param-value> <!--  LESS_RESTRICTED / MORE_RESTRICTED  -->
+			<param-value>MORE_RESTRICTED</param-value> <!-- LESS_RESTRICTED / MORE_RESTRICTED -->
 		</init-param>
 	</filter>
-    <servlet>
-        <servlet-name>Faces Servlet</servlet-name>
-        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
+	<filter>
+		<filter-name>DeployFilter</filter-name>
+		<filter-class>netgest.bo.http.DeployFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>boCharsetFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>XEOBuilderFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DeployFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>LoginFilter</filter-name>
+		<url-pattern>*.xvw</url-pattern>
+	</filter-mapping>
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
 	<servlet>
 		<servlet-name>XWC Servlet</servlet-name>
 		<servlet-class>netgest.bo.xwc.framework.http.XUIServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
 		<init-param>
 			<param-name>DefaultLanguage</param-name>
 			<param-value>pt</param-value>
@@ -70,19 +83,8 @@
 			<param-name>UseViewerCache</param-name>
 			<param-value>false</param-value>
 		</init-param>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
-	<filter>
-		<filter-name>DeployFilter</filter-name>
-		<filter-class>netgest.bo.http.DeployFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>DeployFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>LoginFilter</filter-name>
-		<url-pattern>*.xvw</url-pattern>
-	</filter-mapping>
 	<servlet-mapping>
 		<servlet-name>XWC Servlet</servlet-name>
 		<url-pattern>*.xeoviewer</url-pattern>
@@ -110,7 +112,7 @@
 	</mime-mapping>
 	<welcome-file-list>
 		<welcome-file>Login.xvw</welcome-file>
-	</welcome-file-list>
+	</welcome-file-list>	
 	<ejb-ref>
 		<ejb-ref-name>ejb/boClientRemote</ejb-ref-name>
 		<ejb-ref-type>Session</ejb-ref-type>
@@ -181,4 +183,8 @@
 		<remote>netgest.bo.runtime.robots.ejbtimers.xeoEJBTimer</remote>
 		<ejb-link>xwfTimeAgent</ejb-link>
 	</ejb-ref>
+	<context-param>
+      <param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name>
+      <param-value>true</param-value>
+	</context-param>
 </web-app>
