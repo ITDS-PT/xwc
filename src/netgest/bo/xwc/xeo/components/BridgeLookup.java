@@ -52,6 +52,7 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
+import netgest.bo.xwc.xeo.components.lookup.LookupComponent;
 import netgest.bo.xwc.xeo.components.utils.BridgeLookupFavoriteSwitcher;
 import netgest.bo.xwc.xeo.components.utils.DefaultFavoritesSwitcherAlgorithm;
 
@@ -64,7 +65,7 @@ import netgest.bo.xwc.xeo.components.utils.DefaultFavoritesSwitcherAlgorithm;
  * @author PedroRio
  *
  */
-public class BridgeLookup extends AttributeBase {
+public class BridgeLookup extends AttributeBase implements LookupComponent {
 	
 	private XUICommand oLookupCommand;
     private XUICommand oOpenCommand;
@@ -109,6 +110,23 @@ public class BridgeLookup extends AttributeBase {
      */
     private XUIBindProperty<BridgeLookupFavoriteSwitcher> algorithm = 
     	new XUIBindProperty<BridgeLookupFavoriteSwitcher>( "algorithm", this, BridgeLookupFavoriteSwitcher.class );
+    
+    
+    /**
+     * Lookup Query to use
+     */
+    private XUIViewBindProperty<String>  lookupQuery =
+    	new XUIViewBindProperty<String>( "lookupQuery", this, String.class );
+    
+    public String getLookupQuery(){
+    	return lookupQuery.getEvaluatedValue(); 
+    }
+    
+    public void setLookupQuery(String queryExpr){
+    	this.lookupQuery.setExpressionText( queryExpr );
+    }
+    
+    
     
     /**
      * Set the height of the component, only works with multi-line components

@@ -41,6 +41,7 @@ import netgest.bo.xwc.framework.XUIBaseProperty;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRendererServlet;
 import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
@@ -48,6 +49,7 @@ import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
 import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
+import netgest.bo.xwc.xeo.components.lookup.LookupComponent;
 import netgest.io.FSiFile;
 import netgest.io.iFile;
 /**
@@ -57,7 +59,7 @@ import netgest.io.iFile;
  * @author jcarreira
  *
  */
-public class AttributeNumberLookup extends AttributeBase {
+public class AttributeNumberLookup extends AttributeBase implements LookupComponent {
 
 	private XUICommand oLookupCommand;
     private XUICommand oOpenCommand;
@@ -65,6 +67,19 @@ public class AttributeNumberLookup extends AttributeBase {
     private XUICommand oFavoriteCommand;
 
     
+    /**
+     * Lookup Query to use
+     */
+    private XUIViewBindProperty<String>  lookupQuery =
+    	new XUIViewBindProperty<String>( "lookupQuery", this, String.class );
+    
+    public String getLookupQuery(){
+    	return lookupQuery.getEvaluatedValue(); 
+    }
+    
+    public void setLookupQuery(String queryExpr){
+    	this.lookupQuery.setExpressionText( queryExpr );
+    }
     
     @Override
 	public void initComponent() {

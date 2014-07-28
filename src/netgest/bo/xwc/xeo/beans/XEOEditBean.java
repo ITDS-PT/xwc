@@ -90,6 +90,7 @@ import netgest.bo.xwc.xeo.components.BridgeToolBar;
 import netgest.bo.xwc.xeo.components.FormEdit;
 import netgest.bo.xwc.xeo.components.LookupList;
 import netgest.bo.xwc.xeo.components.SplitedLookup;
+import netgest.bo.xwc.xeo.components.lookup.LookupComponent;
 import netgest.bo.xwc.xeo.components.utils.DefaultFavoritesSwitcherAlgorithm;
 import netgest.bo.xwc.xeo.components.utils.LookupFavorites;
 import netgest.bo.xwc.xeo.components.utils.XEOListVersionHelper;
@@ -908,6 +909,10 @@ public class XEOEditBean extends XEOBaseBean{
         oSessionContext = oRequestContext.getSessionContext();
         
         AttributeBase oAtt = (AttributeBase)getViewRoot().findComponent( sCompId );
+        LookupComponent lookup = null;
+        if (oAtt instanceof LookupComponent){
+        	lookup = (LookupComponent) oAtt;
+        }
         AttributeHandler    oAttHandler = ((XEOObjectAttributeConnector)oAtt.getDataFieldConnector()).getAttributeHandler();
         boDefAttribute      oAttDef     = oAttHandler.getDefAttribute();
         
@@ -918,14 +923,6 @@ public class XEOEditBean extends XEOBaseBean{
     			className = objects[0];
     		}
     	}
-        
-    	
-        
-        // Obtem a bean do objecto a ser editado
-        // e associa o objecto do parametro
-        
-        // Verifica o modo de edi������o do Objecto... se for orf���o
-        // abre o edit para associar um novo
         
     	String lookupViewerName = oAtt.getLookupViewer();
     	if( lookupViewerName == null ) {
@@ -983,7 +980,13 @@ public class XEOEditBean extends XEOBaseBean{
             //Order is important, this must come after setParentComponentId
             oBaseBean.setSelectedObject( className );
             
-            String sBoql = getLookupQuery( oAttHandler, className );
+            String sBoql = null;
+            if (lookup != null){
+            	sBoql = lookup.getLookupQuery();
+            }
+            if (StringUtils.isEmpty( sBoql )){
+            	sBoql = getLookupQuery( oAttHandler, className );
+            }
             oBaseBean.executeBoql( sBoql );
         }
 
