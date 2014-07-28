@@ -1,5 +1,8 @@
 package netgest.bo.xwc.components.classic;
 
+import java.io.IOException;
+import java.util.List;
+
 import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsBaseRenderer;
@@ -11,11 +14,7 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-
 import netgest.utils.StringUtils;
-
-import java.io.IOException;
-import java.util.List;
 /**
  * This component renders a label for a input component
  * @author jcarreira
@@ -122,10 +121,11 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 		protected void addToolTip(XUIComponentBase oAtt, AttributeLabel label) {
 			String tooltip = label.getToolTip();
 			if (StringUtils.hasValue( tooltip )){
+				tooltip = JavaScriptUtils.safeJavaScriptWrite( tooltip );
 				StringBuilder b = new StringBuilder();
 				b.append("new Ext.ToolTip({ " +
 			        "target: '"+oAtt.getClientId()+"', " +
-			        "html: '"+tooltip+"'" +
+			        "html: '"+ tooltip  +"'" +
 			        "});"	);
 				addScript( oAtt.getClientId() , b );
 			}
@@ -150,7 +150,8 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
             //It's not working... in extjs 2.2.1
 //			config.addString( "forId" , ((Attribute)oComp.getParent()).getInputComponent().getClientId() );
             
-			config.addString( "text" , JavaScriptUtils.writeValue( oAttrLabel.getText() ) );
+            
+			config.addString( "text" , JavaScriptUtils.safeJavaScriptWrite( oAttrLabel.getText() ) );
 			
             if( !oAttrLabel.isVisible() )
             	config.add("hidden",true);
