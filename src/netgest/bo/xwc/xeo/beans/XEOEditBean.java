@@ -1207,8 +1207,7 @@ public class XEOEditBean extends XEOBaseBean{
             //Order is important, setSelectedObject cannot be called before setComponentId
             oBaseBean.setSelectedObject(refObj.getName());
             oBaseBean.executeBoql( 
-            			//"select "+ oAttDef.getReferencedObjectName()
-            		getLookupQuery( bridge.getName(), objectName )
+            		getLookupQuery( bridge.getParent().getAttribute( bridge.getName() ), objectName )
             	);
             oBaseBean.setMultiLookup( true );
         }
@@ -1323,7 +1322,7 @@ public class XEOEditBean extends XEOBaseBean{
 								oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
 							} catch (NumberFormatException e) {
 								throw new RuntimeException(e);
-							}
+							} 
 						}
 					} else {
 						long lCurrentBoui;
@@ -2616,13 +2615,13 @@ public class XEOEditBean extends XEOBaseBean{
 			if (securityRights.canRead(getEboContext(), childObj.getName())) {
 				if (oAttDef.getChildIsOrphan( childObj.getName() ) ) { 
 					
-							oViewRoot = oSessionContext
-									.createChildView(
+					oViewRoot = oSessionContext
+							.createChildView(
 					        		getViewerResolver().getViewer( childObj, XEOViewerResolver.ViewerType.EDIT, oAttDef )
-										);
-							XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
-									.getBean("viewBean");
-							oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
+								);
+					XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
+							.getBean("viewBean");
+					oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
 					
 				} 
 				else {
