@@ -1,5 +1,6 @@
 package netgest.bo.xwc.xeo.beans;
 
+import netgest.bo.def.boDefAttribute;
 import netgest.bo.runtime.boObject;
 
 
@@ -11,12 +12,29 @@ public class XEOViewerResolver {
 		LOOKUP,
 		PREVIEW
 	}
-
+	
 	public String getViewer( boObject forObject, ViewerType type ) {
-		return getViewer( forObject.getName(), type );
+		return getViewer( forObject.getName(), type, "" );
 	}
 
-	public String getViewer( String className, ViewerType type ) {
+	public String getViewer( boObject forObject, ViewerType type, boDefAttribute source ) {
+		return getViewer( forObject.getName(), type, source );
+	}
+	
+	public String getViewer( boObject forObject, ViewerType type, String source ) {
+		return getViewer( forObject.getName(), type, source );
+	}
+	
+	
+	public String getViewer( String className, ViewerType type){
+		return getViewer( className , type , "" );
+	}
+	
+	public String getViewer( String className, ViewerType type, boDefAttribute source){
+		return getViewer( className , type , source.getName() );
+	}
+
+	public String getViewer( String className, ViewerType type, String source ) {
 		String ret;
 		switch( type ) {
 			case LIST:

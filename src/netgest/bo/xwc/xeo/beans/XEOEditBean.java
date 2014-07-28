@@ -1055,10 +1055,10 @@ public class XEOEditBean extends XEOBaseBean{
     		}
     	}
     	if( defAtt.getChildIsOrphan( className ) ) {
-    		return getViewerResolver().getViewer( className, XEOViewerResolver.ViewerType.LOOKUP );
+    		return getViewerResolver().getViewer( className, XEOViewerResolver.ViewerType.LOOKUP, defAtt );
     	} else {
     		return 
-    			getViewerResolver().getViewer( relObject.getName(), XEOViewerResolver.ViewerType.EDIT );
+    			getViewerResolver().getViewer( relObject.getName(), XEOViewerResolver.ViewerType.EDIT, defAtt );
     	}
     }
     
@@ -1310,24 +1310,15 @@ public class XEOEditBean extends XEOBaseBean{
 							
 							oRequestContext.renderResponse();
 						} else {
-							boObject sObjectToOpen;
 							try {
-								sObjectToOpen = boObject
-										.getBoManager()
-										.loadObject(
-												getEboContext(),
-												Long
-														.parseLong(sBridgeKeyToEdit));
 								oViewRoot = oSessionContext
 										.createChildView(
-								        		getViewerResolver().getViewer( sObjectToOpen, XEOViewerResolver.ViewerType.EDIT )
+								        		getViewerResolver().getViewer( childObj, XEOViewerResolver.ViewerType.EDIT, oAttDef )
 											);
 								XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 										.getBean("viewBean");
 								oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
 							} catch (NumberFormatException e) {
-								throw new RuntimeException(e);
-							} catch (boRuntimeException e) {
 								throw new RuntimeException(e);
 							}
 						}
@@ -1344,7 +1335,7 @@ public class XEOEditBean extends XEOBaseBean{
 											lCurrentBoui);
 							oViewRoot = oSessionContext
 									.createChildView(
-							        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+							        		getViewerResolver().getViewer( childObj, XEOViewerResolver.ViewerType.EDIT, oAttDef )
 									);
 							XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 									.getBean("viewBean");
@@ -1356,7 +1347,7 @@ public class XEOEditBean extends XEOBaseBean{
 						}
 
 						oViewRoot = oSessionContext.createChildView(
-				        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+				        		getViewerResolver().getViewer( childObj, XEOViewerResolver.ViewerType.EDIT, oAttDef )
 							);
 						XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 								.getBean("viewBean");
@@ -1452,7 +1443,7 @@ public class XEOEditBean extends XEOBaseBean{
 							try {
 								oViewRoot = oSessionContext
 										.createChildView(
-								        		getViewerResolver().getViewer( oObjectName, XEOViewerResolver.ViewerType.EDIT )
+								        		getViewerResolver().getViewer( oObjectName, XEOViewerResolver.ViewerType.EDIT, oAttDef )
 											);
 								XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 										.getBean("viewBean");
@@ -1475,7 +1466,7 @@ public class XEOEditBean extends XEOBaseBean{
 					} else {
 						oViewRoot = oSessionContext
 								.createChildView(
-					        		getViewerResolver().getViewer( oObjectName, XEOViewerResolver.ViewerType.EDIT )
+					        		getViewerResolver().getViewer( oObjectName, XEOViewerResolver.ViewerType.EDIT, oAttDef )
 								);
 						XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 								.getBean("viewBean");
@@ -2037,7 +2028,7 @@ public class XEOEditBean extends XEOBaseBean{
 				);
 			
 			if( oAttHandler.getValueObject() != null ) {
-				long boui = Long.valueOf(oAttHandler.getValueString());
+				long boui = Long.parseLong( oAttHandler.getValueString());
 				boObject objectToLookup = boObject.getBoManager().loadObject( getEboContext(),  boui );
 
 				boolean openInOrphanEdit = 
@@ -2062,11 +2053,11 @@ public class XEOEditBean extends XEOBaseBean{
 					XUIViewRoot 	oViewRoot;
 					if( openInOrphanEdit )
 						oViewRoot = oSessionContext.createView( 
-								getViewerResolver().getViewer( objectToLookup, XEOViewerResolver.ViewerType.EDIT )
+								getViewerResolver().getViewer( objectToLookup, XEOViewerResolver.ViewerType.EDIT, oAttHandler.getDefAttribute()  )
 							);
 					else
 						oViewRoot = oSessionContext.createChildView(
-								getViewerResolver().getViewer( objectToLookup, XEOViewerResolver.ViewerType.EDIT )
+								getViewerResolver().getViewer( objectToLookup, XEOViewerResolver.ViewerType.EDIT, oAttHandler.getDefAttribute() )
 							);
 					
 					((XEOEditBean)oViewRoot.getBean("viewBean"))
@@ -2076,7 +2067,6 @@ public class XEOEditBean extends XEOBaseBean{
 						.setEditInOrphanMode( openInOrphanEdit );
 					
 					oRequestContext.setViewRoot( oViewRoot );
-			        oViewRoot.processInitComponents();
 				}
 		        oRequestContext.renderResponse();
 			}
@@ -2623,53 +2613,18 @@ public class XEOEditBean extends XEOBaseBean{
 			if (securityRights.canRead(getEboContext(), childObj.getName())) {
 				if (oAttDef.getChildIsOrphan( childObj.getName() ) ) { 
 					
-						boObject sObjectToOpen;
-						try {
-							sObjectToOpen = boObject
-									.getBoManager()
-									.loadObject(
-											getEboContext(),
-											Long
-													.parseLong(sBridgeKeyToEdit));
 							oViewRoot = oSessionContext
 									.createChildView(
-							        		getViewerResolver().getViewer( sObjectToOpen, XEOViewerResolver.ViewerType.EDIT )
+					        		getViewerResolver().getViewer( childObj, XEOViewerResolver.ViewerType.EDIT, oAttDef )
 										);
 							XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 									.getBean("viewBean");
 							oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
-						} catch (NumberFormatException e) {
-							throw new RuntimeException(e);
-						} catch (boRuntimeException e) {
-							throw new RuntimeException(e);
-						}
 					
 				} 
 				else {
-					long lCurrentBoui;
-
-					lCurrentBoui = Long.valueOf(sBridgeKeyToEdit);
-
-					String sClassName;
-					try {
-						sClassName = boObject.getBoManager()
-								.getClassNameFromBOUI(getEboContext(),
-										lCurrentBoui);
-						oViewRoot = oSessionContext
-								.createChildView(
-						        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
-								);
-						XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
-								.getBean("viewBean");
-						oBaseBean.setCurrentObjectKey(sBridgeKeyToEdit);
-					} catch (NumberFormatException e) {
-						throw new RuntimeException(e);
-					} catch (boRuntimeException e) {
-						throw new RuntimeException(e);
-					}
-
 					oViewRoot = oSessionContext.createChildView(
-			        		getViewerResolver().getViewer( sClassName, XEOViewerResolver.ViewerType.EDIT )
+			        		getViewerResolver().getViewer( childObj, XEOViewerResolver.ViewerType.EDIT, oAttDef )
 						);
 					XEOEditBean oBaseBean = (XEOEditBean) oViewRoot
 							.getBean("viewBean");
@@ -2677,7 +2632,7 @@ public class XEOEditBean extends XEOBaseBean{
 					oBaseBean.setParentBeanId( getId() );
 					oBaseBean.setParentComponentId(oCommand.getClientId());
 					oBaseBean.setCurrentObjectKey(String
-							.valueOf(lCurrentBoui));
+							.valueOf(sBridgeKeyToEdit));
 				}
 			} else {
 				oRequestContext
