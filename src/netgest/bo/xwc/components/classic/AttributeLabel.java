@@ -151,7 +151,7 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 //			config.addString( "forId" , ((Attribute)oComp.getParent()).getInputComponent().getClientId() );
             
             
-			config.addString( "text" , JavaScriptUtils.safeJavaScriptWrite( oAttrLabel.getText() ) );
+			config.addString( "text" , JavaScriptUtils.writeValue( oAttrLabel.getText() ) );
 			
             if( !oAttrLabel.isVisible() )
             	config.add("hidden",true);
