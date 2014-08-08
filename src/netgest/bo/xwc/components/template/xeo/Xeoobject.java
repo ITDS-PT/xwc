@@ -1,14 +1,17 @@
 package netgest.bo.xwc.components.template.xeo;
 
 import java.io.IOException;
+import java.util.List;
 
+import javax.faces.component.UIComponent;
 import javax.servlet.http.HttpServletRequest;
-
-import netgest.bo.xwc.components.template.xeo.wrappers.TemplateDataRecordConnectorWrapper;
 
 import netgest.bo.runtime.boObject;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector;
 import netgest.bo.xwc.components.template.base.TemplateRenderer;
+import netgest.bo.xwc.components.template.loader.TemplateLoaderFactory;
+import netgest.bo.xwc.components.template.preprocessor.CommandsPreProcessor;
+import netgest.bo.xwc.components.template.xeo.wrappers.TemplateDataRecordConnectorWrapper;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -92,6 +95,24 @@ public class Xeoobject extends XUIComponentBase {
 			this.currentObject = connector.getXEOObject();
 		}
 		return recordWrapper;
+	}
+	
+	@Override
+	public void initComponent() {
+		super.initComponent();
+		if (!this.template.isDefaultValue( )){
+			CommandsPreProcessor p = new CommandsPreProcessor( loadTemplate( getTemplate() ), this );
+			List<UIComponent> list = p.createComponents( );
+				getChildren( ).addAll( list );
+		}
+	}
+	
+	protected freemarker.template.Template loadTemplate(String name){
+		try {
+			return TemplateLoaderFactory.loadTemplate( name );
+		} catch ( IOException e ) {
+			throw new RuntimeException( String.format(" Could not load template %s ", name ) , e );
+		}
 	}
 	
 	public void preRender() {
