@@ -40,6 +40,12 @@ public class GlobalSearch extends ViewerSecurityBase implements IToolbarGroup {
 		new XUIBaseProperty<String>("label", this, ComponentMessages.GLOBAL_SEARCH_LBL.toString() );
 	
 	/**
+	 * The label of the search button
+	 */
+	private XUIBaseProperty<Boolean> visible = 
+		new XUIBaseProperty<Boolean>("visible", this, true );
+	
+	/**
 	 * The icon of the search button
 	 */
 	private XUIBaseProperty<String> icon = 
@@ -81,6 +87,18 @@ public class GlobalSearch extends ViewerSecurityBase implements IToolbarGroup {
 	
 	public void setSearchWidth(String width){
 		this.searchWidth.setValue(width);
+	}
+	
+	public void setVisible(Boolean visible){
+		this.visible.setValue( visible );
+	}
+	
+	public void setVisible(String visible){
+		this.visible.setValue( Boolean.valueOf( visible  ) );
+	}
+	
+	public Boolean getVisible(){
+		return visible.getValue();
 	}
 	
 	/**
@@ -181,41 +199,43 @@ public class GlobalSearch extends ViewerSecurityBase implements IToolbarGroup {
 	@Override
 	public List<UIComponent> getComponentList() {
 
-		AttributeText t = new AttributeText();
-		t.setMaxLength(30);
-		t.setRenderComponent(false);
-		t.setValueExpression("#{ " + getBeanId() + ".textSearch}");
-		t.setWidth(getSearchWidth());
-		t.setId("textSearchXEO");
-		
-		AttributeLov lov = null;
-		if (getShowModelsCombo()){
-			lov = new AttributeLov();
-			lov.setRenderComponent(false);
-			lov.setValueExpression("#{ " + getBeanId() + ".searchModel}");
-			lov.setLovMap(comboModelOptions.getExpressionString());
-			lov.setWidth(getComboWidth());
-			lov.setOnChangeSubmit(true);
-			lov.setMaxLength(20);
-			lov.setId("lovOptionsXEO");
-		}
-		
-		Menu m = new Menu();
-		m.setText(getLabel());
-		String icon = getIcon();
-		if (icon != null && !(icon.length() == 0))
-			m.setIcon(getIcon());
-		m.setTarget("alwaysNewTab");
-		m.setServerAction("#{ " + getBeanId() + ".searchGlobal}");
-		m.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
-		m.setId("globalSearchActionXEO");
-		
-		
 		List<UIComponent> result = new LinkedList<UIComponent>();
-		result.add(t);
-		if (getShowModelsCombo() && lov != null)
-			result.add(lov);
-		result.add(m);
+		if (getVisible()){
+			AttributeText t = new AttributeText();
+			t.setMaxLength(30);
+			t.setRenderComponent(false);
+			t.setValueExpression("#{ " + getBeanId() + ".textSearch}");
+			t.setWidth(getSearchWidth());
+			t.setId("textSearchXEO");
+			
+			AttributeLov lov = null;
+			if (getShowModelsCombo()){
+				lov = new AttributeLov();
+				lov.setRenderComponent(false);
+				lov.setValueExpression("#{ " + getBeanId() + ".searchModel}");
+				lov.setLovMap(comboModelOptions.getExpressionString());
+				lov.setWidth(getComboWidth());
+				lov.setOnChangeSubmit(true);
+				lov.setMaxLength(20);
+				lov.setId("lovOptionsXEO");
+			}
+			
+			Menu m = new Menu();
+			m.setText(getLabel());
+			String icon = getIcon();
+			if (icon != null && !(icon.length() == 0))
+				m.setIcon(getIcon());
+			m.setTarget("alwaysNewTab");
+			m.setServerAction("#{ " + getBeanId() + ".searchGlobal}");
+			m.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
+			m.setId("globalSearchActionXEO");
+			
+			
+			result.add(t);
+			if (getShowModelsCombo() && lov != null)
+				result.add(lov);
+			result.add(m);
+		}
 		
 		return result;
 	}
