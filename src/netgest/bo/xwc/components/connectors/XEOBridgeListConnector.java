@@ -6,8 +6,9 @@ import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefBridge;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.localizations.MessageLocalizer;
-import netgest.bo.runtime.bridgeHandler;
 import netgest.bo.runtime.boObjectList.SqlField;
+import netgest.bo.runtime.bridgeHandler;
+import netgest.bo.xwc.components.connectors.decoder.XEOObjectAttributeDecoder;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 
 public class XEOBridgeListConnector implements DataListConnector {
@@ -58,10 +59,14 @@ public class XEOBridgeListConnector implements DataListConnector {
 			if( def != null ) {
 				oAtt = def.getAttributeRef( attributeName );
 			}
+			if (oAtt == null ){
+				XEOObjectAttributeDecoder decoder = new XEOObjectAttributeDecoder( def );
+				oAtt = decoder.decode( attributeName );
+			}
 		}
 		if( oAtt != null ) {
 			return new XEOObjectAttributeMetaData( oAtt );
-		}
+		} 
 		return null;
 	}
 

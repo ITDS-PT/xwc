@@ -118,6 +118,8 @@ public class XEOObjectConnector implements DataRecordConnector, Map<String,Objec
         AttributeHandler oAttrHandlr = getXEOAttribute( name );
         if( oAttrHandlr != null ) {
         	oRetAttribute = new XEOObjectAttributeConnector( this, oAttrHandlr );
+        } else {
+        	return new NullFieldConnector();
         }
 
         return oRetAttribute;
