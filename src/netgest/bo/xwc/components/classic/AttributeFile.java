@@ -196,14 +196,16 @@ public class AttributeFile extends AttributeBase {
             
             boolean readPermission = oAttFile.getEffectivePermission( SecurityPermissions.READ );
             boolean writePermission = oAttFile.getEffectivePermission( SecurityPermissions.WRITE );
+            boolean isDisabled = oAttFile.isDisabled();
             if (!readPermission){
-            	oInpConfig.add( "disabled" , oAttFile.isDisabled() );
+            	oInpConfig.add( "disabled" , true );
             } else {
             	if (!writePermission){
             		oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
                     oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
+            	} else {
+            		oInpConfig.add( "disabled" , isDisabled );
             	}
-            	oInpConfig.add( "disabled" , false );
             }
             
             oInpConfig.add("maxLength", "500" );
