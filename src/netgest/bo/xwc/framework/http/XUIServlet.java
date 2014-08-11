@@ -83,8 +83,6 @@ public class XUIServlet extends HttpServlet
     		boolean useCache = Boolean.parseBoolean( useCacheParameter );
     		if (!useCache) {
     			XUIViewHandler.disableCache();
-    		} else {
-    			XUIViewHandler.enableCache();
     		}
     	} else {
     		XUIViewHandler.disableCache();

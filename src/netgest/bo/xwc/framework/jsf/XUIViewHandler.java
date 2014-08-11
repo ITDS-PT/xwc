@@ -131,6 +131,10 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 		useCache = Boolean.TRUE;
 	}
 	
+	public static synchronized boolean isCacheEnabled(){
+		return useCache;
+	}
+	
 	static ThreadLocal< Boolean > savingInCache = new ThreadLocal< Boolean >(){
         protected Boolean initialValue() {
             return Boolean.FALSE;
