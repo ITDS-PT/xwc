@@ -14,7 +14,7 @@ public class XEOViewerResolver {
 	}
 	
 	public String getViewer( boObject forObject, ViewerType type ) {
-		return getViewer( forObject.getName(), type, "" );
+		return getViewer( forObject.getName(), type  );
 	}
 
 	public String getViewer( boObject forObject, ViewerType type, boDefAttribute source ) {
