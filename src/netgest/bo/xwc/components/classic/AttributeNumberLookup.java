@@ -292,7 +292,7 @@ public class AttributeNumberLookup extends AttributeBase implements LookupCompon
 			boolean enableCardIdLink = oAttr.getEnableCardIdLink();
 			boolean readOnly		 = oAttr.isReadOnly();
 			boolean disabled		 = oAttr.isDisabled();
-            if ( enableCardIdLink && disabled ){
+			if ( enableCardIdLink && disabled ){
             	disabled =  false;
             	readOnly = true;
             }
@@ -330,7 +330,7 @@ public class AttributeNumberLookup extends AttributeBase implements LookupCompon
             if( readOnly || !oAttr.getEffectivePermission(SecurityPermissions.WRITE)) {
             	oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
 	            oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
-	       
+	            oInpConfig.addJSString("trigger3Class", "x-hidden x-form-favorite-trigger ");
             }
             else {
 	        	if ( !oAttr.getEffectivePermission(SecurityPermissions.DELETE))
