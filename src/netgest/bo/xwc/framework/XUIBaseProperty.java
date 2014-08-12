@@ -59,6 +59,10 @@ public class XUIBaseProperty<V> {
 
     }
     
+    protected void changed(){
+    	this.bDefaultValue = false;
+    }
+    
     public Object saveState() {
         return new Object[] { 
         		bDefaultValue? null:oPropertyValue, 

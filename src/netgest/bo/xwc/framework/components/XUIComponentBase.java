@@ -686,8 +686,9 @@ public abstract class XUIComponentBase extends UIComponentBase
      
     
     public void applyPropertyDefaultValue(String name,String value) {	    	
-    	if (value!=null)
+    	if (value!=null){
     		XUIPropertySetter.setProperty(this, name, value);
+    	}
     }
             
     private void applyPropertiesDefaultValues() {
@@ -696,9 +697,9 @@ public abstract class XUIComponentBase extends UIComponentBase
     	for( Entry<String,XUIBaseProperty<?>> s : props ) {
 			XUIBaseProperty<?> p = s.getValue();
 			
-			if (p.isDefaultValue())
-				applyPropertyDefaultValue(p.getName(),
-						XUIDefaultPropertiesHandler.getPropertyValue(p.getName(), this));
+			if (p.isDefaultValue()){
+				applyPropertyDefaultValue(p.getName(), XUIDefaultPropertiesHandler.getPropertyValue(p.getName(), this));
+			}		
 		}    	
     }
     
@@ -711,8 +712,9 @@ public abstract class XUIComponentBase extends UIComponentBase
     	XUIComponentBase component = this;
     	
     	if( !wasInitComponentProcessed ) {
-    		if ( XUIDefaultPropertiesHandler.existPropertiesForComponent(this) )
+    		if ( XUIDefaultPropertiesHandler.existPropertiesForComponent(this) ){
     			applyPropertiesDefaultValues();
+    		}
         	
     		XUIComponentPlugIn plugIn = getPlugIn();
     		
