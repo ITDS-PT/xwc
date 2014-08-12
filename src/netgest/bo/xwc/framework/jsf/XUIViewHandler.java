@@ -358,6 +358,11 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 		    }
 		    catch (Exception e) 
 		    {
+		    	String message = e.getMessage();
+		    	if (StringUtils.isEmpty( message )){
+		    		message = "";
+		    	}
+		    	log.warn( String.format("Could not render %s because of %s", viewToRender.getViewId(), message ) , e );
 		    	throw new RuntimeException("XEOEditBean - XSLT Transformation Error", e);
 		    }
 		    finally {
