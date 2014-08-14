@@ -1,6 +1,7 @@
 package netgest.bo.xwc.components.classic.grid;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 import netgest.bo.xwc.components.classic.grid.utils.DataFieldDecoder;
 import netgest.bo.xwc.components.localization.ViewersMessages;
@@ -17,6 +18,13 @@ import netgest.bo.xwc.xeo.beans.XEOBaseBean;
  */
 public class GridDatesBetweenFilterBean extends XEOBaseBean {
 	
+	/**
+	 * Format a date to javascript compatible format (basically we must be able to do "new Date()" (in Javascript) with the
+	 * result of this formatter
+	 */
+	private static final String JAVASCRIPT_DATE_PARSE_FORMAT = "yyyy-MM-dd";
+	private SimpleDateFormat sdf = new SimpleDateFormat( JAVASCRIPT_DATE_PARSE_FORMAT );
+
 	/**
 	 * Keeps the start date
 	 */
@@ -79,8 +87,8 @@ public class GridDatesBetweenFilterBean extends XEOBaseBean {
 				.append( gridId )
 				.append("').filters.getFilter('")
 				.append( DataFieldDecoder.convertForGridPanel( column ) ).append("');")
-				.append( String.format("f.setBeforeValue(%s);",formatDate(getEnd())) ) //Affect the Widgets with the value
-				.append( String.format("f.setAfterValue(%s);",formatDate(getStart())) )
+				.append( String.format("f.setBeforeValue('%s');",formatDate(getEnd())) ) //Affect the Widgets with the value
+				.append( String.format("f.setAfterValue('%s');",formatDate(getStart())) )
 				.append( "f.setBeforeCheck(true);" ) //Mark the widget as checked
 				.append( "f.setAfterCheck(true);" )
 				.append( "f.clearData();" ) //Clear the Is Null / Not is Null filters
@@ -126,7 +134,8 @@ public class GridDatesBetweenFilterBean extends XEOBaseBean {
 	 * @return A string with the ms 
 	 */
 	private String formatDate(Timestamp toFormat) {
-		return String.valueOf(toFormat.getTime());
+		String result = sdf.format( toFormat );
+		return result;
 	}
 	
 }

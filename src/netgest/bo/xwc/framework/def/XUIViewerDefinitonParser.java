@@ -699,11 +699,16 @@ public class XUIViewerDefinitonParser
     	wrapper.setParent( parent );
     	wrapper.setName( "xvw:genericTag" );
     	
-    	for (XUIViewerDefinitionNode child : result){
-    		wrapper.addChild(child);
-    		
+    	if (result.size() == 1){
+    		return result.get( 0 );
+    	} else {
+    		for (XUIViewerDefinitionNode child : result){
+    			wrapper.addChild(child);
+    		}
+    		return wrapper;
     	}
-    	return wrapper;
+    	
+    	
     }
     
     //END TESTING

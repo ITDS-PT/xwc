@@ -1,8 +1,8 @@
 package netgest.bo.xwc.framework.localization;
 
-import netgest.utils.StringUtils;
-
 import java.util.regex.Pattern;
+
+import netgest.utils.StringUtils;
 
 public class JavaToJavascriptPatternConverter {
 
@@ -77,6 +77,12 @@ public class JavaToJavascriptPatternConverter {
 	private static final String[] separators = new String[] { "/", ".", "-" };
 
 	public static String getAlternativeDateFormats(String jsPattern) {
+		
+		int dayIndex = jsPattern.indexOf( "d" );
+		int monthIndex = jsPattern.indexOf( "m" );
+		
+		boolean isDayFirst = dayIndex < monthIndex;
+		
 		StringBuilder b = new StringBuilder();
 		String append = "";
 		String separatorInPattern = "";
@@ -84,6 +90,11 @@ public class JavaToJavascriptPatternConverter {
 			if ( jsPattern.contains( separator ) ) {
 				separatorInPattern = separator;
 			}
+		}
+		if (isDayFirst){
+			b.append("d-m|dm|d.m|d/m|d|");
+		} else {
+			b.append("m-d|md|m.d|m/d|d|");
 		}
 		if ( StringUtils.hasValue( separatorInPattern ) ) {
 			for ( String separator : separators ) {
@@ -94,6 +105,8 @@ public class JavaToJavascriptPatternConverter {
 							Pattern.quote( separatorInPattern ) , separator ) );
 				}
 			}
+			
+			
 			return b.toString();
 		} else
 			return "";

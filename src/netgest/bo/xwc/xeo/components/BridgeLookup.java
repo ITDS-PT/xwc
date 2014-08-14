@@ -52,6 +52,7 @@ import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.xeo.beans.XEOEditBean;
+import netgest.bo.xwc.xeo.components.lookup.LookupComponent;
 import netgest.bo.xwc.xeo.components.utils.BridgeLookupFavoriteSwitcher;
 import netgest.bo.xwc.xeo.components.utils.DefaultFavoritesSwitcherAlgorithm;
 
@@ -64,7 +65,7 @@ import netgest.bo.xwc.xeo.components.utils.DefaultFavoritesSwitcherAlgorithm;
  * @author PedroRio
  *
  */
-public class BridgeLookup extends AttributeBase {
+public class BridgeLookup extends AttributeBase implements LookupComponent {
 	
 	private XUICommand oLookupCommand;
     private XUICommand oOpenCommand;
@@ -95,7 +96,7 @@ public class BridgeLookup extends AttributeBase {
      * The height of the component
      */
     private XUIViewStateBindProperty<String> height = 
-    	new XUIViewStateBindProperty<String>( "height", this, "22", String.class );
+    	new XUIViewStateBindProperty<String>( "height", this, "19", String.class );
     
     /**
      * The number of favorites 
@@ -109,6 +110,23 @@ public class BridgeLookup extends AttributeBase {
      */
     private XUIBindProperty<BridgeLookupFavoriteSwitcher> algorithm = 
     	new XUIBindProperty<BridgeLookupFavoriteSwitcher>( "algorithm", this, BridgeLookupFavoriteSwitcher.class );
+    
+    
+    /**
+     * Lookup Query to use
+     */
+    private XUIViewBindProperty<String>  lookupQuery =
+    	new XUIViewBindProperty<String>( "lookupQuery", this, String.class );
+    
+    public String getLookupQuery(){
+    	return lookupQuery.getEvaluatedValue(); 
+    }
+    
+    public void setLookupQuery(String queryExpr){
+    	this.lookupQuery.setExpressionText( queryExpr );
+    }
+    
+    
     
     /**
      * Set the height of the component, only works with multi-line components
@@ -191,10 +209,6 @@ public class BridgeLookup extends AttributeBase {
         getChildren().add( oFavoriteCommand );
         
         
-    }
-    @Override
-    public String getDisplayValue(){
-    	return super.getDisplayValue();
     }
     
     /**
@@ -342,7 +356,7 @@ public class BridgeLookup extends AttributeBase {
 					b2.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setDisplayed('none');");
 				} else {
 					b2.append("Ext.get('").append(oAttr.getClientId()).append("_tblBtn').setDisplayed('');");
-					if (oAttr.isDisabled() || oAttr.isReadOnly() || oAttr.getEffectivePermission( SecurityPermissions.WRITE ) ) {
+					if (oAttr.isDisabled() || oAttr.isReadOnly() || !oAttr.getEffectivePermission( SecurityPermissions.WRITE ) ) {
 						b2.append("Ext.get('").append(oAttr.getClientId()).append("_colBtns').setDisplayed('none');");
 						b2.append("Ext.get('").append(oAttr.getClientId()).append("_tdBtns').setDisplayed('none');");
 					}
@@ -537,7 +551,7 @@ public class BridgeLookup extends AttributeBase {
         public void encodeEnd(XUIComponentBase oComp) throws IOException {
         	
         	XUIResponseWriter w = getResponseWriter();
-            BridgeLookup oAttr = (BridgeLookup)oComp;
+            BridgeLookup bridgeLookup = (BridgeLookup)oComp;
         	
             // Write the field
     		oComp.setDestroyOnClient( true );
@@ -554,13 +568,13 @@ public class BridgeLookup extends AttributeBase {
         	}
         	
         	//Start Table
-        	String tableStyle = "width:100%;table-layout:fixed;" + (oAttr.isUsable()?"":"display:none;");
+        	String tableStyle = "width:100%;table-layout:fixed;" + (bridgeLookup.isUsable()?"":"display:none;");
             
             w.startElement( TABLE, oComp);
         	w.writeAttribute( CELLPADDING, "0" );
         	w.writeAttribute( CELLSPACING, "0" );
         	w.writeAttribute( STYLE, tableStyle );
-        	w.writeAttribute( ID, oAttr.getClientId()+"_tblBtn" );
+        	w.writeAttribute( ID, bridgeLookup.getClientId()+"_tblBtn" );
             	
             w.startElement( COLGROUP, oComp);
             
@@ -570,10 +584,10 @@ public class BridgeLookup extends AttributeBase {
             w.endElement(HTMLTag.COL);
             
             w.startElement( HTMLTag.COL, oComp);
-        	w.writeAttribute( ID, oAttr.getClientId()+"_colBtns" );
+        	w.writeAttribute( ID, bridgeLookup.getClientId()+"_colBtns" );
     		w.writeAttribute( STYLE, 
     				"vertical-align:top;width:54px;1px solid #B5B8C8;"
-    	            + (oAttr.isUsable()?"":"display:none;")
+    	            + (bridgeLookup.isUsable()?"":"display:none;")
     				,null 
     		);
             w.endElement(HTMLTag.COL);
@@ -592,10 +606,10 @@ public class BridgeLookup extends AttributeBase {
         	 
         		w.endElement(HTMLTag.TD);
         		w.startElement( HTMLTag.TD, oComp);
-            	w.writeAttribute( ID, oAttr.getClientId()+"_tdBtns" );
+            	w.writeAttribute( ID, bridgeLookup.getClientId()+"_tdBtns" );
         		w.writeAttribute( 
         			STYLE, "vertical-align:top;"
-        	        + (oAttr.isUsable()?"":"display:none;")
+        	        + (bridgeLookup.isUsable()?"":"display:none;")
         			 
         		);
         		
@@ -618,7 +632,7 @@ public class BridgeLookup extends AttributeBase {
             		w.startElement(HTMLTag.A);
             			
 		    			w.writeAttribute(SRC, "javascript:void(0)");
-		    			w.writeAttribute(ONCLICK, XVWScripts.getAjaxCommandScript( oAttr.getLookupCommand(),XVWScripts.WAIT_DIALOG ));
+		    			w.writeAttribute(ONCLICK, XVWScripts.getAjaxCommandScript( bridgeLookup.getLookupCommand(),XVWScripts.WAIT_DIALOG ));
 		    			w.writeAttribute(CLASS, "search-lookup-trigger");
 	            		
 	    			w.endElement(HTMLTag.A);
@@ -636,7 +650,7 @@ public class BridgeLookup extends AttributeBase {
             		
 	            		w.startElement(HTMLTag.A);
 			    			w.writeAttribute(SRC, "javascript:void(0)");
-			    			w.writeAttribute(ONCLICK, XVWScripts.getAjaxCommandScript( oAttr.getCleanCommand(),XVWScripts.WAIT_DIALOG ));
+			    			w.writeAttribute(ONCLICK, XVWScripts.getAjaxCommandScript( bridgeLookup.getCleanCommand(),XVWScripts.WAIT_DIALOG ));
 			    			w.writeAttribute(CLASS, "search-lookup-clean-trigger");
 		    			w.endElement(HTMLTag.A);
 	    			
@@ -652,17 +666,17 @@ public class BridgeLookup extends AttributeBase {
             		w.writeAttribute(ID, oComp.getClientId() + "_favButton");
             		w.writeAttribute(STYLE, "display:inline");
             		
-            		if ( oAttr.getShowFavorites()){
+            		if ( bridgeLookup.getShowFavorites()){
             			StringBuilder b = new StringBuilder(300);
             			b.append("var fav = Ext.get('").append(oComp.getClientId()).append("_fav');");
             			b.append("Ext.get('").append(oComp.getClientId())
             				.append("_left').dom.value=").append("fav.getX();");
             			b.append("Ext.get('").append(oComp.getClientId())
         				.append("_top').dom.value=").append("fav.getY();");
-            			b.append(XVWScripts.getAjaxCommandScript( oAttr.getFavoriteCommand(),XVWScripts.WAIT_DIALOG ));
+            			b.append(XVWScripts.getAjaxCommandScript( bridgeLookup.getFavoriteCommand(),XVWScripts.WAIT_DIALOG ));
             			
 	            		w.startElement(HTMLTag.A);
-	            			w.writeAttribute(ID, oAttr.getClientId()+"_fav");	
+	            			w.writeAttribute(ID, bridgeLookup.getClientId()+"_fav");	
 			    			w.writeAttribute(SRC, "javascript:void(0)");
 			    			w.writeAttribute(ONCLICK, b.toString() );
 			    			w.writeAttribute(CLASS, "search-lookup-favorite-trigger");
@@ -726,9 +740,9 @@ public class BridgeLookup extends AttributeBase {
     				.append("_left').dom.value=").append("fav.getX();");
     			b.append("Ext.get('").append(oComp.getClientId())
 				.append("_top').dom.value=").append("fav.getY();");
-    			b.append(XVWScripts.getAjaxCommandScript( oAttr.getFavoriteCommand(),XVWScripts.WAIT_DIALOG ));
+    			b.append(XVWScripts.getAjaxCommandScript( bridgeLookup.getFavoriteCommand(),XVWScripts.WAIT_DIALOG ));
     			
-    			StringBuilder b2 = encodeChanges(oAttr);
+    			StringBuilder b2 = encodeChanges(bridgeLookup);
     			getRequestContext().getScriptContext().add(XUIScriptContext.POSITION_FOOTER, "hideTbl" + oComp.getId(), 
     					b2.toString());
 			
@@ -740,6 +754,7 @@ public class BridgeLookup extends AttributeBase {
         	
         	// Write Scripts
         	encodeComponentScript( oComp );
+        	
         }
         
         

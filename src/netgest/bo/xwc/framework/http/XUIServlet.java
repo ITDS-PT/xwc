@@ -29,9 +29,6 @@ import netgest.utils.StringUtils;
 
 import org.apache.log4j.Logger;
 
-import xeo.api.base.XEOApplication;
-import xeo.api.base.XEOThreadLocalScope;
-
 public class XUIServlet extends HttpServlet
 {
 	
@@ -83,8 +80,6 @@ public class XUIServlet extends HttpServlet
     		boolean useCache = Boolean.parseBoolean( useCacheParameter );
     		if (!useCache) {
     			XUIViewHandler.disableCache();
-    		} else {
-    			XUIViewHandler.enableCache();
     		}
     	} else {
     		XUIViewHandler.disableCache();
@@ -141,7 +136,7 @@ public class XUIServlet extends HttpServlet
 			boApplication.currentContext().addEboContext( oEboContext );
 			
 			// Create XEOApplication scope for API
-			XEOApplication.wrapScope().setCurrentScope();
+			// XEOApplication.wrapScope().setCurrentScope();
 		}
 		
 		Locale userLocale = XUILocalization.getUserLocale();
@@ -287,7 +282,7 @@ public class XUIServlet extends HttpServlet
             } catch( Throwable e ) {};
             
             // Release the scope from API 2
-            XEOThreadLocalScope.unSetDefaultScope();            
+            //XEOThreadLocalScope.unSetDefaultScope();            
 
         }
     }

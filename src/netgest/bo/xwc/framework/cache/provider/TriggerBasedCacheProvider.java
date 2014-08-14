@@ -200,6 +200,9 @@ public class TriggerBasedCacheProvider implements CacheEngine {
 	@Override
 	public void add(String key, Object entry) {
 		Date expiresDate = getExpiratioDate( defaultExpirationTime );
+		if (entry instanceof CacheElement) {
+			expiresDate = ((CacheElement)entry).getExpiredDate();
+		}
 		addToTableAndCache( key , entry , expiresDate );
 	}
 	

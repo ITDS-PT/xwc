@@ -1,5 +1,24 @@
 
 
+/***
+ * 
+ * README FOR Grouping and Selecting Rows
+ * 
+ * The ExtJS Grid did not have multiple group support. It's added in this extension
+ * 
+ * The GroupingStore object extends the original DataStore and adds multiple group support in the form
+ * of sub-store. Each group has a reference to its sub-groups in the form of GroupingStores
+ * 
+ * The problem this created was that row indexes stayed the same, meaning row index 3 is the third visible
+ * row (even if it's the first row of the third group) The rowIndex is global, not local to the group. If you want 
+ * to select the first of row of group N, you must count the number of visible rows that appear before that group 
+ * Functions that work with row indexes (namely selecting row)
+ * have the difficulty of having to deal with this. 
+ * 
+ * 
+ */
+
+
 Ext.ns('ExtXeo','ExtXeo.grid');
 Ext.ns('ExtXeo','ExtXeo.data'); 
 
@@ -1127,7 +1146,10 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
         var row = this.getRow(rowIndex);
         if(row && !row.offsetParent){
             var g = this.findGroup(row);
-            this.toggleGroup(g, true);
+            //Don't know why would we toggle group (expand) in a onBeforeRowSelect
+            //This causes some weird behaviours because the getRow and findGroup implementations
+            //are probably not very compatible with our Group implementation
+            //this.toggleGroup(g, true);
         }
     },
     processRows : function(startRow, skipStripe){
@@ -1748,6 +1770,8 @@ ExtXeo.grid.GridGroup = Ext.extend( ExtXeo.grid.GridGroup, {
 			this.groupingView.parentView.groupLoaded( this );
 		}
 		
+		this.groupStore.expanded = true;
+		
 		var grid = this.groupingView.grid;
 		if (grid.isAllRowsSelected()){
 			grid.selModel.selectAll();
@@ -1766,6 +1790,9 @@ ExtXeo.grid.GridGroup = Ext.extend( ExtXeo.grid.GridGroup, {
     		this.toolBar.destroy();
     		this.toolBar = null;
     	}
+    	if (this.groupStore){
+    		this.groupStore.expanded = false;
+    	}
 	},
     createGroupToolbar : function( elemId, store ) {
     	var ret = new ExtXeo.PagingToolbar( { beforePageText:'', style:'border:1px solid lightgray;padding-top:0px;padding-bottom:0px;', cls:'x-grid-group-tb', hidden:true ,ctCls:'x-grid-group-tb' ,autoWidth:false, width:270,renderTo:elemId + '-tb', store: store, gridId : store.gridId } );
@@ -1783,6 +1810,7 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     , gridId : null
     , resetCount : null
 	, rowIdentifier : 'BOUI'
+	, expanded : false 
 	, dataSourceChange : false //Represents a change in the datasource
 	, constructor: function( opts ) {
 		this.groupStores = [];
@@ -1831,33 +1859,82 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
 		return this.pageSize;
 	}
 	
+	/**
+	 * 
+	 * Find the index of a record recursively, accounts for subgroups
+	 * 
+	 * */
+	, findRecursiveInStore : function (property, value, store, count ){
+		var subStores = store.groupStores;
+		if (subStores !== undefined){
+			for (var i = 0 ; i < subStores.length ; i++){
+				if (subStores[i] !== undefined){
+					var currentStore = subStores[i];
+					if (currentStore.isExpanded()){ //Needs to be expanded
+						if (currentStore.groupStores && currentStore.groupStores.length == 0){ //And not be a middle group, 
+							// we're only interested in the leaf stores
+							var index = currentStore.find( property, value );
+							if (index == -1){
+								count.total += currentStore.getTotalCount(); //If cannot find add the total of records
+							} else {
+								if (index !== undefined){
+									count.total += index;
+									count.found = true;
+									break;
+								}
+							}
+						}
+						if (!count.found){
+							this.findRecursiveInStore(property, value, currentStore, count);
+						}
+					}
+				}
+			}
+		}
+		if (count.found){
+			return count.total;
+		}
+		else 
+			return -1;
+	}
 		
+	/**
+	 * Find a record in the store recursivly (meaning we can need to traverse all substores)
+	 */
 	, findRecursive : function (property, value, grouped){
 		
 		if (!grouped){
 			var result = this.find( property, value);
 			return result;
 		}
-		var count = 0;
-		var found = false;
+		var count = { total : 0 , found : false };
 		for (var i = 0 ; i < this.groupStores.length ; i++){
-			if (this.groupStores[i]){
+			if (this.groupStores[i] !== undefined){
 				var currentStore = this.groupStores[i];
-				var index = currentStore.find( property, value );
-				if (index == -1){
-					count += this.groupStores[i].getTotalCount();
-				} else {
-					count += index;
-					found = true;
-					break;
-				} 
+				if (currentStore.isExpanded()){ //We're not interested in counting collapsed groups
+					if (currentStore.groupStores && currentStore.groupStores.length == 0) //We only need leaf stores, not one with subgroups
+					var index = currentStore.find( property, value );
+					if (index == -1){
+						count.total += currentStore.getTotalCount();
+					} else {
+						if (index !== undefined){
+							count.total += index;
+							count.found = true;
+							break;
+						}
+					}
+					if (!count.found){
+						this.findRecursiveInStore(property, value, currentStore, count);
+					}
+				}
 			}
 		}
-		if (found){
-			return count;
+		if (count.found){
+			return count.total;
 		}
 		else 
 			return -1;
+		
 	}
 	
 	, clearExpandedGroups : function () {
@@ -2247,22 +2324,27 @@ ExtXeo.data.GroupingStore = Ext.extend( Ext.data.Store, {
     , resetDataSourceChange : function () {
     	this.dataSourceChange = false;
     }
+    
     , selectAllRows : function(){
     	
     	for (var i = 0 ; i < this.groupStores.length ; i++){
     		if (this.groupStores[i]){
-    		this.groupStores[i].selectAllRows();
+    			this.groupStores[i].selectAllRows();
+    		}
     	}
-    }
     }
     
     , deselectAllRows : function () {
     	
     	for (var i = 0 ; i < this.groupStores.length ; i++){
     		if (this.groupStores[i]){
-    		this.groupStores[i].deselectAllRows();
+    			this.groupStores[i].deselectAllRows();
+    		}
     	}
     }
+    
+    , isExpanded : function (){
+    	return this.expanded;
     }
     
     
@@ -2671,41 +2753,95 @@ Ext.grid.XeoCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel,
 	 * The problem with our approach to having rows of the root store as groups is that
 	 * when you select all rows, it would expand the groups instead of selecting the rows of the
 	 * groups
+	 * 
+	 * Takes into account subgroups and records of subgroups not being really rows, but other subgroups
+	 * 
 	 */
-	, selectAll : function(){
+	, selectAll : function( gs ){
 		if (this.grid.store.groupField !== null && this.grid.store.groupField.length == 0){
 			Ext.grid.XeoCheckboxSelectionModel.superclass.selectAll.call(this);
 		} else {
 			this.selectingAll = true;
 			var negated = this.getNegatedSelections();
-			var gs = this.grid.store.groupStores;
-			var count = 0;
+			if (gs === undefined || gs === null){
+				gs = this.grid.store.groupStores;
+			}
+			var count = { total : 0 };
 			for (var i = 0 ; i < gs.length ; i++){
-				if (gs[i]){
-					var records = gs[i].getRange(0,gs[i].getCount());
-					for (var k = 0 ; k < records.length ; k++){
-						var boui = records[k].data[this.getRowIdentifier()];
-						var skip = false;
-						for (var j = 0 ; j < negated.length ; j++){ 
-							//Remove the ! 
-							var raw = negated[j];
-							var value = raw.slice(1);
-							if ( value == boui ){
-								skip = true;
-								break;
+				if (gs[i] !== undefined){
+					var store = gs[i];
+					if (store.isExpanded()){
+						var records = store.getRange(0,store.getCount());
+						for (var k = 0 ; k < records.length ; k++){
+							var boui = records[k].data[this.getRowIdentifier()];
+							if (boui !== "" && boui !== null){
+								var skip = false;
+								for (var j = 0 ; j < negated.length ; j++){ 
+									//Remove the ! 
+									var raw = negated[j];
+									var value = raw.slice(1);
+									if ( value == boui ){
+										skip = true;
+										break;
+									}
+								}
+								if (!skip){
+									this.grid.view.onRowSelect(count.total);
+									this.selectRow(count.total,true,true);
+									count.total++;
+								}
 							}
 						}
-						if (!skip){
-							this.grid.view.onRowSelect(count);
-							this.selectRow(count,true,true);
-							count++;
-						}
+						
+						var subStores = store.groupStores;
+						this.recursiveSelectRows(subStores, count, {});
 					}
 				}
 			}
 			this.selectingAll = false;
 		}
-		this.grid.store.selectAllRows();
+//		this.grid.store.selectAllRows();
+	}
+	
+	, recursiveSelectRows : function ( subStores, count, processed ){
+		if (subStores){
+			var negated = this.getNegatedSelections();
+			for (var k = 0 ; k < subStores.length ; k++){
+				var subStore = subStores[k];
+				if (subStore){
+					if (processed[subStore.storeId] === undefined ){
+						if (subStore){
+							if (subStore.isExpanded()){
+								processed[subStore.storeId] = true;	
+								var records = subStore.getRange(0,subStore.getCount());
+								for (var m = 0 ; m < records.length ; m++){
+									var boui = records[m].data[this.getRowIdentifier()];
+									if (boui !== "" && boui !== null){
+										var skip = false;
+										for (var j = 0 ; j < negated.length ; j++){ 
+											//Remove the ! 
+											var raw = negated[j];
+											var value = raw.slice(1);
+											if ( value == boui ){
+												skip = true;
+												break;
+											}
+										}
+										if (!skip){
+											this.grid.view.onRowSelect(count.total);
+											this.selectRow(count.total,true,true);
+											count.total++;
+										}
+									}
+								}
+								var subSubStores = subStore.groupStores;
+								this.recursiveSelectRows(subSubStores, count, processed);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	, getNegatedSelections : function () {
@@ -2732,14 +2868,22 @@ Ext.grid.XeoCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel,
 		} else {
 			this.clearingAll = true;
 			var gs = this.grid.store.groupStores;
-			var count = 0;
+			var count = { total : 0 };
 			for (var i = 0 ; i < gs.length ; i++){
-				if (gs[i]){
-					var records = gs[i].getRange(0,gs[i].getCount());
-					for (var k = 0 ; k < records.length ; k++){
-						this.grid.view.onRowDeselect(count);
-						this.deselectRow(count,true);
-						count++;
+				var store = gs[i];
+				if (store !== undefined){
+					if (store.isExpanded()){
+						var records = gs[i].getRange(0,gs[i].getCount());
+						for (var k = 0 ; k < records.length ; k++){
+							var boui = records[k].data[this.getRowIdentifier()];
+							if (boui !== "" && boui !== null){
+								this.grid.view.onRowDeselect(count.total);
+								this.deselectRow(count.total,true);
+								count.total++;
+							}
+						}
+						var subStores = gs[i].groupStores;
+						this.recursiveDeselectRows(subStores, count, {});
 					}
 				}
 			}
@@ -2747,6 +2891,30 @@ Ext.grid.XeoCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel,
 		}
 		this.grid.store.deselectAllRows();
 		
+	}
+	
+	, recursiveDeselectRows : function (gs, count, processed){
+		for (var i = 0 ; i < gs.length ; i++){
+			var store = gs[i];
+			if (store !== undefined){
+				if (store.isExpanded()){
+					if (processed[store.storeId] === undefined){
+						processed[store.storeId] = true;
+						var records = store.getRange(0,store.getCount());
+						for (var k = 0 ; k < records.length ; k++){
+							var boui = records[k].data[this.getRowIdentifier()];
+							if (boui !== "" && boui !== null){
+								this.grid.view.onRowDeselect(count.total);
+								this.deselectRow(count.total,true);
+								count.total++;
+							}
+						}
+						var subStores = store.groupStores;
+						this.recursiveDeselectRows(subStores, count, processed);
+					}
+				}
+			}
+		}
 	}
 	
 	/**
@@ -3005,7 +3173,6 @@ ExtXeo.grid.rowSelect = function( oSelModel, rowIndex, record){
 	var rowIdentifier = oSelModel.grid.getRowIdentifier();
 	if (record.data){
 		oInput.value = record.data[rowIdentifier];
-		console.log("Selected " + record.data[rowIdentifier]);
 		ExtXeo.grid.addSelected(oSelModel.grid.id,record.data[rowIdentifier],false);
 	}
 	ExtXeo.grid.updateCounter(oSelModel);
