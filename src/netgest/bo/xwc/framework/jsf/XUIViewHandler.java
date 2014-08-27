@@ -201,8 +201,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                            UIViewRoot viewToRender) throws IOException,
         FacesException {
     	
-    	long ini = System.currentTimeMillis();
-    	
     	XUIRequestContext.getCurrentContext()
     		.setRenderedViewer( viewToRender );
     		
@@ -256,6 +254,16 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             else {
             	renderNormal( context, request, response, renderKit, viewToRender );
             }
+        }
+        
+        // Release transaction if the viewer is transient and owns a transaction
+        XUIViewRoot renderedViewer = (XUIViewRoot)viewToRender;
+        if( renderedViewer.isTransient() && renderedViewer.getOwnsTransaction() ) {
+        	String transactionId = renderedViewer.getTransactionId() ;
+        	if( transactionId != null ) {
+        		XUIRequestContext.getCurrentContext().
+        			getTransactionManager().releaseTransaction( renderedViewer.getTransactionId() );
+        	}
         }
 
         if (null != oldWriter) {
