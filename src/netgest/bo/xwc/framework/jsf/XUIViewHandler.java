@@ -96,6 +96,7 @@ import com.sun.faces.util.Util;
 
 /**
  * <B>ViewHandlerImpl</B> is the default implementation class for ViewHandler.
+ * 
  *
  * @version $Id: ViewHandlerImpl.java,v 1.45.12.2.2.1 2006/04/12 19:32:04 ofung Exp $
  * @see javax.faces.application.ViewHandler
