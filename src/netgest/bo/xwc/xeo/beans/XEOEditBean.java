@@ -124,6 +124,7 @@ public class XEOEditBean extends XEOBaseBean{
 	}
 	
 	/**
+	 * 
 	 * For testing purposes only
 	 */
 	public XEOEditBean(EboContext ctx){
