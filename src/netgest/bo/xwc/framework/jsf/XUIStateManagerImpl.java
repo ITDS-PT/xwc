@@ -70,6 +70,7 @@ import netgest.bo.system.Logger;
 import netgest.bo.system.LoggerLevels;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.errorLogging.ViewStateDebug;
+import netgest.bo.xwc.framework.errorLogging.ViewStateDebugInfo;
 
 import com.sun.faces.RIConstants;
 import com.sun.faces.config.WebConfiguration;
@@ -228,7 +229,51 @@ public class XUIStateManagerImpl extends StateManager {
             }
         }
         
+        // Debug se há views a serem idenvidamente fechadas!!!!
+        ViewStateDebug.debugIfClosed( "===  DEBUG INFO FOR VIEWS CLOSED BY SYSTEMOPERATIONS.XVW ===", String.valueOf( id ) );
+        ViewStateDebugInfo debugInfo = ViewStateDebug.getDebugInfo( String.valueOf( id ) );
+        if( debugInfo != null ) {
+        	// Clear closed info...
+        	debugInfo.setCloseTime( 0 );
+        }
+        
         return viewRoot;
+    }
+    
+    public boolean existsView( String idString ) {
+        String idInLogicalMap;
+        String idInMap;
+
+        int sep = idString.indexOf(NamingContainer.SEPARATOR_CHAR);
+        assert(-1 != sep);
+        assert(sep < idString.length());
+
+        idInLogicalMap = idString.substring(0, sep);
+        
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        ExternalContext externalCtx = context.getExternalContext();
+        Object sessionObj = externalCtx.getSession(false);
+
+        // stop evaluating if the session is not available
+        if (sessionObj == null) {
+            return false;
+        }
+
+        Map<?,?> logicalMap = (Map<?,?>) externalCtx.getSessionMap()
+              .get(LOGICAL_VIEW_MAP);
+        
+        if( logicalMap.containsKey(idInLogicalMap) ) {
+        	idInMap = idString.substring(sep + 1);
+        	Map<?,?> actualMap = (Map<?,?>)logicalMap.get( idInLogicalMap );
+        	if( actualMap.containsKey(  idInMap  ) ) {
+        		return true;
+        	}
+        }
+        
+        
+        return false;
+    	
     }
 
     public void closeView( String idString ) {

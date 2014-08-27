@@ -52,7 +52,7 @@ public class ViewStateDebug {
 		}
 	}
 	
-	private static synchronized ViewStateDebugInfo getDebugInfo( String stateId ) {
+	public static synchronized ViewStateDebugInfo getDebugInfo( String stateId ) {
 		Map<String,Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext()
 				.getSessionMap();
 			

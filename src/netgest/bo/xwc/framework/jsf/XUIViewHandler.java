@@ -260,11 +260,7 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
         // Release transaction if the viewer is transient and owns a transaction
         XUIViewRoot renderedViewer = (XUIViewRoot)viewToRender;
         if( renderedViewer.isTransient() && renderedViewer.getOwnsTransaction() ) {
-        	String transactionId = renderedViewer.getTransactionId() ;
-        	if( transactionId != null ) {
-        		XUIRequestContext.getCurrentContext().
-        			getTransactionManager().releaseTransaction( renderedViewer.getTransactionId() );
-        	}
+        	renderedViewer.dispose();
         }
 
         if (null != oldWriter) {
