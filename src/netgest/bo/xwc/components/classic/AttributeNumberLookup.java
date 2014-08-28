@@ -515,7 +515,7 @@ public class AttributeNumberLookup extends AttributeBase implements LookupCompon
 	
 				            resp.setHeader("Cache-Control","private");               
 				            ServletOutputStream so = response.getOutputStream(); 
-			                resp.setHeader("Content-Disposition","attachment; filename="+sName);
+			                resp.setHeader("Content-Disposition","attachment; filename=\""+sName+"\"");
 	
 				            Long FileSize = new Long(file.length()); 
 				            int xfsize = FileSize.intValue(); 

@@ -427,7 +427,7 @@ public class AttributeWordMacro extends AttributeBase {
 	
 				            resp.setHeader("Cache-Control","private");               
 				            ServletOutputStream so = response.getOutputStream(); 
-			                resp.setHeader("Content-Disposition","attachment; filename="+sName);
+			                resp.setHeader("Content-Disposition","attachment; filename=\""+sName+"\"");
 			                
 			                resp.setHeader("XEODM-FileName", sName );
 			                resp.setHeader("XEODM-ReadOnly", Boolean.toString( oFile.isDisabled() ) );

@@ -623,7 +623,7 @@ public class XEOEditBean extends XEOBaseBean{
     	  HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
     	  response.setContentType("application/pdf");
     	  String fileName = currentEditObject.getTextCARDID().toString().replace(" ","_");
-    	  response.setHeader("Content-disposition","attachment; filename=" + fileName + ".pdf"); 
+    	  response.setHeader("Content-disposition","attachment; filename=\"" + fileName + ".pdf\""); 
       	  OutputStream out = response.getOutputStream();
     		
     	  // Step 3: Construct fop with desired output format
@@ -695,7 +695,7 @@ public class XEOEditBean extends XEOBaseBean{
     	
     	HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
     	response.setContentType("application/excel");
-  	  	response.setHeader("Content-disposition","attachment; filename="+currentEditObject.getTextCARDID()+".xls"); 
+  	  	response.setHeader("Content-disposition","attachment; filename=\""+currentEditObject.getTextCARDID()+".xls\""); 
   	  	try 
   	  	{
 			response.getOutputStream().write( result );
