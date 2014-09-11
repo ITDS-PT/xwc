@@ -216,11 +216,8 @@ public class TreePanel extends XUIComponentBase implements ExtJSRegionRenderer {
 				
 				if (targetDefaultMenu != null)
 				{
-					String script = "" +
-					"function openDefaultTab() {" +
-						"XVW.openCommandTab('"+sFrameName+"','"+formIdenfier+"','"+getDefaultTab()+"','');" +
-					"};"+
-					"window.setTimeout( openDefaultTab, 1000 ); ";
+					String function = String.format("XVW.openCommandTab('%s','%s','%s','');", sFrameName, formIdenfier, getDefaultTab());
+					String script = String.format("(function openDefaultTab(){ window.setTimeout( function ( ) { if (XVW.getXApp() != null){ %s } else { openDefaultTab() } }, 500 ); })();  ", function);
 	
 				getRequestContext().getScriptContext().add(
 					XUIScriptContext.POSITION_FOOTER, "defaultTab", script);
