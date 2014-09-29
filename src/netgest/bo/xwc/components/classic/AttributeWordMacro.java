@@ -23,16 +23,14 @@ import javax.servlet.http.HttpServletResponse;
 import netgest.bo.runtime.AttributeHandler;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boRuntimeException;
+import netgest.bo.system.Logger;
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.HTMLTag;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
-import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.components.classic.scripts.XVWScripts.WaitMode;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
-import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.components.xeodm.XEODMBuilder;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
@@ -42,7 +40,6 @@ import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUISessionContext;
 import netgest.bo.xwc.framework.components.XUICommand;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
-import netgest.bo.xwc.framework.components.XUIForm;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
 import netgest.bo.xwc.xeo.beans.FileBrowseBean;
@@ -57,6 +54,9 @@ import netgest.io.iFile;
  *
  */
 public class AttributeWordMacro extends AttributeBase {
+	
+	
+	private static final Logger logger = Logger.getLogger( AttributeWordMacro.class );
 	
     private XUICommand oLookupCommand;
 
@@ -358,8 +358,18 @@ public class AttributeWordMacro extends AttributeBase {
 	                    oAttrComp.setSubmittedValue( "" );
 	                }
 	                else {
-	                	if( ((XEOObjectAttributeConnector)oAttrComp.getDataFieldConnector()).getAttributeHandler().isObject() ) {
-	                		oAttrComp.setSubmittedValue( value );
+	                	
+	                	DataFieldConnector connector = oAttrComp.getDataFieldConnector();
+	                	if (connector != null){
+	                		XEOObjectAttributeConnector xeoConnector = (XEOObjectAttributeConnector) connector;
+	                		AttributeHandler handler = xeoConnector.getAttributeHandler();
+	                		if (handler != null && handler.isObject()){
+	                			oAttrComp.setSubmittedValue( value );
+	                		} else {
+	                			logger.warn( "Attribute %s with ID %s does not have an AttributeHandler", oAttrComp.getObjectAttribute() , oAttrComp.getClientId() );	
+	                		}
+	                	} else {
+	                		logger.warn( "Attribute %s with ID %s does not have a DataFieldConnector", oAttrComp.getObjectAttribute() , oAttrComp.getClientId() );
 	                	}
 	                }
                 }
@@ -369,7 +379,6 @@ public class AttributeWordMacro extends AttributeBase {
         }
         
         
-        @SuppressWarnings("unchecked")
 		public void service(ServletRequest request, ServletResponse response, XUIComponentBase comp) throws IOException {
         	HttpServletResponse resp = (HttpServletResponse)response;
         	 
@@ -402,7 +411,6 @@ public class AttributeWordMacro extends AttributeBase {
 			        			try {
 			        				docObj.getAttribute( objAtt ).setValueiFile( new FSiFile( null, file, null ) );
 								} catch (boRuntimeException e) {
-									// TODO Auto-generated catch block
 									throw new RuntimeException(e);
 								}
 			        		}
@@ -419,7 +427,7 @@ public class AttributeWordMacro extends AttributeBase {
 	
 				            resp.setHeader("Cache-Control","private");               
 				            ServletOutputStream so = response.getOutputStream(); 
-			                resp.setHeader("Content-Disposition","attachment; filename="+sName);
+			                resp.setHeader("Content-Disposition","attachment; filename=\""+sName+"\"");
 			                
 			                resp.setHeader("XEODM-FileName", sName );
 			                resp.setHeader("XEODM-ReadOnly", Boolean.toString( oFile.isDisabled() ) );
@@ -451,7 +459,6 @@ public class AttributeWordMacro extends AttributeBase {
 						}
 		        	}
 				} catch (boRuntimeException e) {
-					// TODO Auto-generated catch block
 					throw new RuntimeException(e);
 				}
         	}

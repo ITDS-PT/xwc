@@ -24,6 +24,8 @@ public class XUIStateBindProperty<V> extends XUIStateProperty<ValueExpression> {
     	if( sExpression != null ) {
     		if( !sExpression.equals( getExpressionString() ) ) {
     			super.setValue( getComponent().createValueExpression( sExpression, this.cValueType ) );
+    		} else {
+    			super.changed(); //Expression was the same but someone attempted to change the value
     		}
     	} else {
     		super.setValue( null );

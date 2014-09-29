@@ -18,6 +18,7 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
 public class XEOMainBean extends XEOBaseBean {
@@ -110,14 +111,13 @@ public class XEOMainBean extends XEOBaseBean {
 
         oViewRoot = oSessionContext.createView( sViewerName );
         oBaseBean = (XEOEditBean)oViewRoot.getBean( "viewBean" );
+        
+        if (StringUtils.isEmpty( sObjectName)){
+        	throw new RuntimeException( String.format("Name of new Object in viewer %s cannot be null", sViewerName ) );
+        }
         oBaseBean.createNew( sObjectName );
         
-        // Diz a que a view corrente � a criada.
         oRequestContext.setViewRoot( oViewRoot );
-        
-        // TODO: This action must be automatic on the platform
-        // initialize components
-        oViewRoot.processInitComponents();
         
     }
     
@@ -139,13 +139,7 @@ public class XEOMainBean extends XEOBaseBean {
         oBaseBean = (XEOEditBean)oViewRoot.getBean( "viewBean" );
         oBaseBean.setCurrentObjectKey( sKey );
         
-        // Diz a que a view corrente � a criada.
         oRequestContext.setViewRoot( oViewRoot );
-        
-        // TODO: This action must be automatic on the platform
-        // initialize components
-        oViewRoot.processInitComponents();
-
         
     }
 
@@ -207,13 +201,7 @@ public class XEOMainBean extends XEOBaseBean {
         }
         
         oBaseBean.executeBoql( oViewerConfig.getBoql() );
-        // Diz a que a view corrente � a criada.
         oRequestContext.setViewRoot( oViewRoot );
-        
-        // TODO: This action must be automatic on the platform
-        // initialize components
-        oViewRoot.processInitComponents();
-        
         
     }
     
@@ -236,7 +224,6 @@ public class XEOMainBean extends XEOBaseBean {
         oViewRoot = oSessionContext.createView( sViewerName );
         
         oRequestContext.setViewRoot( oViewRoot );
-        //oViewRoot.processInitComponents();
     	
     }
     

@@ -343,6 +343,9 @@ public class XEOBaseLookupList extends XEOBaseList {
 		@Override
 		public void beforePreRender() {
 			
+				GridPanel grid = (GridPanel) getComponent().findParent( GridPanel.class );
+				grid.resetColumns();
+			
 				((XUIComponentBase)getComponent().getParent()).forceRenderOnClient();
 				getComponent().getChildren().clear();
 				if(selectedObject != null && !"".equalsIgnoreCase(selectedObject)){

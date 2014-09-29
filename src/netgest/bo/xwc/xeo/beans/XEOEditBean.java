@@ -124,6 +124,7 @@ public class XEOEditBean extends XEOBaseBean{
 	}
 	
 	/**
+	 * 
 	 * For testing purposes only
 	 */
 	public XEOEditBean(EboContext ctx){
@@ -622,7 +623,7 @@ public class XEOEditBean extends XEOBaseBean{
     	  HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
     	  response.setContentType("application/pdf");
     	  String fileName = currentEditObject.getTextCARDID().toString().replace(" ","_");
-    	  response.setHeader("Content-disposition","attachment; filename=" + fileName + ".pdf"); 
+    	  response.setHeader("Content-disposition","attachment; filename=\"" + fileName + ".pdf\""); 
       	  OutputStream out = response.getOutputStream();
     		
     	  // Step 3: Construct fop with desired output format
@@ -694,7 +695,7 @@ public class XEOEditBean extends XEOBaseBean{
     	
     	HttpServletResponse response = (HttpServletResponse) getRequestContext().getResponse();
     	response.setContentType("application/excel");
-  	  	response.setHeader("Content-disposition","attachment; filename="+currentEditObject.getTextCARDID()+".xls"); 
+  	  	response.setHeader("Content-disposition","attachment; filename=\""+currentEditObject.getTextCARDID()+".xls\""); 
   	  	try 
   	  	{
 			response.getOutputStream().write( result );
@@ -769,8 +770,10 @@ public class XEOEditBean extends XEOBaseBean{
     }
     @Visible
     public void destroy()  throws boRuntimeException {
+    	boObject xeoobject = null;
     	try {
-    		getXEOObject().destroy(); 
+    		xeoobject = getXEOObject();
+    		xeoobject.destroy(); 
 	        getRequestContext().addMessage(
 	                "Bean",
 	                new XUIMessage(XUIMessage.TYPE_POPUP_MESSAGE, XUIMessage.SEVERITY_INFO, 
@@ -793,7 +796,7 @@ public class XEOEditBean extends XEOBaseBean{
     			}
     			else if( "BO-3021".equals( boEx.getErrorCode() ) ) {
     				setValid(false);
-    				showObjectErrors();
+    				showObjectErrors(xeoobject);
     			}
         		else {
         			throw new RuntimeException( e );
@@ -917,9 +920,10 @@ public class XEOEditBean extends XEOBaseBean{
         boDefAttribute      oAttDef     = oAttHandler.getDefAttribute();
         
     	String className = oAttDef.getReferencedObjectName(); 
-    	if( "boObject".equals( oAttDef.getReferencedObjectName() ) ) {
-    		String[] objects = oAttDef.getObjectsName();
-    		if( objects != null && objects.length > 0 ) {
+    	String[] objects = oAttDef.getObjectsName();
+    	boolean hasReferencedObjectsList = objects != null && objects.length > 0;
+    	if( "boObject".equals( oAttDef.getReferencedObjectName()) || hasReferencedObjectsList ) {
+    		if( hasReferencedObjectsList ) {
     			className = objects[0];
     		}
     	}
@@ -969,8 +973,9 @@ public class XEOEditBean extends XEOBaseBean{
             LookupList lookUp_list=(LookupList)oViewRoot.findComponent(LookupList.class); 
             if (lookUp_list!=null &&  
             		boDefAttribute.ATTRIBUTE_OBJECT.equalsIgnoreCase(
-            				oAttHandler.getDefAttribute().getAtributeDeclaredType()))
+            				oAttHandler.getDefAttribute().getAtributeDeclaredType())){
             	lookUp_list.setRowSelectionMode(GridPanel.SELECTION_ROW);
+            }
             
             oBaseBean.setParentBean( this ); 
             oBaseBean.setParentAttributeName( oAttHandler.getName() );
@@ -983,11 +988,10 @@ public class XEOEditBean extends XEOBaseBean{
             String sBoql = null;
             if (lookup != null){
             	sBoql = lookup.getLookupQuery();
+            	if (StringUtils.hasValue( sBoql )){
+            		oBaseBean.executeBoql( sBoql );
+            	}
             }
-            if (StringUtils.isEmpty( sBoql )){
-            	sBoql = getLookupQuery( oAttHandler, className );
-            }
-            oBaseBean.executeBoql( sBoql );
         }
 
         // Diz a que a view corrente ��� a criada.

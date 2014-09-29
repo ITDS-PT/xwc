@@ -1,12 +1,8 @@
 package netgest.bo.xwc.xeo.advancedSearch;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
 
-import netgest.bo.def.boDefActivity;
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
@@ -84,7 +80,7 @@ public class AdvancedSearchAttributeChooser extends XEOBaseBean {
 
 			if ( StringUtils.hasValue( current.getName() ) && isNotStateAttribute( current ) ) {
 				Menu m = new Menu();
-				m.setId(current.getName() + (incrementer++));
+				m.setId(current.getName() + "_" +(incrementer++));
 				m.setText( current.getLabel() );
 				ModelInformation info = new ModelInformation( modelName, current.getName(), null, current.getReferencedObjectName() );
 				m.setValue( info.toString() );
@@ -132,7 +128,7 @@ public class AdvancedSearchAttributeChooser extends XEOBaseBean {
 
 			if ( StringUtils.hasValue( current.getName() ) ) {
 				Menu m = new Menu();
-				m.setId(current.getName() + (incrementer++) );
+				m.setId(current.getName() + "_" +(incrementer++) );
 				m.setText( current.getLabel() );
 				ModelInformation info = new ModelInformation( modelName, current.getName(), parentAttributeName, targetObject );
 				m.setValue( info.toString() );

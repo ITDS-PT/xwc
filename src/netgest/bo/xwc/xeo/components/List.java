@@ -90,7 +90,9 @@ public class List extends GridPanel {
 		if( getRenderIconColumn() ) {
 			addIconColumn();
 		}
-		createToolBar( 0 );
+		if (getRenderToolBar()){
+			createToolBar( 0 );
+		}
 		super.initComponent();
 		
 		java.util.List<UIComponent> children = getChildren();

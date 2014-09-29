@@ -73,7 +73,7 @@ public class XEOObjectListRowConnector extends XEOObjectConnector {
 	}
 
 	private boolean fieldIsNotPartOfObject(DataFieldConnector ret) {
-		return ret == null;
+		return ret == null || ret instanceof NullFieldConnector;
 	}
 	
 	

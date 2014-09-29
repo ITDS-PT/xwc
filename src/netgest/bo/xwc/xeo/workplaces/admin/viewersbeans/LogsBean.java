@@ -110,7 +110,7 @@ public class LogsBean extends XEOBaseBean  {
 				File file = new File(this.selectedLog);
 				DataInputStream is = new DataInputStream(new FileInputStream(file));
 				response.setContentType("application/x-download");
-				response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
+				response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
 				
 				ServletOutputStream so = response.getOutputStream(); 
 				

@@ -28,6 +28,7 @@ import netgest.bo.xwc.components.classic.scripts.XVWScripts;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectAttributeConnector;
 import netgest.bo.xwc.components.localization.ComponentMessages;
+import netgest.bo.xwc.components.security.SecurityPermissions;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.xeodm.XEODMBuilder;
 import netgest.bo.xwc.framework.XUIBindProperty;
@@ -192,7 +193,20 @@ public class AttributeFile extends AttributeBase {
             oInpConfig.add("hideTrigger1", false);
             oInpConfig.addJSString("cls", "xwc-att-file" );
             oInpConfig.addJSString("ctCls", "xeoObjectLink" );
-            oInpConfig.add( "disabled" , oAttFile.isDisabled() );
+            
+            boolean readPermission = oAttFile.getEffectivePermission( SecurityPermissions.READ );
+            boolean writePermission = oAttFile.getEffectivePermission( SecurityPermissions.WRITE );
+            boolean isDisabled = oAttFile.isDisabled();
+            if (!readPermission){
+            	oInpConfig.add( "disabled" , true );
+            } else {
+            	if (!writePermission){
+            		oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
+                    oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
+            	} else {
+            		oInpConfig.add( "disabled" , isDisabled );
+            	}
+            }
             
             oInpConfig.add("maxLength", "500" );
             

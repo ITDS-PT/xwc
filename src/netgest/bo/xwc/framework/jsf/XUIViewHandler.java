@@ -96,6 +96,7 @@ import com.sun.faces.util.Util;
 
 /**
  * <B>ViewHandlerImpl</B> is the default implementation class for ViewHandler.
+ * 
  *
  * @version $Id: ViewHandlerImpl.java,v 1.45.12.2.2.1 2006/04/12 19:32:04 ofung Exp $
  * @see javax.faces.application.ViewHandler
@@ -129,6 +130,10 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 	
 	public static synchronized void enableCache(){
 		useCache = Boolean.TRUE;
+	}
+	
+	public static synchronized boolean isCacheEnabled(){
+		return useCache;
 	}
 	
 	static ThreadLocal< Boolean > savingInCache = new ThreadLocal< Boolean >(){
@@ -197,8 +202,6 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
                            UIViewRoot viewToRender) throws IOException,
         FacesException {
     	
-    	long ini = System.currentTimeMillis();
-    	
     	XUIRequestContext.getCurrentContext()
     		.setRenderedViewer( viewToRender );
     		
@@ -252,6 +255,12 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
             else {
             	renderNormal( context, request, response, renderKit, viewToRender );
             }
+        }
+        
+        // Release transaction if the viewer is transient and owns a transaction
+        XUIViewRoot renderedViewer = (XUIViewRoot)viewToRender;
+        if( renderedViewer.isTransient() && renderedViewer.getOwnsTransaction() ) {
+        	renderedViewer.dispose();
         }
 
         if (null != oldWriter) {
@@ -354,6 +363,11 @@ public class XUIViewHandler extends XUIViewHandlerImpl {
 		    }
 		    catch (Exception e) 
 		    {
+		    	String message = e.getMessage();
+		    	if (StringUtils.isEmpty( message )){
+		    		message = "";
+		    	}
+		    	log.warn( String.format("Could not render %s because of %s", viewToRender.getViewId(), message ) , e );
 		    	throw new RuntimeException("XEOEditBean - XSLT Transformation Error", e);
 		    }
 		    finally {

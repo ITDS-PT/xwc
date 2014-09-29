@@ -116,7 +116,7 @@ public class FileUploadRenderer extends TemplateRenderer implements XUIRendererS
 				String mimetype = oCtx.getMimeType(sName.toLowerCase());
 		
 		        resp.setHeader("Cache-Control","private");               
-		        resp.setHeader("Content-Disposition","attachment; filename="+sName);
+		        resp.setHeader("Content-Disposition","attachment; filename=\""+sName+"\"");
 		        OutputStream so = resp.getOutputStream(); 
 		
 		        resp.setContentType(mimetype);

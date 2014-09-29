@@ -410,15 +410,13 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 			children.add( currentMenuPos++, Menu.getMenuSpacer() );
 		}
 		
-		if (getRenderFavoritesBtn()){
-			menu = createViewerBeanMethod(  "showFavoritesBridge", 
-					XEOComponentMessages.BRIDGETB_FAVORITE.toString(), 
-					XEOComponentMessages.BRIDGETB_FAVORITE_TTIP.toString(),
-					"ext-xeo/icons/favorite.png", 
-					getParent().getClientId( getFacesContext() ), 
-					"showFavorite", "self")
-				;
-		}
+		menu = createViewerBeanMethod(  "showFavoritesBridge", 
+				XEOComponentMessages.BRIDGETB_FAVORITE.toString(), 
+				XEOComponentMessages.BRIDGETB_FAVORITE_TTIP.toString(),
+				"ext-xeo/icons/favorite.png", 
+				getParent().getClientId( getFacesContext() ), 
+				"showFavorite", "self")
+			;
 	}
 	
 	@Override
@@ -460,6 +458,14 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 					separatorRendered = getRenderRemoveBtn() && XEOComponentStateLogic.isBridgeRemoveVisible( targetBridge ); 
 					viewerMethod.setVisible( Boolean.toString( separatorRendered ));
 					viewerMethod.setDisabled( XEOComponentStateLogic.isBridgeRemoveEnabled(targetBridge) );
+				} else if ("showFavorite".equals( viewerMethod.getTargetMethod() )){
+					separatorRendered = getRenderFavoritesBtn();
+					viewerMethod.setVisible( Boolean.toString( separatorRendered ));
+					try {
+						viewerMethod.setDisabled( targetBridge.disableWhen() );
+					} catch ( boRuntimeException e ) {
+						throw new RuntimeException( e );
+					}
 				}
 			}
 			else if (comp instanceof Menu)

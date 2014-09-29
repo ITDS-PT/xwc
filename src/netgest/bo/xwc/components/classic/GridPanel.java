@@ -24,6 +24,7 @@ import netgest.bo.localizations.MessageLocalizer;
 import netgest.bo.preferences.Preference;
 import netgest.bo.runtime.boObject;
 import netgest.bo.runtime.boObjectList;
+import netgest.bo.system.XEO;
 import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.annotations.ObjectAttribute;
 import netgest.bo.xwc.components.annotations.Required;
@@ -69,6 +70,7 @@ import netgest.bo.xwc.xeo.components.utils.columnAttribute.LovColumnNameExtracto
 import netgest.bo.xwc.xeo.workplaces.admin.localization.ExceptionMessage;
 import netgest.utils.StringUtils;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -2395,122 +2397,176 @@ public class GridPanel extends ViewerInputSecurityBase {
 					
 					FilterTerms.FilterJoin filterJoin = it.next();
 					FilterTerm filterTerm = filterJoin.getTerm();
+					
 					Object val = filterTerm.getValue();
 					String column = filterTerm.getDataField();
-					if (val != null) {
-						if (val instanceof String) {
-							String sVal = val == null ? "" : val.toString()
-									.toUpperCase();
-							
-							String sDisplayValue = dataRecordConnector
-									.getAttribute(column).getDisplayValue();
-							
-							Object oColValue = dataRecordConnector
-									.getAttribute(column).getValue();
-							String sColValue = "";
-
-							if (oColValue instanceof String){
-								sColValue = oColValue.toString();
-							} else {
-								addLine = false;
-								continue ; //Not supported probably a CardID Search on a Bridge
-							}
-							
-							String sColumnValue = sDisplayValue == null ? ""
-									: sDisplayValue.toUpperCase();
-							
-							
-							if (filterTerm.getOperator() == FilterTerms.OPERATOR_CONTAINS  ||
-									//AC Behaviour of like is the same of contains in Strings
-									filterTerm.getOperator() == FilterTerms.OPERATOR_LIKE) {
-								if (!sColumnValue.contains(sVal)) {
-									addLine = false;
-								}
-							} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_NOT_CONTAINS) {
-								if (sColumnValue.contains(sVal)) {
-									addLine = false;
-								}
-							} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_EQUAL) {
-								if (!val.equals( sColValue==null?"":sColValue )) {
-									addLine = false;
-								}
-							} else {
-								System.err
-										.println(MessageLocalizer.getMessage("LOCAL_FILTER_UNSUPORTED_STRING_FILTER"));
-							}
-						} else if (val instanceof java.util.Date) {
-							Date dVal = (Date) val;
-							Date dColumnValue = (Date) dataRecordConnector
-									.getAttribute(column).getValue();
-							if (filterTerm.getOperator() == FilterTerms.OPERATOR_EQUAL) {
-								if (dVal.compareTo(dColumnValue) != 0) {
-									addLine = false;
-								}
-							} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_GREATER_THAN) {
-								if (dVal.compareTo(dColumnValue) >= 0) {
-									addLine = false;
-								}
-							} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_LESS_THAN) {
-								if (dVal.compareTo(dColumnValue) <= 0) {
-									addLine = false;
-								}
-							} else {
-								System.err
-										.println(MessageLocalizer.getMessage("LOCAL_FILTER_UNSUPORTED_DATE_FILTER"));
-							}
-						} else if (val instanceof Boolean) {
-							// Only supports OPERATOR_EQUAL
-							String sVal = ((Boolean) val).booleanValue() ? "1"
-									: "0";
-							String sColumnValue = (String) dataRecordConnector
-									.getAttribute(column).getValue();
-							if (!sVal.equals(sColumnValue)) {
-								addLine = false;
-							}
-						} else if (val instanceof BigDecimal) {
-							BigDecimal nVal = (BigDecimal) val;
-							BigDecimal nColumnValue = (BigDecimal) dataRecordConnector
-									.getAttribute(column).getValue();
-							if (filterTerm.getOperator() == FilterTerms.OPERATOR_EQUAL) {
-								if (nColumnValue == null || nVal.compareTo(nColumnValue) != 0) {
-									addLine = false;
-								}
-							} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_GREATER_THAN) {
-								if (nVal.compareTo(nColumnValue) >= 0) {
-									addLine = false;
-								}
-							} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_LESS_THAN) {
-								if (nVal.compareTo(nColumnValue) <= 0) {
-									addLine = false;
-								}
-							} else {
-								System.err
-										.println(MessageLocalizer.getMessage("LOCAL_FILTER_UNSUPORTED_BIGDECIMAL_FILTER"));
-							}
-						} else if (val instanceof Object[]) {
-							BigDecimal nColumnValue = (BigDecimal) dataRecordConnector
-									.getAttribute(column).getValue();
-							Set<BigDecimal> bouis = new HashSet<BigDecimal>();
-							Object[] aVals = (Object[]) val;
-							for (int i = 0; i < aVals.length; i++) {
-								bouis.add(new BigDecimal(aVals[i].toString()));
-							}
-
-							if (!bouis.contains(nColumnValue)) {
-								addLine = false;
-							}
-						}
-					}
-					else {
-						Object colValue = dataRecordConnector.getAttribute(column).getValue();
-						if( colValue == null) {
+					
+					if (filterTerm.getOperator() == FilterTerms.OPERATOR_CONTAINS){
+						Object oColValue = dataRecordConnector
+								.getAttribute(column).getValue();
+						if (oColValue == null){
 							addLine = false;
-						} 
-						if (colValue == val){
-							addLine = true;
 						}
-						
-					}
+					} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_NOT_CONTAINS){
+						Object oColValue = dataRecordConnector
+								.getAttribute(column).getValue();
+						if (oColValue != null){
+							addLine = false;
+						}
+					} else {
+					
+						if (val != null) {
+							if (val instanceof String && !filterTerm.isCardIdSearch()) {
+								String sVal = val == null ? "" : val.toString()
+										.toUpperCase();
+								
+								String sDisplayValue = dataRecordConnector
+										.getAttribute(column).getDisplayValue();
+								
+								Object oColValue = dataRecordConnector
+										.getAttribute(column).getValue();
+								String sColValue = "";
+	
+								if (oColValue instanceof String){
+									sColValue = oColValue.toString();
+								} else {
+									addLine = false;
+									continue ; //Not supported probably a CardID Search on a Bridge
+								}
+								
+								String sColumnValue = sDisplayValue == null ? ""
+										: sDisplayValue.toUpperCase();
+								
+								
+								if (filterTerm.getOperator() == FilterTerms.OPERATOR_CONTAINS  ||
+										//AC Behaviour of like is the same of contains in Strings
+										filterTerm.getOperator() == FilterTerms.OPERATOR_LIKE) {
+									if (!sColumnValue.contains(sVal)) {
+										addLine = false;
+									}
+								} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_NOT_CONTAINS) {
+									if (sColumnValue.contains(sVal)) {
+										addLine = false;
+									}
+								} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_EQUAL) {
+									if (!val.equals( sColValue==null?"":sColValue )) {
+										addLine = false;
+									}
+								} else {
+									System.err
+											.println(MessageLocalizer.getMessage("LOCAL_FILTER_UNSUPORTED_STRING_FILTER"));
+								}
+							} else if (val instanceof java.util.Date) {
+								Date dVal = (Date) val;
+								Date dColumnValue = (Date) dataRecordConnector
+										.getAttribute(column).getValue();
+								
+								
+								if (filterTerm.getOperator() == FilterTerms.OPERATOR_EQUAL) {
+									if (!DateUtils.isSameDay( dVal , dColumnValue )) {
+										addLine = false;
+									}
+								} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_GREATER_THAN) {
+									if (dVal.compareTo(dColumnValue) >= 0) {
+										addLine = false;
+									}
+								} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_LESS_THAN) {
+									if (dVal.compareTo(dColumnValue) <= 0) {
+										addLine = false;
+									}
+								} else {
+									System.err
+											.println(MessageLocalizer.getMessage("LOCAL_FILTER_UNSUPORTED_DATE_FILTER"));
+								}
+							} else if (val instanceof Boolean) {
+								// Only supports OPERATOR_EQUAL
+								String sVal = ((Boolean) val).booleanValue() ? "1"
+										: "0";
+								String sColumnValue = (String) dataRecordConnector
+										.getAttribute(column).getValue();
+								if (!sVal.equals(sColumnValue)) {
+									addLine = false;
+								}
+							} else if (val instanceof BigDecimal || filterTerm.isCardIdSearch()) {
+								
+								if (!filterTerm.isCardIdSearch()){
+									BigDecimal nVal = (BigDecimal) val;
+									BigDecimal nColumnValue = (BigDecimal) dataRecordConnector
+											.getAttribute(column).getValue();
+									if (filterTerm.getOperator() == FilterTerms.OPERATOR_EQUAL) {
+										if (nColumnValue == null || nVal.compareTo(nColumnValue) != 0) {
+											addLine = false;
+										}
+									} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_GREATER_THAN) {
+										if (nVal.compareTo(nColumnValue) >= 0) {
+											addLine = false;
+										}
+									} else if (filterTerm.getOperator() == FilterTerms.OPERATOR_LESS_THAN) {
+										if (nVal.compareTo(nColumnValue) <= 0) {
+											addLine = false;
+										}
+									} else {
+										System.err
+												.println(MessageLocalizer.getMessage("LOCAL_FILTER_UNSUPORTED_BIGDECIMAL_FILTER"));
+									}
+								} else {
+									String searchText = (String) val;
+									BigDecimal nColumnValue = (BigDecimal) dataRecordConnector.getAttribute(column).getValue();
+									boObject objectInBridge = XEO.load( nColumnValue.longValue() );
+									
+									String cardId = objectInBridge.getTextCARDID().toString();
+									
+									if (!cardId.startsWith( searchText )){
+										addLine = false;
+									}
+								}
+							} else if (val instanceof Object[]) {
+								
+								Object value = dataRecordConnector.getAttribute(column).getValue();
+								
+								//Could be bouis or lovs
+								if (value instanceof BigDecimal){
+									BigDecimal nColumnValue = (BigDecimal) value;
+									Set<BigDecimal> bouis = new HashSet<BigDecimal>();
+									Object[] aVals = (Object[]) val;
+									for (int i = 0; i < aVals.length; i++) {
+										bouis.add(new BigDecimal(aVals[i].toString()));
+									}
+									if (!bouis.contains(nColumnValue)) {
+										addLine = false;
+									}
+								} else if (value instanceof String){
+									String nColumnValue = (String) value;
+									Object[] aVals = (Object[]) val;
+									Set<String> bouis = new HashSet<String>();
+									for (int i = 0; i < aVals.length; i++) {
+										bouis.add(aVals[i].toString());
+									}
+									if (!bouis.contains(nColumnValue)) {
+										addLine = false;
+									}
+								}
+								
+								
+								
+								
+	
+							}
+						}
+						else {
+							Object colValue = dataRecordConnector.getAttribute(column).getValue();
+							if( colValue == null) {
+								addLine = false;
+							} 
+							if (colValue == val){
+								addLine = true;
+							}
+							
+						}
+					
+				}
+					
+					
 				}
 				if (addLine) {
 					finalList.add(dataRecordConnector);
