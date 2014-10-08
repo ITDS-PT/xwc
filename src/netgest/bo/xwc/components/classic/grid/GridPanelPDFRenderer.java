@@ -6,11 +6,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import netgest.bo.xwc.components.classic.ColumnAttribute;
+import netgest.bo.xwc.components.classic.GridColumnRenderer;
 import netgest.bo.xwc.components.classic.GridPanel;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
@@ -104,6 +107,16 @@ public class GridPanelPDFRenderer {
 				}
 			}
 			
+			Map<String,GridColumnRenderer> columnRenderer = new HashMap<String,GridColumnRenderer>();
+            Column[] oAttributeColumns = oGrid.getColumns();
+            for( Column gridCol : oAttributeColumns ) {
+            	if( gridCol != null && gridCol instanceof ColumnAttribute ) {
+            		GridColumnRenderer r = ((ColumnAttribute)gridCol).getRenderer();
+            		if( r != null ) {
+            			columnRenderer.put( gridCol.getDataField(), r );
+            		}
+            	}
+            }
 			
 			PdfPTable table = new PdfPTable( visibleColumns.size() );
 			//table.setWidthPercentage(100f);
@@ -180,7 +193,13 @@ public class GridPanelPDFRenderer {
     					DataFieldConnector oAtt;
     					oAtt = oRecordConnector.getAttribute( current.getDataField() );
     					if( oAtt != null ) {
-    						String sValue = oAtt.getDisplayValue();
+    						String sValue = "";
+    						GridColumnRenderer colRender = columnRenderer.get( oGridColumns[i].getDataField() ); 
+    	        			if( colRender != null ) {
+    	        				sValue = colRender.render( oGrid, oRecordConnector, oAtt );
+    	        			} else {
+    	        				sValue = oAtt.getDisplayValue();
+    	        			}
     						
     						cell = new PdfPCell();
     						
