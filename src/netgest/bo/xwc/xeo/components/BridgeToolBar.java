@@ -434,7 +434,7 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 				isMySeparator = true; 
 				separatorRendered = false;
 				ViewerMethod viewerMethod = (ViewerMethod)comp;
-				if( "addNewToBridge".equals( viewerMethod.getTargetMethod() ) ) {
+				if( "addNewToBridge".equals( viewerMethod.getTargetMethod() ) || viewerMethod.getId().contains( "_new_" )) {
 					try
 					{
 						if (!targetBridge.getSelectedBoDef().getBoCanBeOrphan())
@@ -602,18 +602,19 @@ public class BridgeToolBar extends ToolBarMenuPositions {
 			rootMenu = new BridgeMethod();
 			rootMenu.setText( XEOComponentMessages.BRIDGETB_ADD.toString("") );
 			rootMenu.setToolTip( XEOComponentMessages.BRIDGETB_ADD.toString( subClasseDef.getLabel() ) );
-			rootMenu.setIcon( "resources/" + subClasseDef.getName() + "/ico16.gif" );
+			String subClassName = subClasseDef.getName();
+			rootMenu.setIcon( "resources/" + subClassName + "/ico16.gif" );
 			rootMenu.setValue( subClasseDef.getName() );
 			rootMenu.setServerActionWaitMode( XVWServerActionWaitMode.DIALOG.toString() );
 			
-			if ( bridgeMetadata.getChildIsOrphan( subClasseDef.getName() ) )
+			if ( bridgeMetadata.getChildIsOrphan( subClassName ) )
 			{
-				rootMenu.setId( getId() + "_add_" + subClasseDef.getName() );
+				rootMenu.setId( getId() + "_add_" + subClassName );
 				rootMenu.setTargetMethod( "lookupBridge" );
 			}
 			else
 			{			
-				rootMenu.setId( getId() + "_new_" + subClasseDef.getName() );
+				rootMenu.setId( getId() + "_new_" + subClassName );
 				rootMenu.setTargetMethod("addNewToBridge");
 			}
 			
