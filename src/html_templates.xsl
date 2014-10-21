@@ -469,6 +469,8 @@
         </td>
     </xsl:template>
     
+    
+    
     <xsl:template match="attributeOutput" priority="-1">
         <xsl:if test="count(ancestor::cell) > 0">
             <xsl:value-of select="./@renderedValue"/>
