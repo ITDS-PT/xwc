@@ -27,7 +27,7 @@ if(ExtXeo.PagingToolbar){
 	    displayMsg     : "Listado {0} - {1} de {2}",
 	    emptyMsg       : 'No hay datos para mostrar'
 	  });
-	}
+	};
 
 if(ExtXeo.grid.GridView) {
 	  Ext.apply(ExtXeo.grid.GridView.prototype , {
@@ -41,7 +41,7 @@ if(ExtXeo.grid.GridView) {
 	    resetDefs	   		: 'Restablecer valores predeterminados',
 	    showGroupToolBar 	: 'Mostrar las agrupaciones'
 	 });
-}
+};
 
 if(ExtXeo.grid.ViewGroup) {
 	  Ext.apply(ExtXeo.grid.ViewGroup.prototype , {
@@ -51,7 +51,7 @@ if(ExtXeo.grid.ViewGroup) {
 	    aggregateTbMinText  : 'M&iacute;nimo',
 	    aggregateTbMaxText  : 'M&aacute;ximo'
 	 });
-}
+};
 
 if(ExtXeo.grid.GroupingView) {
 	  Ext.apply(ExtXeo.grid.GroupingView.prototype , {
@@ -62,13 +62,13 @@ if(ExtXeo.grid.GroupingView) {
 	    removeGroupText: 'Eliminar los grupos',
 	    loadingMsg	   : 'Cargando...'  	  
 	 });
-}	
+};	
 
 if( Ext.grid.GridFilters) {
 		  Ext.apply(Ext.grid.GridFilters.prototype , {
 			 filtersText: 'Filtros'	  
 	 });
-}	  
+};	  
 
 if( Ext.grid.filter.ObjectFilter) {
 	  Ext.apply(Ext.grid.filter.ObjectFilter.prototype , {
@@ -77,7 +77,7 @@ if( Ext.grid.filter.ObjectFilter) {
 		  , containsDataText : 'Contiene datos'
 		  , notContainsDataText : 'No contiene datos'	   
 	 });
-}
+};
 
 if( Ext.grid.filter.DateFilter) {
 	  Ext.apply(Ext.grid.filter.DateFilter.prototype , {
@@ -88,7 +88,7 @@ if( Ext.grid.filter.DateFilter) {
 		  , containsDataText : 'Contiene datos'
 		  , notContainsDataText : 'No contiene datos'	  
 	 });
-}
+};
 
 if( Ext.grid.filter.BooleanFilter) {
 	  Ext.apply(Ext.grid.filter.BooleanFilter.prototype , {
@@ -97,7 +97,7 @@ if( Ext.grid.filter.BooleanFilter) {
 		  , containsDataText : 'Contiene datos'
 		  , notContainsDataText : 'No contiene datos'	  
 	 });
-}
+};
 
 if( Ext.grid.filter.ListFilter) {
 	  Ext.apply(Ext.grid.filter.ListFilter.prototype , {
@@ -105,21 +105,21 @@ if( Ext.grid.filter.ListFilter) {
 		  , containsDataText : 'Contiene datos'
 		  , notContainsDataText : 'No contiene datos'
 	 });
-}
+};
 
 if( Ext.grid.filter.NumericFilter) {
 	  Ext.apply(Ext.grid.filter.NumericFilter.prototype , {
 		  containsDataText : 'Contiene datos'
 		  , notContainsDataText : 'No contiene datos'	  
 	 });
-}
+};
 
 if( Ext.grid.filter.StringFilter) {
 	  Ext.apply(Ext.grid.filter.StringFilter.prototype , {
 		  containsDataText : 'Contiene datos'
 		  , notContainsDataText : 'No contiene datos'	  
 	 });
-}
+};
 
 if( ExtXeo.form.NumberField) {
 	  Ext.apply(ExtXeo.form.NumberField.prototype , {
@@ -127,4 +127,4 @@ if( ExtXeo.form.NumberField) {
 		    maxText : "El valor m&aacute;ximo para este campo es {0}",
 		    nanText : "{0} no es un n&uacute;mero v&aacute;lido"
 	 });
-}
+};
