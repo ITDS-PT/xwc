@@ -370,7 +370,7 @@ public class AttributeImage extends ViewerOutputSecurityBase {
 	            	w.writeAttribute("height", oImg.getHeight(), null);
 	            if( oImg.getClassName() != null )
 	            	w.writeAttribute("class", oImg.getClassName(), null);
-	            if( oImg.getClassName() != null )
+	            if( oImg.getAlign() != null )
 	            	w.writeAttribute("align", oImg.getAlign(), null);
 	            
 	            //'javax.faces.ViewState'
