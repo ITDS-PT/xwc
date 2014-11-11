@@ -3,6 +3,7 @@ package netgest.bo.xwc.xeo.workplaces.admin.viewersbeans;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import netgest.bo.system.boApplication;
 import netgest.bo.xwc.components.classic.charts.configurations.IBarChartConfiguration;
 import netgest.bo.xwc.components.classic.charts.configurations.IPieChartConfiguration;
 import netgest.bo.xwc.components.classic.charts.datasets.PieDataSet;
@@ -19,6 +20,7 @@ import netgest.bo.xwc.xeo.workplaces.admin.connectors.ObjectsDataListConnector;
 import netgest.bo.xwc.xeo.workplaces.admin.connectors.SessionsDataListConnector;
 import netgest.bo.xwc.xeo.workplaces.admin.connectors.ThreadsDataListConnector;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
+import netgest.utils.StringUtils;
 
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Mem;
@@ -74,6 +76,14 @@ public class HomeBean extends XEOBaseBean {
 	public String getSysInfo() throws IOException, SigarException {	
 		StringBuffer sysInfo = new StringBuffer();
 
+		String version = boApplication.getDefaultApplication().getBuildVersion();
+		if (StringUtils.isEmpty( version )){
+			version = "?";
+		} else {
+			version = version.replaceAll( "_" , "." );
+		}
+		
+		sysInfo.append("<b>XEO : " + version + "</b>");
 		try {
 			double uptime = sigar.getUptime().getUptime();
 
@@ -88,6 +98,7 @@ public class HomeBean extends XEOBaseBean {
 
 			Mem mem   = this.sigar.getMem();
 			Swap swap = this.sigar.getSwap();
+			
 
 			sysInfo.append("<table>");
 			sysInfo.append("<tr>");
