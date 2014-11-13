@@ -137,10 +137,15 @@ public class XMLGridPanelRenderer extends XUIRenderer {
 			                            	w.writeCDATA(JavaScriptUtils.safeJavaScriptWrite( sDisplayValue ) );
 			                            	break;
 			                            case DataFieldTypes.VALUE_NUMBER:
-			                            	if (DataFieldTypes.RENDER_OBJECT_LOOKUP == oDataField.getInputRenderType()){
+			                            	byte renderType = oDataField.getInputRenderType();
+			                            	
+			                            	if (DataFieldTypes.RENDER_OBJECT_LOOKUP == renderType){
+			                            		w.writeAttribute("displayValue", JavaScriptUtils.safeJavaScriptWrite( sDisplayValue ) );
+			                            	} else if (DataFieldTypes.RENDER_LOV == renderType || oDataField.getIsLov()){
 			                            		w.writeAttribute("displayValue", JavaScriptUtils.safeJavaScriptWrite( sDisplayValue ) );
 			                            	} else {
 			                            		w.writeAttribute("displayValue",XUILocalization.formatNumber( ((BigDecimal)oDataFieldValue).longValue() ));
+			                            		
 			                            	}
 			                                break;
 			                            case DataFieldTypes.VALUE_CURRENCY:
