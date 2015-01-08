@@ -14,6 +14,7 @@ import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 import netgest.bo.xwc.framework.localization.XUILocalization;
 
 import java.io.IOException;
@@ -80,6 +81,7 @@ public class AttributeDateTime extends AttributeBase {
     
     @Override
     public void validate(FacesContext context) {
+    	Object oldValue = getValue();
         Object oSubmitedValue = getSubmittedValue();
         Date   oSubmitedDate;
         String sSubmitedValue;
@@ -95,6 +97,12 @@ public class AttributeDateTime extends AttributeBase {
                 }
                 else {
                     setValue( null );
+                }
+                if (isValid()) {
+                    Object newValue = getValue();
+                    if (!compareValue(oldValue, newValue)) {
+                        queueEvent(new XUIValueChangeEvent(this, oldValue, newValue));
+                    }
                 }
             }
             catch( ParseException ex ) {
