@@ -18,7 +18,10 @@
         		color: blue;
         		cursor : pointer;
         	}	
-        		
+        	  div.x-panel {
+        	  	overflow:auto;
+        	  } 
+        	         		
         	  div.body
         	  {
         	  	background-color:white;
