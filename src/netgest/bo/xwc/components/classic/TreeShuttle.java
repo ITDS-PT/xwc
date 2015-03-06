@@ -232,7 +232,7 @@ public class TreeShuttle extends AttributeBase {
 			// O Componente Ext-js
 			StringBuffer extComp = new StringBuffer();
 			
-			extComp.append("function toggleCheck(node,isCheck)\n");
+			extComp.append("window.toggleCheck=function(node,isCheck)\n");
 			extComp.append("{\n");
 			extComp.append("	if(node)\n");
 			extComp.append("	{\n");
