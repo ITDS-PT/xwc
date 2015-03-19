@@ -22,6 +22,7 @@
             <xwc:render for='row'>netgest.bo.xwc.components.classic.Row$XEOHTMLRenderer</xwc:render>
             <xwc:render for='cell'>netgest.bo.xwc.components.classic.Cell$XEOHTMLRenderer</xwc:render>
             <xwc:render for='actionButton'>netgest.bo.xwc.components.classic.ActionButton$XEOHTMLRenderer</xwc:render>
+            <xwc:render for='actionLink'>netgest.bo.xwc.components.classic.ActionLink$XEOHTMLRenderer</xwc:render>
             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.ToolBar$XEOHTMLRenderer</xwc:render>
 
             <xwc:render for='attribute'>netgest.bo.xwc.components.classic.Attribute$XEOHTMLRenderer</xwc:render>
@@ -102,6 +103,7 @@
             <xwc:render for='row'>netgest.bo.xwc.components.classic.Row$XEOHTMLRenderer</xwc:render>
             <xwc:render for='cell'>netgest.bo.xwc.components.classic.Cell$XEOHTMLRenderer</xwc:render>
             <xwc:render for='actionButton'>netgest.bo.xwc.components.classic.ActionButton$XEOHTMLRenderer</xwc:render>
+             <xwc:render for='actionLink'>netgest.bo.xwc.components.classic.ActionLink$XEOHTMLRenderer</xwc:render>
             <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.ToolBar$XEOHTMLRenderer</xwc:render>
 
 			<xwc:render for='pieChart'>netgest.bo.xwc.components.classic.charts.PieChart$XEOHTMLRenderer</xwc:render>
@@ -215,6 +217,7 @@
             <xwc:render for='row'>netgest.bo.xwc.components.classic.Row$XEOHTMLRenderer</xwc:render>
             <xwc:render for='cell'>netgest.bo.xwc.components.classic.Cell$XEOHTMLRenderer</xwc:render>
             <xwc:render for='actionButton'>netgest.bo.xwc.components.template.base.TemplateRenderer</xwc:render>
+             <xwc:render for='actionLink'>netgest.bo.xwc.components.classic.ActionLink$XEOHTMLRenderer</xwc:render>
             <!-- <xwc:render for='actionButton'>netgest.bo.xwc.components.classic.renderers.jquery.ActionButtonRenderer</xwc:render> -->
             <xwc:render for='toolBar'>netgest.bo.xwc.components.template.renderers.ToolBarRenderer</xwc:render>
             <!-- <xwc:render for='toolBar'>netgest.bo.xwc.components.classic.renderers.jquery.ToolbarRenderer</xwc:render>-->
@@ -396,6 +399,7 @@
              <xwc:render for='title'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
              <xwc:render for='viewerTitle'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
              <xwc:render for='actionButton'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
+              <xwc:render for='actionLink'>netgest.bo.xwc.components.classic.renderers.XMLSkipRenderer</xwc:render>
  
             <xwc:render for='attribute'>netgest.bo.xwc.components.classic.renderers.xml.XMLOnlyElementRenderer</xwc:render>
             <xwc:render for='attributeText'>netgest.bo.xwc.components.classic.renderers.xml.XMLAttributeLongTextRenderer</xwc:render>
@@ -625,6 +629,10 @@
         <xwc:component name='actionButton'>
             <xwc:className>netgest.bo.xwc.components.classic.ActionButton</xwc:className>
             <xwc:description>ActionButton</xwc:description>
+        </xwc:component>
+        <xwc:component name='actionLink'>
+            <xwc:className>netgest.bo.xwc.components.classic.ActionLink</xwc:className>
+            <xwc:description>ActionLink</xwc:description>
         </xwc:component>
         <xwc:component name='option'>
             <xwc:className>netgest.bo.xwc.components.classic.UIOption</xwc:className>
