@@ -10,6 +10,7 @@ import static netgest.bo.xwc.components.HTMLTag.TR;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
@@ -388,6 +389,8 @@ public class AttributeImage extends ViewerOutputSecurityBase {
 	            }
 	            sActionUrl += "javax.faces.ViewState=" + sViewState;
 	            sActionUrl += "&xvw.servlet=" + sServletId;
+	            sActionUrl += "&timestamp=" + new Date().getTime();
+
 	
 	            if( oValue != null )
 	            	w.writeAttribute( "src" , sActionUrl, null );
