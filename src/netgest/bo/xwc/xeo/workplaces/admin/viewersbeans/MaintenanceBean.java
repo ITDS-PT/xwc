@@ -22,7 +22,7 @@ import org.json.JSONObject;
 public class MaintenanceBean extends XEOBaseList {
 
 	// TODO close ctx threads 
-
+	
 	public MaintenanceBean() {
 
 		executeBoql("SELECT Ebo_ClsReg ORDER BY Ebo_ClsReg.name");
@@ -47,9 +47,9 @@ public class MaintenanceBean extends XEOBaseList {
 	}
 
 	public void rebuildReferences() throws Exception {  
-		RebuildEboReferences refs = new RebuildEboReferences( this.getNewEboContext(), this.getSelectedObjects());
-		refs.start();
-		openLog(refs);
+		RebuildEboReferences refsEboRefs = new RebuildEboReferences( this.getNewEboContext(), this.getSelectedObjects());
+		openLog(refsEboRefs);
+		refsEboRefs.run();		
 	}
 
 	public void allOnSameTable() throws Exception {
@@ -61,19 +61,20 @@ public class MaintenanceBean extends XEOBaseList {
 	}
 
 	private void rebuildSecurityKeys(boolean allOnSameTable) throws Exception {
-		RebuildSecurityKeys refs = new RebuildSecurityKeys(
+		RebuildSecurityKeys refsSecKeys = new RebuildSecurityKeys(
 				this.getNewEboContext()
 				,this.getSelectedObjects()
 				,allOnSameTable 
 		);
-		refs.start();
-		openLog(refs);
+		openLog(refsSecKeys);
+		refsSecKeys.run();
+		
 	}
 
 	public void rebuildTextIndex() throws Exception {  
-		RebuildTextIndex refs = new RebuildTextIndex( this.getNewEboContext(), this.getSelectedObjects() );
-		refs.start();
-		openLog(refs);
+		RebuildTextIndex refsTextIndex = new RebuildTextIndex( this.getNewEboContext(), this.getSelectedObjects() );
+		openLog(refsTextIndex);		
+		refsTextIndex.run();		
 	}
 	
 	private void successAlert(String operation)  {  
