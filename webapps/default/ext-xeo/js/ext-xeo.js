@@ -60,7 +60,7 @@ ExtXeo.destroyComponents1 = function( oDNode, oWnd ) {
 
 XVW.ErrorDialog = function( sTitle, sMessage, sDetails ) {
 	var buttonsDefinition = {ok:'OK', cancel:'Details'};
-	if (sDetails === undefined || sDetails !== null || sDetails.length == 0){
+	if (sDetails === undefined || sDetails == null || sDetails.length == 0){
 		buttonsDefinition = {ok:'OK'};
 	} 
 	
