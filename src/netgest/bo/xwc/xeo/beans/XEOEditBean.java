@@ -930,7 +930,12 @@ public class XEOEditBean extends XEOBaseBean{
         
     	String lookupViewerName = oAtt.getLookupViewer();
     	if( lookupViewerName == null ) {
-    		lookupViewerName = getLookupViewer( oAttHandler );
+    		if (!hasReferencedObjectsList) {
+    			lookupViewerName = getLookupViewer( oAttHandler );
+    		}
+    		else {
+    			lookupViewerName = getLookupViewer( oAttHandler , boDefHandler.getBoDefinition(className) );
+    		}
     	}
     	
         
