@@ -22,6 +22,7 @@ import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIRequestContext;
 import netgest.bo.xwc.framework.XUIResponseWriter;
+import netgest.bo.xwc.framework.XUIViewBindProperty;
 import netgest.bo.xwc.framework.XUIViewStateProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIForm;
@@ -48,7 +49,12 @@ public class Form extends XUIForm
 	
 	private XUIBindProperty<Byte> 		securityPermissions = 
 		new XUIBindProperty<Byte>("securityPermissions", this, Byte.class );
-
+	
+	/**
+	 * Whether or not the Enter key is disabled for form submit
+	 */
+	private XUIViewBindProperty<Boolean>  disableEnterForSubmit = 
+		new XUIViewBindProperty<Boolean>("disableEnterForSubmit", this, true, Boolean.class);	
 	
 	public void setSecurityPermissions( String sExpressionString ) {
 		this.securityPermissions.setExpressionText( sExpressionString );
@@ -76,6 +82,14 @@ public class Form extends XUIForm
 
 	public void setEncType(String encType) {
 		this.encType.setValue( encType );
+	}
+	
+	public boolean isDisableEnterForSubmit() {
+		return disableEnterForSubmit.getEvaluatedValue();
+	}
+
+	public void setDisableEnterForSubmit(boolean disableEnterForSubmit) {
+		this.disableEnterForSubmit.setValue( disableEnterForSubmit );
 	}
 	
 	public String getCssClass(){
@@ -235,6 +249,10 @@ public class Form extends XUIForm
             writer.writeAttribute("id", clientId, "clientId");
             writer.writeAttribute("name", clientId, "name");
             writer.writeAttribute("method", "post", null);
+         
+            if (oForm.isDisableEnterForSubmit()) {
+            	writer.writeAttribute("onkeypress", "return event.keyCode != 13;");
+            }
             
             if( oForm.getEncType() != null ) {
                 writer.writeAttribute("enctype", oForm.getEncType(), "encType");
