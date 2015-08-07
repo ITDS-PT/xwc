@@ -1,5 +1,7 @@
 package netgest.bo.xwc.xeo.workplaces.admin.viewersbeans;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -20,6 +22,7 @@ import netgest.bo.xwc.xeo.workplaces.admin.connectors.ObjectsDataListConnector;
 import netgest.bo.xwc.xeo.workplaces.admin.connectors.SessionsDataListConnector;
 import netgest.bo.xwc.xeo.workplaces.admin.connectors.ThreadsDataListConnector;
 import netgest.bo.xwc.xeo.workplaces.admin.localization.MainAdminBeanMessages;
+import netgest.utils.IOUtils;
 import netgest.utils.StringUtils;
 
 import org.hyperic.sigar.CpuPerc;
@@ -73,6 +76,40 @@ public class HomeBean extends XEOBaseBean {
 		lastCreatedObjects = new ObjectsDataListConnector("BOUI desc");
 	}
 
+	private String getInstalledAppsVersions() {
+		String appsVersions="";
+		String xeohome=boApplication.getDefaultApplication().getApplicationConfig().getNgtHome();
+		
+		File [] verFiles=new File(xeohome).listFiles(new FileFilter() {
+			
+			@Override
+			public boolean accept(File pathname) {
+				if (pathname.getName().endsWith(".ver") && !pathname.getName().equals("xeocore.ver")) {
+					return true;
+				}
+				return false;
+			}
+		});
+		
+		
+		for (File verFile:verFiles) {
+			try {
+				String version=IOUtils.readFileAsString(verFile);
+				if (StringUtils.isEmpty( version )){
+					version = "?";
+				} else {
+					version = version.replaceAll( "_" , "." );
+				}
+				appsVersions+=", <b>"+verFile.getName().replaceAll(".ver", "")+": </b>"+version;
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return appsVersions;
+	}
+	
 	public String getSysInfo() throws IOException, SigarException {	
 		StringBuffer sysInfo = new StringBuffer();
 
@@ -83,7 +120,7 @@ public class HomeBean extends XEOBaseBean {
 			version = version.replaceAll( "_" , "." );
 		}
 		
-		sysInfo.append("<b>XEO : " + version + "</b>");
+		sysInfo.append("<b>XEO : </b>" + version +getInstalledAppsVersions());
 		try {
 			double uptime = sigar.getUptime().getUptime();
 
