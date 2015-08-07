@@ -332,6 +332,11 @@ public class XUIViewerDefinitonParser
     	StreamWrapper is = resolveViewerFromWebContext( viewerName,false );
     	if( is == null ) {
     		is = resolveViewerFromClassLoader( viewerName );
+    		//WildFly Workaround 
+    		//WebContext in wildfly is not part of the contextClassLoader
+    		if (is.getInputStream()==null) {
+    			is=resolveViewerFromWebContext(viewerName.replaceAll("^(.*)\\_(.*)$","$1/$2"), false);
+    		}
     	}
     	return is;
     }
