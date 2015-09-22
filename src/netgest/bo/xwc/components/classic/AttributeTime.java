@@ -5,12 +5,16 @@ import netgest.bo.xwc.components.classic.extjs.ExtJsFieldRendeder;
 import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
+import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.localization.JavaToJavascriptPatternConverter;
 import netgest.bo.xwc.framework.localization.XUILocalization;
 
 import java.sql.Timestamp;
 import java.util.Map;
+
+import javax.el.ValueExpression;
+import javax.faces.component.UIComponent;
 
 /**
  * This component renders a combo with day hour's. It can be bind to a {@link DataFieldConnector} and
@@ -20,8 +24,40 @@ import java.util.Map;
  */
 public class AttributeTime extends AttributeBase {
 
+	 private XUIBindProperty<Boolean> showSeconds = 
+		    	new XUIBindProperty<Boolean>( "showSeconds", this, Boolean.class ,"false");
+	 
+	 /**
+	  * Define if the component shows seconds besides hours and minutes
+	  * default is false
+	  * 
+	  * @param  showSeconds true/false or a {@link ValueExpression}
+	  */
+	 public void setShowSeconds( String showSeconds ) {
+	     this.showSeconds.setExpressionText( showSeconds );
+	 }
+	 
+	 /**
+	  * Get the value of the showSeconds property of the component
+	  * @return true/false 
+	  */
+	 public boolean isShowSeconds() {
+	     return this.showSeconds.getEvaluatedValue();
+	 }
+	
 	public static class XEOHTMLRenderer extends ExtJsFieldRendeder {
 
+		private boolean getShowSeconds(XUIComponentBase oComp) {
+			boolean showSeconds=((AttributeTime)oComp).isShowSeconds();
+			
+			UIComponent comp=oComp.getParent();
+			if (comp instanceof AttributeDateTime) {
+				showSeconds=((AttributeDateTime)comp).isShowSeconds();
+			}
+			
+			return showSeconds;
+		}
+		
 		@Override
 		public String getExtComponentType(XUIComponentBase oComp) {
 			return "Ext.form.TimeField";
@@ -31,6 +67,10 @@ public class AttributeTime extends AttributeBase {
 		public ExtConfig getExtJsFieldConfig(AttributeBase oAttr) {
 	        ExtConfig oInpTimeConfig = super.getExtJsFieldConfig( oAttr );
 	        String timeFormat= XUILocalization.getHourMinuteFormat();
+	        if (getShowSeconds(oAttr)) {
+		       timeFormat= XUILocalization.getTimeFormat();	        	
+	        }
+	        
 	        String javascriptFormat = JavaToJavascriptPatternConverter.convertTimePatternToJavascript( timeFormat );
 	        oInpTimeConfig.addJSString("format", javascriptFormat);
 	        oInpTimeConfig.add("width", 95 );
@@ -72,7 +112,12 @@ public class AttributeTime extends AttributeBase {
             oValue = attBase.getValue();
             if( oValue != null ) {
 	            if( oValue instanceof Timestamp ) {
-	            	jsValue = JavaScriptUtils.writeValue( XUILocalization.formatHourMinute( (Timestamp)oValue ) );
+	            	if (getShowSeconds(attBase)) {	            	
+	            		jsValue = JavaScriptUtils.writeValue( XUILocalization.formatTime( (Timestamp)oValue ) );
+	            	}
+	            	else {
+	            		jsValue = JavaScriptUtils.writeValue( XUILocalization.formatHourMinute( (Timestamp)oValue ) );
+	            	}
 	            }
 	            else {
 	            	jsValue = JavaScriptUtils.writeValue( oValue );

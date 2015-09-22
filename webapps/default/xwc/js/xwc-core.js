@@ -161,11 +161,15 @@ XVW.AjaxCommand = function( sFormId, sActionId, sActionValue, iWaitScreen, bSubm
         var oParNode;
         for( var i=0; i < oParNames.length; i++ ) {
             oParNode = reqDoc.createElement( "p" );
-            oParNode.setAttribute("name", oParNames[i] );
-            oParNode.appendChild( reqDoc.createCDATASection( oParValues[ i ] ) );
+            oParNode.setAttribute("name", oParNames[i] );                        
+            try {
+            	oParNode.appendChild( reqDoc.createCDATASection( oParValues[ i ] ) );
+            }
+            catch(err) {
+            	oParNode.appendChild( reqDoc.createTextNode( oParValues[ i ] ) );
+            }          
             eParam.appendChild( oParNode );
         }
-        
         var sActionUrl = XVW.prv.getFormInput( oForm, 'xvw.ajax.submitUrl').value;
         submitAjax( sActionUrl, reqDoc, renderOnElement );
         

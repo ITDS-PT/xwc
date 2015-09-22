@@ -30,8 +30,8 @@ import netgest.bo.xwc.components.classic.grid.GridPanelExtJsRenderer;
 import netgest.bo.xwc.components.classic.grid.GridPanelRenderer;
 import netgest.bo.xwc.components.classic.gridexplorer.XVWGridExplorerViewEditBean;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts;
-import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.classic.scripts.XVWScripts.WaitMode;
+import netgest.bo.xwc.components.classic.scripts.XVWServerActionWaitMode;
 import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.XEOObjectListConnector;
 import netgest.bo.xwc.components.model.Menu;
@@ -566,10 +566,9 @@ public class GridExplorer extends List {
 			super.setAutoSaveGridState( Boolean.toString( true ) );
 		}
 		
-		Preference expPref = getExplorerUserSatePreference();
-		restoreUserExplorerState( expPref );
 		
 		super.initComponent();
+		
 
 		// Preview Command 
 		XUICommand previewCmd = new XUICommand();
@@ -583,6 +582,8 @@ public class GridExplorer extends List {
 		getChildren().add( setViewCmd );
 		createToolBar();
 		
+		Preference expPref = getExplorerUserSatePreference();
+		restoreUserExplorerState( expPref );
 		
 		this.isNew = true;
 	}

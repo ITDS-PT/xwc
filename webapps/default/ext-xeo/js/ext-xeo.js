@@ -60,7 +60,7 @@ ExtXeo.destroyComponents1 = function( oDNode, oWnd ) {
 
 XVW.ErrorDialog = function( sTitle, sMessage, sDetails ) {
 	var buttonsDefinition = {ok:'OK', cancel:'Details'};
-	if (sDetails === undefined || sDetails !== null || sDetails.length == 0){
+	if (sDetails === undefined || sDetails == null || sDetails.length == 0){
 		buttonsDefinition = {ok:'OK'};
 	} 
 	
@@ -611,33 +611,22 @@ XVW.closeView = function( sId ) {
 	if( xapp != null ) {
 		var tabs = xapp.desktop.tabPanel;
 		var tabItems = tabs.items;
-		var tabIndex = -1;
-	    for ( var i = 0;tabIndex == -1 && i < tabItems.getCount(); i++) {
+	    for ( var i = 0; i < tabItems.getCount(); i++) {
 	    	var oFrames = tabItems.get(i).el.dom.getElementsByTagName('iframe');
 	    	if( oFrames.length > 0 ) {
 	    		for ( var k = 0; k < oFrames.length; k++) {
-					//if( oFrames[k].contentWindow == window )
-	    			if( oFrames[k].contentWindow.document.getElementById( sId ) != null ) {
-	    				tabIndex = i;
-						var forms = oFrames[k].contentWindow.document.getElementsByTagName("form");
-						for(var z=0;z<forms.length;z++) {
-							if( window.parent.XVW.disposeView ) {
-								window.parent.XVW.disposeView( forms[z], true );
-							} else {
-								XVW.disposeView( forms[z], true );
-							}
-						}
-						break;
-	    			}
+					if( oFrames[k].contentWindow == window ) {
+						tabItems.get(i).forceClose = true;
+						tabs.remove( tabItems.get(i) );
+						
+						var forms = document.getElementsByTagName("form");
+						for(var z=0;z<forms.length;z++)
+							XVW.disposeView( forms[z], true );
+						return;
+					}
 				}
 	    	}
 		}
-	    
-	    if( tabIndex != -1 ) {
-			tabItems.get( tabIndex ).forceClose = true;
-			tabs.remove( tabItems.get(tabIndex) );
-	    }
-	    
 	}
 };
 

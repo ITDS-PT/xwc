@@ -920,16 +920,22 @@ public class XEOEditBean extends XEOBaseBean{
         boDefAttribute      oAttDef     = oAttHandler.getDefAttribute();
         
     	String className = oAttDef.getReferencedObjectName(); 
-    	if( "boObject".equals( oAttDef.getReferencedObjectName() ) ) {
-    		String[] objects = oAttDef.getObjectsName();
-    		if( objects != null && objects.length > 0 ) {
+    	String[] objects = oAttDef.getObjectsName();
+    	boolean hasReferencedObjectsList = objects != null && objects.length > 0;
+    	if( "boObject".equals( oAttDef.getReferencedObjectName()) || hasReferencedObjectsList ) {
+    		if( hasReferencedObjectsList ) {
     			className = objects[0];
     		}
     	}
         
     	String lookupViewerName = oAtt.getLookupViewer();
     	if( lookupViewerName == null ) {
-    		lookupViewerName = getLookupViewer( oAttHandler );
+    		if (!hasReferencedObjectsList) {
+    			lookupViewerName = getLookupViewer( oAttHandler );
+    		}
+    		else {
+    			lookupViewerName = getLookupViewer( oAttHandler , boDefHandler.getBoDefinition(className) );
+    		}
     	}
     	
         
@@ -972,8 +978,9 @@ public class XEOEditBean extends XEOBaseBean{
             LookupList lookUp_list=(LookupList)oViewRoot.findComponent(LookupList.class); 
             if (lookUp_list!=null &&  
             		boDefAttribute.ATTRIBUTE_OBJECT.equalsIgnoreCase(
-            				oAttHandler.getDefAttribute().getAtributeDeclaredType()))
+            				oAttHandler.getDefAttribute().getAtributeDeclaredType())){
             	lookUp_list.setRowSelectionMode(GridPanel.SELECTION_ROW);
+            }
             
             oBaseBean.setParentBean( this ); 
             oBaseBean.setParentAttributeName( oAttHandler.getName() );
@@ -986,11 +993,10 @@ public class XEOEditBean extends XEOBaseBean{
             String sBoql = null;
             if (lookup != null){
             	sBoql = lookup.getLookupQuery();
+            	if (StringUtils.hasValue( sBoql )){
+            		oBaseBean.executeBoql( sBoql );
+            	}
             }
-            if (StringUtils.isEmpty( sBoql )){
-            	sBoql = getLookupQuery( oAttHandler, className );
-            }
-            oBaseBean.executeBoql( sBoql );
         }
 
         // Diz a que a view corrente ��� a criada.

@@ -6,14 +6,15 @@ import static netgest.bo.xwc.components.HTMLTag.COL;
 import static netgest.bo.xwc.components.HTMLTag.TABLE;
 import static netgest.bo.xwc.components.HTMLTag.TD;
 import static netgest.bo.xwc.components.HTMLTag.TR;
-
 import netgest.bo.xwc.components.HTMLAttr;
 import netgest.bo.xwc.components.localization.ComponentMessages;
 import netgest.bo.xwc.framework.XUIBaseProperty;
+import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIMessage;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
+import netgest.bo.xwc.framework.jsf.XUIValueChangeEvent;
 import netgest.bo.xwc.framework.localization.XUILocalization;
 
 import java.io.IOException;
@@ -38,7 +39,28 @@ import javax.faces.context.FacesContext;
  *
  */
 public class AttributeDateTime extends AttributeBase {
-
+	
+	 private XUIBindProperty<Boolean> showSeconds = 
+		    	new XUIBindProperty<Boolean>( "showSeconds", this, Boolean.class ,"false");
+	 
+    /**
+     * Define if the component shows seconds besides hours and minutes
+     * default is false
+     * 
+     * @param  showSeconds true/false or a {@link ValueExpression}
+     */
+    public void setShowSeconds( String showSeconds ) {
+        this.showSeconds.setExpressionText( showSeconds );
+    }
+    
+    /**
+     * Get the value of the showSeconds property of the component
+     * @return true/false 
+     */
+    public boolean isShowSeconds() {
+        return this.showSeconds.getEvaluatedValue();
+    }
+    
     @Override
     public void initComponent() {
     	
@@ -80,6 +102,7 @@ public class AttributeDateTime extends AttributeBase {
     
     @Override
     public void validate(FacesContext context) {
+    	Object oldValue = getValue();
         Object oSubmitedValue = getSubmittedValue();
         Date   oSubmitedDate;
         String sSubmitedValue;
@@ -89,12 +112,23 @@ public class AttributeDateTime extends AttributeBase {
                 sSubmitedValue = ((String)oSubmitedValue).trim();
                 if(  sSubmitedValue.length() > 0 )
                 {
-                    oSubmitedDate = XUILocalization.parseDateHourMinute( String.valueOf( oSubmitedValue ) );
+                	if (this.isShowSeconds()) {
+                		oSubmitedDate = XUILocalization.parseDateTime(String.valueOf( oSubmitedValue ) );
+                	}
+                	else {
+                		oSubmitedDate = XUILocalization.parseDateHourMinute(String.valueOf( oSubmitedValue ) );
+                	}
                     setValue( new Timestamp( oSubmitedDate.getTime() ) );
                     setValid(true);
                 }
                 else {
                     setValue( null );
+                }
+                if (isValid()) {
+                    Object newValue = getValue();
+                    if (!compareValue(oldValue, newValue)) {
+                        queueEvent(new XUIValueChangeEvent(this, oldValue, newValue));
+                    }
                 }
             }
             catch( ParseException ex ) {

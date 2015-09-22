@@ -28,6 +28,7 @@ import netgest.bo.xwc.framework.def.XUIViewerDefinitionNode;
 import netgest.bo.xwc.framework.def.XUIViewerDefinitonParser;
 import netgest.bo.xwc.xeo.components.Bridge;
 import netgest.bo.xwc.xeo.components.ColumnAttribute;
+import netgest.bo.xwc.xeo.components.ListToolBar;
 import netgest.bo.xwc.xeo.localization.BeansMessages;
 import netgest.utils.StringUtils;
 
@@ -106,6 +107,12 @@ public class XEOBaseLookupList extends XEOBaseList {
                     XEOEditBean bean = (XEOEditBean) getParentBean();
                     executeBoql( bean.getLookupQuery( getHandlerForParentComponent(bean), this.selectedObject ) );
                     getRequestContext().setViewRoot( actual );
+                    
+                    ListToolBar oCompToolBar = (ListToolBar)actual.findComponent( ListToolBar.class );
+                    if (oCompToolBar!=null) {                    	
+                    	oCompToolBar.refreshCreateNewButton();
+                    }
+                    
               }
               else if (isFilterLookup()){
             	  	//When we have a filter, execute the normal query
@@ -115,7 +122,7 @@ public class XEOBaseLookupList extends XEOBaseList {
             	    executeBoql( ((XEOEditBean) getParentBean()).getLookupQuery( this.parentAttribute , this.selectedObject ) );
               }
         }  
-  }
+	}
 
 
     public Map<String, String> getLookupObjects() {
@@ -342,6 +349,9 @@ public class XEOBaseLookupList extends XEOBaseList {
 
 		@Override
 		public void beforePreRender() {
+			
+				GridPanel grid = (GridPanel) getComponent().findParent( GridPanel.class );
+				grid.resetColumns();
 			
 				((XUIComponentBase)getComponent().getParent()).forceRenderOnClient();
 				getComponent().getChildren().clear();

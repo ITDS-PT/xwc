@@ -3,12 +3,13 @@ package netgest.bo.xwc.framework.http;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+
+import netgest.bo.boConfig;
 
 
 public class XUIMultiPartRequestWrapper extends HttpServletRequestWrapper{
@@ -36,7 +37,17 @@ public class XUIMultiPartRequestWrapper extends HttpServletRequestWrapper{
         }
 
 		try {
-			oMultiPartRequest = new com.oreilly.servlet.MultipartRequest( oRequest, tmpdir.getAbsolutePath(), 64 * 1024 * 1024, "utf-8" );
+			int maxUploadFileSizeMB=64;			
+			String strMaxFileSize=boConfig.getApplicationConfig().getProperty("maxUploadFileSizeMB");			
+			if (strMaxFileSize!=null && !strMaxFileSize.equals("")) {
+				try {
+					maxUploadFileSizeMB=Integer.parseInt(strMaxFileSize);
+				}
+				catch (NumberFormatException e) {				
+				}
+			}
+			
+			oMultiPartRequest = new com.oreilly.servlet.MultipartRequest( oRequest, tmpdir.getAbsolutePath(), maxUploadFileSizeMB * 1024 * 1024, "utf-8" );
 			
 			Enumeration oEnum = oMultiPartRequest.getParameterNames();
 			while( oEnum.hasMoreElements() ) {

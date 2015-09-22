@@ -98,6 +98,45 @@ public class ListToolBar extends ToolBarMenuPositions {
 		}
 	}
 	
+	public void refreshCreateNewButton() {
+		try {
+			List<UIComponent> children = getChildren();		
+			int nMenus=0;
+			String objectName=getTargetList().getObjectList().getBoDef().getName();
+			
+			boolean createNew=true;
+			for (UIComponent uiComp:children) {
+				if (uiComp instanceof Menu) {
+					Menu currMenu=(Menu)uiComp;
+					String menuId=currMenu.getId();
+					System.out.println(menuId);
+					if (menuId!=null && menuId.contains("_new_") && menuId.endsWith(objectName)) {
+						currMenu.setVisible("true");
+						createNew=false;
+						
+					}
+					else if (menuId!=null && menuId.contains("_new_")) {
+						currMenu.setVisible("false");
+					}				
+				}
+				nMenus++;	
+	    	}
+									
+			if (createNew) {
+				Menu menu = addCreateNew();
+				if( menu != null ) {
+					menu.setVisible( renderCreateNewBtn.getExpressionString() );					
+					children.add(  nMenus-2, menu );
+				}
+			}			
+			resetRenderedOnClient();
+		}
+		catch (boRuntimeException e) {
+			throw new RuntimeException( e );
+		}
+		
+	}
+	
 	@Override
 	public void preRender() {
 		super.preRender();

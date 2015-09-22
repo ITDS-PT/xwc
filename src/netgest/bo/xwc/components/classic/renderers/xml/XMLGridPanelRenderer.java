@@ -14,6 +14,7 @@ import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.connectors.DataFieldTypes;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
 import netgest.bo.xwc.components.model.Column;
+import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.framework.XUIRenderer;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.components.XUIComponentBase;
@@ -53,15 +54,16 @@ public class XMLGridPanelRenderer extends XUIRenderer {
 		
 		
 		w.startElement("gridheaderrow");
-		for ( int k = 0; k < columns.length ; k++)
-		{
+		for ( int k = 0; k < columns.length ; k++){
 			Column curr = columns[k];
-			w.startElement("gridheadercolumn");
-				String label = GridPanel.getColumnLabel( grid.getDataSource(), curr );
-				w.writeAttribute("width", curr.getWidth());
-				columnsUsed.add(label);
-				w.writeAttribute("displayValue", label==null?"": label);
-				w.endElement("gridheadercolumn");
+			if (!curr.isHidden()){
+				w.startElement("gridheadercolumn");
+					String label = GridPanel.getColumnLabel( grid.getDataSource(), curr );
+					w.writeAttribute("width", curr.getWidth());
+					columnsUsed.add(label);
+					w.writeAttribute("displayValue", label==null?"": label);
+					w.endElement("gridheadercolumn");
+			}
 		}
 		w.endElement("gridheaderrow");
 		
@@ -129,16 +131,21 @@ public class XMLGridPanelRenderer extends XUIRenderer {
 			                            	if (sDisplayValue.indexOf("<img style='cursor:hand' hspace='3' border='0' align='absmiddle'")>-1) {
 			                            		sDisplayValue=sDisplayValue.replaceAll("\\<.*?>","");
 			                            	}
-			                            	w.writeCDATA(sDisplayValue);
+			                            	w.writeCDATA(JavaScriptUtils.safeJavaScriptWrite( sDisplayValue ) );
 			                            	break;
 			                            case DataFieldTypes.VALUE_CLOB:
-			                            	w.writeCDATA(sDisplayValue);
+			                            	w.writeCDATA(JavaScriptUtils.safeJavaScriptWrite( sDisplayValue ) );
 			                            	break;
 			                            case DataFieldTypes.VALUE_NUMBER:
-			                            	if (DataFieldTypes.RENDER_OBJECT_LOOKUP == oDataField.getInputRenderType()){
-			                            		w.writeAttribute("displayValue", sDisplayValue );
+			                            	byte renderType = oDataField.getInputRenderType();
+			                            	
+			                            	if (DataFieldTypes.RENDER_OBJECT_LOOKUP == renderType){
+			                            		w.writeAttribute("displayValue", JavaScriptUtils.safeJavaScriptWrite( sDisplayValue ) );
+			                            	} else if (DataFieldTypes.RENDER_LOV == renderType || oDataField.getIsLov()){
+			                            		w.writeAttribute("displayValue", JavaScriptUtils.safeJavaScriptWrite( sDisplayValue ) );
 			                            	} else {
 			                            		w.writeAttribute("displayValue",XUILocalization.formatNumber( ((BigDecimal)oDataFieldValue).longValue() ));
+			                            		
 			                            	}
 			                                break;
 			                            case DataFieldTypes.VALUE_CURRENCY:

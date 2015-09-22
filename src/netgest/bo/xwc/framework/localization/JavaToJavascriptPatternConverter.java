@@ -22,9 +22,16 @@ public class JavaToJavascriptPatternConverter {
 	public static String convertTimePatternToJavascript(String javaPattern) {
 		String js = convertHours( javaPattern );
 		js = convertMinutes( js );
+		js = convertSeconds(js);
 		return js;
 	}
 
+	private static String convertSeconds(String js) {
+		if ( js.contains( "s" ) )
+			return js = js.replaceAll( "[s]+" , "s" );
+		return js;
+	}
+	
 	private static String convertMinutes(String js) {
 		if ( js.contains( "m" ) )
 			return js = js.replaceAll( "[m]+" , "i" );
