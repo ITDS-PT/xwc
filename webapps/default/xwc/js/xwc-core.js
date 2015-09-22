@@ -199,7 +199,12 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement, retryCount ) {
                 {
                     window.ts2 = new Date();
                     jsProcessingInit = new Date().getTime(); 
+                    
                     XVW.handleAjaxResponse( oXmlReq, renderOnElement );
+                    if( !XVW || typeof window == 'undefined' ) {
+                        // Frame doesn't exists any more... abort processing...
+                    	return;
+                    }
                     jsProcessingEnd = new Date().getTime();
                     requestOk = true;
                     XVW.NoWait();
@@ -576,8 +581,10 @@ XVW.handleAjaxResponse = function( oXmlReq, renderOnElement ) {
         	}
         }
 
-    
-    XVW.ajax.enableAjaxRequests();
+	// The scripts may closed this view... test if XVW is available
+    if( XVW ) {
+    	XVW.ajax.enableAjaxRequests();
+    }
 };
 
 XVW.reportAjaxErrorBlock = function (oFooterScriptNodeList) {

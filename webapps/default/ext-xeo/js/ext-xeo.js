@@ -616,12 +616,12 @@ XVW.closeView = function( sId ) {
 	    	if( oFrames.length > 0 ) {
 	    		for ( var k = 0; k < oFrames.length; k++) {
 					if( oFrames[k].contentWindow == window ) {
-						tabItems.get(i).forceClose = true;
-						tabs.remove( tabItems.get(i) );
-						
 						var forms = document.getElementsByTagName("form");
 						for(var z=0;z<forms.length;z++)
 							XVW.disposeView( forms[z], true );
+						
+						tabItems.get(i).forceClose = true;
+						tabs.remove( tabItems.get(i) );
 						return;
 					}
 				}
