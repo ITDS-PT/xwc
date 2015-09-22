@@ -387,10 +387,24 @@ public class ExtJsTheme implements XUITheme {
 	@Override
 	public void writeHeader(XUIResponseWriter headerWriter) throws IOException  {
 		
-		headerWriter.startElement( HtmlTags.META);
-		headerWriter.writeAttribute("http-equiv", "X-UA-Compatible");
-		headerWriter.writeAttribute("content", "IE=EmulateIE7;chrome=IE10");
-		headerWriter.endElement( HtmlTags.META );
+		String ua = ((HttpServletRequest) XUIRequestContext.getCurrentContext().getRequest()).getHeader("User-Agent");
+		if (ua != null) {
+			ua = ua.toLowerCase();
+			boolean isOpera = ua.indexOf("opera") > -1;
+			boolean isIE7 = !isOpera && ua.indexOf("msie 7") > -1;
+			boolean isIE8 = !isOpera && ua.indexOf("msie 8") > -1;
+			boolean isIE9 = !isOpera && ua.indexOf("msie 9") > -1;
+
+			headerWriter.startElement(HtmlTags.META);
+			if (isIE7 || isIE8 || isIE9) {
+				headerWriter.writeAttribute("http-equiv", "X-UA-Compatible");
+				headerWriter.writeAttribute("content", "IE=EmulateIE7;chrome=IE10");
+			} else {
+				headerWriter.writeAttribute("http-equiv", "X-UA-Compatible");
+				headerWriter.writeAttribute("content", "IE=edge;chrome=IE10");
+			}
+			headerWriter.endElement(HtmlTags.META);
+		}
 		
 	}
 
