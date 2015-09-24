@@ -37,7 +37,7 @@ public class GroupDefinitionParser {
 					result += ",";
 				}
 				
-				if (!LovColumnNameExtractor.isXeoLovColumn(group)){
+				if (!LovColumnNameExtractor.isXeoLovColumn(group) && !group.startsWith("/*DUMMY")){
 					if (matchPartsWithColumns( group )){
 						result += group;
 					}

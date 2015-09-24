@@ -658,12 +658,18 @@ ExtXeo.GridGroupDragDrop = Ext.extend(Ext.util.Observable, {
     		if ( count <= 1 ){
     			for (k = 0; k < groups.length ; k++){
     				var group = groups[ k ];
-    				this.addGroupAtIndex( group, 0);
-    				this.hideGroupedColumn( group );
+    				 if (!group.startsWith("/*DUMMY_AGGRE")) {
+    					 this.addGroupAtIndex( group, 0);
+    					 this.hideGroupedColumn( group );
+    				 }    	
     			}
     		}
     	}
     	this.checkAndToogleGroupMessageVisibility();
+    	
+    	if (groups.length==1 && groups[0].startsWith("/*DUMMY_AGGRE")) {
+    		Ext.get(this.grid.id + "_groupInvite").show();
+    	}
     	
     }
     /**

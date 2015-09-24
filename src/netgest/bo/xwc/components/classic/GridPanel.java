@@ -122,10 +122,31 @@ public class GridPanel extends ViewerInputSecurityBase {
 	public void setFilterLookup( String lookupExpr ){
 		this.filterLookup.setExpressionText( lookupExpr );
 	}
-
+	
 	private XUIViewProperty<HashMap<String, ArrayList<String>>> aggregateFields = new XUIViewProperty<HashMap<String, ArrayList<String>>>(
 			"aggregateFields", this, null);
+	
+	
+	/**
+	 * Defines the default aggregations of a grid/explorer 
+	 * Use the format <b>att1:attlabel1=[expressions];att2:attlabel2=[expressions]</b>
+	 * Examples:
+	 * <i>VALORPROD:V. Ponderado=[SUM];PROP_VALORSUM:Valor Û=[SUM]</i>
+	 * <i>VALORPROD:V. Ponderado=[SUM,MIN];PROP_VALORSUM:Valor Û=[SUM,MAX,AVG,MIN]</i>
+	 * 
+	 */
+	private XUIViewStateBindProperty<String> aggregateFieldsExpression = new XUIViewStateBindProperty<String>(
+			"aggregateFieldsExpression", this, String.class);
 
+	public void setAggregateFieldsExpression(String aggregateFieldsExpression){
+		this.aggregateFieldsExpression.setExpressionText( aggregateFieldsExpression );
+	}
+	
+	public String getAggregateFieldsExpression(){
+		return this.aggregateFieldsExpression.getEvaluatedValue();
+	}
+	
+	
 	/**
 	 * Determines how a user can select the rows in the grid panel. 
 	 * Default (ROW) allows the user to select a single row; 
@@ -520,7 +541,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 	}
 
 	public String getCurrAggregateFieldDescSet() {
-		return this.currAggregateFieldDescSet;
+		return this.currAggregateFieldDescSet.trim();
 	}
 
 	public String getCurrAggregateFieldOpSet() {
@@ -710,6 +731,16 @@ public class GridPanel extends ViewerInputSecurityBase {
 		}
 		
 		this.defaultSettings.setValue(defaults);
+		
+		if (!StringUtils.isEmpty(getAggregateFieldsExpression())) {
+			this.setAggregateData(getAggregateFieldsExpression());
+			this.setAggregateFieldsFromString(getAggregateData());
+			this.setAggregateData(null);
+			if (StringUtils.isEmpty(this.getGroupBy())) {
+				this.setGroupBy("/*DUMMY_AGGREGATE*/");
+			}
+		}
+		
 		if( getAutoSaveGridState() ) {
 			restoreUserState();
 		}
@@ -2013,7 +2044,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 					ArrayList<String> listVals = this.aggregateFields
 							.getValue()
-							.get(aggregateFieldId + ":" + aggregateFieldDesc);
+							.get(aggregateFieldId + ":" + aggregateFieldDesc.trim());
 
 					if (listVals == null) {
 						listVals = new ArrayList<String>();
@@ -2023,7 +2054,7 @@ public class GridPanel extends ViewerInputSecurityBase {
 						listVals.add(aggregateFieldOp);
 					}
 					this.aggregateFields.getValue().put(
-							aggregateFieldId + ":" + aggregateFieldDesc,
+							aggregateFieldId + ":" + aggregateFieldDesc.trim(),
 							listVals);
 				}
 				this.setAggregateField(null, null, null, null);
@@ -2197,9 +2228,11 @@ public class GridPanel extends ViewerInputSecurityBase {
 
 		/** ML: 07-10-2011 **/
 		if (getEnableAggregate()) {
-			this.setAggregateData(preference.getString("aggFields"));
-			this.setAggregateFieldsFromString(getAggregateData());
-			this.setAggregateData(null);
+			if (!StringUtils.isEmpty(preference.getString("aggFields"))) {
+				this.setAggregateData(preference.getString("aggFields"));
+				this.setAggregateFieldsFromString(getAggregateData());
+				this.setAggregateData(null);
+			}			
 		}
 		/** END ML: 07-10-2011 **/
 	}
