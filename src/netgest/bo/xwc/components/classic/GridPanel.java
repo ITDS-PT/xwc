@@ -2232,6 +2232,9 @@ public class GridPanel extends ViewerInputSecurityBase {
 				this.setAggregateData(preference.getString("aggFields"));
 				this.setAggregateFieldsFromString(getAggregateData());
 				this.setAggregateData(null);
+				if (StringUtils.isEmpty(this.getGroupBy())) {
+					this.setGroupBy("/*DUMMY_AGGREGATE*/");
+				}
 			}			
 		}
 		/** END ML: 07-10-2011 **/

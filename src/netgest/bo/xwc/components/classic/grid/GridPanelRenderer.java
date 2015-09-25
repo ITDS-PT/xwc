@@ -3,6 +3,7 @@ package netgest.bo.xwc.components.classic.grid;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -116,6 +117,24 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 		return this.extRenderer.get().extEncodeAll( comp );
 	}
     
+	//Bug with /*DUMMY_AGGREGATE*/ 
+	//remove from array to prevent being used on a query
+	//this is a workaround
+	//The use of the virtual field /*DUMMY_AGGREGATE*/ should be reevaluated 
+	private Object[] removeDummyAggregateFromArray(Object[] array) {
+		List<Object> newArray= new ArrayList<Object>();
+		for (Object currItem:array) {
+			if (currItem instanceof String) {
+				if (((String)currItem).indexOf("/*DUMMY_AGGREGATE*/")==-1) {
+					newArray.add(currItem);
+				}
+			}
+			else {
+				newArray.add(currItem);
+			}
+		}
+		return newArray.toArray(new String[newArray.size()]);
+	}
     
 	public void service(ServletRequest oRequest, ServletResponse oResponse, XUIComponentBase oComp ) throws IOException
     {
@@ -123,12 +142,9 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
         GridPanelRequestParameters reqParam;
 
         oGrid = (GridPanel)oComp;
-        
-        
 
         String sType = oRequest.getParameter("type");
-        
-        
+                
         
         if( "pdf".equalsIgnoreCase( sType ) ) {
         	GridPanelPDFRenderer pdfRender = new GridPanelPDFRenderer();
@@ -169,15 +185,24 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 	                    	columnRenderer.put( gridCol.getDataField(), r );
 	                    }
 	                }
-	            }
-	    		String[] groupBy = reqParam.getGroupBy(); 
+	            }	    		
 	        	
 	        	if( reqParam.getGroupByLevel() >= reqParam.getGroupBy().length ) {
-	
+	        		String[] groupBy = reqParam.getGroupBy(); 
+	        		Object[] pValues=reqParam.getParentValues();
+	        		
+	        		//Bug with /*DUMMY_AGGREGATE*/ 
+	        		//remove from array to prevent being used on a query
+	        		//this is a workaround
+	        		//The use of the virtual field /*DUMMY_AGGREGATE*/ should be reevaluated 
+	        		if (groupBy.length>1 && !StringUtils.isEmpty(oGrid.getAggregateFieldsString())) {
+	 	        		groupBy=(String[])removeDummyAggregateFromArray(groupBy);
+		        		pValues=removeDummyAggregateFromArray(reqParam.getParentValues());
+	        		}
 	        		DataListConnector groupDetails = 
 	            		((GroupableDataList)dataSource).getGroupDetails(
 	            				groupBy,
-	            				reqParam.getParentValues(),
+	            				pValues,
 	            				groupBy[groupBy.length-1],
 	            				reqParam.getPage(), 
 	            				reqParam.getPageSize()
