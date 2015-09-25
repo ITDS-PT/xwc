@@ -2008,9 +2008,13 @@ public class GridPanel extends ViewerInputSecurityBase {
 		setCurrentSortTerms( defaults.get("currentSortTerms") );
 		setCurrentColumnsConfig( defaults.get("currentColumnsConfig") );
 		setCurrentFilters( null );
-		setAdvancedFilters( null );
-		setAggregateData(null);
-		setAggregateFieldsFromString(getAggregateData());
+		setAdvancedFilters( null );		
+		this.setAggregateData(getAggregateFieldsExpression());
+		this.setAggregateFieldsFromString(getAggregateData());
+		this.setAggregateData(null);
+		if (StringUtils.isEmpty(this.getGroupBy())) {
+			this.setGroupBy("/*DUMMY_AGGREGATE*/");
+		}
 		resetRecordCount();
 		resetSelections();
 		forceRenderOnClient();
