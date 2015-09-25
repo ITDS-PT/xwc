@@ -215,8 +215,10 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement, retryCount ) {
                     }
                 }
                 catch( e ) {
-                	XVW.handleAjaxError( e.message, e.stack  );
-                    requestOk = false;
+                    if( !(typeof XVW == 'undefined' || typeof window == 'undefined') ) {
+	                	XVW.handleAjaxError( e.message, e.stack  );
+	                    requestOk = false;
+                    }
                 }
             }
             else if( oXmlReq.status == 401 && oXmlReq.getResponseHeader('login-url') != "" ){
@@ -248,26 +250,33 @@ function submitAjax( sActionUrl, reqDoc, renderOnElement, retryCount ) {
 	           XVW.handleAjaxError( oXmlReq.status + " - " + oXmlReq.statusText, oXmlReq.responseText );
             }
             
-            if (!XVW.ajax.canAjaxRequest()){
-            	XVW.ajax.enableAjaxRequests();
+            try {
+	            if (!XVW.ajax.canAjaxRequest()){
+	            	XVW.ajax.enableAjaxRequests();
+	            }
+	            
+	            var jsTime = 0;
+	            if (requestOk){
+	            	jsTime = jsProcessingEnd - jsProcessingInit;
+	            }
+	            
+	            if (requestOk){
+	            	XVW.NoWait();
+	                if (retryCount){
+	                	if (retryCount > 0){
+	                		XVW.ResetWait();
+	                	}
+	                }
+	            }
+	             
+	            var requestTime = requestEnd - requestStart;
+	            XVW.logAjaxTiming(requestTime,jsTime);
             }
-            
-            var jsTime = 0;
-            if (requestOk){
-            	jsTime = jsProcessingEnd - jsProcessingInit;
-            }
-            
-            if (requestOk){
-            	XVW.NoWait();
-                if (retryCount){
-                	if (retryCount > 0){
-                		XVW.ResetWait();
-                	}
+            catch( e ) {
+                if( !(typeof XVW == 'undefined' || typeof window == 'undefined') ) {
+                	throw e;
                 }
             }
-             
-            var requestTime = requestEnd - requestStart;
-            XVW.logAjaxTiming(requestTime,jsTime);
         }
     };
     var requestStart = new Date().getTime();
