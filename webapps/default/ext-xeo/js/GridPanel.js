@@ -643,7 +643,6 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
            s.setDisabled( this.cm.config[this.hdCtxIndex].groupable === false);
            s.setChecked(grouped, true);
         }
-        
         var s2 = this.hmenu.items.get('aggregate');
         
         if(s2){        	
@@ -853,7 +852,10 @@ ExtXeo.grid.GroupingView = Ext.extend(ExtXeo.grid.GridView, {
     	this.grid.markDataSourceChange();
     	if(checked)
     	{
-    		this.grid.store.addAggregateField('T:' + mi.itemId, mi.itemId, checked);  
+    		//workaround to apply default checks on aggregates
+    		if (mi.itemId.indexOf('aggregateSum')<0 && mi.itemId.indexOf('aggregateAvg')<0 &&
+    			mi.itemId.indexOf('aggregateMin')<0 && mi.itemId.indexOf('aggregateMax')<0)
+    			this.grid.store.addAggregateField('T:' + mi.itemId, mi.itemId, checked);  
             if(!this.grid.isGrouped()){    			
     			this.grid.groupByColumn("/*DUMMY_AGGREGATE*/");
     		}	
@@ -1528,22 +1530,25 @@ ExtXeo.grid.ViewGroup = Ext.extend( ExtXeo.grid.ViewGroup, {
 		            		 
 		            		 aggregateFormatted = aggregateFormatted + '<tr class="x-grid3-hd-row" bgcolor="' + curColour + '"><td class="x-grid3-col x-grid3-cell">&nbsp;' + 
 		            		 										this.utf8_decode(aggregateFieldDesc) + '&nbsp;</td>';
-		            		 
 		            		 if(hasSum) 
 		              		 {
 		              			aggregateFormatted = aggregateFormatted + '<td class="x-grid3-col x-grid3-cell" align="right">&nbsp;' + aggregateSUM + '&nbsp;</td>';
+		              			this.grid.gridDragDrop.gridView.hmenu.items.get('aggregate').menu.items.get('aggregateSum').setChecked(true);
 		              		 }
 		            		 if(hasAvg) 
 		              		 {
 		              			aggregateFormatted = aggregateFormatted + '<td class="x-grid3-col x-grid3-cell" align="right">&nbsp;' + aggregateAVG + '&nbsp;</td>';
+		              			this.grid.gridDragDrop.gridView.hmenu.items.get('aggregate').menu.items.get('aggregateAvg').setChecked(true);
 		              		 }
 		            		 if(hasMin) 
 		              		 {
 		              			aggregateFormatted = aggregateFormatted + '<td class="x-grid3-col x-grid3-cell" align="right">&nbsp;' + aggregateMIN + '&nbsp;</td>';
+		              			this.grid.gridDragDrop.gridView.hmenu.items.get('aggregate').menu.items.get('aggregateMin').setChecked(true);
 		              		 }
 		            		 if(hasMax) 
 		              		 {
 		              			aggregateFormatted = aggregateFormatted + '<td class="x-grid3-col x-grid3-cell" align="right">&nbsp;' + aggregateMAX + '&nbsp;</td>';
+		              			this.grid.gridDragDrop.gridView.hmenu.items.get('aggregate').menu.items.get('aggregateMax').setChecked(true);
 		              		 }
 		            		 aggregateFormatted = aggregateFormatted + '</tr>';
 		            		 
