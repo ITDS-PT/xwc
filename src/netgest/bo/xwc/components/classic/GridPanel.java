@@ -2012,7 +2012,8 @@ public class GridPanel extends ViewerInputSecurityBase {
 		this.setAggregateData(getAggregateFieldsExpression());
 		this.setAggregateFieldsFromString(getAggregateData());
 		this.setAggregateData(null);
-		if (StringUtils.isEmpty(this.getGroupBy())) {
+		if (this.getEnableAggregate() && StringUtils.isEmpty(this.getGroupBy()) && 
+				!StringUtils.isEmpty(getAggregateFieldsExpression())) {
 			this.setGroupBy("/*DUMMY_AGGREGATE*/");
 		}
 		resetRecordCount();
