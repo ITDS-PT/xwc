@@ -910,15 +910,15 @@ public class GridPanel extends ViewerInputSecurityBase {
 		
 	}
 
-	public void setCurrentAggregateField(String aggregateField) {
-		
+	public void setCurrentAggregateField(String aggregateField) {		
 		AggregateDecoder decoder = new AggregateDecoder( aggregateField );
-		currAggregateFieldCheckSet = decoder.getActionString();
-		currAggregateFieldOpSet = decoder.getOperationString();
-		currAggregateFieldSet = decoder.getField();
-		currAggregateFieldDescSet = decoder.getFieldDescription();
-		
-		
+		Column selCol=getColumn(decoder.getField());
+		if (selCol!=null && selCol.isEnableAggregate()) {		
+			currAggregateFieldCheckSet = decoder.getActionString();
+			currAggregateFieldOpSet = decoder.getOperationString();
+			currAggregateFieldSet = decoder.getField();
+			currAggregateFieldDescSet = decoder.getFieldDescription();
+		}		
 	}
 	
 	public static class SelectColumnsListener implements ActionListener {
