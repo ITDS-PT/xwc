@@ -9,7 +9,8 @@
                     <xvw:columnAttribute dataField="state" width="100"/>                 
                     <xvw:columnAttribute dataField="lastruntime" width="100"/>
                     <xvw:columnAttribute dataField="nextruntime" width="100"/>
-                    <xvw:columnAttribute dataField="activeStatus" width="100"/>                    
+                    <xvw:columnAttribute dataField="state" width="100"/>     
+                    <xvw:columnAttribute dataField="activeStatus" width="100"/>                                     
                 </xvw:columns>
             </xeo:list>
         </xeo:formList>
