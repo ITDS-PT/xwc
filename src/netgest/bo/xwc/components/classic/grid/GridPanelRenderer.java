@@ -130,7 +130,7 @@ public class GridPanelRenderer extends XUIRenderer implements XUIRendererServlet
 				}
 			}
 			else {
-				newArray.add(currItem);
+				newArray.add(String.valueOf(currItem));
 			}
 		}
 		return newArray.toArray(new String[newArray.size()]);
