@@ -41,9 +41,11 @@ import netgest.bo.xwc.framework.components.XUIComponentBase;
 import netgest.bo.xwc.framework.components.XUIViewRoot;
 import netgest.bo.xwc.framework.http.XUIMultiPartRequestWrapper;
 import netgest.bo.xwc.xeo.beans.FileBrowseBean;
+import netgest.bo.xwc.xeo.beans.FileEditBean;
 import netgest.io.FSiFile;
 import netgest.io.iFile;
 import netgest.io.iFilePermissionDenied;
+import netgest.utils.FileUtils;
 /**
  * This atribute works with AttributeBinnaryData from XEO Model
  * It allow download and upload of files
@@ -53,8 +55,10 @@ import netgest.io.iFilePermissionDenied;
 public class AttributeFile extends AttributeBase {
 
     private XUICommand oLookupCommand;
+    private XUICommand oEditCommand;
     private XUIBindProperty<Boolean> suportsMetadata = 
     	new XUIBindProperty<Boolean>( "suportsMetadata", this, Boolean.class );
+	private XUIBindProperty<Boolean> showFilenameEdit = new XUIBindProperty<Boolean>("showFilenameEdit", this, false, Boolean.class);
 
     public void setSuportsMetadata( String sIsLov ) {
         this.suportsMetadata.setExpressionText( sIsLov );
@@ -64,7 +68,15 @@ public class AttributeFile extends AttributeBase {
         return this.suportsMetadata.getEvaluatedValue();
     }
     
-    @Override
+	public void setShowFilenameEdit(String showFilenameEdit) {
+		this.showFilenameEdit.setExpressionText(showFilenameEdit);
+	}
+    
+    public boolean showFilenameEdit() {
+		return this.showFilenameEdit.getEvaluatedValue();
+	}
+
+	@Override
 	public void preRender() {
     	
     	super.preRender();
@@ -77,9 +89,17 @@ public class AttributeFile extends AttributeBase {
                     new LookupActionListener()
                 );
             getChildren().add( oLookupCommand );
+            
+            oEditCommand = new XUICommand();
+            oEditCommand.setId( getId() + "_ed" );
+            oEditCommand.addActionListener( 
+                    new EditActionListener()
+                );
+            getChildren().add( oEditCommand );
         }
         else {
             oLookupCommand = (XUICommand)getChild( 0 );
+            oEditCommand = (XUICommand)getChild( 1 );
         }
 	}
 
@@ -98,7 +118,41 @@ public class AttributeFile extends AttributeBase {
     	getRequestContext().renderResponse();
     	
     }
-    
+	
+	private void doEdit() {
+		DataFieldConnector oConnector = getDataFieldConnector();
+
+		if (oConnector instanceof XEOObjectAttributeConnector) {
+			try {
+				iFile file = ((XEOObjectAttributeConnector) oConnector).getAttributeHandler().getValueiFile();
+
+				try {
+					if (file != null && file.isDirectory() && file.listFiles() != null && file.listFiles().length > 0) {
+						file = file.listFiles()[0];
+					}
+				} catch (RuntimeException e1) {
+				} catch (iFilePermissionDenied e1) {
+				}
+
+				if (file != null) {
+					XUISessionContext oSessionContext = getRequestContext().getSessionContext();
+
+					XUIViewRoot oViewRoot = oSessionContext.createChildView("netgest/bo/xwc/components/viewers/FileEdit.xvw");
+					getRequestContext().setViewRoot(oViewRoot);
+
+					FileEditBean oFileEditBean = (FileEditBean) oViewRoot.getBean("viewBean");
+					oFileEditBean.setParentComponentId(getClientId());
+					oFileEditBean.setParentBeanId(getBeanId());
+					oFileEditBean.setFilename(file.getName());
+
+					getRequestContext().renderResponse();
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+	
     @Override
 	public void validate( FacesContext context ) {
         Object      oSubmitedValue = getSubmittedValue();
@@ -145,6 +199,20 @@ public class AttributeFile extends AttributeBase {
         }
     }
     
+    protected void setEditCommand(XUICommand oEditCommand) {
+        this.oEditCommand = oEditCommand;
+    }
+
+    protected XUICommand getEditCommand() {
+        return oEditCommand;
+    }
+
+    public static class EditActionListener implements ActionListener {
+        public void processAction(ActionEvent event) {
+            ((AttributeFile)((XUICommand)event.getSource()).getParent()).doEdit();
+        }
+    }
+    
     public static class XEOHTMLRenderer extends ExtJsFieldRendeder implements XUIRendererServlet {
 
     	
@@ -155,7 +223,7 @@ public class AttributeFile extends AttributeBase {
     		AttributeBase oAtt = (AttributeBase)oComp;
     		
             if( !oAtt.isReadOnly() ) 
-            	return "Ext.form.TwinTriggerField";
+            	return "ExtXeo.form.FileLookup";
             else
             	return "Ext.form.TextField";
     	}
@@ -190,6 +258,7 @@ public class AttributeFile extends AttributeBase {
     		
             oInpConfig.addJSString("trigger1Class", "x-form-clear-trigger");
             oInpConfig.addJSString("trigger2Class", "x-form-search-trigger");
+            oInpConfig.addJSString("trigger3Class", "x-form-edit-trigger");
             oInpConfig.add("hideTrigger1", false);
             oInpConfig.addJSString("cls", "xwc-att-file" );
             oInpConfig.addJSString("ctCls", "xeoObjectLink" );
@@ -203,6 +272,7 @@ public class AttributeFile extends AttributeBase {
             	if (!writePermission){
             		oInpConfig.addJSString("trigger1Class", "x-hidden x-form-clear-trigger");
                     oInpConfig.addJSString("trigger2Class", "x-hidden x-form-search-trigger");
+                    oInpConfig.addJSString("trigger3Class", "x-hidden x-form-edit-trigger");
             	} else {
             		oInpConfig.add( "disabled" , isDisabled );
             	}
@@ -213,7 +283,14 @@ public class AttributeFile extends AttributeBase {
             Object value = oAttFile.getValue(); 
             if( value != null ) {
             	oInpConfig.addJSString("value", JavaScriptUtils.writeValue( value ) );
-            }
+            } 
+            
+			if (oAttFile.showFilenameEdit() && FileUtils.isPathAnIfile(String.valueOf(value))) {
+				oInpConfig.add("hideTrigger3", false);
+			} else {
+				oInpConfig.add("hideTrigger3", true);
+			}
+            
             oInpConfig.add("readOnly", true );
             
 	            if( oForm.haveDependents( oAttr.getObjectAttribute() ) || oAttr.isOnChangeSubmit()  ) {
@@ -234,6 +311,11 @@ public class AttributeFile extends AttributeBase {
 	            oInpConfig.add("onTrigger2Click", "function(){if(!this.disabled){ " +
 	            		XVWScripts.getOpenCommandWindow( oAttFile.getLookupCommand(), 
 	            				oAttFile.getLookupCommand().getClientId(), "{width:400, height:250}" ) +
+	            		"}}"
+	            );
+	            oInpConfig.add("onTrigger3Click", "function(){if(!this.disabled){ " +
+	            		XVWScripts.getOpenCommandWindow( oAttFile.getEditCommand(), 
+	            				oAttFile.getEditCommand().getClientId(), "{width:400, height:250}" ) +
 	            		"}}"
 	            );
             

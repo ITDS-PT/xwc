@@ -1,5 +1,10 @@
 @CHARSET "ISO-8859-1";
 
+.x-form-field-wrap .x-form-edit-trigger {
+    background-image: url(../images/form/edit-trigger.gif);
+    cursor: pointer;
+}
+
 .x-tab-panel-body {
 	border-right: 1px solid #8db2e3;
 	border-left: 1px solid #8db2e3;

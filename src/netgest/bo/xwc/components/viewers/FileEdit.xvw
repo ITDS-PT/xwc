@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xvw:root xmlns:xvw="http://www.netgest.net/xeo/xvw">
+	<xvw:viewer beanClass="netgest.bo.xwc.xeo.beans.FileEditBean" beanId="viewBean" localizationClasses="netgest.bo.xwc.components.localization.ViewersMessages">
+		<xvw:form>
+			<xvw:toolBar>
+				<xvw:menu text="@{BTN_CONFIRM}" serverAction="#{viewBean.confirm}" />
+				<xvw:menu text="@{BTN_CANCEL}" serverAction="#{viewBean.cancel}" />
+			</xvw:toolBar>
+			<xvw:errorMessages />
+			<xvw:rows>
+				<xvw:row>
+					<xvw:cell>
+						<xvw:attribute label="@{ATTACH_FILENAME}" maxLength="255" inputType="attributeText" valueExpression="#{viewBean.filename}" modelRequired="true"></xvw:attribute>
+					</xvw:cell>
+				</xvw:row>
+			</xvw:rows>
+		</xvw:form>
+	</xvw:viewer>
+</xvw:root>
