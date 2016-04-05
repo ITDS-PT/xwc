@@ -61,6 +61,10 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
+        <servlet-name>File Servlet</servlet-name>
+        <servlet-class>netgest.bo.xwc.xeo.http.FileServlet</servlet-class>
+    </servlet>
+	<servlet>
 		<servlet-name>XWC Servlet</servlet-name>
 		<servlet-class>netgest.bo.xwc.framework.http.XUIServlet</servlet-class>
 		<init-param>
@@ -92,6 +96,10 @@
 	<servlet-mapping>
 		<servlet-name>XWC Servlet</servlet-name>
 		<url-pattern>*.xvw</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>File Servlet</servlet-name>
+		<url-pattern>/file/*</url-pattern>
 	</servlet-mapping>
 	<listener>
 		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>

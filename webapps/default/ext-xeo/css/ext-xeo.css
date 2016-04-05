@@ -46,7 +46,7 @@
 	font-weight: bold;
 }
 
-.xeoObjectLink .x-form-text {
+.xeoObjectLink .x-form-text, .gridColumnFile {
 	color: blue;
 	cursor: pointer;
 	text-decoration: underline;
