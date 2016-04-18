@@ -100,7 +100,7 @@ public class HomeBean extends XEOBaseBean {
 				} else {
 					version = version.replaceAll( "_" , "." );
 				}
-				appsVersions+=", <b>"+verFile.getName().replaceAll(".ver", "")+": </b>"+version;
+				appsVersions+=", <b>"+verFile.getName().replaceAll(".ver", "").toUpperCase()+": </b>"+version;
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
