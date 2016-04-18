@@ -1712,17 +1712,40 @@ public class GridPanel extends ViewerInputSecurityBase {
 		int[] selectedPages = getSelectedPages();
 		if (selectedPages.length > 0){
 			for (int k = 0 ; k < selectedPages.length ; k++){
-				if (selectedPages[k] > 0){
-					connector.setPage(selectedPages[k]);
-					connector.refresh();
-					DataListIterator it = connector.iterator();
-					while (it.hasNext()) {
-						DataRecordConnector record = it.next();
-						String rowId = record.getAttribute(this.getRowUniqueIdentifier()).getValue().toString(); 
-						if (!nonSelectableIdentifiers.containsKey(rowId))
-							result.put(rowId, record);
-					}
-				}
+                if (selectedPages[k] > 0) {
+                    if ((connector.dataListCapabilities() & DataListConnector.CAP_PAGING) != 0) {
+                        connector.setPage(selectedPages[k]);
+                        connector.refresh();
+                        DataListIterator it = connector.iterator();
+                        while (it.hasNext()) {
+                            DataRecordConnector record = it.next();
+                            String rowId = record.getAttribute(this.getRowUniqueIdentifier()).getValue().toString();
+                            if (!nonSelectableIdentifiers.containsKey(rowId))
+                                result.put(rowId,
+                                        record);
+                        }
+                    }
+                    else {
+
+                        int pageSize = Integer.parseInt(getPageSize());
+                        int startIndex = pageSize * (selectedPages[k] - 1);
+                        DataListIterator it = connector.iterator();
+                        int currentRecord = 0;
+                        while (it.hasNext() && (currentRecord < (startIndex + pageSize))) {
+                            currentRecord++;
+                            DataRecordConnector record = it.next();
+
+                            if (currentRecord > startIndex) {
+                                String rowId = record.getAttribute(this.getRowUniqueIdentifier()).getValue().toString();
+                                if (!nonSelectableIdentifiers.containsKey(rowId))
+                                    result.put(rowId,
+                                            record);
+                            }
+
+                        }
+
+                    }
+                }
 			}
 		} 
 		if (this.getSelectedRowsIdentifiers() != null) {
