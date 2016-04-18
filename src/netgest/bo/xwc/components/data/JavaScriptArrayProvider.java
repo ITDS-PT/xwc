@@ -180,6 +180,15 @@ public class JavaScriptArrayProvider {
 		                            JavaScriptUtils.safeJavaScriptWrite( oStringBuilder, sDisplayValue, '\"' );
 		                            oStringBuilder.append( "\"" );
 		                    	}
+			                   else if ( "BOUI".equals(keyField) ){//VCARDOSO
+		                    		 oStringBuilder.append( "\"" );
+		                                JavaScriptUtils.safeJavaScriptWrite( 
+		                                    oStringBuilder, 
+		                                    (oDataFieldValue.toString()),
+		                                    '\"'
+		                                );
+		                                oStringBuilder.append( "\"" );
+		                    	}
 		                    	else {
 			                        oDataFieldType = oDataField.getDataType();
 			                        switch( oDataFieldType ) {
