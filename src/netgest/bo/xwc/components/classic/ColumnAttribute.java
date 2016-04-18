@@ -5,10 +5,15 @@ import java.io.PrintWriter;
 
 import javax.el.ValueExpression;
 
+import netgest.bo.def.boDefAttribute;
 import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.annotations.RequiredAlways;
 import netgest.bo.xwc.components.annotations.Values;
+import netgest.bo.xwc.components.classic.renderers.FileDownloadRenderer;
+import netgest.bo.xwc.components.connectors.DataFieldMetaData;
+import netgest.bo.xwc.components.connectors.DataListConnector;
 import netgest.bo.xwc.components.connectors.DataRecordConnector;
+import netgest.bo.xwc.components.connectors.XEOObjectAttributeMetaData;
 import netgest.bo.xwc.components.connectors.XEOObjectConnector;
 import netgest.bo.xwc.components.model.Column;
 import netgest.bo.xwc.components.security.SecurityPermissions;
@@ -158,6 +163,8 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
     private XUIViewProperty<Boolean>    		enableAggregate	= 
     	new XUIViewProperty<Boolean>( "enableAggregate", this, false );
     
+    private XUIBindProperty<Boolean> showFileDownloadLink = new XUIBindProperty<Boolean>("showFileDownloadLink", this, false, Boolean.class);
+    
     /**
 	 * Set the column enables Aggregate
 	 * @param sBooleanText true/false
@@ -173,6 +180,14 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 	 */
 	public boolean isEnableAggregate() {
 		return enableAggregate.getValue();
+	}
+	
+	public void setShowFileDownloadLink(String showFileDownloadLink) {
+		this.showFileDownloadLink.setExpressionText(showFileDownloadLink);
+	}
+    
+    public boolean showFileDownloadLink() {
+		return this.showFileDownloadLink.getEvaluatedValue();
 	}
     
     public void setSqlExpression( String sqlexpressionEl ) {
@@ -413,7 +428,26 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
      * Return the current renderer class 
      */
 	public GridColumnRenderer getRenderer() {
-		return this.renderer.getEvaluatedValue();
+		GridColumnRenderer renderer = this.renderer.getEvaluatedValue();
+
+		if (renderer == null && showFileDownloadLink()) {
+			GridPanel grid = (GridPanel) findParentComponent(GridPanel.class);
+
+			if (grid != null) {
+				DataListConnector listConnector = grid.getDataSource();
+				DataFieldMetaData metadata = listConnector.getAttributeMetaData(getDataField());
+
+				if (metadata != null && metadata instanceof XEOObjectAttributeMetaData) {
+					boDefAttribute attDef = ((XEOObjectAttributeMetaData) metadata).getBoDefAttribute();
+
+					if (attDef != null && boDefAttribute.ATTRIBUTE_BINARYDATA.equals(attDef.getAtributeDeclaredType())) {
+						renderer = new FileDownloadRenderer();
+					}
+				}
+			}
+		}
+
+		return renderer;
 	}
 	
 	PrintWriter 	templateWriter;

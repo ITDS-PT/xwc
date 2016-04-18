@@ -42,7 +42,7 @@ ExtXeo.form.NumberField = Ext.extend(Ext.form.TextField,  {
     decimalSeparator : ",",
     groupSeparator : ".",
     decimalPrecision : 2,
-    currencySymbol : '€',
+    currencySymbol : 'â‚¬',
     moneyField : false ,
     moneyPosition : 'right',
     minDecimalPrecision : 2,
@@ -828,4 +828,25 @@ ExtXeo.form.Lookup = Ext.extend(Ext.form.TwinTriggerField,  {
 	
 	onLookupHover : Ext.emptyFn
 
+});
+
+/**
+ * 
+ * The Attribute File Lookup
+ * 
+ * 
+ * */
+ExtXeo.form.FileLookup = Ext.extend(Ext.form.TwinTriggerField, {
+	initComponent : function() {
+		ExtXeo.form.FileLookup.superclass.initComponent.call(this);
+
+		this.triggerConfig = {
+	        tag: "span", cls: "x-form-twin-triggers", cn:[
+	        {tag: "img", src: Ext.BLANK_IMAGE_URL, cls: "x-form-trigger " + this.trigger1Class, id: this.id + "-clear"},
+	        {tag: "img", src: Ext.BLANK_IMAGE_URL, cls: "x-form-trigger " + this.trigger2Class, id: this.id + "-search"},
+	        {tag: "img", src: Ext.BLANK_IMAGE_URL, cls: "x-form-trigger " + this.trigger3Class, id: this.id + "-edit"}
+	    ]};
+	},
+	
+	onTrigger3Click : Ext.emptyFn
 });

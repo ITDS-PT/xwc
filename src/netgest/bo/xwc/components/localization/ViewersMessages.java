@@ -115,6 +115,9 @@ public interface ViewersMessages {
 	
 	public static final XUILocalizedMessage ATTACH_FILE = 
 		new XUILocalizedMessage( ViewersMessages.class.getName(), "ATTACH_FILE" );
+	
+	public static final XUILocalizedMessage ATTACH_FILENAME = 
+			new XUILocalizedMessage( ViewersMessages.class.getName(), "ATTACH_FILENAME" );
 
 	public static final XUILocalizedMessage LOGIN_USER = 
 		new XUILocalizedMessage( ViewersMessages.class.getName(), "LOGIN_USER" );

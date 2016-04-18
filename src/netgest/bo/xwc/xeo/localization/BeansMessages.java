@@ -241,4 +241,11 @@ public interface BeansMessages {
 	
 	public static final XUILocalizedMessage LOCALE_SETTINGS_LOV_ENTRY_CURRENCY_LEFT =  new XUILocalizedMessage(
 			BeansMessages.class.getName() , "LOCALE_SETTINGS_LOV_ENTRY_CURRENCY_LEFT" );
+	
+	// File browse
+	public static final XUILocalizedMessage FILE_BROWSE_INVALID_FILENAME_TITLE = 
+			new XUILocalizedMessage( BeansMessages.class.getName(), "FILE_BROWSE_INVALID_FILENAME_TITLE" );
+	
+	public static final XUILocalizedMessage FILE_BROWSE_INVALID_FILENAME = 
+			new XUILocalizedMessage( BeansMessages.class.getName(), "FILE_BROWSE_INVALID_FILENAME" );
 }
