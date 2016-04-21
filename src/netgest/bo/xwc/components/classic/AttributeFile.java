@@ -58,7 +58,6 @@ public class AttributeFile extends AttributeBase {
     private XUICommand oEditCommand;
     private XUIBindProperty<Boolean> suportsMetadata = 
     	new XUIBindProperty<Boolean>( "suportsMetadata", this, Boolean.class );
-	private XUIBindProperty<Boolean> showFilenameEdit = new XUIBindProperty<Boolean>("showFilenameEdit", this, false, Boolean.class);
 
     public void setSuportsMetadata( String sIsLov ) {
         this.suportsMetadata.setExpressionText( sIsLov );
@@ -68,14 +67,6 @@ public class AttributeFile extends AttributeBase {
         return this.suportsMetadata.getEvaluatedValue();
     }
     
-	public void setShowFilenameEdit(String showFilenameEdit) {
-		this.showFilenameEdit.setExpressionText(showFilenameEdit);
-	}
-    
-    public boolean showFilenameEdit() {
-		return this.showFilenameEdit.getEvaluatedValue();
-	}
-
 	@Override
 	public void preRender() {
     	
@@ -103,8 +94,7 @@ public class AttributeFile extends AttributeBase {
         }
 	}
 
-	private void doLookup() {
-    	
+	private void doLookup() {    	
     	XUISessionContext oSessionContext = getRequestContext().getSessionContext();
     	
     	XUIViewRoot oViewRoot = oSessionContext.createChildView( "netgest/bo/xwc/components/viewers/FileBrowse.xvw" );
@@ -116,7 +106,6 @@ public class AttributeFile extends AttributeBase {
     	oFileBrowseBean.setParentBeanId( getBeanId() );
     	
     	getRequestContext().renderResponse();
-    	
     }
 	
 	private void doEdit() {

@@ -247,6 +247,17 @@ public class AttributeBase extends ViewerInputSecurityBase {
     private XUIViewStateBindProperty<Boolean> enableFullTextSearch  = 
     	new XUIViewStateBindProperty<Boolean>( "enableFullTextSearch", this, "false",Boolean.class );
     
+    
+    private XUIBindProperty<Boolean> showFilenameEdit = new XUIBindProperty<Boolean>("showFilenameEdit", this, false, Boolean.class);
+    
+	public void setShowFilenameEdit(String showFilenameEdit) {
+		this.showFilenameEdit.setExpressionText(showFilenameEdit);
+	}
+    
+    public boolean showFilenameEdit() {
+		return this.showFilenameEdit.getEvaluatedValue();
+	}
+    
     /**
      * Associates to a method that returns the list of results for a lookup
      * Must return a JSONArray containing a set of JSONObjects each with two entries:

@@ -296,6 +296,9 @@ public class Attribute extends AttributeBase
         if( getValueExpression("enableCardIdLink") != null )
             oAttr.setEnableCardIdLink( getValueExpression("enableCardIdLink").getExpressionString() );
         
+        if( getValueExpression("showFilenameEdit") != null )
+            oAttr.setShowFilenameEdit( getValueExpression("showFilenameEdit").getExpressionString() );
+        
         if( getValueExpression("enableFullTextSearch") != null )
             oAttr.setEnableFullTextSearch( getValueExpression("enableFullTextSearch").getExpressionString() );
         
