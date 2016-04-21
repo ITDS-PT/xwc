@@ -3,12 +3,16 @@ package netgest.bo.xwc.components.classic;
 import java.io.IOException;
 import java.util.List;
 
+import javax.el.ValueExpression;
+
 import netgest.bo.xwc.components.annotations.Localize;
 import netgest.bo.xwc.components.classic.extjs.ExtConfig;
 import netgest.bo.xwc.components.classic.extjs.ExtJsBaseRenderer;
+import netgest.bo.xwc.components.connectors.DataFieldConnector;
 import netgest.bo.xwc.components.util.JavaScriptUtils;
 import netgest.bo.xwc.components.util.ScriptBuilder;
 import netgest.bo.xwc.framework.XUIBaseProperty;
+import netgest.bo.xwc.framework.XUIBindProperty;
 import netgest.bo.xwc.framework.XUIResponseWriter;
 import netgest.bo.xwc.framework.XUIScriptContext;
 import netgest.bo.xwc.framework.XUIViewStateBindProperty;
@@ -31,6 +35,48 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
     @Localize
     private XUIViewStateBindProperty<String> 		toolTip    = new XUIViewStateBindProperty<String>( "toolTip", this, String.class );
     
+    /**
+     * Bean property where to keep the value of the attribute
+     */
+    private XUIBaseProperty<String> beanProperty         		= new XUIBaseProperty<String>( "beanProperty", this, "currentData" );
+    
+    /**
+     * Name of the attribute of a XEO Model to bind this attributeLabel
+     */
+    private XUIBaseProperty<String> objectAttribute         	= new XUIBaseProperty<String>( "objectAttribute", this );
+    
+    /**
+     * A connector to keep/retrieve the value of the attribute
+     */
+    protected XUIBindProperty<DataFieldConnector> dataFieldConnector = new XUIBindProperty<DataFieldConnector>( "dataFieldConnector", this, DataFieldConnector.class );
+
+    
+    
+    /**
+     * Initialize the component
+     */
+    @Override
+    public void initComponent() {
+        super.initComponent();
+        setAttributeProperties( );
+    }
+    
+    /**
+     * 
+     * Returns the value of the property dataFieldConnector
+     * Property: <code>dataFieldConnector</code>
+     * @return
+     * 		{@link DataFieldConnector}
+     */
+    public DataFieldConnector getDataFieldConnector() {
+        return this.dataFieldConnector.getEvaluatedValue();
+    }
+    
+    public void setDataFieldConnector(String dataFieldExpr){
+    	this.dataFieldConnector.setExpressionText( dataFieldExpr );
+    }
+    
+    
     public void setText( String sText ) {
         this.text.setValue( sText );
     }
@@ -38,6 +84,15 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 	public String getText( ) {
         return this.text.getValue();
     }
+	
+    public void setObjectAttribute( String objectAttribute ) {
+        this.objectAttribute.setValue( objectAttribute );
+    }
+    
+	public String getObjectAttribute( ) {
+        return this.objectAttribute.getValue();
+    }
+	
 
     public void setVisible( String visible) {
     	this.visible.setExpressionText(visible);
@@ -87,6 +142,76 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 	public void setToolTip(String ttipExpr){
 		this.toolTip.setExpressionText( ttipExpr );
 	}
+	
+	/**
+	 * Save the object property of this component 
+	 */
+    public void setBeanProperty(String beanProperty) {
+        this.beanProperty.setValue( beanProperty ); 
+    }
+    
+    /**
+     * Get the bean property associated with the component
+     * 
+     * @return String in the format of {@link ValueExpression}
+     */
+    public String getBeanProperty() {
+        return beanProperty.getValue();
+    }
+	
+	protected void setAttributeProperties() {
+		String beanProperty = getBeanProperty();
+    	String sBeanExpression = "";
+    	String sObjectAttribute = getObjectAttribute();
+    	if (beanProperty.startsWith("viewBean.")) //Backward compatibility
+    		sBeanExpression = "#{" + getBeanProperty() + "." + sObjectAttribute;
+    	else
+    		sBeanExpression = "#{" + getBeanId() + "." + getBeanProperty() + "." + sObjectAttribute;
+        
+    	if (sObjectAttribute != null){
+	        this.dataFieldConnector.setExpressionText( sBeanExpression + "}" );
+	        
+	        this.objectAttribute.setValue( sObjectAttribute );
+	
+	        // Value
+	        this.setValueExpression(
+	            "value", createValueExpression( sBeanExpression +  ".value}", Object.class ) 
+	        );
+	
+	        // Label
+	        if (text.isDefaultValue() ){	        	
+		        this.text.setValue( (String)
+		                createValueExpression( sBeanExpression + ".label}", String.class ).getValue(getELContext())
+		            );
+	        }
+	        if (visible.isDefaultValue()){
+		        this.visible.setValue( 
+		                createValueExpression( sBeanExpression + ".visible}", Boolean.class ) 
+		            );
+	        }
+	        if (modelRequired.isDefaultValue()){
+		        this.modelRequired.setValue( 
+		                createValueExpression( sBeanExpression + ".required}", Boolean.class ) 
+		            );
+	        }
+	        if (recommended.isDefaultValue()){
+		        this.recommended.setValue( 
+		                createValueExpression( sBeanExpression + ".recomended}", Boolean.class ) 
+		            );
+	        }
+	        
+	        this.setSecurityPermissions( sBeanExpression + ".securityPermissions}" );
+	
+	        this.dataFieldConnector.setValue( 
+	                createValueExpression( sBeanExpression + "}", DataFieldConnector.class ) 
+	            );
+	        
+	        
+	        if (toolTip.isDefaultValue()){
+	        	this.toolTip.setExpressionText(sBeanExpression + ".toolTip}" );
+	        }
+    	}
+	}
 
 	public static class XEOHTMLRenderer extends ExtJsBaseRenderer {
 
@@ -131,6 +256,14 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 			}
 		}
 
+		private String getTextValue(AttributeLabel oAttrLabel) {
+			String textValue=oAttrLabel.getText();
+			if (!StringUtils.isEmpty(oAttrLabel.getObjectAttribute()) &&
+					StringUtils.isEmpty(oAttrLabel.getText())) {				
+			}
+			return textValue;
+		}
+		
 		protected void addScript(String id, StringBuilder b) {
 			getRequestContext().getScriptContext().add( XUIScriptContext.POSITION_FOOTER , id + "_ttip" , b.toString() );
 		}
@@ -151,7 +284,7 @@ public class AttributeLabel extends ViewerOutputSecurityBase {
 //			config.addString( "forId" , ((Attribute)oComp.getParent()).getInputComponent().getClientId() );
             
             
-			config.addString( "text" , JavaScriptUtils.writeValue( oAttrLabel.getText() ) );
+			config.addString( "text" , JavaScriptUtils.writeValue( getTextValue(oAttrLabel)) );
 			
             if( !oAttrLabel.isVisible() )
             	config.add("hidden",true);
