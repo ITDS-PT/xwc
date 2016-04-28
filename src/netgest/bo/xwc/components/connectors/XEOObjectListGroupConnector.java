@@ -11,6 +11,7 @@ import java.util.List;
 import netgest.bo.data.DataManager;
 import netgest.bo.data.DataSet;
 import netgest.bo.data.DriverUtils;
+import netgest.bo.data.sqlserver.SqlServerDriver;
 import netgest.bo.def.boDefAttribute;
 import netgest.bo.def.boDefHandler;
 import netgest.bo.ql.QLParser;
@@ -352,14 +353,25 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 	public int getPageSize() {
 		return this.pageSize;
 	}
-
+	
+	//Problems with SQLServer when using group by and order by in a inner query
+	private String addTopForSQLServer(String sql) {	
+		if ((getEboContext().getDataBaseDriver() instanceof SqlServerDriver)) {	
+			int selectIdx=sql.indexOf("SELECT");			
+			if (selectIdx>-1) {
+				sql=sql.substring(0,selectIdx)+"SELECT TOP "+Long.MAX_VALUE+" "+sql.substring(selectIdx+6,sql.length());
+			}
+		}
+		return sql;
+	}
+	
 	public int getRecordCount() {
 		if( hasMoreResults() ) {
 			prepareQuery();
 			DataSet countDataSet = DataManager.executeNativeQuery( 
 					getEboContext(), 
 					"DATA", 
-					"select count(*) from (" + this.preparedSql + ") count", 
+					"select count(*) from (" + addTopForSQLServer(this.preparedSql) + ") count", 
 					1,
 					1,
 					this.preparedSqlArgs 
@@ -666,7 +678,7 @@ public class XEOObjectListGroupConnector implements DataGroupConnector {
 		DataSet countDataSet = DataManager.executeNativeQuery( 
 				getEboContext(), 
 				"DATA", 
-				"select count(*) from (" + this.preparedSql + ") count", 
+				"select count(*) from (" + addTopForSQLServer(this.preparedSql) + ") count", 
 				1,
 				1,
 				this.preparedSqlArgs 
