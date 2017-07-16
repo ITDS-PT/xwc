@@ -22,6 +22,13 @@ import netgest.io.iFile;
  * 
  */
 public class FileDownloadRenderer implements GridColumnRenderer {
+	
+	private String attName = null;
+	
+	public FileDownloadRenderer(String attName) {
+		this.attName = attName;
+	}
+	
 	@Override
 	public String render(GridPanel grid, DataRecordConnector record, DataFieldConnector field) {
 		String sRetValue = field.getDisplayValue();
@@ -31,9 +38,9 @@ public class FileDownloadRenderer implements GridColumnRenderer {
 				XEOObjectAttributeConnector connector = (XEOObjectAttributeConnector) field;
 				AttributeHandler oAttHandler = connector.getAttributeHandler();
 
-				if (oAttHandler != null && oAttHandler.getDefAttribute().getAtributeDeclaredType() == boDefAttribute.ATTRIBUTE_BINARYDATA) {
+				//if (oAttHandler != null && oAttHandler.getDefAttribute().getAtributeDeclaredType() == boDefAttribute.ATTRIBUTE_BINARYDATA) {
 					sRetValue = createDownloadLink(grid, oAttHandler);
-				}
+		//		}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -64,15 +71,16 @@ public class FileDownloadRenderer implements GridColumnRenderer {
 		if (grid != null && oAttHandler != null) {
 			try {
 				boObject obj = oAttHandler.getParent();
-
+				AttributeHandler binAttHandler = obj.getAttribute(this.attName);
 				if (obj != null) {
 					String objName = obj.getName();
 					String objBoui = String.valueOf(obj.getBoui());
-					String attName = oAttHandler.getName();
-					iFile file = oAttHandler.getValueiFile();
+					String attName = binAttHandler.getName();
+					iFile file = binAttHandler.getValueiFile();
 
-					if (file != null) {
-						String filename = file.getName();
+					if (file != null) {						
+						String name =oAttHandler.getValueString();
+						String filename=file.getName();
 						String fileid = file.getId();
 
 						if (file.exists()) {
@@ -81,9 +89,9 @@ public class FileDownloadRenderer implements GridColumnRenderer {
 							String fileUrl = boConfig.getApplicationConfig().getWebContextRoot() + "/file/" + objName + "/" + objBoui + "/" + attName + "/" + URLEncoder.encode(filename, "UTF-8") + "/" + fileid;
 							String link = (req.isSecure() ? "https" : "http") + "://" + req.getServerName() + (req.getServerPort() == 80 ? "" : ":" + req.getServerPort()) + fileUrl;
 							String downloadScript = "XVW.downloadFile('" + link + "');";
-							result = "<a class=\"gridColumnFile\" onclick=\"" + downloadScript + "\">" + filename + "</a>";
+							result = "<a class=\"gridColumnFile\" onclick=\"" + downloadScript + "\">" + name + "</a>";
 						} else {
-							result = filename;
+							result = name;
 						}
 					}
 				}

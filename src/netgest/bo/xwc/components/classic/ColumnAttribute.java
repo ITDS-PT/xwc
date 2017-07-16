@@ -27,6 +27,7 @@ import netgest.bo.xwc.xeo.components.Bridge;
 import netgest.bo.xwc.xeo.components.List;
 import netgest.bo.xwc.xeo.components.LookupList;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
 /**
@@ -163,7 +164,7 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
     private XUIViewProperty<Boolean>    		enableAggregate	= 
     	new XUIViewProperty<Boolean>( "enableAggregate", this, false );
     
-    private XUIBindProperty<Boolean> showFileDownloadLink = new XUIBindProperty<Boolean>("showFileDownloadLink", this, false, Boolean.class);
+    private XUIBindProperty<String> renderFileDownloadLink = new XUIBindProperty<String>("renderFileDownloadLink", this,String.class);
     
     /**
 	 * Set the column enables Aggregate
@@ -182,12 +183,12 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 		return enableAggregate.getValue();
 	}
 	
-	public void setShowFileDownloadLink(String showFileDownloadLink) {
-		this.showFileDownloadLink.setExpressionText(showFileDownloadLink);
+	public void setRenderFileDownloadLink(String renderFileDownloadLink) {
+		this.renderFileDownloadLink.setExpressionText(renderFileDownloadLink);
 	}
     
-    public boolean showFileDownloadLink() {
-		return this.showFileDownloadLink.getEvaluatedValue();
+    public String getRenderFileDownloadLink() {
+		return this.renderFileDownloadLink.getEvaluatedValue();
 	}
     
     public void setSqlExpression( String sqlexpressionEl ) {
@@ -430,20 +431,22 @@ public class ColumnAttribute extends XUIComponentBase implements Column {
 	public GridColumnRenderer getRenderer() {
 		GridColumnRenderer renderer = this.renderer.getEvaluatedValue();
 
-		if (renderer == null && showFileDownloadLink()) {
+		if (renderer == null && !StringUtils.isEmpty(getRenderFileDownloadLink())) {
 			GridPanel grid = (GridPanel) findParentComponent(GridPanel.class);
 
 			if (grid != null) {
-				DataListConnector listConnector = grid.getDataSource();
-				DataFieldMetaData metadata = listConnector.getAttributeMetaData(getDataField());
-
-				if (metadata != null && metadata instanceof XEOObjectAttributeMetaData) {
-					boDefAttribute attDef = ((XEOObjectAttributeMetaData) metadata).getBoDefAttribute();
-
-					if (attDef != null && boDefAttribute.ATTRIBUTE_BINARYDATA.equals(attDef.getAtributeDeclaredType())) {
-						renderer = new FileDownloadRenderer();
-					}
-				}
+				//DataListConnector listConnector = grid.getDataSource();
+			//	DataFieldMetaData metadata = listConnector.getAttributeMetaData(getDataField());
+				
+				renderer = new FileDownloadRenderer(this.getRenderFileDownloadLink());
+				
+//				if (metadata != null && metadata instanceof XEOObjectAttributeMetaData) {
+//					boDefAttribute attDef = ((XEOObjectAttributeMetaData) metadata).getBoDefAttribute();
+//
+//					if (attDef != null && boDefAttribute.ATTRIBUTE_BINARYDATA.equals(attDef.getAtributeDeclaredType())) {
+//						renderer = new FileDownloadRenderer();
+//					}
+//				}
 			}
 		}
 
